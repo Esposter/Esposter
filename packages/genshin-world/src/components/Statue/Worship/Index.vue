@@ -18,7 +18,7 @@ interface Props {
   progress: StatueRegionProgressSave;
 }
 
-const { gameText, getItemName, levels, progress } = defineProps<Props>();
+const { getItemName, levels, progress } = defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 
 // The level the screen shows: the lowest one whose rewards are not yet claimed, or the last once all are. Its Oculus is the

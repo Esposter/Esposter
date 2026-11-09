@@ -11,7 +11,7 @@ interface Props {
   items: SurveyResponseRecord[];
 }
 
-const { columns, items } = defineProps<Props>();
+const { items } = defineProps<Props>();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
 const { detailRowKey } = storeToRefs(surveyResponseDialogStore);
 // One dialog for the whole table, driven by the target row key — never one dialog per row. The item is resolved

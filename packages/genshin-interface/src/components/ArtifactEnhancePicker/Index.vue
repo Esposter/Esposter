@@ -51,19 +51,7 @@ interface Props {
   title: string;
 }
 
-const {
-  autoAddLabel,
-  cancelLabel,
-  confirmLabel,
-  fodders,
-  isConfirmDisabled,
-  levelLabel,
-  materials,
-  moraCost,
-  moraLabel,
-  notice,
-  title,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   autoAdd: [];
   cancel: [];

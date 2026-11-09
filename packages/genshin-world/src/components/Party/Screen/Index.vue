@@ -33,8 +33,7 @@ interface Props {
   travelerName: string;
 }
 
-const { characterDataMap, characterPackReaders, characters, gameText, nameText, party, travelerName } =
-  defineProps<Props>();
+const { characterDataMap, characters, gameText, nameText, party, travelerName } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Party Setup opens on the deployed team, and the arrows step from there
 const teamIndex = ref(party.deployedTeamIndex);

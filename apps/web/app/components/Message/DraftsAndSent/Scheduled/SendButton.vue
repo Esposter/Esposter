@@ -10,7 +10,7 @@ interface Props {
   scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
 }
 
-const { scheduledMessageJob } = defineProps<Props>();
+defineProps<Props>();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { sendScheduledMessageNow } = scheduledMessageJobStore;
 </script>

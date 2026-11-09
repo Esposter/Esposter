@@ -9,7 +9,7 @@ interface Props {
   participant: DirectMessageParticipant;
 }
 
-const { isOwner, participant } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ remove: [] }>();
 </script>
 

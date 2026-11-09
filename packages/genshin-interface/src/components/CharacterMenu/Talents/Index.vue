@@ -22,8 +22,7 @@ interface Props {
   upgradeLabel: string;
 }
 
-const { costs, isUpgradeDisabled, levelTexts, names, passiveNames, phases, reasons, upgradeLabel } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ upgrade: [index: number] }>();
 </script>
 

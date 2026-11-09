@@ -9,7 +9,7 @@ interface Props {
   resource: ResourceInResource;
 }
 
-const { resource } = defineProps<Props>();
+defineProps<Props>();
 const favoriteStore = useFavoriteStore();
 const { favoriteIds } = storeToRefs(favoriteStore);
 const { toggleFavorite } = favoriteStore;

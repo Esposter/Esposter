@@ -18,7 +18,7 @@ interface Props {
   labelKey: GameTextKey;
 }
 
-const { alertedIcons, gameText, icon, labelKey } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

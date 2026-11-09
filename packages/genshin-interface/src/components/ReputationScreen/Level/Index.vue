@@ -16,7 +16,7 @@ interface Props {
 }
 
 const level = defineModel<number>("level", { default: 0 });
-const { achievedLabel, cell, levelLabel, notAchievedLabel } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

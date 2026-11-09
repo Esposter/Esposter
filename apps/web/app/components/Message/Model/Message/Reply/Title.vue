@@ -9,7 +9,7 @@ interface Props {
   message: MessageEntity;
 }
 
-const { creator, message } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

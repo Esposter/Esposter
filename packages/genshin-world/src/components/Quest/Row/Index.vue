@@ -16,7 +16,7 @@ interface Props {
   title: string;
 }
 
-const { distance, isCommission, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

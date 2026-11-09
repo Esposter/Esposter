@@ -7,7 +7,7 @@ interface Props {
   stroke: StrokeElement;
 }
 
-const { stroke } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

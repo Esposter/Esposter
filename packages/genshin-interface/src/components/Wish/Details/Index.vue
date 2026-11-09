@@ -19,7 +19,7 @@ interface Props {
   title: string;
 }
 
-const { closeLabel, fatePoints, pathLabel, pool, title } = defineProps<Props>();
+const { pool } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const poolRarityCellsMap = computed(() => Map.groupBy(pool, ({ rarity }) => rarity));
 </script>

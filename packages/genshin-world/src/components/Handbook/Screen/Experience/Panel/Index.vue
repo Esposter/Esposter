@@ -17,7 +17,7 @@ interface Props {
   totalCount: number;
 }
 
-const { completedCount, gameText, investigationRewards, isRewardClaimed, totalCount } = defineProps<Props>();
+const { completedCount, totalCount } = defineProps<Props>();
 // The bar's segments, one per investigation, each lit when that investigation is done
 const progressSegments = computed(() => Array.from({ length: totalCount }, (_value, index) => index < completedCount));
 </script>

@@ -17,7 +17,7 @@ interface Props {
   logoPath: string;
 }
 
-const { gameText, language, logoPath } = defineProps<Props>();
+const { gameText } = defineProps<Props>();
 const licenceLines = computed(() => gameText[GameTextKey.TitleLicence].split("\n"));
 </script>
 

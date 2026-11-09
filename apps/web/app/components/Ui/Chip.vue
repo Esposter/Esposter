@@ -14,7 +14,7 @@ interface Props {
 // Mark and its block are decoration beside the words, which say it all. One the reader added, such as a filtered
 // Word, holds a quiet button that takes it away again
 defineSlots<{ default: () => VNode }>();
-const { meaning, removeLabel, token } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ remove: [] }>();
 </script>
 

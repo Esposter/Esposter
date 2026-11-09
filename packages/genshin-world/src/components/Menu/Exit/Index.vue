@@ -13,7 +13,7 @@ interface Props {
   interactionState?: InteractionState;
 }
 
-const { gameText, interactionState } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; quit: [] }>();
 const cancelButton = useTemplateRef("cancelButton");
 // The prompt is a dialog over the menu, so focus starts on Cancel, the way back to the menu

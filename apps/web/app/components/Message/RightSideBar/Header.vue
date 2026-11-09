@@ -7,7 +7,7 @@ interface Props {
 }
 
 defineSlots<{ actions?: () => VNode }>();
-const { title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

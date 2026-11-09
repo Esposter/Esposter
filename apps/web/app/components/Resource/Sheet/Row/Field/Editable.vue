@@ -15,7 +15,7 @@ interface Props {
   rowIndex: number;
 }
 
-const { column, item, rowIndex } = defineProps<Props>();
+const { column, item } = defineProps<Props>();
 const updateRow = useUpdateRow();
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);

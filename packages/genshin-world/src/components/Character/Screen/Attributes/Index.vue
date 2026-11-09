@@ -48,19 +48,7 @@ interface Props {
 const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const {
-  adventureRank,
-  character,
-  characterName,
-  elementMarkPath,
-  friendshipLevel,
-  gameText,
-  materialDataMap,
-  maxStamina,
-  nameText,
-  statTables,
-  travelerBonusLines,
-} = defineProps<Props>();
+const { adventureRank, character, gameText, materialDataMap, nameText, statTables } = defineProps<Props>();
 // The chosen character's ascension phases, looked up once for the rows and the two results below
 const ascensionPhases = computed(() => statTables.characterDataMap.get(character.id)?.ascensionPhases);
 // The phase the chosen character enters at its next ascension, as the Attributes tab lists it: the Adventure Rank it needs

@@ -7,7 +7,7 @@ interface Props {
   updatedAt: Date;
 }
 
-const { deviceLabel, isCurrent, updatedAt } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ revoke: [] }>();
 </script>
 

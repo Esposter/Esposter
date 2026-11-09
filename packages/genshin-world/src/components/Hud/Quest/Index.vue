@@ -32,7 +32,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { gameText, input, mark, quest, questProgress, textMap } = defineProps<Props>();
+const { quest, questProgress } = defineProps<Props>();
 const step = computed(() => quest.steps[questProgress?.stepIndex ?? 0]);
 </script>
 

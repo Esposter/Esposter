@@ -17,7 +17,7 @@ interface Props {
 }
 
 const isPicking = defineModel<boolean>("isPicking", { default: false });
-const { characters, characterTitle, detail, hours } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ send: [placeId: number, characterId: number, hours: number] }>();
 </script>
 

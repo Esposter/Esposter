@@ -23,8 +23,7 @@ interface Props {
 }
 
 const isActive = defineModel<boolean>("isActive", { required: true });
-const { configuration, createAnimationConfigurations, isToEnemy, playAnimationKey, spritesheetKey } =
-  defineProps<Props>();
+const { createAnimationConfigurations } = defineProps<Props>();
 const frame = ref<number>();
 const animations = createAnimationConfigurations ? useAnimations(createAnimationConfigurations, true) : undefined;
 </script>

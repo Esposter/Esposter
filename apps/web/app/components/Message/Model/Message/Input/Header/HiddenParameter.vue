@@ -6,7 +6,7 @@ interface Props {
   name: string;
 }
 
-const { isHighlighted, name } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

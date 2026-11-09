@@ -41,8 +41,7 @@ interface Props {
 const nation = defineModel<string>("nation", { required: true });
 const place = defineModel<number | undefined>("place");
 const isPicking = defineModel<boolean>("isPicking", { default: false });
-const { characters, characterTitle, closeLabel, detail, hours, limitLabel, nations, pins, rewardsLabel, title } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   claim: [placeId: number];
   close: [];

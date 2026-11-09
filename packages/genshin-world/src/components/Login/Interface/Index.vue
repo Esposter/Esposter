@@ -56,20 +56,7 @@ interface Props {
   statusStep: LoginStatusStep;
 }
 
-const {
-  ageRating,
-  gameText,
-  interfaceClips,
-  interfaceRects,
-  isDoorWaiting,
-  isSpinnerShown,
-  isWelcomeShown,
-  language,
-  playerName,
-  progress,
-  stage,
-  statusStep,
-} = defineProps<Props>();
+const { gameText, interfaceClips, isDoorWaiting, language, playerName, stage } = defineProps<Props>();
 // The white is up as the screen enters, the moment the screen hands on
 const emit = defineEmits<{ whiten: [] }>();
 const client = computed(() => GameLanguageGameClientMap[language]);

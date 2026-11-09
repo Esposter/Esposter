@@ -10,7 +10,7 @@ interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { field, label, userSettings } = defineProps<Props>();
+const { field, userSettings } = defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const { cloned: editedVolumePercentage } = useCloned(() => userSettings[field]);

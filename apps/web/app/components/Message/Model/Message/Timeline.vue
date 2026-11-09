@@ -7,7 +7,7 @@ interface Props {
   nextMessageDate?: Date;
 }
 
-const { messageDate, nextMessageDate } = defineProps<Props>();
+const { messageDate } = defineProps<Props>();
 const displayDate = computed(() => getTimelineDateLabel(messageDate));
 </script>
 

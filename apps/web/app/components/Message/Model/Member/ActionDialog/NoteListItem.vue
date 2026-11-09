@@ -5,7 +5,7 @@ interface Props {
   note: ModerationNoteInRoom;
 }
 
-const { note } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

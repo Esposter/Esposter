@@ -9,7 +9,7 @@ interface Props {
   id: InviteInMessage["id"];
 }
 
-const { id } = defineProps<Props>();
+defineProps<Props>();
 const roomInviteDialogStore = useRoomInviteDialogStore();
 const { revokingId } = storeToRefs(roomInviteDialogStore);
 </script>

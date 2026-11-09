@@ -7,7 +7,7 @@ interface Props {
   sender: PublicUser;
 }
 
-const { sender } = defineProps<Props>();
+defineProps<Props>();
 const friendRequestStore = useFriendRequestStore();
 const { acceptFriendRequest } = friendRequestStore;
 </script>

@@ -5,7 +5,7 @@ interface Props {
   stream: MediaStream;
 }
 
-const { isInteractive = true, presenterName, stream } = defineProps<Props>();
+const { isInteractive = true } = defineProps<Props>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const video = useTemplateRef("video");
 const videoAspectRatio = ref("16 / 9");

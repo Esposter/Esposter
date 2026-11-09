@@ -11,7 +11,7 @@ interface Props {
   title: string;
 }
 
-const { gameText, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const backButton = useTemplateRef("backButton");
 // The screen is a dialog over the world, so focus starts inside it

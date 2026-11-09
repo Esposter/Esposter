@@ -11,7 +11,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { action, roomId } = defineProps<Props>();
+const { action } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
 const { deleteWebhook, rotateToken } = webhookStore;

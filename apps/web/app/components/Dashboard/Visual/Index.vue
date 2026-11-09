@@ -28,7 +28,7 @@ interface Props {
 // The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh. A group's
 // Children are drawn by the caller's child slot, and by this component again when it gives none
 defineSlots<{ actions?: (props: { dataset?: Dataset }) => VNode; child?: (props: { visual: Visual }) => VNode }>();
-const { collision, compactType, isEditable, visual } = defineProps<Props>();
+const { visual } = defineProps<Props>();
 const emit = defineEmits<DashboardVisualEmits>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");

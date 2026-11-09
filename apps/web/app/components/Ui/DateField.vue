@@ -25,17 +25,7 @@ interface Props {
 // Is an instant, read and written in the reader's own time zone, so the day a reader picks is the day they see. A day
 // Is chosen and the panel closes; with a time the panel stays open for it, and Done closes it
 const modelValue = defineModel<TModel>({ required: true });
-const {
-  isClearable,
-  isDisabled,
-  isLabelHidden,
-  isRequired,
-  isTime,
-  label,
-  max,
-  min,
-  placeholder = "Pick a date",
-} = defineProps<Props>();
+const { isTime, max, min, placeholder = "Pick a date" } = defineProps<Props>();
 const isOpen = ref(false);
 const field = useTemplateRef("field");
 // The trigger, which what opens the field in place of something else focuses

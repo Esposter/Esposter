@@ -15,7 +15,7 @@ interface Props {
 }
 
 const modelValue = defineModel<boolean>({ default: false });
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { createRoomEmoji } = roomEmojiStore;
 const { items } = storeToRefs(roomEmojiStore);

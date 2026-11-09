@@ -10,7 +10,7 @@ interface Props {
   source: ResourceListSource;
 }
 
-const { error, hasActiveFilters, source } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ clear: []; refresh: [] }>();
 </script>
 

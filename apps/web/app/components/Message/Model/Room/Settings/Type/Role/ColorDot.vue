@@ -5,7 +5,7 @@ interface Props {
   color: RoomRoleInMessage["color"];
 }
 
-const { color } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

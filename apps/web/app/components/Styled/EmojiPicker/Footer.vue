@@ -10,7 +10,7 @@ interface Props {
 
 defineSlots<{ default?: () => VNode }>();
 const skinTone = defineModel<SkinTone>("skinTone", { required: true });
-const { emoji } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- One thing at a time, Slack's shape: the hovered emoji takes the whole bar and the standing controls take it back the

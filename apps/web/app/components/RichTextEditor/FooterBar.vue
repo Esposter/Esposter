@@ -3,7 +3,7 @@ import type { FooterBarSlotProps } from "@/components/RichTextEditor/FooterBarSl
 
 defineSlots<{ append: (props: FooterBarSlotProps) => VNode; prepend: (props: FooterBarSlotProps) => VNode }>();
 
-const { editor } = defineProps<FooterBarSlotProps>();
+defineProps<FooterBarSlotProps>();
 </script>
 
 <template>

@@ -8,7 +8,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const isOpen = ref(false);
 </script>
 

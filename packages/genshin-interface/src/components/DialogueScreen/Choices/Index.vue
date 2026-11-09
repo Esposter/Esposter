@@ -13,7 +13,7 @@ interface Props {
   selectedChoiceId: string;
 }
 
-const { choices, selectedChoiceId } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [id: string] }>();
 </script>
 

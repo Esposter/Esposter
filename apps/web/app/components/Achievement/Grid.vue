@@ -9,7 +9,7 @@ interface Props {
   userAchievements: UserAchievementWithDefinition[];
 }
 
-const { achievementDefinitions, achievementNameRarityMap, userAchievements } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

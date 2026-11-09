@@ -28,7 +28,7 @@ interface Props {
   trackedQuestId: string;
 }
 
-const { gameText, quest, questChapters, questProgressMap, textMap, trackedQuestId } = defineProps<Props>();
+const { quest, questChapters, questProgressMap } = defineProps<Props>();
 const emit = defineEmits<{ navigate: [questId: string] }>();
 const selectedChapter = computed(() => questChapters.find(({ questIds }) => questIds.includes(quest.id)));
 // The selected quest's step, and how far its first counted objective has come

@@ -12,7 +12,7 @@ interface Props {
 // One of the dock's menus over commands the palette offers too, so the two never disagree: a heading wherever the
 // Group changes, and the chosen member of a choice marked
 defineSlots<{ default: () => VNode }>();
-const { commands, label } = defineProps<Props>();
+const { commands } = defineProps<Props>();
 const items = computed(() =>
   commands.map(({ description, group, icon, id, isSelected, meaning, title }, index) => ({
     description,

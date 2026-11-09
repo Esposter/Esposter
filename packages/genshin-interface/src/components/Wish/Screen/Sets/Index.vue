@@ -12,7 +12,7 @@ interface Props {
   sets: WishSet[];
 }
 
-const { purchases, sets } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ buy: []; wish: [count: number] }>();
 </script>
 

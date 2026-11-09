@@ -26,8 +26,7 @@ interface Props<T> {
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ required: true });
 const isEditFormValid = defineModel<boolean>("isEditFormValid", { required: true });
-const { editedItem, isDirty, isSavable, itemType, name, originalItem, remove, save, schema, title } =
-  defineProps<Props<T>>();
+const { isDirty } = defineProps<Props<T>>();
 const emit = defineEmits<{ close: [] }>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isConfirmCloseDialogOpen = ref(false);

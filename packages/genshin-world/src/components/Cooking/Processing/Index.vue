@@ -28,7 +28,7 @@ interface Props {
 
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const jobs = defineModel<Record<number, ProcessingJob>>("jobs", { required: true });
-const { gameText, materialDataMap, nameText, now, recipes } = defineProps<Props>();
+const { materialDataMap, nameText, now, recipes } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The processings offered: only the ones known from the start, since a processing not yet known is refused
 const knownRecipes = recipes.filter((recipe) => recipe.isDefaultUnlocked);

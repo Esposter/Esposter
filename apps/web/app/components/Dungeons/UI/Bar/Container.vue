@@ -22,7 +22,6 @@ const {
   isSkipAnimations = false,
   position,
   scaleY = 0.7,
-  type,
   width = BAR_WIDTH,
 } = defineProps<Props>();
 const emit = defineEmits<{

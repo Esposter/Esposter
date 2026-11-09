@@ -7,7 +7,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { devices, label } = defineProps<Props>();
+const { devices } = defineProps<Props>();
 // A device the browser has not been given permission to name reads as its id
 const items = computed(() =>
   devices.map((device) => ({

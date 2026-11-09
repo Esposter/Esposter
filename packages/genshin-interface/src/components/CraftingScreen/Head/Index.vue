@@ -11,7 +11,7 @@ interface Props {
   title: string;
 }
 
-const { closeLabel, coins, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

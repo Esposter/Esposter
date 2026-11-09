@@ -6,7 +6,7 @@ interface Props {
   keybind: string;
 }
 
-const { keybind } = defineProps<Props>();
+defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const isCapturingKeybind = ref(false);

@@ -91,25 +91,14 @@ const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
 const {
   activeCharacterId,
-  adventureRank,
-  characterIdConstellationsMap,
-  characterTalentKits,
   companionshipExpMap = new Map<number, number>(),
   friendshipLevelMap = new Map<number, number>(),
-  gameDataBaseUrl,
   gameText,
   initialTab,
-  isTouch,
   language = GameLanguage.English,
-  materialDataMap,
-  maxStamina,
   nameText,
-  reliquarySets,
   statTables,
-  talentUpgradeMap,
-  travelerBonusLines,
   travelerElement,
-  uid,
 } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const characterId = ref(activeCharacterId);

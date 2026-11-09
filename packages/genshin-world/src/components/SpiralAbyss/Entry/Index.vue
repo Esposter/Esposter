@@ -20,7 +20,7 @@ interface Props {
   nameText: TextChunk;
 }
 
-const { blessing, floors, gameText, nameText } = defineProps<Props>();
+const { blessing, gameText } = defineProps<Props>();
 const emit = defineEmits<{ choose: [floorId: number, chamberId: number]; close: [] }>();
 const pickedFloorId = ref<number>();
 const title = computed(() => (blessing ? gameText[GameTextKey.AbyssMoonSpire] : gameText[GameTextKey.AbyssCorridor]));

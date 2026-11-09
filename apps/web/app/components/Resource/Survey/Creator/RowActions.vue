@@ -10,7 +10,7 @@ interface Props {
   noun?: string;
 }
 
-const { count, index, noun = "row" } = defineProps<Props>();
+const { noun = "row" } = defineProps<Props>();
 const emit = defineEmits<{ move: [toIndex: number]; remove: [] }>();
 </script>
 

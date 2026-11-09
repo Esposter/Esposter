@@ -9,7 +9,7 @@ interface Props {
 }
 
 defineSlots<{ default: (props: { close: () => void }) => VNode }>();
-const { isRemovable, label, value } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ remove: [] }>();
 </script>
 

@@ -23,7 +23,7 @@ interface Props {
   status: CharacterPackPreloadStatus;
 }
 
-const { gameText, language, loadedBytes, pendingBytes, progress, status } = defineProps<Props>();
+const { language, progress } = defineProps<Props>();
 const emit = defineEmits<{ finish: []; retry: [] }>();
 // The game's startup screen: the seven marks in a row on white, pale until loading reaches them, then darkened by a
 // Wipe from the left that jumps as loading does, with no easing. The lit row is the pale one again, clipped to what

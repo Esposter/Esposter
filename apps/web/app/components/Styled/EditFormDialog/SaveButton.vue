@@ -8,7 +8,7 @@ interface Props {
   isSavable: boolean;
 }
 
-const { formId, isPending, isSavable } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

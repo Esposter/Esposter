@@ -19,7 +19,7 @@ interface Props {
   scope?: AbyssBenedictionScope;
 }
 
-const { gameText, icon, isLit, name, scope } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [] }>();
 </script>
 

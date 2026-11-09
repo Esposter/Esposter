@@ -8,7 +8,7 @@ interface Props {
   isPending: boolean;
 }
 
-const { emptyDescription, isPending } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 const postStore = usePostStore();
 const { hasMore, items } = storeToRefs(postStore);

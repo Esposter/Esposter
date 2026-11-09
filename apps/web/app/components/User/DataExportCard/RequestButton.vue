@@ -6,7 +6,7 @@ interface Props {
   refresh: () => Promise<unknown>;
 }
 
-const { refresh } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { checkIsPending, executeMutation } = useMutation();
 </script>

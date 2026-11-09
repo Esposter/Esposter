@@ -6,7 +6,7 @@ interface Props {
   label: string;
 }
 
-const { label } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const backButton = useTemplateRef("backButton");
 

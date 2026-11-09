@@ -10,7 +10,7 @@ interface Props {
   markRadius: number;
 }
 
-const { landmark, markRadius } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

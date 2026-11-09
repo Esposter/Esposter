@@ -10,7 +10,7 @@ interface Props {
   dialogMessage: DialogMessage;
 }
 
-const { dialogMessage } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

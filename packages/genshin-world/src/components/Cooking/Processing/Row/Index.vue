@@ -24,7 +24,7 @@ interface Props {
 
 // The units the player picked for this processing, one until picked
 const count = defineModel<number>("count");
-const { gameText, isStartable, materialDataMap, nameText, queuedCount, recipe } = defineProps<Props>();
+const { materialDataMap, nameText } = defineProps<Props>();
 const emit = defineEmits<{ start: [] }>();
 const getDefinition = (itemId: number) => getItemDefinition(itemId, nameText, materialDataMap);
 </script>

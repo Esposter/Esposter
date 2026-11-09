@@ -15,7 +15,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
-const { editedValue, schema, submit, title, tooltipText, value } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ reset: [] }>();
 const isOpen = ref(false);
 </script>

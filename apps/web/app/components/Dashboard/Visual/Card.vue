@@ -10,7 +10,7 @@ interface Props {
   visual: Visual;
 }
 
-const { data, visual } = defineProps<Props>();
+const { data } = defineProps<Props>();
 // The compute gives a card one series of one value, named for its aggregation and column, which is the label a card
 // Shows unless the owner has written their own
 const series = computed(() => takeOne(data.series));

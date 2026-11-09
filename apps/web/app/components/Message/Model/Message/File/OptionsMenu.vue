@@ -8,7 +8,7 @@ interface Props {
   url: string;
 }
 
-const { filename, url } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 </script>
 

@@ -8,7 +8,7 @@ interface Props {
   progressSegments: GameTextSegment[];
 }
 
-const { name, progressSegments } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

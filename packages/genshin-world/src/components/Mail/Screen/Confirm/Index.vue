@@ -14,7 +14,7 @@ interface Props {
   title: string;
 }
 
-const { cancelLabel, confirmLabel, isGift, text, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ cancel: []; confirm: [] }>();
 </script>
 

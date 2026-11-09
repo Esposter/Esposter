@@ -12,7 +12,7 @@ interface Props {
   maxHealth: number;
 }
 
-const { gameText, health, level, maxHealth } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

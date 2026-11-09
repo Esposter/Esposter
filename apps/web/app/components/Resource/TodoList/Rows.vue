@@ -14,7 +14,7 @@ interface Props {
   label: string;
 }
 
-const { isReorderable, items, label } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ toggle: [id: TodoListItem["id"]] }>();
 const todoListStore = useTodoListStore();
 const { editItem, reorderItems, toggleImportant } = todoListStore;

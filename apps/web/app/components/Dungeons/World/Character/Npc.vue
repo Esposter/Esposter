@@ -16,7 +16,7 @@ interface Props {
 
 const direction = defineModel<Direction | undefined>("direction", { required: true });
 const isMoving = defineModel<boolean>("isMoving", { required: true });
-const { asset, id, path, pathIndex, singleSidedSpritesheetDirection, walkingAnimationMapping } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

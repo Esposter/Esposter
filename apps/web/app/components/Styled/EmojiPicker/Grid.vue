@@ -11,7 +11,7 @@ interface Props {
   skinTone: SkinTone;
 }
 
-const { emojis, skinTone } = defineProps<Props>();
+const { emojis } = defineProps<Props>();
 // Hover is reported with no emoji when the pointer leaves an emoji, because whatever is showing the preview has
 // Standing content of its own to put back — a preview that outlived the pointer would hold that space for good.
 // Crossing from one emoji to the next reports the leave before the enter, which Vue renders as one update

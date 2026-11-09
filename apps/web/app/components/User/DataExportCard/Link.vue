@@ -6,7 +6,7 @@ interface Props {
   dataExportId: string;
 }
 
-const { dataExportId } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { checkIsPending, executeMutation } = useMutation();
 // Held by the button rather than the card, so the link is dropped with the ready export it was minted for

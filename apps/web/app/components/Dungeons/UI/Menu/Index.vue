@@ -12,7 +12,7 @@ interface Props {
 }
 
 const isVisible = defineModel<boolean>("isVisible", { required: true });
-const { grid, position } = defineProps<Props>();
+defineProps<Props>();
 const { border, primary } = useDungeonsColors();
 </script>
 

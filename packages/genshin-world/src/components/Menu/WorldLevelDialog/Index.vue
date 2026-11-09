@@ -33,7 +33,6 @@ interface Props {
 
 const {
   gameText,
-  isWorldLevelAdjustable,
   isWorldLevelLowered,
   serverClockOffsetMs = 0,
   worldLevel,

@@ -6,7 +6,7 @@ interface Props {
   rarity: number;
 }
 
-const { color, rarity } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

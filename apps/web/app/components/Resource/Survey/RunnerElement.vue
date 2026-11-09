@@ -22,7 +22,7 @@ interface Props {
   view: SurveyElementView;
 }
 
-const { answers, errorByPointer, getRowViews, isDisabled, questionNumbers, seed, view } = defineProps<Props>();
+const { answers, view } = defineProps<Props>();
 const emit = defineEmits<{ answer: [name: string, value: SurveyAnswerValue | undefined] }>();
 // Only a question answers under its name, so a page's html and image elements have no answer to hold
 const answer = computed(() => ("name" in view.node.props ? answers[view.node.props.name] : undefined));

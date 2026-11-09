@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DefaultLinkPreviewResponse } from "@esposter/db-schema";
 
-const { favicons, url } = defineProps<DefaultLinkPreviewResponse>();
+defineProps<DefaultLinkPreviewResponse>();
 </script>
 
 <!-- A link whose page says nothing about itself, embedded as Discord embeds one: the address, and its icon -->

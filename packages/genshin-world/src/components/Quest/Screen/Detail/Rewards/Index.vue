@@ -12,7 +12,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { chapter, gameText } = defineProps<Props>();
+const { gameText } = defineProps<Props>();
 // The caption over a series' rewards, its journal's name in the game's gold
 const rewardsCaptionSegments = computed(() => splitGameTextColors(gameText[GameTextKey.QuestSeriesRewards]));
 </script>

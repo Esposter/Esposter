@@ -13,7 +13,7 @@ interface Props {
   step: LoginStatusStep;
 }
 
-const { gameText, progress, step } = defineProps<Props>();
+const { progress, step } = defineProps<Props>();
 // The game's status at the foot of its login screen as it prepares: a line of text, then from loading on its share
 // Done to two places, over the ornament's double diamond while the game loads and over the progress bar while data
 // Does. Once loading is done the words go, the bar folds into its diamond under the full share, and then the whole row

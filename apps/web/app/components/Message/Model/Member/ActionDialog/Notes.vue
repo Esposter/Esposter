@@ -12,7 +12,7 @@ import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
 const isOpen = defineModel<boolean>({ default: false });
-const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
+const { roomId, user } = defineProps<MemberActionDialogProps>();
 const { $trpc } = useNuxtApp();
 const noteRules = [UiRules.maxLength(MODERATION_NOTE_MAX_LENGTH)];
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);

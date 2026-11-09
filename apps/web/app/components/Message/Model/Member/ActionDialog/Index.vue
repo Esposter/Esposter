@@ -7,7 +7,7 @@ import { AdminActionType } from "@esposter/db-schema";
 // The dialog one of a member's actions opened. The row mounts this only while one is open, so closing it is clearing
 // Which one it is
 const type = defineModel<MemberDialogType>("type");
-const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
+defineProps<MemberActionDialogProps>();
 const isOpen = computed({
   get: () => Boolean(type.value),
   set: (newIsOpen) => {

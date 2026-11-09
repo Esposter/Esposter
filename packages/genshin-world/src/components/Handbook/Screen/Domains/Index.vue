@@ -14,7 +14,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { domains, gameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ challenge: [landmark: DomainEntranceLandmark]; claimFirstClear: [entryId: number] }>();
 </script>
 

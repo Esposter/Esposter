@@ -7,7 +7,7 @@ interface Props {
 }
 
 defineSlots<{ append?: () => VNode }>();
-const { image, name } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

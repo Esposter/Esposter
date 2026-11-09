@@ -13,7 +13,7 @@ interface Props {
   width?: number;
 }
 
-const { barPercentage: baseBarPercentage, position, scaleY = 0.4, width = BAR_WIDTH } = defineProps<Props>();
+const { barPercentage: baseBarPercentage, scaleY = 0.4, width = BAR_WIDTH } = defineProps<Props>();
 const emit = defineEmits<{ "level-up": [onComplete: () => void] }>();
 const settingsStore = useSettingsStore();
 const { isSkipAnimations: isSettingsSkipAnimations } = storeToRefs(settingsStore);

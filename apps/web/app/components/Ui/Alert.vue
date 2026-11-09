@@ -10,7 +10,7 @@ interface Props {
 // A line the page says about itself where the reader is already looking: a capped import, a failed save. An error
 // Interrupts a screen reader, as the alert role does; anything else waits its turn as a status
 defineSlots<{ default: () => VNode }>();
-const { status } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

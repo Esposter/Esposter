@@ -12,7 +12,7 @@ interface Props {
   refinementMaterial?: { count: number; name: string };
 }
 
-const { copyCells, isRefinementMaterialHeld, pickedCopyId, refinementMaterial } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ pickCopy: [id: number]; pickMaterial: [] }>();
 </script>
 

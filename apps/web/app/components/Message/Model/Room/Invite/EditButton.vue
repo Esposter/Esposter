@@ -9,7 +9,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId } = storeToRefs(roomDialogStore);
 </script>

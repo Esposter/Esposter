@@ -5,7 +5,7 @@ interface Props {
   datetime: Date;
 }
 
-const { datetime } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- A row reads at a glance as "3 days ago", and the exact moment is a hover away -->

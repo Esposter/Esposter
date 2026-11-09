@@ -3,8 +3,7 @@ import type { CallParticipantTileProps } from "@/models/message/room/call/CallPa
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-const { isDeafened, isScreenSharing, isSelf, isSpeaking, participant, videoStream } =
-  defineProps<CallParticipantTileProps>();
+const { isSelf, participant } = defineProps<CallParticipantTileProps>();
 const emit = defineEmits<{ click: [] }>();
 const name = computed(() => (isSelf ? `${participant.name} (You)` : participant.name));
 </script>

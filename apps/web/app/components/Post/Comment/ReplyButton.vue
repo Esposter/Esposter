@@ -7,7 +7,7 @@ interface Props {
   commentId: string;
 }
 
-const { commentId } = defineProps<Props>();
+defineProps<Props>();
 const commentDialogStore = useCommentDialogStore();
 const { replyingId } = storeToRefs(commentDialogStore);
 </script>

@@ -23,7 +23,7 @@ defineSlots<{ default: () => VNode; value: () => VNode }>();
 // A field drawn as a select's trigger, whose value opens a panel of its own, with its label above it. The value is the
 // Value slot and the panel is the default slot; the caller answers the clear button through its clear event
 const isOpen = defineModel<boolean>("isOpen", { default: false });
-const { isClearable, isDisabled, isEmpty, isLabelHidden, isRequired, label, placeholder } = defineProps<Props>();
+const { isRequired } = defineProps<Props>();
 const emit = defineEmits<{ clear: [] }>();
 const attrs = useAttrs();
 const popover = useTemplateRef("popover");

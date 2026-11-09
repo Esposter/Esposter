@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
-const { file, isPreview, thumbnailUrl = "", url } = defineProps<FileRendererComponentProps>();
+const { file, isPreview, thumbnailUrl = "" } = defineProps<FileRendererComponentProps>();
 // Show the lightweight thumbnail inline when one exists — the lightbox still opens the full-resolution original.
 // It rides the same batched read as the original url, so a rendered list costs no extra query per image.
 const inlineThumbnailUrl = computed(() => (isPreview || !file.hasThumbnail ? "" : thumbnailUrl));

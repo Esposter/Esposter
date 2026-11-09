@@ -24,8 +24,7 @@ interface Props {
 // A number picked along a field's track, filled with the accent up to a raised thumb. The model follows every move, and
 // End says the reader settled on a value — a drag let go, or each key press — which is when a setting is saved
 const modelValue = defineModel<number>({ required: true });
-const { isDisabled, isInvalid, isLabelHidden, isRequired, label, level, levelLabel, max, min, step, valueText } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ end: [value: number] }>();
 const labelId = useId();
 // @TODO: no upstream issue — Vuetify 0's slider emits end for a drag alone, so a key's change settles here

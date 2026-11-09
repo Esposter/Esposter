@@ -5,7 +5,7 @@ interface Props {
   isDense?: true;
 }
 
-const { isDense } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ fullscreen: [] }>();
 const mediaStore = useMediaStore();
 const { activeScreenShareStream, hasScreenShare, pinnedParticipantId } = storeToRefs(mediaStore);

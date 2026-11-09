@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { URLLinkPreviewResponse } from "@esposter/db-schema";
 
-const { description, images, siteName, title, url } = defineProps<URLLinkPreviewResponse>();
+defineProps<URLLinkPreviewResponse>();
 </script>
 
 <!-- A page's own card for itself, embedded as Discord embeds one: where it is from, its title as the link, what it says

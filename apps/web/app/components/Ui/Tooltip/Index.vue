@@ -15,7 +15,7 @@ defineSlots<{
   content?: () => VNode;
   default: (props: { activatorProps: UiTooltipActivatorProps }) => VNode;
 }>();
-const { isDisabled, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

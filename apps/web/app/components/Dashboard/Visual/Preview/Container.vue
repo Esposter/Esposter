@@ -12,7 +12,7 @@ interface Props {
   visual: Visual;
 }
 
-const { collision, compactType, visual } = defineProps<Props>();
+const { visual } = defineProps<Props>();
 // A group's commits, opens and transfers come up from its grid, and a child group's come up from its own container, so each
 // Container passes what it hears from either on to its caller
 const emit = defineEmits<DashboardVisualEmits>();

@@ -9,7 +9,7 @@ interface Props {
 // A page's progress as one thin line along an edge, over the page rather than in its flow, so where it hangs is the
 // Caller's. What the fill is drawn with and the length it grows by are the style's: standard's one eased fill,
 // Voxel's a row of pixel blocks that grows a whole block at a time
-const { label, value } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

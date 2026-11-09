@@ -10,7 +10,7 @@ interface Props {
 }
 // Drawn as the field it opens, so a surface's search reads as search at a glance; the field itself is the palette's,
 // Which opens in the scope the surface registered
-const { label } = defineProps<Props>();
+defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 </script>

@@ -28,7 +28,7 @@ interface Props {
 
 // The mode the editor shows, Design or Preview, which the bar's switch chooses between
 const modelValue = defineModel<EmailView>({ required: true });
-const { error, findings, getNodeTitle, resourceId } = defineProps<Props>();
+const { resourceId } = defineProps<Props>();
 const session = authClient.useSession();
 const emailEditorStore = useEmailEditorStore();
 const { datasetReference } = storeToRefs(emailEditorStore);

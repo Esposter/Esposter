@@ -27,7 +27,7 @@ interface Props {
 const settings = defineModel<GenshinSettings>("settings", { required: true });
 // The kind of the list that is open, which this row's own list is when the kind is its own
 const openedList = defineModel<SettingsRowKind>("openedList");
-const { gameText, options, qualityValue, row, tab } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

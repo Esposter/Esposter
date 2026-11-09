@@ -6,7 +6,7 @@ interface Props {
   share: number;
 }
 
-const { offset, share } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

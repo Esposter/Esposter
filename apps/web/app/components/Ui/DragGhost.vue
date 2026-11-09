@@ -8,7 +8,7 @@ interface Props {
   title: string;
 }
 
-const { icon, point, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- Teleported to the body, so a clipped or transformed panel the drag crosses cannot cut the chip off -->

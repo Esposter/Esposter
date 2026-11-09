@@ -11,7 +11,7 @@ interface Props {
   draftItem: DraftItem;
 }
 
-const { draftItem } = defineProps<Props>();
+defineProps<Props>();
 const dataStore = useDataStore();
 const { createMessage } = dataStore;
 const inputStore = useInputStore();

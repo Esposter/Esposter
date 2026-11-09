@@ -8,7 +8,7 @@ interface Props {
   isDense?: true;
 }
 
-const { isDense } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- A card per type in both densities: Home's quick create keeps a tile's name alone, the gallery has the room to say

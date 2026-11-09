@@ -12,7 +12,7 @@ interface Props {
   elementName: string;
 }
 
-const { characterId, characters, elementMarkPath, elementName } = defineProps<Props>();
+const { characterId, characters } = defineProps<Props>();
 const characterName = computed(() => characters.find(({ id }) => id === characterId)?.name ?? "");
 </script>
 

@@ -10,7 +10,7 @@ interface Props {
 
 defineSlots<{ "append-footer": (props: FooterBarSlotProps) => VNode }>();
 const modelValue = defineModel<string>({ required: true });
-const { height = "15rem", placeholder } = defineProps<Props>();
+const { height = "15rem" } = defineProps<Props>();
 </script>
 
 <template>

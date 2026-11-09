@@ -6,7 +6,7 @@ interface Props {
   member: PartySetupSlot;
 }
 
-const { member } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

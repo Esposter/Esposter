@@ -12,7 +12,7 @@ interface Props {
   type: VisualType;
 }
 
-const { title, type } = defineProps<Props>();
+const { type } = defineProps<Props>();
 const visualStore = useVisualStore();
 const { addVisual, createVisual } = visualStore;
 const { visuals: dashboardVisuals } = storeToRefs(visualStore);

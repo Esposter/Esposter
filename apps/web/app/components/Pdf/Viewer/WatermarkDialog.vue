@@ -9,7 +9,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { filename, viewer } = defineProps<Props>();
+defineProps<Props>();
 // The text is asked before the one download it stamps, and nothing is saved for an empty text. A text of only spaces is
 // Empty too, so the field's rules refuse it and the form's validity holds the download
 const watermark = ref("");

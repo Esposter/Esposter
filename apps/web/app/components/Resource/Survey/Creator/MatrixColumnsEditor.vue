@@ -11,7 +11,7 @@ interface Props {
 // A column is told apart by its name, since an answer is keyed by it, and each column's own settings are checked by its
 // Schema. A column whose cell takes choices holds its list beneath it, drawn by the choice list editor
 const modelValue = defineModel<SurveyMatrixColumn[]>({ required: true });
-const { label } = defineProps<Props>();
+defineProps<Props>();
 const editor = useSurveyListEditor(modelValue, {
   duplicateMessage: "Column names must be unique",
   getItemError: (column) => surveyMatrixColumnSchema.safeParse(column).error?.issues[0]?.message,

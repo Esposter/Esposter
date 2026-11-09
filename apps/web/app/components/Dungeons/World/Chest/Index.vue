@@ -12,7 +12,7 @@ interface Props {
   position: Position;
 }
 
-const { chest, position } = defineProps<Props>();
+const { chest } = defineProps<Props>();
 // Reactivity will be handled by animations
 const frame = chest.isOpened ? CHEST_OPENED_FRAME : CHEST_CLOSED_FRAME;
 const animations = useAnimations((scene) => [

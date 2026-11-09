@@ -13,7 +13,7 @@ interface Props {
   text: string;
 }
 
-const { columnIndex, grid, rowIndex, text } = defineProps<Props>();
+const { columnIndex, grid, rowIndex } = defineProps<Props>();
 const onGridClick = useOnGridClick(grid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 

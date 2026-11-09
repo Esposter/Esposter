@@ -14,7 +14,7 @@ interface Props {
 // The default is what keeps an unanswered question undefined: a boolean prop left out of a mount is cast to false, which
 // Would read as an answer of No and pre-select that option
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { node } = defineProps<Props>();
 const isChecked = computed({
   get: () => answer.value === true,
   set: (isOn) => {

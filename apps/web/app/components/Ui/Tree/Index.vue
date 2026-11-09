@@ -12,7 +12,7 @@ interface Props {
 // And typing the start of a title moves to the next visible item that starts with it. Focus and a click are the
 // Selection, so the item that takes either is the one the model holds
 const selectedId = defineModel<string>({ required: true });
-const { items, label } = defineProps<Props>();
+defineProps<Props>();
 const typeahead = useTypeahead();
 // The item row an event starts at, or null when it starts outside every row
 const getItemRow = (event: Event) =>

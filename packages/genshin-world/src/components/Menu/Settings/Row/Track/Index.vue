@@ -18,7 +18,7 @@ interface Props {
 
 // The settings the track shows and changes, which the host keeps on this device
 const settings = defineModel<GenshinSettings>("settings", { required: true });
-const { gameText, row, tab } = defineProps<Props>();
+defineProps<Props>();
 // A value reads with one decimal place where its range steps by tenths, and as a whole number everywhere else
 const formatTrackValue = (trackRow: SettingsTrackRow): string =>
   getTrackValue(trackRow, settings.value).toFixed(trackRow.range.step < 1 ? 1 : 0);

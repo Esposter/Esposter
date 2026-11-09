@@ -10,7 +10,7 @@ interface Props {
   name: string;
 }
 
-const { id, image, name } = defineProps<Props>();
+const { id } = defineProps<Props>();
 const blockStore = useBlockStore();
 const { blockedUsers } = storeToRefs(blockStore);
 const friendRequestStore = useFriendRequestStore();

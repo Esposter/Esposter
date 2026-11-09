@@ -22,7 +22,7 @@ interface Props {
 // Prop can name, such as a provider's own logo component, fills the mark's slot, and a title drawn in a colour of the
 // Row's own, such as a member's top role's, fills the title's
 defineSlots<{ append?: () => VNode; mark?: () => VNode; title?: () => VNode }>();
-const { description, icon, image, isMarkless, meaning, shortcut, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

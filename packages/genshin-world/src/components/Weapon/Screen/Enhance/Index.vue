@@ -26,8 +26,7 @@ interface Props {
   weapon: Weapon;
 }
 
-const { baseAttackText, gameText, maxLevel, pickedMaterialCount, requiredExp, secondaryLabel, secondaryText, weapon } =
-  defineProps<Props>();
+const { gameText, pickedMaterialCount, weapon } = defineProps<Props>();
 // The level Enhance's header shows alone; the Ascend header writes its own level pair over the cap of each phase
 const levelText = computed(() => fillGameTextValues(gameText[GameTextKey.LevelFormat], `${weapon.level}`));
 const consumedText = computed(() =>

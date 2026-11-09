@@ -7,7 +7,7 @@ import { useRoomDialogStore } from "@/store/message/room/dialog";
 
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<Props>();
+const { isPreview = false } = defineProps<Props>();
 const roomDialogStore = useRoomDialogStore();
 const { isEditRoomDialogOpen } = storeToRefs(roomDialogStore);
 </script>

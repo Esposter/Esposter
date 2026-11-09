@@ -11,7 +11,7 @@ interface Props {
   resourceId: string;
 }
 
-const { findings, getNodeTitle, resourceId } = defineProps<Props>();
+defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { setSelectedNodeId } = pageBuilderCanvasStore;
 </script>

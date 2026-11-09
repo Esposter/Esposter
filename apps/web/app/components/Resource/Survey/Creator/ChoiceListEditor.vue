@@ -12,7 +12,7 @@ interface Props {
 // A choice's value is what an answer holds and its text is what a respondent reads, so a value is needed and unique
 // Within its list. A row that breaks either is flagged and the list is not written until every row is valid
 const modelValue = defineModel<SurveyChoice[]>({ required: true });
-const { label } = defineProps<Props>();
+defineProps<Props>();
 const editor = useSurveyListEditor(modelValue, getSurveyChoiceListEditorOptions(surveyChoiceSchema));
 const { addItems, updateItem } = editor;
 const addText = ref("");

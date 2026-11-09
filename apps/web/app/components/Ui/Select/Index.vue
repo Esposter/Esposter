@@ -15,7 +15,7 @@ interface Props {
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 defineOptions({ inheritAttrs: false });
 const modelValue = defineModel<TModel>({ required: true });
-const { isDisabled, items, label, placeholder } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- A pick of one clears the old choice before it selects the new one, and the model passes on only the choice itself,

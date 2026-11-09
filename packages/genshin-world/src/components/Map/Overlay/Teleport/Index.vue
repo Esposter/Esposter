@@ -26,7 +26,7 @@ interface Props {
 // The landmark chosen on the map or in the list, whose panel names its area and jumps there on its Teleport Button
 // Alone. Its close button clears it, which hides the panel
 const landmark = defineModel<PlaceLandmark | undefined>("landmark");
-const { catalogue, gameText } = defineProps<Props>();
+const { catalogue } = defineProps<Props>();
 const emit = defineEmits<{ jump: [pose: WorldJumpPose] }>();
 const chosenArea = computed(() => landmark.value && findLandmarkArea(catalogue, landmark.value));
 </script>

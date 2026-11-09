@@ -16,7 +16,7 @@ interface Props {
   text: string;
 }
 
-const { columnIndex, rowIndex, text } = defineProps<Props>();
+const { columnIndex, rowIndex } = defineProps<Props>();
 const onGridClick = useOnGridClick(PlayerTitleMenuOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>
 

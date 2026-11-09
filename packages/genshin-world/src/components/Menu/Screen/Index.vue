@@ -43,7 +43,7 @@ interface Props {
 // Each built screen, by its kind, as its host draws it with what it needs and closes it by setting the world back
 const slots = defineSlots<Partial<Record<TitledScreenKind, () => VNode>>>();
 const screenKind = defineModel<ScreenKind>("screenKind", { required: true });
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   pickNamecard: [itemId: number];
   quit: [];

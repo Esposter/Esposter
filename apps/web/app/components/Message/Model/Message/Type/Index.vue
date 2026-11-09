@@ -4,13 +4,7 @@ import type { MessageComponentProps } from "@/models/message/MessageComponentPro
 import { getShortTimeLabel } from "@/util/date/getShortTimeLabel";
 
 defineSlots<{ default?: () => VNode }>();
-const {
-  active,
-  creator,
-  isPreview = false,
-  isSameBatch: baseIsSameBatch,
-  message,
-} = defineProps<MessageComponentProps>();
+const { isPreview = false, isSameBatch: baseIsSameBatch, message } = defineProps<MessageComponentProps>();
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const messageHtml = useMessageHtml(
   () => message.message,

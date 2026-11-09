@@ -16,7 +16,7 @@ defineSlots<{ panel: (props: { focus: () => void }) => VNode }>();
 const text = defineModel<string>("text", { required: true });
 const tokens = defineModel<T[]>("tokens", { required: true });
 const isOpen = defineModel<boolean>("isOpen", { default: false });
-const { getTokenTitle, label } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ submit: [] }>();
 const container = useTemplateRef("container");
 const field = useTemplateRef("field");

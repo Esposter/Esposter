@@ -21,7 +21,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, getRowViews, isDisabled, node, seed } = defineProps<Props>();
+const { getRowViews, node, seed } = defineProps<Props>();
 // A kind takes only the props it reads: the seed when it orders its choices, and the row views when it is a dynamic panel
 const kindProps = computed(() => {
   if (node.type === SurveyNodeType.PanelDynamic) return { getRowViews, seed };

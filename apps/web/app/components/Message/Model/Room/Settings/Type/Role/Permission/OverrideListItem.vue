@@ -16,7 +16,7 @@ interface Props {
 }
 
 const modelValue = defineModel<PermissionOverrideState>({ required: true });
-const { description, inheritedValue, isAllowDisabled, isDisabled, title } = defineProps<Props>();
+const { inheritedValue, isAllowDisabled, isDisabled } = defineProps<Props>();
 const items = computed<UiMenuItem<PermissionOverrideState>[]>(() => [
   { isDisabled, title: "Deny", value: PermissionOverrideState.Deny },
   {

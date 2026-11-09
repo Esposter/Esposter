@@ -28,7 +28,7 @@ interface Props {
 }
 
 const isConfirmingDeleteGift = defineModel<boolean>("isConfirmingDeleteGift", { default: false });
-const { birthdayMailIds, entry, gameText, materialDataMap, names, textMap } = defineProps<Props>();
+const { entry, gameText, materialDataMap, names, textMap } = defineProps<Props>();
 const emit = defineEmits<{ claim: [mail: MailSave]; deleteGift: [mail: MailSave]; pin: [mail: MailSave] }>();
 // The date line's words either side of the date, since the game's line holds the date as {0} and the date is a NuxtTime
 const dateLine = computed(() => gameText[GameTextKey.MailDetailDate].split("{0}"));

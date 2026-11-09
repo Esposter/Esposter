@@ -39,20 +39,7 @@ interface Props {
 const expeditions = defineModel<Expedition[]>("expeditions", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
 const wallet = defineModel<Wallet>("wallet", { required: true });
-const {
-  adventureRank,
-  characterPassiveGroupIdMap,
-  characters,
-  completedQuestIds,
-  downCharacterIds,
-  gameDataBaseUrl,
-  gameText,
-  materialDataMap,
-  nameText,
-  now,
-  random,
-  regionStatueProgressMap,
-} = defineProps<Props>();
+const { characterPassiveGroupIdMap, gameDataBaseUrl, regionStatueProgressMap } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const unlockedStatuePointIds = computed(() =>
   computeUnlockedStatuePointIds(Object.fromEntries(regionStatueProgressMap)),

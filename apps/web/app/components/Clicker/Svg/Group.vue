@@ -2,7 +2,7 @@
 import type { GroupProps } from "@/components/Clicker/Svg/GroupProps";
 
 defineSlots<{ default: () => VNode }>();
-const { gAttrs } = defineProps<GroupProps>();
+defineProps<GroupProps>();
 const emit = defineEmits<{ click: [event: MouseEvent] }>();
 </script>
 

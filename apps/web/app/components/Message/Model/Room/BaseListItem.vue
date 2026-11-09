@@ -16,7 +16,7 @@ interface Props {
 }
 
 defineSlots<{ actions?: () => VNode; append?: () => VNode }>();
-const { contextMenuItems, image, isActive, isUnread, name, roomId } = defineProps<Props>();
+const { contextMenuItems, roomId } = defineProps<Props>();
 const { getContextMenuProps } = useContextMenu();
 const contextMenuProps = getContextMenuProps(roomId, () => contextMenuItems);
 </script>

@@ -7,7 +7,7 @@ interface Props {
   source: string;
 }
 
-const { label = "Copy", source } = defineProps<Props>();
+const { label = "Copy" } = defineProps<Props>();
 const { copied, copy } = useClipboard({ legacy: true });
 </script>
 

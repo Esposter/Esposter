@@ -23,7 +23,7 @@ interface Props {
 // The panel's border is the renderer's frame around it. Each child is drawn by the caller's child slot, so the group draws it
 // The way its own dashboard does
 defineSlots<{ default: (props: { visual: Visual }) => unknown }>();
-const { collision, compactType, isEditable, visual } = defineProps<Props>();
+const { isEditable, visual } = defineProps<Props>();
 const emit = defineEmits<DashboardVisualEmits>();
 const container = useTemplateRef("container");
 const { width } = useElementSize(container);

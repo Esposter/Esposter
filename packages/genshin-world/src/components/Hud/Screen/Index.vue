@@ -88,32 +88,7 @@ defineSlots<{
   // The popups drawn beside the centre over the list of prompts, such as a tip or a choice of offers
   prompts?: () => VNode;
 }>();
-const {
-  camera,
-  catalogue,
-  characterDataMap,
-  characterIdSkillGlyphsMap,
-  frame,
-  gadgetCooldownSeconds,
-  gameText,
-  input,
-  interactionPrompts,
-  interfaceRects,
-  isQuickSwapOpen,
-  isTouch,
-  landmarks,
-  maxStamina,
-  member,
-  nameTextMap,
-  nearOculusPlaces,
-  party,
-  questMark,
-  questProgress,
-  questTextMap,
-  trackedQuest,
-  travelerName,
-  trialSecondsRemaining,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   map: [];
   menu: [];

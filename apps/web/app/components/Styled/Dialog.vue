@@ -33,17 +33,7 @@ const slots = defineSlots<{
   "prepend-confirm"?: () => VNode;
 }>();
 const isOpen = defineModel<boolean>({ default: false });
-const {
-  confirm,
-  confirmLabel,
-  confirmVariant = UiButtonVariant.Accent,
-  formId,
-  isConfirmDisabled,
-  isConfirmPending,
-  isOptimistic,
-  size = UiDialogSize.Medium,
-  title,
-} = defineProps<Props>();
+const { confirmLabel, confirmVariant = UiButtonVariant.Accent, size = UiDialogSize.Medium } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions"] || slots["prepend-confirm"]));
 </script>

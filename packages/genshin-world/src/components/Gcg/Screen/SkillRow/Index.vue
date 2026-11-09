@@ -10,7 +10,7 @@ interface Props {
   skills: GcgSkill[];
 }
 
-const { isDisabled, skills } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [skillId: number] }>();
 </script>
 

@@ -22,7 +22,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
 // Written from outside too, and read by whatever must hold still while the menu is open, such as a hover bar
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
-const { isLabelShown, items, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
+const { items, positionArea = POPOVER_POSITION_AREA } = defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");

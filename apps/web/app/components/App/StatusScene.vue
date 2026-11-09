@@ -11,7 +11,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { description, isMissingBlock, statusCode, title } = defineProps<Props>();
+const { isMissingBlock, statusCode } = defineProps<Props>();
 // Every digit's voxels, each block dropping in a beat after the one to its left so the number builds from the floor up
 const digits = computed(() => {
   const characters = [...String(statusCode)];

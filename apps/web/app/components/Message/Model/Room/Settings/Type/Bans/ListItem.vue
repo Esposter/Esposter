@@ -5,7 +5,7 @@ interface Props {
   ban: BanInRoom;
 }
 
-const { ban } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

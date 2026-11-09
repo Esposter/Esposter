@@ -13,7 +13,7 @@ interface Props {
   slots: PartySetupSlot[];
 }
 
-const { nextLabel, previousLabel, slots } = defineProps<Props>();
+const { nextLabel, previousLabel } = defineProps<Props>();
 const emit = defineEmits<{ next: []; previous: [] }>();
 // The two arrows step the team either way: one arrow's markup, drawn once, and the next arrow mirrors it by its class
 const steps = computed(() => [

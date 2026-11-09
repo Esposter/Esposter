@@ -11,7 +11,7 @@ interface Props {
 // An item is one input of the question, held under its name, which an answer is keyed by, so a name is unique within the
 // List and each item's own settings are checked by its schema
 const modelValue = defineModel<SurveyMultipleTextItem[]>({ required: true });
-const { label } = defineProps<Props>();
+defineProps<Props>();
 const editor = useSurveyListEditor(modelValue, {
   duplicateMessage: "Item names must be unique",
   getItemError: (item) => surveyMultipleTextItemSchema.safeParse(item).error?.issues[0]?.message,

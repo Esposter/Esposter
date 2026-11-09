@@ -6,7 +6,7 @@ interface Props {
   ascension: number;
 }
 
-const { ascension } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

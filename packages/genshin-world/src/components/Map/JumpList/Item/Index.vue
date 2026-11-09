@@ -14,7 +14,7 @@ interface Props {
   landmark: PlaceLandmark;
 }
 
-const { areaName, gameText, landmark } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ jump: [] }>();
 </script>
 

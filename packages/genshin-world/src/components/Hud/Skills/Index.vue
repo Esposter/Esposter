@@ -43,21 +43,7 @@ interface Props {
   skillGlyphs?: SkillGlyphs;
 }
 
-const {
-  burstCooldown,
-  burstCooldownSeconds,
-  element,
-  energy,
-  energyCost,
-  gadgetCooldown,
-  gadgetCooldownSeconds,
-  gameText,
-  input,
-  isTouch,
-  skillCooldown,
-  skillCooldownSeconds,
-  skillGlyphs,
-} = defineProps<Props>();
+const { element, input } = defineProps<Props>();
 const skillCode = getActionKeyCode(InputAction.ElementalSkill);
 const burstCode = getActionKeyCode(InputAction.ElementalBurst);
 const gadgetCode = getActionKeyCode(InputAction.QuickUseGadget);

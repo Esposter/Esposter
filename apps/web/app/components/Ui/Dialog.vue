@@ -37,16 +37,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ actions?: () => VNode; default: () => VNode; footer?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
 const isExpanded = defineModel<boolean>("isExpanded", { default: false });
-const {
-  isBodyBare,
-  isExpandable,
-  isTall,
-  isTitleHidden,
-  overline,
-  placement = UiDialogPlacement.High,
-  size,
-  title,
-} = defineProps<Props>();
+const { isExpandable, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
 // A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {

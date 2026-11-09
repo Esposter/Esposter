@@ -9,7 +9,7 @@ interface Props {
   y: number;
 }
 
-const { scale = 1, y } = defineProps<Props>();
+const { scale = 1 } = defineProps<Props>();
 const dialogStore = useDialogStore();
 const { inputPromptCursorDisplayWidth, inputPromptCursorX, isInputPromptCursorVisible } = storeToRefs(dialogStore);
 </script>

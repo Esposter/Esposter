@@ -13,7 +13,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ default: "" });
-const { autofocus, isFocused, isRequired, name } = defineProps<Props>();
+const { autofocus, isFocused, name } = defineProps<Props>();
 const emit = defineEmits<{
   blur: [];
   delete: [];

@@ -20,8 +20,7 @@ interface Props {
 }
 
 const amount = defineModel<number>("amount");
-const { amountLabel, amountMaximum, refusalLabel, requiredCoins, requiredLabel, startLabel, totalTimeLabel } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ start: [] }>();
 </script>
 

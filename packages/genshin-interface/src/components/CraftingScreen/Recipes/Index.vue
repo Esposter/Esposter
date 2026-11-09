@@ -11,7 +11,7 @@ interface Props {
 }
 
 const recipeId = defineModel<number>("recipeId", { default: 0 });
-const { recipes } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

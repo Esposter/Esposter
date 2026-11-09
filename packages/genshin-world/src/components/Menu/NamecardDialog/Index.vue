@@ -17,7 +17,7 @@ interface Props {
 }
 
 // Back closes the picker
-const { gameText, namecardItemId, namecards } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; pick: [itemId: number] }>();
 </script>
 

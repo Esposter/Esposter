@@ -13,7 +13,7 @@ interface Props {
   texture: ImageKey;
 }
 
-const { displayWidth, imagePosition, isHiddenWhenEmpty, scaleY, texture } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ "update:displayWidth": [value?: number] }>();
 </script>
 

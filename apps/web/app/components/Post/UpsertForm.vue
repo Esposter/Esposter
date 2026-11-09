@@ -11,7 +11,7 @@ interface Props {
   isPending?: boolean;
 }
 
-const { initialValues = { description: "", title: "" }, isCreate, isPending } = defineProps<Props>();
+const { initialValues = { description: "", title: "" } } = defineProps<Props>();
 const emit = defineEmits<{ submit: [values: NonNullable<Props["initialValues"]>] }>();
 const titleRules = [UiRules.required(), UiRules.maxLength(POST_TITLE_MAX_LENGTH), UiRules.isNotProfanity()];
 // A copy, so typing edits the form's own values rather than the object the caller passed in

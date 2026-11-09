@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { count, meaning, title } = defineProps<Props>();
+defineProps<Props>();
 const isOpen = ref(true);
 </script>
 

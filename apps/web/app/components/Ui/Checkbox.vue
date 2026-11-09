@@ -15,7 +15,7 @@ interface Props {
 // Which is the checkbox itself
 defineOptions({ inheritAttrs: false });
 const modelValue = defineModel<boolean>({ required: true });
-const { isLabelShown, isMixed, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

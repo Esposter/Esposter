@@ -18,7 +18,7 @@ defineSlots<{
   below?: (props: { index: number; row: SurveyListRow<TItem> }) => VNode;
   default: (props: { error?: string; index: number; row: SurveyListRow<TItem> }) => VNode;
 }>();
-const { editor, label, noun } = defineProps<Props>();
+const { editor } = defineProps<Props>();
 const rows = computed(() => editor.rows.value);
 const errors = computed(() => editor.errors.value);
 const announcement = computed(() => editor.announcement.value);

@@ -8,7 +8,7 @@ interface Props {
 // The whole section beside it rather than inside it. The rows it hides are the list's own, which reads this model
 defineSlots<{ append?: () => VNode }>();
 const isCollapsed = defineModel<boolean>("collapsed", { required: true });
-const { title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

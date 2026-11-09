@@ -36,22 +36,7 @@ interface Props {
 }
 
 const amount = defineModel<number>("amount");
-const {
-  amountLabel,
-  amountMaximum,
-  materialCountLabel,
-  materialsBoxLabel,
-  obtainLabel,
-  queueDetail,
-  refusalLabel,
-  requiredCoins,
-  requiredLabel,
-  startLabel,
-  supportLabel,
-  tab,
-  totalTimeLabel,
-  yieldCount,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ obtain: [queueId: number]; start: [] }>();
 </script>
 

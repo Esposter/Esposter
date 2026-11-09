@@ -18,7 +18,7 @@ interface Props {
   subareaNames: { name: string; x: number; y: number }[];
 }
 
-const { areaLabels, metres, subareaNames } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

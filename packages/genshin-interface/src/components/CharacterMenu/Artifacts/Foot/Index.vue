@@ -33,19 +33,7 @@ interface Props {
 
 // The slot the actions are for, which Switch moves on to the next one
 const selectedIndex = defineModel<number>("selectedIndex", { default: 0 });
-const {
-  enhanceLabel,
-  equipDisabledSlots,
-  equipLabel,
-  fastEquipLabel,
-  isDetailsOpen,
-  lockLabel,
-  selectedStats,
-  slotNames,
-  switchLabel,
-  unequipLabel,
-  unlockLabel,
-} = defineProps<Props>();
+const { selectedStats } = defineProps<Props>();
 const emit = defineEmits<CharacterMenuArtifactEmits>();
 const isSelectedWorn = computed(() => selectedStats !== undefined);
 </script>

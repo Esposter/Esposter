@@ -13,7 +13,7 @@ interface Props {
 
 // The drawn metres across the map's width, which the slider sets and the map is drawn at
 const metres = defineModel<number>("metres", { required: true });
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 const zoomTrack = useTemplateRef("zoomTrack");
 const zoomThumbY = computed(() => MAP_ZOOM_TRACK_TOP + computeZoomShare(metres.value) * MAP_ZOOM_TRACK_HEIGHT);
 // Whether the slider is being dragged. It is not drawn, so it is a plain variable rather than state

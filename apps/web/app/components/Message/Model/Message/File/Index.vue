@@ -14,7 +14,7 @@ interface Props {
   message: MessageEntity;
 }
 
-const { columnLayout, file, index, isPreview, message } = defineProps<Props>();
+const { columnLayout, file, index, message } = defineProps<Props>();
 const isCreator = await useIsCreator(() => message);
 const fileStore = useFileStore();
 const { getFileUrlMap, getViewableFiles } = fileStore;

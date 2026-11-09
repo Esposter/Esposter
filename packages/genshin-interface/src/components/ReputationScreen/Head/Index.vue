@@ -8,7 +8,7 @@ interface Props {
   title: string;
 }
 
-const { backLabel, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

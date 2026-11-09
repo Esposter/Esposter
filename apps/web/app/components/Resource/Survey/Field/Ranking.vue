@@ -14,7 +14,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { node } = defineProps<Props>();
 // The answer's order, with any choice it leaves out kept after it, so the list never loses a choice
 const rankedChoices = computed(() => {
   const keyedChoices = getSurveyKeyedChoices(node.props.choices);

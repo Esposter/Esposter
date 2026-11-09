@@ -10,7 +10,7 @@ interface Props {
 }
 
 const tabId = defineModel<number>("tabId", { default: 0 });
-const { tabs } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

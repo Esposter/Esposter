@@ -13,7 +13,7 @@ interface Props {
   rowIndex: number;
 }
 
-const { columnIndex, item, rowIndex } = defineProps<Props>();
+const { item } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 const itemOptionGrid = useItemOptionGrid();
 const isUsableItem = useIsUsableItem(() => item);

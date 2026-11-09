@@ -13,7 +13,7 @@ interface Props {
   section?: UserSettingsPageSection;
 }
 
-const { section } = defineProps<Props>();
+defineProps<Props>();
 const router = useRouter();
 const { linkSocial, listAccounts, unlinkAccount } = authClient;
 const alertStore = useAlertStore();

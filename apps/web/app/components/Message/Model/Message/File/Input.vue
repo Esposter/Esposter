@@ -10,7 +10,7 @@ interface Props {
   uploadFileUrl?: UploadFileUrl;
 }
 
-const { file, index, uploadFileUrl = { progress: 1, url: "" } } = defineProps<Props>();
+const { uploadFileUrl = { progress: 1, url: "" } } = defineProps<Props>();
 const emit = defineEmits<{ delete: [number]; toggleSpoiler: [string] }>();
 const progressPercentage = computed(() => uploadFileUrl.progress * 100);
 </script>

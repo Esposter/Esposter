@@ -8,7 +8,7 @@ interface Props {
   pathLabel: string;
 }
 
-const { fatePoints, pathLabel } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

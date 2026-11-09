@@ -11,7 +11,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node, seed } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

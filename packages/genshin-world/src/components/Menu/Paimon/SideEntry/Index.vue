@@ -20,7 +20,7 @@ interface Props {
   tip: string;
 }
 
-const { alertedIcons, checkIsBuilt, icon, screenKind, tip } = defineProps<Props>();
+const { icon } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 // The icon's box and glyph, one object the button keeps rather than a fresh one per render
 const mark = computed(() => getMenuFrameMark(icon));

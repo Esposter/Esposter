@@ -14,7 +14,7 @@ interface Props {
 // Named by its label and described by the files it holds, each with its size. A drop honours accept as the picker
 // Does, which the browser leaves to the page
 const modelValue = defineModel<File[]>({ required: true });
-const { accept, isMultiple, label } = defineProps<Props>();
+const { accept, isMultiple } = defineProps<Props>();
 const id = useId();
 const dropZone = useTemplateRef("dropZone");
 const input = useTemplateRef("input");

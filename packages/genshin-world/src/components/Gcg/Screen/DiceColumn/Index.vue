@@ -13,7 +13,7 @@ interface Props {
   selectedDieIndices: number[];
 }
 
-const { dice, paidDiceIndices, selectedDieIndices } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [dieIndex: number] }>();
 </script>
 

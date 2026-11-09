@@ -12,7 +12,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { frame, gameText } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

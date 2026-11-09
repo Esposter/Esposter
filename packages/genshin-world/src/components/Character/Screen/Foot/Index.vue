@@ -13,7 +13,7 @@ interface Props {
   uid?: number;
 }
 
-const { gameText, tab, uid } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

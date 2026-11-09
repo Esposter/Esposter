@@ -14,7 +14,7 @@ interface Props {
 
 const isDescending = defineModel<boolean>("isDescending", { required: true });
 const sort = defineModel<InventorySort>("sort", { required: true });
-const { orderLabel, sortLabels } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

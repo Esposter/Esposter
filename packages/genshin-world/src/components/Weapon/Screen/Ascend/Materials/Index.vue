@@ -11,7 +11,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { costs, gameText } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

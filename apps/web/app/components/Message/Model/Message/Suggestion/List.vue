@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { isVisible, selectedIndex, title } = defineProps<Props>();
+const { selectedIndex } = defineProps<Props>();
 const listbox = useTemplateRef("listbox");
 
 watch(

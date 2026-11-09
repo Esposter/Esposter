@@ -31,7 +31,7 @@ interface Props {
   language: GameLanguage;
 }
 
-const { gameDataBaseUrl, gameId, gameText, language } = defineProps<Props>();
+const { gameDataBaseUrl, gameId, language } = defineProps<Props>();
 const emit = defineEmits<{ leave: [won: boolean] }>();
 const duel = ref<GcgDuel>();
 const textMap = shallowRef<Readonly<Record<string, string>>>({});

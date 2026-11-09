@@ -8,7 +8,7 @@ interface Props {
   title: string;
 }
 
-const { reviveLabel, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ revive: [] }>();
 </script>
 

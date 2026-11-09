@@ -8,7 +8,7 @@ interface Props {
   currencies: CurrencyCount[];
 }
 
-const { currencies } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

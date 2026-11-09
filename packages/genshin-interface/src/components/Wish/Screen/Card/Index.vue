@@ -21,8 +21,7 @@ interface Props {
   timeRemainingText: string;
 }
 
-const { bannerCard, bannerLabel, fiveStarNotice, pool, probabilityLabel, timeRemainingLabel, timeRemainingText } =
-  defineProps<Props>();
+const { pool } = defineProps<Props>();
 const featuredCell = computed(() => pool.find(({ isFeatured, rarity }) => isFeatured && rarity === 5));
 </script>
 

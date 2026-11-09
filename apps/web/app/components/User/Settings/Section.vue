@@ -9,7 +9,7 @@ interface Props {
 }
 
 const slots = defineSlots<{ actions?: () => VNode; default: () => VNode }>();
-const { section } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

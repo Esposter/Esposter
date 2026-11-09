@@ -17,7 +17,7 @@ interface Props {
 
 defineSlots<{ default: () => VNode; "prepend-actions"?: () => VNode }>();
 const modelValue = defineModel<boolean>({ default: false });
-const { editedValue, isCreate, schema, submit, title, value } = defineProps<Props>();
+const { editedValue, value } = defineProps<Props>();
 const emit = defineEmits<{ reset: [] }>();
 const styledDialog = useTemplateRef("styledDialog");
 const errorIcon = useTemplateRef("errorIcon");

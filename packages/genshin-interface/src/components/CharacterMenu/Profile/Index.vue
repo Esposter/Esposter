@@ -12,7 +12,7 @@ interface Props {
   namecardName: string;
 }
 
-const { entries, namecardName } = defineProps<Props>();
+const { entries } = defineProps<Props>();
 const entryIndex = ref(0);
 const selectedEntry = computed(() => entries[entryIndex.value]);
 </script>

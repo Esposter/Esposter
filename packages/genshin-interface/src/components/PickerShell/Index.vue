@@ -5,7 +5,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => unknown }>();
-const { title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

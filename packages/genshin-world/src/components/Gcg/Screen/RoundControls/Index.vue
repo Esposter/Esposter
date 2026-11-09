@@ -14,7 +14,7 @@ interface Props {
   roundLabel: string;
 }
 
-const { gameText, isActionLocked, isPlayerTurn, roundLabel } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ declareRoundEnd: [] }>();
 </script>
 

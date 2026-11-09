@@ -14,7 +14,7 @@ interface Props {
   index: number;
 }
 
-const { commission, gameText, index } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

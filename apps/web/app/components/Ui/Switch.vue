@@ -13,7 +13,7 @@ interface Props {
 // Passes goes to the element, which is the switch itself
 defineOptions({ inheritAttrs: false });
 const modelValue = defineModel<boolean>({ required: true });
-const { isLabelShown, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

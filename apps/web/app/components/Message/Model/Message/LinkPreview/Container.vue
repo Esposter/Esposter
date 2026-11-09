@@ -14,7 +14,7 @@ interface Props {
   rowKey: MessageEntity["rowKey"];
 }
 
-const { linkPreviewResponse, partitionKey, rowKey } = defineProps<Props>();
+const { partitionKey, rowKey } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { getSlice } = dataStore;

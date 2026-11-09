@@ -14,7 +14,7 @@ interface Props {
 const search = defineModel<string>("search", { required: true });
 const isSummaryView = defineModel<boolean>("isSummaryView", { required: true });
 const isGroupedByType = defineModel<boolean>("isGroupedByType", { required: true });
-const { source } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ export: []; refresh: [] }>();
 // The two views of the list are toggles that say whether they are on, so they stay out on every width; what is done
 // Now and then waits in the overflow menu

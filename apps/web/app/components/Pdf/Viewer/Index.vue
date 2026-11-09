@@ -20,14 +20,7 @@ interface Props {
   pdfDocument?: PDFDocumentProxy;
 }
 
-const {
-  filename,
-  highlightTerms = [],
-  isFailed,
-  isPasswordRequested,
-  isPasswordWrong,
-  pdfDocument,
-} = defineProps<Props>();
+const { highlightTerms = [], isFailed, isPasswordRequested, pdfDocument } = defineProps<Props>();
 const emit = defineEmits<{ submitPassword: [password: string] }>();
 const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");

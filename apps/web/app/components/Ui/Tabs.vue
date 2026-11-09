@@ -18,7 +18,7 @@ interface Props {
 
 defineSlots<{ default: (props: { value: T }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
-const { isFilling, items, label, variant } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

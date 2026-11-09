@@ -16,7 +16,7 @@ interface Props {
   create: (input: CreateApiKeyInput) => Promise<string>;
 }
 
-const { create } = defineProps<Props>();
+defineProps<Props>();
 const isOpen = ref(false);
 const name = ref("");
 // What the key reaches, and nothing until the owner ticks it: a key is made for one kind of work

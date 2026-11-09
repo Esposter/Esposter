@@ -9,7 +9,7 @@ interface Props {
   results: WishResultCell[];
 }
 
-const { results } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ dismiss: [] }>();
 </script>
 

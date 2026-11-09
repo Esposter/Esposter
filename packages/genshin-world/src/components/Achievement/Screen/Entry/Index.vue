@@ -16,7 +16,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { achievement, gameText, progressMap, textMap } = defineProps<Props>();
+const { achievement, progressMap } = defineProps<Props>();
 const isFinished = computed(() => checkIsAchievementFinished(achievement.id, progressMap));
 // The moment a finished achievement was finished, its stamp's date
 const finishedAt = computed(() => progressMap.get(achievement.id)?.finishedAt);

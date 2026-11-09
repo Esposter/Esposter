@@ -72,7 +72,6 @@ const {
   materialDataMap,
   names,
   wallet,
-  weaponDetails,
 } = defineProps<Props>();
 const emit = defineEmits<{
   close: [];

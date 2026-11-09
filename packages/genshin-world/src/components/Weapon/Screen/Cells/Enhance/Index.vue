@@ -9,7 +9,7 @@ interface Props {
   oreCells: { id: number; name: string; ownedCount: number; pickedCount: number }[];
 }
 
-const { fodderCells, oreCells } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ pickOre: [id: number]; toggleFodder: [id: number]; unpickOre: [id: number] }>();
 </script>
 

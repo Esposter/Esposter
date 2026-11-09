@@ -10,7 +10,7 @@ interface Props {
   name: string;
 }
 
-const { healthShare, levelText, name } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ heal: [] }>();
 </script>
 

@@ -5,7 +5,7 @@ interface Props {
   userId: string;
 }
 
-const { userId } = defineProps<Props>();
+defineProps<Props>();
 const friendDialogStore = useFriendDialogStore();
 const { unblockingUserId } = storeToRefs(friendDialogStore);
 </script>

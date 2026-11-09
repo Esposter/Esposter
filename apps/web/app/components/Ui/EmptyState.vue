@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { description, meaning, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- Nothing to show yet: a mark, a sentence saying so, a line on how that changes, and at most one action -->

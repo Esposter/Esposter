@@ -38,22 +38,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const {
-  counter,
-  error,
-  hint,
-  isAutofocus,
-  isDisabled,
-  isInvalid,
-  isLabelHidden,
-  isRequired,
-  label,
-  maxlength,
-  placeholder,
-  rows,
-  rules = [],
-  type,
-} = defineProps<Props>();
+const { counter, maxlength, rules = [], type } = defineProps<Props>();
 // The limit counted under the field, whether it only counts or also stops the typing
 const countLimit = computed(() => counter ?? maxlength);
 // The primitive hands a rule whatever its model holds, which for a text field is always its text

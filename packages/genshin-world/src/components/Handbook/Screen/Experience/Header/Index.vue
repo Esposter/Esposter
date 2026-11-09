@@ -9,7 +9,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

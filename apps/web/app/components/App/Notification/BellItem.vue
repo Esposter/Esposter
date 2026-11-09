@@ -10,7 +10,7 @@ interface Props {
   notification: AppNotification;
 }
 
-const { notification } = defineProps<Props>();
+defineProps<Props>();
 const notificationStore = useNotificationStore();
 const { consumeNotificationAction, dismissNotification } = notificationStore;
 </script>

@@ -12,7 +12,7 @@ interface Props {
 }
 
 const modelValue = defineModel<Row<RowValueType.Text>["value"]>({ required: true });
-const { isEditMode, label, value } = defineProps<Props>();
+defineProps<Props>();
 const valueRules = [UiRules.required(), UiRules.maxLength(USER_NAME_MAX_LENGTH), UiRules.isNotProfanity()];
 </script>
 

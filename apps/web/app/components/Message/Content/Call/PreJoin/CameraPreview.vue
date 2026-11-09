@@ -6,7 +6,7 @@ interface Props {
   stream?: MediaStream;
 }
 
-const { isCameraEnabled, stream } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

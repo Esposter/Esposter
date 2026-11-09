@@ -20,7 +20,7 @@ interface Props {
 // One day of a month, a cell of the month's grid: its number, which opens the day, the first of its events and a count
 // Of the rest, which opens it too. A click on its empty space selects it, and an event dragged over it tints it and
 // Dropped there moves onto it. A weekend is shaded, as Outlook shades the days outside the work week
-const { day, events, isCreatable, isFocused, isOutside, isSelected, isToday } = defineProps<Props>();
+const { day, events } = defineProps<Props>();
 const emit = defineEmits<{
   create: [];
   dragStart: [id: string];

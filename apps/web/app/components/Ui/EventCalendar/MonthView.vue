@@ -13,7 +13,7 @@ interface Props {
 // Week, Home and End to the week's ends, Page Up and Page Down a month. The day walked to is selected and becomes the
 // Day shown, so a step off the month turns the page
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
-const { eventDayMap, isCreatable, today } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   create: [day: Temporal.PlainDate];
   dragStart: [id: string];

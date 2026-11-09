@@ -12,7 +12,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+defineProps<Props>();
 // The answer is a record from each item's name to its text, read as the empty record until one is given
 const answers = useSurveyRecordAnswer(answer);
 const updateItem = (name: string, text: string) => {

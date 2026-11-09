@@ -6,7 +6,7 @@ import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
 import { usePdfDocument } from "vue-pdfjs-headless";
 
-const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
+const { isPreview, url } = defineProps<FileRendererComponentProps>();
 const isOpen = ref(false);
 // The renderer loads as the component mounts, and a renderer that never came draws no page either
 const { isFailed: isRendererFailed, loaded: renderer } = useLazyLoad(loadPdfRenderer);

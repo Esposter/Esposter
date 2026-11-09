@@ -21,7 +21,7 @@ defineSlots<{
   mark?: () => VNode;
   title?: () => VNode;
 }>();
-const { id, isSelected, isTabbable, item, rowProps } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ focus: []; select: [event: KeyboardEvent | MouseEvent] }>();
 const NuxtInvisibleLink = resolveComponent("NuxtInvisibleLink");
 </script>

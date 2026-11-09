@@ -16,7 +16,7 @@ interface Props {
   wallet: Wallet;
 }
 
-const { gameText, now, wallet } = defineProps<Props>();
+const { now, wallet } = defineProps<Props>();
 const originalResin = computed(() => regenerateOriginalResin(wallet, now)[Currency.OriginalResin]);
 </script>
 

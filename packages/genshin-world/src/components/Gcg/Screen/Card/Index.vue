@@ -15,7 +15,7 @@ interface Props {
   name: string;
 }
 
-const { costLabel, costs, isSelected, name } = defineProps<Props>();
+const { costLabel, costs, name } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 const diceCost = computed(() => countGcgDiceCost(costs));
 const accessibleName = computed(() => [name, formatGcgNumberLabel(costLabel, diceCost.value)].join(", "));

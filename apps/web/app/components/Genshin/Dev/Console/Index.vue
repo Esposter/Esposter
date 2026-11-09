@@ -14,7 +14,7 @@ interface Props {
 // Alone while it is focused: the engine ignores a key typed into a field, and the event stops here so the screens'
 // Own listeners on the window never see it. The keys it handles itself are listed while it is open, and never bound
 const isOpen = defineModel<boolean>({ required: true });
-const { registry } = defineProps<Props>();
+defineProps<Props>();
 const line = ref("");
 const entries = useLocalStorage<DevConsoleEntry[]>(LocalStorageKey.GenshinDevConsoleHistory, []);
 

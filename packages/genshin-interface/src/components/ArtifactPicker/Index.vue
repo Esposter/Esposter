@@ -21,7 +21,7 @@ interface Props {
   title: string;
 }
 
-const { closeLabel, options, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [id: string]; close: [] }>();
 </script>
 

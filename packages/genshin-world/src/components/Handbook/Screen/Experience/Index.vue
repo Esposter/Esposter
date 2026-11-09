@@ -23,8 +23,7 @@ interface Props {
   totalCount: number;
 }
 
-const { commissions, completedCount, gameText, investigationRewards, isRewardClaimed, totalCount } =
-  defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

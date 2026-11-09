@@ -9,7 +9,7 @@ interface Props {
   items: UiMenuItem<T>[];
 }
 // A menu's items, drawn the one way whether a trigger or a point opened the menu around them
-const { checkIsTabbable, getItemId, items } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [value: T, event: MouseEvent] }>();
 // A setting is a checkbox, a choice of a group a radio, and anything else a plain action
 const getItemRole = (isChecked: boolean | undefined, isSelected: boolean | undefined) => {

@@ -7,7 +7,7 @@ interface Props {
   resource: ResourceInResource;
 }
 
-const { resource } = defineProps<Props>();
+defineProps<Props>();
 const { previewSnapshotVersionId, stopPreviewingSnapshot } = useVersionHistoryRoute();
 const isHighlighted = computed(() => !previewSnapshotVersionId.value);
 </script>

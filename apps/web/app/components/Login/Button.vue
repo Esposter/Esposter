@@ -7,7 +7,7 @@ import { useAlertStore } from "@/store/alert";
 import { toTitleCase } from "@/util/text/toTitleCase";
 import { getResultAsync, noop } from "@esposter/shared";
 
-const { logo, provider } = defineProps<ButtonProps>();
+defineProps<ButtonProps>();
 const { signIn } = authClient;
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;

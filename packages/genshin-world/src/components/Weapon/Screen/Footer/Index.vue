@@ -12,7 +12,7 @@ interface Props {
   pendingMora: number;
 }
 
-const { gameText, pendingMora } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

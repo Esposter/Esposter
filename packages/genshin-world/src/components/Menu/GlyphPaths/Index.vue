@@ -5,7 +5,7 @@ interface Props {
   glyph: MenuIconGlyph;
 }
 
-const { glyph } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

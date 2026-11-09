@@ -21,7 +21,6 @@ const {
   initialPosition,
   positionIncrement,
   scale = 2.5,
-  tween,
 } = defineProps<Props>();
 const position = computed(() => ({
   x: initialPosition.x + (positionIncrement.x ?? 0) * grid.position.value.x,

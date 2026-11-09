@@ -7,7 +7,7 @@ interface Props {
   isMicrophoneEnabled: boolean;
 }
 
-const { isCameraEnabled, isMicrophoneEnabled } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ toggleCamera: []; toggleMicrophone: [] }>();
 </script>
 

@@ -8,7 +8,7 @@ interface Props {
   signOut: () => Promisable<unknown>;
 }
 
-const { otherSessionCount, signOut } = defineProps<Props>();
+defineProps<Props>();
 const isOpen = ref(false);
 </script>
 

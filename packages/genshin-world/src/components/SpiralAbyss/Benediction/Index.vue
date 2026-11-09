@@ -22,7 +22,7 @@ interface Props {
   nameText: TextChunk;
 }
 
-const { chamber, choices, floor, gameText, litTowerBuffId, nameText } = defineProps<Props>();
+const { chamber, floor, gameText } = defineProps<Props>();
 const emit = defineEmits<{ choose: [towerBuffId: number] }>();
 const title = computed(() =>
   floor === undefined || chamber === undefined

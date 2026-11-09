@@ -8,7 +8,7 @@ interface Props {
   name: string;
 }
 
-const { deleteKey, name } = defineProps<Props>();
+defineProps<Props>();
 const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
 // The card owns the lookup and hands the key down, so only the open state is read from the primitive here

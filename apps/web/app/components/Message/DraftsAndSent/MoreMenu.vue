@@ -12,7 +12,7 @@ interface Props {
   label: string;
 }
 
-const { actions, confirmDelete, deleteLabel, deleteMessage, label } = defineProps<Props>();
+const { actions, deleteLabel } = defineProps<Props>();
 const isDeleteOpen = ref(false);
 const items = computed<Item[]>(() => [
   ...actions,

@@ -11,7 +11,7 @@ interface Props {
   visuals: Visual[];
 }
 
-const { collision, compactType, visuals } = defineProps<Props>();
+defineProps<Props>();
 const container = useTemplateRef("container");
 const { width } = useElementSize(container);
 // The published dashboard only shows its visuals, so a narrower screen reflows them and nothing here is saved

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const modelValue = defineModel<RoomInMessage["image"]>({ required: true });
-const { name, roomId } = defineProps<Props>();
+const { roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const fileInput = useTemplateRef("fileInput");
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.room.generateProfileImageUploadUrl.mutate({ roomId }));

@@ -15,7 +15,7 @@ interface Props {
 // So the keyboard and the pointer reach it the one way
 defineSlots<{ append?: () => VNode; prepend?: () => VNode }>();
 const query = defineModel<string>("query", { required: true });
-const { commands, label, placeholder } = defineProps<Props>();
+const { commands } = defineProps<Props>();
 const emit = defineEmits<{ select: [command: UiCommand] }>();
 const field = useTemplateRef("field");
 const listboxId = useId();

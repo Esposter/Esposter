@@ -28,8 +28,7 @@ interface Props {
   zones: CookingZones;
 }
 
-const { autoCookLabel, closeLabel, dishes, isAutoCookable, pointer, selectedId, stopLabel, title, zones } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ autoCook: []; close: []; select: [id: number]; stop: [] }>();
 </script>
 

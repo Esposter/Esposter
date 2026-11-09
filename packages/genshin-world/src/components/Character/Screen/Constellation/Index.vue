@@ -22,7 +22,7 @@ interface Props {
 }
 
 const characters = defineModel<Character[]>("characters", { required: true });
-const { character, characterIdConstellationsMap, gameText, nameText } = defineProps<Props>();
+const { character, characterIdConstellationsMap, nameText } = defineProps<Props>();
 // Which of the six constellations are activated, the first the character's count of them
 const constellationsActivated = computed(() =>
   Array.from({ length: CONSTELLATION_COUNT }, (_value, index) => index < character.constellationCount),

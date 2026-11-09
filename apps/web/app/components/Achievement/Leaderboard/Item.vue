@@ -9,7 +9,7 @@ interface Props {
   isMyEntry?: true;
 }
 
-const { entry, isMyEntry } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

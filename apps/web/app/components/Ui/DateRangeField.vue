@@ -9,7 +9,7 @@ interface Props {
 // Field empties both. Its days are plain dates, so the call site decides which instant each bound means
 const from = defineModel<Temporal.PlainDate>("from");
 const to = defineModel<Temporal.PlainDate>("to");
-const { label, placeholder = "Pick dates" } = defineProps<Props>();
+const { placeholder = "Pick dates" } = defineProps<Props>();
 const isOpen = ref(false);
 </script>
 

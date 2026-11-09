@@ -30,8 +30,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { chapters, gameText, questCategory, questDistanceMap, rowQuests, selectedQuestId, textMap } =
-  defineProps<Props>();
+const { gameText, questDistanceMap } = defineProps<Props>();
 const emit = defineEmits<{ select: [questId: string] }>();
 // How far each quest stands in the reader's words, by quest id, for those with a place to go to
 const questDistanceTexts = computed(

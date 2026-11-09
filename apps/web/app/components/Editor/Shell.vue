@@ -22,7 +22,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { context, editorType, layout, panelNameMap, regionNameMap, registry } = defineProps<Props>();
+const { context, editorType, layout } = defineProps<Props>();
 const sizeClass = useEditorSizeClass();
 const editorReaderStateStore = useEditorReaderStateStore();
 const { readerStateMap } = storeToRefs(editorReaderStateStore);

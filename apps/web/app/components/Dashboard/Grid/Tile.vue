@@ -19,7 +19,7 @@ interface Props {
 // A tile is one tab stop of an editable grid. Its eight handles are unpainted hit areas with resize cursors.
 // The handles are drawn after the visual, and a dragged tile is at two
 defineSlots<{ default: () => VNode }>();
-const { geometry, isAutoHeight, isDragged, isEditable, label, offset } = defineProps<Props>();
+const { isAutoHeight } = defineProps<Props>();
 const emit = defineEmits<{
   measure: [height: number];
   open: [];

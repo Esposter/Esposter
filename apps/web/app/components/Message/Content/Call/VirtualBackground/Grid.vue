@@ -10,7 +10,7 @@ interface Props {
   selectedVirtualBackground: string;
 }
 
-const { selectedVirtualBackground } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [virtualBackground: string] }>();
 const callBackgroundStore = useCallBackgroundStore();
 const { createCallBackground, deleteCallBackground, readCallBackgrounds } = callBackgroundStore;

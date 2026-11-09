@@ -10,7 +10,7 @@ import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/share
 
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<Props>();
+const { isPreview = false, message } = defineProps<Props>();
 const { data: session } = await useAuthSession();
 const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);

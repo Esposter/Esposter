@@ -23,16 +23,7 @@ interface Props {
   refineSlotCount: number;
 }
 
-const {
-  copyCells,
-  fodderCells,
-  isRefinementMaterialHeld,
-  openTab,
-  oreCells,
-  pickedCopyId,
-  refinementMaterial,
-  refineSlotCount,
-} = defineProps<Props>();
+const { copyCells, fodderCells, isRefinementMaterialHeld, openTab, oreCells, refineSlotCount } = defineProps<Props>();
 const emit = defineEmits<{
   pickCopy: [id: number];
   pickMaterial: [];

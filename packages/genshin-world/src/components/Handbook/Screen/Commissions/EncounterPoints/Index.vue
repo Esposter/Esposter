@@ -16,8 +16,7 @@ interface Props {
   longTermEncounterPoints: number;
 }
 
-const { encounterPointLimit, encounterPoints, gameText, isLongTermEncounterPointUsable, longTermEncounterPoints } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ useLongTermEncounterPoints: [] }>();
 </script>
 

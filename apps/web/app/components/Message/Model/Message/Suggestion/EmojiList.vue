@@ -8,7 +8,7 @@ import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitl
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();
+const { command, items } = defineProps<Pick<SuggestionProps<PickableEmoji>, "command" | "items" | "query">>();
 const emojiPickerStore = useEmojiPickerStore();
 const { skinTone } = storeToRefs(emojiPickerStore);
 const selectItem = (index: number) => {

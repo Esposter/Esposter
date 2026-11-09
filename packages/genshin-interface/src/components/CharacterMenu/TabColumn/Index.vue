@@ -16,7 +16,7 @@ interface Props {
 }
 
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
-const { tabLabels } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

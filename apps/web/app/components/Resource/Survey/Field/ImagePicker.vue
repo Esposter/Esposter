@@ -14,7 +14,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { isDisabled, node } = defineProps<Props>();
 const items = computed<(UiListItem<string> & { imageLink: string })[]>(() =>
   getSurveyKeyedChoices(node.props.choices).map(({ choice, key }) => ({
     hasMarkSlot: true,

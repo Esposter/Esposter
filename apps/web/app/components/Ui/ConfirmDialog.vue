@@ -24,14 +24,7 @@ interface Props {
 // Guarded one asks the name in
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const {
-  confirm,
-  confirmLabel,
-  confirmName = "",
-  isOptimistic,
-  size = UiDialogSize.Medium,
-  title,
-} = defineProps<Props>();
+const { confirmName = "", size = UiDialogSize.Medium } = defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const typedName = ref("");
 

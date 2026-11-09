@@ -14,7 +14,7 @@ interface Props {
 }
 
 const modelValue = defineModel<Row<RowValueType.Image>["value"]>({ required: true });
-const { isEditMode, label, value } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { isLoading, uploadImage } = useUploadImage(() => $trpc.user.generateProfileImageUploadUrl.mutate());
 const fileInput = useTemplateRef("fileInput");

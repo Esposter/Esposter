@@ -15,7 +15,7 @@ interface Props {
   landmarks: PlaceLandmark[];
 }
 
-const { catalogue, gameText, landmarks } = defineProps<Props>();
+const { catalogue, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ jump: [landmark: PlaceLandmark] }>();
 // Every region with somewhere to jump to, in the catalogue's order, each landmark named by its area
 const regionJumps = computed(() =>

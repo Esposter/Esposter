@@ -17,7 +17,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ mark: (props: { isOn: boolean; value: number }) => VNode }>();
 const modelValue = defineModel<number | string>({ required: true });
-const { count, isDisabled, label } = defineProps<Props>();
+const { count } = defineProps<Props>();
 const hovered = ref<number>();
 const steps = computed(() => Array.from({ length: count }, (_value, index) => index + 1));
 const filledTo = computed(() => hovered.value ?? (typeof modelValue.value === "number" ? modelValue.value : 0));

@@ -27,7 +27,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ mark?: (props: { item: UiMenuItem<T> }) => VNode }>();
 const modelValue = defineModel<T>({ required: true });
-const { isDisabled, isIconOnly, isVertical, items, label, variant } = defineProps<Props>();
+defineProps<Props>();
 const id = useId();
 </script>
 

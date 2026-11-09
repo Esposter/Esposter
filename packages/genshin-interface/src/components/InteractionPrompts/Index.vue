@@ -12,7 +12,7 @@ interface Props {
   selectedId: string;
 }
 
-const { isTouch, prompts, selectedId } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   // A row pressed itself, by a tap or by a click with the cursor shown, which acts on that row as F acts on the selected
   press: [id: string];

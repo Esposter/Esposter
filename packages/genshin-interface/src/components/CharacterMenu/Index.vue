@@ -24,7 +24,7 @@ interface Props {
 defineSlots<{ default: () => unknown }>();
 const characterId = defineModel<number>("characterId", { required: true });
 const tab = defineModel<CharacterMenuTab>("tab", { required: true });
-const { characters, elementMarkPath, elementName, isTouch, tabLabels } = defineProps<Props>();
+const { characters } = defineProps<Props>();
 // The characters either side of the chosen one, the list wrapping round at its ends
 const steps = computed(() => {
   const index = characters.findIndex(({ id }) => id === characterId.value);

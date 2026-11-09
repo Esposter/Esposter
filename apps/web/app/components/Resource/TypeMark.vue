@@ -7,7 +7,7 @@ interface Props {
   type: ResourceType;
 }
 
-const { type } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- A resource type's mark in a field's block, the way an inventory holds an item in its slot -->

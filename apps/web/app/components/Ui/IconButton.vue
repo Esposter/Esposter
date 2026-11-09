@@ -18,7 +18,7 @@ interface Props {
 }
 // The tooltip renders no element of its own, so what a call site passes goes to the button
 defineOptions({ inheritAttrs: false });
-const { disabledReason, isPending, label, meaning, shortcut, variant } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- A pending button's spinner takes the icon's place, since the button is only as wide as one -->

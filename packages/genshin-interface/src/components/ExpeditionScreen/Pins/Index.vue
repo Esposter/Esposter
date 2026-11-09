@@ -9,7 +9,7 @@ interface Props {
 }
 
 const place = defineModel<number | undefined>("place");
-const { pins } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

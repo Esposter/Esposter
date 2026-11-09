@@ -11,7 +11,7 @@ interface Props {
   meaning: UiIconMeaning;
 }
 
-const { isEnd, label, meaning } = defineProps<Props>();
+defineProps<Props>();
 const layoutStore = useLayoutStore();
 const { isDesktop, isLeftDrawerOpen, isRightDrawerOpen } = storeToRefs(layoutStore);
 </script>

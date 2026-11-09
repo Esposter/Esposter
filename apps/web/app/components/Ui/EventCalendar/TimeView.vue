@@ -20,7 +20,7 @@ interface Props {
 // To the day's ends and by Page Up and Page Down a view at a time; the slot walked to is selected, and its day becomes
 // The day shown, so a step off the first or the last day steps the view
 const date = defineModel<Temporal.PlainDate>("date", { required: true });
-const { days, eventDayMap, isCreatable, step, today } = defineProps<Props>();
+const { days, step, today } = defineProps<Props>();
 const emit = defineEmits<UiCalendarSlotEmits & { showDay: [day: Temporal.PlainDate] }>();
 const scroller = useTemplateRef("scroller");
 const grid = useTemplateRef("grid");

@@ -15,7 +15,7 @@ interface Props {
 }
 // The tool in hand, which a tool group chooses among
 const modelValue = defineModel<string>({ default: "" });
-const { groups, label } = defineProps<Props>();
+const { groups } = defineProps<Props>();
 const id = useId();
 const toolbar = useTemplateRef("toolbar");
 // The bar draws every item while it measures, and reads each item's width and the overflow button's once when its items

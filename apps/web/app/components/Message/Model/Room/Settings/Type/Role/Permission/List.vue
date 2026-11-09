@@ -12,7 +12,7 @@ interface Props {
 }
 
 const modelValue = defineModel<bigint>({ required: true });
-const { isDisabled, roomId } = defineProps<Props>();
+const { roomId } = defineProps<Props>();
 const roleStore = useRoleStore();
 const { getMyPermissions } = roleStore;
 // A role may carry no permission its author lacks, and the save judges the whole bitfield it writes. So a switch is

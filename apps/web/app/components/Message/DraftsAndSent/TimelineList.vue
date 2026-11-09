@@ -15,7 +15,7 @@ interface Props {
 // Messages under the day they belong to, each row the room it is in, the message's text and its time, with the row's
 // Actions beside it
 defineSlots<{ actions?: (props: { item: TItem }) => VNode }>();
-const { getDate, getRow, items, label } = defineProps<Props>();
+const { getDate, getRow, items } = defineProps<Props>();
 const itemRecord = computed(() => Object.fromEntries(items.map((item) => [getRow(item).value, item])));
 const rows = computed(() =>
   getTimelineSections(items, getDate).flatMap(({ items: sectionItems, title }) =>

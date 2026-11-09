@@ -6,7 +6,7 @@ interface Props {
   nextMessage?: MessageEntity;
 }
 
-const { message, nextMessage } = defineProps<Props>();
+const { message } = defineProps<Props>();
 const creator = useCreator(() => message);
 </script>
 

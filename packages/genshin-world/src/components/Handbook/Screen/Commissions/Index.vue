@@ -26,16 +26,7 @@ interface Props {
   nameText: Readonly<Record<string, string>>;
 }
 
-const {
-  dayCommissions,
-  encounterPointLimit,
-  encounterPoints,
-  gameText,
-  isAdventureEncountersUnlocked,
-  isLongTermEncounterPointUsable,
-  longTermEncounterPoints,
-  nameText,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ claimCommission: [commissionId: number]; useLongTermEncounterPoints: [] }>();
 </script>
 

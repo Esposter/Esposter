@@ -9,7 +9,7 @@ interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<Props>();
+defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 const items = VoiceInputModes.map((voiceInputMode) => ({

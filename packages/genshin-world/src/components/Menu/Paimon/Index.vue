@@ -61,26 +61,7 @@ interface Props {
   worldLevelChangedAt?: Temporal.Instant;
 }
 
-const {
-  accountAvatarUrl,
-  accountName,
-  adventureExpProgress,
-  adventureRank,
-  alertedIcons,
-  checkIsBuilt,
-  finishedMainQuestIds,
-  gameText,
-  interactionState,
-  isWorldLevelAdjustable,
-  isWorldLevelLowered,
-  namecardItemId,
-  namecards,
-  serverClockOffsetMs,
-  signature,
-  travelerBirthday,
-  worldLevel,
-  worldLevelChangedAt,
-} = defineProps<Props>();
+const { gameText } = defineProps<Props>();
 const emit = defineEmits<{
   close: [];
   open: [screenKind: TitledScreenKind];

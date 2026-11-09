@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode; "no-data": () => VNode }>();
-const { messages } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

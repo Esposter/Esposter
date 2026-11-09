@@ -9,7 +9,7 @@ interface Props {
   tip: string;
 }
 
-const { tip } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 // Quit is anchored from the bottom edge, as the frame anchors it: its box stands 36 of the 1440 high still's pixels above
 // That still's bottom, each still pixel drawn at `--reference-pixel`, which puts its centre 55 units above the frame's bottom

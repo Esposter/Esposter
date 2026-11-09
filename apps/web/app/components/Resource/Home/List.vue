@@ -11,7 +11,7 @@ interface Props {
   source: ResourceListSource;
 }
 
-const { isPending, resources, source } = defineProps<Props>();
+const { source } = defineProps<Props>();
 // An empty Favorites tab is not an empty account, so the copy comes from the set the tab is over
 const emptyState = computed(() => ({
   ...ResourceListSourceDefinitionMap[source].emptyState,

@@ -22,7 +22,7 @@ interface Props {
   rarity?: number;
 }
 
-const { gameText, isDimmed, isNew, isSelected, kills, name, rarity } = defineProps<Props>();
+const { rarity } = defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 // The face gradient of a four or five star tile, held as one style so the button is not handed a fresh object on each render
 const faceStyle = computed(() => ({

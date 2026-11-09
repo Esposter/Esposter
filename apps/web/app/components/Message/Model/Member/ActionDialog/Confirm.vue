@@ -12,7 +12,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { text, title, type, user } = defineProps<Props>();
+defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 </script>
 

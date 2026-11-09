@@ -12,7 +12,7 @@ interface Props {
   upgrade: Upgrade;
 }
 
-const { isBought, upgrade } = defineProps<Props>();
+const { upgrade } = defineProps<Props>();
 const pointStore = usePointStore();
 const { checkIsAffordable } = pointStore;
 const upgradeStore = useUpgradeStore();

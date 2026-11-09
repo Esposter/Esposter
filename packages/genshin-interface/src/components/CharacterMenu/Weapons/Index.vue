@@ -31,21 +31,7 @@ interface Props {
   switchLabel: string;
 }
 
-const {
-  ascension,
-  baseAttack,
-  baseAttackLabel,
-  enhanceLabel,
-  kind,
-  levelText,
-  name,
-  passiveName,
-  rarity,
-  refinement,
-  subStatLabel,
-  subStatValue,
-  switchLabel,
-} = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

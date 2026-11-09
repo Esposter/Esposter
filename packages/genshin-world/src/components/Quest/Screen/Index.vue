@@ -41,16 +41,7 @@ interface Props {
   trackedQuestId: string;
 }
 
-const {
-  gameText,
-  listScroll = 0,
-  questChapters = [],
-  questDistanceMap,
-  questProgressMap,
-  quests,
-  textMap,
-  trackedQuestId,
-} = defineProps<Props>();
+const { gameText, listScroll = 0, questChapters = [], quests, trackedQuestId } = defineProps<Props>();
 const emit = defineEmits<{ close: []; navigate: [questId: string] }>();
 const list = useTemplateRef("list");
 // The tab open, none for the first, which lists every quest

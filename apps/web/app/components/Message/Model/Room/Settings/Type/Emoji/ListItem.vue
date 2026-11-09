@@ -11,7 +11,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomEmoji, roomId } = defineProps<Props>();
+const { roomEmoji } = defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { updateRoomEmoji } = roomEmojiStore;
 const editedName = ref(roomEmoji.name);

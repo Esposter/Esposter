@@ -15,7 +15,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { dataSourceType } = defineProps<Props>();
+defineProps<Props>();
 const exportFile = useExportFile();
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);

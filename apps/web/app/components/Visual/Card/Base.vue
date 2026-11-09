@@ -5,7 +5,7 @@ interface Props {
   card: Card;
 }
 
-const { card } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -35,19 +35,7 @@ interface Props {
   worldLevel: number;
 }
 
-const {
-  accountAvatarUrl,
-  accountName,
-  adventureExpProgress,
-  adventureRank,
-  alertedIcons,
-  gameText,
-  namecardItemId,
-  namecards,
-  signature,
-  travelerBirthday,
-  worldLevel,
-} = defineProps<Props>();
+const { namecardItemId, namecards } = defineProps<Props>();
 const emit = defineEmits<{ openBirthday: []; openNamecard: []; openWorldLevel: [] }>();
 const equippedNamecard = computed(() => namecards.find(({ itemId }) => itemId === namecardItemId));
 const info = useTemplateRef("info");

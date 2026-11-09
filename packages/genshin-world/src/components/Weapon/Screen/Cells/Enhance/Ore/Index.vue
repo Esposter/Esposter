@@ -7,7 +7,7 @@ interface Props {
   ore: { name: string; ownedCount: number; pickedCount: number };
 }
 
-const { ore } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ pick: []; unpick: [] }>();
 </script>
 

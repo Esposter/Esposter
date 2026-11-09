@@ -5,7 +5,7 @@ interface Props {
   item: { name: string; title: string };
 }
 
-const { error, item } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ update: [patch: { name: string } | { title: string }] }>();
 </script>
 

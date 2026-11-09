@@ -9,7 +9,7 @@ interface Props {
   resources: ResourceInResource[];
 }
 
-const { deleteResources, resources } = defineProps<Props>();
+const { resources } = defineProps<Props>();
 const listDialogStore = useListDialogStore();
 const { deletingIds } = storeToRefs(listDialogStore);
 // The resources still in the list, so a row a read took away meanwhile is not deleted from behind the dialog

@@ -10,7 +10,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { battleLabel, gameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ concede: [] }>();
 </script>
 

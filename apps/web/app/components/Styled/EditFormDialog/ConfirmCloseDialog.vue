@@ -7,7 +7,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ required: true });
-const { isSavable, itemType } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ discard: []; save: [] }>();
 </script>
 

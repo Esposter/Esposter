@@ -5,7 +5,7 @@ import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<Pick<SuggestionProps<string>, "command" | "items" | "query">>();
+const { command, items } = defineProps<Pick<SuggestionProps<string>, "command" | "items" | "query">>();
 const selectItem = (index: number) => {
   command(takeOne(items, index));
 };

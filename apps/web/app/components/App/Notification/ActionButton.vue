@@ -7,7 +7,7 @@ interface Props {
   action: AppNotificationAction;
 }
 
-const { action } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ complete: [] }>();
 const { executeMutation, isPending } = useMutation();
 // One button runs one action, so a second press while it is out joins nothing and is dropped

@@ -9,7 +9,7 @@ interface Props {
 }
 
 const characterId = defineModel<number>("characterId", { required: true });
-const { characters } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

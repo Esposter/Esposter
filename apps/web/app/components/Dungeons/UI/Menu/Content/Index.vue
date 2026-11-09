@@ -9,7 +9,7 @@ interface Props {
   grid: Grid<TGrid>;
 }
 
-const { grid } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

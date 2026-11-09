@@ -24,7 +24,7 @@ interface Props {
 // One day of hours: a slot per half hour to select, or to drop an event on, each event an hour tall at its time, events
 // In the same slot side by side, and on today a line in the accent at the current time. The hours outside the working
 // Day and the whole of a weekend are shaded, as Outlook shades them
-const { day, events, focusedSlot, isCreatable, isToday, selectedSlot } = defineProps<Props>();
+const { day, events, focusedSlot, selectedSlot } = defineProps<Props>();
 const emit = defineEmits<UiCalendarSlotEmits & { select: [start: Temporal.PlainDateTime] }>();
 const isWeekend = computed(() => day.dayOfWeek > CALENDAR_WORK_WEEK_DAY_COUNT);
 const midnight = Temporal.PlainTime.from({ hour: 0 });

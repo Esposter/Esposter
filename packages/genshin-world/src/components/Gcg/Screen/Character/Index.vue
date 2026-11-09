@@ -26,8 +26,7 @@ interface Props {
   shieldLabel: string;
 }
 
-const { aura, energy, energyLabel, hp, hpLabel, isChoosable, maxEnergy, name, shield, shieldLabel } =
-  defineProps<Props>();
+const { energy, energyLabel, hp, hpLabel, name, shield, shieldLabel } = defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 const accessibleName = computed(() =>
   [

@@ -17,7 +17,7 @@ interface Props {
   nextMessage?: MessageEntity;
 }
 
-const { creator, message, nextMessage } = defineProps<Props>();
+const { message, nextMessage } = defineProps<Props>();
 const isSameBatch = computed(() => checkIsSameBatch(message, nextMessage));
 const appearanceStore = useAppearanceStore();
 const { messageDisplayMode } = storeToRefs(appearanceStore);

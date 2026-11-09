@@ -86,13 +86,7 @@ const density = defineModel<UiDataTableDensity>("density", { default: UiDataTabl
 const activeCell = defineModel<UiDataTableCell>("activeCell");
 const {
   columns,
-  getCellProps,
-  getHeaderProps,
-  getItemTitle,
-  getRowProps,
   groupBy,
-  isCellNavigable,
-  isFirstColumnSticky,
   isMultiSort,
   isPending = false,
   isReorderable,
@@ -101,9 +95,6 @@ const {
   items,
   itemsLength,
   itemsPerPageOptions,
-  label,
-  onEditCell,
-  onOpen,
   search = "",
 } = defineProps<Props>();
 const emit = defineEmits<{ reorder: [ids: T["id"][]] }>();

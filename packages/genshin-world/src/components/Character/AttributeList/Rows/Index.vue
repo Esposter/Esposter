@@ -4,7 +4,7 @@ interface Props {
   rows: { label: string; value: string }[];
 }
 
-const { rows } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -6,7 +6,7 @@ import { UiToken } from "@/models/ui/UiToken";
 
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<Props>();
+const { isPreview = false, message } = defineProps<Props>();
 const isCallEnded = computed(() => Boolean(message.message));
 const formattedDuration = computed(() => {
   if (!isCallEnded.value) return "";

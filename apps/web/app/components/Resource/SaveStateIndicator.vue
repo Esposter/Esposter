@@ -11,7 +11,7 @@ interface Props {
   resource: ResourceInResource;
 }
 
-const { resource } = defineProps<Props>();
+defineProps<Props>();
 const resourceStore = useResourceStore();
 const { saveState } = storeToRefs(resourceStore);
 // Widened off the as-const literal union so the two states carrying no colour read the optional key

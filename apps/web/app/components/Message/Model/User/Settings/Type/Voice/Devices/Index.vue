@@ -7,7 +7,7 @@ interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<Props>();
+defineProps<Props>();
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 // One enumeration feeds all three pickers — a call per picker re-enumerates the same device list and

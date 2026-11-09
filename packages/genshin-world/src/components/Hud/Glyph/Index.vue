@@ -6,7 +6,7 @@ interface Props {
   glyphLayers: readonly GlyphLayer[];
 }
 
-const { glyphLayers } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -41,20 +41,7 @@ interface Props {
   title: string;
 }
 
-const {
-  blessingTitle,
-  closeLabel,
-  heldCount,
-  level,
-  levelLabel,
-  offerAllLabel,
-  offerLabel,
-  ownedLabel,
-  requiredLabel,
-  rewardsLabel,
-  staminaLabel,
-  title,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ blessing: []; claim: []; close: []; offer: [] }>();
 </script>
 

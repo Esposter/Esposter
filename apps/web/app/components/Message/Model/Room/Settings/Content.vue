@@ -8,7 +8,7 @@ interface Props {
   settingsType: keyof typeof SettingsContentMap;
 }
 
-const { room, settingsType } = defineProps<Props>();
+const { settingsType } = defineProps<Props>();
 const emit = defineEmits<{ close: []; "open:drawer": [] }>();
 const component = computed(() => SettingsContentMap[settingsType]);
 </script>

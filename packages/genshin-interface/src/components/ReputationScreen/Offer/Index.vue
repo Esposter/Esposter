@@ -6,7 +6,7 @@ interface Props {
   offer: { acceptLabel: string; title: string };
 }
 
-const { offer } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ accept: [] }>();
 </script>
 

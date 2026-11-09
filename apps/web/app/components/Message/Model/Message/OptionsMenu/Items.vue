@@ -8,7 +8,7 @@ interface Props {
   items: Extract<Item, { meaning: UiIconMeaning }>[];
 }
 
-const { items } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

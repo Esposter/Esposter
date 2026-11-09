@@ -14,7 +14,7 @@ const slots = defineSlots<{
   // The page's own sections as tab links, whose line closes the header
   navigation?: () => VNode;
 }>();
-const { isServiceMenuShown, title } = defineProps<Props>();
+defineProps<Props>();
 const isServiceMenuOpen = ref(false);
 </script>
 

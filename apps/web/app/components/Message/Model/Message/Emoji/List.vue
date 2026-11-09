@@ -9,7 +9,7 @@ interface Props {
   message: MessageEntity;
 }
 
-const { isPreview, message } = defineProps<Props>();
+const { message } = defineProps<Props>();
 const { data: session } = await useAuthSession();
 const emojiStore = useEmojiStore();
 const { getEmojis } = emojiStore;

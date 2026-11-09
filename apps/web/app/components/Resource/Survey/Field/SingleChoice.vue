@@ -22,7 +22,7 @@ defineSlots<{
   }) => VNode;
 }>();
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node, seed } = defineProps<Props>();
+const { node, seed } = defineProps<Props>();
 const { isOther, items, otherText, otherTitle, pick, selectedKey, updateOtherText } = useSurveyChoiceAnswer(
   answer,
   () => node.props,

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { node } = defineProps<Props>();
 // The answer is a record from each row's value to the value of the column chosen in it, read as the empty record until one is given
 const answers = useSurveyRecordAnswer(answer);
 // Each column is keyed by its place in the question, since two values may read alike and a radio group keys its options by text

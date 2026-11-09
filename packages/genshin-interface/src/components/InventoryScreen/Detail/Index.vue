@@ -22,7 +22,7 @@ interface Props {
   weapon?: InventoryWeaponDetails;
 }
 
-const { cell, isDestroying, isSortable, lockLabel, unlockLabel, weapon } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ lock: [id: string] }>();
 </script>
 

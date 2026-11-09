@@ -7,7 +7,7 @@ interface Props {
   voteCount: number;
 }
 
-const { label, totalVoteCount, voteCount } = defineProps<Props>();
+const { totalVoteCount, voteCount } = defineProps<Props>();
 const votePercentage = computed(() => (totalVoteCount > 0 ? Math.round((voteCount / totalVoteCount) * 100) : 0));
 const voteDescription = computed(() => getVoteDescription(voteCount));
 </script>

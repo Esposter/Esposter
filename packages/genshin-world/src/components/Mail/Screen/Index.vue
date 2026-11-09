@@ -39,8 +39,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { birthdayMailIds, gameText, isBagFull, mailRows, mails, materialDataMap, names, now, textMap } =
-  defineProps<Props>();
+const { birthdayMailIds, mailRows, mails } = defineProps<Props>();
 const emit = defineEmits<{
   claim: [mail: MailSave];
   claimAll: [];

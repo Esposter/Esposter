@@ -17,7 +17,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ append?: (props: { value: T }) => VNode }>();
 const modelValue = defineModel<T>();
-const { isDisabled = false, items, label } = defineProps<Props>();
+const { isDisabled = false } = defineProps<Props>();
 const id = useId();
 </script>
 

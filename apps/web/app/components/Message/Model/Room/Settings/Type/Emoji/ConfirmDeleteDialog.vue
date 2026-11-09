@@ -8,7 +8,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const roomEmojiStore = useRoomEmojiStore();
 const { items } = storeToRefs(roomEmojiStore);
 const { deleteRoomEmoji } = roomEmojiStore;

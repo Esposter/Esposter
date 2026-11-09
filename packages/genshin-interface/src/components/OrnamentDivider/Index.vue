@@ -16,7 +16,7 @@ interface Props {
   opacity?: number;
 }
 
-const { endScale, fill, isHairlineHidden, isMiddleHidden, opacity = 1 } = defineProps<Props>();
+const { opacity = 1 } = defineProps<Props>();
 </script>
 
 <template>

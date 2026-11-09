@@ -9,7 +9,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;
 const roomDialogStore = useRoomDialogStore();

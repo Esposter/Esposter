@@ -26,7 +26,7 @@ interface Props {
   serverClockOffsetMs: number;
 }
 
-const { gameText, isHeld, isPaused, language, save, serverClockOffsetMs } = defineProps<Props>();
+const { save } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
 const containerBaseUrl = useContainerBaseUrl();
 const gameDataBaseUrl = getGenshinGameDataBaseUrl(containerBaseUrl);

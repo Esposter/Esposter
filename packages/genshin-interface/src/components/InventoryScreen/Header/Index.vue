@@ -16,7 +16,7 @@ interface Props {
 }
 
 const category = defineModel<ItemCategory>("category", { required: true });
-const { backLabel, capacity, tabLabels } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

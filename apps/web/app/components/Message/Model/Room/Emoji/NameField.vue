@@ -10,7 +10,7 @@ interface Props {
 }
 
 const name = defineModel<string>({ required: true });
-const { isAutofocus, isLabelHidden } = defineProps<Props>();
+defineProps<Props>();
 const field = useTemplateRef("field");
 // The colons are the shortcode's rather than the name's, so a pasted `:avocado:` keeps only what is between them
 const enteredName = computed({

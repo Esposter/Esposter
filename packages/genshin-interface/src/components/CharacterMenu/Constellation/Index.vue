@@ -14,7 +14,7 @@ interface Props {
   names: string[];
 }
 
-const { activated, activateLabel, isActivateDisabled, names } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ activate: [] }>();
 const nodeStyles = CONSTELLATION_NODE_PLACES.map(({ left, top }) => ({
   left: `calc(var(--unit) * ${left})`,

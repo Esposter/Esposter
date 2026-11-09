@@ -21,7 +21,7 @@ interface Props
 // What the store and the inventory say of one item once its row is pressed: its picture and name, what it does, its
 // Flavour line and its price beside whatever buys it
 const slots = defineSlots<{ action?: () => VNode; "append-text"?: () => VNode }>();
-const { amount, description, flavorDescription, id, isAffordable, price, type } = defineProps<Props>();
+const { description, flavorDescription, price } = defineProps<Props>();
 const descriptionHtml = computed(() => (description ? marked.parse(description, { async: false }) : ""));
 const flavorDescriptionHtml = computed(() => marked.parse(`"${flavorDescription}"`, { async: false }));
 const displayPrice = computed(() => formatNumberLong(price));

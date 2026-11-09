@@ -3,7 +3,7 @@ import type { CallFeature } from "@/models/message/room/call/CallFeature";
 
 interface Props extends CallFeature {}
 
-const { description, icon, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- One thing a call can do: its mark and name on one line, a sentence under them -->

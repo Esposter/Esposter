@@ -11,7 +11,7 @@ interface Props {
   isDisabled: boolean;
 }
 
-const { costs, isDisabled } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

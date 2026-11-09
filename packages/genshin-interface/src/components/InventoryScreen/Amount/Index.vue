@@ -7,7 +7,7 @@ interface Props {
 }
 
 const amount = defineModel<number>("amount", { required: true });
-const { amountLabel, amountMaximum } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

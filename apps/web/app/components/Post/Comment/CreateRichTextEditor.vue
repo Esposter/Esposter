@@ -8,7 +8,7 @@ interface Props {
   parentId: string;
 }
 
-const { parentId } = defineProps<Props>();
+defineProps<Props>();
 const commentStore = useCommentStore();
 const { isCreateCommentPending } = storeToRefs(commentStore);
 const { createComment } = commentStore;

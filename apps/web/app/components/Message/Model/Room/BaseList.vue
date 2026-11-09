@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode; prepend: () => VNode }>();
-const { hasMore, isCollapsed = false, isPending } = defineProps<Props>();
+const { isCollapsed = false } = defineProps<Props>();
 const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
 </script>
 

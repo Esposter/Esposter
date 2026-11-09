@@ -12,7 +12,7 @@ interface Props<TType extends RowValueType> {
 }
 
 const modelValue = defineModel<Row<TType>["value"]>({ required: true });
-const { isEditMode, row, title } = defineProps<Props<TType>>();
+const { isEditMode, row } = defineProps<Props<TType>>();
 
 watch(
   () => isEditMode,

@@ -10,7 +10,7 @@ interface Props {
   requirement: TextSegment[];
 }
 
-const { headline, requirement } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -6,7 +6,7 @@ interface Props {
   roomId: string;
 }
 
-const { replyRowKey, roomId } = defineProps<Props>();
+defineProps<Props>();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
 const scrollToMessage = useScrollToMessage();

@@ -14,7 +14,7 @@ interface Props {
   isShown: boolean;
 }
 
-const { cell, isDestroying, isShown } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [id: string]; select: [id: string] }>();
 </script>
 

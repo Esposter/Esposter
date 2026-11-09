@@ -26,7 +26,7 @@ interface Props {
   isWorldBlurred?: boolean;
 }
 
-const { interactionState, isTouch } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -23,7 +23,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { achievements, categories, gameText, initialCategoryId, progressMap, textMap } = defineProps<Props>();
+const { achievements, categories, gameText, initialCategoryId, progressMap } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const selectedCategoryId = ref(initialCategoryId ?? categories[0]?.id ?? 0);
 const categoryAchievementsMap = computed(() => Map.groupBy(achievements, ({ categoryId }) => categoryId));

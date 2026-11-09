@@ -29,20 +29,7 @@ interface Props {
   worldLevelChangedAt?: Temporal.Instant;
 }
 
-const {
-  gameText,
-  isBirthdayDialogOpen,
-  isExitPrompted,
-  isNamecardDialogOpen,
-  isWorldLevelAdjustable,
-  isWorldLevelDialogOpen,
-  isWorldLevelLowered,
-  namecardItemId,
-  namecards,
-  serverClockOffsetMs,
-  worldLevel,
-  worldLevelChangedAt,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   closeBirthday: [];
   closeExit: [];

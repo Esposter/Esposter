@@ -21,7 +21,7 @@ interface Props {
 
 // The count the player picked, which the slider writes and the screen keeps within the good's most
 const count = defineModel<number>("count", { default: 1 });
-const { buyLabel, closeLabel, countLabel, countMaximum, good, pickedCount } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
 </script>
 

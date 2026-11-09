@@ -44,21 +44,7 @@ interface Props {
   totalCount: number;
 }
 
-const {
-  commissions,
-  completedCount,
-  dayCommissions,
-  domains,
-  encounterPointLimit,
-  encounterPoints,
-  gameText,
-  investigationRewards,
-  isAdventureEncountersUnlocked,
-  isLongTermEncounterPointUsable,
-  longTermEncounterPoints,
-  nameText,
-  totalCount,
-} = defineProps<Props>();
+defineProps<Props>();
 // A locked weekly boss is challenged by its entrance, and a weekly boss's first clear is claimed by its entry
 const emit = defineEmits<{
   challenge: [landmark: DomainEntranceLandmark];

@@ -88,42 +88,7 @@ const sort = defineModel<InventorySort>("sort", { required: true });
 const isDescending = defineModel<boolean>("isDescending", { required: true });
 // The entry the detail panel shows, its id, and the first entry of the open tab while none is chosen
 const selectedId = defineModel<string>("selectedId", { required: true });
-const {
-  amountLabel,
-  backLabel,
-  cancelLabel,
-  capacity,
-  cells,
-  currencies,
-  destroyButtonLabel,
-  destroyCannotLabel,
-  destroyConfirmButtonLabel,
-  destroyConfirmListLabel,
-  destroyConfirmTitle,
-  destroyConfirmWarningLabel,
-  destroyFullLabel,
-  destroyLabel,
-  destroyNames,
-  destroyRecoveredLabel,
-  destroyRecoveredNames,
-  destroySelectedLabel,
-  destroyTipLabel,
-  detailsLabel,
-  isConfirming,
-  isDestroyFull,
-  isDestroying,
-  isSortable,
-  lockLabel,
-  orderLabel,
-  quickSelects,
-  quickUseLabel,
-  sortLabels,
-  tabLabels,
-  title,
-  unlockLabel,
-  useLabel,
-  weaponDetails,
-} = defineProps<Props>();
+const { cells, isConfirming } = defineProps<Props>();
 const emit = defineEmits<{
   cancelDestroy: [];
   choose: [id: string];

@@ -10,7 +10,7 @@ interface Props {
   isPicked: boolean;
 }
 
-const { floor, isPicked } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [chamberId: number]; pick: [] }>();
 </script>
 

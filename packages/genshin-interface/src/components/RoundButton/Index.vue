@@ -11,7 +11,7 @@ interface Props {
   label: string;
 }
 
-const { icon, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

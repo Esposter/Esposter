@@ -26,7 +26,7 @@ interface Props {
 
 const characters = defineModel<Character[]>("characters", { required: true });
 const inventory = defineModel<Inventory>("inventory", { required: true });
-const { artifactSlot, character, gameText, nameText, reliquarySets } = defineProps<Props>();
+const { artifactSlot } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // The bag's artifacts for the slot, in the picker's options
 const equipOptions = computed(() =>

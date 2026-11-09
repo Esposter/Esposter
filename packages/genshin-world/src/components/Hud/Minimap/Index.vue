@@ -32,7 +32,7 @@ interface Props {
   parent: CanvasRect;
 }
 
-const { camera, catalogue, gameText, interfaceRects, landmarks, nearOculusPlaces, parent } = defineProps<Props>();
+const { nearOculusPlaces } = defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 // The chime sounds as an Oculus comes into range, not on every frame it stays in range
 let nearOculusIds = new Set<string>();

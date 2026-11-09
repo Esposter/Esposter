@@ -12,7 +12,7 @@ interface Props {
   pointer: string;
 }
 
-const { node, pointer } = defineProps<Props>();
+defineProps<Props>();
 const surveyCreatorStore = useSurveyCreatorStore();
 const { selectedPointer } = storeToRefs(surveyCreatorStore);
 const { getSelectionBindings } = useSurveyCanvasSelection();

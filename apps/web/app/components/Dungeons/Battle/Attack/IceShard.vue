@@ -7,7 +7,7 @@ import { getAnimationCompleteEventKey } from "@/services/dungeons/animation/getA
 import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
-const { isToEnemy } = defineProps<AttackProps>();
+defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 const animationCompleteEventKey = getAnimationCompleteEventKey(AttackKey["Ice Shard Start"]);
 </script>

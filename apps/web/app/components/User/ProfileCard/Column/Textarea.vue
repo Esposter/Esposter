@@ -12,7 +12,7 @@ interface Props {
 }
 
 const modelValue = defineModel<Row<RowValueType.Textarea>["value"]>({ required: true });
-const { isEditMode, label, value } = defineProps<Props>();
+defineProps<Props>();
 const valueRules = [UiRules.maxLength(USER_BIOGRAPHY_MAX_LENGTH)];
 </script>
 

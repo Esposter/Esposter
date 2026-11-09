@@ -10,7 +10,7 @@ interface Props {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { css, device, title } = defineProps<Props>();
+const { css, device } = defineProps<Props>();
 
 const frame = useTemplateRef("frame");
 const pane = useTemplateRef("pane");

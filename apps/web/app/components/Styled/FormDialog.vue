@@ -21,7 +21,7 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default?: () => VNode; "prepend-actions"?: () => VNode; "prepend-confirm"?: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { confirmLabel, confirmVariant, isConfirmDisabled, isOptimistic, size, submit, title } = defineProps<Props>();
+defineProps<Props>();
 const { answer, isPending } = useDialogAnswer(isOpen);
 const isValid = ref(true);
 const formId = useId();

@@ -16,7 +16,7 @@ interface Props {
   queueId: number;
 }
 
-const { forgedLabel, headingLabel, isObtainable, obtainLabel, progress, queueId } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ obtain: [queueId: number] }>();
 </script>
 

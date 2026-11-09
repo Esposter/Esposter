@@ -15,7 +15,7 @@ interface Props {
   levels: DomainLevelRow[];
 }
 
-const { gameText, isInDomain, levels } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; enter: [dungeonId: number]; leave: [] }>();
 </script>
 

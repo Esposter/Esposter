@@ -5,7 +5,7 @@ interface Props {
   post: PostInPostWithRelations;
 }
 
-const { post } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -12,7 +12,7 @@ interface Props {
   name: string;
 }
 
-const { caption, isDisabled, isPressed, name } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ pick: [] }>();
 </script>
 

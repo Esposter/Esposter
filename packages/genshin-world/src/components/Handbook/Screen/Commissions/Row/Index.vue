@@ -17,7 +17,7 @@ interface Props {
   nameText: Readonly<Record<string, string>>;
 }
 
-const { commission, gameText, index, nameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ claimCommission: [commissionId: number] }>();
 </script>
 

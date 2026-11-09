@@ -4,7 +4,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- One saved value, read rather than edited: its name in the muted colour above it -->

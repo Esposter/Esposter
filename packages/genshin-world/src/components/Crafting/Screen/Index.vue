@@ -72,8 +72,6 @@ const wallet = defineModel<Wallet>("wallet", { required: true });
 const craftedCountMap = defineModel<ReadonlyMap<number, number>>("craftedCountMap", { required: true });
 const {
   adventureRank,
-  artifactDropTables,
-  crafters,
   gameText,
   getWorldNow,
   initialCrafterId,
@@ -83,9 +81,6 @@ const {
   progress,
   random,
   recipes,
-  reliquaryPieceEntryMap,
-  strongboxes,
-  weaponDataMap,
 } = defineProps<Props>();
 const emit = defineEmits<{ achievementEvents: [achievementEvents: AchievementEvent[]]; close: [] }>();
 const amount = ref(1);

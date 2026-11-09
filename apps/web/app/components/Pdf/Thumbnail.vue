@@ -8,7 +8,7 @@ interface Props {
   pdfDocument?: PDFDocumentProxy;
 }
 
-const { isFailed, pdfDocument } = defineProps<Props>();
+const { pdfDocument } = defineProps<Props>();
 const canvas = useTemplateRef("canvas");
 
 usePdfPage({ canvas: () => canvas.value ?? undefined, pageNumber: 1, pdfDocument: () => pdfDocument });

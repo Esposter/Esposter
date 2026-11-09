@@ -12,7 +12,7 @@ interface Props {
   repliesId: string;
 }
 
-const { comment, isExpanded, repliesId } = defineProps<Props>();
+defineProps<Props>();
 const commentStore = useCommentStore();
 const { toggleCommentExpanded } = commentStore;
 </script>

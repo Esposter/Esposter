@@ -5,7 +5,7 @@ interface Props {
 }
 
 defineSlots<{ default: (props: { descriptionId: string }) => VNode }>();
-const { description, title } = defineProps<Props>();
+defineProps<Props>();
 const descriptionId = useId();
 </script>
 

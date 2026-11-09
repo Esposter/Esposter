@@ -10,7 +10,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { rename, resource } = defineProps<Props>();
+const { resource } = defineProps<Props>();
 // The caller mounts this only while it is open, so the field starts from the current name on every open
 const editedName = ref(resource.name);
 const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGTH)];

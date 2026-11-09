@@ -21,7 +21,7 @@ interface Props {
   title: string;
 }
 
-const { closeLabel, coins, materialsLabel, queuesLabel, tab, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; "update:tab": [tab: ForgeTab] }>();
 </script>
 

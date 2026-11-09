@@ -7,7 +7,7 @@ interface Props {
 }
 
 // The fill of a shape or a sticky note, changed as the picker is moved
-const { fill, index } = defineProps<Props>();
+defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { updateElementProperty } = whiteboardStore;
 </script>

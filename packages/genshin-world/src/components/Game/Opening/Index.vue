@@ -33,8 +33,7 @@ interface Props {
   sceneExportBaseUrl: string;
 }
 
-const { gameDataBaseUrl, gameText, language, musicRecordingBaseUrl, playerName, progress, sceneExportBaseUrl } =
-  defineProps<Props>();
+const { gameDataBaseUrl, language } = defineProps<Props>();
 const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
 // The game's opening as one sequence: its splashes on white, then the login screen under the sky of the player's
 // Hour, its title waiting for a click, its flight and its door waiting for another, then the startup loading screen,

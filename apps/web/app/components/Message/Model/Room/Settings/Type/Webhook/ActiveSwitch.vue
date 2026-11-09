@@ -8,7 +8,7 @@ interface Props {
   webhook: WebhookInMessage;
 }
 
-const { roomId, webhook } = defineProps<Props>();
+defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 </script>

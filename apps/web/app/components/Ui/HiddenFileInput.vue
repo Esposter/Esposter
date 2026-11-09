@@ -3,7 +3,7 @@ interface Props {
   accept: string;
 }
 
-const { accept } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [file: File | undefined] }>();
 const input = useTemplateRef("input");
 // The caller's own labelled control opens the picker and reads back what was picked, so the picker's input stays out

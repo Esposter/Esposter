@@ -15,7 +15,7 @@ interface Props {
   options: SettingsOption[];
 }
 
-const { label, options } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

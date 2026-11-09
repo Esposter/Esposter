@@ -4,7 +4,7 @@ interface Props {
   label: string;
 }
 
-const { label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

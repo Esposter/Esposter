@@ -15,7 +15,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+const { node } = defineProps<Props>();
 const items = computed(() => getSurveyRatingItems(node.props.rateCount));
 const rating = computed<number | string>({
   get: () => getSurveyRatingStep(answer.value),

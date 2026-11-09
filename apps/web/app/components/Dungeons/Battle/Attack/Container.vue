@@ -8,7 +8,7 @@ interface Props {
 
 defineSlots<{ default: () => VNode }>();
 const isActive = defineModel<boolean>("isActive", { required: true });
-const { isToEnemy } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

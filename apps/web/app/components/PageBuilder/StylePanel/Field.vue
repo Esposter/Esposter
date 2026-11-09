@@ -20,7 +20,7 @@ interface Props {
 }
 // The saved value. A draft the check refuses stays in the field, unsaved, and the saved value is left as it was
 const modelValue = defineModel<string>({ required: true });
-const { label, placeholder, property } = defineProps<Props>();
+const { property } = defineProps<Props>();
 const draft = ref(modelValue.value);
 const rules = [() => getStyleValueError(property, draft.value) ?? true];
 // A length is drawn as its number and a unit select, where the number is what the arrows step. A draft that is not a length stays text

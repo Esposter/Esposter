@@ -13,7 +13,7 @@ interface Props {
   title: string;
 }
 
-const { gameText, subtitle, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   // The button that closes the tip, after which the next tip waiting is shown
   close: [];

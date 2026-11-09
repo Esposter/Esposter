@@ -11,7 +11,7 @@ interface Props {
   yaw?: number;
 }
 
-const { size, x = 0, y = 0, yaw = 0 } = defineProps<Props>();
+const { x = 0, y = 0, yaw = 0 } = defineProps<Props>();
 </script>
 
 <template>

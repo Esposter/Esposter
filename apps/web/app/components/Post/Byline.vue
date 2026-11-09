@@ -8,7 +8,7 @@ interface Props {
   post: PostInPostWithRelations;
 }
 
-const { isLink, post } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

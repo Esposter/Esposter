@@ -14,7 +14,7 @@ interface Props {
   depth: number;
 }
 
-const { comment, depth } = defineProps<Props>();
+const { comment } = defineProps<Props>();
 // The synchronous form: a tree renders one of these per node, and the awaited one makes every node an async
 // Boundary for something that only gates action affordances
 const session = authClient.useSession();

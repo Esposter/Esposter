@@ -8,7 +8,7 @@ interface Props {
 }
 
 const addText = defineModel<string>({ required: true });
-const { label, placeholder } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ add: []; paste: [event: ClipboardEvent] }>();
 </script>
 

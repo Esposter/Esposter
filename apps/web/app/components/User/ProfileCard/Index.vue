@@ -16,7 +16,7 @@ interface Props {
   section?: UserSettingsPageSection;
 }
 
-const { section } = defineProps<Props>();
+defineProps<Props>();
 const { data: session } = await useAuthSession();
 const { updateUser } = authClient;
 const { executeMutation, isPending } = useMutation();

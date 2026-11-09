@@ -14,7 +14,7 @@ interface Props {
 
 // The tab the screen shows, which a tab's own press chooses
 const tab = defineModel<SettingsTab>("tab", { required: true });
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

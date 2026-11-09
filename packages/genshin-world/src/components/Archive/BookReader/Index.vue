@@ -13,7 +13,7 @@ interface Props {
   title: string;
 }
 
-const { body, gameText, title } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 </script>
 

@@ -14,7 +14,7 @@ interface Props {
   start: string;
 }
 
-const { createdAt, mcpScopes, name, start } = defineProps<Props>();
+const { mcpScopes, start } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const description = computed(() =>
   [

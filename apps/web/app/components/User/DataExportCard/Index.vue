@@ -9,7 +9,7 @@ interface Props {
   section: UserSettingsPageSection;
 }
 
-const { section } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const {
   data: dataExport,

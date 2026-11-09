@@ -14,7 +14,7 @@ interface Props {
   variant?: "quest";
 }
 
-const { count, countSize = "30cqh", rarity, variant } = defineProps<Props>();
+const { countSize = "30cqh", variant } = defineProps<Props>();
 const faceGradientMap = computed(() => (variant ? ItemRarityQuestFaceGradientMap : ItemRarityFaceGradientMap));
 </script>
 

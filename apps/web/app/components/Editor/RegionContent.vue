@@ -16,7 +16,7 @@ interface Props {
   registry: EditorRegistry;
 }
 
-const { name, panelNameMap, region, registry } = defineProps<Props>();
+const { panelNameMap, region, registry } = defineProps<Props>();
 // A reader who picks a tab chooses the region's panel, which the shell keeps in the reader's state
 const emit = defineEmits<{ selectPanel: [panelId: string] }>();
 // A region holding several present panels is tabbed, with one tab for each, and draws the panel its reader chose

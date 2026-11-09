@@ -9,7 +9,7 @@ interface Props {
   roleId: RoomRoleInMessage["id"];
 }
 
-const { roleId } = defineProps<Props>();
+defineProps<Props>();
 const roleDialogStore = useRoleDialogStore();
 const { deletingId } = storeToRefs(roleDialogStore);
 </script>

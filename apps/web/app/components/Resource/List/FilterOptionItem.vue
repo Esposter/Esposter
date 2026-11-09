@@ -10,7 +10,7 @@ interface Props {
   selectedValues: T[];
 }
 
-const { item, meaning, selectedValues } = defineProps<Props>();
+const { item, selectedValues } = defineProps<Props>();
 const emit = defineEmits<{ toggle: [value: T] }>();
 // Read once for both the pressed state and the mark, since a choice shows its mark only while it is on
 const isSelected = computed(() => selectedValues.includes(item.value));

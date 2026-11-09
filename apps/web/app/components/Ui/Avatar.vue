@@ -11,7 +11,7 @@ interface Props {
   name: string;
 }
 
-const { image = "", isLarge, isSmall, name } = defineProps<Props>();
+const { image = "" } = defineProps<Props>();
 // A server-rendered image can finish loading before hydration attaches the load listener, and Vuetify 0 never looks
 // Again, so the letter would stay up over a loaded image. NuxtImg reports a load that landed before it mounted
 const NuxtImg = resolveComponent("NuxtImg");

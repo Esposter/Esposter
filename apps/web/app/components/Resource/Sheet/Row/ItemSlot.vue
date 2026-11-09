@@ -12,7 +12,7 @@ interface Props {
   rowIndex: number;
 }
 
-const { columnKey, item, rowIndex } = defineProps<Props>();
+const { columnKey } = defineProps<Props>();
 const columnStore = useColumnStore();
 const { displayColumns } = storeToRefs(columnStore);
 const cellStore = useCellStore();

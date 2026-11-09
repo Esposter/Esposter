@@ -14,7 +14,7 @@ interface Props {
 // A submit button's type and a toggle's pressed state are the call site's to set
 defineOptions({ inheritAttrs: false });
 defineSlots<{ default: () => VNode }>();
-const { disabled, isPending, variant } = defineProps<Props>();
+defineProps<Props>();
 // The primitive renders nothing of its own, so the component's root is not the button: what anchors a popover or
 // Takes focus back reads the element here
 const element = useTemplateRef("element");

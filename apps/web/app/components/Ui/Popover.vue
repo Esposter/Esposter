@@ -24,7 +24,7 @@ defineOptions({ inheritAttrs: false });
 defineSlots<{ default: (props: { close: () => void }) => VNode; trigger?: () => VNode }>();
 // Written from outside too, so a shortcut elsewhere on the page can open the panel
 const isOpenModel = defineModel<boolean>("isOpen", { default: false });
-const { anchor, isLabelShown, label, positionArea = POPOVER_POSITION_AREA, variant } = defineProps<Props>();
+const { anchor, positionArea = POPOVER_POSITION_AREA } = defineProps<Props>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => anchor ?? trigger.value?.element);

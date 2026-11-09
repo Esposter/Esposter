@@ -9,7 +9,7 @@ interface Props {
   width: number;
 }
 
-const { imagePosition, scaleY, width } = defineProps<Props>();
+defineProps<Props>();
 const leftCapShadowDisplayWidth = ref<number>();
 const rightCapShadowDisplayWidth = ref<number>();
 </script>

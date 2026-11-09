@@ -8,7 +8,7 @@ interface Props {
   value: number;
 }
 
-const { label, value } = defineProps<Props>();
+const { value } = defineProps<Props>();
 const uiStyle = useUiStyle();
 const filledBlockCount = computed(() => Math.round((value / 100) * LOADING_BAR_BLOCK_COUNT));
 </script>

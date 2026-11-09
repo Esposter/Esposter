@@ -9,7 +9,7 @@ import { AdminActionType } from "@esposter/db-schema";
 interface Props extends MemberActionTarget {}
 
 const isOpen = defineModel<boolean>({ default: false });
-const { displayName, user } = defineProps<Props>();
+defineProps<Props>();
 // A radio group's values are strings, so each duration is carried as its milliseconds written out
 const durationItems = TimeoutDurationSelectItems.map(({ title, value }) => ({ title, value: String(value) }));
 const selectedDurationMs = ref(String(TimeoutDurationMap["1 minute"]));

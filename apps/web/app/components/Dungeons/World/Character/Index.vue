@@ -9,18 +9,7 @@ import { Sprite } from "vue-phaserjs";
 
 const position = defineModel<Position>("position", { required: true });
 const direction = defineModel<Direction | undefined>("direction", { required: true });
-const {
-  id,
-  onComplete,
-  onMovementStarted,
-  onMovementStopped,
-  onPositionChangeFinished,
-  onPositionChangeStarted,
-  singleSidedSpritesheetDirection,
-  speed,
-  spriteConfiguration,
-  walkingAnimationMapping,
-} = defineProps<CharacterProps>();
+defineProps<CharacterProps>();
 // Every grid-engine stream this character listens on, so a sixth costs a push rather than a ref and a line in
 // The teardown. Grid engine removes the character itself when a new tilemap is created
 const subscriptions = ref<Subscription[]>([]);

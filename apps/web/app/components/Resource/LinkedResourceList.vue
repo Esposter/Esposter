@@ -8,7 +8,7 @@ interface Props {
   resources: LinkedResource[];
 }
 
-const { resources } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- Each row goes to the resource it names, leading with its type's mark -->

@@ -20,7 +20,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { armedHandIndex, cards, gameText, rerollHandIndex, switchedHandIndices, textMap } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [handIndex: number] }>();
 </script>
 

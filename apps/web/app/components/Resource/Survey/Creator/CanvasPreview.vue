@@ -8,7 +8,7 @@ interface Props {
   node: SurveyPlaceableNode;
 }
 
-const { node } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

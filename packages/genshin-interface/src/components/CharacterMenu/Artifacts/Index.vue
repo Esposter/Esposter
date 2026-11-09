@@ -46,24 +46,7 @@ interface Props {
   unlockLabel: string;
 }
 
-const {
-  artifactDetailsLabel,
-  enhanceLabel,
-  equipDisabledSlots,
-  equipLabel,
-  fastEquipLabel,
-  lockLabel,
-  noSetBonusLabel,
-  notice,
-  setBonusHeading,
-  sets,
-  slotNames,
-  slotStats,
-  switchLabel,
-  totals,
-  unequipLabel,
-  unlockLabel,
-} = defineProps<Props>();
+const { slotStats } = defineProps<Props>();
 const emit = defineEmits<CharacterMenuArtifactEmits>();
 // The slot the actions are for, the first until Switch moves it on, and whether the details are open in place of the totals
 const selectedIndex = ref(0);

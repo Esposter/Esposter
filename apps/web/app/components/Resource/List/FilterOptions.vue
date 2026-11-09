@@ -8,7 +8,7 @@ interface Props {
   selectedValues: T[];
 }
 // A filter's choices as buttons that say whether each is on, so one list serves a filter of one choice and of several
-const { items, meaning, selectedValues } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ toggle: [value: T] }>();
 </script>
 

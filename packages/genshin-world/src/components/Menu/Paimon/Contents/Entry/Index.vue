@@ -22,7 +22,7 @@ interface Props {
   screenKind: TitledScreenKind;
 }
 
-const { alertedIcons, checkIsBuilt, gameText, icon, screenKind } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 </script>
 

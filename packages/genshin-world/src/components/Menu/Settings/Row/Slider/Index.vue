@@ -18,7 +18,7 @@ interface Props {
 
 // The settings the slider sets, which the host keeps on this device
 const settings = defineModel<GenshinSettings>("settings", { required: true });
-const { gameText, row } = defineProps<Props>();
+const { row } = defineProps<Props>();
 const trackValue = computed(() => getTrackValue(row, settings.value));
 const isBacked = computed(() => row.kind !== SettingsRowKind.Slider);
 // Sets the value, held within the row's range, of a slider the world backs

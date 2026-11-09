@@ -17,7 +17,7 @@ interface Props {
   transform: string;
 }
 
-const { catalogue, landmarks, markRadius, transform } = defineProps<Props>();
+const { catalogue, landmarks } = defineProps<Props>();
 const emit = defineEmits<{ select: [landmark: PlaceLandmark] }>();
 // Only a filled area's outline is drawn: the rest of the map is blank until a statue of it is resonated with
 const areaOutlines = computed(() => {

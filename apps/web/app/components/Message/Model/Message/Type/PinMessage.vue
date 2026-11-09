@@ -6,7 +6,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props extends MessageComponentProps<StandardMessageEntity> {}
 
-const { active, creator, isPreview = false, message } = defineProps<Props>();
+const { isPreview = false } = defineProps<Props>();
 const scrollToMessage = useScrollToMessage();
 </script>
 

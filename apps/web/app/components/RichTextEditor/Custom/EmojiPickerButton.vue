@@ -8,7 +8,7 @@ interface Props {
   editor?: Editor;
 }
 
-const { editor } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

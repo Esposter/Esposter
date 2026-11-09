@@ -18,7 +18,7 @@ interface Props {
   isDisabled?: true;
 }
 
-const { isDisabled } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const { executeMutation, isPending: isDeployPending } = useMutation();
 const resourceStore = useResourceStore();

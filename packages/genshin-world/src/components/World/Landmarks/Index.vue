@@ -57,17 +57,13 @@ interface Props {
 }
 
 const {
-  getGroundHeight,
-  hiddenKinds,
   kindFamilyMap = {},
   landmarkCollider,
   lightUniforms,
   rampTexture,
   regionDataMap,
   sceneExportMap,
-  statue,
   surfaces,
-  treeSpeciesOptionsMap,
   windUniforms,
 } = defineProps<Props>();
 // Every landmark of every region in reach, built by its kind's kit, so a region's landmarks appear as its data

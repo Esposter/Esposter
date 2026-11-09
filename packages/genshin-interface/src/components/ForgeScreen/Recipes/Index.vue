@@ -20,7 +20,7 @@ interface Props {
   tab: ForgeTab;
 }
 
-const { queues, recipeId, recipes, selectedQueueId, tab } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ "update:recipeId": [recipeId: number] }>();
 </script>
 

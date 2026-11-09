@@ -7,7 +7,7 @@ interface Props {
   width?: number;
 }
 
-const { height, width } = defineProps<Props>();
+defineProps<Props>();
 const glassPanelImageKey = useGlassPanelImageKey();
 </script>
 

@@ -4,7 +4,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <!-- The header names what is selected, so a reader knows what a change will touch. Whether a panel is drawn at all is the editor's: each

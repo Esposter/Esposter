@@ -10,7 +10,7 @@ interface Props {
   isSelected: boolean;
 }
 
-const { face, isSelected } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

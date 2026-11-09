@@ -11,7 +11,7 @@ interface Props {
   rarity: number;
 }
 
-const { caption, name, rarity } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ choose: [] }>();
 </script>
 

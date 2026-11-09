@@ -13,7 +13,7 @@ interface Props {
 // The store's and the inventory's rows, as Cookie Clicker's: an item's picture, its name over its price and how many
 // Are owned. A row opens its item's details in the one popover the list keeps, hung off the row pressed
 defineSlots<{ detail: (props: { item: T }) => VNode }>();
-const { items, label, positionArea } = defineProps<Props>();
+const { items, label } = defineProps<Props>();
 // Each row carries its item, so the slots draw from it without finding it again
 const listItems = computed(() =>
   items.map<UiListItem<string> & { item: T }>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),

@@ -22,7 +22,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { adventureRank, alertedIcons, checkIsBuilt, finishedMainQuestIds, gameText } = defineProps<Props>();
+const { adventureRank, finishedMainQuestIds } = defineProps<Props>();
 const emit = defineEmits<{ open: [screenKind: TitledScreenKind] }>();
 // The contents the player's rank and quests have opened, in the game's order: a system not open yet is not drawn at all
 const openContents = computed(() =>

@@ -11,7 +11,7 @@ interface Props {
   id: WebhookInMessage["id"];
 }
 
-const { action, id } = defineProps<Props>();
+const { action } = defineProps<Props>();
 const webhookDialogStore = useWebhookDialogStore();
 const { getSelectedId } = webhookDialogStore;
 const selectedId = getSelectedId(action);

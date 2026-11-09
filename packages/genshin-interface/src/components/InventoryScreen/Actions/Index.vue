@@ -19,7 +19,7 @@ interface Props {
   useLabel: string;
 }
 
-const { amountLabel, detailsLabel, isDestroying, isSortable, selectedCell, useLabel } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ use: [id: string, amount: number] }>();
 // The amount the Use eats, one until the player picks one. The Index keys this component by the entry it shows, so each
 // Entry starts at one, and a Use sets it back to one, since the stack it came from may now hold less than was picked

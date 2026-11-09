@@ -22,7 +22,7 @@ interface Props {
 const modelValue = defineModel<Temporal.PlainDate>();
 const from = defineModel<Temporal.PlainDate>("from");
 const to = defineModel<Temporal.PlainDate>("to");
-const { isRange, label, markedDates = [], max, min } = defineProps<Props>();
+const { isRange, markedDates = [], max, min } = defineProps<Props>();
 const headingId = useId();
 const root = useTemplateRef("root");
 const { today } = useCalendarClock();

@@ -39,7 +39,7 @@ const inventory = defineModel<Inventory>("inventory", { required: true });
 const progress = defineModel<CookingProgress>("progress", { required: true });
 // The recipe on the screen, whose zone parameters lay out the indicator, and the dishes the list offers
 const recipe = defineModel<CookingRecipe>("recipe", { required: true });
-const { avatarId, gameText, heldPointer, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
+const { avatarId, heldPointer, materialDataMap, nameText, random, recipes, talent } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const zones = computed(() => readCookingZones(recipe.value.qteParam));
 const dishes = computed(() => recipes.map(({ id, nameTextId }) => ({ id, name: nameText[nameTextId] ?? "" })));

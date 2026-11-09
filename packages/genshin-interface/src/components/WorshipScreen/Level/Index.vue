@@ -17,7 +17,7 @@ interface Props {
   state: WorshipLevelState;
 }
 
-const { rewards, staminaLabel, staminaShare, state } = defineProps<Props>();
+const { rewards, staminaLabel, staminaShare } = defineProps<Props>();
 const emit = defineEmits<{ claim: [] }>();
 // The lines the level pays: its stamina first, then each reward by its name and its count
 const lines = computed(() => [

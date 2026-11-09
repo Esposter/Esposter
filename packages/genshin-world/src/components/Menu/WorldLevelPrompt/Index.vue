@@ -15,7 +15,7 @@ interface Props {
   interactionState?: InteractionState;
 }
 
-const { adjustPrompt, gameText, interactionState } = defineProps<Props>();
+const { adjustPrompt, gameText } = defineProps<Props>();
 const emit = defineEmits<{ close: []; confirm: [] }>();
 const cancelButton = useTemplateRef("cancelButton");
 // The tips are the change's own words, in the colours their tags give them

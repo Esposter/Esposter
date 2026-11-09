@@ -11,7 +11,7 @@ interface Props {
 }
 
 // An arrow's route, the arrowhead at each of its ends, and the detach of each end bound to a shape. A detach is one commit
-const { arrow, index } = defineProps<Props>();
+const { index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations, updateElementProperty } = whiteboardStore;
 const { editState } = storeToRefs(whiteboardStore);

@@ -11,7 +11,7 @@ interface Props {
 }
 // The background-image value, its layers joined by commas. A background's colour is its own field beside the list
 const modelValue = defineModel<string>({ required: true });
-const { placeholder } = defineProps<Props>();
+defineProps<Props>();
 // Each layer is keyed by its own id rather than its place, so removing one keeps the unsaved draft of the layers after it
 const toLayers = (value: string): Layer[] =>
   splitBackgroundLayers(value).map((layer) => ({ id: crypto.randomUUID(), value: layer }));

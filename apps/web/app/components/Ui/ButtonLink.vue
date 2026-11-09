@@ -9,7 +9,7 @@ interface Props {
 // Somewhere to go that reads as something to press: a real link, so it opens in a new tab like any other, in the
 // Button's look
 defineSlots<{ default: () => VNode }>();
-const { to, variant } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

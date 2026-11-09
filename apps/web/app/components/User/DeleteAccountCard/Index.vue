@@ -12,7 +12,7 @@ interface Props {
   section: UserSettingsPageSection;
 }
 
-const { section } = defineProps<Props>();
+defineProps<Props>();
 const { data: session } = await useAuthSession();
 const { $trpc } = useNuxtApp();
 const { executeMutation } = useMutation();

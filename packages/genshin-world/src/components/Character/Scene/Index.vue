@@ -11,7 +11,7 @@ interface Props {
   tab: CharacterMenuTab;
 }
 
-const { element = Element.Geo, tab } = defineProps<Props>();
+const { element = Element.Geo } = defineProps<Props>();
 </script>
 
 <template>

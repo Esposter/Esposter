@@ -13,7 +13,7 @@ interface Props {
   row: DataSource["rows"][number];
 }
 
-const { columns, index, row } = defineProps<Props>();
+const { columns, row } = defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { editingId } = storeToRefs(rowDialogStore);
 const { isOpen } = useSingletonDialog(editingId);

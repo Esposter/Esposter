@@ -32,18 +32,7 @@ interface Props {
 const amount = defineModel<number>("amount", { default: 1 });
 const crafterId = defineModel<number>("crafterId", { default: 0 });
 const recipeId = defineModel<number>("recipeId", { default: 0 });
-const {
-  amountLabel,
-  amountMaximum,
-  craftedLabel,
-  crafters,
-  craftingMaterialsLabel,
-  craftLabel,
-  materials,
-  recipes,
-  requiredCoins,
-  requiredLabel,
-} = defineProps<Props>();
+const { recipes } = defineProps<Props>();
 const emit = defineEmits<{ craft: [] }>();
 const pickedRecipeName = computed(() => recipes.find((recipe) => recipe.id === recipeId.value)?.name ?? "");
 </script>

@@ -11,7 +11,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node } = defineProps<Props>();
+defineProps<Props>();
 // A comment's answer is the text as typed, and an empty box holds no answer
 const comment = computed({
   get: () => (answer.value === undefined ? "" : String(answer.value)),

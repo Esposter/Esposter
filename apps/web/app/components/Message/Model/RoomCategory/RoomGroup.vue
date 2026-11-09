@@ -12,7 +12,7 @@ interface Props {
   rooms: RoomInMessage[];
 }
 
-const { category, rooms } = defineProps<Props>();
+const { category } = defineProps<Props>();
 const emit = defineEmits<{ move: [direction: -1 | 1] }>();
 const roomCategoryDialogStore = useRoomCategoryDialogStore();
 const { deletingId } = storeToRefs(roomCategoryDialogStore);

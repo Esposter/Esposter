@@ -11,7 +11,7 @@ interface Props {
   isPending: boolean;
 }
 
-const { counts, error, isPending } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
 const emptyState = {
   description: "No resources match the current filters.",

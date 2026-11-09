@@ -8,7 +8,7 @@ interface Props {
   truncation: DatasetTruncation;
 }
 
-const { truncation } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

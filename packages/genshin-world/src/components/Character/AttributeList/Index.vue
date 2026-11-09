@@ -39,20 +39,7 @@ interface Props {
   travelerBonusLines: AttributeLine[];
 }
 
-const {
-  ascendRows,
-  character,
-  elementMarkPath,
-  friendshipLevel,
-  gameText,
-  isAscendable,
-  isLevelUpable,
-  isLiftable,
-  maxStamina,
-  name,
-  statTables,
-  travelerBonusLines,
-} = defineProps<Props>();
+const { character, gameText, maxStamina, statTables, travelerBonusLines } = defineProps<Props>();
 const emit = defineEmits<{ ascend: []; levelUp: []; lift: [] }>();
 const characterData = computed(() => statTables.characterDataMap.get(character.id));
 // The level and the cap it is at, the cap in the dimmer colour the game's own line sets it in

@@ -14,7 +14,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 const closeButton = useTemplateRef("closeButton");
 // The map is a dialog over the world, so focus starts inside it

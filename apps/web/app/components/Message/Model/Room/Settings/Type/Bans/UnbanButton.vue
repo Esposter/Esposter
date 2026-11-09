@@ -8,7 +8,7 @@ interface Props {
   userId: BanInMessage["userId"];
 }
 
-const { userId } = defineProps<Props>();
+defineProps<Props>();
 const banDialogStore = useBanDialogStore();
 const { unbanningUserId } = storeToRefs(banDialogStore);
 </script>

@@ -8,7 +8,7 @@ interface Props {
 }
 
 // One element drawn by its kind, in the order the canvas gives it, so the element list's order is its z-order
-const { element } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

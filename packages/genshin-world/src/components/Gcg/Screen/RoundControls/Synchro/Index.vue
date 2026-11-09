@@ -12,7 +12,7 @@ interface Props {
   isTuning: boolean;
 }
 
-const { gameText, isActionLocked, isTuning } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ toggleTuning: [] }>();
 </script>
 

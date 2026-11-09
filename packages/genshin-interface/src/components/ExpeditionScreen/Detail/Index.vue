@@ -15,7 +15,7 @@ interface Props {
   rewardsLabel: string;
 }
 
-const { detail, hours, rewardsLabel } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ "update:hours": [hours: number] }>();
 </script>
 

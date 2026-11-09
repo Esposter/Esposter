@@ -8,7 +8,7 @@ interface Props {
   label: string;
 }
 
-const { direction, label } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 

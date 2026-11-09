@@ -6,7 +6,7 @@ interface Props {
   userId: string;
 }
 
-const { userId } = defineProps<Props>();
+defineProps<Props>();
 const blockStore = useBlockStore();
 const { createBlock } = blockStore;
 </script>

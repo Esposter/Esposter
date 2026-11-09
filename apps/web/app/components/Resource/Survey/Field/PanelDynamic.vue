@@ -24,7 +24,7 @@ interface Props {
 }
 
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, getRowViews, isDisabled, node, seed } = defineProps<Props>();
+const { getRowViews, isDisabled, node } = defineProps<Props>();
 const panels = computed(() => getSurveyAnswerRows(answer.value, node.props.panelCount));
 // A panel's key names its row for as long as the row stands, so a row that stays keeps the state its fields hold while the
 // Rows before it are removed. An answer has no id to read a key from, so each is minted here

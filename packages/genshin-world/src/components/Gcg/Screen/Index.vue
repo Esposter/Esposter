@@ -36,7 +36,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { battleNumber, battleTotal, duel, gameText, playerSideIndex, textMap } = defineProps<Props>();
+const { battleNumber, battleTotal, duel, gameText, playerSideIndex } = defineProps<Props>();
 const emit = defineEmits<{
   declareRoundEnd: [];
   leave: [won: boolean];

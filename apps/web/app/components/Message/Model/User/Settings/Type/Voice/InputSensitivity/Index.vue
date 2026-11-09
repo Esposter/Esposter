@@ -9,7 +9,7 @@ interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<Props>();
+defineProps<Props>();
 const { audioInputs, ensurePermissions, permissionGranted } = useDevicesList({ requestPermissions: false });
 </script>
 

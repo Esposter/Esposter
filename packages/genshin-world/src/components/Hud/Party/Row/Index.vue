@@ -31,7 +31,7 @@ interface Props {
   switchCooldownShare: number;
 }
 
-const { action, characterId, index, input, isTouch, name, party, switchCooldownShare } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -15,7 +15,7 @@ interface Props {
   phase: GcgPhase;
 }
 
-const { gameText, isChoosingReroll, isPlayerWinner, phase } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{
   addRerollGroup: [];
   clearSelection: [];

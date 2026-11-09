@@ -27,7 +27,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { birthdayMailIds, gameText, isSelected, mail, now, row, textMap } = defineProps<Props>();
+const { birthdayMailIds, gameText, mail, now, row } = defineProps<Props>();
 const emit = defineEmits<{ select: [mail: MailSave] }>();
 // A mail in the Gift Mail Box is kept there and says so; any other mail shows its time left
 const statusText = computed(() => {

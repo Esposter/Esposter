@@ -31,8 +31,7 @@ interface Props {
 }
 
 const level = defineModel<number>("level", { default: 0 });
-const { achievedLabel, backLabel, headline, levelLabel, levels, notAchievedLabel, offer, requirement, title } =
-  defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ accept: []; close: [] }>();
 </script>
 

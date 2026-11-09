@@ -9,7 +9,7 @@ interface Props {
   id: RoomEmojiInMessage["id"];
 }
 
-const { id } = defineProps<Props>();
+defineProps<Props>();
 const roomEmojiDialogStore = useRoomEmojiDialogStore();
 const { deletingId } = storeToRefs(roomEmojiDialogStore);
 </script>

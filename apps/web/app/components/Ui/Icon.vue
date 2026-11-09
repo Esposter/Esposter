@@ -9,7 +9,7 @@ interface Props {
   meaning: UiIconMeaning;
 }
 
-const { label, meaning } = defineProps<Props>();
+defineProps<Props>();
 const uiStyle = useUiStyle();
 </script>
 

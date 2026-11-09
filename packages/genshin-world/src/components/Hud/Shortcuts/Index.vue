@@ -14,7 +14,7 @@ interface Props {
   input: Input;
 }
 
-const { gameText, input } = defineProps<Props>();
+defineProps<Props>();
 const shortcuts = HUD_SHORTCUTS.map(({ icon, inputAction, labelKey }) => ({
   glyph: MenuEntryGlyphMap[icon],
   inputAction,

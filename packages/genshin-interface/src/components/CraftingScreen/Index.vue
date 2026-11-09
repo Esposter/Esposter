@@ -42,22 +42,7 @@ const amount = defineModel<number>("amount", { default: 1 });
 const crafterId = defineModel<number>("crafterId", { default: 0 });
 const recipeId = defineModel<number>("recipeId", { default: 0 });
 const tabId = defineModel<number>("tabId", { default: 0 });
-const {
-  amountLabel,
-  amountMaximum,
-  closeLabel,
-  coins,
-  craftedLabel,
-  crafters,
-  craftingMaterialsLabel,
-  craftLabel,
-  materials,
-  recipes,
-  requiredCoins,
-  requiredLabel,
-  tabs,
-  title,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; craft: [] }>();
 </script>
 

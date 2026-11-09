@@ -10,7 +10,7 @@ interface Props {
   skinTone: SkinTone;
 }
 
-const { emoji, skinTone } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

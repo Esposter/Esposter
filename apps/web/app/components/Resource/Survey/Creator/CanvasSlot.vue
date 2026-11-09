@@ -8,7 +8,7 @@ interface Props {
   slotPointer: string;
 }
 
-const { children, slotPointer } = defineProps<Props>();
+const { slotPointer } = defineProps<Props>();
 const { dropTarget, previewNode } = useSurveyCreatorDrag();
 // The preview stands among the elements, at the index a drop over this slot would land at. The document itself is not changed
 const isPreviewAt = (index: number) =>

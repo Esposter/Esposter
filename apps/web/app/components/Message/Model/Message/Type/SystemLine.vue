@@ -15,7 +15,7 @@ interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "acti
 }
 
 defineSlots<{ default: () => VNode }>();
-const { active, icon, isPreview = false, meaning, message, token } = defineProps<Props>();
+const { isPreview = false } = defineProps<Props>();
 </script>
 
 <template>

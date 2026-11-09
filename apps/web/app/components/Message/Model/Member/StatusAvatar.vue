@@ -15,7 +15,7 @@ interface Props {
 }
 // A member's picture with their status as a dot on its corner. The dot is decoration: whatever shows the avatar says
 // The status in words, in its label or beside it
-const { id, image, isLarge, isSmall, name } = defineProps<Props>();
+defineProps<Props>();
 const statusStore = useStatusStore();
 const { getUserStatus } = statusStore;
 </script>

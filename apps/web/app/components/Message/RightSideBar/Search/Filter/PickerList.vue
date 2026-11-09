@@ -7,7 +7,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { hasMore, isPending } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 </script>
 

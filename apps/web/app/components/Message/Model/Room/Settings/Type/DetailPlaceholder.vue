@@ -6,7 +6,7 @@ interface Props {
   text: string;
 }
 
-const { meaning, text } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -32,7 +32,7 @@ interface Props {
 
 const count = defineModel<number>("count", { default: 1 });
 const goodId = defineModel<number>("goodId", { default: 0 });
-const { balances, buyLabel, closeLabel, countLabel, countMaximum, goods, sourceLabel, title } = defineProps<Props>();
+const { countMaximum, goods } = defineProps<Props>();
 const emit = defineEmits<{ buy: [good: ShopGoodCell, count: number]; close: [] }>();
 // The good the player picked, if any, and the good the detail shows, which is the first good until one is picked
 const { pickedCount, pickedGood, setCount } = useShopGoodPick({

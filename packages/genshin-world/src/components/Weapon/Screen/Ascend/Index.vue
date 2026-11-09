@@ -30,17 +30,7 @@ interface Props {
   weapon: Weapon;
 }
 
-const {
-  baseAttackText,
-  costs,
-  gameText,
-  maxLevel,
-  nextBaseAttackText,
-  nextMaxLevel,
-  secondaryLabel,
-  secondaryText,
-  weapon,
-} = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

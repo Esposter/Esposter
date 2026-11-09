@@ -14,7 +14,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { category, isSelected, percent, textMap } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [] }>();
 </script>
 

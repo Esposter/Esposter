@@ -7,7 +7,7 @@ interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "isPr
 }
 
 defineSlots<{ default: () => VNode; prepend?: () => VNode }>();
-const { active, isPreview = false } = defineProps<Props>();
+const { isPreview = false } = defineProps<Props>();
 </script>
 
 <!-- One message's row, as Discord lays one out: the author's column on the left, and the message beside it, never

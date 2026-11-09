@@ -34,7 +34,7 @@ defineSlots<{
   title?: (props: { item: ExtendedListItem }) => VNode;
 }>();
 const modelValue = defineModel<T[]>();
-const { getRowProps, isMultiple, isReorderable, items, label } = defineProps<Props>();
+const { isMultiple, isReorderable, items } = defineProps<Props>();
 const emit = defineEmits<{ reorder: [values: T[]]; select: [value: T, event: KeyboardEvent | MouseEvent] }>();
 const listId = useId();
 const getRowId = (value: T) => `${listId}-${value}`;

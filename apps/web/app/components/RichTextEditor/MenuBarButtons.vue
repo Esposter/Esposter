@@ -8,7 +8,7 @@ interface Props {
   items: MenuItem[];
 }
 
-const { items } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -16,7 +16,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { tags, updateTags } = defineProps<Props>();
+const { tags } = defineProps<Props>();
 const nameRules = [UiRules.maxLength(MAX_TAG_NAME_LENGTH)];
 const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // The caller mounts this only while it is open, so the rows start from the current tags on every open.

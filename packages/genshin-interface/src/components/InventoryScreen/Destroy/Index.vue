@@ -22,15 +22,7 @@ interface Props {
   selectedCell?: InventoryCell;
 }
 
-const {
-  destroyButtonLabel,
-  destroyCannotLabel,
-  destroyNames,
-  destroySelectedLabel,
-  destroyTipLabel,
-  quickSelects,
-  selectedCell,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ destroy: []; quickSelect: [rarity: number] }>();
 </script>
 

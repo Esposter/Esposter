@@ -10,7 +10,7 @@ interface Props {
 }
 
 const nation = defineModel<string>("nation", { required: true });
-const { nations } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

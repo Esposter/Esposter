@@ -4,7 +4,7 @@ interface Props {
   title: string;
 }
 
-const { srcdoc, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

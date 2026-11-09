@@ -14,7 +14,7 @@ interface Props {
   maxStamina: number;
 }
 
-const { frame, gameText, maxStamina } = defineProps<Props>();
+const { maxStamina } = defineProps<Props>();
 // Each cut between the pool's sections as the angle of the arc it stands at, the arc running from its foot at 27.1
 // Degrees below its centre to its head at 27.1 above
 const sectionAngles = computed(() =>

@@ -21,8 +21,7 @@ interface Props {
   speakerRole: string;
 }
 
-const { choices, confirmLabel, line, revealedLength, selectedChoiceId, speakerName, speakerRole } =
-  defineProps<Props>();
+const { choices, line, revealedLength } = defineProps<Props>();
 const emit = defineEmits<{ advance: []; choose: [id: string] }>();
 // The line split by character, so a pair of code units is never cut
 const characters = computed(() => [...line]);

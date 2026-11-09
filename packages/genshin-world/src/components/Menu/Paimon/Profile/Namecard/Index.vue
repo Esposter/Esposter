@@ -8,7 +8,7 @@ interface Props {
   namecardName?: string;
 }
 
-const { isDisabled, namecardName } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ open: [] }>();
 </script>
 

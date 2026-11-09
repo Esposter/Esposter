@@ -9,7 +9,7 @@ interface Props {
   isCreator: boolean;
 }
 
-const { callId, isCreator } = defineProps<Props>();
+defineProps<Props>();
 const callStore = useCallStore();
 const { joinCall } = callStore;
 const knockerStore = useKnockerStore();

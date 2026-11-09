@@ -14,7 +14,7 @@ interface Props {
   offers: BlossomClaimOffer[];
 }
 
-const { canRestore = false, gameText, offers } = defineProps<Props>();
+const { canRestore = false } = defineProps<Props>();
 const emit = defineEmits<{
   // A row chosen, which spends its resin and grants its rewards
   choose: [offer: BlossomClaimOffer];

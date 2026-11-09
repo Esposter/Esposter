@@ -11,7 +11,7 @@ interface Props {
 // And closes the dialog, so the dialog's own title bar is dropped
 defineSlots<{ default: () => VNode }>();
 const isOpen = defineModel<boolean>({ default: false });
-const { title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

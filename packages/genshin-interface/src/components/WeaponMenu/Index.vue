@@ -23,7 +23,7 @@ interface Props {
 
 defineSlots<{ default: () => unknown }>();
 const tab = defineModel<WeaponMenuTab>("tab", { required: true });
-const { actionLabel, closeLabel, detailsLabel, isActionDisabled, kind, name, tabs } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ action: []; close: [] }>();
 </script>
 

@@ -32,7 +32,7 @@ interface Props {
   travelerName: string;
 }
 
-const { characterDataMap, frame, gameText, input, isTouch, nameTextMap, party, travelerName } = defineProps<Props>();
+const { characterDataMap, frame, isTouch, nameTextMap, party, travelerName } = defineProps<Props>();
 // The share of the switch's cooldown left, which darkens every row but the one on the field
 const switchCooldownShare = computed(() =>
   Math.max(0, 1 - (frame.seconds - party.switchedSeconds) / PARTY_SWITCH_COOLDOWN_SECONDS),

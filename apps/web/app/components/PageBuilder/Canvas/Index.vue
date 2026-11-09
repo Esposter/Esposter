@@ -33,7 +33,7 @@ interface Props {
 }
 
 const isDeleteOpen = defineModel<boolean>("isDeleteOpen", { default: false });
-const { announce, draggedType, dropTarget, kind, resourceId } = defineProps<Props>();
+const { draggedType, dropTarget, kind, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();

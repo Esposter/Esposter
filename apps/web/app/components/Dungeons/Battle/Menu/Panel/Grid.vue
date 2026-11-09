@@ -20,7 +20,7 @@ interface Props {
   x?: number;
 }
 
-const { getText, grid, isVisible, x = 0 } = defineProps<Props>();
+const { x = 0 } = defineProps<Props>();
 </script>
 
 <template>

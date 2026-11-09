@@ -28,7 +28,7 @@ interface Props {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { kind, tip } = defineProps<Props>();
+defineProps<Props>();
 const button = useTemplateRef("button");
 const pillRestDuration = `${INTERACTION_PILL_REST_MS}ms`;
 const pressDuration = `${INTERACTION_PRESS_MS}ms`;

@@ -27,7 +27,7 @@ interface Props {
   rotation: number;
 }
 
-const { area, furnishings, gameText, held, placements, position, rotation } = defineProps<Props>();
+const { area, furnishings, gameText, placements, position, rotation } = defineProps<Props>();
 const emit = defineEmits<{ place: [placement: HomePlacement] }>();
 const selectedItemId = ref<number>();
 const itemIdFurnishingMap = computed(() => new Map(furnishings.map((furnishing) => [furnishing.itemId, furnishing])));

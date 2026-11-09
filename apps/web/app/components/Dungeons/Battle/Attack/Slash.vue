@@ -6,7 +6,7 @@ import { AttackGameObjectType } from "@/models/dungeons/attack/AttackGameObjectT
 import { getAnimationConfiguration } from "@/services/dungeons/animation/getAnimationConfiguration";
 
 const isActive = defineModel<boolean>("isActive", { required: true });
-const { isToEnemy } = defineProps<AttackProps>();
+defineProps<AttackProps>();
 const emit = defineEmits<{ complete: [] }>();
 </script>
 

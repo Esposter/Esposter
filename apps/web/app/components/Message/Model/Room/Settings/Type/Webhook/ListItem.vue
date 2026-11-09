@@ -12,7 +12,7 @@ interface Props {
   webhook: WebhookInMessage;
 }
 
-const { roomId, webhook } = defineProps<Props>();
+const { webhook } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;

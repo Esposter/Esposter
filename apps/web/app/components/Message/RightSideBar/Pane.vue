@@ -9,7 +9,7 @@ interface Props {
 // The footer slot is the row pinned under the body, drawn only when a call site passes content for it
 const slots = defineSlots<{ actions?: () => VNode; default: () => VNode; footer?: () => VNode }>();
 const emit = defineEmits<{ close: [] }>();
-const { isBodyBare, title } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -54,28 +54,7 @@ interface Props {
 const amount = defineModel<number>("amount", { default: 1 });
 const recipeId = defineModel<number>("recipeId", { default: 0 });
 const tab = defineModel<ForgeTab>("tab", { default: ForgeTab.Materials });
-const {
-  amountLabel,
-  amountMaximum,
-  closeLabel,
-  coins,
-  materialCountLabel,
-  materialsBoxLabel,
-  materialsLabel,
-  obtainLabel,
-  queueDetail,
-  queues,
-  queuesLabel,
-  recipes,
-  refusalLabel,
-  requiredCoins,
-  requiredLabel,
-  startLabel,
-  supportLabel,
-  title,
-  totalTimeLabel,
-  yieldCount,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; obtain: [queueId: number]; start: [] }>();
 </script>
 

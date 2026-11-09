@@ -12,7 +12,7 @@ interface Props {
   post: PostInPostWithRelations;
 }
 
-const { isPage, post } = defineProps<Props>();
+const { post } = defineProps<Props>();
 const { data: session } = await useAuthSession();
 const postDialogStore = usePostDialogStore();
 const { deletingId } = storeToRefs(postDialogStore);

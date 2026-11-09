@@ -14,7 +14,7 @@ interface Props {
 // A list of choices picked from a multi-select, whose options are keyed by this field's own id: the select writes each
 // Option's key as its element's id, and a choice's value may repeat on another field of the same page
 const answer = defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { error, isDisabled, node, seed } = defineProps<Props>();
+const { node, seed } = defineProps<Props>();
 const id = useId();
 // The options in the order the reader sees them, so a key is a choice's place in what the select lists
 const orderedChoices = computed(() => getSurveyOrderedChoices(node.props.choices, node.props.choicesOrder, seed));

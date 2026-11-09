@@ -11,7 +11,7 @@ interface Props {
   isTouch: boolean;
 }
 
-const { interactionPrompts, isTouch } = defineProps<Props>();
+const { interactionPrompts } = defineProps<Props>();
 const emit = defineEmits<{
   // A row pressed itself, which acts on it
   press: [id: string];

@@ -23,18 +23,7 @@ interface Props {
   title: string;
 }
 
-const {
-  backLabel,
-  configureTeamLabel,
-  deployLabel,
-  nextLabel,
-  previousLabel,
-  quickSetupLabel,
-  resonanceLabel,
-  slots,
-  teamName,
-  title,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ close: []; configureTeam: []; deploy: []; next: []; previous: []; quickSetup: [] }>();
 </script>
 

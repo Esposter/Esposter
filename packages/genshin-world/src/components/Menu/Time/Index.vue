@@ -18,7 +18,7 @@ interface Props {
   initialAdvance?: number;
 }
 
-const { clockMinutes, gameText, initialAdvance = 0 } = defineProps<Props>();
+const { clockMinutes, initialAdvance = 0 } = defineProps<Props>();
 const emit = defineEmits<{ close: []; confirm: [minutes: number] }>();
 const dial = useTemplateRef("dial");
 const confirmButton = useTemplateRef("confirmButton");

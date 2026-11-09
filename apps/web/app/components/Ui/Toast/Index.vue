@@ -14,7 +14,7 @@ interface Props {
 }
 
 defineSlots<{ actions?: () => VNode; default: () => VNode; mark?: () => VNode }>();
-const { durationMs, isDismissible, status } = defineProps<Props>();
+const { durationMs } = defineProps<Props>();
 const emit = defineEmits<{ close: [] }>();
 // Held while the pointer is over it or focus is inside it, so a toast is never taken away mid-read or mid-click
 const { start, stop } = useTimeoutFn(() => emit("close"), durationMs ?? 0, { immediate: durationMs !== undefined });

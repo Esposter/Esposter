@@ -13,7 +13,7 @@ interface Props {
 }
 
 const isOpen = defineModel<boolean>({ default: false });
-const { getInput, submitLabel, submitVariant, title } = defineProps<Props>();
+defineProps<Props>();
 const executeAdminAction = useExecuteAdminAction();
 const { answer, isPending } = useDialogAnswer(isOpen);
 // The submit sits in the footer, beside the form it submits, so it names the form by id

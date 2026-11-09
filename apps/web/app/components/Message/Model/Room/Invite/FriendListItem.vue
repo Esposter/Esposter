@@ -14,7 +14,7 @@ interface Props {
   room: RoomInMessage;
 }
 
-const { isInviteSendable, memberIdSet, recipient, room } = defineProps<Props>();
+defineProps<Props>();
 const directMessageStore = useDirectMessageStore();
 const { checkIsInviteDirectMessagePending, checkIsInviteFriendPending, inviteDirectMessage, inviteFriend } =
   directMessageStore;

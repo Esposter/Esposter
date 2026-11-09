@@ -9,7 +9,7 @@ interface Props {
   participant: CallParticipant;
 }
 
-const { isSpeaking, participant } = defineProps<Props>();
+const { participant } = defineProps<Props>();
 const { data: session } = await useAuthSession();
 const callStore = useCallStore();
 const { isInCall } = storeToRefs(callStore);

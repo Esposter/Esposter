@@ -10,7 +10,7 @@ interface Props {
   resource: ResourceInResource;
 }
 
-const { purge, resource } = defineProps<Props>();
+defineProps<Props>();
 const recycleBinDialogStore = useRecycleBinDialogStore();
 const { purgingId } = storeToRefs(recycleBinDialogStore);
 const { isOpen } = useSingletonDialog(purgingId);

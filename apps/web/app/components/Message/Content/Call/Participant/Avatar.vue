@@ -6,7 +6,7 @@ interface Props {
   participant: CallParticipant;
 }
 
-const { isSpeaking, participant } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

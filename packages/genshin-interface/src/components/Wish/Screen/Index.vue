@@ -67,28 +67,7 @@ interface Props {
 }
 
 const bannerId = defineModel<string>("bannerId", { default: "" });
-const {
-  backLabel,
-  bannerCard,
-  banners,
-  currencies,
-  detailsLabel,
-  fatePoints,
-  fiveStarNotice,
-  history,
-  historyLabel,
-  pathLabel,
-  pool,
-  probabilityLabel,
-  purchases,
-  results,
-  sets,
-  shopLabel,
-  timeRemainingLabel,
-  timeRemainingText,
-  title,
-  trialLabel,
-} = defineProps<Props>();
+const { banners } = defineProps<Props>();
 const emit = defineEmits<{ buy: []; close: []; dismiss: []; startTrial: []; wish: [count: number] }>();
 // The Details popup the Details button opens over the screen
 const isDetailsOpen = ref(false);

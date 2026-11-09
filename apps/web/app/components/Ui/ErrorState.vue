@@ -5,7 +5,7 @@ interface Props {
   error: string;
 }
 
-const { error } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ retry: [] }>();
 </script>
 

@@ -4,7 +4,7 @@ import type { FileRendererComponentProps } from "@/models/message/file/FileRende
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getFileSize } from "@/services/file/getFileSize";
 
-const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
+defineProps<FileRendererComponentProps>();
 </script>
 
 <template>

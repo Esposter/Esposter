@@ -12,7 +12,7 @@ interface Props {
   row: DataSource["rows"][number];
 }
 
-const { index, row } = defineProps<Props>();
+defineProps<Props>();
 const rowDialogStore = useRowDialogStore();
 const { deletingIds, editingId } = storeToRefs(rowDialogStore);
 </script>

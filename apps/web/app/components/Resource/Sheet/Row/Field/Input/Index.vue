@@ -11,7 +11,7 @@ interface Props {
 }
 
 const modelValue = defineModel<ColumnTypeModelValueMap[TColumnType]>({ required: true });
-const { column, isInline } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

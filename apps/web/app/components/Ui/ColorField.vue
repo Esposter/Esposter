@@ -18,7 +18,7 @@ interface Props {
 // A colour picked with the browser's own picker, which follows the page's colour scheme, shown as a swatch beside the
 // Hex value it holds. The swatch is the control, so its label names it
 const modelValue = defineModel<string>({ required: true });
-const { label, swatches = [] } = defineProps<Props>();
+const { swatches = [] } = defineProps<Props>();
 const id = useId();
 // Mounted on the client only: the browser reads a colour off the document, which a server render does not have
 const isMounted = useMounted();

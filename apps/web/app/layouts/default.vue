@@ -17,8 +17,6 @@ interface Props {
 
 const slots = defineSlots<{ default?: () => VNode; left?: () => VNode; right?: () => VNode }>();
 const {
-  isRightTitleHidden,
-  isViewportHeight,
   leftDrawerWidth = LEFT_DRAWER_WIDTH,
   leftTitle = "Navigation",
   rightDrawerWidth = RIGHT_DRAWER_WIDTH,

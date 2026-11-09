@@ -13,7 +13,7 @@ interface Props {
 
 // A picture holds no answer, and declaring the model keeps the chooser's binding from falling through onto the image
 defineModel<SurveyAnswerValue | undefined>({ default: undefined });
-const { node } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

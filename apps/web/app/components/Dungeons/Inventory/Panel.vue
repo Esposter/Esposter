@@ -8,7 +8,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => VNode }>();
-const { height, width } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

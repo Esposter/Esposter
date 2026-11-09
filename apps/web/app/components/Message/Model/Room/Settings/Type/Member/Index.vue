@@ -9,7 +9,7 @@ interface Props {
   room: RoomInMessage;
 }
 
-const { room } = defineProps<Props>();
+defineProps<Props>();
 const roleStore = useRoleStore();
 const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();

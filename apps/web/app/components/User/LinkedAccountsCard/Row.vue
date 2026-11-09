@@ -11,7 +11,7 @@ interface Props extends ButtonProps {
   linkedAccountCount: number;
 }
 
-const { isLinked, isPending, linkedAccountCount, logo, provider } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ link: []; unlink: [] }>();
 </script>
 

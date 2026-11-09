@@ -9,7 +9,7 @@ interface Props {
   revoke: () => Promisable<unknown>;
 }
 
-const { deviceLabel, isCurrent, revoke } = defineProps<Props>();
+defineProps<Props>();
 const userSessionDialogStore = useUserSessionDialogStore();
 const { revokingId } = storeToRefs(userSessionDialogStore);
 // The card owns the lookup and hands the session down, so only the open state is read from the primitive here

@@ -47,22 +47,7 @@ interface Props {
   worshipTitle: string;
 }
 
-const {
-  autoRecoverLabel,
-  closeLabel,
-  healHint,
-  inCombatLabel,
-  isAutoRecoverOn,
-  members,
-  poolAmount,
-  poolLabel,
-  poolMaximum,
-  preparingLabel,
-  thresholdPercent,
-  title,
-  waitingMembers = [],
-  worshipTitle,
-} = defineProps<Props>();
+const { waitingMembers = [] } = defineProps<Props>();
 const emit = defineEmits<{
   close: [];
   heal: [characterId: number];

@@ -9,7 +9,7 @@ interface Props {
 }
 // One item of a tree, open from the start with its children beneath it
 // Its row indents one more step at each depth it sits at
-const { item } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

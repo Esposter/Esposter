@@ -9,7 +9,7 @@ interface Props {
   type: ResourceType;
 }
 
-const { count, type } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [type: ResourceType] }>();
 </script>
 

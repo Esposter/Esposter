@@ -13,7 +13,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { invite, isCreator, roomId } = defineProps<Props>();
+const { invite, roomId } = defineProps<Props>();
 const runtimeConfig = useRuntimeConfig();
 const roleStore = useRoleStore();
 const { checkHasMyPermission } = roleStore;

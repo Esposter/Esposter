@@ -9,7 +9,7 @@ interface Props {
   label: string;
 }
 // Tabs that go somewhere rather than show a panel, so each is a real link in the tab order and the current one says so
-const { isIconOnly, items, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

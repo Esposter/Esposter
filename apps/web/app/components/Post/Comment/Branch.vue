@@ -5,7 +5,7 @@ interface Props {
   parentId: string;
 }
 
-const { depth, parentId } = defineProps<Props>();
+const { parentId } = defineProps<Props>();
 const { hasMore, isLoaded, items, readComments, readMoreComments } = useReadComments(parentId);
 
 if (!isLoaded.value) await readComments();

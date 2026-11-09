@@ -8,7 +8,7 @@ interface Props {
 // How many of something wait on what it sits beside — unread notifications, a room's mentions — filled in the danger
 // Colour. Never narrower than it is tall, so one digit reads as a round mark and more digits widen it rather than
 // Squeezing into it, and it never shrinks in a row that runs short
-const { count, label } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

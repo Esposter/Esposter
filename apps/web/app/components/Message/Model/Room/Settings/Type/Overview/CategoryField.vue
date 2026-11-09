@@ -6,7 +6,7 @@ interface Props {
 }
 
 const modelValue = defineModel<null | string>({ required: true });
-const { items } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ save: [] }>();
 // A select holds a string, so the room with no category is the empty one
 const selectedCategoryId = computed({

@@ -6,7 +6,7 @@ interface Props {
   progress: number;
 }
 
-const { isFolded, progress } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

@@ -11,7 +11,7 @@ interface Props {
   rowIndex: number;
 }
 
-const { columnIndex, item, rowIndex } = defineProps<Props>();
+const { columnIndex, rowIndex } = defineProps<Props>();
 const itemOptionGrid = useItemOptionGrid();
 const onGridClick = useOnGridClick(itemOptionGrid, () => ({ x: columnIndex, y: rowIndex }));
 </script>

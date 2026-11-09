@@ -9,7 +9,7 @@ interface Props {
   view?: { tension: number; zone: FishingZone };
 }
 
-const { view } = defineProps<Props>();
+defineProps<Props>();
 const percent = (value: number) => `${(value / REEL_BAR_MAX) * 100}%`;
 </script>
 

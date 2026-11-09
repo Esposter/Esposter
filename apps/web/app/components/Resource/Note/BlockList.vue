@@ -6,7 +6,7 @@ import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { takeOne } from "@esposter/shared";
 
-const { command, items, query } = defineProps<Pick<SuggestionProps<NoteSlashItem>, "command" | "items" | "query">>();
+const { command, items } = defineProps<Pick<SuggestionProps<NoteSlashItem>, "command" | "items" | "query">>();
 const selectItem = (index: number) => {
   const item = takeOne(items, index);
   command(item);

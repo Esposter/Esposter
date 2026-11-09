@@ -8,7 +8,7 @@ interface Props {
   slotName?: string;
 }
 
-const { selectedStats, slotName } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

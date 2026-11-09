@@ -17,7 +17,7 @@ interface Props {
   text: string;
 }
 
-const { columnIndex, rowIndex, text } = defineProps<Props>();
+const { columnIndex, rowIndex } = defineProps<Props>();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
 const onGridClick = useSettingsOnGridClick(() => ({ x: columnIndex, y: rowIndex }));

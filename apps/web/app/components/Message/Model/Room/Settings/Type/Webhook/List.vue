@@ -9,7 +9,7 @@ interface Props {
   roomId: RoomInMessage["id"];
 }
 
-const { roomId } = defineProps<Props>();
+defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
 </script>

@@ -32,7 +32,7 @@ interface Props {
 // Can keep them
 const view = defineModel<UiCalendarView>("view", { default: UiCalendarView.Month });
 const date = defineModel<Temporal.PlainDate>("date", { default: () => Temporal.Now.plainDateISO() });
-const { events, label, onCreate } = defineProps<Props>();
+const { events, onCreate } = defineProps<Props>();
 const emit = defineEmits<{ move: [id: string, start: Date]; open: [id: string] }>();
 const { today } = useCalendarClock();
 const viewItems: UiMenuItem<UiCalendarView>[] = UiCalendarViews.map((value) => ({ title: value, value }));

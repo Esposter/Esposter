@@ -16,7 +16,7 @@ interface Props {
 }
 
 const modelValue = defineModel<string>({ required: true });
-const { isRequired, isUnpublished, label, resources } = defineProps<Props>();
+const { isRequired, isUnpublished, resources } = defineProps<Props>();
 const items = computed(() => (isRequired ? (resources?.items ?? []) : prependNoneSelectItem(resources?.items ?? [])));
 // A deleted or binned resource is gone from the owner's list while the program still holds its id, so the select
 // Would show nothing at all — the binding is kept, and said to be missing where it is picked. Only a whole list can

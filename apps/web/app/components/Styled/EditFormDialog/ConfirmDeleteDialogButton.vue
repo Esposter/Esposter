@@ -12,7 +12,7 @@ interface Props<T> {
   remove?: () => Promisable<unknown>;
 }
 
-const { itemType, name, originalItem, remove } = defineProps<Props<T>>();
+defineProps<Props<T>>();
 const isOpen = ref(false);
 </script>
 

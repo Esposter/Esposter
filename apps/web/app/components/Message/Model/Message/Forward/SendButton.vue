@@ -10,7 +10,7 @@ interface Props {
   forward: MessageEntity;
 }
 
-const { forward } = defineProps<Props>();
+defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const alertStore = useAlertStore();
 const { createAlert } = alertStore;

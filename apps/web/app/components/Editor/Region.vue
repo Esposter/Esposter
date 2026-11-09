@@ -19,7 +19,7 @@ interface Props {
   registry: EditorRegistry;
 }
 
-const { name, overlayInset, panelNameMap, region, registry } = defineProps<Props>();
+const { overlayInset, region } = defineProps<Props>();
 // A docked region reports the size its handle asks for, a sheet asks to be opened or closed, and a tabbed region reports the
 // Panel its reader picked, which the shell answers
 const emit = defineEmits<{ resize: [size: number]; selectPanel: [panelId: string]; toggle: [] }>();

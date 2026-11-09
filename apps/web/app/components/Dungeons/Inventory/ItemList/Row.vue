@@ -9,7 +9,7 @@ interface Props {
 }
 
 defineSlots<{ default?: () => VNode }>();
-const { text } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 

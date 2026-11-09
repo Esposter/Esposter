@@ -9,7 +9,7 @@ interface Props {
 }
 
 defineSlots<{ default: () => unknown }>();
-const { label, size } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

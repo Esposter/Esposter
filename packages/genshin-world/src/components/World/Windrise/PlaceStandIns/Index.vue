@@ -20,7 +20,7 @@ interface Props {
   rampTexture: DataTexture;
 }
 
-const { getGroundHeight, lightUniforms, miningOutcropPlaces, oculusPlaces, rampTexture } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>

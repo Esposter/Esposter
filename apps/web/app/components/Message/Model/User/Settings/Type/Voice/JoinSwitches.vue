@@ -7,7 +7,7 @@ interface Props {
   userSettings: UserSettingsInMessage;
 }
 
-const { userSettings } = defineProps<Props>();
+defineProps<Props>();
 const userSettingsStore = useUserSettingsStore();
 const { updateUserSettings } = userSettingsStore;
 </script>

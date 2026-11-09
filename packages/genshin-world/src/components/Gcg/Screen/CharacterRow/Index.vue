@@ -16,7 +16,7 @@ interface Props {
   textMap: Readonly<Record<string, string>>;
 }
 
-const { activeIndex, characters, gameText, textMap } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ select: [characterIndex: number] }>();
 </script>
 

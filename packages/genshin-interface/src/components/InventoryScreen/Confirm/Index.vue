@@ -21,18 +21,7 @@ interface Props {
   isDestroyFull: boolean;
 }
 
-const {
-  cancelLabel,
-  destroyConfirmButtonLabel,
-  destroyConfirmListLabel,
-  destroyConfirmTitle,
-  destroyConfirmWarningLabel,
-  destroyFullLabel,
-  destroyNames,
-  destroyRecoveredLabel,
-  destroyRecoveredNames,
-  isDestroyFull,
-} = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ cancelDestroy: []; confirmDestroy: [] }>();
 const cancelButton = useTemplateRef("cancelButton");
 

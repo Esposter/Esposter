@@ -6,7 +6,7 @@ interface Props {
   disabled?: boolean;
 }
 
-const { disabled } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ click: [] }>();
 </script>
 

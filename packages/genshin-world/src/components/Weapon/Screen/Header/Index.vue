@@ -18,7 +18,7 @@ interface Props {
   refinement: number;
 }
 
-const { gameText, mora, openTab, rarity, refinement } = defineProps<Props>();
+const { gameText, refinement } = defineProps<Props>();
 const rankText = computed(() => getWeaponRankText(gameText, refinement));
 </script>
 

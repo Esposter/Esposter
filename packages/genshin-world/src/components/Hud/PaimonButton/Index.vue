@@ -10,7 +10,7 @@ interface Props {
   gameText: GameText;
 }
 
-const { gameText } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ press: [] }>();
 </script>
 

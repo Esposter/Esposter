@@ -11,7 +11,7 @@ interface Props {
   teamName: string;
 }
 
-const { configureTeamLabel, deployLabel, quickSetupLabel, teamName } = defineProps<Props>();
+defineProps<Props>();
 const emit = defineEmits<{ configureTeam: []; deploy: []; quickSetup: [] }>();
 </script>
 

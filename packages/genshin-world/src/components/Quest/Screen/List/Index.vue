@@ -30,8 +30,7 @@ interface Props {
   title: string;
 }
 
-const { category, gameText, listScroll, questChapters, questDistanceMap, quests, selectedQuestId, textMap, title } =
-  defineProps<Props>();
+const { category, listScroll, questChapters, quests } = defineProps<Props>();
 const emit = defineEmits<{ select: [questId: string] }>();
 const listElement = useTemplateRef("listElement");
 const questGroups = computed(() => getQuestGroups(quests, questChapters, category));

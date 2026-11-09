@@ -6,7 +6,7 @@ interface Props {
   message: MessageEntity;
 }
 
-const { isPreview = false, message } = defineProps<Props>();
+const { isPreview = false } = defineProps<Props>();
 </script>
 
 <template>

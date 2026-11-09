@@ -7,7 +7,7 @@ interface Props {
   column: Column;
 }
 
-const { column } = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>
