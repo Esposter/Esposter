@@ -55,6 +55,18 @@ describe("resourceSurveyCreatorLayers", () => {
     component.unmount();
   });
 
+  // The region around the tree owns the one scroll, so the tree grows to its rows rather than scrolling inside the region
+  test("the tree draws no scroll of its own", async () => {
+    expect.hasAssertions();
+
+    loadSurvey();
+    const component = await mountSuspended(ResourceSurveyCreatorLayers);
+
+    expect(component.attributes("of-y-auto")).toBeUndefined();
+
+    component.unmount();
+  });
+
   test("choosing a row selects its node", async () => {
     expect.hasAssertions();
 

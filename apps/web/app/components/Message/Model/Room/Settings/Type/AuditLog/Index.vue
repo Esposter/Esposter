@@ -26,7 +26,7 @@ await Promise.all([readModerationLog(), readMembers()]);
 </script>
 
 <template>
-  <div py-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4>
     <MessageModelRoomSettingsTypeAuditLogFilters
       v-model:type="type"
       v-model:actor-user-id="actorUserId"

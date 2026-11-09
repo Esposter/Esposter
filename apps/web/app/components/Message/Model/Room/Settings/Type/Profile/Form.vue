@@ -33,7 +33,7 @@ const save = async () => {
 </script>
 
 <template>
-  <div py-4 flex flex-col gap-6 ui-body>
+  <div flex flex-col gap-6>
     <MessageModelRoomSettingsTypeProfileDisplayNameField v-model="editedDisplayName" @save="save()" />
   </div>
 </template>

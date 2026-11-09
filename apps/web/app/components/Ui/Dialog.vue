@@ -7,7 +7,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
-import { UiDialogTallFrameClassMap } from "@/services/ui/UiDialogTallFrameClassMap";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
@@ -49,10 +48,10 @@ const {
   title,
 } = defineProps<Props>();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
-// A tall frame takes its placement's fixed height where the placement has one, and otherwise keeps the cap it stands under
+// A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {
-  const tallFrameClass = isTall ? UiDialogTallFrameClassMap[displayPlacement.value] : undefined;
-  return tallFrameClass ?? UiDialogFrameClassMap[displayPlacement.value];
+  const { height, tallHeight } = UiDialogFrameClassMap[displayPlacement.value];
+  return isTall ? tallHeight : height;
 });
 const sizeClass = computed(() => {
   const isStandingInPage =

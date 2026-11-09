@@ -84,12 +84,7 @@ export const useWhiteboardKeyboard = (
   const nudgeSelection = (direction: Point, step: number) => {
     editState.value = applyWhiteboardEdit(
       editState.value,
-      getMoveOperations(
-        editState.value.document,
-        selectedIds.value,
-        { x: direction.x * step, y: direction.y * step },
-        false,
-      ),
+      getMoveOperations(editState.value.document, selectedIds.value, { x: direction.x * step, y: direction.y * step }),
     );
   };
   const redo = () => {

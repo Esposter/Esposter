@@ -22,7 +22,7 @@ onMounted(() => readMemberPermissionOverrides({ roomId: room.id }));
 <!-- Discord's roles editor: the roles and members down one side, under the field that adds one, and the picked one's
      permissions beside them -->
 <template>
-  <div py-4 gap-6 grid cols-1 ui-body lg:cols-6 md:cols-4 sm:cols-3>
+  <div gap-6 grid cols-1 lg:cols-6 md:cols-4 sm:cols-3>
     <div flex flex-col gap-2 min-w-0>
       <MessageModelRoomSettingsTypeRoleCreateForm :room-id="room.id" />
       <MessageModelRoomSettingsTypeRoleList :roles :room-id="room.id" />

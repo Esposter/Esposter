@@ -41,7 +41,7 @@ const save = async () => {
 <!-- A handful of kinds, so each is a box of its own the reader sees at once rather than a list folded behind a
      select -->
 <template>
-  <div py-4 flex flex-col gap-6 ui-body>
+  <div flex flex-col gap-6>
     <UiTextField
       :hint="`In MB. Leave empty to use the platform limit of ${maxFileSizeMegabytes} MB.`"
       :model-value="editedMaxFileSizeBytes ? String(editedMaxFileSizeBytes / MEGABYTE) : ''"

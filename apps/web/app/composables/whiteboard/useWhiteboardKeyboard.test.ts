@@ -117,7 +117,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(
       applyWhiteboardEdit(
         createWhiteboardEditState(document),
-        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }, false),
+        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }),
       ),
     );
     const selectedIds = ref<string[]>([]);
@@ -140,7 +140,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(
       applyWhiteboardEdit(
         createWhiteboardEditState(document),
-        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }, false),
+        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }),
       ),
     );
     const selectedIds = ref<string[]>([]);
@@ -242,7 +242,7 @@ describe(useWhiteboardKeyboard, () => {
     const editState = ref(
       applyWhiteboardEdit(
         createWhiteboardEditState(document),
-        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }, false),
+        getMoveOperations(document, [WHITEBOARD_PROCESS_ID], { x: 10, y: 0 }),
       ),
     );
     const selectedIds = ref([WHITEBOARD_PROCESS_ID]);

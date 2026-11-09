@@ -19,7 +19,7 @@ const {
 </script>
 
 <template>
-  <div py-4 flex flex-col gap-6 ui-body>
+  <div flex flex-col gap-6>
     <!-- The form's own shape while the filter is read: the words' field, then the action's track -->
     <template v-if="isPending">
       <UiSkeleton h-8 />

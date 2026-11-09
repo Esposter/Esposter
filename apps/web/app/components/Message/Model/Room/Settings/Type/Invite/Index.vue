@@ -17,7 +17,7 @@ await readRoomInvites();
 
 <!-- Discord's invites panel: what the list is, beside the two things done to it, over one row per live link -->
 <template>
-  <div py-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4>
     <div flex gap-2 items-center>
       <p text-muted flex-1 min-w-0>Every active invite link in this room. Revoke any one, or create one of your own.</p>
       <MessageModelRoomSettingsTypeInviteCreateButton :room-id="room.id" />

@@ -41,10 +41,17 @@ watch(
     @keydown.enter.self.prevent="isOpen = true"
     @keydown.space.self.prevent="isOpen = true"
   />
-  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" :size="UiDialogSize.ExtraLarge" is-expandable>
-    <!-- Its height in the middle of the screen, and all the dialog's height once the reader takes it over the page -->
+  <StyledDialog
+    v-if="!isPreview"
+    v-model="isOpen"
+    :title="file.filename"
+    :size="UiDialogSize.ExtraLarge"
+    is-expandable
+    is-tall
+  >
+    <!-- The viewer fills the body, and a tall dialog gives the body a height to fill, in the middle of the screen and the
+      whole page once the reader takes it over -->
     <PdfViewer
-      h="[64dvh]"
       grow
       :filename="file.filename"
       :is-failed="isAnyFailed"

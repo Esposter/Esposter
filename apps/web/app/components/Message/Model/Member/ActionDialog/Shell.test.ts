@@ -54,7 +54,9 @@ describe("messageModelMemberActionDialogShell", () => {
       const component = mountShell();
       await flushPromises();
 
-      expect(component.get('button[type="submit"]').element.form).toBe(component.get("form").element);
+      expect(component.get<HTMLButtonElement>('button[type="submit"]').element.form).toBe(
+        component.get("form").element,
+      );
     });
   });
 });

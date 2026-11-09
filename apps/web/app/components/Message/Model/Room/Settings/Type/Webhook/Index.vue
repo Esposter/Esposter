@@ -21,7 +21,7 @@ await readWebhooks(room.id);
 <!-- Discord's arrangement: one button creates the webhook and every field of it is edited on its own row, so the
      name is asked for where it is also changed rather than twice -->
 <template>
-  <div py-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4>
     <div flex gap-2 items-center>
       <p text-muted flex-1 min-w-0>Webhooks let other services post messages into this room.</p>
       <UiButton

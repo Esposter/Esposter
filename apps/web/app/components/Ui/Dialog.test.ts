@@ -6,7 +6,6 @@ import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
-import { UiDialogTallFrameClassMap } from "@/services/ui/UiDialogTallFrameClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -180,8 +179,8 @@ describe("uiDialog", () => {
         await flushPromises();
         const frameClasses = component.get("section").classes();
 
-        expect(frameClasses).toContain(UiDialogTallFrameClassMap[placement]);
-        expect(frameClasses).not.toContain(UiDialogFrameClassMap[placement]);
+        expect(frameClasses).toContain(UiDialogFrameClassMap[placement].tallHeight);
+        expect(frameClasses).not.toContain(UiDialogFrameClassMap[placement].height);
       },
     );
 
@@ -194,8 +193,8 @@ describe("uiDialog", () => {
         await flushPromises();
         const frameClasses = component.get("section").classes();
 
-        expect(frameClasses).toContain(UiDialogFrameClassMap[placement]);
-        expect(frameClasses).not.toContain(UiDialogTallFrameClassMap[placement]);
+        expect(frameClasses).toContain(UiDialogFrameClassMap[placement].height);
+        expect(frameClasses).not.toContain(UiDialogFrameClassMap[placement].tallHeight);
       },
     );
 
@@ -214,7 +213,7 @@ describe("uiDialog", () => {
       });
       await flushPromises();
 
-      expect(component.get("section").classes()).toContain(UiDialogFrameClassMap[placement]);
+      expect(component.get("section").classes()).toContain(UiDialogFrameClassMap[placement].tallHeight);
     });
 
     // A body draws no height of its own, so the frame sizes it to its content and only its maximum limits it. Whether a

@@ -7,13 +7,15 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 // A type's own blade is a stub that draws one paragraph, so the outlet's wrapper is what is under test
-vi.mock(import("@/services/resource/ResourceBladeDefinitionMap"), async () => {
+vi.mock(import("@/services/resource/ResourceBladeDefinitionMap"), async (importOriginal) => {
+  const { ResourceBladeDefinitionMap } = await importOriginal();
   const { ResourceType: MockedResourceType } = await import("@esposter/db-schema");
   const { defineComponent, h } = await import("vue");
   const StubBlade = defineComponent(() => () => h("p", "stub blade"));
 
   return {
     ResourceBladeDefinitionMap: {
+      ...ResourceBladeDefinitionMap,
       [MockedResourceType.Sheet]: [{ component: StubBlade, icon: "", slug: "stub", title: "Stub" }],
     },
   };

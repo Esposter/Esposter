@@ -14,7 +14,7 @@ const { items } = storeToRefs(roomEmojiStore);
 </script>
 
 <template>
-  <div py-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4>
     <!-- The panel manages the set and never adds to it, so the empty state is the only place that can say where
          adding happens -->
     <UiEmptyState

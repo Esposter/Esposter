@@ -194,7 +194,7 @@ watch(selectedPointer, async (pointer) => {
 </script>
 
 <template>
-  <div ref="layers" flex flex-col gap-2 min-h-0 of-y-auto>
+  <div ref="layers" flex flex-col gap-2>
     <UiList :get-row-props :items="layerItems" label="Layers" @select="(value) => select(value)">
       <template #leading="{ item }">
         <span aria-hidden="true" shrink-0 :style="{ width: `calc(var(--ui-step) * ${item.depth * 2})` }" />

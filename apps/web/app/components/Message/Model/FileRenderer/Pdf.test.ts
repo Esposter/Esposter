@@ -5,7 +5,9 @@ import type { PdfApi, PdfRenderer } from "vue-pdfjs-headless";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageModelFileRendererPdf from "@/components/Message/Model/FileRenderer/Pdf.vue";
+import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
+import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -63,6 +65,21 @@ describe("messageModelFileRendererPdf", () => {
     expect(viewerDialog).toBeDefined();
     expect(viewerDialog?.querySelector(":scope > section > footer")).toBeNull();
     expect(viewerDialog?.querySelector('[aria-label="Close"]')).not.toBeNull();
+  });
+
+  // The viewer fills its dialog's body, and a body fills only a frame that stands at a height, so the frame is tall
+  test("the viewer's frame stands at a definite height", async () => {
+    expect.hasAssertions();
+
+    const component = await mountPdf(false);
+    await component.find("canvas").trigger("click");
+    const viewerDialog = [...document.body.querySelectorAll("dialog")].find(
+      (dialog) => dialog.querySelector("h2")?.textContent === filename,
+    );
+
+    expect(viewerDialog?.querySelector(":scope > section")?.classList).toContain(
+      UiDialogFrameClassMap[UiDialogPlacement.Middle].tallHeight,
+    );
   });
 
   test("opening the viewer from the keyboard", async () => {

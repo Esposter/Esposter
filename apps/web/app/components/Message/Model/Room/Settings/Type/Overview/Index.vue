@@ -98,7 +98,7 @@ const save = async () => {
 
 <!-- The panel's name is the header's, so the fields start at the top, one column across the panel -->
 <template>
-  <div py-4 flex flex-col gap-6 ui-body>
+  <div flex flex-col gap-6>
     <MessageModelRoomSettingsTypeOverviewCategoryField
       v-model="editedCategoryId"
       :items="categoryItems"

@@ -14,7 +14,7 @@ const { hasMore, isPending, items, readMoreBans, searchQuery } = useReadBans(roo
 </script>
 
 <template>
-  <div py-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4>
     <UiTextField v-model="searchQuery" label="Search bans" :type="UiTextFieldType.Search" />
     <!-- A ban row's own shape while a search is out: the picture, the name and when it happened -->
     <div v-if="isPending" flex flex-col>
