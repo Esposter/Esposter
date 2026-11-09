@@ -8,7 +8,7 @@ describe("the Functions environment", () => {
   test("declares exactly the variables .env.example names", () => {
     expect.hasAssertions();
 
-    const names = Object.keys(parseEnv(readFileSync(join(import.meta.dirname, "../../.env.example"), "utf8")));
+    const names = Object.keys(parseEnv(readFileSync(join(import.meta.dirname, "../../../.env.example"), "utf8")));
     expect(names.toSorted()).toStrictEqual(Object.keys(functionsEnvironmentVariablesSchema.shape).toSorted());
   });
 });

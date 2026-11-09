@@ -10,7 +10,7 @@ import { RouterLink } from "vue-router";
 
 // `mountSuspended`'s `route` reaches the router that resolves the links, not the `useRoute()` the guard against
 // Linking to the current page reads — so the path under test is set here
-const { currentRoute } = vi.hoisted(() => ({ currentRoute: { path: "" } }));
+const { currentRoute } = vi.hoisted(() => ({ currentRoute: { matched: [], path: "" } }));
 
 mockNuxtImport("useRoute", () => () => currentRoute);
 

@@ -34,6 +34,8 @@ export interface WebEnvironmentVariables {
   VAPID_PUBLIC_KEY: string;
 }
 
+// The variables the other app also declares, written twice on purpose, so the duplicate-code gate skips the schema
+// `jscpd:ignore-start`
 export const webEnvironmentVariablesSchema = z.object({
   APP_ENV: environmentSchema,
   AZURE_CONTAINER_BASE_URL: z.url(),
@@ -62,3 +64,4 @@ export const webEnvironmentVariablesSchema = z.object({
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_PUBLIC_KEY: z.string().min(1),
 }) satisfies z.ZodType<WebEnvironmentVariables>;
+// `jscpd:ignore-end`
