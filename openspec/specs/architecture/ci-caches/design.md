@@ -41,5 +41,6 @@ The pnpm store is keyed on the lockfile's hash. `install-projects` saves it afte
 ## Notes
 
 - A branch's first run finds no cache of its own and falls back to the default branch's, so a Renovate or pull request branch's first run reads `main`'s store and mirror, and fetches only what their lock adds.
+- A task run with several argument sets keeps a cache per set, scoped in the key: the eight coverage shards each restore only their own shard's entry, since one restore prefix would hand every shard whichever entry saved last. `main` neither restores nor saves one, as its run is the production gate.
 - A cache is evicted by least recent use once the repository passes its cap, so the mirror and the store survive because the two saving branches read them on every run.
 - The lockfile verification cache that `pnpm/setup` saves on every branch is one small entry per lockfile and branch, so a run on another branch still saves that entry. CodeQL's internal cache is not written by this repository's workflows. Neither is governed by this rule.

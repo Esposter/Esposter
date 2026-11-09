@@ -55,9 +55,11 @@ The persona plugin runs its TypeScript under plain `node`: its enums are `const`
 - **`vp dev`, `vp build` and `vp migrate` for the app** — [deferred](../../../deferred/architecture/vite-plus-app-commands/design.md) while Nuxt owns the module graph.
 - **A remote cache** — [deferred](../../../deferred/architecture/vite-plus-remote-cache/design.md) until a release carries the client and there is a server to point it at.
 
-### The test tasks are not CI's gate
+### Tests as tasks
 
-A `test:<member>` task runs `vitest run` in the member's directory, and it replays the last green run while nothing that run read has changed. Reading a file, a built dependency's `dist` or a shared setup file is an input, so an edit to any of them misses, and an edit to something the run never read does not. It is a local tool: CI's coverage job still runs the sharded suite from the root, and nothing replaces it until three things are settled. The cache keeps one entry per task, so a replay compares against the last saved run only. A variable the task does not list under `env` reaches the test process without being part of the key. And the merge job reads one blob per shard, so a replayed member would have to restore its own blob as a declared output, and `apps/web`, most of the suite, would have to be cached per shard. Wiring them in waits on a measured saving, and `main`, the production gate, keeps the full run whatever is decided.
+A `test:<member>` task runs `vitest run` in the member's directory and replays the last green run while nothing that run read has changed, with `test:all` ordering them: a local tool, since CI does not run a suite per member. CI's coverage shards are the `coverage:ci` task, which takes `--shard=i/n` as an argument, so each shard keeps an entry of its own and a hit restores the blob the merge job reads (`monorepo-tooling`, `## CI job shape`). Reading a file, a built dependency's `dist` or a shared setup file is an input, so an edit to any of them misses and an edit to something the run never read does not.
+
+Three limits hold for every test task. The cache keeps one entry per task and argument set, so a replay compares against the last saved run only. A variable the task does not list under `env` reaches the test process without being part of the key, so a suite that reads one from the real environment has to list it. And a hash-sharded slice mixes members, so how often a shard replays depends on how widely its tests read, which is measured from CI's own replays rather than assumed.
 
 ## Key files
 
