@@ -48,7 +48,11 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     { files: ["apps/infra/**"], rules: { "naming/no-site-name-literal": "off" } },
     {
       files: ["**/*.vue"],
-      rules: { "props-interface/no-exported-type": "error", "props-interface/require-props-name": "error" },
+      rules: {
+        "props-interface/no-exported-type": "error",
+        "props-interface/no-unread-destructure": "error",
+        "props-interface/require-props-name": "error",
+      },
     },
     {
       files: ["apps/web/configuration/**", "apps/web/nuxt.config.ts"],

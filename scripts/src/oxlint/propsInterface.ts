@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { noExportedType } from "#src/services/oxlint/propsInterface/noExportedType";
+import { noUnreadDestructure } from "#src/services/oxlint/propsInterface/noUnreadDestructure";
 import { requirePropsName } from "#src/services/oxlint/propsInterface/requirePropsName";
 import { definePlugin } from "@oxlint/plugins";
 
@@ -14,10 +15,15 @@ import { definePlugin } from "@oxlint/plugins";
 // Named after its single export the way any other module is. So an SFC exports no type at all, and an import
 // Site never has to guess whether a name it reads came from a component or a module.
 //
-// Both rules are purely syntactic and scoped to `**/*.vue` in the root oxlint.config.ts.
+// The three rules are scoped to `**/*.vue` in the root oxlint.config.ts. `no-unread-destructure` reads the scope
+// Manager's references, which is syntax and needs no type information, so it stays a plugin rule.
 const plugin: Plugin = definePlugin({
   meta: { name: "props-interface" },
-  rules: { "no-exported-type": noExportedType, "require-props-name": requirePropsName },
+  rules: {
+    "no-exported-type": noExportedType,
+    "no-unread-destructure": noUnreadDestructure,
+    "require-props-name": requirePropsName,
+  },
 });
 
 export default plugin;

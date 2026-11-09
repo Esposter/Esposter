@@ -40,7 +40,7 @@ const modelValue = defineModel<ModelValueMap[TKey]>({ required: true });
 interface Props {
   isDense?: true;
 }
-const { isDense } = defineProps<Props>(); // isDense: true | undefined
+defineProps<Props>(); // the template reads isDense as true | undefined
 ```
 
 ```ts

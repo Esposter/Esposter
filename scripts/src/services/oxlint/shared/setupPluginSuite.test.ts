@@ -1,12 +1,15 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 interface OxlintFixture {
+  // The source `oxlint --fix` leaves in place of `source`. Only a fixture that sets it is fixed and checked, so a
+  // Rule with no autofix, or a suite of one, never runs the fix pass at all
+  fixed?: string;
   name: string;
   source: string;
   violations: number;
@@ -45,6 +48,10 @@ export const setupPluginSuite = ({
   wrapSource = (source) => source,
 }: SetupOxlintPluginSuiteOptions): void => {
   const fixtureViolationsMap = new Map<string, number>();
+  const fixedSourcesMap = new Map<string, string>();
+  const fixedFixtures = fixtures.flatMap(({ fixed, name }) =>
+    fixed === undefined ? [] : [{ expected: `${wrapSource(fixed)}\n`, name }],
+  );
   let directory = "";
   let codes: string[] = [];
 
@@ -83,6 +90,15 @@ export const setupPluginSuite = ({
       const name = basename(filename, extension);
       fixtureViolationsMap.set(name, (fixtureViolationsMap.get(name) ?? 0) + 1);
     }
+
+    if (fixedFixtures.length === 0) return;
+    spawnSync(
+      process.execPath,
+      [OXLINT_BIN, "--config", join(directory, CONFIG_FILENAME), "--fix", "--disable-nested-config", directory],
+      { encoding: "utf8" },
+    );
+    for (const { name } of fixedFixtures)
+      fixedSourcesMap.set(name, readFileSync(join(directory, `${name}${extension}`), "utf8"));
   });
 
   afterAll(() => {
@@ -93,6 +109,12 @@ export const setupPluginSuite = ({
     expect.hasAssertions();
 
     expect(fixtureViolationsMap.get(name)).toBe(violations);
+  });
+
+  test.each(fixedFixtures)("fixes $name to its expected source", ({ expected, name }) => {
+    expect.hasAssertions();
+
+    expect(fixedSourcesMap.get(name)).toBe(expected);
   });
 
   test("reports every rule under test and nothing else", () => {
