@@ -14,13 +14,6 @@ vi.mock("claude-code", () => ({
   read: (_$: unknown, { key }: { key: string }) => Promise.resolve(stateByKey[key]),
 }));
 
-const NOW = 0;
-const FUTURE_RESET = new Date(60_000).toISOString();
-const PAST_RESET = new Date(-60_000).toISOString();
-const RESERVE_WINDOW = { isAheadOfPace: false, name: "five-hour", percentage: 80, resetsAt: FUTURE_RESET };
-const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
-const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
-
 type WorkflowLaunch = Record<string, string>;
 type Next = (launch: WorkflowLaunch) => { deny?: string };
 type Handler = (engine: EngineInterface, launch: WorkflowLaunch, next: Next) => Promise<{ deny?: string }>;
@@ -36,21 +29,27 @@ const register = (): { handler: Handler; letLaunchThrough: LetLaunchThrough } =>
   return { handler, letLaunchThrough };
 };
 
-const createEngine = (files: Record<string, string>, now = NOW): EngineInterface =>
-  ({
-    clock: { now: () => Promise.resolve(now) },
-    fs: {
-      exists: (path: string) => Promise.resolve(path in files),
-      read: (path: string) => Promise.resolve(files[path]),
-    },
-  }) as unknown as EngineInterface;
-
-const setReserve = (resetsAt = FUTURE_RESET) => {
-  stateByKey.enabledMods = { resin: true };
-  stateByKey.reserveWindow = { ...RESERVE_WINDOW, resetsAt };
-};
-
 describe("registerReserveGate", () => {
+  const NOW = 0;
+  const FUTURE_RESET = new Date(60_000).toISOString();
+  const PAST_RESET = new Date(-60_000).toISOString();
+  const RESERVE_WINDOW = { isAheadOfPace: false, name: "five-hour", percentage: 80, resetsAt: FUTURE_RESET };
+  const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
+  const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
+
+  const createEngine = (files: Record<string, string>, now = NOW): EngineInterface =>
+    ({
+      clock: { now: () => Promise.resolve(now) },
+      fs: {
+        exists: (path: string) => Promise.resolve(path in files),
+        read: (path: string) => Promise.resolve(files[path]),
+      },
+    }) as unknown as EngineInterface;
+
+  const setReserve = (resetsAt = FUTURE_RESET) => {
+    stateByKey.enabledMods = { resin: true };
+    stateByKey.reserveWindow = { ...RESERVE_WINDOW, resetsAt };
+  };
   beforeEach(() => {
     for (const key of Object.keys(stateByKey)) Reflect.deleteProperty(stateByKey, key);
     setReserve();
