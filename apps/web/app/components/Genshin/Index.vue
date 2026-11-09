@@ -8,6 +8,7 @@ import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGa
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { GameLanguageTagMap, GameTextKey } from "genshin-text";
 import { computeLoadingProgress, GameOpening } from "genshin-world";
 
@@ -95,7 +96,7 @@ const progress = computed(() =>
       :model-value="isReplaced"
       :placement="UiDialogPlacement.Middle"
       title="Logged in elsewhere"
-      w="[min(32rem,90vw)]"
+      :size="UiDialogSize.Medium"
     >
       <p>This game was started in another session, which now holds your save.</p>
       <template #footer>
@@ -107,7 +108,7 @@ const progress = computed(() =>
       :model-value="isStartRetrying"
       :placement="UiDialogPlacement.Middle"
       title="Save not loaded"
-      w="[min(32rem,90vw)]"
+      :size="UiDialogSize.Medium"
     >
       <p>Your save could not be loaded. The game waits here and tries again.</p>
       <template #footer>

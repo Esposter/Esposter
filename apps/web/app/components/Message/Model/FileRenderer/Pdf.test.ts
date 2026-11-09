@@ -55,9 +55,14 @@ describe("messageModelFileRendererPdf", () => {
     const component = await mountPdf(false);
     await component.find("canvas").trigger("click");
 
-    expect(document.body.querySelector("dialog h2")?.textContent).toBe(filename);
-    expect(document.body.querySelector("dialog footer")).toBeNull();
-    expect(document.body.querySelector('dialog [aria-label="Close"]')).not.toBeNull();
+    // The viewer holds a closed watermark dialog of its own, so the footer read is the one directly under the viewer's frame
+    const viewerDialog = [...document.body.querySelectorAll("dialog")].find(
+      (dialog) => dialog.querySelector("h2")?.textContent === filename,
+    );
+
+    expect(viewerDialog).toBeDefined();
+    expect(viewerDialog?.querySelector(":scope > section > footer")).toBeNull();
+    expect(viewerDialog?.querySelector('[aria-label="Close"]')).not.toBeNull();
   });
 
   test("opening the viewer from the keyboard", async () => {

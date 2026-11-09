@@ -27,6 +27,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Program/Status.vue")),
       icon: "i-mdi:chart-timeline-variant",
+      isBodyBare: true,
       slug: ResourceBladeSlug.Status,
       title: "Status",
     },
@@ -35,6 +36,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Sheet/Data.vue")),
       icon: "i-mdi:table",
+      isBodyBare: true,
       slug: ResourceBladeSlug.Data,
       title: "Data",
     },
@@ -49,6 +51,7 @@ export const ResourceBladeDefinitionMap: Record<ResourceType, BladeDefinition[]>
     {
       component: defineAsyncComponent(() => import("@/components/Resource/Survey/Responses.vue")),
       icon: "i-mdi:poll",
+      isBodyBare: true,
       slug: ResourceBladeSlug.Responses,
       title: "Responses",
     },

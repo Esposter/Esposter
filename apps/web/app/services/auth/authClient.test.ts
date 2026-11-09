@@ -11,9 +11,11 @@ export const getSession = vi.fn<() => Promise<unknown>>();
 export const signOut = vi.fn<() => Promise<void>>();
 export const useSession = vi.fn<(fetcher?: unknown) => unknown>();
 export const apiKeyList = vi.fn<() => Promise<unknown>>();
+export const listAccounts = vi.fn<() => Promise<unknown>>();
 export const authClient = {
   apiKey: { list: apiKeyList },
   getSession,
+  listAccounts,
   signOut,
   useSession,
 } as unknown as typeof baseAuthClient;

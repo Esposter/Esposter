@@ -9,6 +9,7 @@ const { memberCount } = storeToRefs(memberStore);
 </script>
 
 <template>
-  <MessageRightSideBarHeader :title="`Members — ${memberCount}`" @close="isRightDrawerOpen = false" />
-  <MessageModelMemberList of-y-auto />
+  <MessageRightSideBarPane :title="`Members — ${memberCount}`" is-body-bare @close="isRightDrawerOpen = false">
+    <MessageModelMemberList />
+  </MessageRightSideBarPane>
 </template>

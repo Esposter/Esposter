@@ -7,6 +7,7 @@ import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncat
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
@@ -69,7 +70,7 @@ watch(isOpen, async (newIsOpen) => {
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     title="Import survey responses"
-    w="[min(32rem,90vw)]"
+    :size="UiDialogSize.Medium"
   >
     <p>Replaces the sheet with a survey's responses, one row each. Undo brings the sheet back.</p>
     <!-- The surveys are a read: the field's own shape until it settles, then the reason it failed, the reader's

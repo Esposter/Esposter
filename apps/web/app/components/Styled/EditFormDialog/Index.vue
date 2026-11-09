@@ -2,6 +2,7 @@
 import type { Promisable } from "type-fest";
 import type { z } from "zod";
 
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { DIALOG_BODY_TRANSITION_DURATION, DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 import { prettify } from "@/util/text/prettify";
 
@@ -63,7 +64,7 @@ watch(isOpen, (newIsOpen) => {
     is-expandable
     :overline="prettify(itemType)"
     :title
-    w="[min(50rem,90vw)]"
+    :size="UiDialogSize.Large"
     @update:model-value="
       (value) => {
         if (value) isOpen = true;

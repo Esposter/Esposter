@@ -98,7 +98,7 @@ onMounted(() => {
         <slot name="left" />
       </UiDialog>
     </template>
-    <main col-start-2 row-start-1 min-h-0 min-w-0>
+    <main col-start-2 row-start-1 min-h-0 min-w-0 of-y-auto>
       <slot />
     </main>
     <template v-if="hasRightDrawer">

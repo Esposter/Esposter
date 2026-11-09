@@ -34,11 +34,21 @@ const updateAnswer = (value: SurveyAnswerValue | undefined) => {
 const fieldNode = computed(() =>
   view.node.type === SurveyNodeType.Panel ? undefined : withSurveyRequired(view.node, view.isRequired),
 );
+const titleId = useId();
 </script>
 
 <template>
-  <fieldset v-if="view.node.type === SurveyNodeType.Panel" :data-pointer="view.pointer" flex flex-col gap-3 min-w-0>
-    <legend v-if="view.node.props.title" ui-title>{{ view.node.props.title }}</legend>
+  <div
+    v-if="view.node.type === SurveyNodeType.Panel"
+    role="group"
+    :aria-labelledby="view.node.props.title ? titleId : undefined"
+    :data-pointer="view.pointer"
+    flex
+    flex-col
+    gap-3
+    min-w-0
+  >
+    <p v-if="view.node.props.title" :id="titleId" ui-title>{{ view.node.props.title }}</p>
     <p v-if="view.node.props.description" text-muted>{{ view.node.props.description }}</p>
     <ResourceSurveyRunnerElement
       v-for="child of view.children"
@@ -52,7 +62,7 @@ const fieldNode = computed(() =>
       :view="child"
       @answer="(name, value) => emit('answer', name, value)"
     />
-  </fieldset>
+  </div>
   <div v-else-if="fieldNode" :data-pointer="view.pointer" flex gap-2 items-start>
     <span v-if="questionNumbers.get(view.pointer)" text-muted shrink-0>{{ questionNumbers.get(view.pointer) }}.</span>
     <div flex-1 min-w-0>

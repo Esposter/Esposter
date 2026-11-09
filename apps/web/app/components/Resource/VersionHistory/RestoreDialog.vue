@@ -3,6 +3,7 @@ import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { getSnapshotVersionId } from "@/services/resource/getSnapshotVersionId";
 import { getSnapshotVersionTitle } from "@/services/resource/getSnapshotVersionTitle";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
@@ -33,7 +34,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
 <!-- Raw rather than StyledDialog: this Cancel takes focus when the dialog opens, the safe answer to a restore, and the
      styled shell's Cancel does not -->
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Restore version" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Restore version" :size="UiDialogSize.Medium">
     <p>
       Restore <strong>{{ restoringSnapshotVersionTitle }}</strong> into the working draft? The draft it replaces becomes
       a version of its own first, so this can be undone — and the published version stays live until you re-publish.

@@ -22,6 +22,12 @@ const { executeMutation } = useMutation();
 const userApiKeyDialogStore = useUserApiKeyDialogStore();
 const { deletingId } = storeToRefs(userApiKeyDialogStore);
 const { data, error, refresh } = useQuery(() => requireAuthData(list()), { isInlineError: true });
+const apiKeys = computed(() => data.value?.apiKeys ?? []);
+const emptyState = {
+  description: "An agent such as a Claude Code session reaches your follow-ups or your resources with one",
+  meaning: UiIconMeaning.Terminal,
+  title: "No API keys",
+};
 // Resolved through the primitive, so a key another device deleted is dropped with its row rather than re-opening
 const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
   data.value?.apiKeys.find(({ id }) => id === deletingId.value),
@@ -45,25 +51,28 @@ const { item: deletingApiKey } = useSingletonDialog(deletingId, () =>
         "
       />
     </template>
-    <UiErrorState v-if="error" :error @retry="refresh()" />
-    <UserSettingsListSkeleton v-else-if="!data" />
-    <UiEmptyState
-      v-else-if="data.apiKeys.length === 0"
-      description="An agent such as a Claude Code session reaches your follow-ups or your resources with one"
-      :meaning="UiIconMeaning.Terminal"
-      title="No API keys"
-    />
-    <ul v-else flex flex-col>
-      <UserApiKeysCardRow
-        v-for="{ createdAt, id, name, permissions, start } of data.apiKeys"
-        :key="id"
-        :created-at
-        :mcp-scopes="getApiKeyScopes(permissions)"
-        :name="name ?? ''"
-        :start="start ?? ''"
-        @delete="deletingId = id"
-      />
-    </ul>
+    <UiAsyncBody
+      :empty-state="emptyState"
+      :error
+      :is-empty="apiKeys.length === 0 ? true : undefined"
+      :is-pending="data ? undefined : true"
+      @retry="refresh()"
+    >
+      <template #loading>
+        <UserSettingsListSkeleton />
+      </template>
+      <ul flex flex-col>
+        <UserApiKeysCardRow
+          v-for="{ createdAt, id, name, permissions, start } of apiKeys"
+          :key="id"
+          :created-at
+          :mcp-scopes="getApiKeyScopes(permissions)"
+          :name="name ?? ''"
+          :start="start ?? ''"
+          @delete="deletingId = id"
+        />
+      </ul>
+    </UiAsyncBody>
   </UserSettingsSection>
   <UserApiKeysCardConfirmDeleteDialog
     v-if="deletingApiKey"

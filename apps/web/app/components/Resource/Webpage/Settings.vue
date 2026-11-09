@@ -33,7 +33,7 @@ await loadContent();
 </script>
 
 <template>
-  <div p-4 gap-4 grid items-start ui-body md:cols-2>
+  <div gap-4 grid items-start ui-body md:cols-2>
     <UiFrame title="Description">
       <p text-muted>The text under the page's title in a search result and in a shared link.</p>
       <UiTextField

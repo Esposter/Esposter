@@ -11,6 +11,11 @@ const tagItems = computed(() =>
     to: { path: RoutePath.ResourceExplorerAll, query: { tagName: name } },
   })),
 );
+const emptyState = {
+  description: "Tag a resource from its Overview blade and it will show up here.",
+  meaning: UiIconMeaning.Tag,
+  title: "No tags yet",
+};
 </script>
 
 <!-- Tags are the grouping this area actually has: a resource carries many, so the portal's Resource groups —
@@ -18,28 +23,31 @@ const tagItems = computed(() =>
      the list pre-filtered by that tag, which is where sorting, columns and bulk actions already live -->
 <template>
   <div p-2 flex flex-col h-full min-w-0 of-y-auto ui-body>
-    <div v-if="isPending" flex flex-col gap-2>
-      <UiSkeleton v-for="index of 8" :key="index" h-8 />
-    </div>
-    <UiErrorState v-else-if="error" :error @retry="refresh()" />
-    <UiEmptyState
-      v-else-if="counts.length === 0"
-      description="Tag a resource from its Overview blade and it will show up here."
-      :meaning="UiIconMeaning.Tag"
-      title="No tags yet"
-    />
-    <nav v-else aria-label="Tags">
-      <ul flex flex-col>
-        <li v-for="{ count, name, to } of tagItems" :key="name">
-          <NuxtLink :to ui-item no-underline>
-            <UiItemContent :meaning="UiIconMeaning.Tag" :title="name">
-              <template #append>
-                <span text-muted>{{ count }}</span>
-              </template>
-            </UiItemContent>
-          </NuxtLink>
-        </li>
-      </ul>
-    </nav>
+    <UiAsyncBody
+      :empty-state="emptyState"
+      :error
+      :is-empty="counts.length === 0 ? true : undefined"
+      :is-pending="isPending ? true : undefined"
+      @retry="refresh()"
+    >
+      <template #loading>
+        <div flex flex-col gap-2>
+          <UiSkeleton v-for="index of 8" :key="index" h-8 />
+        </div>
+      </template>
+      <nav aria-label="Tags">
+        <ul flex flex-col>
+          <li v-for="{ count, name, to } of tagItems" :key="name">
+            <NuxtLink :to ui-item no-underline>
+              <UiItemContent :meaning="UiIconMeaning.Tag" :title="name">
+                <template #append>
+                  <span text-muted>{{ count }}</span>
+                </template>
+              </UiItemContent>
+            </NuxtLink>
+          </li>
+        </ul>
+      </nav>
+    </UiAsyncBody>
   </div>
 </template>

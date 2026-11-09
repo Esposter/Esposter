@@ -4,7 +4,9 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiStyles } from "@/models/ui/UiStyle";
+import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
+import { UiDialogTallFrameClassMap } from "@/services/ui/UiDialogTallFrameClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -162,6 +164,57 @@ describe("uiDialog", () => {
 
       expect(body.element.parentElement).toBe(component.get("section").element);
       expect(body.element.contains(component.get("ul").element)).toBe(true);
+    });
+
+    // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a height
+    // To divide and each pane scrolls on its own
+    test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
+      "A tall dialog stands at a definite height: %s",
+      async (placement) => {
+        expect.hasAssertions();
+
+        const component = mount(UiDialog, {
+          attachTo: document.body,
+          props: { isTall: true, modelValue: true, placement, title },
+        });
+        await flushPromises();
+        const frameClasses = component.get("section").classes();
+
+        expect(frameClasses).toContain(UiDialogTallFrameClassMap[placement]);
+        expect(frameClasses).not.toContain(UiDialogFrameClassMap[placement]);
+      },
+    );
+
+    test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
+      "A dialog that is not tall keeps the cap its placement gives it: %s",
+      async (placement) => {
+        expect.hasAssertions();
+
+        const component = mount(UiDialog, { attachTo: document.body, props: { modelValue: true, placement, title } });
+        await flushPromises();
+        const frameClasses = component.get("section").classes();
+
+        expect(frameClasses).toContain(UiDialogFrameClassMap[placement]);
+        expect(frameClasses).not.toContain(UiDialogTallFrameClassMap[placement]);
+      },
+    );
+
+    // A drawer and the full screen already stand at their edge's height, so a tall one keeps its own class
+    test.each([
+      UiDialogPlacement.DrawerBottom,
+      UiDialogPlacement.DrawerEnd,
+      UiDialogPlacement.DrawerStart,
+      UiDialogPlacement.FullScreen,
+    ])("A tall drawer or the full screen keeps its own height: %s", async (placement) => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { isTall: true, modelValue: true, placement, title },
+      });
+      await flushPromises();
+
+      expect(component.get("section").classes()).toContain(UiDialogFrameClassMap[placement]);
     });
 
     // A body draws no height of its own, so the frame sizes it to its content and only its maximum limits it. Whether a

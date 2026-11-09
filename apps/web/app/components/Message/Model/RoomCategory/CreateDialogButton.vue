@@ -32,7 +32,6 @@ const name = ref("");
       }
     "
     title="New category"
-    w="[min(32rem,90vw)]"
   >
     <UiTextField
       v-model="name"

@@ -18,8 +18,7 @@ const { error, isPending, refresh } = useQuery(
 </script>
 
 <template>
-  <MessageRightSideBarHeader title="Followed Threads" @close="isRightDrawerOpen = false" />
-  <div flex-1 of-y-auto>
+  <MessageRightSideBarPane title="Followed Threads" @close="isRightDrawerOpen = false">
     <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.rowKey" :thread />
     <template v-if="followedThreads.length === 0">
       <UiErrorState v-if="error" :error @retry="refresh()" />
@@ -33,5 +32,5 @@ const { error, isPending, refresh } = useQuery(
         title="No followed threads"
       />
     </template>
-  </div>
+  </MessageRightSideBarPane>
 </template>

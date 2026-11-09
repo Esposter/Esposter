@@ -20,32 +20,32 @@ const displayThreadMessages = computed(() =>
      dropped anywhere in the pane can be resolved to this composer rather than to the room's -->
 <template>
   <div :[THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE]="true" contents>
-    <MessageRightSideBarHeader title="Thread" @close="closeThread()">
+    <MessageRightSideBarPane title="Thread" is-body-bare @close="closeThread()">
       <template v-if="activeRootRowKey" #actions>
         <UiOverflowMenu :items="actionItems" label="Thread actions" />
       </template>
-    </MessageRightSideBarHeader>
-    <div v-if="isReadThreadPending" flex-1 of-y-auto>
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" p-4 />
-    </div>
-    <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
-      <template #no-data>
-        <UiEmptyState
-          v-if="activeRootRowKey"
-          description="Replies to this message land here."
-          :meaning="UiIconMeaning.Reply"
-          title="No replies yet"
-        />
-        <UiEmptyState
-          v-else
-          description="Open a message's thread to read and reply to it here."
-          :meaning="UiIconMeaning.Comment"
-          title="No thread selected"
-        />
+      <template v-if="isReadThreadPending">
+        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" p-4 />
       </template>
-    </MessageModelMessageSearchList>
-    <!-- Keyed by the thread so opening another one starts on an empty editor: tiptap seeds its content once at
+      <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
+        <template #no-data>
+          <UiEmptyState
+            v-if="activeRootRowKey"
+            description="Replies to this message land here."
+            :meaning="UiIconMeaning.Reply"
+            title="No replies yet"
+          />
+          <UiEmptyState
+            v-else
+            description="Open a message's thread to read and reply to it here."
+            :meaning="UiIconMeaning.Comment"
+            title="No thread selected"
+          />
+        </template>
+      </MessageModelMessageSearchList>
+      <!-- Keyed by the thread so opening another one starts on an empty editor: tiptap seeds its content once at
          setup, so a composer that merely rebinds would keep showing the reply typed for the previous thread -->
-    <MessageRightSideBarThreadInput v-if="activeRootRowKey" :key="activeRootRowKey" />
+      <MessageRightSideBarThreadInput v-if="activeRootRowKey" :key="activeRootRowKey" />
+    </MessageRightSideBarPane>
   </div>
 </template>

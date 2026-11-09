@@ -4,6 +4,7 @@ import type { MemberActionDialogProps } from "@/models/message/member/MemberActi
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { UiRules } from "@/services/ui/UiRules";
@@ -35,7 +36,7 @@ const formId = useId();
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Notes for ${displayName}`"
-    w="[min(36rem,90vw)]"
+    :size="UiDialogSize.Large"
   >
     <ul v-if="isPending && items.length === 0" aria-busy="true" flex flex-col gap-3>
       <li v-for="index of 3" :key="index" flex flex-col gap-1>

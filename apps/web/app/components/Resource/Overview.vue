@@ -56,7 +56,7 @@ watch(publication, async (newPublication) => {
 </script>
 
 <template>
-  <div p-4 flex flex-col gap-4 ui-body>
+  <div flex flex-col gap-4 ui-body>
     <UiFrame title="Essentials">
       <template #actions>
         <!-- The only way into the tags editor, in the card's header so it reads as the card's action rather than

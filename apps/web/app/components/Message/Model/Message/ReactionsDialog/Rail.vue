@@ -26,7 +26,6 @@ const selectedValues = computed(() => [modelValue.value]);
     :model-value="selectedValues"
     shrink-0
     w-28
-    of-y-auto
     @update:model-value="
       (value) => {
         const [emojiTag] = value ?? [];

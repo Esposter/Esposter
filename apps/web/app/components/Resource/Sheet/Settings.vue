@@ -24,7 +24,7 @@ await loadContent();
 <!-- The format on one side and what that format asks on the other, so a wide blade reads as the choice and its
   consequence side by side, and a narrow one stacks them in that order -->
 <template>
-  <div p-4 gap-4 grid items-start ui-body md:cols-2>
+  <div gap-4 grid items-start ui-body md:cols-2>
     <UiFrame title="File type">
       <p text-muted>How the next import reads a file, and the format an export starts from.</p>
       <!-- Changing the type swaps in that format's default configuration; the data section is untouched (settings

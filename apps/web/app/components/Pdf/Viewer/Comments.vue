@@ -23,10 +23,19 @@ const goToComment = (value: string) => {
   const comment = comments.value?.[Number(value)];
   if (comment) viewer.goToPage(comment.pageNumber);
 };
+const emptyState = { description: "", meaning: UiIconMeaning.Comment, title: "This PDF has no comments" };
 </script>
 
 <template>
-  <PdfViewerSidebarListSkeleton v-if="comments === undefined" />
-  <UiEmptyState v-else-if="comments.length === 0" :meaning="UiIconMeaning.Comment" title="This PDF has no comments" />
-  <UiList v-else :items="rows" label="Comments" @select="(value) => goToComment(value)" />
+  <UiAsyncBody
+    :empty-state="emptyState"
+    error=""
+    :is-empty="comments?.length === 0 ? true : undefined"
+    :is-pending="comments === undefined ? true : undefined"
+  >
+    <template #loading>
+      <PdfViewerSidebarListSkeleton />
+    </template>
+    <UiList :items="rows" label="Comments" @select="(value) => goToComment(value)" />
+  </UiAsyncBody>
 </template>

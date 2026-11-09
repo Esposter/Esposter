@@ -21,7 +21,7 @@ await loadContent();
 
 <template>
   <!-- The calendar is the page, so it takes the page's room rather than a frame inside it -->
-  <div p-4 h-full ui-body>
+  <div h-full ui-body>
     <UiEventCalendar
       :events
       label="Todos by due date"

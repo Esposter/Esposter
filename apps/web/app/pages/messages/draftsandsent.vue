@@ -16,21 +16,19 @@ await readDraftsAndSent();
     <template #left>
       <MessageLeftSideBar />
     </template>
-    <div h-full of-y-auto>
-      <div p-6 flex flex-col gap-4 ui-body>
-        <div flex gap-2 items-center>
-          <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
-          <h1 ui-title>Drafts & sent</h1>
-        </div>
-        <MessageDraftsAndSentTabs v-model="tab">
-          <template #default="{ value }">
-            <MessageDraftsAndSentDraftList v-if="value === DraftsAndSentTab.Drafts" />
-            <MessageDraftsAndSentScheduledList v-else-if="value === DraftsAndSentTab.Scheduled" />
-            <MessageDraftsAndSentSentList v-else />
-          </template>
-        </MessageDraftsAndSentTabs>
+    <div p-6 flex flex-col gap-4 ui-body>
+      <div flex gap-2 items-center>
+        <AppDrawerButton label="Show Room List" :meaning="UiIconMeaning.Menu" />
+        <h1 ui-title>Drafts & sent</h1>
       </div>
-      <MessageDraftsAndSentScheduleDialog />
+      <MessageDraftsAndSentTabs v-model="tab">
+        <template #default="{ value }">
+          <MessageDraftsAndSentDraftList v-if="value === DraftsAndSentTab.Drafts" />
+          <MessageDraftsAndSentScheduledList v-else-if="value === DraftsAndSentTab.Scheduled" />
+          <MessageDraftsAndSentSentList v-else />
+        </template>
+      </MessageDraftsAndSentTabs>
     </div>
+    <MessageDraftsAndSentScheduleDialog />
   </NuxtLayout>
 </template>

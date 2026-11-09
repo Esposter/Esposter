@@ -3,6 +3,7 @@ import type { ExecuteAdminActionInput } from "#shared/models/db/moderation/Execu
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 
 interface Props {
   getInput: (roomId: string) => ExecuteAdminActionInput;
@@ -20,7 +21,7 @@ const formId = useId();
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title :size="UiDialogSize.Medium">
     <UiForm :id="formId" flex flex-col gap-3 @submit="answer(() => executeAdminAction(getInput))">
       <slot />
     </UiForm>

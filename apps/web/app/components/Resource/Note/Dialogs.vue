@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { useResourceStore } from "@/store/resource";
 import { useNoteStore } from "@/store/resource/note";
@@ -26,7 +27,12 @@ const html = computed(() => (previewDoc.value ? renderNoteHtml(previewDoc.value)
     this has already parsed the file, so the confirm is the only thing left to do. The content it replaces becomes a
     revision first, and the import does not proceed when that revision did not land, because the revision is the way
     back -->
-  <UiDialog v-model="isPreviewOpen" :placement="UiDialogPlacement.Middle" title="Import Markdown" w="[min(48rem,90vw)]">
+  <UiDialog
+    v-model="isPreviewOpen"
+    :placement="UiDialogPlacement.Middle"
+    title="Import Markdown"
+    :size="UiDialogSize.Large"
+  >
     <!-- eslint-disable-next-line vue/no-v-html -- the imported note's sanitized HTML -->
     <div class="rich-text-content" v-html="html" />
     <template #footer>

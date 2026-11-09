@@ -2,6 +2,7 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { computeColumnChartData } from "@/services/resource/sheet/column/computeColumnChartData";
 
 interface Props {
@@ -18,7 +19,7 @@ const chartData = computed(() => (columnStatistics ? computeColumnChartData(colu
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`${columnStatistics?.columnName} — Chart`"
-    w="[min(48rem,90vw)]"
+    :size="UiDialogSize.Large"
   >
     <StyledApexChart v-if="chartData" :options="chartData.options" :series="chartData.series" :type="chartData.type" />
   </UiDialog>

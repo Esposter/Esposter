@@ -6,6 +6,7 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { KeepDuplicateMode, KeepDuplicateModes } from "@/models/resource/sheet/commands/KeepDuplicateMode";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getVisibleEditableColumns } from "@/services/resource/sheet/column/getVisibleEditableColumns";
 import { findDuplicateRows } from "@/services/resource/sheet/commands/findDuplicateRows";
@@ -39,7 +40,7 @@ const keepModeItems = KeepDuplicateModes.map((mode) => ({ title: `Keep ${mode}`,
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Duplicate rows" w="[min(48rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Duplicate rows" :size="UiDialogSize.Large">
     <!-- The dialog stays in the document while closed, so its body mounts only while it is open: its reads cost
       Nothing until then -->
     <template v-if="isOpen">

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { checkIsBlankSource } from "@/services/shared/checkIsBlankSource";
 import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
 import { useResourceStore } from "@/store/resource";
@@ -32,7 +33,7 @@ onUnmounted(() => {
     :confirm="() => importEmailSource(resourceId, source)"
     :is-confirm-disabled="checkIsBlankSource(source) || undefined"
     title="Import MJML"
-    w="[min(48rem,90vw)]"
+    :size="UiDialogSize.Large"
   >
     <UiTextField v-model="source" label="MJML source" :rows="20" />
     <p text-muted>The email is replaced by this source as one edit, so one undo restores it.</p>

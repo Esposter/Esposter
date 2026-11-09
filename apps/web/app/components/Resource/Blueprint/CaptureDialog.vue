@@ -38,7 +38,6 @@ onUnmounted(() => {
     confirm-label="Create"
     :is-confirm-disabled="overLimitCount > 0 || undefined"
     title="Save as blueprint"
-    w="[min(32rem,90vw)]"
     :submit="
       async () => {
         const outcome = await executeMutation(

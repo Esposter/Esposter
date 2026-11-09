@@ -76,7 +76,7 @@ watchAutosave(programResource, saveProgram);
 <!-- Who the program reaches beside what it sends them, each a card of its own, so a wide blade reads the two halves
   side by side and a narrow one stacks them in the order a program is set up -->
 <template>
-  <div p-4 gap-4 grid items-start ui-body md:cols-2>
+  <div gap-4 grid items-start ui-body md:cols-2>
     <UiFrame title="Audience">
       <p text-muted>The dataset the participants come from, and the column that tells one participant from another.</p>
       <DatasetReferencePicker v-model="audience" :error />

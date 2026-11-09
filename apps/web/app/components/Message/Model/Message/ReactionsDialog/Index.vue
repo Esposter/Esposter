@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useEmojiStore } from "@/store/message/emoji";
 
@@ -25,14 +26,15 @@ const selectedEmoji = computed(
 
 <template>
   <!-- High, as a dialog whose rail swaps panels of other lengths stands, so the rail never moves under the pointer -->
-  <UiDialog v-model="isOpen" title="Reactions" w="[min(36rem,90vw)]">
-    <div v-if="selectedEmoji" flex gap-3>
+  <UiDialog v-model="isOpen" title="Reactions" :size="UiDialogSize.Large">
+    <!-- The row fills the body, and the list beside the rail is the one scroller, so the rail stays in view as the list is read -->
+    <div v-if="selectedEmoji" flex flex-1 gap-3 min-h-0>
       <MessageModelMessageReactionsDialogRail
         :emojis="displayEmojis"
         :model-value="selectedEmoji.emojiTag"
         @update:model-value="selectedEmojiTag = $event"
       />
-      <div aria-label="Reacted by" role="list" flex flex-1 flex-col min-w-0>
+      <div aria-label="Reacted by" role="list" flex flex-1 flex-col min-w-0 of-y-auto>
         <MessageModelMessageReactionsDialogUserListItem
           v-for="userId of selectedEmoji.userIds"
           :key="userId"

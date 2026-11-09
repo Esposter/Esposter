@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 import { useResourceStore } from "@/store/resource";
@@ -27,7 +28,7 @@ const installCommands = [
     :variant="UiButtonVariant.Quiet"
     @click="isOpen = true"
   />
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Connect an agent" w="[min(36rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Connect an agent" :size="UiDialogSize.Large">
     <ol list-decimal list-inside flex flex-col gap-4>
       <li>
         Create an API key for the agent with the Follow-ups scope, and keep it for the last step.

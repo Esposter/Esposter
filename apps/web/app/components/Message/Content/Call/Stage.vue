@@ -33,7 +33,7 @@ const callParticipantGridClass = computed(() => {
       :stream="activeScreenShareStream"
       @fullscreen="emit('fullscreen')"
     />
-    <div v-else flex-1 grid grid-auto-rows-fr :class="[isDense ? 'gap-2' : 'gap-3', callParticipantGridClass]">
+    <div v-else flex-1 min-h-0 grid grid-auto-rows-fr :class="[isDense ? 'gap-2' : 'gap-3', callParticipantGridClass]">
       <MessageContentCallParticipantTile
         v-for="[participantId, tileProps] of participantTilePropsMap"
         :key="participantId"

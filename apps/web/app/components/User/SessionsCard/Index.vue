@@ -22,6 +22,7 @@ const { item: revokingSession } = useSingletonDialog(revokingId, () =>
   sessions.value?.find(({ id }) => id === revokingId.value),
 );
 const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) => !isCurrent).length ?? 0);
+const sessionRows = computed(() => sessions.value ?? []);
 </script>
 
 <template>
@@ -40,20 +41,23 @@ const otherSessionCount = computed(() => sessions.value?.filter(({ isCurrent }) 
         "
       />
     </template>
-    <UiErrorState v-if="error" :error @retry="refresh()" />
     <!-- Keyed on the sessions rather than a pending flag: an empty list would read as an account nothing is
          signed in to, while the reader is looking at it from one of the rows it is missing -->
-    <UserSettingsListSkeleton v-else-if="!sessions" />
-    <ul v-else flex flex-col>
-      <UserSessionsCardRow
-        v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessions"
-        :key="id"
-        :device-label
-        :is-current="isCurrent ? true : undefined"
-        :updated-at
-        @revoke="revokingId = id"
-      />
-    </ul>
+    <UiAsyncBody :error :is-pending="sessions ? undefined : true" @retry="refresh()">
+      <template #loading>
+        <UserSettingsListSkeleton />
+      </template>
+      <ul flex flex-col>
+        <UserSessionsCardRow
+          v-for="{ deviceLabel, id, isCurrent, updatedAt } of sessionRows"
+          :key="id"
+          :device-label
+          :is-current="isCurrent ? true : undefined"
+          :updated-at
+          @revoke="revokingId = id"
+        />
+      </ul>
+    </UiAsyncBody>
   </UserSettingsSection>
   <UserSessionsCardConfirmRevokeDialog
     v-if="revokingSession"

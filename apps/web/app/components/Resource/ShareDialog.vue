@@ -5,6 +5,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getShareMessage } from "@/services/resource/getShareMessage";
 import { useNotificationStore } from "@/store/notification";
@@ -78,7 +79,7 @@ const share = async () => {
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Share “${resource.name}”`"
-    w="[min(36rem,90vw)]"
+    :size="UiDialogSize.Large"
   >
     <div v-if="isLoadingRooms" flex flex-col gap-2>
       <UiSkeleton h-8 />

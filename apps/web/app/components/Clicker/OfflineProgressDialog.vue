@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { OFFLINE_CAP_MS } from "@/services/clicker/constants";
 import { formatNumberLong } from "@/services/clicker/formatNumberLong";
 import { useClickerStore } from "@/store/clicker";
@@ -25,7 +26,7 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Welcome back!" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Welcome back!" :size="UiDialogSize.Medium">
     <p>
       <!-- The award stops accruing at the cap, so absences past it say so instead of implying the full time paid out -->
       While you were away for {{ displayElapsedDuration }}, your buildings produced

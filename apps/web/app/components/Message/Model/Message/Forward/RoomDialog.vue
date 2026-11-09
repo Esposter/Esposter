@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
@@ -35,7 +36,7 @@ const {
 
 <template>
   <!-- High, as a dialog whose list changes length under its search stands, so the field never moves -->
-  <UiDialog v-if="forward && creator" v-model="isOpen" title="Forward To" w="[min(36rem,90vw)]">
+  <UiDialog v-if="forward && creator" v-model="isOpen" title="Forward To" :size="UiDialogSize.Large">
     <p text-muted>Select where you want to share this message.</p>
     <UiTextField v-model="searchQuery" label="Search rooms" :type="UiTextFieldType.Search" />
     <!-- Loading until a search settles: rows in the list's own shape while one is out with nothing on screen, the

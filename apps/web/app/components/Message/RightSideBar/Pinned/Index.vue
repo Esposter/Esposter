@@ -15,8 +15,7 @@ const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
 <!-- A pane of the side panel rather than a popover off the header, as Slack's pins are: the list gets the panel's
      height, a phone reads it as the same sheet as the members, and the header keeps one button fewer -->
 <template>
-  <MessageRightSideBarHeader title="Pinned Messages" @close="isRightDrawerOpen = false" />
-  <div px-2 flex-1 of-y-auto>
+  <MessageRightSideBarPane title="Pinned Messages" is-body-bare @close="isRightDrawerOpen = false">
     <template v-if="isPending">
       <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
     </template>
@@ -31,5 +30,5 @@ const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
         />
       </template>
     </MessageModelMessageSearchList>
-  </div>
+  </MessageRightSideBarPane>
 </template>

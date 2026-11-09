@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { VueWrapper } from "@vue/test-utils";
-import type { SurveyPanelDynamicNode, SurveyTemplateNode } from "vue-survey-engine-headless";
+import type { SurveyPanelDynamicNode, SurveyPanelNode, SurveyTemplateNode } from "vue-survey-engine-headless";
 
 import Runner from "@/components/Resource/Survey/Runner.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
@@ -15,6 +15,7 @@ import {
   SURVEY_REQUIRED_MESSAGE,
   SurveyNodeType,
   surveyPanelDynamicNodePropsSchema,
+  surveyPanelNodeType,
   SurveyProgressBarPlacement,
 } from "vue-survey-engine-headless";
 
@@ -292,6 +293,26 @@ describe("runner", () => {
       await flushPromises();
 
       expect(findRowLabels(component)).toStrictEqual([["a"], ["a", "b"]]);
+    });
+
+    test("a panel is a group named by its title", async () => {
+      expect.hasAssertions();
+
+      const panel: SurveyPanelNode = {
+        props: {
+          ...surveyPanelNodeType.createDefaultProps(),
+          children: [createSurveyTestQuestion("first")],
+          id: crypto.randomUUID(),
+          title: "Contact",
+        },
+        type: SurveyNodeType.Panel,
+      };
+      const component = await mountSuspended(Runner, {
+        props: { document: createSurveyTestDocument([createSurveyTestPage([panel])]) },
+      });
+      const labelledBy = component.get('[role="group"]').attributes("aria-labelledby");
+
+      expect(component.get(`[id="${labelledBy}"]`).text()).toBe("Contact");
     });
 
     test("a progress bar set to the bottom is drawn after the page's questions", async () => {

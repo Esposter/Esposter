@@ -34,12 +34,19 @@ const runs = computed(() => {
     })),
   }));
 });
+const emptyState = { description: "", meaning: UiIconMeaning.Bookmark, title: "This PDF has no outline" };
 </script>
 
 <template>
-  <PdfViewerSidebarListSkeleton v-if="outline === undefined" />
-  <UiEmptyState v-else-if="outline.length === 0" :meaning="UiIconMeaning.Bookmark" title="This PDF has no outline" />
-  <template v-else>
+  <UiAsyncBody
+    :empty-state="emptyState"
+    error=""
+    :is-empty="outline?.length === 0 ? true : undefined"
+    :is-pending="outline === undefined ? true : undefined"
+  >
+    <template #loading>
+      <PdfViewerSidebarListSkeleton />
+    </template>
     <template v-for="(run, index) of runs" :key="index">
       <UiList
         v-if="run.isFollowable"
@@ -67,5 +74,5 @@ const runs = computed(() => {
         </div>
       </div>
     </template>
-  </template>
+  </UiAsyncBody>
 </template>

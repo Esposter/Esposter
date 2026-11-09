@@ -16,7 +16,7 @@ const roomName = useRoomName(inviteRoomId);
 
 <!-- Discord's dialog: the sender's friends with an Invite each, above the link for anyone who is not a friend yet -->
 <template>
-  <StyledDialog v-if="room" v-model="isOpen" :title="`Invite friends to ${roomName}`" w="[min(31.25rem,90vw)]">
+  <StyledDialog v-if="room" v-model="isOpen" :title="`Invite friends to ${roomName}`">
     <div flex flex-col gap-3 ui-body>
       <h3 ui-heading>Send an invite to a friend</h3>
       <MessageModelRoomInviteFriendList :key="room.id" :room />

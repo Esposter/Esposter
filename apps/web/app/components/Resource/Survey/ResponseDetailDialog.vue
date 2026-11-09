@@ -3,6 +3,7 @@ import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
 import type { SurveyResponseRecord } from "#shared/models/resource/survey/SurveyResponseRecord";
 
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
 
 interface Props {
@@ -22,7 +23,13 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
 </script>
 
 <template>
-  <UiDialog v-if="item" v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Response" w="[min(40rem,90vw)]">
+  <UiDialog
+    v-if="item"
+    v-model="isOpen"
+    :placement="UiDialogPlacement.Middle"
+    title="Response"
+    :size="UiDialogSize.Large"
+  >
     <!-- The dataset row rendered vertically — answers already arrive flattened, so there is no new read path -->
     <dl gap-x-6 gap-y-3 grid cols="[auto_1fr]">
       <template v-for="{ name } of columns" :key="name">

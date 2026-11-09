@@ -14,39 +14,45 @@ interface Props {
 }
 
 const { activeBlade, resource } = defineProps<Props>();
+const blade = computed(() => ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade));
 // The type's own blade wins over its inline editor, and the two are mutually exclusive — one Suspense
 // Boundary renders whichever applies rather than two identical ones
 const contentComponent = computed(
   () =>
-    ResourceBladeDefinitionMap[resource.type].find(({ slug }) => slug === activeBlade)?.component ??
+    blade.value?.component ??
     (activeBlade === ResourceBladeType.Editor ? ResourceEditorComponentMap[resource.type] : undefined),
 );
+// The outlet's body pads and scrolls the blade, so a blade writes its content only. The editor is a full-bleed canvas that
+// Lays out its own regions, and a blade that draws a table owns its own scroll, so each is drawn bare with its own padding
+const isBodyBare = computed(() => activeBlade === ResourceBladeType.Editor || blade.value?.isBodyBare);
 </script>
 
 <template>
-  <!-- The type's own Overview wraps the generic one; without an entry the generic one renders as-is -->
-  <component
-    :is="ResourceOverviewComponentMap[resource.type] ?? ResourceOverview"
-    v-if="activeBlade === ResourceBladeType.Overview"
-    :resource
-  />
-  <ResourceActivityLog
-    v-else-if="activeBlade === ResourceBladeType.Activity"
-    :key="resource.id"
-    :resource-id="resource.id"
-  />
-  <!-- A resolved Suspense otherwise keeps the blade being left on screen until the next one resolves, so a switch
-    reads as a click that did nothing. A zero timeout swaps in the fallback at once; a blade over content already
-    read resolves in the same task, before the browser paints, so only a real wait — a first open, or a blade's
-    chunk arriving — is ever seen as one -->
-  <Suspense v-else-if="contentComponent" :timeout="0">
-    <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
-    <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is coming -->
-    <template #fallback>
-      <p role="status" text-muted p-8 flex gap-2 items-center justify-center>
-        <UiSpinner />
-        Loading…
-      </p>
-    </template>
-  </Suspense>
+  <div :class="isBodyBare ? 'contents' : ['ui-region-body', 'h-full', 'p-3']">
+    <!-- The type's own Overview wraps the generic one; without an entry the generic one renders as-is -->
+    <component
+      :is="ResourceOverviewComponentMap[resource.type] ?? ResourceOverview"
+      v-if="activeBlade === ResourceBladeType.Overview"
+      :resource
+    />
+    <ResourceActivityLog
+      v-else-if="activeBlade === ResourceBladeType.Activity"
+      :key="resource.id"
+      :resource-id="resource.id"
+    />
+    <!-- A resolved Suspense otherwise keeps the blade being left on screen until the next one resolves, so a switch
+      reads as a click that did nothing. A zero timeout swaps in the fallback at once; a blade over content already
+      read resolves in the same task, before the browser paints, so only a real wait — a first open, or a blade's
+      chunk arriving — is ever seen as one -->
+    <Suspense v-else-if="contentComponent" :timeout="0">
+      <component :is="contentComponent" :key="`${resource.id}${ID_SEPARATOR}${activeBlade}`" />
+      <!-- A blade may be a sheet, a calendar or an editor, so no one skeleton is its shape: the spinner says it is coming -->
+      <template #fallback>
+        <p role="status" text-muted p-8 flex gap-2 items-center justify-center>
+          <UiSpinner />
+          Loading…
+        </p>
+      </template>
+    </Suspense>
+  </div>
 </template>

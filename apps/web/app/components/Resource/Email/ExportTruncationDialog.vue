@@ -42,7 +42,6 @@ const exportAnyway = async () => {
     confirm-label="Export anyway"
     :confirm="exportAnyway"
     title="Export incomplete data?"
-    w="[min(32rem,90vw)]"
   >
     <span>
       This email is bound to {{ formatTruncationCount(truncation.totalRows, truncation.isCountCapped) }}

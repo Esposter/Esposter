@@ -34,25 +34,28 @@ const updateRow = (row: SurveyChoice, columnKey: string | undefined) => {
   <ResourceSurveyFieldShell :error :question="node.props">
     <template #default="{ describedBy, labelledBy }">
       <div role="group" :aria-describedby="describedBy" :aria-labelledby="labelledBy">
-        <!-- One row of the table per row choice, its radio group choosing one column of that row -->
-        <table w-full>
-          <tbody>
-            <tr v-for="row of node.props.rows" :key="row.value">
-              <th scope="row" fw-normal pr-4 text-start align-top>{{ getSurveyChoiceText(row) }}</th>
-              <td>
-                <UiRadioGroup
-                  :aria-invalid="error ? true : undefined"
-                  :aria-required="node.props.isAllRowRequired ? true : undefined"
-                  :is-disabled
-                  :items="columnItems"
-                  :label="getSurveyChoiceText(row)"
-                  :model-value="getColumnKey(row)"
-                  @update:model-value="(columnKey) => updateRow(row, columnKey)"
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- One row of the table per row choice, its radio group choosing one column of that row. A table wider than the
+          field scrolls in its own wrapper, as the dynamic matrix's does -->
+        <div of-x-auto>
+          <table w-full>
+            <tbody>
+              <tr v-for="row of node.props.rows" :key="row.value">
+                <th scope="row" fw-normal pr-4 text-start align-top>{{ getSurveyChoiceText(row) }}</th>
+                <td>
+                  <UiRadioGroup
+                    :aria-invalid="error ? true : undefined"
+                    :aria-required="node.props.isAllRowRequired ? true : undefined"
+                    :is-disabled
+                    :items="columnItems"
+                    :label="getSurveyChoiceText(row)"
+                    :model-value="getColumnKey(row)"
+                    @update:model-value="(columnKey) => updateRow(row, columnKey)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </template>
   </ResourceSurveyFieldShell>

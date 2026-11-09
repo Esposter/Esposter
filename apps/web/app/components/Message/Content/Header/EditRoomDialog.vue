@@ -3,6 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiRules } from "@/services/ui/UiRules";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
@@ -59,7 +60,7 @@ const updateRoom = async () => {
     v-model="isEditRoomDialogOpen"
     :placement="UiDialogPlacement.Middle"
     title="Edit Room"
-    w="[min(28rem,90vw)]"
+    :size="UiDialogSize.Medium"
   >
     <UiForm
       :id="formId"

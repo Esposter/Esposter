@@ -6,6 +6,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
@@ -69,7 +70,7 @@ const deploy = async () => {
     <UiIcon :meaning="UiIconMeaning.Deploy" />
     Deploy
   </UiButton>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" :size="UiDialogSize.Medium">
     <UiForm v-if="deployments.length === 0" :id="formId" flex flex-col gap-3 @submit="deploy()">
       <p v-if="blueprint.parameters.length === 0" text-muted>
         This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.

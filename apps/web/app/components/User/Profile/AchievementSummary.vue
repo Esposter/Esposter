@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MAX_RECENT_ACHIEVEMENTS } from "@/services/achievement/constants";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
@@ -56,7 +57,7 @@ const isOpen = ref(false);
         :user-achievement
       />
     </ul>
-    <UiDialog v-model="isOpen" title="Achievements" w="[min(64rem,90vw)]">
+    <UiDialog v-model="isOpen" title="Achievements" :size="UiDialogSize.ExtraLarge">
       <AchievementGrid
         :achievement-definitions="unlockedAchievementDefinitions"
         :user-achievements="unlockedUserAchievements"

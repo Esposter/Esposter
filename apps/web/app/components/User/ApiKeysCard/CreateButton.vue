@@ -6,6 +6,7 @@ import { McpScopes } from "#shared/models/auth/McpScope";
 import { API_KEY_NAME_MAX_LENGTH } from "#shared/services/auth/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { McpScopeTitleMap } from "@/services/auth/McpScopeTitleMap";
 import { UiRules } from "@/services/ui/UiRules";
@@ -43,7 +44,7 @@ const { answer } = useDialogAnswer(isOpen);
     <UiIcon :meaning="UiIconMeaning.Create" />
     Create key
   </UiButton>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create API key" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create API key" :size="UiDialogSize.Medium">
     <template v-if="createdKey">
       <p>Copy the key now. It is shown only once; a lost key is deleted and replaced.</p>
       <div px-3 py-2 flex gap-2 items-center ui-field>

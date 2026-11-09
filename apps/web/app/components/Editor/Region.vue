@@ -37,6 +37,12 @@ const isReversed = computed(() => [RegionEdge.Bottom, RegionEdge.End].includes(r
 const isResizable = computed(
   () => region.presentation === RegionPresentation.Docked && region.minimumSize < region.maximumSize,
 );
+// A region tabbed by its panels scrolls inside the panel it shows, so its wrapper only clips. Any other region's wrapper is
+// Its body: a bar is one row that draws its own padding, so its body is full-bleed, and a column's body pads what it draws
+const regionBodyClass = computed(() => {
+  if (region.panels.length > 1) return "of-hidden";
+  return ["ui-region-body", isVertical.value ? undefined : "p-3"];
+});
 const sizeStyle = computed(() => (isVertical.value ? { height: `${region.size}px` } : { width: `${region.size}px` }));
 // An inline inset beats the `inset-y-0` class the overlay map gives a column, so that map stays as it is
 const overlayInsetStyle = computed(() => {
@@ -75,9 +81,10 @@ const overlayInsetStyle = computed(() => {
     min-w-0
     ui-frame
   >
-    <!-- Content taller than its region scrolls inside it, so it never paints over the canvas or a column beside it. The handle sits
-         outside, since it straddles the region's edge -->
-    <div flex flex-1 flex-col min-h-0 min-w-0 of-auto>
+    <!-- Content taller than its region scrolls inside it, so it never paints over the canvas or a column beside it. A region
+         tabbed by its panels scrolls in the selected panel instead, so this wrapper only clips. The handle sits outside,
+         since it straddles the region's edge -->
+    <div flex flex-1 flex-col min-h-0 min-w-0 :class="regionBodyClass">
       <EditorRegionContent
         :name
         :panel-name-map

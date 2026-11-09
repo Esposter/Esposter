@@ -3,6 +3,7 @@ import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessag
 import { pollOptionSchema } from "#shared/models/message/poll/PollOption";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { POLL_MAX_OPTIONS, POLL_MIN_OPTIONS } from "@/services/message/poll/constants";
 import { UiRules } from "@/services/ui/UiRules";
@@ -44,7 +45,7 @@ const createPoll = async () => {
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create Poll" w="[min(32rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create Poll" :size="UiDialogSize.Medium">
     <UiForm :id="formId" flex flex-col gap-3 @submit="answer(createPoll, true)">
       <UiTextField v-model="question" is-autofocus label="Question" :rules="requiredRules" />
       <div v-for="(option, index) of options" :key="index" flex gap-2 items-end>

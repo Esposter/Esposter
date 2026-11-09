@@ -12,26 +12,34 @@ interface Props {
 }
 
 const { isPending, resources, source } = defineProps<Props>();
+// An empty Favorites tab is not an empty account, so the copy comes from the set the tab is over
+const emptyState = computed(() => ({
+  ...ResourceListSourceDefinitionMap[source].emptyState,
+  meaning: ResourceListSourceDefinitionMap[source].meaning,
+}));
 </script>
 
 <!-- The cards fill the width a column at a time, so a wide screen shows every one at a glance rather than a narrow
      column of them -->
 <template>
-  <div v-if="isPending" class="columns" aria-busy="true" gap-3 grid>
-    <!-- Each card's own shape -->
-    <UiSkeleton v-for="index of RECENT_RESOURCES_LIMIT" :key="index" h-16 />
-  </div>
-  <!-- An empty Favorites tab is not an empty account, so the copy comes from the set the tab is over -->
-  <UiEmptyState
-    v-else-if="resources.length === 0"
-    :="ResourceListSourceDefinitionMap[source].emptyState"
-    :meaning="ResourceListSourceDefinitionMap[source].meaning"
-  />
-  <ul v-else class="columns" gap-3 grid>
-    <li v-for="resource of resources" :key="resource.id">
-      <ResourceHomeListItem :resource />
-    </li>
-  </ul>
+  <UiAsyncBody
+    :empty-state="emptyState"
+    error=""
+    :is-empty="resources.length === 0 ? true : undefined"
+    :is-pending="isPending ? true : undefined"
+  >
+    <template #loading>
+      <div class="columns" aria-busy="true" gap-3 grid>
+        <!-- Each card's own shape -->
+        <UiSkeleton v-for="index of RECENT_RESOURCES_LIMIT" :key="index" h-16 />
+      </div>
+    </template>
+    <ul class="columns" gap-3 grid>
+      <li v-for="resource of resources" :key="resource.id">
+        <ResourceHomeListItem :resource />
+      </li>
+    </ul>
+  </UiAsyncBody>
 </template>
 
 <style scoped>

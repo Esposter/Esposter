@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import type { UiDialogSize } from "@/models/ui/UiDialogSize";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
+import { UiDialogTallFrameClassMap } from "@/services/ui/UiDialogTallFrameClassMap";
 import { Dialog } from "@vuetify/v0";
 
 interface Props {
@@ -14,6 +16,9 @@ interface Props {
   // A button beside the close one takes it over the whole page and back, for content that wants all the room the
   // Reader can give it
   isExpandable?: true;
+  // Stands at a fixed height in the page rather than only being capped by it, so a two-pane body divides a height and
+  // Each pane scrolls on its own. A drawer and the full screen already stand at their edge's height, so they ignore it
+  isTall?: true;
   // Drawn in a title bar with a close button beside it, or, where the content says what it is on its own, only the
   // Dialog's accessible name
   isTitleHidden?: true;
@@ -36,6 +41,7 @@ const isExpanded = defineModel<boolean>("isExpanded", { default: false });
 const {
   isBodyBare,
   isExpandable,
+  isTall,
   isTitleHidden,
   overline,
   placement = UiDialogPlacement.High,
@@ -43,6 +49,11 @@ const {
   title,
 } = defineProps<Props>();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
+// A tall frame takes its placement's fixed height where the placement has one, and otherwise keeps the cap it stands under
+const frameClass = computed(() => {
+  const tallFrameClass = isTall ? UiDialogTallFrameClassMap[displayPlacement.value] : undefined;
+  return tallFrameClass ?? UiDialogFrameClassMap[displayPlacement.value];
+});
 const sizeClass = computed(() => {
   const isStandingInPage =
     displayPlacement.value === UiDialogPlacement.High || displayPlacement.value === UiDialogPlacement.Middle;
@@ -77,7 +88,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
       of-visible
       @cancel.prevent
     >
-      <section ref="frame" :class="UiDialogFrameClassMap[displayPlacement]" flex flex-col ui-lifted>
+      <section ref="frame" :class="frameClass" flex flex-col ui-lifted>
         <Dialog.Title v-if="isTitleHidden" sr-only>{{ title }}</Dialog.Title>
         <header v-else px-3 py-2 flex flex-wrap gap-2 ui-bar items-center>
           <hgroup flex-1 min-w-0>

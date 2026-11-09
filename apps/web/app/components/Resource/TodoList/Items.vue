@@ -92,7 +92,7 @@ await loadContent();
 </script>
 
 <template>
-  <div p-4 flex flex-col gap-2 h-full of-y-auto ui-body>
+  <div flex flex-col gap-2 ui-body>
     <ResourceTodoListTopSlot />
     <template v-if="openListItems.length > 0 || completedListItems.length > 0">
       <!-- The open todos drag only in the list's own order, so a drop never lands in an order the reader is not looking

@@ -55,7 +55,7 @@ const title = computed(() => (snapshotVersion.value ? getSnapshotVersionTitle(sn
         />
       </div>
     </UiAlert>
-    <div flex-1 min-w-0 of-auto>
+    <div flex-1 min-h-0 min-w-0>
       <UiEmptyState
         v-if="!publishedVersion || !viewComponent"
         description="This version has no rendered form of its own — restore it to see its content."

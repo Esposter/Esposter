@@ -2,6 +2,7 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { getVisualMoveTargets } from "@/services/dashboard/visual/getVisualMoveTargets";
 import { useVisualStore } from "@/store/dashboard/visual";
 
@@ -23,7 +24,7 @@ const moveTo = (targetGroupId: string) => {
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Move to" w="[min(24rem,90vw)]">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Move to" :size="UiDialogSize.Small">
     <UiRadioGroup
       label="Move to"
       :items="targets"

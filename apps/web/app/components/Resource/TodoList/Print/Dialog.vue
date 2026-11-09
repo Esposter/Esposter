@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
 
 const todoListPrintDialogStore = useTodoListPrintDialogStore();
@@ -20,7 +21,13 @@ useEventListener("afterprint", () => {
 <!-- Microsoft To Do's Print list: what goes on the page besides each todo's title and due date, then the browser's own
      print dialog, which also saves a PDF -->
 <template>
-  <StyledDialog v-model="isDialogOpen" confirm-label="Print" :confirm="print" title="Print list" w="[min(24rem,90vw)]">
+  <StyledDialog
+    v-model="isDialogOpen"
+    confirm-label="Print"
+    :confirm="print"
+    title="Print list"
+    :size="UiDialogSize.Small"
+  >
     <UiSwitch v-model="isStepsPrinted" is-label-shown label="Print steps" />
     <UiSwitch v-model="isNotesPrinted" is-label-shown label="Print notes" />
   </StyledDialog>

@@ -3,6 +3,7 @@ import type { TagRow } from "@/models/resource/TagRow";
 import type { ResourceTags } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getResourceTags } from "@/services/resource/tag/getResourceTags";
 import { getTagRows } from "@/services/resource/tag/getTagRows";
@@ -33,7 +34,7 @@ const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => cr
     is-optimistic
     :submit="() => updateTags(getResourceTags(rows))"
     title="Edit tags"
-    w="[min(40rem,90vw)]"
+    :size="UiDialogSize.Large"
   >
     <div v-for="(row, index) of rows" :key="row.id" flex gap-2 items-end>
       <UiTextField v-model="row.name" label="Name" :rules="nameRules" flex-1 />

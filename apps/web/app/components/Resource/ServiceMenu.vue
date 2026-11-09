@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { LEFT_DRAWER_WIDTH } from "#shared/services/app/constants";
 import { ResourceListSources } from "@/models/resource/list/ResourceListSource";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
@@ -31,17 +30,7 @@ const items = computed<UiListItem<string>[]>(() =>
      built once -->
 <template>
   <Transition name="service-menu">
-    <nav
-      v-if="isOpen"
-      :style="{ width: `${LEFT_DRAWER_WIDTH}px` }"
-      p-2
-      inset-y-0
-      left-0
-      absolute
-      z-2
-      of-y-auto
-      ui-lifted
-    >
+    <nav v-if="isOpen" w="[min(16rem,80dvw)]" p-2 inset-y-0 left-0 absolute z-2 of-y-auto ui-lifted>
       <UiList :items label="Resource menu" @select="isOpen = false" />
     </nav>
   </Transition>

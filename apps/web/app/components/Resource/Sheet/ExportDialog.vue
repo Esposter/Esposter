@@ -54,7 +54,6 @@ const columnsLabelId = useId();
     "
     :is-confirm-disabled="selectedColumnIds.length === 0 || undefined"
     :title="`Export as ${dataSourceType}`"
-    w="[min(32rem,90vw)]"
   >
     <div role="group" :aria-labelledby="columnsLabelId" flex flex-col gap-2>
       <p :id="columnsLabelId" text-muted>Columns to export</p>

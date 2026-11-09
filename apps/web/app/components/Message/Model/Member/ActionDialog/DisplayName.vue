@@ -3,6 +3,7 @@ import type { MemberActionDialogProps } from "@/models/message/member/MemberActi
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { useMemberStore } from "@/store/message/user/member";
 
 const isOpen = defineModel<boolean>({ default: false });
@@ -37,7 +38,7 @@ const save = () =>
     v-model="isOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Display name for ${displayName}`"
-    w="[min(32rem,90vw)]"
+    :size="UiDialogSize.Medium"
   >
     <UiForm :id="formId" flex flex-col gap-3 @submit="save()">
       <MessageModelRoomSettingsTypeProfileDisplayNameField v-model="editedDisplayName" @save="save()" />

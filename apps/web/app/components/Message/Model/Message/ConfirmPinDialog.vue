@@ -52,7 +52,6 @@ const pinMessage = async () => {
     :confirm="pinMessage"
     is-optimistic
     title="Pin It. Pin It Good."
-    w="[min(32rem,90vw)]"
   >
     <p>Hey, just double-checking that you want to pin this message to the current room for posterity and greatness?</p>
     <div py-2 ui-frame>

@@ -28,6 +28,7 @@ const { data: accounts, error, refresh } = useQuery(() => requireAuthData(listAc
 // The provider issued and `allowDifferentEmails` is off, so a second account of the same provider would have to
 // Carry the same verified address as the first — which no provider issues twice
 const providerIdAccountIdMap = computed(() => new Map(accounts.value?.map(({ id, providerId }) => [providerId, id])));
+const linkedAccountCount = computed(() => accounts.value?.length ?? 0);
 // A link the provider or the callback rejects comes back as a redirect carrying `?error=<code>`, so its
 // Outcome never reaches the promise the button awaited
 const linkError = router.currentRoute.value.query.error;
@@ -43,55 +44,58 @@ if (typeof linkError === "string") {
 
 <template>
   <UserSettingsSection :section>
-    <UiErrorState v-if="error" :error @retry="refresh()" />
     <!-- Keyed on the accounts rather than a pending flag: until they land every provider would read "Not linked"
          with a Link button, inviting a user to reconnect a provider they already have, and a refresh mid-unlink
          would blank a list that is still correct -->
-    <UserSettingsListSkeleton v-else-if="!accounts" />
-    <ul v-else flex flex-col>
-      <UserLinkedAccountsCardRow
-        v-for="loginButtonProps of LoginButtonItems"
-        :key="loginButtonProps.provider"
-        :="loginButtonProps"
-        :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
-        :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
-        :linked-account-count="accounts.length"
-        @link="
-          async () => {
-            await executeProviderMutation(
-              () =>
-                executeMutation(
-                  () =>
-                    requireAuthData(
-                      linkSocial({
-                        callbackURL: RoutePath.UserSettings,
-                        errorCallbackURL: RoutePath.UserSettings,
-                        provider: loginButtonProps.provider,
-                      }),
-                    ),
-                  { key: LINKED_ACCOUNTS_MUTATION_KEY },
-                ),
-              { key: loginButtonProps.provider },
-            );
-          }
-        "
-        @unlink="
-          async () => {
-            const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
-            if (!accountId) return;
-            await executeProviderMutation(
-              () =>
-                executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
-                  key: LINKED_ACCOUNTS_MUTATION_KEY,
-                  onSuccess: async () => {
-                    await refresh();
-                  },
-                }),
-              { key: loginButtonProps.provider },
-            );
-          }
-        "
-      />
-    </ul>
+    <UiAsyncBody :error :is-pending="accounts ? undefined : true" @retry="refresh()">
+      <template #loading>
+        <UserSettingsListSkeleton />
+      </template>
+      <ul flex flex-col>
+        <UserLinkedAccountsCardRow
+          v-for="loginButtonProps of LoginButtonItems"
+          :key="loginButtonProps.provider"
+          :="loginButtonProps"
+          :is-linked="providerIdAccountIdMap.has(loginButtonProps.provider) ? true : undefined"
+          :is-pending="checkIsPending(loginButtonProps.provider) ? true : undefined"
+          :linked-account-count="linkedAccountCount"
+          @link="
+            async () => {
+              await executeProviderMutation(
+                () =>
+                  executeMutation(
+                    () =>
+                      requireAuthData(
+                        linkSocial({
+                          callbackURL: RoutePath.UserSettings,
+                          errorCallbackURL: RoutePath.UserSettings,
+                          provider: loginButtonProps.provider,
+                        }),
+                      ),
+                    { key: LINKED_ACCOUNTS_MUTATION_KEY },
+                  ),
+                { key: loginButtonProps.provider },
+              );
+            }
+          "
+          @unlink="
+            async () => {
+              const accountId = providerIdAccountIdMap.get(loginButtonProps.provider);
+              if (!accountId) return;
+              await executeProviderMutation(
+                () =>
+                  executeMutation(() => requireAuthData(unlinkAccount({ accountId })), {
+                    key: LINKED_ACCOUNTS_MUTATION_KEY,
+                    onSuccess: async () => {
+                      await refresh();
+                    },
+                  }),
+                { key: loginButtonProps.provider },
+              );
+            }
+          "
+        />
+      </ul>
+    </UiAsyncBody>
   </UserSettingsSection>
 </template>

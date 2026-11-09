@@ -3,6 +3,7 @@ import type { ColumnStatistics } from "#shared/models/resource/sheet/column/Colu
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 import { ColumnStatisticsHeaders } from "@/services/resource/sheet/column/ColumnStatisticsHeaders";
@@ -14,7 +15,12 @@ const selectedStatistics = ref<ColumnStatistics>();
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Column statistics" w="[min(64rem,90vw)]">
+  <UiDialog
+    v-model="isOpen"
+    :placement="UiDialogPlacement.Middle"
+    title="Column statistics"
+    :size="UiDialogSize.ExtraLarge"
+  >
     <template v-if="isOpen">
       <UiDataTable
         :columns="ColumnStatisticsHeaders"

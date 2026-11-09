@@ -10,13 +10,16 @@ const {
 </script>
 
 <template>
-  <UiErrorState v-if="error" :error @retry="refresh()" />
-  <AchievementLeaderboardCard v-else-if="leaderboard" :leaderboard />
-  <!-- Ranked players' own rows while the read is out -->
-  <div v-else aria-busy="true" flex flex-col>
-    <div v-for="index of 5" :key="index" ui-row>
-      <UiSkeleton shrink-0 size-6 />
-      <UiSkeleton h-4 w="1/3" />
-    </div>
-  </div>
+  <UiAsyncBody :error :is-pending="leaderboard ? undefined : true" @retry="refresh()">
+    <!-- Ranked players' own rows while the read is out -->
+    <template #loading>
+      <div aria-busy="true" flex flex-col>
+        <div v-for="index of 5" :key="index" ui-row>
+          <UiSkeleton shrink-0 size-6 />
+          <UiSkeleton h-4 w="1/3" />
+        </div>
+      </div>
+    </template>
+    <AchievementLeaderboardCard v-if="leaderboard" :leaderboard />
+  </UiAsyncBody>
 </template>

@@ -23,7 +23,6 @@ const nameRules = [UiRules.required(), UiRules.maxLength(RESOURCE_NAME_MAX_LENGT
     is-optimistic
     :submit="() => rename(editedName)"
     title="Rename resource"
-    w="[min(32rem,90vw)]"
   >
     <UiTextField v-model="editedName" is-autofocus label="Name" :rules="nameRules" />
   </StyledFormDialog>

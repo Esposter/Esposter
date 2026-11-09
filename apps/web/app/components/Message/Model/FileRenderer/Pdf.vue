@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
 
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
 import { usePdfDocument } from "vue-pdfjs-headless";
@@ -40,7 +41,7 @@ watch(
     @keydown.enter.self.prevent="isOpen = true"
     @keydown.space.self.prevent="isOpen = true"
   />
-  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" w="[min(64rem,96vw)]" is-expandable>
+  <StyledDialog v-if="!isPreview" v-model="isOpen" :title="file.filename" :size="UiDialogSize.ExtraLarge" is-expandable>
     <!-- Its height in the middle of the screen, and all the dialog's height once the reader takes it over the page -->
     <PdfViewer
       h="[64dvh]"

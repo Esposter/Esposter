@@ -36,8 +36,9 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
 
 <template>
   <div p-4 flex flex-col gap-4 ui-body>
-    <!-- The count reads beside the heading it describes and yields its width first, so the row never wraps -->
-    <div flex gap-4 items-center>
+    <!-- The count reads beside the heading it describes and yields its width first, so the row wraps only when the
+      buttons cannot all fit beside the heading -->
+    <div flex flex-wrap gap-4 items-center>
       <h2 ui-heading>Status</h2>
       <p text-sm text-muted flex-1 min-w-0 truncate>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded

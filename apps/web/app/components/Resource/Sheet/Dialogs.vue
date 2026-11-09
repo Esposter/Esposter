@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { useResourceStore } from "@/store/resource";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
 
@@ -25,7 +26,7 @@ const { answer, importingResourceId, isImporting, saveResourceRevision } = useIm
     v-model="isPreviewOpen"
     :placement="UiDialogPlacement.Middle"
     :title="`Preview: ${previewName}`"
-    w="[min(64rem,90vw)]"
+    :size="UiDialogSize.ExtraLarge"
   >
     <ResourceSheetPreviewTable v-if="previewDataSource" :data-source="previewDataSource" />
     <template #footer>
