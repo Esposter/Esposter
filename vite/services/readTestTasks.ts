@@ -1,6 +1,7 @@
 import type { RunTask } from "#vite/models/RunTask";
 
-import { PNPM_STATE_PATTERNS, ROOT_URL, TEST_REWRITTEN_PATTERNS, TEST_ROOT_DIRECTORIES } from "#vite/constants";
+import { ROOT_URL, TEST_REWRITTEN_PATTERNS, TEST_ROOT_DIRECTORIES } from "#vite/constants";
+import { createTask } from "#vite/services/createTask";
 import { getTestTaskName } from "#vite/services/getTestTaskName";
 import { readManifest } from "#vite/services/readManifest";
 import { readdirSync } from "node:fs";
@@ -17,16 +18,6 @@ export const readTestTasks = (): [string, RunTask][] =>
     .filter((directory) => readManifest(directory)?.scripts?.test)
     .map((directory) => [
       getTestTaskName(directory),
-      {
-        cache: {
-          input: [
-            { auto: true },
-            ...PNPM_STATE_PATTERNS,
-            ...TEST_REWRITTEN_PATTERNS.map((pattern) => `!${directory}/${pattern}`),
-          ],
-          output: [],
-        },
-        command: "pnpm exec vitest run",
-        cwd: directory,
-      },
+      // The rewritten patterns are relative to the member the command runs in, which is the task's `cwd`
+      { ...createTask("pnpm exec vitest run", TEST_REWRITTEN_PATTERNS, []), cwd: directory },
     ]);
