@@ -2,9 +2,9 @@
 
 ## 1. Arrowheads
 
-- [ ] 1.1 Replace each end's flag with a head kind of none, triangle, diamond, circle or bar, and draw each filled head at its end. Verify: the tests named 'An arrow takes a different arrowhead at each end' and 'A patch naming an unknown arrowhead is refused' written first in the headless arrowhead tests and the whiteboard patch tests, and seen failing.
+- [ ] 1.1 Replace each end's flag with an optional head kind of triangle, diamond, circle or bar, and draw each filled head at its end. Verify: the tests named 'An arrow takes a different arrowhead at each end' and 'A patch naming an unknown arrowhead is refused' written first in the headless arrowhead tests and the whiteboard patch tests, and seen failing.
 - [ ] 1.2 Choose each end's head from the arrow's panel, one choice per end. Verify: the test named 'An arrow takes a different arrowhead at each end' written first in EditorPropertiesArrow.test.ts and seen failing.
-- [ ] 1.3 Rewrite each stored arrow's flag to a head kind, true to triangle and false to none, on dev then prod. It is a throwaway scratchpad script (the backfills skill), guarded by counting each whiteboard's arrows and flags before and after, and run until it reports no flag left. Verify: the run's output, not a test.
+- [ ] 1.3 Rewrite each stored arrow's flag to a head kind, true to triangle and false to no head, on dev then prod. It is a throwaway scratchpad script (the backfills skill), guarded by counting each whiteboard's arrows and flags before and after, and run until it reports no flag left. Verify: the run's output, not a test.
 
 ## 2. Dragging a free end
 

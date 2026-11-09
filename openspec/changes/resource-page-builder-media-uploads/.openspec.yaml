@@ -1,0 +1,10 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/PageBuilder/**",
+    "apps/web/shared/services/pageBuilder/**",
+    "apps/web/shared/models/file/MimeType.ts",
+    "apps/web/server/trpc/procedure/resource/**",
+  ]

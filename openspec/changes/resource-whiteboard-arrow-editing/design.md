@@ -14,9 +14,9 @@ Each row is a feature of Excalidraw, the reference product, with the verdict thi
 
 ## Decisions
 
-- **Five head kinds, each one filled shape.** The kinds are none, a triangle, a diamond, a circle and a bar. The triangle is the head an end draws today, so it stays the head of an end's default. Rejected: the open chevron, which is a stroked path and not a filled shape, so the export would need a second way to draw one head; and the outline variant of each head, which doubles the set for a difference that is only the fill.
+- **Four head kinds, each one filled shape, held as an enum.** The kinds are a triangle, a diamond, a circle and a bar, and an end with no head holds no value, since an enum takes no member for absence. The triangle is the head an end draws today, so it stays the head of an end's default. Rejected: the open chevron, which is a stroked path and not a filled shape, so the export would need a second way to draw one head; and the outline variant of each head, which doubles the set for a difference that is only the fill.
 - **A head is a value for each end, in place of the flag.** Each end holds its head kind, and the flag is deleted rather than kept beside it, so there is one way to say whether an end has a head. Rejected: a second field for the new kinds beside the flag, which would leave two ways to say the same thing.
-- **The stored flags are rewritten once.** Removing the flag makes every stored arrow fail its parse until it is rewritten, so a one-time rewrite maps each flag to a head kind: true to the triangle and false to none. Rejected: a default on the new field, which would let an arrow parse without the rewrite and would keep the old form readable beside the new one.
+- **The stored flags are rewritten once.** Removing the flag makes every stored arrow fail its parse until it is rewritten, so a one-time rewrite maps each flag to a head kind: true to the triangle and false to no head. Rejected: a default on the new field, which would let an arrow parse without the rewrite and would keep the old form readable beside the new one.
 - **A dragged free end binds by the rule drawing uses.** Released on a shape, the end binds to the connection point nearest the release; released on empty canvas, it stays free. Rejected: a dragged end that never binds, which would make the same end bind when it is drawn and not when it is moved.
 - **A bound end has no handle.** Its point is the connection point its binding names, so a drag would move a point the model derives. Rejected: a handle on a bound end that unbinds it on drag, since the detach control already unbinds an end as one step.
 - **The flowchart helper is built from the arrow's own commands.** The new shape is inserted at the release point with the default size and fill of a placed shape of its kind, and the arrow is inserted and bound at each end in one edit, so one undo step removes both. Rejected: a next shape at a fixed offset in the handle's direction, which needs a gap and an alignment rule the model does not hold; and a second gesture after the arrow, which would split one step into two.
@@ -72,7 +72,7 @@ flowchart TD
 New files, created by the change:
 
 ```text
-packages/vue-block-editor-headless/src/models/ArrowheadKind.ts        the five head kinds, and none, as one value for each end
+packages/vue-block-editor-headless/src/models/ArrowheadKind.ts        the four head kinds, held by an end as an optional value
 apps/web/app/services/whiteboard/gesture/getFreeEndHandle.ts          the free end a press on an arrow's handle takes
 apps/web/app/services/whiteboard/gesture/getConnectionHandle.ts       the connection point a press on a shape's handle takes
 apps/web/app/services/whiteboard/gesture/reduceEndGesture.ts          drags a free end, and binds it where it is released

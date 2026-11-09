@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/PageBuilder/Email/**",
+    "apps/web/shared/services/pageBuilder/email/**",
+    "packages/mjml-blocks/src/services/**",
+  ]

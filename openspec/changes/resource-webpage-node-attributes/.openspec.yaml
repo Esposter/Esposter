@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/shared/services/pageBuilder/**",
+    "apps/web/shared/models/pageBuilder/**",
+    "apps/web/app/components/PageBuilder/ContentPanel.vue",
+  ]

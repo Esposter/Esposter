@@ -2,7 +2,7 @@
 
 ### Requirement: Each end of an arrow takes its own arrowhead
 
-Each end of an arrow SHALL take one arrowhead, chosen from none, a triangle, a diamond, a circle and a bar, independently of the other end.
+Each end of an arrow SHALL take one arrowhead, chosen from a triangle, a diamond, a circle and a bar, or none at all, independently of the other end.
 
 #### Scenario: An arrow takes a different arrowhead at each end
 

@@ -1,0 +1,10 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/shared/services/pageBuilder/email/**",
+    "apps/web/shared/services/pageBuilder/critique/**",
+    "apps/web/app/composables/emailEditor/**",
+    "apps/web/server/services/resource/ResourceCritiqueMap.ts",
+  ]

@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/PageBuilder/StylePanel/**",
+    "apps/web/app/components/PageBuilder/Email/**",
+    "apps/web/app/composables/pageBuilder/useEmailStyle.ts",
+    "apps/web/shared/services/pageBuilder/constants.ts",
+    "apps/web/shared/models/pageBuilder/StyleProperty.ts",
+  ]
