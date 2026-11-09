@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-opus-5-5
+x-touches:
+  [
+    "apps/web/app/components/Resource/Survey/Creator/**",
+    "apps/web/app/composables/survey/**",
+    "apps/web/app/components/Ui/Adorner.vue",
+    "apps/web/app/components/Ui/EditableText.vue",
+    "packages/vue-survey-engine-headless/src/**",
+  ]
