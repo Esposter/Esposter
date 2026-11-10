@@ -4,7 +4,7 @@
 
 ## The task cache
 
-The library builds and the whole-repository checks run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `format:check`, `lint`, `typecheck`, and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+The library builds and the whole-repository checks run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `format:check`, `lint`, `typecheck`, and one `build:<directory>` per package, which `build:packages` orders, and `build:parity` for the parity page — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
 
 ```mermaid
 flowchart TD

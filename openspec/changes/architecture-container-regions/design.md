@@ -1,6 +1,6 @@
 ## Context
 
-The `architecture-dialog-regions` change gives the base dialog its body and footer. The component read it was drawn from covered all 926 components and recorded 188 findings, which this change judges. The convention is `structured-containers` in the `vue-component-patterns` skill, and the sweep that carries it is the `vue-components` ledger.
+The `architecture-dialog-regions` change gives the base dialog its body and footer. The component read it was drawn from covered every component and recorded its findings, which this change judges. The convention is `structured-containers` in the `vue-component-patterns` skill, and the sweep that carries it is the `vue-components` ledger.
 
 ## Verdicts
 
