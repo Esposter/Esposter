@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Bug Fixes
+
+* **scripts:** the parity folder test reads the root cache exclusion from vite/, where it moved ([bddfdfd](https://github.com/Esposter/Esposter/commit/bddfdfd0a90eb3b9944a0a86a36650c810447361))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 ### Bug Fixes

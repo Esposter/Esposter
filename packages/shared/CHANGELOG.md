@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Features
+
+* **env:** each app declares its environment once and checks it at start ([8fff393](https://github.com/Esposter/Esposter/commit/8fff393088e145b33ec25c2f929a01446b5bb700))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 **Note:** Version bump only for package @esposter/shared

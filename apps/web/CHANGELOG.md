@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Bug Fixes
+
+* **ci:** the four reds on ai/queue ([97ad42b](https://github.com/Esposter/Esposter/commit/97ad42bcd4ab4310587dd26c7086e8aa66c78a29))
+* **web:** drop the public Azure Event Grid and Function runtime config keys ([d753f45](https://github.com/Esposter/Esposter/commit/d753f45e1f874e82ed6bdec911cf8babc2c3005f))
+
+### Features
+
+* **env:** each app declares its environment once and checks it at start ([8fff393](https://github.com/Esposter/Esposter/commit/8fff393088e145b33ec25c2f929a01446b5bb700))
+* **whiteboard:** the wheel pans and a pinch zooms about the pointer, with Space pan, fit keys, select all and element copy, cut and paste ([18762d5](https://github.com/Esposter/Esposter/commit/18762d5ebd6d761a3f05ad8ae1a50f2bca9ac72a))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 ### Bug Fixes
