@@ -1,7 +1,9 @@
+import { ZERO_UUID } from "@esposter/shared";
+
 // Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout).
-// It is a fixed v4-shaped UUID so it satisfies user-id validation, never collides with a real user,
+// It is the all-zero v4 UUID, which passes user-id validation as a v4 and never collides with a real user (a random v4 id is never all zero),
 // And lets the audit log render "AutoMod" instead of resolving a member display name.
-export const AUTOMOD_USER_ID = "00000000-0000-4000-8000-000000000000";
+export const AUTOMOD_USER_ID = ZERO_UUID;
 // Caps the follow list read so resolving thread roots never fans out an unbounded number of
 // Azure Table point reads for a single request.
 export const MAX_FOLLOWED_THREADS = 50;

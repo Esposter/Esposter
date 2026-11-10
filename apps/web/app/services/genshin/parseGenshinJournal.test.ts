@@ -3,7 +3,7 @@ import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { describe, expect, test } from "vitest";
 
 describe(parseGenshinJournal, () => {
-  const SESSION_ID = "8c3f1e2a-4b5d-4e6f-8a7b-9c0d1e2f3a4b";
+  const SESSION_ID = crypto.randomUUID();
 
   test("reads back the journal a page wrote, its instants still ISO strings", () => {
     expect.hasAssertions();

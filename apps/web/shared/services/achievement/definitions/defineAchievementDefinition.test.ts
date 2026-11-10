@@ -5,7 +5,7 @@ import { MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe("defineAchievementDefinition", () => {
-  const roomId = "00000000-0000-4000-8000-000000000000";
+  const roomId = crypto.randomUUID();
   const timeZone = "UTC";
   const { check } = MessageAchievementDefinitionMap[MessageAchievementName.EssayWriter];
   // EssayWriter unlocks at 1,000 characters, so a message one short is the case the condition must reject

@@ -9,10 +9,10 @@ describe(toUserAchievementWithDefinition, () => {
   const achievementDefinition = AchievementDefinitionMap[EmailAchievementName.EmailMarketer];
   const userAchievement = {
     achievement: { name: EmailAchievementName.EmailMarketer },
-    achievementId: "00000000-0000-4000-8000-000000000000",
+    achievementId: crypto.randomUUID(),
     amount: 1,
     unlockedAt: new Date(0),
-    userId: "00000000-0000-4000-8000-000000000000",
+    userId: crypto.randomUUID(),
   } as UserAchievementInAchievementWithRelations;
 
   test("keeps the row's own progress and gives the achievement the definition's fields", () => {

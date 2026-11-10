@@ -28,9 +28,8 @@ describe(exportWhiteboard, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const resourceName = "a";
-  // Fixed rather than random, since the outline of a shape is seeded from its id and the export is compared with itself
-  const PROCESS_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000011";
-  const IMAGE_ID = "3f2c1a9e-0b7d-4c3e-8a1f-000000000012";
+  const PROCESS_ID = crypto.randomUUID();
+  const IMAGE_ID = crypto.randomUUID();
   const IMAGE_FILE_ID = "5e1a7c3b9d2f4e6a8b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a";
   const positionedDocument: PositionedDocument = {
     elements: [
