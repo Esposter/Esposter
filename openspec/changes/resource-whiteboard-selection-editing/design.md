@@ -74,6 +74,7 @@ New files, created by the change:
 ```text
 apps/web/app/services/whiteboard/gesture/getSelectionBounds.ts   the box a selection of several covers, and the point of each handle on it
 apps/web/app/services/whiteboard/gesture/getScaleOperations.ts   the operations that scale each element of a selection about the side opposite a handle
+apps/web/app/services/whiteboard/gesture/getResizeHandle.test.ts the edge handles a press takes, and which elements show none
 ```
 
 ## Sources

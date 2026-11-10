@@ -2,7 +2,7 @@
 
 ## 1. The sketch level
 
-- [ ] 1.1 Add the optional sketch level to the shape, sticky note and arrow models, and the optional corner setting to the shape model, each described in the shared element schema. Verify: tests named after the scenarios 'A sketch level that is not one of the three is refused' and 'A corner setting that is not sharp or round is refused' written first and seen failing.
+- [ ] 1.1 Add the sketch level, defaulting to artist, to the shape, sticky note and arrow models, and the corner setting, defaulting to sharp, to the shape model, each described in the shared element schema. Verify: tests named after the scenarios 'A sketch level that is not one of the three is refused' and 'A corner setting that is not sharp or round is refused' written first and seen failing.
 - [ ] 1.2 Scale each sketched element's offset by its sketch level on the canvas and in the export, with the artist level drawing the offset outlines draw today. Verify: tests named after the scenarios 'Architect draws a shape with straight edges', 'Cartoonist draws a larger offset than artist' and 'An arrow route is drawn straight at the architect level' written first and seen failing.
 - [ ] 1.3 Keep the outline sketched by its element at every render with the scaled offset. Verify: the test named after the scenario 'A shape draws the same hand-drawn outline on every render' stays green after the offset is scaled.
 

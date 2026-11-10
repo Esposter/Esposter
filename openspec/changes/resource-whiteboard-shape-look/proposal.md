@@ -18,4 +18,4 @@ The whiteboard sketches every outline at one fixed offset, so a diagram that nee
 
 ## Impact
 
-The properties panel gains a sketch control and a corner control. The stored document gains optional fields on the shape, the sticky note and the arrow. A stored element that lacks a new field reads its default, artist and sharp, so no stored document is rewritten. A freehand stroke saved before the change draws smoothed. This change lands after the stroke-and-fill change, since both add controls to the same panel and the same element models.
+The properties panel gains a sketch control and a corner control. The stored document gains fields with defaults on the shape, the sticky note and the arrow. A stored element that lacks a new field reads its default, artist and sharp, so no stored document is rewritten. A freehand stroke saved before the change draws smoothed. This change lands after the stroke-and-fill change, since both add controls to the same panel and the same element models.

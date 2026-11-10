@@ -78,9 +78,9 @@ Existing files this change touches, with the role each plays after it.
 | `packages/vue-block-editor-headless/src/services/export/toStickyNoteSvg.ts`          | draws a sticky note's box at its level                                                                    |
 | `packages/vue-block-editor-headless/src/services/export/toStrokeSvg.ts`              | draws a freehand stroke through the smoothed path                                                         |
 | `packages/vue-block-editor-headless/src/services/getShapeOutline.ts`                 | the corner points of each shape kind, which the rounding joins                                            |
-| `packages/vue-block-editor-headless/src/models/ShapeElement.ts`                      | the optional corner setting                                                                               |
-| `packages/vue-block-editor-headless/src/models/ArrowElement.ts`                      | the optional sketch level                                                                                 |
-| `packages/vue-block-editor-headless/src/models/StickyNoteElement.ts`                 | the optional sketch level                                                                                 |
+| `packages/vue-block-editor-headless/src/models/ShapeElement.ts`                      | the corner setting, an enum with a default                                                                |
+| `packages/vue-block-editor-headless/src/models/ArrowElement.ts`                      | the sketch level, an enum with a default                                                                  |
+| `packages/vue-block-editor-headless/src/models/StickyNoteElement.ts`                 | the sketch level, an enum with a default                                                                  |
 | `apps/web/app/components/Resource/Whiteboard/ElementShape.vue`                       | draws a shape's outline with the closed path at its level and corners                                     |
 | `apps/web/app/components/Resource/Whiteboard/ElementArrow.vue`                       | draws an arrow's route at its level                                                                       |
 | `apps/web/app/components/Resource/Whiteboard/ElementStickyNote.vue`                  | draws a sticky note's box at its level                                                                    |
