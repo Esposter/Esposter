@@ -1,20 +1,12 @@
 import type { RunTasks } from "#vite/models/RunTasks";
 
 import { PACKAGE_REWRITTEN_PATTERNS, PACKAGES_DIRECTORY, PNPM_STATE_PATTERNS } from "#vite/constants";
-import { createTask } from "#vite/services/createTask";
 import { getBuildTaskName } from "#vite/services/getBuildTaskName";
 import { readPackageBuildTasks } from "#vite/services/readPackageBuildTasks";
 
 const packageBuildTasks = readPackageBuildTasks();
 
 export const BUILD_TASKS: RunTasks = {
-  // Nothing reads the app's `.output`, so a hit restores nothing: the replay itself is the verdict that this
-  // Exact tree already built green — as it is for the two checks below, which write nothing anyone reads
-  "build:app": createTask(
-    "pnpm -C apps/web build",
-    ["apps/web/.data/**", "apps/web/.nuxt/**", "apps/web/node_modules/.cache/**"],
-    [],
-  ),
   ...Object.fromEntries(packageBuildTasks),
   // The libraries as a set: the per-package tasks do the caching, so this one only orders them
   "build:packages": {

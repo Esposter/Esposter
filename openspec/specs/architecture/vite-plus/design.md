@@ -4,7 +4,7 @@
 
 ## The task cache
 
-The builds and the whole-repository checks run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `build:app`, `format:check`, `lint`, `typecheck`, and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+The library builds and the whole-repository checks run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `format:check`, `lint`, `typecheck`, and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
 
 ```mermaid
 flowchart TD
@@ -14,9 +14,9 @@ flowchart TD
   X --> C["record what it read and wrote"]
 ```
 
-How CI carries the cache, why a hit needs the install, and why the app build replays on the packages' built bytes are in [monorepo tooling](../monorepo-tooling/design.md) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
+How CI carries the cache and why a hit needs the install are in [monorepo tooling](../monorepo-tooling/design.md) under `## CI job shape`. Tasks are cached by default, so no `--cache` flag is written; it exists to cache a plain script. The same tasks cache locally, natively on a Windows host: an unchanged `vp run build:packages` replays in seconds where it builds in a minute.
 
-**A cached command is a task, never a script.** A script carries no cache settings, and a task may not share a script's name, so a script that needs caching moves into a task under its own name and the script is deleted — `build:packages`, `lint` and `typecheck` are `vp run <name>`, and so are the leaves those aggregates run (`lint:oxlint`, `typecheck:workspace` and the rest, each with its own command). The aggregates stay uncached, since one with no inputs of its own would replay a verdict no leaf produced, so the cache lives on the leaves. `typecheck:workspace` is the one uncached leaf: its check reads and writes across `apps/web/.nuxt`, and a cache input cannot exclude that directory without replaying a verdict the app's generated types can change. `build:app` is the one task with no script behind it: it wraps the app's own `build`, which stays the deploy entrypoint by name. A task that writes nothing anyone reads keeps no outputs, so its replay restores nothing and is the verdict alone.
+**A cached command is a task, never a script.** A script carries no cache settings, and a task may not share a script's name, so a script that needs caching moves into a task under its own name and the script is deleted — `build:packages`, `lint` and `typecheck` are `vp run <name>`, and so are the leaves those aggregates run (`lint:oxlint`, `typecheck:workspace` and the rest, each with its own command). The aggregates stay uncached, since one with no inputs of its own would replay a verdict no leaf produced, so the cache lives on the leaves. `typecheck:workspace` is the one uncached leaf: its check reads and writes across `apps/web/.nuxt`, and a cache input cannot exclude that directory without replaying a verdict the app's generated types can change. A task that writes nothing anyone reads keeps no outputs, so its replay restores nothing and is the verdict alone.
 
 **A command earns a task only when a replay is as good as a run, and a run costs enough to skip.** Three things hold together: the command's result depends on nothing but files the tracer sees, it is slow enough that a hit saves a job real time, and something runs it again on a tree that has not changed — a rerun, a re-push, a second workflow on the same commit. Everything else stays a script, which is the default rather than a task waiting to be promoted:
 
@@ -24,6 +24,8 @@ How CI carries the cache, why a hit needs the install, and why the app build rep
 - **A command reading what the tracer cannot see** — the network, a git remote, the clock.
 
 **Rejected: keeping `format:check` a script.** A hit still pays the install, so caching looks like it saves little. It is a task because the check reruns on an unchanged tree (a rerun, a re-push), where a hit restores the verdict and a pass runs the formatter over the whole workspace. Do not move it back to a script.
+
+**Rejected: caching the app build.** A replay of `build:app` would have to restore `apps/web/.output`, which the build itself creates. A fresh CI checkout lacks it, while the recorded run's listing of `apps/web` names it, so the listing misses, and no sampled CI run replayed. Carrying the output would restore and save a large directory on every run, most of them a new commit that rebuilds anyway, to save only a rerun of an unchanged tree. The app build is therefore the call site `pnpm -C apps/web build`, uncached in CI, and not a task.
 
 **Rejected: caching the test and coverage shards with the task cache.** No shard replayed in a measured run, because a test's inputs are the whole app, so every commit changes them. The cost was a second task layer to keep.
 

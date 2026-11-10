@@ -38,12 +38,10 @@ jobs:
         uses: ./.github/actions/setup-packages
         with:
           filter: "@esposter/web..."
-      # A replay restores nothing — the task keeps no outputs — so a hit is the verdict alone: this exact tree, down
-      # to the packages' built bytes, already built green
+      # Uncached: a replay needs the app's `.output` carried in the cache, which costs more than it saves
+      # (`openspec/specs/architecture/vite-plus/design.md` → Rejected)
       - name: 🏗️ Build app
-        uses: ./.github/actions/run-cached-task
-        with:
-          task: build:app
+        run: pnpm -C apps/web build
 
   coverage:
     name: Coverage
