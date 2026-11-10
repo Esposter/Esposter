@@ -14,28 +14,26 @@ Nuxt code runs in three contexts, each with different capabilities:
 
 ## The solution
 
-Use `import.meta.env` for universal env constants. Vite replaces these at build time in every bundle — client, server (Nitro), and Vitest:
+The app runs in one of three environments, the `Environment` enum (`development`, `production`, `test`), and a deployment names its own in `APP_ENV`. `configuration/vite.ts` sets `vite.mode` from it, so `import.meta.env.MODE` is that value in every bundle — client, server (Nitro) — and Vitest sets it to `test` itself. The constants compare it with the enum, so exactly one is true:
 
 ```ts
 // apps/web/shared/util/environment/constants.ts
-export const IS_PRODUCTION = import.meta.env.PROD;
-export const IS_DEVELOPMENT = import.meta.env.DEV;
-export const IS_TEST = import.meta.env.MODE === "test";
+export const IS_PRODUCTION = import.meta.env.MODE === Environment.Production;
+export const IS_DEVELOPMENT = import.meta.env.MODE === Environment.Development;
+export const IS_TEST = import.meta.env.MODE === Environment.Test;
 ```
 
-These are set automatically:
-
-| Command      | `PROD`  | `DEV`   | `MODE`          |
-| ------------ | ------- | ------- | --------------- |
-| `nuxt dev`   | `false` | `true`  | `"development"` |
-| `nuxt build` | `true`  | `false` | `"production"`  |
-| Vitest       | `false` | `true`  | `"test"`        |
+| Where                              | `MODE`          |
+| ---------------------------------- | --------------- |
+| `nuxt dev`, `APP_ENV=development`  | `"development"` |
+| `nuxt build`, `APP_ENV=production` | `"production"`  |
+| Vitest                             | `"test"`        |
 
 ## Where to use what
 
-**`IS_PRODUCTION` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `PROD` and `DEV` follow the command (`nuxt build` against `nuxt dev`), so a staging build is production here. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts` and moves only `MODE`, which nothing reads except `IS_TEST`.
+**`IS_PRODUCTION` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. They read the environment the deployment declared and not the command that built it, so `nuxt dev` with `APP_ENV=production` is production, and `IS_DEVELOPMENT` is `false` under Vitest, where `IS_TEST` is the one that holds.
 
-Rejected: Nuxt's `import.meta.dev`, with production as `!import.meta.dev`. It is typed by Nuxt and defined in Nitro, but Vitest does not define it, so it is `false` in every test, including the `nuxt` environment. `!import.meta.dev` would make `IS_PRODUCTION` true across the whole suite, switching on the rate limiter, the production volume and the production starter monsters wherever a test does not mock the constant. `import.meta.env` is defined in the client, Nitro and Vitest alike, which is why the constants file reads it. The lint rule that bans `import.meta.dev`, `import.meta.env.PROD` and `import.meta.env.MODE` outside the constants file stays for that reason (`packages/configuration/eslint/typescriptRules.js`).
+Rejected: Nuxt's `import.meta.dev`, with production as `!import.meta.dev`. It is typed by Nuxt and defined in Nitro, but Vitest does not define it, so it is `false` in every test, including the `nuxt` environment. `!import.meta.dev` would make `IS_PRODUCTION` true across the whole suite, switching on the rate limiter, the production volume and the production starter monsters wherever a test does not mock the constant. Rejected too: Vite's `import.meta.env.PROD` and `DEV`, which follow the command that built the bundle and not the `Environment` the deployment declared, so a second answer to the same question sat beside `APP_ENV`. The lint rule that bans `import.meta.dev` and `import.meta.env.PROD`, `DEV` and `MODE` outside the constants file stays (`packages/configuration/eslint/typescriptRules.js`).
 
 **`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `apps/functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, whose code the Nuxt build evaluates and never ships, apart from the values it writes under `public`), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet. A server secret is never copied into `runtimeConfig`, so a built artifact holds none of them and a deployment supplies each one under its own name when the server starts.
 
