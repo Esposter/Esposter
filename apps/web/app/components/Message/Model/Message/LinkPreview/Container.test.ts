@@ -14,6 +14,7 @@ describe("messageModelMessageLinkPreviewContainer", () => {
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
   const url = "url";
+  const linkPreviewResponse = { favicons: [], mediaType: "", url };
 
   // The thread pane renders messages of a room other than the one on screen, so the removal reads the message out
   // Of its own room's slice — the room on screen holds nothing for it to take the embeds off
@@ -24,7 +25,6 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
       await deleteGate;
     });
-    const linkPreviewResponse = { favicons: [], mediaType: "", url };
     const message = createMessageEntity({
       roomId: otherRoomId,
       type: MessageType.Message,
@@ -46,5 +46,22 @@ describe("messageModelMessageLinkPreviewContainer", () => {
 
     releaseDelete();
     await deleted;
+  });
+
+  // The remove button is faded out until the pointer is over the embed or the keyboard reaches it
+  test("shows the remove button while the pointer is over the embed", async () => {
+    expect.hasAssertions();
+
+    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: crypto.randomUUID() });
+    const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
+      props: { linkPreviewResponse, partitionKey: message.partitionKey, rowKey: message.rowKey },
+    });
+    const removeButton = component.get('[aria-label="Remove embeds"]');
+
+    expect(removeButton.classes()).toContain("op-0");
+    await component.trigger("mouseenter");
+    expect(removeButton.classes()).not.toContain("op-0");
+    await component.trigger("mouseleave");
+    expect(removeButton.classes()).toContain("op-0");
   });
 });

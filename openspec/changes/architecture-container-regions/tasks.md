@@ -14,8 +14,8 @@
 ## 3. The call sites
 
 - [ ] 3.1 Move the 9 blades, 8 settings panels, 5 panes, 9 regions and 4 pages onto the containers. Verify: each touched component's tests pass and each scrolls in the driven browser.
-- [ ] 3.2 Move the 25 lists onto the async body. Verify: the touched lists' tests pass.
-- [ ] 3.3 Replace the hand-rolled hover latches with the VueUse composable, merge the sheet's undo and redo buttons and add the field label. Verify: the touched components' tests pass.
+- [x] 3.2 Move the lists whose loading, error and empty branches are a plain chain onto the async body, and leave the rest (ten migrated; the rule is in the design). Verify: the touched lists' tests pass.
+- [x] 3.3 Replace the one plain hover latch with the VueUse composable and add the field label where fields drew the same mark. Verify: the touched components' tests pass.
 
 ## 4. The defects
 

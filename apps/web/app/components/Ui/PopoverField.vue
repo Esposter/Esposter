@@ -41,9 +41,7 @@ defineExpose({ element });
 
 <template>
   <div flex flex-col gap-1>
-    <span :id="labelId" :class="{ 'sr-only': isLabelHidden }" text-sm text-muted
-      >{{ label }} <UiRequiredMark v-if="isRequired"
-    /></span>
+    <UiFieldLabel :id="labelId" :class="{ 'sr-only': isLabelHidden }" :is-required :label />
     <div flex gap-1 items-center>
       <UiPopover
         ref="popover"

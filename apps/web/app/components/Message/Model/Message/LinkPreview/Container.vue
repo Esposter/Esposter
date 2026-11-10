@@ -18,7 +18,8 @@ const { partitionKey, rowKey } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { getSlice } = dataStore;
-const isActive = ref(false);
+const container = useTemplateRef("container");
+const isHovered = useElementHover(container);
 const isConfirmDialogOpen = ref(false);
 const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async () => {
@@ -44,11 +45,11 @@ const deleteLinkPreviewResponse = async () => {
 </script>
 
 <template>
-  <div flex gap-1 items-start @mouseenter="isActive = true" @mouseleave="isActive = false">
+  <div ref="container" flex gap-1 items-start>
     <MessageModelMessageLinkPreview max-w-140 :="linkPreviewResponse" />
     <!-- Shown beside the embed it removes while the pointer is over it, and whenever the keyboard reaches it -->
     <UiIconButton
-      :class="isActive ? undefined : 'op-0 focus-visible:op-100'"
+      :class="isHovered ? undefined : 'op-0 focus-visible:op-100'"
       label="Remove embeds"
       :meaning="UiIconMeaning.Remove"
       :variant="UiButtonVariant.Quiet"

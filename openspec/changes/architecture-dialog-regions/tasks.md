@@ -13,7 +13,7 @@
 ## 3. The call sites
 
 - [ ] 3.1 Move the 28 dialogs that write a footer, and the 20 that write a scroll wrapper, onto the regions, dropping their own padding, scroll and fixed heights. Verify: the touched dialogs' tests pass, and once after all the edits a driven-browser run opens the sheet export dialog and the column chooser with a long column list and measures that the body scrolls inside the frame with the footer in view.
-- [ ] 3.2 Add the scan test that fails a call site drawing its own scroll wrapper, padding, footer or fixed body height in the default slot. Verify: a test named after the scenario 'A call site that draws its own footer fails the scan' written first and seen failing.
+- [x] 3.2 Add the scan test that fails a call site drawing its own scroll wrapper, padding, footer or fixed body height in the default slot. Verify: a test named after the scenario 'A call site that draws its own footer fails the scan' written first and seen failing.
 
 ## 4. The record
 

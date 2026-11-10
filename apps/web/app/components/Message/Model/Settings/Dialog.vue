@@ -16,7 +16,7 @@ defineProps<Props>();
 
 <template>
   <UiDialog v-model="isOpen" :title is-body-bare is-tall is-title-hidden :size="UiDialogSize.Full">
-    <div flex flex-1 min-h-0 relative ui-body>
+    <div flex flex-1 h-full relative ui-body>
       <slot />
     </div>
   </UiDialog>

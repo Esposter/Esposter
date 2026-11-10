@@ -24,10 +24,11 @@ const describedBy = computed(
 
 <template>
   <div flex flex-col gap-1>
-    <span :id="titleId" text-sm text-muted>
-      {{ getSurveyQuestionTitle(question) }}
-      <UiRequiredMark v-if="question.isRequired" />
-    </span>
+    <UiFieldLabel
+      :id="titleId"
+      :is-required="question.isRequired || undefined"
+      :label="getSurveyQuestionTitle(question)"
+    />
     <span v-if="question.description" :id="descriptionId" text-sm text-muted>{{ question.description }}</span>
     <slot :described-by :labelled-by="titleId" :title="getSurveyQuestionTitle(question)" />
     <span v-if="error" :id="errorId" role="alert" text-sm text-error>{{ error }}</span>

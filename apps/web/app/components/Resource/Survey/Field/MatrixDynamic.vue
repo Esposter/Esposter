@@ -97,8 +97,7 @@ const getChoiceCellAttributes = (column: SurveyMatrixColumn, row: SurveyAnswers,
               text-muted
               p-1
             >
-              {{ column.title || column.name }}
-              <UiRequiredMark v-if="column.isRequired" />
+              <UiFieldLabel :is-required="column.isRequired || undefined" :label="column.title || column.name" />
             </th>
           </tr>
         </thead>
