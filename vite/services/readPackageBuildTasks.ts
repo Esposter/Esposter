@@ -1,11 +1,7 @@
 import type { RunTask } from "#vite/models/RunTask";
 
-import {
-  BUILD_HOOK_GENERATED_PATTERNS,
-  PACKAGE_REWRITTEN_PATTERNS,
-  PACKAGES_DIRECTORY,
-  PNPM_STATE_PATTERNS,
-} from "#vite/constants";
+import { BUILD_HOOK_GENERATED_PATTERNS, PACKAGE_REWRITTEN_PATTERNS, PACKAGES_DIRECTORY } from "#vite/constants";
+import { createBuildCache } from "#vite/services/createBuildCache";
 import { getBuildTaskName } from "#vite/services/getBuildTaskName";
 import { readPackageBuildManifests } from "#vite/services/readPackageBuildManifests";
 
@@ -26,18 +22,7 @@ export const readPackageBuildTasks = (): [string, RunTask][] => {
     return [
       getBuildTaskName(directory),
       {
-        cache: {
-          input: [
-            { auto: true },
-            ...PNPM_STATE_PATTERNS,
-            // Resolved from the workspace root, as the task belongs to it rather than to the package its `cwd` names
-            ...[...PACKAGE_REWRITTEN_PATTERNS, ...BUILD_HOOK_GENERATED_PATTERNS].map((pattern) => ({
-              base: "workspace" as const,
-              pattern: `!${PACKAGES_DIRECTORY}/${directory}/${pattern}`,
-            })),
-          ],
-          output: [{ auto: true }, ...PNPM_STATE_PATTERNS],
-        },
+        cache: createBuildCache(directory, [...PACKAGE_REWRITTEN_PATTERNS, ...BUILD_HOOK_GENERATED_PATTERNS]),
         command: "pnpm run build",
         cwd: `${PACKAGES_DIRECTORY}/${directory}`,
         dependsOn: dependencyNames.flatMap((dependencyName) => buildTaskNameMap.get(dependencyName) ?? []),
