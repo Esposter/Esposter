@@ -11,6 +11,14 @@ export const PNPM_STATE_PATTERNS: string[] = [
   "!node_modules/.pnpm-workspace-state-v1.json",
 ];
 
+// The root project's incremental build state, which `tsrs` writes under `node_modules/.cache` rather than beside the
+// Tracked root: the check reads it back and rewrites it, so it is a cache's state and not one of the check's inputs
+export const ROOT_TSBUILDINFO_PATH = "node_modules/.cache/tsrs/root.tsbuildinfo";
+
+// The declaration `@nuxt/eslint`'s typegen writes beside the app's generated ESLint config. Every ESLint run that loads
+// That config reads it and rewrites it when it is absent or stale, and its content is a function of the plugins it loads
+export const ESLINT_TYPEGEN_PATTERNS: string[] = ["apps/web/.nuxt/eslint-typegen.d.ts"];
+
 // The files a package's build rewrites, or another task writes into the package, relative to the package
 export const PACKAGE_REWRITTEN_PATTERNS: string[] = [
   "auto-imports.d.ts",
