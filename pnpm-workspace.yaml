@@ -50,7 +50,7 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.11
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.15
+  "@electric-sql/pglite": ^0.5.16
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
   "@fission-ai/openspec": ^1.16.1
