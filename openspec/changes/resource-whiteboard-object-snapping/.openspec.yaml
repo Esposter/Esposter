@@ -1,0 +1,9 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/services/whiteboard/gesture/getMoveOperations.ts",
+    "apps/web/app/services/whiteboard/gesture/getDraggedBounds.ts",
+    "apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue",
+  ]
