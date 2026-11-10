@@ -13,9 +13,9 @@ Six align commands SHALL each move every box of a selection of two or more so th
 
 #### Scenario: Aligning leaves a free arrow where it was
 
-- **GIVEN** a selected shape and a selected arrow with both ends free
+- **GIVEN** two selected shapes and a selected arrow with both ends free
 - **WHEN** the owner chooses align top
-- **THEN** the shape's top edge is at the top of the selection's box
+- **THEN** the two shapes' top edges are level
 - **AND** the arrow's ends have not moved
 
 #### Scenario: Align is disabled when fewer than two boxes are selected
