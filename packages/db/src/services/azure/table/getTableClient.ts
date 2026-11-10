@@ -6,7 +6,11 @@ import { TableClient } from "@azure/data-tables";
 import { getResultAsync, noop } from "@esposter/shared";
 
 const provisionTableClient = async (connectionString: string, tableName: AzureTable) => {
-  const tableClient = TableClient.fromConnectionString(connectionString, tableName);
+  // The library allows an unencrypted connection only for the literal `UseDevelopmentStorage=true`, so an emulator named
+  // By its own http endpoints, on ports of its own, is allowed explicitly
+  const tableClient = TableClient.fromConnectionString(connectionString, tableName, {
+    allowInsecureConnection: /TableEndpoint=http:\/\//iu.test(connectionString),
+  });
   await getResultAsync(() => tableClient.createTable()).match(noop, (error) => {
     if (!checkIsConflict(error)) throw error;
   });
