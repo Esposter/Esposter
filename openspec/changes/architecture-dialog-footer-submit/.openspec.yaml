@@ -1,0 +1,12 @@
+schema: spec-driven
+affected_areas: [architecture]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/components/Message/Model/Member/ActionDialog/Shell.vue",
+    "apps/web/app/components/Message/Model/Member/ActionDialog/DisplayName.vue",
+    "apps/web/app/components/Message/Model/Member/ActionDialog/Notes.vue",
+    "apps/web/app/components/Resource/Blueprint/DeployDialog.vue",
+    "apps/web/app/components/Resource/ShareDialog.vue",
+    "apps/web/app/components/Styled/Dialog.vue",
+  ]
