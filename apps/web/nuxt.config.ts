@@ -5,7 +5,6 @@ import { css } from "./configuration/css.ts";
 import { devtools } from "./configuration/devtools.ts";
 import { experimental } from "./configuration/experimental.ts";
 import { fonts } from "./configuration/fonts.ts";
-import { hooks } from "./configuration/hooks.ts";
 import { ignore } from "./configuration/ignore.ts";
 import { image } from "./configuration/image.ts";
 import { imports } from "./configuration/imports.ts";
@@ -32,7 +31,6 @@ export default defineNuxtConfig({
   devtools,
   experimental,
   fonts,
-  hooks,
   ignore,
   image,
   imports,

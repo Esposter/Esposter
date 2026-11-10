@@ -1,8 +1,5 @@
 import type { NuxtConfig } from "nuxt/schema";
 
-import { createRequire } from "node:module";
-import { dirname, join } from "node:path";
-
 export const vite: NuxtConfig["vite"] = {
   build: {
     // Fix phaser "Local data URIs are not supported"
@@ -19,16 +16,4 @@ export const vite: NuxtConfig["vite"] = {
     // Own copy it is
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats"],
   },
-  // Yaml's Node export is CommonJS, which the ESM Vite SSR runner cannot evaluate; use its equivalent ESM build.
-  plugins: [
-    {
-      enforce: "pre",
-      name: "yaml-browser-ssr-entry",
-      resolveId(source, importer) {
-        if (source !== "yaml" || !importer) return null;
-        const yamlDirectory = dirname(createRequire(importer).resolve("yaml/package.json"));
-        return join(yamlDirectory, "browser/index.js");
-      },
-    },
-  ],
 };

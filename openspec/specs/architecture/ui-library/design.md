@@ -351,7 +351,7 @@ flowchart TD
 The accessibility patterns, usability references, platform documents and design systems the library shares with every other surface are on [Design sources](../design-sources/design.md). What follows is what only this page's decisions draw on.
 
 - [Why Vuetify 0](https://0.vuetifyjs.com/introduction/why-vuetify0): the headless layer's scope, and its standing as the foundation Vuetify's next major is built on.
-- [Nuxt integration](https://0.vuetifyjs.com/guide/integration/nuxt), Vuetify 0: the transpile entry, the Unhead theme adapter and the hydration plugin.
+- [Nuxt integration](https://0.vuetifyjs.com/guide/integration/nuxt), Vuetify 0: the Unhead theme adapter and the hydration plugin.
 - [Compatibility](https://0.vuetifyjs.com/guide/integration/compatibility), Vuetify 0: each concern with exactly one owner.
 - [Components](https://0.vuetifyjs.com/guide/fundamentals/components), Vuetify 0: the compound parts, the attributes object each part's slot hands over, and the polymorphic base element.
 - [AI tools](https://0.vuetifyjs.com/guide/tooling/ai-tools), Vuetify 0: the skill and the markdown twin of every docs page.
