@@ -43,6 +43,10 @@ flowchart TD
 - The moved builders are imported by the Responses blade's server reads. The builders' tests move with them, so the import paths are tested from both ends.
 - The results table is one row of cells, so a long survey's results scroll inside the preview. The preview adds no layout of its own.
 
+## Open questions
+
+- Task 2.5's 'Completing a preview saves no response' scenario already holds: the preview passes a no-op completion listener and no save path is wired to it, so a test of that scenario passes before the change. The change owner decides whether it stays a test-first task, becomes a guard, or is dropped.
+
 ## Key files
 
 | File                                                                                  | Role                                                                                  |

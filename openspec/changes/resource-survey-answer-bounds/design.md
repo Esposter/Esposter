@@ -45,6 +45,10 @@ flowchart TD
 - A reader this change misses keeps counting or drawing the scale from one. The four readers, the answer schema, the field, the summary and the matrix call site, each have a test in the tasks.
 - The Creator's form draws `rateMin` through the schema form's one-of path as a select of its two literals. If that path draws a number field instead, an owner can type a value the schema refuses, and the form test in the tasks catches it.
 
+## Open questions
+
+- Tasks 2.1 and 2.3 name scenarios that already hold on the current code. The rating schema caps a move at the scale's last step, so 'A stored rating above a shortened scale blocks the move' passes before the change, and the summary labels a rating's steps from one, so 'A rating that starts at one is counted as before' passes too. The change owner decides whether each stays a test-first task, becomes a guard that holds the behaviour, or is dropped.
+
 ## Key files
 
 | File                                                                                               | Role                                                                      |

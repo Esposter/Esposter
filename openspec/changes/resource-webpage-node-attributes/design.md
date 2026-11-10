@@ -31,6 +31,10 @@ A webpage button renders a link with its address and its label, and has no targe
 
 - A check that a fragment link names an element id the page holds. The critique reports the links it can read from the document, and a fragment check is a separate rule over the page's ids.
 
+## Open questions
+
+- The element id rule conflicts across the change. The Decision above admits only letters, digits, hyphens and underscores within a length bound, but the proposal, the document-model scenarios and task 2.2 refuse only an id with a space, so an id such as `price#1` is refused under this design and accepted under the spec. The owner decides which rule governs, and what the length bound is, since the design names none.
+
 ## Key files
 
 | File                                                            | Role                                                                                                      |
