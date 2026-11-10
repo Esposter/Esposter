@@ -31,7 +31,7 @@ export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
 // The plugin's own `all-flat` preset decides which rules are on, so a rule it adds arrives without an edit here. The
 // Preset hands them over as warnings, which fail nothing, so each rule it turns on is an error and the rest stay off
 const PINIA_RULES = Object.fromEntries(
-  Object.entries(pinia.configs["all-flat"].rules ?? {}).map(
+  Object.entries(pinia.configs["all-flat"].rules).map(
     ([ruleName, severity]) => [ruleName, severity === "off" ? "off" : "error"] as const,
   ),
 );
