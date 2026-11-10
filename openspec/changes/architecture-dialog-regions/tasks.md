@@ -4,7 +4,7 @@
 
 - [x] 1.1 Draw the default slot in a body region and add a footer slot, both from one shared shortcut, with the bare-body prop. Verify: tests named after the scenarios 'A long list scrolls inside the body', 'A short body does not scroll', 'A bare body keeps the scroll without the padding', 'The footer stays in view' and 'No footer content draws no region' written first and seen failing.
 - [x] 1.2 Give the popover's panel the same body shortcut. Verify: a test that a popover with a list taller than its limit scrolls inside it, written first and seen failing.
-- [x] 1.3 Make the styled form dialog's footer submit name its form by id. Verify: tests named after the scenarios 'The footer's submit submits the body's form', 'Enter in a field submits the form' and 'The submit is disabled while a field fails' written first and seen failing.
+- [x] 1.3 Make the styled form dialog's footer submit name its form by id. Verify: tests named after the scenarios 'The footer's submit submits the body's form' and 'The submit is disabled while a field fails' written first and seen failing.
 
 ## 2. The shells
 

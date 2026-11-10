@@ -41,8 +41,9 @@ Two causes of overflow follow from this and are the causes the regions remove by
 - A scroll on the dialog element itself, since it scrolls the title bar away with the body.
 - A confirm-variant switch on the raw dialog, since the styled dialogs already draw the pair and the raw ones differ in their footer states.
 - A single `UiRegionBody` component for the body and its padding, which is two tokens at six sites and would be syntax extraction.
+- A test that Enter in a field submits the form — a form submits implicitly in the browser, so a test would exercise the DOM, not our code.
 
 ## Risks and trade-offs
 
-- Moving a footer out of a form changes how the submit is wired, so each of the ten form dialogs needs its submit proven to still submit on Enter and to stay disabled while invalid.
+- Moving a footer out of a form changes how the submit is wired, so each of the ten form dialogs needs its submit proven to still submit and to stay disabled while invalid.
 - A dialog whose single child brought its own scroll, such as the data table, now has two nested scrollers until its own is removed, which each migration checks.

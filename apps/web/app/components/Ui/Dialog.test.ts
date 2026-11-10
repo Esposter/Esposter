@@ -62,7 +62,22 @@ describe("uiDialog", () => {
 
     // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the
     // Class is what is checked
-    test.each(Object.values(UiDialogSize))("A named size sets the width: %s", async (size) => {
+    test("A named size sets the width", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, placement: UiDialogPlacement.Middle, size: UiDialogSize.Large, title },
+      });
+      await flushPromises();
+      const dialogClasses = component.get("dialog").classes();
+
+      expect(
+        Object.values(UiDialogSizeClassMap).filter((sizeClass) => dialogClasses.includes(sizeClass)),
+      ).toStrictEqual([UiDialogSizeClassMap[UiDialogSize.Large]]);
+    });
+
+    test.each(Object.values(UiDialogSize))("Each named size draws its own width class: %s", async (size) => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -273,6 +288,35 @@ describe("uiDialog", () => {
 
       expect(component.find("[ui-region-body]").exists()).toBe(true);
       expect(component.find("footer").exists()).toBe(false);
+    });
+
+    // The title bar draws the title and a close control beside it, so the reader can name the dialog and dismiss it
+    test("A dialog shows its title with a close control", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, { attachTo: document.body, props: { modelValue: true, title } });
+      await flushPromises();
+
+      expect(component.get("hgroup").text()).toBe(title);
+      expect(component.find('[aria-label="Close"]').exists()).toBe(true);
+    });
+
+    // The body is the one region that scrolls, and the title bar and the footer sit outside it, so a long body scrolls
+    // Between them and leaves both in view. jsdom lays nothing out, so the scroll itself is proven in a driven browser
+    test("A long body scrolls inside the dialog", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: { default: () => h("ul", [h("li", "a")]), footer: () => h("button", { type: "button" }) },
+      });
+      await flushPromises();
+      const body = component.get("[ui-region-body]").element;
+
+      expect(body.parentElement).toBe(component.get("section").element);
+      expect(body.contains(component.get("header").element)).toBe(false);
+      expect(body.contains(component.get("footer").element)).toBe(false);
     });
   });
 });

@@ -25,9 +25,9 @@ vi.mock(import("@/services/resource/ResourceBladeDefinitionMap"), async (importO
   };
 });
 
-const resource = { id: "resource", type: ResourceType.Sheet } as ResourceInResource;
-
 describe("resourceBladeOutlet", () => {
+  const resource = { id: "resource", type: ResourceType.Sheet } as ResourceInResource;
+
   // The outlet owns the padding and the scroll a blade used to write, so a blade's content is padded and scrolls
   // inside the outlet's body. jsdom measures no layout, so the overflow itself is proven in a driven browser
   test("A blade's content is padded and scrolls", async () => {

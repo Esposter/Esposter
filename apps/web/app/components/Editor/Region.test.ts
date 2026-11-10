@@ -11,21 +11,21 @@ vi.mock(import("@/composables/editor/useEditorSizeClass"), () => ({
   useEditorSizeClass: () => computed(() => SizeClass.Expanded),
 }));
 
-const panelId = "panel";
-const createRegion = (edge: RegionEdge): ResolvedRegion => ({
-  activePanelId: panelId,
-  edge,
-  id: "region",
-  isOpen: true,
-  maximumSize: 0,
-  minimumSize: 0,
-  panels: [{ contentKey: panelId, id: panelId }],
-  presentation: RegionPresentation.Docked,
-  size: 0,
-});
-const registry: EditorRegistry = { [panelId]: defineComponent(() => () => h("p", "content")) };
-
 describe("editorRegion", () => {
+  const panelId = "panel";
+  const createRegion = (edge: RegionEdge): ResolvedRegion => ({
+    activePanelId: panelId,
+    edge,
+    id: "region",
+    isOpen: true,
+    maximumSize: 0,
+    minimumSize: 0,
+    panels: [{ contentKey: panelId, id: panelId }],
+    presentation: RegionPresentation.Docked,
+    size: 0,
+  });
+  const registry: EditorRegistry = { [panelId]: defineComponent(() => () => h("p", "content")) };
+
   // A region's body is full-bleed in every orientation, a bar and a column alike: each panel pads what it draws, so the
   // Body that holds the panel adds no padding of its own
   test("A full-bleed region opts out of the padding", () => {

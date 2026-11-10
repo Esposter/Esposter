@@ -49,12 +49,6 @@ A form in a dialog's body SHALL be submitted by a button in the footer that name
 - **WHEN** the reader presses the footer's submit
 - **THEN** the form is submitted once
 
-#### Scenario: Enter in a field submits the form
-
-- **GIVEN** a form dialog with the cursor in a field
-- **WHEN** the reader presses Enter
-- **THEN** the form is submitted once
-
 #### Scenario: The submit is disabled while a field fails
 
 - **GIVEN** a form dialog with a failing field

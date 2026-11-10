@@ -180,12 +180,11 @@ describe("styledFormDialog", () => {
     expect(component.get("footer button:last-child").attributes("data-variant")).toBe(expected);
   });
 
-  // The confirm is the form's submit, so it goes through the form's own validation, and a failed write keeps the
-  // Dialog open over the draft
-  test("submits through its form and stays open when the submit fails", async () => {
+  // The confirm is the form's submit, so it goes through the form's own validation
+  test("The footer's submit submits the body's form", async () => {
     expect.hasAssertions();
 
-    const submit = vi.fn<() => boolean>(() => false);
+    const submit = vi.fn<() => boolean>(() => true);
     const component = mount(StyledFormDialog, {
       attachTo: document.body,
       props: { confirmLabel, modelValue: true, submit, title },
@@ -197,6 +196,24 @@ describe("styledFormDialog", () => {
     expect(confirmButton.attributes("type")).toBe("submit");
 
     confirmButton.element.click();
+    await flushPromises();
+
+    expect(submit).toHaveBeenCalledTimes(1);
+  });
+
+  // A failed write keeps the dialog open over the draft
+  test("A failed submit keeps the dialog open", async () => {
+    expect.hasAssertions();
+
+    const submit = vi.fn<() => boolean>(() => false);
+    const component = mount(StyledFormDialog, {
+      attachTo: document.body,
+      props: { confirmLabel, modelValue: true, submit, title },
+      slots: { default: "<p>a</p>" },
+    });
+    await flushPromises();
+
+    component.get<HTMLButtonElement>("footer button:last-child").element.click();
     await flushPromises();
 
     expect(submit).toHaveBeenCalledTimes(1);
