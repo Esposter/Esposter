@@ -39,7 +39,7 @@
     },
     {
       "allowedVersions": "<1.3",
-      "description": "`vite` depends on `rolldown` at its own minor (`~1.2.16` in vite 8.3), and a plugin that peers on both resolves the catalog's copy beside vite's, so the catalog stays on vite's line until a vite release depends on rolldown 1.3. `tsdown` already depends on 1.3 and keeps its own copy.",
+      "description": "`vite` depends on `rolldown` at its own minor, and a plugin that peers on both resolves the catalog's copy beside vite's, so the catalog follows vite's minor, taking every patch inside it, until a vite release depends on the next minor. `tsdown` already depends on the next minor and keeps its own copy.",
       "matchPackageNames": ["rolldown"]
     },
     {
