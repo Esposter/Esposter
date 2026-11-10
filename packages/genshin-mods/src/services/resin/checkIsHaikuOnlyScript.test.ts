@@ -52,6 +52,15 @@ describe(checkIsHaikuOnlyScript, () => {
     ["an escaped model key alone", String.raw`await agent('', { 'model': 'haiku' });`],
     ["an escaped model key after the haiku key", String.raw`await agent('', { model: 'haiku', 'model': 'opus' });`],
     [
+      "a line comment ended by U+2028 above an opus agent",
+      "// note\u2028await agent('', { model: 'opus' });\nawait agent('', { model: 'haiku' });",
+    ],
+    [
+      "a line comment ended by a carriage return above an opus agent",
+      "// note\rawait agent('', { model: 'opus' });\nawait agent('', { model: 'haiku' });",
+    ],
+    ["a third argument after the options", "await agent('', { model: 'haiku' }, { model: 'opus' });"],
+    [
       "a string with an escape beside the haiku model",
       String.raw`await agent('', { label: 'it\'s', model: 'haiku' });`,
     ],

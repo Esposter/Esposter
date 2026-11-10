@@ -1,5 +1,7 @@
 import { MaskFrame } from "../../models/MaskFrame";
 
+// The characters that end a line comment, as the language defines its line terminators
+const LINE_TERMINATOR_REGEX = /[\n\r\u2028\u2029]/u;
 // A quoted string's whole literal, escapes read, which a line ending before its closing quote fails to match
 const STRING_LITERAL_REGEX = /'(?:[^'\\\n]|\\[\s\S])*'|"(?:[^"\\\n]|\\[\s\S])*"/uy;
 // The template text from a position, up to its closing backtick or an interpolation's `${`
@@ -39,8 +41,8 @@ export const maskScriptCode = (script: string): string | undefined => {
       frames.push(MaskFrame.Template);
       index++;
     } else if (script.startsWith("//", index)) {
-      const end = script.indexOf("\n", index);
-      const stop = end === -1 ? script.length : end;
+      const end = script.slice(index).search(LINE_TERMINATOR_REGEX);
+      const stop = end === -1 ? script.length : index + end;
       spans.push([index, stop]);
       index = stop;
     } else if (script.startsWith("/*", index)) {

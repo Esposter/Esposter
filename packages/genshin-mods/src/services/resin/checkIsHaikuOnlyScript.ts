@@ -35,7 +35,10 @@ export const checkIsHaikuOnlyScript = (script: string | undefined): boolean => {
       const optionsClose = findClosingBracket(code, optionsOpen);
       if (optionsClose === -1 || optionsClose > closeIndex) return false;
       const afterOptions = findNonSpace(code, optionsClose + 1, closeIndex);
-      if (afterOptions !== closeIndex && code.charAt(afterOptions) !== ",") return false;
+      if (afterOptions !== closeIndex) {
+        if (code.charAt(afterOptions) !== ",") return false;
+        if (findNonSpace(code, afterOptions + 1, closeIndex) !== closeIndex) return false;
+      }
       return checkIsHaikuOptions(script, code, optionsOpen, optionsClose);
     })
   );
