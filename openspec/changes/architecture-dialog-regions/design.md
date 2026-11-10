@@ -29,12 +29,18 @@ Two causes of overflow follow from this and are the causes the regions remove by
 - **The styled shells fill the footer and keep their props.** The shell's actions row becomes its footer slot content, so Cancel, the third choice and the confirm are unchanged for every consumer.
 - **A scan test holds it.** A dialog call site whose default slot root draws a scroll class or a footer fails a test, so the construction is enforced by the same enforcer as the other shells, and no review has to remember it.
 - **Fixed body heights are removed.** The settings wrapper and the reactions dialog use the frame's height and a flexible body instead of a viewport height.
+- **The padding is the container's, not the shortcut's.** The body shortcut carries the column, the gap and the scroll, and the dialog adds the padding itself unless its body is bare, because a utility cannot reliably undo padding a shortcut sets. The gap is `gap-3`, the nearest to the `gap-2` and `gap-3` the call sites wrote.
+- **A confirm takes a variant, and a raw dialog stays raw only for a reason the shell cannot express.** The styled dialogs gained an optional confirm variant so a destructive act no longer needs a hand-written Cancel and submit pair. A dialog whose Cancel takes the initial focus stays raw, and so do the dialogs whose footer changes with their state.
+- **A dialog that needs a stable height is tall, not fixed.** The settings and PDF dialogs stand at the frame's definite height and each pane scrolls inside it, so no body writes a viewport height.
+- **A list dialog takes the nearest named size down, not up.** The 36rem dialogs became Medium rather than Large, so no dialog widens by a third because the scale has no 36rem.
 
 ## Rejected
 
 - A body height set per placement at each call site, since that is the duplication this change removes.
 - A device-specific dialog, which the responsive skill already rules out.
 - A scroll on the dialog element itself, since it scrolls the title bar away with the body.
+- A confirm-variant switch on the raw dialog, since the styled dialogs already draw the pair and the raw ones differ in their footer states.
+- A single `UiRegionBody` component for the body and its padding, which is two tokens at six sites and would be syntax extraction.
 
 ## Risks and trade-offs
 

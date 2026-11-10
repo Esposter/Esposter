@@ -47,12 +47,16 @@ Each cluster is a shape that appears in several components, with the count the r
 - **The frame is the card.** The frame already has a title bar and a body, so a card is a frame and no card component is added.
 - **A named size, not a width prop.** The values in use are few, so a dialog says Small, Medium or Large and the base owns the numbers. The alternative was a width passthrough, which keeps the literal at every call site.
 - **A shape seen twice is a note.** The singleton confirm is the one large cluster with a business-logic core, so it is its own change with its own design.
+- **A region whose panels pad themselves is bare.** The editor's regions draw the scroll and nothing else, because the contextual panel and the dashboard panels already pad, and the blade outlet and the right sidebar panes keep one bare flag for the content that scrolls itself. The frame and the settings content have no such flag, since no call site needed it.
+- **A pane has a pinned footer.** The thread's composer sits under the scrolling replies, so a reader never scrolls to reply.
+- **The explorer has one scroll owner.** The save notice sits above the scrolling area, so the outlet's own scroll and the explorer's never nest.
 
 ## Rejected
 
 - A card component beside the frame, since it would be the frame with another name.
 - A composable that returns loading, error and empty flags, for the reason above.
 - A generic row component for every list row, since the 13 row shells differ in their trailing content and the item content already owns what is shared.
+- A bare flag on every container, since two had no caller and were deleted: a flag exists while a call site passes it.
 
 ## Risks and trade-offs
 
