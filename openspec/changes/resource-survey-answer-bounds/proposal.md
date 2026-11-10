@@ -6,7 +6,7 @@ A rating always starts at one, and a tag box can be bounded only from above. The
 
 - A rating question takes a scale that starts at zero or at one, and its steps are named by their numbers.
 - A tag box takes a minimum selection, bounded as a checkbox's is.
-- A save is refused when a checkbox or tag box has a minimum selection above its maximum.
+- A save is refused when a tag box has a minimum selection above its maximum.
 - A rating's answer must be a step of its scale, and a selection must hold within its bounds.
 - The response summary counts a zero-based rating's steps from zero.
 
@@ -14,7 +14,7 @@ A rating always starts at one, and a tag box can be bounded only from above. The
 
 ### Modified Capabilities
 
-- `survey-document`: a save is refused when a checkbox or tag box has a minimum selection above its maximum.
+- `survey-document`: a save is refused when a tag box has a minimum selection above its maximum.
 - `survey-runner`: a rating answer is a step of its scale, and a selection holds within its minimum and maximum.
 - `survey-response-summary`: a rating card's bars run from the first step of its scale.
 

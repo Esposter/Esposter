@@ -1,6 +1,6 @@
 ## 1. The tag box minimum
 
-- [ ] 1.1 Add the minimum selection to the tag box's props, and refuse on save a checkbox or tag box whose minimum is above its maximum. Verify: tests named after the scenarios 'A tag box whose minimum is above its maximum is refused on save' and 'A checkbox whose minimum is above its maximum is refused on save' written first and seen failing.
+- [ ] 1.1 Add the minimum selection to the tag box's props, and refuse on save a tag box whose minimum is above its maximum. Verify: a test named after the scenario 'A tag box whose minimum is above its maximum is refused on save' written first and seen failing.
 - [ ] 1.2 Bound a tag box's answer by its minimum and its maximum, so a move below the minimum is refused. Verify: tests named after the scenarios 'A tag box below its minimum blocks the move' and 'A selection within its bounds moves on' written first and seen failing.
 
 ## 2. The rating scale
