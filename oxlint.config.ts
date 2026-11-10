@@ -21,11 +21,20 @@ import {
 } from "#oxlint/importRestrictions";
 import { JS_PLUGINS } from "#oxlint/jsPlugins";
 import { POLLING_MESSAGE, USE_ROUTER_PAGE_MESSAGE } from "#oxlint/messages";
+import pinia from "eslint-plugin-pinia";
 import { defineConfig } from "oxlint";
 
 // The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
 // So the two passes never ignore different trees.
 export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
+
+// The plugin's own `all-flat` preset decides which rules are on, so a rule it adds arrives without an edit here. The
+// Preset hands them over as warnings, which fail nothing, so each rule it turns on is an error and the rest stay off
+const PINIA_RULES = Object.fromEntries(
+  Object.entries(pinia.configs["all-flat"].rules ?? {}).map(
+    ([ruleName, severity]) => [ruleName, severity === "off" ? "off" : "error"] as const,
+  ),
+);
 
 const oxlintConfiguration: OxlintConfig = defineConfig({
   categories: {
@@ -215,6 +224,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   ],
   plugins: ["import", "oxc", "promise", "typescript", "unicorn", "vitest", "vue"],
   rules: {
+    ...PINIA_RULES,
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
     "comments/no-trailing-comment": "error",
@@ -328,6 +338,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "oxc/no-rest-spread-properties": "off",
     "pass-through-helper/no-forwarding-wrapper": "error",
     "pinia-store/require-store-binding": "error",
+    "pinia/require-setup-store-properties-export": "off",
     "prefer-destructuring": "off",
     "promise/avoid-new": "off",
     "promise/no-return-wrap": "off",

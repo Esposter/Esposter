@@ -1,3 +1,4 @@
+// @TODO: https://github.com/oxc-project/oxc/issues/18656 — drop this file and `eslint-plugin-jsonc` once oxlint lints JSON
 import jsonFilePatterns from "@esposter/configuration/eslint/jsonFilePatterns.js";
 import { configs } from "eslint-plugin-jsonc";
 import { defineConfig } from "eslint/config";

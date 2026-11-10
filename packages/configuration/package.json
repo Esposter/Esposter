@@ -72,7 +72,6 @@
     "eslint-plugin-jsonc": "catalog:",
     "eslint-plugin-oxlint": "catalog:",
     "eslint-plugin-perfectionist": "catalog:",
-    "eslint-plugin-pinia": "catalog:",
     "eslint-plugin-vuejs-accessibility": "catalog:",
     "natural-orderby": "catalog:",
     "playwright": "catalog:",

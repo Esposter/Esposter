@@ -4,7 +4,7 @@ Read when changing how the repo's JSON is linted, adding a JSONC file, or when o
 
 ## JSON linting — `eslint-plugin-jsonc`, and the manifest exception
 
-`packages/configuration/eslint/plugins/json.js` runs the plugin's recommended set over the repo's JSON — oxlint lints no JSON at all, so nothing here is a duplicate. Three things about the wiring are not guessable:
+`packages/configuration/eslint/plugins/json.js` runs the plugin's recommended set over the repo's JSON — oxlint lints no JSON at all, so nothing here is a duplicate, and a JS plugin cannot host it (oxlint hands one no file but a script). The file carries a `@TODO` on [oxc#18656](https://github.com/oxc-project/oxc/issues/18656), which asks oxlint to lint JSON and YAML; the plugin goes when that ships. Three things about the wiring are not guessable:
 
 - **`recommended-with-json` bans comments, so a JSONC file needs the other config.** `recommended-with-jsonc` is the same set minus `jsonc/no-comments`, and the files that take it are JSONC by contract rather than by extension — the editor settings and the tsconfigs. Matched by the wrong one, a comment is a hard parse failure rather than a rule report.
 - **A manifest stays on `@eslint/json`.** `depend/ban-dependencies` (`packages/configuration/eslint/plugins/depend.js`) listens on `Document > Object > Member`, which is momoa's AST and not the ESTree-shaped tree this plugin parses to — and a file carries exactly one `language`. A jsonc entry reaching a manifest leaves that rule matching nothing, which looks exactly like passing, so manifests are excluded here rather than covered twice.
