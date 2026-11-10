@@ -2,7 +2,6 @@ import type { UserConfig } from "vite-plus";
 
 import { BUILD_TASKS } from "#vite/buildTasks";
 import { CHECK_TASKS } from "#vite/checkTasks";
-import { TEST_TASKS } from "#vite/testTasks";
 import { defineConfig } from "vite-plus";
 
 import oxfmtConfiguration from "./oxfmt.config.ts";
@@ -14,7 +13,7 @@ import oxlintConfiguration from "./oxlint.config.ts";
 const configuration: UserConfig = defineConfig({
   fmt: oxfmtConfiguration,
   lint: oxlintConfiguration,
-  run: { tasks: { ...BUILD_TASKS, ...CHECK_TASKS, ...TEST_TASKS } },
+  run: { tasks: { ...BUILD_TASKS, ...CHECK_TASKS } },
 });
 
 export default configuration;

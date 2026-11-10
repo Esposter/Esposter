@@ -32,17 +32,3 @@ export const BUILD_HOOK_GENERATED_PATTERNS: string[] = [
   "src/generated/relations.ts",
   "src/generated/schema.ts",
 ];
-
-// The directories whose members' manifests may carry a `test` script, besides the root-level `scripts` package
-export const TEST_ROOT_DIRECTORIES: string[] = ["apps", PACKAGES_DIRECTORY];
-
-// What a member's own test run writes into the member: the app's generated Nuxt and data directories, the coverage
-// Report, and the caches Vitest and the tools under it keep in `node_modules`. None is an input of the next run
-export const TEST_REWRITTEN_PATTERNS: string[] = [
-  ".data/**",
-  ".nuxt/**",
-  "coverage/**",
-  "node_modules/.cache/**",
-  "node_modules/.vite/**",
-  "node_modules/.vitest-cache/**",
-];

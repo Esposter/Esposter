@@ -76,15 +76,11 @@ jobs:
           path: ~/Esposter/cache/content
           key: game-data-mirror-${{ hashFiles('packages/genshin-world/src/generated/gameDataLock.json') }}
           restore-keys: game-data-mirror-
-      # Each shard is a cached task of its own, so a shard none of whose reads changed replays its blob. `main` is
-      # The production gate and runs every shard in full (monorepo-tooling.md → ## CI job shape)
+      # `default` beside `blob`, on purpose (monorepo-tooling.md → ## CI job shape)
       - name: 🧪 Test
-        uses: ./.github/actions/run-cached-task
-        with:
-          task: coverage:ci
-          scope: -shard-${{ matrix.shard }}
-          arguments: --shard=${{ matrix.shard }}/${{ strategy.job-total }}
-          cache: ${{ github.ref_name != 'main' }}
+        env:
+          SHARD: ${{ matrix.shard }}/${{ strategy.job-total }}
+        run: pnpm coverage --reporter=default --reporter=blob --shard="$SHARD"
 
       - name: 📤 Upload blob report
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

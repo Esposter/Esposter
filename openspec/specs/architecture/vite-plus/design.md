@@ -4,7 +4,7 @@
 
 ## The task cache
 
-The builds, the format check, the whole-repository checks and each member's tests run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `build:app`, `format:check`, `lint`, `typecheck`, one `build:<directory>` per package, which `build:packages` orders, and one `test:<member>` per workspace member with a test script, which `test:all` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
+The builds and the whole-repository checks run as tasks of the root `vite.config.ts`, which composes them from the modules in `vite/` — `build:app`, `format:check`, `lint`, `typecheck`, and one `build:<directory>` per package, which `build:packages` orders — under `vp run`, which traces every file a task and its child processes open, probe or list, and replays the recorded run only when each still matches. A task replays only when every file its command read still matches the recorded run, and otherwise runs the command under the tracer again and records the new one:
 
 ```mermaid
 flowchart TD
@@ -24,6 +24,8 @@ How CI carries the cache, why a hit needs the install, and why the app build rep
 - **A command reading what the tracer cannot see** — the network, a git remote, the clock.
 
 **Rejected: keeping `format:check` a script.** A hit still pays the install, so caching looks like it saves little. It is a task because the check reruns on an unchanged tree (a rerun, a re-push), where a hit restores the verdict and a pass runs the formatter over the whole workspace. Do not move it back to a script.
+
+**Rejected: caching the test and coverage shards with the task cache.** No shard replayed in a measured run, because a test's inputs are the whole app, so every commit changes them. The cost was a second task layer to keep.
 
 **A task's settings are the files its command rewrites.** A build that rewrites a file it also read makes `vp` refuse to cache it, naming the file. Each task's `cache.input` keeps automatic tracking and subtracts exactly those files; they stay outputs, so a replay restores them. pnpm's own install and run state is subtracted from every task, since no build's result depends on it and the dependencies themselves are traced file by file. The list fails safe — a newly rewritten file is a refusal, never a stale replay — and `vp` names only the first, so a newly refused build is listed whole by building once and taking the tracked files newer than its start. A test pinning the list would restate the config, so none exists.
 
@@ -55,18 +57,12 @@ The persona plugin runs its TypeScript under plain `node`: its enums are `const`
 - **`vp dev`, `vp build` and `vp migrate` for the app** — [deferred](../../../deferred/architecture/vite-plus-app-commands/design.md) while Nuxt owns the module graph.
 - **A remote cache** — [deferred](../../../deferred/architecture/vite-plus-remote-cache/design.md) until a release carries the client and there is a server to point it at.
 
-### Tests as tasks
-
-A `test:<member>` task runs `vitest run` in the member's directory and replays the last green run while nothing that run read has changed, with `test:all` ordering them: a local tool, since CI does not run a suite per member. CI's coverage shards are the `coverage:ci` task, which takes `--shard=i/n` as an argument, so each shard keeps an entry of its own and a hit restores the blob the merge job reads (`monorepo-tooling`, `## CI job shape`). Reading a file, a built dependency's `dist` or a shared setup file is an input, so an edit to any of them misses and an edit to something the run never read does not.
-
-Three limits hold for every test task. The cache keeps one entry per task and argument set, so a replay compares against the last saved run only. A variable the task does not list under `env` reaches the test process without being part of the key, so a suite that reads one from the real environment has to list it. And a hash-sharded slice mixes members, so how often a shard replays depends on how widely its tests read, which is measured from CI's own replays rather than assumed.
-
 ## Key files
 
 | File                                          | Role                                                                                   |
 | :-------------------------------------------- | :------------------------------------------------------------------------------------- |
 | `vite.config.ts`                              | composes the formatter, linter and `run` settings; the tasks themselves are in `vite/` |
-| `vite/*Tasks.ts`, `vite/services/`            | each cached build, check and test a task, with the files it rewrites subtracted        |
+| `vite/*Tasks.ts`, `vite/services/`            | each cached build and check, with the files it rewrites subtracted                     |
 | `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool       |
 | `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed               |
 | `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                       |
