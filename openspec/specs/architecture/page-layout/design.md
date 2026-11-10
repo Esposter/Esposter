@@ -34,6 +34,7 @@ A wide screen docks every drawer the page has, open. A narrow one keeps each clo
 
 - **The button that opens a drawer is `AppDrawerButton`**, placed by the page in its own header — beside the title, in the toolbar — since where it reads naturally is the page's call. The component owns the rest: it exists only on a narrow screen and opens its side's drawer. A page with a drawer and no button leaves a phone no way to reach the drawer at all.
 - **A drawer is titled once.** A sheet draws a title bar with a close button over what the page put in it. Content that already draws its own — the room's side panes, each under one `MessageRightSideBarHeader` with its title and close — passes `is-right-title-hidden`, and the sheet keeps its title only as the dialog's accessible name, so no screen shows two titles and two close buttons for one pane.
+- **A drawer's content pads and scrolls itself.** A docked drawer has no body of its own, since its column clips the content to the drawer's width. A sheet's body is bare, so the content takes its own padding and the sheet scrolls what it draws. Either way the content is what pads and scrolls.
 
 ## What the height changes
 
@@ -51,6 +52,8 @@ An immersive page never scrolls the window at all: its layout hides the document
 | The page                        | Nothing — the page sits on the ground                |
 | A region inside the page        | The component that is the region, wearing `ui-frame` |
 | A bar — a room's header, a tool | The bar, wearing `ui-bar`                            |
+
+**A region draws its own body**, as the [containers](../ui-library/design.md#containers-own-their-body) of the UI library do. The component that is the region wears `ui-frame` and holds the scroll for the content it is given.
 
 **No page paints its own background, and the layout takes no style from a page.** A page that looks like it needs one — a list that should read as a panel — is a list that belongs in a drawer, or a region that wears `ui-frame`. The shell's props are only what the grid needs to know — the drawers' widths and titles, and the height mode — since a style prop would let any page push any style into the one component every page shares.
 

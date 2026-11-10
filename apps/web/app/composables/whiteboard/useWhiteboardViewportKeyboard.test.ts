@@ -23,10 +23,11 @@ describe(useWhiteboardViewportKeyboard, () => {
   const FAR_PROCESS = { ...WHITEBOARD_PROCESS, id: FAR_PROCESS_ID, x: 1000, y: 1000 };
   const INITIAL_VIEWPORT = { scale: 1, x: 0, y: 0 };
 
-  test("Shift and 1 fit the content", async () => {
+  test("shift and 1 fit the content", async () => {
     expect.hasAssertions();
 
-    const { editState } = storeToRefs(useWhiteboardStore());
+    const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
     const { viewport } = storeToRefs(whiteboardEditorStore);
     const { setCanvasRect } = whiteboardEditorStore;
@@ -42,10 +43,11 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(viewport.value).toStrictEqual({ scale: 1, x: 850, y: 850 });
   });
 
-  test("Fitting an empty board changes nothing", async () => {
+  test("fitting an empty board changes nothing", async () => {
     expect.hasAssertions();
 
-    const { editState } = storeToRefs(useWhiteboardStore());
+    const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
     const { viewport } = storeToRefs(whiteboardEditorStore);
     const { setCanvasRect } = whiteboardEditorStore;
@@ -59,10 +61,11 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(viewport.value).toStrictEqual(INITIAL_VIEWPORT);
   });
 
-  test("Shift and 2 fit the selection", async () => {
+  test("shift and 2 fit the selection", async () => {
     expect.hasAssertions();
 
-    const { editState } = storeToRefs(useWhiteboardStore());
+    const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
     const whiteboardEditorStore = useWhiteboardEditorStore();
     const { selectedIds, viewport } = storeToRefs(whiteboardEditorStore);
     const { setCanvasRect } = whiteboardEditorStore;
@@ -78,7 +81,7 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(viewport.value).toStrictEqual({ scale: 1, x: -150, y: -150 });
   });
 
-  test("Ctrl and 0 reset the zoom about the view centre", async () => {
+  test("ctrl and 0 reset the zoom about the view centre", async () => {
     expect.hasAssertions();
 
     const whiteboardEditorStore = useWhiteboardEditorStore();
@@ -94,10 +97,11 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(viewport.value).toStrictEqual({ scale: 1, x: -100, y: -100 });
   });
 
-  test("Space held pans until it is released", async () => {
+  test("space held pans until it is released", async () => {
     expect.hasAssertions();
 
-    const { isSpaceHeld } = storeToRefs(useWhiteboardEditorStore());
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { isSpaceHeld } = storeToRefs(whiteboardEditorStore);
     await mountViewportKeyboard();
 
     pressKey({ bubbles: true, code: "Space", key: " " });
@@ -109,7 +113,7 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(isSpaceHeld.value).toBe(false);
   });
 
-  test("Space on a focused button presses the button", async () => {
+  test("space on a focused button presses the button", async () => {
     expect.hasAssertions();
 
     const button = document.createElement("button");
@@ -118,7 +122,8 @@ describe(useWhiteboardViewportKeyboard, () => {
       button.remove();
     });
     button.focus();
-    const { isSpaceHeld } = storeToRefs(useWhiteboardEditorStore());
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { isSpaceHeld } = storeToRefs(whiteboardEditorStore);
     await mountViewportKeyboard();
 
     pressKey({ bubbles: true, cancelable: true, code: "Space", key: " " }, button);
@@ -126,7 +131,7 @@ describe(useWhiteboardViewportKeyboard, () => {
     expect(isSpaceHeld.value).toBe(false);
   });
 
-  test("Space typed into a text field is text", async () => {
+  test("space typed into a text field is text", async () => {
     expect.hasAssertions();
 
     const textarea = document.createElement("textarea");
@@ -135,7 +140,8 @@ describe(useWhiteboardViewportKeyboard, () => {
       textarea.remove();
     });
     textarea.focus();
-    const { isSpaceHeld } = storeToRefs(useWhiteboardEditorStore());
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { isSpaceHeld } = storeToRefs(whiteboardEditorStore);
     await mountViewportKeyboard();
 
     pressKey({ bubbles: true, code: "Space", key: " " }, textarea);

@@ -23,4 +23,4 @@
 
 ## 5. The record
 
-- [ ] 5.1 Update the UI library design and the page-layout design, and record the deferred and rejected clusters under the deferred and rejected folders. Verify: `pnpm exec openspec validate architecture-container-regions --strict --no-interactive` passes.
+- [x] 5.1 Update the UI library design and the page-layout design, and record the deferred and rejected clusters under the deferred and rejected folders. Verify: `pnpm exec openspec validate architecture-container-regions --strict --no-interactive` passes.
