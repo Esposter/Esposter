@@ -1,0 +1,12 @@
+schema: spec-driven
+affected_areas: [architecture]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/modules/**",
+    "apps/web/server/services/devSession/**",
+    "packages/shared/src/services/devSeed/**",
+    "scripts/src/devSeed/**",
+    "scripts/src/models/devSeed/**",
+    "scripts/src/services/devSeed/**",
+  ]

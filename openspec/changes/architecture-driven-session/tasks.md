@@ -1,0 +1,26 @@
+# Tasks
+
+## 1. The gates, tests first
+
+- [ ] 1.1 Write the module's gate test beside the module, as the design's new-file tree places it, asserting that a build which is not a development build registers no session route. Verify: the test named after the scenario 'A production build carries no session route' written first and seen failing. The production proof is CI's build of the app, read when verification is asked, since local production builds are not run.
+- [ ] 1.2 Write the handler's tests beside the handler, in the devSession services folder the design's tree names: a non-local database is refused, a production environment is refused, a missing driven user is refused, and an accepted post reads back as the driven user through `readSession`. Verify: tests named after the scenarios 'A non-local database is refused', 'A production server refuses the session route', 'A session route with no seeded user is refused' and 'A dev server mints a signed-in session' written first and seen failing. The read-back runs against the in-memory database; if `readSession` cannot run there, stop and revisit the design's Notes before going on.
+
+## 2. The session route
+
+- [ ] 2.1 Write the handler in the devSession services folder: the runtime gate, the session created through the better-auth context, and the cookie the context names. Verify: the tests of 1.2 pass, and the session the handler gets back from the internal adapter has the shape the installed source returns, which the first Notes risk names.
+- [ ] 2.2 Write the module beside the other development modules, as the design's tree names it, registering the handler at the session route only when the development flag is set. Verify: the test of 1.1 passes, run from `apps/web` with `pnpm test modules/devSession.test.ts --run`.
+
+## 3. The seed
+
+- [ ] 3.1 Write the seed's target gates first in the devSeed services folder the design's tree names: a target that is the owner's dev database stops before any write, and a storage connection that is the default emulator or a non-local endpoint stops before any write. Verify: tests named after the scenarios 'The seed leaves the dev database untouched', 'A seed aimed at the dev database is refused' and 'A seed aimed at the default storage emulator is refused' written first and seen failing. The run in 4.2 is the wider proof that the owner's rows are unchanged.
+- [ ] 3.2 Write the seed and its entry, the devSeed entry folder and its services and models folders the design's tree names, with the entry going through the timing wrapper; add the `dev:seed` script in `scripts/package.json`; and put the driven user's identifier in the devSeed constants file under the shared package's services folder, with `pnpm build` run in that package so its barrel carries it. Verify: the tests of 3.1 pass; `pnpm -C scripts exec vitest run src/workspace/commandEntries.test.ts` passes; a seed run against a scratch database and a scratch emulator writes its dataset, and a second run leaves the same counts; that run also confirms the owner's Postgres role can create the seed database and that the emulator's table-port and location options work, as the Notes' risks name.
+
+## 4. The driven browser
+
+- [ ] 4.1 Replace the statement that nothing is signed in, in `.agents/skills/run-app/references/driven-browser.md`, with the driver step: start the run's emulator and the server with the environment overrides, post to the session route once, and let the browser's cookie jar carry the cookie. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts` passes, and the page names the route, the overrides and the scratch-only emulator.
+- [ ] 4.2 Run the driven browser once after 2.2 and 3.2 are built: post to the session route, open the messages, friends, drafts, resources and achievements pages, and record page errors, console errors and every request host, with the owner's dev database row counts and emulator folder read before and after. Verify: the run's output shows each page listing its seeded rows, no page error or console error, no request to a host other than the loopback address and the blob read host, and the owner's counts and folder unchanged; the run proves the scenario 'A driven page reads seeded data' and the cookie-jar and environment-override risks.
+
+## 5. The record
+
+- [x] 5.1 Amend the Rejected clause on the app's dev server driven by Playwright, in the scripted-session harness section of `openspec/changes/genshin-phases/design.md`: its sign-in reason is answered by this change, and its Azure reason stands. Verify: `pnpm exec openspec validate architecture-driven-session --strict --no-interactive` passes, and `pnpm -C scripts exec vitest run src/workspace/openspecLinks.test.ts` passes.
+- [ ] 5.2 When it ships, archive the change, rewrite the capability's design as built, add its row to the architecture README index, and add the development-only route to the auth design's Notes beside its provider-only requirement. Verify: `pnpm -C scripts exec vitest run src/workspace/openspecIndexes.test.ts` passes after the archive, and `pnpm -C scripts exec vitest run src/workspace/openspecValidate.test.ts` passes.
