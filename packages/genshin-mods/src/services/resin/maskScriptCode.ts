@@ -1,8 +1,9 @@
 // A frame the scan is inside: a template literal's text, or an interpolation's code with the braces open in it
 type Frame = "template" | number;
 
-// Every character of a literal's or a comment's body becomes a space, so the code left is at the same positions
-const blankBody = (text: string): string => text.replace(/[^\n]/gu, " ");
+// Every character of a literal's or a comment's body becomes a space, so the code left is at the same positions. A code
+// point outside the BMP is two UTF-16 units, so it becomes two spaces, not one
+const blankBody = (text: string): string => text.replace(/[^\n]/gu, (character) => " ".repeat(character.length));
 
 // The template text from a position, up to its closing backtick or an interpolation's `${`
 const TEMPLATE_TEXT_REGEX = /(?:\\[\s\S]|\$(?!\{)|[^`\\$])*/uy;

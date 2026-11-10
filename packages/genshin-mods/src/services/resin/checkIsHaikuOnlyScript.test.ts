@@ -21,6 +21,10 @@ describe(checkIsHaikuOnlyScript, () => {
       "a haiku agent whose prompt quotes an opus agent",
       "await agent(\"write agent('x', { model: 'opus' }) into the report\", { model: 'haiku' });",
     ],
+    [
+      "a haiku agent after an emoji in an earlier prompt",
+      "await agent('🚀 launch', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });",
+    ],
   ])("allows %s", (_description, script) => {
     expect.hasAssertions();
 
