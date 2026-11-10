@@ -26,6 +26,7 @@ import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/ge
 import { getFollowedTagEntries } from "#src/services/outdatedDependencies/renovate/getFollowedTagEntries";
 import { getRenovateRules } from "#src/services/outdatedDependencies/renovate/getRenovateRules";
 import { partitionHeldDependencies } from "#src/services/outdatedDependencies/renovate/partitionHeldDependencies";
+import { readWithinRangeBumps } from "#src/services/outdatedDependencies/renovate/readWithinRangeBumps";
 import { getOverrideEntries } from "#src/services/outdatedDependencies/workspace/getOverrideEntries";
 import { getSection } from "#src/services/outdatedDependencies/workspace/getSection";
 import { parseWorkspaceEntries } from "#src/services/outdatedDependencies/workspace/parseWorkspaceEntries";
@@ -142,10 +143,17 @@ const { held, outdated } = partitionHeldDependencies(
   ],
   renovateRules,
 );
-const errors = [...regularChecks.errors, ...registryChecks.errors, ...referenceChecks.errors];
+// A held package's newest version inside its cap is still a bump to take, listed beside the outdated ones
+const withinRangeChecks = await readWithinRangeBumps(held, catalogEntries, renovateRules);
+const errors = [
+  ...regularChecks.errors,
+  ...registryChecks.errors,
+  ...referenceChecks.errors,
+  ...withinRangeChecks.errors,
+];
 const hasBlockingIssues =
   uncatalogedManifestDependencies.length > 0 || unpinnedReferences.length > 0 || errors.length > 0;
-printOutdatedDependencies(outdated, color);
+printOutdatedDependencies([...outdated, ...withinRangeChecks.outdatedDependencies], color);
 printHeldDependencies(held, color);
 printRegistryErrors(errors, color);
 printExecutionTime(startedAt);
