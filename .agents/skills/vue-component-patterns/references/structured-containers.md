@@ -2,7 +2,7 @@
 
 Read when writing or changing a component that frames other content — a dialog, popover, drawer, card, panel, sheet or editor region — or when a call site of one writes its own padding, scroll wrapper or footer inside the container's slot. `references/slots.md` is how a slot is declared and forwarded; this page is what a container's slots are _for_.
 
-> **Status:** the dialog's body and footer regions, the `#footer` slot and the shared region shortcut are built. The scan test that fails a call site drawing its own region is not: it is task 3.2 of the open `architecture-dialog-regions` change, so the call-site rule below is held by review until it lands.
+> **Status:** the dialog's body and footer regions, the `#footer` slot, the shared region shortcut and the scan test that fails a call site drawing its own region are built. The overflow itself is judged in a driven browser, since no test measures layout.
 
 ## A container owns its regions, and a slot carries content
 
@@ -49,7 +49,7 @@ A region scrolls inside a frame only when each flex ancestor down to it can shri
 
 ## Enforced by construction
 
-The container makes the right shape the only shape. The scan test that would fail a call site whose default slot root draws a scroll class, a `<footer>` or a fixed height is task 3.2 of the open `architecture-dialog-regions` change, and it is not written yet. Until it lands the sweep below is the only check, and a review is the weaker enforcer: nothing mechanical fails when a body overflows on one screen size.
+The container makes the right shape the only shape, and `Ui/Dialog.scan.test.ts` fails a dialog call site whose default slot draws a scroll class, a `<footer>`, a fieldset or a viewport height. Nothing mechanical fails when a body overflows on one screen size, so a layout claim is read in a driven browser once, after the edits.
 
 ## The sweep
 
