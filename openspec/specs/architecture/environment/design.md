@@ -33,7 +33,9 @@ These are set automatically:
 
 ## Where to use what
 
-**`IS_PRODUCTION` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts`, so these build-time constants always reflect the deployed environment.
+**`IS_PRODUCTION` / `IS_DEVELOPMENT` (from `#shared/util/environment/constants`)** — the single consistent choice everywhere: module-level code, class property initialisers, composables, server routes, plugins. `PROD` and `DEV` follow the command (`nuxt build` against `nuxt dev`), so a staging build is production here. `vite.mode` is set from `APP_ENV` in `configuration/vite.ts` and moves only `MODE`, which nothing reads except `IS_TEST`.
+
+Rejected: Nuxt's `import.meta.dev`, with production as `!import.meta.dev`. It is typed by Nuxt and defined in Nitro, but Vitest does not define it, so it is `false` in every test, including the `nuxt` environment. `!import.meta.dev` would make `IS_PRODUCTION` true across the whole suite, switching on the rate limiter, the production volume and the production starter monsters wherever a test does not mock the constant. `import.meta.env` is defined in the client, Nitro and Vitest alike, which is why the constants file reads it. The lint rule that bans `import.meta.dev`, `import.meta.env.PROD` and `import.meta.env.MODE` outside the constants file stays for that reason (`packages/configuration/eslint/typescriptRules.js`).
 
 **`process.env.*` directly** — secrets, urls and connection strings, in code that only ever runs server-side (`server/`, `apps/functions/`, and the `shared/` modules only those contexts import) or at build time (`configuration/`, whose code the Nuxt build evaluates and never ships, apart from the values it writes under `public`), plus `APP_ENV` in the build-time config files where `import.meta.env` is not available yet. A server secret is never copied into `runtimeConfig`, so a built artifact holds none of them and a deployment supplies each one under its own name when the server starts.
 
