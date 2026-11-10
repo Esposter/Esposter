@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Bug Fixes
+
+* **ci:** the four reds on ai/queue ([97ad42b](https://github.com/Esposter/Esposter/commit/97ad42bcd4ab4310587dd26c7086e8aa66c78a29))
+
+### Features
+
+* **env:** each app declares its environment once and checks it at start ([8fff393](https://github.com/Esposter/Esposter/commit/8fff393088e145b33ec25c2f929a01446b5bb700))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 ### Bug Fixes

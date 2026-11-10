@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Bug Fixes
+
+* **ci:** coverage:ci runs the root coverage script, as a job does, so --coverage is stated once ([146eb8c](https://github.com/Esposter/Esposter/commit/146eb8c096bc48f50a500f7da51698235fed91e4))
+* **ci:** the cache save key carries the task's scope, so each shard's entry is the one its restore prefix finds ([5277338](https://github.com/Esposter/Esposter/commit/5277338bfceabd6017cfc8cc7e2cedc84e8cdb22))
+* **ci:** the four reds on ai/queue ([97ad42b](https://github.com/Esposter/Esposter/commit/97ad42bcd4ab4310587dd26c7086e8aa66c78a29))
+* **ci:** the terrain worker alias test gets room to start its Vite server ([d524f16](https://github.com/Esposter/Esposter/commit/d524f16b57c7de51e3c1ed5ff63c49992dc532d8))
+* **ci:** the test tasks' cache exclusions are relative to their member, and are built by createTask ([630e99f](https://github.com/Esposter/Esposter/commit/630e99fcea37aa01f377d5a5a368665f72f8a8db))
+* **scripts:** the parity folder test reads the root cache exclusion from vite/, where it moved ([bddfdfd](https://github.com/Esposter/Esposter/commit/bddfdfd0a90eb3b9944a0a86a36650c810447361))
+* **web:** drop the public Azure Event Grid and Function runtime config keys ([d753f45](https://github.com/Esposter/Esposter/commit/d753f45e1f874e82ed6bdec911cf8babc2c3005f))
+
+### Features
+
+* **env:** each app declares its environment once and checks it at start ([8fff393](https://github.com/Esposter/Esposter/commit/8fff393088e145b33ec25c2f929a01446b5bb700))
+* **whiteboard:** the wheel pans and a pinch zooms about the pointer, with Space pan, fit keys, select all and element copy, cut and paste ([18762d5](https://github.com/Esposter/Esposter/commit/18762d5ebd6d761a3f05ad8ae1a50f2bca9ac72a))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 ### Bug Fixes

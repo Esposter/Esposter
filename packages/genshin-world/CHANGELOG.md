@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
+
+### Bug Fixes
+
+* **ci:** the terrain worker alias test gets room to start its Vite server ([d524f16](https://github.com/Esposter/Esposter/commit/d524f16b57c7de51e3c1ed5ff63c49992dc532d8))
+
 # [4.7.0](https://github.com/Esposter/Esposter/compare/v4.6.0...v4.7.0) (2026-11-08)
 
 ### Bug Fixes
