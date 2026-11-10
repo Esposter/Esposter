@@ -1,6 +1,6 @@
 # Runner Collapsible Panels
 
-SurveyJS lets a respondent collapse and expand a panel in a long form. This record covers the panel half of that setting. The question-box half is covered by the [survey look options record](../../../rejected/resource/survey-look-options/design.md).
+SurveyJS lets a respondent collapse and expand a panel in a long form. This record covers the panel half of that setting. The question-box half has no record of its own: the [survey look options record](../../../rejected/resource/survey-look-options/design.md) rejects hiding question boxes altogether, which is a different option.
 
 ## Why deferred
 
