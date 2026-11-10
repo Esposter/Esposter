@@ -39,7 +39,7 @@ const isLeaveOpen = ref(false);
           {{ participants.length }}
         </template>
         <div w="[min(18rem,80dvw)]" flex flex-col>
-          <p text-sm text-muted px-2>Participants</p>
+          <p text-sm text-muted>Participants</p>
           <MessageContentHeaderDirectMessageParticipant
             v-for="participant of participants"
             :key="participant.id"

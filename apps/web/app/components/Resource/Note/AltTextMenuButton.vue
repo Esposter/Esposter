@@ -31,7 +31,7 @@ const applyAltText = () => {
     <template #trigger>
       <UiIcon :meaning="UiIconMeaning.Edit" />
     </template>
-    <form p-2 flex gap-2 items-end @submit.prevent="applyAltText()">
+    <form flex gap-2 items-end @submit.prevent="applyAltText()">
       <div w-64>
         <UiTextField v-model="altText" is-autofocus label="Alt text" placeholder="Describe the image" />
       </div>

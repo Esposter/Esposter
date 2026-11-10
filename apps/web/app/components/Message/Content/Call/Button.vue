@@ -21,7 +21,7 @@ const roomParticipantMap = useCallRoomParticipantMap();
     </template>
     <template #default="{ close }">
       <div w="[min(16rem,80dvw)]" flex flex-col>
-        <p text-sm text-muted px-2>In call</p>
+        <p text-sm text-muted>In call</p>
         <div v-for="{ id, image, isMuted, name } of roomParticipantMap.values()" :key="id" ui-row>
           <UiItemContent :image="image ?? undefined" :title="name">
             <template v-if="isMuted" #append>
