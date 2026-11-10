@@ -4,6 +4,6 @@ A laser tool that leaves a fading trail under the pointer, which the other peopl
 
 ## Why deferred
 
-A laser is shown to everyone on the board, so it is live state, sent as the pointer moves. The whiteboard has no live patches between editors: it autosaves its own document ([whiteboard](../../../specs/resource/whiteboard/design.md)). Live presence is what the [document collaboration](../document-collaboration/design.md) record defers, and the laser cannot be built before it.
+A laser is shown to everyone on the board, so it is live state, sent as the pointer moves. The whiteboard has no live patches between editors: it autosaves its own document ([whiteboard](../../../specs/resource/whiteboard/design.md)). No record specifies a live presence channel. The [document collaboration](../document-collaboration/design.md) record covers sharing with specific users, roles and ACLs, and concurrent editing, and never mentions presence, so the laser has no specified channel to send its trail over.
 
-**Revisit when:** the document collaboration record is revived and built, which gives a board a live channel.
+**Revisit when:** a live presence channel is specified in a record of its own and built, which gives a board a live channel.
