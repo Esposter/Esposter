@@ -1,6 +1,5 @@
 import type { Pinia } from "pinia";
 
-import { Environment } from "#shared/models/environment/Environment";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
@@ -107,7 +106,7 @@ vi.mock("nuxt/server", async (importOriginal) => ({
     // Nuxt's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
-    public: { appEnv: Environment.Development, azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
+    public: { azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
   }),
 }));
 // The first mountSuspended in a worker pays a one-time cold cost: the Nuxt app graph is evaluated and its

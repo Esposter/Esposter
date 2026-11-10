@@ -4,7 +4,6 @@ import type { NuxtConfig } from "nuxt/schema";
 // Secrets straight off the environment under their own names, checked at startup by the environment plugin
 export const runtimeConfig: NuxtConfig["runtimeConfig"] = {
   public: {
-    appEnv: process.env.APP_ENV,
     azure: { container: { baseUrl: process.env.AZURE_CONTAINER_BASE_URL } },
     baseUrl: process.env.BASE_URL,
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID },
