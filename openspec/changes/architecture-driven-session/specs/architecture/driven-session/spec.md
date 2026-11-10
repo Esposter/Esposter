@@ -81,5 +81,5 @@ A page a driven browser opens after the session route signs the driven user in S
 
 - **GIVEN** a development server signed in through the session route with the seed in place
 - **WHEN** a driven browser opens the messages, friends, drafts, resources and achievements pages
-- **THEN** each page lists the rows the seed wrote for the driven user
+- **THEN** the messages, friends and resources pages list the rows the seed wrote for the driven user, and the drafts and achievements pages open signed in, since the seed writes none of theirs
 - **AND** no page records an uncaught error or a console error

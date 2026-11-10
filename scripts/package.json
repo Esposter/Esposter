@@ -73,6 +73,7 @@
     "bench": "vitest bench --run",
     "bench:types": "vpx src/benchTypes/index.ts",
     "crossOS": "node src/crossOS/index.ts",
+    "dev:seed": "vpx src/devSeed/index.ts",
     "genshin:animestudio:build": "vpx src/animeStudio/index.ts",
     "genshin:assets": "vpx src/genshinAssets/index.ts",
     "genshin:data": "vpx src/gameData/index.ts",
@@ -92,7 +93,9 @@
   },
   "dependencies": {
     "citty": "catalog:",
+    "drizzle-orm": "catalog:",
     "genshin-text": "workspace:*",
+    "postgres": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
@@ -100,6 +103,7 @@
     "@azure/storage-blob": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db": "workspace:*",
+    "@esposter/db-mock": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "@esposter/shared-node": "workspace:*",
