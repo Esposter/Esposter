@@ -130,7 +130,7 @@ flowchart TD
   B --> W["record what the build read and wrote"]
 ```
 
-The task's inputs are the package's own files less the ones its build rewrites: `dist`, the barrels (`src/index.ts` and `src/components/index.ts`), `auto-imports.d.ts`, the `_tmp_*` file the manifest rewrite writes through, the sources a build hook generates, and the package's `node_modules/.cache`. Those files stay outputs, so a replay restores them. Each is kept out of the inputs because a task that reads a file it also rewrites is one `vp` refuses to cache. pnpm's own run state is left out of every task, since no build's result depends on it.
+The task's inputs are the package's own files less the ones its build rewrites: `dist`, the barrels (`src/index.ts` and `src/components/index.ts`), `auto-imports.d.ts`, the sources a build hook generates, and the package's `node_modules/.cache`. Those files stay outputs, so a replay restores them. Each is kept out of the inputs because a task that reads a file it also rewrites is one `vp` refuses to cache. pnpm's own run state is left out of every task, since no build's result depends on it: that includes the `_tmp_*` temporary each `pnpm run` writes into the workspace root and removes before it ends.
 
 The cache lives in `node_modules/.vite/task-cache` at the root of each checkout, so a fresh worktree builds cold once. CI restores that directory between runs, with the `paths` a job names, through the `run-cached-task` action. The tracer and the replay rules are [the task cache](../vite-plus/design.md#the-task-cache).
 

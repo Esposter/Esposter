@@ -1,3 +1,4 @@
+import type { CachePattern } from "#vite/models/CachePattern";
 import type { RunTask } from "#vite/models/RunTask";
 
 import { PNPM_STATE_PATTERNS } from "#vite/constants";
@@ -7,7 +8,7 @@ import { PNPM_STATE_PATTERNS } from "#vite/constants";
 export const createTask = (
   command: string,
   rewrittenPatterns: string[],
-  output: (string | { auto: true })[] = [{ auto: true }, ...PNPM_STATE_PATTERNS],
+  output: CachePattern[] = [{ auto: true }, ...PNPM_STATE_PATTERNS],
 ): RunTask => ({
   cache: {
     input: [{ auto: true }, ...PNPM_STATE_PATTERNS, ...rewrittenPatterns.map((pattern) => `!${pattern}`)],
