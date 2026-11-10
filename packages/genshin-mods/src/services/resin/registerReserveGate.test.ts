@@ -2,6 +2,8 @@ import type { EngineInterface, On } from "claude-code";
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
+import type { WorkflowLaunch } from "../../models/WorkflowLaunch";
+
 import { RESERVE_REFUSAL_INSTRUCTION } from "../constants";
 import { getReserveSummary } from "./getReserveSummary";
 import { registerReserveGate } from "./registerReserveGate";
@@ -14,15 +16,14 @@ vi.mock("claude-code", () => ({
   read: (_$: unknown, { key }: { key: string }) => Promise.resolve(stateByKey[key]),
 }));
 
-type WorkflowLaunch = Record<string, string>;
-type Next = (launch: WorkflowLaunch) => { deny?: string };
 type Handler = (engine: EngineInterface, launch: WorkflowLaunch, next: Next) => Promise<{ deny?: string }>;
 type LetLaunchThrough = (engine: EngineInterface, launch: WorkflowLaunch, next: Next) => { deny?: string };
+type Next = (launch: WorkflowLaunch) => { deny?: string };
 
 // The handler the gate registers on `tool.call`, and the catch its registration hands the failure to
 const register = (): { handler: Handler; letLaunchThrough: LetLaunchThrough } => {
-  const catchHandler = vi.fn();
-  const on = vi.fn((..._args: unknown[]) => ({ catch: catchHandler }));
+  const catchHandler = vi.fn<(..._args: unknown[]) => void>();
+  const on = vi.fn<(..._args: unknown[]) => { catch: typeof catchHandler }>(() => ({ catch: catchHandler }));
   registerReserveGate(on as unknown as On);
   const handler = on.mock.calls[0]?.[2] as Handler;
   const letLaunchThrough = catchHandler.mock.calls[0]?.[0] as LetLaunchThrough;
