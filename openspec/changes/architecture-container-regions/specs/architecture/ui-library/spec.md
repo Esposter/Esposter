@@ -18,7 +18,7 @@ The frame SHALL draw an optional title bar, a padded body that scrolls when its 
 
 ### Requirement: A blade and a region own their padding and scroll
 
-The blade outlet, the editor shell's regions, the right sidebar's panes and the settings content SHALL each draw their body padded and scrolling, with the body's padding opted out by one flag. A call site SHALL NOT draw its own padded scroll wrapper inside one of them.
+The blade outlet, the editor shell's regions, the right sidebar's panes and the settings content SHALL each draw their body scrolling and padded, except a blade or pane whose content pads and scrolls itself, which draws it bare, and the editor's regions, which are always bare. A call site SHALL NOT draw its own padded scroll wrapper inside one of them.
 
 #### Scenario: A blade's content is padded and scrolls
 

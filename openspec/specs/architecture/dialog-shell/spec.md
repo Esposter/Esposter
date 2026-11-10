@@ -64,9 +64,9 @@ A dialog with nothing to confirm SHALL show no actions row, and its close contro
 - **THEN** no Cancel or confirm button is shown
 - **AND** the close control dismisses the dialog
 
-### Requirement: The confirm control is the dialog's one accent action and names its act
+### Requirement: The confirm control is the dialog's one confirm action and names its act
 
-The confirm control SHALL be the dialog's one accent action, labelled with what it does.
+The confirm control SHALL be the dialog's one confirm action, in the accent colour unless the act destroys something, labelled with what it does.
 
 #### Scenario: The confirm label names the act
 
@@ -74,6 +74,13 @@ The confirm control SHALL be the dialog's one accent action, labelled with what 
 - **WHEN** the dialog is shown
 - **THEN** the confirm button is in the accent colour
 - **AND** its label names what it does
+
+#### Scenario: A destructive confirm takes the danger style
+
+- **GIVEN** a dialog whose confirm deletes or removes something
+- **WHEN** the dialog is shown
+- **THEN** the confirm button is in the danger colour
+- **AND** it is still the dialog's only confirm action
 
 ### Requirement: Confirming closes the dialog itself after its answer
 
@@ -163,4 +170,4 @@ A new dialog with an actions row SHALL use the shared shell rather than build it
 
 - **GIVEN** a dialog needs a pinned region that no other dialog uses
 - **WHEN** a second dialog needs the same region
-- **THEN** the region becomes a slot on the shared shell
+- **THEN** the region becomes a slot on the base dialog
