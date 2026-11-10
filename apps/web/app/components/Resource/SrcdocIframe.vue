@@ -9,5 +9,5 @@ defineProps<Props>();
 
 <template>
   <!-- The sandbox allows scripts but blocks same-origin access so published content cannot touch viewer sessions -->
-  <iframe b-none w-full h-full sandbox="allow-scripts" :srcdoc :title />
+  <iframe b-none h-full w-full sandbox="allow-scripts" :srcdoc :title />
 </template>

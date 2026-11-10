@@ -8,7 +8,7 @@ import { parseClipboardElements } from "@/services/whiteboard/serializeClipboard
 export const pasteWhiteboardElements = (
   state: WhiteboardEditState,
   text: string,
-): { copiedIds: string[]; state: WhiteboardEditState } | undefined => {
+): undefined | { copiedIds: string[]; state: WhiteboardEditState } => {
   const elements = parseClipboardElements(text);
   if (elements === undefined) return undefined;
 

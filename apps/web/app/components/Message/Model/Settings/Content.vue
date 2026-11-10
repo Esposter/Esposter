@@ -8,7 +8,7 @@ defineSlots<{ default: () => VNode; header: () => VNode }>();
   <div flex flex-1 flex-col min-w-0>
     <slot name="header" />
     <!-- The panel scrolls itself rather than the dialog, and the sidebar's scrollspy is bounded by it -->
-    <div :id="SETTINGS_CONTENT_ID" ui-region-body relative p-3>
+    <div :id="SETTINGS_CONTENT_ID" p-3 ui-region-body relative>
       <slot />
     </div>
   </div>

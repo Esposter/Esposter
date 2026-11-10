@@ -15,7 +15,7 @@ const { title = "" } = defineProps<Props>();
       <h2 text-heading-color flex-1 truncate>{{ title }}</h2>
       <slot name="actions" />
     </header>
-    <div ui-region-body p-3>
+    <div p-3 ui-region-body>
       <slot />
     </div>
     <footer v-if="slots.footer" ui-region-footer>

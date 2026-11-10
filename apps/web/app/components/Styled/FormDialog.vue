@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import type { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import type { UiDialogSize } from "@/models/ui/UiDialogSize";
 import type { Promisable } from "type-fest";
-
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiDialogSize } from "@/models/ui/UiDialogSize";
 
 interface Props {
   confirmLabel: string;
@@ -10,11 +9,11 @@ interface Props {
   confirmVariant?: UiButtonVariant;
   isConfirmDisabled?: true;
   isOptimistic?: true;
+  // How wide the dialog stands, Medium when none is named: the base shell holds that default
+  size?: UiDialogSize;
   // What the valid form's submit does, awaited unless the write is optimistic (useDialogAnswer): a failed one keeps
   // The dialog open so the user can retry without losing their draft
   submit: () => Promisable<unknown>;
-  // How wide the dialog stands, Medium when none is named: the base shell holds that default
-  size?: UiDialogSize;
   title: string;
 }
 // What a call site passes goes to the dialog element, which it sizes

@@ -53,7 +53,7 @@ const { isPending: isFriendsPending } = useQuery(useReadFriends(), {
   <div flex flex-col>
     <!-- The field stays at the top of the body as the list scrolls under it. Its own fill is translucent, so the band
       behind it takes the frame's surface -->
-    <div sticky top-0 z-1 bg-lifted pb-2>
+    <div pb-2 bg-lifted top-0 sticky z-1>
       <UiTextField v-model="searchQuery" label="Search friends" :type="UiTextFieldType.Search" />
     </div>
     <ul v-if="recipientItems.length > 0" flex flex-col>

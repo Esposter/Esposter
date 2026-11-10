@@ -24,7 +24,7 @@ useResourceSaveSubscribable(resource.type);
   <div flex flex-1 min-h-0>
     <!-- min-w-0 lets the box shrink below its content's intrinsic width so wide blades scroll internally -->
     <div flex flex-1 min-w-0>
-      <div flex flex-col flex-1 min-w-0>
+      <div flex flex-1 flex-col min-w-0>
         <!-- The notice stays pinned above the blade, so only the blade or preview beneath it scrolls -->
         <ResourceOtherSaveNotice shrink-0 />
         <div flex-1 min-h-0 min-w-0 of-auto>

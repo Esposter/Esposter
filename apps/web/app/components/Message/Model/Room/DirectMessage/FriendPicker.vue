@@ -59,7 +59,7 @@ await readFriends();
   <div flex flex-col>
     <!-- The field stays at the top of the body as the list scrolls under it. Its own fill is translucent, so the band
       behind it takes the frame's surface -->
-    <div sticky top-0 z-1 bg-lifted pb-2>
+    <div pb-2 bg-lifted top-0 sticky z-1>
       <UiTextField v-model="searchQuery" is-autofocus label="Search friends" :type="UiTextFieldType.Search" />
     </div>
     <!-- The selection is written through the pick alone, so choosing a friend already chosen lets them go again in a
