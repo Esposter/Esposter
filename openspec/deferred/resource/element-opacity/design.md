@@ -4,6 +4,6 @@ A per-element opacity that makes a shape, a stroke, an arrow or a label transluc
 
 ## Why deferred
 
-Opacity is one more field on each element, and it must reach the editor's drawing and the export, which draws every element from the model ([whiteboard](../../../specs/resource/whiteboard/design.md)). Translucent elements are niche for the diagrams the whiteboard is for. The stroke and fill styling that an opacity would sit beside is not built yet, so a translucent element would style one property before the panel that sets the others exists.
+Opacity is one more field on each element, and it must reach the editor's drawing and the export, which draws every element from the model ([whiteboard](../../../specs/resource/whiteboard/design.md)). Translucent elements are niche for the diagrams the whiteboard is for. The stroke styling that an opacity would sit beside is not built yet, so a translucent element would style one property before the panel that sets the others exists. The fill is already set in the panel ([whiteboard](../../../specs/resource/whiteboard/design.md)).
 
-**Revisit when:** a reader asks for a translucent element, after per-element stroke and fill styling is built.
+**Revisit when:** a reader asks for a translucent element, after per-element stroke styling is built.
