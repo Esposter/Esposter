@@ -23,7 +23,7 @@ The FileAssets capability already hosts uploads for an email image, the note's i
 
 ## Rejected
 
-- A poster frame for a video, which is the deferred video poster idea.
+- A poster frame for a video, left under Not built: a poster is a second file for each video.
 - A picker that replaces the upload control. The upload stays the first action of each field, and the picker sits beside it, so an owner with a new file never has to go through the list.
 
 ## Risks and trade-offs
@@ -35,7 +35,7 @@ The FileAssets capability already hosts uploads for an email image, the note's i
 
 - External image addresses restricted to an allowlist, as the archived page builder design names. The typed address keeps its current rule.
 - Videos above the request size limit. A larger limit needs the reservation redesigned, and no owner has asked for one.
-- A video poster, which the deferred video poster idea holds until a record of it is written.
+- A video poster. A poster is a second file for each video, and no owner has asked for one yet.
 
 ## Key files
 

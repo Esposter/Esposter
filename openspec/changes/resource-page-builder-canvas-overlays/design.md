@@ -23,7 +23,7 @@ The canvas design already describes a node-handle drag in its pointer flowchart 
 
 ## Rejected
 
-- A permanent name on every node. It covers the page with text, which the rejected outline toggle already avoided.
+- A permanent name on every node. It covers the page with text, so the name shows only while its node is hovered.
 - A handle on every node at once. The handle appears on the selection, as the toolbar does, so a page is not covered with grips.
 
 ## Risks and trade-offs
