@@ -1,3 +1,5 @@
+import type { auth as realAuth } from "#server/auth";
+
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
@@ -17,6 +19,6 @@ export const auth = betterAuth({
   baseURL: MOCK_ENVIRONMENT_VARIABLES.BETTER_AUTH_URL,
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
   secret: MOCK_ENVIRONMENT_VARIABLES.BETTER_AUTH_SECRET,
-});
+}) as unknown as typeof realAuth;
 
 describe.todo("devSessionAuth");
