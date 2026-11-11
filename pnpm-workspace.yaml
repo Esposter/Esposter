@@ -200,7 +200,7 @@ catalog:
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.1.0
   playwright: ^1.65.0
-  postgres: ^4.1.0
+  postgres: ^4.1.1
   publint: ^0.3.25
   rate-limiter-flexible: ^11.4.1
   re2js: ^2.10.0
