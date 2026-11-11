@@ -1,3 +1,3 @@
-# architecture-dialog-footer-submit
+# resource-whiteboard-object-snapping
 
-A dialog whose footer submits its form gets the form id from the shell, not from a generated id in each dialog.
+A shape, sticky note or text box dragged on the whiteboard snaps its edges, centre and edge midpoints to another element within a short distance, with a guide line while the drag runs and Alt turning it off for that drag.
