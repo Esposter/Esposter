@@ -11,7 +11,10 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 // Every batch of every window in one pool, at most `REVIEW_RUNNER_SESSION_CAP` sessions at once, taken in window order so
-// The earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than read.
+// The earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than read,
+// And so is every batch not started once one has errored: the batches still waiting belong to that window or a later one,
+// Whose findings no run can open past a window that did not pass, so reading them would only spend a failing account's
+// Sessions again.
 // Each batch's outcome lands in its window's list at its batch index, and a batch's error is its outcome, so the others
 // Still finish. `onWindowSettled` runs as each window's last batch lands, so the run acts on a window while the pool goes on.
 export const reviewWindows = async (
@@ -29,6 +32,7 @@ export const reviewWindows = async (
   );
   // A window's worktree is made once, detached at its end, when its first batch starts, and every reviewer of the window
   // Reads from it. The finalizer removes each one, whichever way the pool ends.
+  let isStopped = false;
   const directories = new Map<number, string>();
   const getDirectory = (windowIndex: number, end: string): string => {
     const known = directories.get(windowIndex);
@@ -40,24 +44,32 @@ export const reviewWindows = async (
     return directory;
   };
 
+  const runJob = async ({ batchIndex, files, windowIndex }: ReviewBatchJob) => {
+    const { base, end } = takeOne(windows, windowIndex);
+    // The directory's throw is caught as an error: getResultAsync awaits its callback inside its own try, so a
+    // Synchronous throw from the callback lands in the same Err as a rejection
+    const outcome: ReviewBatchOutcome =
+      Date.now() >= deadline || isStopped
+        ? { isUnreached: true }
+        : await getResultAsync(() => reviewBatch(getDirectory(windowIndex, end), base, end, files)).match(
+            (reviewed): ReviewBatchOutcome => reviewed,
+            (error): ReviewBatchOutcome => ({ error }),
+          );
+    if ("error" in outcome) isStopped = true;
+    takeOne(outcomesByWindow, windowIndex)[batchIndex] = outcome;
+    const pending = takeOne(pendingByWindow, windowIndex) - 1;
+    pendingByWindow[windowIndex] = pending;
+    if (pending === 0) onWindowSettled(windowIndex, takeOne(outcomesByWindow, windowIndex));
+  };
+  // The first batch runs alone, so a failure every batch would share, such as a credential that no longer works, costs one
+  // Batch and its retry rather than a whole pool of them
+  const [firstJob, ...otherJobs] = jobs;
+
   await withFinalizerAsync(
-    () =>
-      forEachConcurrently(jobs, REVIEW_RUNNER_SESSION_CAP, async ({ batchIndex, files, windowIndex }) => {
-        const { base, end } = takeOne(windows, windowIndex);
-        // The directory's throw is caught as an error: getResultAsync awaits its callback inside its own try, so a
-        // Synchronous throw from the callback lands in the same Err as a rejection
-        const outcome: ReviewBatchOutcome =
-          Date.now() >= deadline
-            ? { isUnreached: true }
-            : await getResultAsync(() => reviewBatch(getDirectory(windowIndex, end), base, end, files)).match(
-                (reviewed): ReviewBatchOutcome => reviewed,
-                (error): ReviewBatchOutcome => ({ error }),
-              );
-        takeOne(outcomesByWindow, windowIndex)[batchIndex] = outcome;
-        const pending = takeOne(pendingByWindow, windowIndex) - 1;
-        pendingByWindow[windowIndex] = pending;
-        if (pending === 0) onWindowSettled(windowIndex, takeOne(outcomesByWindow, windowIndex));
-      }),
+    async () => {
+      if (firstJob) await runJob(firstJob);
+      await forEachConcurrently(otherJobs, REVIEW_RUNNER_SESSION_CAP, runJob);
+    },
     // A worktree Windows still holds a file of is left behind with a warning rather than failing the run: by the
     // Finalizer, main has already moved, and `git worktree prune` drops its entry once the directory is gone
     () => {
