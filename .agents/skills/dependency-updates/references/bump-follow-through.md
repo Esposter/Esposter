@@ -16,7 +16,7 @@ Any bump that reaches a `dist/` is finished only by this sequence, all of it in 
 
 1. Run the build gate `build`'s `references/dist-size.md` names, from the repo root — it rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size record reads, and it builds `apps/functions` and `apps/infra` too, since `apps/functions` inlines the bumped package. Skipping it leaves the record written from the stale `dist/`.
 2. Read the `package.json` diff of every package the rebuild touched: the `inlinedDependencies` entries the bump moved, and nothing else.
-3. Run `pnpm bundle-sizes:gen`, which rewrites `bundle-sizes.md`, whose diff is the bump's size.
+3. Run `pnpm bundle-sizes:gen`, which rewrites `bundle-sizes.md`, whose diff is the bump's size. On Windows its `genshin-world` rows and the total come out a few bytes off CI's, so those are restored to the committed values unless the bump moved them, and CI's failing diff settles it (`build`'s `references/dist-size.md`).
 4. Run `src/workspace/bundleSizes.test.ts` of `scripts` again — it must pass against the file just written (`testing`'s `references/bundle-size.md`).
 
 A growth the bump does not explain is read before the record is committed (`build`'s `references/dist-size.md`), and the record is never written from a stale `dist/`.
