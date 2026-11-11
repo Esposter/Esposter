@@ -3,13 +3,12 @@
   "version": "4.8.0",
   "description": "Genshin Impact's own text in its fifteen languages: the language registry, a matcher from a browser's locale, and the game's strings looked up by the game's own text id, one lazily loaded chunk per language.",
   "keywords": [
-    "genshin",
     "genshin-impact",
     "i18n",
+    "locale",
     "localization",
-    "textmap",
-    "translation",
-    "typescript"
+    "multilingual",
+    "textmap"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-text#readme",
   "bugs": {

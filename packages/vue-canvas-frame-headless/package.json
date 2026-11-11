@@ -5,7 +5,8 @@
   "keywords": [
     "headless",
     "iframe",
-    "typescript",
+    "scale-to-fit",
+    "srcdoc",
     "vue"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-canvas-frame-headless#readme",

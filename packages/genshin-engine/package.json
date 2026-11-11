@@ -8,11 +8,9 @@
     "game-engine",
     "open-world",
     "procedural",
-    "three",
     "threejs",
     "toon",
     "tsl",
-    "typescript",
     "webgpu"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-engine#readme",

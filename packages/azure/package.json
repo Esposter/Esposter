@@ -6,9 +6,8 @@
     "azure",
     "azure-search",
     "azure-table-storage",
-    "filter",
     "odata",
-    "typescript"
+    "odata-filter"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure#readme",
   "bugs": {

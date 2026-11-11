@@ -4,8 +4,10 @@
   "description": "A headless Vue survey engine: the survey as a typed document on the headless block editor — its question kinds, the checks on a save, a runner of plain functions and the Vue composable over them, with no styling or DOM.",
   "keywords": [
     "headless",
-    "typescript",
-    "vue"
+    "questionnaire",
+    "survey",
+    "vue",
+    "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-survey-engine-headless#readme",
   "bugs": {

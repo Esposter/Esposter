@@ -9,10 +9,9 @@
     "music",
     "onnx",
     "onnxruntime",
-    "pitch",
+    "pitch-detection",
     "polyphonic",
-    "transcription",
-    "typescript"
+    "transcription"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/pitch-transcription#readme",
   "bugs": {

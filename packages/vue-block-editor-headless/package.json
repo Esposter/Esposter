@@ -3,9 +3,12 @@
   "version": "4.8.0",
   "description": "A headless Vue block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, and an editing-session composable, with no styling or DOM.",
   "keywords": [
+    "block-editor",
     "headless",
-    "typescript",
-    "vue"
+    "json-patch",
+    "undo-redo",
+    "vue",
+    "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-block-editor-headless#readme",
   "bugs": {

@@ -6,8 +6,10 @@
     "editor",
     "headless",
     "layout",
-    "typescript",
-    "vue"
+    "panels",
+    "responsive",
+    "vue",
+    "zod"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-editor-layout-headless#readme",
   "bugs": {

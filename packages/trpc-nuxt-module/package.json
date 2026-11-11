@@ -9,7 +9,7 @@
     "ssr",
     "subscriptions",
     "trpc",
-    "typescript",
+    "vue",
     "websocket"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/trpc-nuxt-module#readme",

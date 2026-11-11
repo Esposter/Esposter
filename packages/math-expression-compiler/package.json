@@ -3,7 +3,11 @@
   "version": "4.8.0",
   "description": "Math expressions compiled once into a function of plain numbers — mathjs's numeric language, checked against its recorded answers with every deliberate difference listed",
   "keywords": [
-    "typescript"
+    "expression-evaluator",
+    "expression-parser",
+    "formula",
+    "mathjs",
+    "numeric"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/math-expression-compiler#readme",
   "bugs": {

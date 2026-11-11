@@ -5,14 +5,14 @@
   "keywords": [
     "claude-code",
     "claude-code-plugin",
-    "genshin",
     "genshin-impact",
+    "mcp",
     "output-style",
     "persona",
     "text-to-speech",
     "voice-cloning"
   ],
-  "homepage": "https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/persona-plugin",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-persona#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

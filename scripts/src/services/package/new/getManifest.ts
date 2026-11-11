@@ -39,7 +39,7 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
       "./package.json": "./package.json",
     },
     files: ["dist"],
-    keywords: ["typescript"],
+    keywords: [],
     publishConfig: { access: "public", exports: { ".": "./dist/index.js", "./package.json": "./package.json" } },
     scripts: {
       build: "tsdown",

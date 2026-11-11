@@ -3,7 +3,14 @@
   "version": "4.8.0",
   "description": "Nuxt PWA module on unplugin-pwa — a service worker built by the app, its manifest and its client plugin, for Nuxt 5 and Nitro 3 only",
   "keywords": [
-    "typescript"
+    "nuxt",
+    "nuxt-module",
+    "offline",
+    "pwa",
+    "service-worker",
+    "vite",
+    "web-app-manifest",
+    "workbox"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/unplugin-pwa-nuxt#readme",
   "bugs": {

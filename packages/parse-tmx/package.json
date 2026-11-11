@@ -3,16 +3,13 @@
   "version": "4.8.0",
   "description": "A parser for tmx.",
   "keywords": [
-    "game-development",
     "gamedev",
-    "map",
     "parser",
     "phaser",
     "tiled",
     "tiled-map-editor",
     "tilemap",
     "tmx",
-    "typescript",
     "xml"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/parse-tmx#readme",

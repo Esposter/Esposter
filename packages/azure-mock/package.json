@@ -4,20 +4,17 @@
   "description": "A library that contains azure mock classes.",
   "keywords": [
     "azure",
+    "azure-search",
     "azure-storage",
     "blob-storage",
-    "data-tables",
     "eventgrid",
     "mock",
-    "search",
     "service-bus",
-    "storage-queue",
     "table-storage",
     "testing",
-    "typescript",
     "web-pubsub"
   ],
-  "homepage": "https://github.com/Esposter/Esposter#readme",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-mock#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"
   },

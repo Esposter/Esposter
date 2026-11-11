@@ -4,10 +4,10 @@
   "description": "A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.",
   "keywords": [
     "dashboard",
-    "grid",
+    "drag-and-drop",
+    "grid-layout",
     "headless",
-    "layout",
-    "typescript",
+    "resizable",
     "vue"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/vue-grid-layout-headless#readme",

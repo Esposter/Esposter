@@ -5,10 +5,10 @@
   "keywords": [
     "error-handling",
     "html-sanitization",
-    "monorepo",
+    "indexeddb",
+    "json-patch",
+    "mime-types",
     "neverthrow",
-    "shared",
-    "typescript",
     "utilities",
     "zod"
   ],

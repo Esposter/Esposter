@@ -3,14 +3,13 @@
   "version": "4.8.0",
   "description": "tRPC for Mock Service Worker — answers queries, mutations and subscriptions over HTTP, batching, SSE and WebSockets with tRPC's own handlers, typed off your router.",
   "keywords": [
+    "api-mocking",
     "batch",
-    "mock",
     "msw",
     "sse",
     "subscriptions",
     "testing",
     "trpc",
-    "typescript",
     "websocket"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/trpc-msw#readme",

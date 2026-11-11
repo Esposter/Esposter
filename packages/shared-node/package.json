@@ -5,13 +5,10 @@
   "keywords": [
     "benchmark",
     "child-process",
-    "monorepo",
+    "download-cache",
     "node",
-    "reporting",
-    "shared",
-    "tooling",
-    "typescript",
     "vitest",
+    "vitest-reporter",
     "windows"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/shared-node#readme",

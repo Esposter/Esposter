@@ -2,6 +2,21 @@
   "name": "nuxt-security-module",
   "version": "4.8.0",
   "description": "Nuxt security module for Nitro 3 and h3 2 — security headers, a per-request nonce Content Security Policy, subresource integrity, CORS, allowed methods, basic auth and a request size limit.",
+  "keywords": [
+    "basic-auth",
+    "content-security-policy",
+    "cors",
+    "nitro",
+    "nuxt",
+    "nuxt-module",
+    "rate-limiter",
+    "security-headers",
+    "subresource-integrity"
+  ],
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/nuxt-security-module#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
   "license": "Apache-2.0",
   "author": "Jimmy Chen",
   "repository": {
