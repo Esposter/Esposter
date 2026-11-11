@@ -57,10 +57,6 @@ jobs:
         uses: ./.github/actions/run-cached-task
         with:
           task: build:packages
-          paths: |
-            packages/*/dist
-            packages/*/src/index.ts
-            packages/*/src/components/index.ts
           save: false
 
       - name: 🆔 Identify the reviewer
@@ -133,10 +129,6 @@ jobs:
         uses: ./.github/actions/run-cached-task
         with:
           task: build:packages
-          paths: |
-            packages/*/dist
-            packages/*/src/index.ts
-            packages/*/src/components/index.ts
           save: false
 
       - name: 🆔 Identify the fixer
@@ -202,10 +194,6 @@ jobs:
         uses: ./.github/actions/run-cached-task
         with:
           task: build:packages
-          paths: |
-            packages/*/dist
-            packages/*/src/index.ts
-            packages/*/src/components/index.ts
           save: false
 
       - name: 🆔 Identify the settler
