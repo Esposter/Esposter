@@ -134,6 +134,60 @@ describe("uiMenu", () => {
       expect(trigger.attributes("aria-expanded")).toBe("true");
     });
 
+    test("opens the children of an item beneath it on a click, the right arrow or Enter, instead of picking it, and shuts them on the left arrow", async () => {
+      expect.hasAssertions();
+
+      const groupItems: UiMenuItem<string>[] = [
+        {
+          children: [
+            { title: "Csv", value: "import/csv" },
+            { title: "Json", value: "import/json" },
+          ],
+          title: "Import",
+          value: "import",
+        },
+        { title: "Copy", value: "copy" },
+      ];
+      const component = mount(UiMenu, { attachTo: document.body, props: { items: groupItems, label } });
+      const trigger = component.get("button");
+      await trigger.trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+      const menu = component.get('[role="menu"]');
+      const getTitles = () => component.findAll('[role="menuitem"]').map((item) => item.text());
+
+      expect(getTitles()).toStrictEqual(["Import", "Copy"]);
+      expect(component.get('[role="menuitem"]').attributes("aria-expanded")).toBe("false");
+
+      await component.get('[role="menuitem"]').trigger("click");
+
+      expect(getTitles()).toStrictEqual(["Import", "Csv", "Json", "Copy"]);
+      expect(component.get('[role="menuitem"]').attributes("aria-expanded")).toBe("true");
+      expect(component.emitted("select")).toBeUndefined();
+      expect(trigger.attributes("aria-expanded")).toBe("true");
+
+      await menu.trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+
+      expect(document.activeElement?.textContent.trim()).toBe("Csv");
+
+      await menu.trigger("keydown", { key: "ArrowLeft" });
+      await flushPromises();
+
+      expect(getTitles()).toStrictEqual(["Import", "Copy"]);
+      expect(document.activeElement?.textContent.trim()).toBe("Import");
+
+      await menu.trigger("keydown", { key: "ArrowRight" });
+      await menu.trigger("keydown", { key: "ArrowDown" });
+      await flushPromises();
+      await menu.trigger("keydown", { key: "ArrowDown" });
+      await menu.trigger("keydown", { key: "Enter" });
+
+      expect(component.emitted<[string, KeyboardEvent]>("select")?.map(([value]) => value)).toStrictEqual([
+        "import/json",
+      ]);
+      expect(trigger.attributes("aria-expanded")).toBe("false");
+    });
+
     // A group of choices shows each of them and says which is chosen, rather than one item that steps through them
     test("draws a choice's members as radios, the chosen one checked", async () => {
       expect.hasAssertions();

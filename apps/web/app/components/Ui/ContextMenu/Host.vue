@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY } from "@/services/ui/constants";
+import { getMenuItemByValue } from "@/services/ui/getMenuItemByValue";
 import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { usePopover } from "@vuetify/v0";
@@ -15,9 +16,9 @@ const items = computed(() => getUiMenuItems(contextMenu.value?.items ?? []));
 // Read when the menu is chosen from rather than when it closes: closing clears what is open
 let openItems = contextMenu.value?.items ?? [];
 let opener: HTMLElement | undefined;
-const { checkIsTabbable, choose, first, getItemId, onMenuKeydown } = useMenu(items, popover, {
-  onSelect: async (title, event) => {
-    await openItems.find((item) => item.title === title)?.onClick?.(event);
+const { checkIsTabbable, choose, first, getItemId, onMenuKeydown, rows } = useMenu(items, popover, {
+  onSelect: async (value, event) => {
+    await getMenuItemByValue(openItems, value)?.onClick?.(event);
   },
   returnFocusTo: () => opener,
 });
@@ -72,6 +73,6 @@ watch(isOpen, (newIsOpen) => {
     ui-popover
     @keydown="(event) => onMenuKeydown(event)"
   >
-    <UiMenuItems :check-is-tabbable :get-item-id :items @select="(value, event) => choose(value, event)" />
+    <UiMenuItems :check-is-tabbable :get-item-id :items="rows" @select="(value, event) => choose(value, event)" />
   </div>
 </template>

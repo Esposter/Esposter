@@ -1,17 +1,21 @@
 import type { Item } from "@/models/shared/Item";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
-// An item's title is unique within its menu, so it is the value the menu hands back
-export const getUiMenuItems = (items: Item[]): UiMenuItem<string>[] =>
-  items.map(({ description, disabled, icon, isChecked, isDanger, isGroupStart, isSelected, meaning, title }) => ({
-    description,
-    icon,
-    isChecked,
-    isDanger,
-    isDisabled: disabled,
-    isGroupStart,
-    isSelected,
-    meaning,
-    title,
-    value: title,
-  }));
+import { getMenuItemValue } from "@/services/ui/getMenuItemValue";
+
+export const getUiMenuItems = (items: Item[], parentTitle?: string): UiMenuItem<string>[] =>
+  items.map(
+    ({ children, description, disabled, icon, isChecked, isDanger, isGroupStart, isSelected, meaning, title }) => ({
+      children: children && getUiMenuItems(children, title),
+      description,
+      icon,
+      isChecked,
+      isDanger,
+      isDisabled: disabled,
+      isGroupStart,
+      isSelected,
+      meaning,
+      title,
+      value: getMenuItemValue(title, parentTitle),
+    }),
+  );

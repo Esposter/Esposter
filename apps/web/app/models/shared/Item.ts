@@ -7,6 +7,9 @@ export type Item = {
   [key: string]: unknown;
   active?: boolean;
   badges?: { count: number; icon: string }[];
+  // The actions a menu keeps under this one, shown and hidden by it: an item with children is a group's heading and
+  // Runs nothing itself. One level deep
+  children?: Item[];
   // Drawn after the title in the muted colour, and for a disabled action, the reason it cannot be taken
   description?: string;
   disabled?: boolean;

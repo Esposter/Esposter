@@ -3,6 +3,7 @@ import type { Item } from "@/models/shared/Item";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getMenuItemByValue } from "@/services/ui/getMenuItemByValue";
 import { getUiMenuItems } from "@/services/ui/getUiMenuItems";
 
 interface Props {
@@ -26,8 +27,8 @@ const uiMenuItems = computed(() => getUiMenuItems(items));
     :variant="UiButtonVariant.Quiet"
     px-0
     @select="
-      async (title, event) => {
-        await items.find((item) => item.title === title)?.onClick?.(event);
+      async (value, event) => {
+        await getMenuItemByValue(items, value)?.onClick?.(event);
       }
     "
   >
