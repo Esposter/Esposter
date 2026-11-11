@@ -165,7 +165,7 @@ catalog:
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
   knip: ^6.44.2
-  link-preview-js: ^5.0.1
+  link-preview-js: ^5.0.2
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
   livekit-server-sdk: ^2.19.2
