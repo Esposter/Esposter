@@ -56,6 +56,8 @@ Tests hold to the same rule with one distinction. A test's real id is `crypto.ra
 - **Rejected, `z.guid()`:** it accepts any value in the UUID layout, so it checks less than the ids are. Every real id is a v4, and the narrowest validator that accepts all of them is the one used.
 - **Rejected, `z.uuid()`:** it accepts versions 1 to 8, which admits ids of versions the repo never mints.
 - **Rejected, accepting the nil UUID:** the nil is the one value a broader validator would admit beyond the v4 layout, and no id in the repo is nil. Widening every validator to admit it buys nothing.
+- **The headless block editor validates ids as v4 too.** Its element schemas reparse the whole document on every edit, so a consumer that mints ids of another version has its edits refused. Its ids come from the `createId` the consumer passes, and the app's is `crypto.randomUUID`.
+- **A uuid column's select schema is overridden column by column**, since the database mapping accepts every version. A `z.uuid()` call is a lint error; the column mapping is held by the override alone.
 
 ## Sources
 

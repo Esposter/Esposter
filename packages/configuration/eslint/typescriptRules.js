@@ -201,6 +201,13 @@ export default {
         "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
     },
     {
+      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v4, so a field written with it
+      // Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of a uuid column is
+      // The same lenient form, which no selector sees, and `id-validation`'s design names it
+      message: "Validate an id with `z.uuidv4()`, never `z.uuid()`. See the zod skill.",
+      selector: "CallExpression[callee.object.name='z'][callee.property.name='uuid']",
+    },
+    {
       // `z.int().min(1)` and `z.int().positive()` parse alike, so a count could be written either way and the tree
       // Would hold two spellings of one constraint. A bound paired with a `.max()` is a range, which only `.min()` can
       // Say, so that pair is left alone — the Node reported is the `.min()` call
