@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* review findings: private manifests carry no keywords and a test says so, the keyword lists drop a term the package does not use and gain h3 and one table-storage spelling, the homepage link has one source, and the skill keeps only the judgement the test cannot hold ([4dc8ba8](https://github.com/Esposter/Esposter/commit/4dc8ba82615a6ae39596866b4075a88e48039628))
+* review findings: the haiku gate refuses a quoted property reaching the agent or a constructor and the global alias, ZERO_UUID sits with the other uuid constants, the cache pattern base is an enum, and the docs and skills state the strict v4 plan as planned ([ccfaf0f](https://github.com/Esposter/Esposter/commit/ccfaf0f1d91365fa0d51f9eb811f4ef00b942356))
+* the role select schema keeps its fields sorted, and the vite-plus design names the app's build output without citing a path a fresh checkout lacks ([c88d45c](https://github.com/Esposter/Esposter/commit/c88d45c5fd6d344dd34a73ec4fe12ac9cbf2bc03))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 **Note:** Version bump only for package @esposter/db-schema

@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* review findings: private manifests carry no keywords and a test says so, the keyword lists drop a term the package does not use and gain h3 and one table-storage spelling, the homepage link has one source, and the skill keeps only the judgement the test cannot hold ([4dc8ba8](https://github.com/Esposter/Esposter/commit/4dc8ba82615a6ae39596866b4075a88e48039628))
+* review findings: the haiku gate refuses a quoted property reaching the agent or a constructor and the global alias, ZERO_UUID sits with the other uuid constants, the cache pattern base is an enum, and the docs and skills state the strict v4 plan as planned ([ccfaf0f](https://github.com/Esposter/Esposter/commit/ccfaf0f1d91365fa0d51f9eb811f4ef00b942356))
+* the seed and the session route refuse a remote database or an off-machine host however it is spelled, the seed refuses the owner's default emulator by flag or port, a table client allows plaintext only to loopback, and the friendship id has one implementation ([4ea3a4d](https://github.com/Esposter/Esposter/commit/4ea3a4d3bc188dc115474c85b1a404739951348d))
+
+### Features
+
+* a driven browser signs in through a development-only session route and reads a seeded dataset in a database and emulator of its own ([b4aad64](https://github.com/Esposter/Esposter/commit/b4aad647fae3254906a64c7510a396cf27b49651))
+* every published package names what it is, what it plugs into and what it solves in five to ten keywords, a test holds their shape and the links the generator writes, and the generator no longer seeds typescript ([ca3fcd3](https://github.com/Esposter/Esposter/commit/ca3fcd3aeb7a16cfb97ef7e4b16cf4d03ec6a333))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 ### Features

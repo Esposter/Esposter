@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* **ci:** a task cache saves unless every task replayed, not when one sub-task did, and the jump returns inline now vize rewrites a destructured argument of defineExpose ([adc0abd](https://github.com/Esposter/Esposter/commit/adc0abd62ce2a7fddd4d31c6c43829df14e111e1))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 ### Bug Fixes

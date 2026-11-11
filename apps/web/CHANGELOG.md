@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* review findings: private manifests carry no keywords and a test says so, the keyword lists drop a term the package does not use and gain h3 and one table-storage spelling, the homepage link has one source, and the skill keeps only the judgement the test cannot hold ([4dc8ba8](https://github.com/Esposter/Esposter/commit/4dc8ba82615a6ae39596866b4075a88e48039628))
+* review findings: the API key dialog takes its form id from the base dialog, the dialog shell's rejected alternative states its real reason, and the cookie cast says what the type gap is ([0e5e7a3](https://github.com/Esposter/Esposter/commit/0e5e7a3fc86de944da2928b2129e2aa74bc5e721))
+* the repo-wide lint pass is clean: test titles are lowercase, test helpers that capture nothing sit at module scope, comments begin capitalised, and the ci cache test names its capture group ([e806fd9](https://github.com/Esposter/Esposter/commit/e806fd935729ed40d3d96b6f1a30348f2151348b))
+* the seed and the session route refuse a remote database or an off-machine host however it is spelled, the seed refuses the owner's default emulator by flag or port, a table client allows plaintext only to loopback, and the friendship id has one implementation ([4ea3a4d](https://github.com/Esposter/Esposter/commit/4ea3a4d3bc188dc115474c85b1a404739951348d))
+* the session route's cookie is typed by what the cookie writer accepts, its test auth takes the real auth's type, and the vite cache pattern keeps its literal union because the config loads under Node's type stripping ([6a10314](https://github.com/Esposter/Esposter/commit/6a1031496d504ee5fb356a212ba4a2a79336120b))
+* the version-history panel's header row orders its attributes as the lint rule asks, which the earlier layout fix left out ([e7e0f45](https://github.com/Esposter/Esposter/commit/e7e0f456390cbf1659ac2a2b87c7c02444783ae5))
+* the version-history panel's heading and filter stay put while its list scrolls, since the list is the region that scrolls and the panel no longer scrolls as one box ([79218da](https://github.com/Esposter/Esposter/commit/79218da09f0c255bfd9a5ce813cb10eb25516651))
+* **ui:** a popover's panel already pads its body, so the four callers that padded their own content drop it, and an inset is no longer stacked ([4501d6a](https://github.com/Esposter/Esposter/commit/4501d6ae920ebb792aa0a410d7c18a3c892cd397))
+* **ui:** one height map per dialog frame, a tall PDF dialog, a pinned friend search, bare panel roots, the body gap at gap-3, and the typecheck errors left by the removed snap argument ([ee02dbc](https://github.com/Esposter/Esposter/commit/ee02dbc6448ab4a608ffd6eb39b82b2565ce3fa8))
+* **ui:** region bodies are bare for columns, the explorer and preview keep one scroll owner, a thread's composer stays pinned, 36rem dialogs take Medium, a confirm takes a variant, and the specs and skills say what the build made true ([a25ca98](https://github.com/Esposter/Esposter/commit/a25ca98e0538878d719497511eb1c342d0e41e78))
+* **web:** the dev server skips the vize pre-compile that held its first request past Vite's module-load timeout, and the dev-server notes say one dev chain runs per checkout ([e430a2c](https://github.com/Esposter/Esposter/commit/e430a2c23e42fbe1460fd687898cd922f3106c7a))
+* **web:** the settings content root can shrink in a column, so its body scrolls inside a bounded host ([119a9c6](https://github.com/Esposter/Esposter/commit/119a9c6be3a99a308d77d1e70232af22ec26613d))
+
+### Features
+
+* a driven browser signs in through a development-only session route and reads a seeded dataset in a database and emulator of its own ([b4aad64](https://github.com/Esposter/Esposter/commit/b4aad647fae3254906a64c7510a396cf27b49651))
+* **ui:** a dialog takes a named size, and the body's padding is added by the container so a bare body needs no override ([1f31908](https://github.com/Esposter/Esposter/commit/1f31908b53f4dd935d0539f8effdf8a74f331eb1))
+* **ui:** a scan test holds the dialog regions, one field label draws the required mark, a link preview uses VueUse's hover, and the container tasks record what was built and what was kept ([7b5e322](https://github.com/Esposter/Esposter/commit/7b5e322763bf4c09bbc6f276c167c3c6d1d2fe31))
+* **ui:** the base dialog and popover own a scrolling body and a pinned footer, and the shells fill them ([0deccdb](https://github.com/Esposter/Esposter/commit/0deccdb4928b5471a11629f9e64895e60fef646a))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 ### Bug Fixes

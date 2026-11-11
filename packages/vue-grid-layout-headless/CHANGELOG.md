@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Features
+
+* every published package names what it is, what it plugs into and what it solves in five to ten keywords, a test holds their shape and the links the generator writes, and the generator no longer seeds typescript ([ca3fcd3](https://github.com/Esposter/Esposter/commit/ca3fcd3aeb7a16cfb97ef7e4b16cf4d03ec6a333))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 **Note:** Version bump only for package vue-grid-layout-headless

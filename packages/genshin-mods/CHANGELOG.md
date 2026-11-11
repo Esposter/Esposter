@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* **genshin-mods:** a non-BMP character in a script blanks to two spaces, so the masked code keeps every index ([5ad9113](https://github.com/Esposter/Esposter/commit/5ad9113c04aa254170df938dd78550989e70d095))
+* **genshin-mods:** the script mask ends a line comment at every line terminator, so an agent after one is read, and the check refuses a call with arguments after its options ([1502322](https://github.com/Esposter/Esposter/commit/15023224ac5a99fd37e3159f634332e8bccbd8ae))
+* review findings: the haiku gate refuses a quoted property reaching the agent or a constructor and the global alias, ZERO_UUID sits with the other uuid constants, the cache pattern base is an enum, and the docs and skills state the strict v4 plan as planned ([ccfaf0f](https://github.com/Esposter/Esposter/commit/ccfaf0f1d91365fa0d51f9eb811f4ef00b942356))
+* the repo-wide lint pass is clean: test titles are lowercase, test helpers that capture nothing sit at module scope, comments begin capitalised, and the ci cache test names its capture group ([e806fd9](https://github.com/Esposter/Esposter/commit/e806fd935729ed40d3d96b6f1a30348f2151348b))
+* the Workflow gate's comment masking finds the line terminator after the comment, not the first one in the script, which hung the hook on any comment that followed an earlier line ([1fa12e7](https://github.com/Esposter/Esposter/commit/1fa12e7d37ebfbe15e0f5e328ea85dcdbc75bba1))
+
+### Features
+
+* every published package names what it is, what it plugs into and what it solves in five to ten keywords, a test holds their shape and the links the generator writes, and the generator no longer seeds typescript ([ca3fcd3](https://github.com/Esposter/Esposter/commit/ca3fcd3aeb7a16cfb97ef7e4b16cf4d03ec6a333))
+* **genshin-mods:** a workflow whose every agent is pinned to haiku launches under a usage reserve ([922d8ea](https://github.com/Esposter/Esposter/commit/922d8eac8ab8c7358165eed366b5f6fa5e92200c))
+* **genshin-mods:** the haiku-only workflow gate holds more cases and a leaner mask, and its change is archived into the resin and delegation specs ([1797f53](https://github.com/Esposter/Esposter/commit/1797f53d0436fbf80ccf211618fd132adec0676f))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 **Note:** Version bump only for package genshin-mods

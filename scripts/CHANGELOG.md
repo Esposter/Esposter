@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* a review run reviews at most two windows and leaves the rest owed for the next dispatch, so a run that cannot read its windows no longer spends on the whole backlog ([4168f85](https://github.com/Esposter/Esposter/commit/4168f85353857c5c9609dbb436b6b0bbf1e68437))
+* **ci:** a task cache saves unless every task replayed, not when one sub-task did, and the jump returns inline now vize rewrites a destructured argument of defineExpose ([adc0abd](https://github.com/Esposter/Esposter/commit/adc0abd62ce2a7fddd4d31c6c43829df14e111e1))
+* **ci:** the table client's endpoint pattern names its capture group, the review windows test imports runGit as a type, and the bundle record carries the db and functions builds the table client commit grew ([d1716f8](https://github.com/Esposter/Esposter/commit/d1716f8acdf3e449a00de1e1897852e9fe37e462))
+* knip knows the session route's handler is registered by path and drops the ignore it found needless, the keyword test holds its constants inside its suite, and the size record takes CI's Linux rows for genshin-world ([bba785f](https://github.com/Esposter/Esposter/commit/bba785fdf5173589d7ff49f0ef1c5ba397b14550))
+* review findings: private manifests carry no keywords and a test says so, the keyword lists drop a term the package does not use and gain h3 and one table-storage spelling, the homepage link has one source, and the skill keeps only the judgement the test cannot hold ([4dc8ba8](https://github.com/Esposter/Esposter/commit/4dc8ba82615a6ae39596866b4075a88e48039628))
+* **scripts:** the outdated report offers the newest version inside a hold as an ordinary bump ([256674d](https://github.com/Esposter/Esposter/commit/256674dbc755d3a8d7ce4b0c8126436f3bbd0a5f))
+* the dev seed's database gate reads the database the way the driver does, so a database query parameter can no longer route the seed past it to the dev database ([0e65237](https://github.com/Esposter/Esposter/commit/0e652378ffafb2034f5f73a9ac3b88ce51a429a7))
+* the keyword test derives the product name instead of spelling it, and takes the noise list inline ([f806f03](https://github.com/Esposter/Esposter/commit/f806f038804b6ac750eb1b1864291da29bb84d7d))
+* the repo-wide lint pass is clean: test titles are lowercase, test helpers that capture nothing sit at module scope, comments begin capitalised, and the ci cache test names its capture group ([e806fd9](https://github.com/Esposter/Esposter/commit/e806fd935729ed40d3d96b6f1a30348f2151348b))
+* the review pool runs its first batch alone and starts no batch after one has errored, so a failure every session shares costs one batch and its retry and not the whole window's usage ([00eae24](https://github.com/Esposter/Esposter/commit/00eae24b2a35bc89baf0d479f6f7d432c2264ad8))
+* the seed and the session route refuse a remote database or an off-machine host however it is spelled, the seed refuses the owner's default emulator by flag or port, a table client allows plaintext only to loopback, and the friendship id has one implementation ([4ea3a4d](https://github.com/Esposter/Esposter/commit/4ea3a4d3bc188dc115474c85b1a404739951348d))
+
+### Features
+
+* a driven browser signs in through a development-only session route and reads a seeded dataset in a database and emulator of its own ([b4aad64](https://github.com/Esposter/Esposter/commit/b4aad647fae3254906a64c7510a396cf27b49651))
+* every published package names what it is, what it plugs into and what it solves in five to ten keywords, a test holds their shape and the links the generator writes, and the generator no longer seeds typescript ([ca3fcd3](https://github.com/Esposter/Esposter/commit/ca3fcd3aeb7a16cfb97ef7e4b16cf4d03ec6a333))
+* **oxlint:** a destructured prop the script never reads is removed from the pattern, since a template reads props by bare name ([067b1a1](https://github.com/Esposter/Esposter/commit/067b1a1fded42e1e69953397bde013618887af86))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 ### Bug Fixes

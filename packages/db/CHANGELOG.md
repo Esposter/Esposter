@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
+
+### Bug Fixes
+
+* **ci:** the table client's endpoint pattern names its capture group, the review windows test imports runGit as a type, and the bundle record carries the db and functions builds the table client commit grew ([d1716f8](https://github.com/Esposter/Esposter/commit/d1716f8acdf3e449a00de1e1897852e9fe37e462))
+* **db:** a table client allows an insecure connection when its connection string names an http table endpoint, so an emulator on its own ports is reachable ([a9ed8cf](https://github.com/Esposter/Esposter/commit/a9ed8cfa38f86b32ee167fddddbc34b86c373695))
+* review findings: private manifests carry no keywords and a test says so, the keyword lists drop a term the package does not use and gain h3 and one table-storage spelling, the homepage link has one source, and the skill keeps only the judgement the test cannot hold ([4dc8ba8](https://github.com/Esposter/Esposter/commit/4dc8ba82615a6ae39596866b4075a88e48039628))
+* the seed and the session route refuse a remote database or an off-machine host however it is spelled, the seed refuses the owner's default emulator by flag or port, a table client allows plaintext only to loopback, and the friendship id has one implementation ([4ea3a4d](https://github.com/Esposter/Esposter/commit/4ea3a4d3bc188dc115474c85b1a404739951348d))
+* the table client allows a plaintext connection only when the endpoint's parsed host is this machine, so a loopback name in the userinfo no longer passes for a loopback host ([6fff183](https://github.com/Esposter/Esposter/commit/6fff18324be400bdb1730f4349e77abe4f25c2a3))
+
 # [4.8.0](https://github.com/Esposter/Esposter/compare/v4.7.0...v4.8.0) (2026-11-10)
 
 **Note:** Version bump only for package @esposter/db
