@@ -6,9 +6,8 @@
     "component-library",
     "game-ui",
     "genshin-impact",
-    "interface",
-    "vue",
-    "vue3"
+    "ui-kit",
+    "vue"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/genshin-interface#readme",
   "bugs": {
@@ -115,6 +114,6 @@
     "vue": "catalog:"
   },
   "inlinedDependencies": {
-    "vize": "0.726.0"
+    "vize": "0.737.0"
   }
 }

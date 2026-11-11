@@ -4,8 +4,8 @@
   "description": "Genshin Impact's world as a fan recreation: the catalogue of regions and areas, each region's authored data, and the TresJS components that build it on genshin-engine.",
   "keywords": [
     "genshin-engine",
+    "genshin-impact",
     "open-world",
-    "three",
     "threejs",
     "tresjs",
     "vue",
@@ -135,6 +135,6 @@
   },
   "inlinedDependencies": {
     "type-fest": "5.10.0",
-    "vize": "0.726.0"
+    "vize": "0.737.0"
   }
 }

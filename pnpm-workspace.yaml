@@ -34,16 +34,16 @@ catalog:
   "@azure/core-rest-pipeline": ^1.25.1
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.17.0
+  "@azure/functions": ^4.17.1
   "@azure/identity": ^4.14.1
-  "@azure/search-documents": ^13.0.0
+  "@azure/search-documents": ^13.1.0
   "@azure/service-bus": ^7.10.0
   "@azure/storage-blob": ^12.34.0
   "@azure/storage-queue": ^12.32.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.1.0
-  "@better-auth/api-key": ^1.7.18
-  "@better-auth/drizzle-adapter": ^1.7.18
+  "@better-auth/api-key": ^1.7.20
+  "@better-auth/drizzle-adapter": ^1.7.20
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -57,7 +57,7 @@ catalog:
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.152
+  "@iconify-json/lucide": ^1.2.153
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -85,23 +85,23 @@ catalog:
   "@pulumi/pulumi": ^3.274.1
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.20.0
-  "@tiptap/core": ^3.33.0
-  "@tiptap/extension-code-block-lowlight": ^3.33.0
-  "@tiptap/extension-file-handler": ^3.33.0
-  "@tiptap/extension-image": ^3.33.0
-  "@tiptap/extension-list": ^3.33.0
-  "@tiptap/extension-mention": ^3.33.0
-  "@tiptap/extension-table": ^3.33.0
-  "@tiptap/extensions": ^3.33.0
-  "@tiptap/html": ^3.33.0
-  "@tiptap/pm": ^3.33.0
-  "@tiptap/starter-kit": ^3.33.0
-  "@tiptap/suggestion": ^3.33.0
-  "@tiptap/vue-3": ^3.33.0
+  "@tiptap/core": ^3.33.1
+  "@tiptap/extension-code-block-lowlight": ^3.33.1
+  "@tiptap/extension-file-handler": ^3.33.1
+  "@tiptap/extension-image": ^3.33.1
+  "@tiptap/extension-list": ^3.33.1
+  "@tiptap/extension-mention": ^3.33.1
+  "@tiptap/extension-table": ^3.33.1
+  "@tiptap/extensions": ^3.33.1
+  "@tiptap/html": ^3.33.1
+  "@tiptap/pm": ^3.33.1
+  "@tiptap/starter-kit": ^3.33.1
+  "@tiptap/suggestion": ^3.33.1
+  "@tiptap/vue-3": ^3.33.1
   "@tresjs/cientos": ^5.10.1
   "@tresjs/core": ^5.10.1
-  "@trpc/client": ^11.26.0
-  "@trpc/server": ^11.26.0
+  "@trpc/client": ^11.28.0
+  "@trpc/server": ^11.28.0
   "@tsdown/css": ^0.23.7
   "@types/mjml": ^5.4.2
   "@types/node": ^26.6.6
@@ -111,8 +111,8 @@ catalog:
   "@typesafe-ai/sdk": ^0.7.0
   "@unocss/eslint-config": ^66.12.0
   "@unocss/nuxt": ^66.12.0
-  "@unplugin-pwa/core": ^0.0.5
-  "@unplugin-pwa/vite": ^0.0.5
+  "@unplugin-pwa/core": ^0.0.6
+  "@unplugin-pwa/vite": ^0.0.6
   "@vite-pwa/workbox-build": ^8.0.15
   "@vite-pwa/workbox-swkit": ^8.0.15
   "@vite-pwa/workbox-window": ^8.0.15
@@ -125,10 +125,10 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.726.0
-  "@vizejs/nuxt": ^0.726.0
-  "@vizejs/unplugin": ^0.726.0
-  "@vizejs/vite-plugin": ^0.726.0
+  "@vizejs/native": ^0.737.0
+  "@vizejs/nuxt": ^0.737.0
+  "@vizejs/unplugin": ^0.737.0
+  "@vizejs/vite-plugin": ^0.737.0
   "@vue/compiler-core": ^3.5.45
   "@vue/test-utils": ^2.5.1
   "@vuetify/v0": ^1.3.2
@@ -138,7 +138,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   apexcharts: ^8.8.1
   azurite: ^3.37.0
-  better-auth: ^1.7.18
+  better-auth: ^1.7.20
   bowser: ^2.15.0
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
   # `chokidar` without declaring it, so the app installs it for the bundle to resolve (nitrojs/nitro)
@@ -164,11 +164,11 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.3
-  knip: ^6.44.2
-  link-preview-js: ^5.0.1
+  knip: ^6.45.0
+  link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
-  livekit-server-sdk: ^2.19.2
+  livekit-server-sdk: ^2.19.3
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
   marked: ^18.2.0
@@ -180,7 +180,7 @@ catalog:
   # @TODO: no upstream issue — Nitro 3 resolves `@nuxt/nitro-server`'s `mocked-exports/proxy` alias from the app
   # Remove this dependency when Nitro resolves the alias from Nuxt (nuxt/nuxt)
   mocked-exports: ^0.1.1
-  msw: ^3.0.4
+  msw: ^3.0.5
   natural-orderby: ^5.0.0
   neverthrow: ^8.2.0
   nitro: npm:nitro-nightly@latest
@@ -202,8 +202,8 @@ catalog:
   playwright: ^1.65.0
   postgres: ^4.1.0
   publint: ^0.3.25
-  rate-limiter-flexible: ^11.4.0
-  re2js: ^2.9.1
+  rate-limiter-flexible: ^11.4.1
+  re2js: ^2.10.0
   read-excel-file: ^9.3.14
   # @TODO: no upstream issue — waits on a vite release that depends on the next rolldown minor; the reason is the `renovate.json` rule's description
   rolldown: ~1.2.18
@@ -218,7 +218,7 @@ catalog:
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.7
-  tsrs: ^0.23.0-ts7.1.0-beta
+  tsrs: ^0.24.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
   unicode-emoji-json: ^0.9.0
@@ -229,10 +229,10 @@ catalog:
   vite-plus: ^1.5.1
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
-  vize: ^0.726.0
+  vize: ^0.737.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
-  vue-router: ^5.4.0
+  vue-router: ^5.5.0
   web-push: ^4.0.0
   write-excel-file: ^4.1.1
   zod: ^4.6.7

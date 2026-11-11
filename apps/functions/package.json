@@ -106,7 +106,7 @@
     "@azure/logger": "1.4.0",
     "@azure/msal-common": "16.16.1",
     "@azure/msal-node": "7.2.1",
-    "@azure/search-documents": "13.0.0",
+    "@azure/search-documents": "13.1.0",
     "@azure/service-bus": "7.10.0",
     "@azure/storage-blob": "12.34.0",
     "@azure/storage-common": "12.5.0",

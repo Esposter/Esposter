@@ -103,7 +103,7 @@
       "6.0.1"
     ],
     "htmlparser2": "8.0.2",
-    "link-preview-js": "5.0.1",
+    "link-preview-js": "6.0.0",
     "nth-check": "2.1.1",
     "parse5": "7.3.0",
     "parse5-htmlparser2-tree-adapter": "7.1.0",
