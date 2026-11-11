@@ -22,7 +22,6 @@ const name = ref("");
 // What the key reaches, and nothing until the owner ticks it: a key is made for one kind of work
 const mcpScopes = ref<McpScope[]>([]);
 const isValid = ref(true);
-const formId = useId();
 // Shown once, on the dialog that created it, and gone with the dialog
 const createdKey = ref("");
 const nameRules = [UiRules.required(), UiRules.maxLength(API_KEY_NAME_MAX_LENGTH)];
@@ -45,57 +44,59 @@ const { answer } = useDialogAnswer(isOpen);
     Create key
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Create API key" :size="UiDialogSize.Medium">
-    <template v-if="createdKey">
-      <p>Copy the key now. It is shown only once; a lost key is deleted and replaced.</p>
-      <div px-3 py-2 flex gap-2 items-center ui-field>
-        <code flex-1 break-all>{{ createdKey }}</code>
-        <UiCopyButton label="Copy API key" :source="createdKey" />
-      </div>
-    </template>
-    <!-- The dialog stays open on a created key, which is shown in its place rather than closed over -->
-    <UiForm
-      v-else
-      :id="formId"
-      v-model:is-valid="isValid"
-      flex
-      flex-col
-      gap-3
-      @submit="
-        answer(async () => {
-          createdKey = await create({ mcpScopes, name });
-          return false;
-        })
-      "
-    >
-      <UiTextField
-        v-model="name"
-        hint="Where the key is used, such as the machine an agent runs on"
-        is-autofocus
-        label="Name"
-        :rules="nameRules"
-      />
-      <p text-muted>
-        What the key reaches: Follow-ups is the TodoList's follow-ups a coding session writes and works through,
-        Resources finds, reads and edits the content of every resource you own.
-      </p>
-      <div role="group" aria-label="Scopes" flex flex-col gap-2>
-        <UiCheckbox
-          v-for="mcpScope of McpScopes"
-          :key="mcpScope"
-          is-label-shown
-          :label="McpScopeTitleMap[mcpScope]"
-          :model-value="mcpScopes.includes(mcpScope)"
-          @update:model-value="
-            (isChecked) => {
-              mcpScopes = isChecked
-                ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
-                : mcpScopes.filter((scope) => scope !== mcpScope);
-            }
-          "
+    <template #default="{ formId }">
+      <template v-if="createdKey">
+        <p>Copy the key now. It is shown only once; a lost key is deleted and replaced.</p>
+        <div px-3 py-2 flex gap-2 items-center ui-field>
+          <code flex-1 break-all>{{ createdKey }}</code>
+          <UiCopyButton label="Copy API key" :source="createdKey" />
+        </div>
+      </template>
+      <!-- The dialog stays open on a created key, which is shown in its place rather than closed over -->
+      <UiForm
+        v-else
+        :id="formId"
+        v-model:is-valid="isValid"
+        flex
+        flex-col
+        gap-3
+        @submit="
+          answer(async () => {
+            createdKey = await create({ mcpScopes, name });
+            return false;
+          })
+        "
+      >
+        <UiTextField
+          v-model="name"
+          hint="Where the key is used, such as the machine an agent runs on"
+          is-autofocus
+          label="Name"
+          :rules="nameRules"
         />
-      </div>
-    </UiForm>
-    <template #footer>
+        <p text-muted>
+          What the key reaches: Follow-ups is the TodoList's follow-ups a coding session writes and works through,
+          Resources finds, reads and edits the content of every resource you own.
+        </p>
+        <div role="group" aria-label="Scopes" flex flex-col gap-2>
+          <UiCheckbox
+            v-for="mcpScope of McpScopes"
+            :key="mcpScope"
+            is-label-shown
+            :label="McpScopeTitleMap[mcpScope]"
+            :model-value="mcpScopes.includes(mcpScope)"
+            @update:model-value="
+              (isChecked) => {
+                mcpScopes = isChecked
+                  ? McpScopes.filter((scope) => scope === mcpScope || mcpScopes.includes(scope))
+                  : mcpScopes.filter((scope) => scope !== mcpScope);
+              }
+            "
+          />
+        </div>
+      </UiForm>
+    </template>
+    <template #footer="{ formId }">
       <UiButton v-if="createdKey" :variant="UiButtonVariant.Accent" @click="isOpen = false">Done</UiButton>
       <template v-else>
         <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>

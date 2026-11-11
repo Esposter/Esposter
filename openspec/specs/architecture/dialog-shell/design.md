@@ -61,5 +61,5 @@ The pinned **footer** is the base dialog's `#footer` slot rather than the shell'
 
 ## Notes
 
-- **Rejected, composing `StyledFormDialog` for every dialog:** its footer is Cancel beside one confirm, so it leaves no place for a second footer action, and the member notes dialog has neither Cancel nor a closing submit. Its add-note submit keeps the dialog open, where the shell's answer would close it.
+- **Rejected, composing `StyledFormDialog` for every dialog:** its footer is Cancel beside one confirm that answers and closes, and the member notes dialog has no Cancel and an add-note submit that keeps the dialog open, so composing the shell would change what it shows and does.
 - **Rejected, a generated id in each dialog that draws its own footer:** it restates the same pairing in every one of them, which the base dialog's shared id removes.

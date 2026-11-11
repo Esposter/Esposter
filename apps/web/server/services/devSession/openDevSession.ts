@@ -14,7 +14,8 @@ export const openDevSession = async (context: Awaited<typeof auth.$context>): Pr
   if (!user) return undefined;
   const session = await context.internalAdapter.createSession(user.id, false);
   const { attributes, name } = context.authCookies.sessionToken;
-  // Better-auth capitalises a same-site value that the cookie writer reads without regard to case
+  // Better-auth's type admits a capitalised same-site value that the cookie writer's type does not, and the writer reads
+  // Either case
   return {
     attributes: attributes as DevSessionCookie["attributes"],
     name,
