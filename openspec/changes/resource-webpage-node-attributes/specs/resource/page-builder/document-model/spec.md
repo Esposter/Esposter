@@ -12,16 +12,10 @@ A webpage button SHALL open its link in the same tab or in a new tab, as its tar
 
 #### Scenario: A new-tab button publishes with a safe relationship
 
-- **GIVEN** a webpage button whose target is a new tab and which sets no relationship
+- **GIVEN** a webpage button whose target is a new tab
 - **WHEN** the webpage is published
 - **THEN** the published link opens in a new tab
 - **AND** its relationship is noopener
-
-#### Scenario: A new-tab button keeps its own relationship and adds noopener
-
-- **GIVEN** a webpage button whose target is a new tab and whose relationship is nofollow
-- **WHEN** the webpage is published
-- **THEN** the published relationship is nofollow and noopener
 
 #### Scenario: A target outside the two choices is refused on save
 

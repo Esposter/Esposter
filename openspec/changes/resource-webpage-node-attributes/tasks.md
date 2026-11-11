@@ -2,7 +2,7 @@
 
 ## 1. The button's target
 
-- [ ] 1.1 Add the new-tab choice to the button and render its target, with the safe relationship a new-tab link always carries. Verify: tests named after the scenarios 'A same-tab button publishes no new-tab attribute', 'A new-tab button publishes with a safe relationship' and 'A new-tab button keeps its own relationship and adds noopener' written first and seen failing.
+- [ ] 1.1 Add the new-tab choice to the button and render its target, with the safe relationship a new-tab link always carries. Verify: tests named after the scenarios 'A same-tab button publishes no new-tab attribute', and 'A new-tab button publishes with a safe relationship' written first and seen failing.
 - [ ] 1.2 Refuse a target outside the two choices on save. Verify: a test named after the scenario 'A target outside the two choices is refused on save' written first and seen failing.
 
 ## 2. The element id and title

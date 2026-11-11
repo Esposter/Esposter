@@ -1,6 +1,6 @@
 ## Why
 
-A webpage button can only open its link in the same tab, and no webpage node takes an element id or a title. A page cannot link to one of its own sections, since nothing lets the author name the section, and a tooltip cannot be given to any element. The email's button already holds a target and a relationship, so the webpage is behind its own sibling on the same control.
+A webpage button can only open its link in the same tab, and no webpage node takes an element id, while only a video takes a title. A page cannot link to one of its own sections, since nothing lets the author name the section, and a tooltip cannot be given to any element. The email's button already holds a target and a relationship, so the webpage is behind its own sibling on the same control.
 
 ## What Changes
 

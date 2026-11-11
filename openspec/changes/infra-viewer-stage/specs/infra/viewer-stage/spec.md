@@ -82,7 +82,7 @@ The persona SHALL play the motion mapped to attention wanted on the model, SHALL
 
 ### Requirement: A tap on the model replays the last line without synthesizing it again
 
-The viewer's tap SHALL replay the last line the character spoke, without synthesizing that line again.
+The viewer's tap SHALL replay the last line the character spoke, without synthesizing that line again, except on a choice of an approval bubble the channel is showing, which answers the approval and replays nothing.
 
 #### Scenario: A tap replays the last line
 

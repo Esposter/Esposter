@@ -4,7 +4,7 @@ The second half of the desktop stage is input: a line typed at the character rat
 
 ## Scope
 
-**Today:** the terminal and its push-to-talk dictation are the input; the persona plugin ships hooks, skills and an output style, and no MCP server.
+**Today:** the terminal and its push-to-talk dictation are the input; the persona plugin ships hooks, skills, an output style and the channel server this change describes.
 
 **This adds:**
 
@@ -64,6 +64,8 @@ packages/genshin-persona/
     createChannelPage.ts           ← the markup and the event stream the page listens to
     forwardPermissionPrompt.ts     ← a prompt as a two-choice bubble, a tap as the verdict
 ```
+
+**A tap on a choice is the approval's, not a replay.** While an approval bubble shows, a tap on one of its two choices answers the approval and replays nothing, and a tap on the model anywhere else replays the last line as [the viewer stage](../infra-viewer-stage/design.md) says. With no bubble showing, every tap is a replay.
 
 ## What this does not propose
 
