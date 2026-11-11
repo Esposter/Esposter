@@ -3,5 +3,6 @@
 export enum SeedRefusal {
   DevDatabase = "DevDatabase",
   DevelopmentStorage = "DevelopmentStorage",
+  NonLocalDatabase = "NonLocalDatabase",
   NonLocalStorage = "NonLocalStorage",
 }

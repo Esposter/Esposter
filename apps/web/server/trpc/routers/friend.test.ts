@@ -2,7 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getFriendshipId } from "#server/services/friend/getFriendshipId";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
@@ -15,7 +14,7 @@ import {
   friendsInSocial,
   PublicUserColumns,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRouter", () => {

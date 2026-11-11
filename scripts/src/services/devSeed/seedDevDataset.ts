@@ -12,13 +12,13 @@ import { writeSeedUsers } from "#src/services/devSeed/writeSeedUsers";
 // Writes the dev dataset through the injected stores. Both targets are gated before the first write, so a refused run
 // Leaves both stores as they were; every write is keyed by a fixed identifier, so a rerun converges on the same rows
 export const seedDevDataset = async ({
-  databaseName,
+  databaseUrl,
   db,
   messageAscendingClient,
   messageClient,
   storageConnectionString,
 }: SeedDevDatasetInput): Promise<SeedRefusal | undefined> => {
-  const refusal = getSeedRefusal(databaseName, storageConnectionString);
+  const refusal = getSeedRefusal(databaseUrl, storageConnectionString);
   if (refusal) return refusal;
   await writeSeedUsers(db);
   await writeSeedFriends(db);

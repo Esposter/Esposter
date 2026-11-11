@@ -2,7 +2,6 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getFriendshipId } from "#server/services/friend/getFriendshipId";
 import { createCallerFactory } from "#server/trpc";
 import {
   consumeMockSessionOnce,
@@ -21,7 +20,7 @@ import {
   friendsInSocial,
   usersInAuth,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
+import { getFriendshipId, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 

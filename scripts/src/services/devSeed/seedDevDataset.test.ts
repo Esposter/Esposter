@@ -1,7 +1,11 @@
 import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 
 import { SeedRefusal } from "#src/models/devSeed/SeedRefusal";
-import { SEED_DATABASE_NAME } from "#src/services/devSeed/constants";
+import {
+  DEVELOPMENT_STORAGE_CONNECTION_STRING,
+  SEED_DATABASE_NAME,
+  SEED_FRIEND_USER_ID,
+} from "#src/services/devSeed/constants";
 import { seedDevDataset } from "#src/services/devSeed/seedDevDataset";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
@@ -22,7 +26,8 @@ const createMessageClients = () => ({
 describe(seedDevDataset, () => {
   // An emulator's table endpoint on this machine is all the gate reads, so no account key is needed
   const RUN_STORAGE_CONNECTION_STRING = "TableEndpoint=http://localhost";
-  const DEV_DATABASE_NAME = "a";
+  const SEED_DATABASE_URL = `postgres://localhost/${SEED_DATABASE_NAME}`;
+  const DEV_DATABASE_URL = "postgres://localhost/a";
   const DEV_OWNER_USER_ID = crypto.randomUUID();
 
   const createDevOwnerUser = () => {
@@ -37,25 +42,39 @@ describe(seedDevDataset, () => {
     };
   };
 
-  test("the seed leaves the dev database untouched", async () => {
+  test("a seed aimed at the dev database leaves the dev database untouched", async () => {
     expect.hasAssertions();
 
     const devDatabase = await createMockDb();
     await devDatabase.insert(usersInAuth).values(createDevOwnerUser());
+
+    const refusal = await seedDevDataset({
+      databaseUrl: DEV_DATABASE_URL,
+      db: devDatabase,
+      storageConnectionString: RUN_STORAGE_CONNECTION_STRING,
+      ...createMessageClients(),
+    });
+
+    expect(refusal).toBe(SeedRefusal.DevDatabase);
+    const devOwnerRows = await devDatabase.select().from(usersInAuth);
+    expect(devOwnerRows.map(({ id }) => id)).toStrictEqual([DEV_OWNER_USER_ID]);
+  });
+
+  test("a seed aimed at its own database writes the driven user and the friend", async () => {
+    expect.hasAssertions();
+
     const seedDatabase = await createMockDb();
 
     const refusal = await seedDevDataset({
-      databaseName: SEED_DATABASE_NAME,
+      databaseUrl: SEED_DATABASE_URL,
       db: seedDatabase,
       storageConnectionString: RUN_STORAGE_CONNECTION_STRING,
       ...createMessageClients(),
     });
 
     expect(refusal).toBeUndefined();
-    const devOwnerRows = await devDatabase.select().from(usersInAuth);
-    expect(devOwnerRows.map(({ id }) => id)).toStrictEqual([DEV_OWNER_USER_ID]);
     const seedUserRows = await seedDatabase.select().from(usersInAuth);
-    expect(seedUserRows.map(({ id }) => id)).toContain(DRIVEN_USER_ID);
+    expect(seedUserRows.map(({ id }) => id)).toStrictEqual([DRIVEN_USER_ID, SEED_FRIEND_USER_ID]);
   });
 
   test("a seed aimed at the dev database is refused", async () => {
@@ -64,7 +83,7 @@ describe(seedDevDataset, () => {
     const seedDatabase = await createMockDb();
 
     const refusal = await seedDevDataset({
-      databaseName: DEV_DATABASE_NAME,
+      databaseUrl: DEV_DATABASE_URL,
       db: seedDatabase,
       storageConnectionString: RUN_STORAGE_CONNECTION_STRING,
       ...createMessageClients(),
@@ -81,9 +100,9 @@ describe(seedDevDataset, () => {
     const seedDatabase = await createMockDb();
 
     const refusal = await seedDevDataset({
-      databaseName: SEED_DATABASE_NAME,
+      databaseUrl: SEED_DATABASE_URL,
       db: seedDatabase,
-      storageConnectionString: "UseDevelopmentStorage=true",
+      storageConnectionString: DEVELOPMENT_STORAGE_CONNECTION_STRING,
       ...createMessageClients(),
     });
 
@@ -99,7 +118,7 @@ describe(seedDevDataset, () => {
     const messageClients = createMessageClients();
     const run = () =>
       seedDevDataset({
-        databaseName: SEED_DATABASE_NAME,
+        databaseUrl: SEED_DATABASE_URL,
         db: seedDatabase,
         storageConnectionString: RUN_STORAGE_CONNECTION_STRING,
         ...messageClients,

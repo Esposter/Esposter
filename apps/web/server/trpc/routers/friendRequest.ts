@@ -3,7 +3,6 @@ import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/d
 import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { on } from "#server/services/events/on";
 import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
-import { getFriendshipId } from "#server/services/friend/getFriendshipId";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { router } from "#server/trpc";
@@ -19,7 +18,7 @@ import {
   friendsInSocial,
   publishNotification,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, Operation } from "@esposter/shared";
+import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure

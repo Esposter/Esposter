@@ -5,5 +5,5 @@ import { getSeedStorageRefusal } from "#src/services/devSeed/getSeedStorageRefus
 
 // Both targets, checked before the seed touches either store. The database is checked first, so a refusal names the
 // First target that is not the seed's own
-export const getSeedRefusal = (databaseName: string, storageConnectionString: string): SeedRefusal | undefined =>
-  getSeedDatabaseRefusal(databaseName) ?? getSeedStorageRefusal(storageConnectionString);
+export const getSeedRefusal = (databaseUrl: string, storageConnectionString: string): SeedRefusal | undefined =>
+  getSeedDatabaseRefusal(databaseUrl) ?? getSeedStorageRefusal(storageConnectionString);

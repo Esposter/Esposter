@@ -1,10 +1,9 @@
 import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 
-import { getFriendshipId } from "#server/services/friend/getFriendshipId";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { blocksInSocial, DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getFriendshipId, Operation } from "@esposter/shared";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 export const assertCanCreateDirectMessageParticipant = async (

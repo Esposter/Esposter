@@ -54,6 +54,21 @@ describe(openDevSession, () => {
     expect(sessionRows).toStrictEqual([]);
   });
 
+  // The driver connects to the host a query parameter names ahead of the loopback authority, so the gate
+  // Reads the address as remote
+  test("a loopback database address that names a remote host is refused", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("DATABASE_URL", `${LOCAL_DATABASE_URL}?host=remote.example`);
+    await seedDrivenUser();
+
+    const cookie = await openDevSession(await auth.$context);
+
+    expect(cookie).toBeUndefined();
+    const sessionRows = await db.select().from(sessionsInAuth);
+    expect(sessionRows).toStrictEqual([]);
+  });
+
   test("a production server refuses the session route", async () => {
     expect.hasAssertions();
 

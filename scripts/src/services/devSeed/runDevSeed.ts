@@ -17,9 +17,9 @@ export const runDevSeed = async (
   databaseUrl: string,
   storageConnectionString: string,
 ): Promise<SeedRefusal | undefined> => {
-  const databaseName = getDatabaseName(databaseUrl);
-  const refusal = getSeedRefusal(databaseName, storageConnectionString);
+  const refusal = getSeedRefusal(databaseUrl, storageConnectionString);
   if (refusal) return refusal;
+  const databaseName = getDatabaseName(databaseUrl);
   await createSeedDatabase(databaseUrl, databaseName);
   const client = postgres(databaseUrl);
   const db = drizzle({ client, relations });
@@ -27,7 +27,7 @@ export const runDevSeed = async (
   const messageClient = await getTableClient(storageConnectionString, AzureTable.Messages);
   const messageAscendingClient = await getTableClient(storageConnectionString, AzureTable.MessagesAscending);
   const seedRefusal = await seedDevDataset({
-    databaseName,
+    databaseUrl,
     db,
     messageAscendingClient,
     messageClient,

@@ -1,6 +1,5 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { getFriendshipId } from "#server/services/friend/getFriendshipId";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -15,7 +14,7 @@ import {
   friendsInSocial,
   PublicUserColumns,
 } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { getFriendshipId, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const blockRouter = router({

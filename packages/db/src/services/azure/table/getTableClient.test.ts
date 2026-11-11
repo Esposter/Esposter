@@ -7,9 +7,9 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@azure/data-tables"), () => ({
   TableClient: {
-    fromConnectionString: vi.fn<typeof TableClient.fromConnectionString>(() => ({
-      createTable: () => Promise.resolve(),
-    })),
+    fromConnectionString: vi.fn<typeof TableClient.fromConnectionString>(
+      () => ({ createTable: () => Promise.resolve() }) as unknown as TableClient,
+    ),
   } as unknown as typeof TableClient,
 }));
 
@@ -25,6 +25,20 @@ describe(getTableClient, () => {
     expect(AzureTableClient.fromConnectionString).toHaveBeenCalledWith(connectionString, AzureTable.Messages, {
       allowInsecureConnection: true,
     });
+  });
+
+  // A plaintext endpoint on any other host is a production Functions table, which the client must keep refusing
+  test("a table endpoint on another host is not allowed an insecure connection", async () => {
+    expect.hasAssertions();
+
+    const connectionString = "TableEndpoint=http://example.table.core.windows.net/a;";
+    await getTableClient(connectionString, AzureTable.Messages);
+
+    expect(AzureTableClient.fromConnectionString).toHaveBeenCalledExactlyOnceWith(
+      connectionString,
+      AzureTable.Messages,
+      { allowInsecureConnection: false },
+    );
   });
 
   test("a secure table endpoint is not allowed an insecure connection", async () => {

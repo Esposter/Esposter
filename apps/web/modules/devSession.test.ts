@@ -10,12 +10,12 @@ vi.mock(import("nuxt/kit"), async (importOriginal) => ({
   addServerHandler: vi.fn<typeof addServerHandler>(),
 }));
 
-// The module reads of Nuxt whether it runs under `nuxt dev` and where the server directory is
-const serverDir = "a";
-const createNuxt = (isDevelopment: boolean) =>
-  ({ options: { dev: isDevelopment, serverDir } }) as unknown as Parameters<typeof devSession>[1];
-
 describe("devSession", () => {
+  // The module reads of Nuxt whether it runs under `nuxt dev` and where the server directory is
+  const serverDir = "a";
+  const createNuxt = (isDevelopment: boolean) =>
+    ({ options: { dev: isDevelopment, serverDir } }) as unknown as Parameters<typeof devSession>[1];
+
   test("a production build carries no session route", async () => {
     expect.hasAssertions();
 
