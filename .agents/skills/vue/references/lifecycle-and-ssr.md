@@ -15,12 +15,8 @@ Read when placing a lifecycle hook, or when a component reaches for a browser gl
 - **Prefix browser-only globals with `window.`** to make browser-only code explicit: `window.document.getElementById(id)`, `window.navigator.mediaDevices.getUserMedia(...)`, `new window.RTCPeerConnection(...)`, `window.requestAnimationFrame(cb)`. Standard built-ins available in all environments (`Uint8Array`, `Map`, `Set`, `JSON`, `Promise`, `crypto`, …) do **not** need it. Enforced by oxlint `no-restricted-globals`, so the list of which globals count lives in `oxlint.config.ts` rather than here.
   - **Tests are exempt**, and the rule is off for `**/*.test.ts`. A test declares the environment it runs in, and the default is node — the app's Vitest `setupFiles` load `fake-indexeddb/auto`, which polyfills onto `globalThis` where there is no `window` at all, so a prefix there is a `ReferenceError` rather than a style improvement.
   - **`indexedDB` stays bare everywhere**, source included, and is deliberately absent from the restricted list. `services/cache/indexedDb/` is unit-tested in the node environment against that same polyfill, so prefixing the source breaks its own tests. It is the one browser global this repo treats as environment-agnostic.
-- **Guard browser-only code with `checkIsServer()`** from `@esposter/shared` — never `import.meta.client` or `typeof window !== "undefined"`; `checkIsServer()` is consistent across Nuxt, shared packages and Azure Functions.
+- **Browser-only code is not guarded with `checkIsServer()` at the leaf.** The environment is decided where the code runs: in a client-only phase (`onMounted`, a client plugin), in a `useLocalStorage` ref, which reads its default off-browser, or in a callback the library never calls on the server, as with a `useScript` `use` option. `checkIsServer()` from `@esposter/shared` stays for a genuine fork where both branches are real. The placement rule is `openspec/specs/architecture/browser-execution/design.md`; `import.meta.client` and `typeof window !== "undefined"` are never the test.
 
   ```ts
-  if (!checkIsServer()) { ... }
-
-  useScript<typeof Desmos>(API_URL, {
-    use: () => (checkIsServer() ? undefined : window.Desmos),
-  });
+  useScript<typeof Desmos>(API_URL, { use: () => window.Desmos });
   ```

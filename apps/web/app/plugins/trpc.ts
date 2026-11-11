@@ -22,7 +22,7 @@ export default defineNuxtPlugin(() => {
       enabled: (options) =>
         (!IS_PRODUCTION && !checkIsServer()) || (options.direction === "down" && options.result instanceof Error),
     }),
-    ...(checkIsServer() ? [] : [createOfflineLink(online)]),
+    createOfflineLink(online),
     errorLink,
   ];
   const httpSplitLink = splitLink({
