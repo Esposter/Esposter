@@ -148,7 +148,7 @@
     "open": "11.0.4",
     "parse5": "8.1.1",
     "path-expression-matcher": "1.6.2",
-    "postgres": "4.1.0",
+    "postgres": "4.1.1",
     "powershell-utils": "0.2.1",
     "proxy-agent-negotiate": "1.1.0",
     "rhea": "3.0.5",

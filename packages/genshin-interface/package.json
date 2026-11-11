@@ -114,6 +114,6 @@
     "vue": "catalog:"
   },
   "inlinedDependencies": {
-    "vize": "0.740.0"
+    "vize": "0.746.0"
   }
 }
