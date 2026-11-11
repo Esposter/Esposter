@@ -40,7 +40,7 @@ flowchart TD
 1. **Fetch.** The run reads `origin/main` and `origin/ai/queue`.
 2. **Diverged main.** If `main` is not an ancestor of `ai/queue`, something else pushed `main`: the nightly release's version commit or a push by hand. `MergeMain.yaml` starts a run on every such push, so none is dispatched by hand. The run merges `origin/main` into `ai/queue`, pushes it, and ends, since that push starts the next run. A conflict fails the run, listing the conflicted paths.
 3. **Commits owed.** The commits on `main..ai/queue`, first parents only, in order. None means the run ends.
-4. **Windows.** Every owed commit is cut into consecutive windows. Each window is the longest run of commits whose changed files, taken together, stay within `REVIEW_WINDOW_FILE_CAP`, and holds at least one commit, even when that commit alone is over the cap. The run plans every window owed at its start.
+4. **Windows.** Every owed commit is cut into consecutive windows. Each window is the longest run of commits whose changed files, taken together, stay within `REVIEW_WINDOW_FILE_CAP`, and holds at least one commit, even when that commit alone is over the cap. The run plans at most `REVIEW_RUN_WINDOW_CAP` of the windows owed, the earliest, and the rest stay owed for the next run, which it dispatches once when nothing stopped it.
 5. **Batches.** Each window's changed files, after the excluded paths and binary files are dropped, are sorted by path so neighbours land together, then packed in order into batches under a file cap and a changed-line cap.
 6. **Reviewers.** One pool holds every batch of every window and runs at most `REVIEW_RUNNER_SESSION_CAP` sessions at once. Each window has one detached worktree at its end, shared by its reviewers and removed after the pool. A reviewer is read-only and answers with a JSON object of findings. A batch that fails is retried once. The first batch runs alone before the pool opens, and once any batch has errored the batches not yet started are unreached: a failure every session shares, such as a credential that no longer works, then costs one batch and its retry instead of the whole pool, and the window it belongs to could not pass anyway.
 7. **Window status.** A window passes when every batch answered. It is limited when a batch hit the account's usage limit, failed when a batch still errored, and unreached when the deadline left a batch unstarted.
@@ -131,23 +131,24 @@ The cost is the settler's and the fixer's sessions on the same subscription as t
 
 Each limit is one named constant in the review's code, with its reason beside it. None of the values is written in prose, so a change is one edit in the file.
 
-| Constant                    | What it bounds                                                                                                             |
-| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `REVIEW_WINDOW_FILE_CAP`    | The files one window holds, so `main` advances in steps one review can read.                                               |
-| `REVIEW_BATCH_FILE_CAP`     | The files in one reviewer's batch. Kept small so the reviewer reads every file it is handed.                               |
-| `REVIEW_BATCH_LINE_CAP`     | The changed lines in one reviewer's batch. Kept small so the reviewer reads every line it is handed.                       |
-| `REVIEW_DIFF_LINE_LIMIT`    | Where one oversized file's diff is cut in the prompt. The reviewer is told to read the rest from the file.                 |
-| `REVIEW_RUNNER_SESSION_CAP` | The `claude` sessions one runner holds at once across the whole pool. A starting value, to be measured against a real run. |
-| `REVIEW_ISSUE_FINDING_CAP`  | The findings one review issue holds, so its body stays far under GitHub's body limit.                                      |
-| `REVIEW_FIX_MATRIX_CAP`     | The issues one run's fix matrix takes, GitHub's per-matrix job limit. Past it, the settle job takes the issues.            |
-| `REVIEW_RUN_DEADLINE`       | The wall clock of one run, after which no new batch starts. The review job's timeout is GitHub's hosted maximum above it.  |
-| `REVIEW_SETTLE_DEADLINE`    | The wall clock of the settle loop, after which no settler starts. One settler's wall clock fits below the job's timeout.   |
-| `REVIEW_JOB_NAME`           | The review job's name in `Review.yaml`, which the settle job reads to tell whether a run is still opening issues.          |
-| `REVIEW_ISSUE_LABEL`        | The label of the issues the review owes. It is outside the triage roles.                                                   |
-| `ReviewSessionRoleModelMap` | The model each role's session runs.                                                                                        |
-| `REVIEWER_TIMEOUT_MS`       | The wall clock of one reviewer, past which its process tree is killed.                                                     |
-| `FIXER_TIMEOUT_MS`          | The wall clock of one fixer, past which its process tree is killed.                                                        |
-| `SETTLER_TIMEOUT_MS`        | The wall clock of one settler, past which its process tree is killed.                                                      |
+| Constant                    | What it bounds                                                                                                                        |
+| :-------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| `REVIEW_WINDOW_FILE_CAP`    | The files one window holds, so `main` advances in steps one review can read.                                                          |
+| `REVIEW_BATCH_FILE_CAP`     | The files in one reviewer's batch. Kept small so the reviewer reads every file it is handed.                                          |
+| `REVIEW_BATCH_LINE_CAP`     | The changed lines in one reviewer's batch. Kept small so the reviewer reads every line it is handed.                                  |
+| `REVIEW_DIFF_LINE_LIMIT`    | Where one oversized file's diff is cut in the prompt. The reviewer is told to read the rest from the file.                            |
+| `REVIEW_RUNNER_SESSION_CAP` | The `claude` sessions one runner holds at once across the whole pool. A starting value, to be measured against a real run.            |
+| `REVIEW_ISSUE_FINDING_CAP`  | The findings one review issue holds, so its body stays far under GitHub's body limit.                                                 |
+| `REVIEW_FIX_MATRIX_CAP`     | The issues one run's fix matrix takes, GitHub's per-matrix job limit. Past it, the settle job takes the issues.                       |
+| `REVIEW_RUN_WINDOW_CAP`     | The windows one run reviews, however many are owed, so a run that cannot read its windows spends on this many and not on the backlog. |
+| `REVIEW_RUN_DEADLINE`       | The wall clock of one run, after which no new batch starts. The review job's timeout is GitHub's hosted maximum above it.             |
+| `REVIEW_SETTLE_DEADLINE`    | The wall clock of the settle loop, after which no settler starts. One settler's wall clock fits below the job's timeout.              |
+| `REVIEW_JOB_NAME`           | The review job's name in `Review.yaml`, which the settle job reads to tell whether a run is still opening issues.                     |
+| `REVIEW_ISSUE_LABEL`        | The label of the issues the review owes. It is outside the triage roles.                                                              |
+| `ReviewSessionRoleModelMap` | The model each role's session runs.                                                                                                   |
+| `REVIEWER_TIMEOUT_MS`       | The wall clock of one reviewer, past which its process tree is killed.                                                                |
+| `FIXER_TIMEOUT_MS`          | The wall clock of one fixer, past which its process tree is killed.                                                                   |
+| `SETTLER_TIMEOUT_MS`        | The wall clock of one settler, past which its process tree is killed.                                                                 |
 
 The excluded paths are the generated output, snapshots, the lockfile, migrations, the changelog and binary files. The list lives beside the reason for each entry, and a path is dropped from every window and batch the same way.
 

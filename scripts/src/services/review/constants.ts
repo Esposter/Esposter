@@ -60,6 +60,9 @@ export const SETTLER_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 120 
 export const REVIEW_HEARTBEAT_INTERVAL_MS: number = Temporal.Duration.from({ minutes: 1 }).total("milliseconds");
 export const REVIEW_HEARTBEAT_PROCESS_COUNT = 3;
 export const REVIEW_HEARTBEAT_COMMAND_CHARACTER_LIMIT = 100;
+// The windows one run reviews, however many are owed: the rest stay owed and the run dispatches the next once. A run that
+// Cannot read its windows then spends on this many, and not on the whole backlog, before the next run can show why.
+export const REVIEW_RUN_WINDOW_CAP = 2;
 // The wall clock of one run, from its start: once it has passed, no further batch starts, and the batches already started
 // Finish. The review job's timeout is GitHub's hosted maximum, 360 minutes, above it.
 export const REVIEW_RUN_DEADLINE: Temporal.Duration = Temporal.Duration.from({ minutes: 300 });

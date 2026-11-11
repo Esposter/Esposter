@@ -6,7 +6,12 @@ import { ReviewMode } from "#src/models/review/ReviewMode";
 import { ReviewWindowStatus } from "#src/models/review/ReviewWindowStatus";
 import { checkIsBacklogOwed } from "#src/services/review/checkIsBacklogOwed";
 import { checkIsMainAncestor } from "#src/services/review/checkIsMainAncestor";
-import { REVIEW_FIX_MATRIX_CAP, REVIEW_ISSUE_LABEL, REVIEW_RUN_DEADLINE } from "#src/services/review/constants";
+import {
+  REVIEW_FIX_MATRIX_CAP,
+  REVIEW_ISSUE_LABEL,
+  REVIEW_RUN_DEADLINE,
+  REVIEW_RUN_WINDOW_CAP,
+} from "#src/services/review/constants";
 import { dispatchReview } from "#src/services/review/dispatchReview";
 import { formatReviewWindow } from "#src/services/review/formatReviewWindow";
 import { getFindings } from "#src/services/review/getFindings";
@@ -63,13 +68,15 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     return;
   }
 
-  const windows = readReviewWindows(range);
+  const owedWindows = readReviewWindows(range);
+  const windows = owedWindows.slice(0, REVIEW_RUN_WINDOW_CAP);
+  const hasWindowsPastCap = owedWindows.length > windows.length;
   if (windows.length === 0) {
     console.info("nothing owed");
     writeFixIssues([]);
     return;
   }
-  console.info(`${windows.length} window(s) owed`);
+  console.info(`${owedWindows.length} window(s) owed, ${windows.length} reviewed by this run`);
   for (const [index, window] of windows.entries()) console.info(formatReviewWindow(window, index));
   if (isDryRun) return;
 
@@ -166,7 +173,7 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
   // Every window settles by the pool's end, and a window that somehow did not was not read, so it is unreached
   const settled = statuses.map((status) => status ?? ReviewWindowStatus.Unreached);
   const passedCount = getPassedWindowCount(settled);
-  const isBacklogOwed = mode === ReviewMode.Steady && checkIsBacklogOwed(settled);
+  const isBacklogOwed = mode === ReviewMode.Steady && checkIsBacklogOwed(settled, hasWindowsPastCap);
   if (isBacklogOwed)
     getResult(dispatchReview).match(noop, (error) => {
       issueErrors.push(`the next run was not dispatched: ${error.message}`);
@@ -196,7 +203,10 @@ export const runReview = async ({ findingsDirectory, from, isDryRun, to }: Revie
     summary.push(
       `${issueNumbers.length - REVIEW_FIX_MATRIX_CAP} issue(s) past the fix matrix's cap of ${REVIEW_FIX_MATRIX_CAP} stay open for the settle job, labelled \`${REVIEW_ISSUE_LABEL}\`.`,
     );
-  if (isBacklogOwed) summary.push("The deadline left windows unreviewed, so the next run is dispatched.");
+  if (isBacklogOwed)
+    summary.push(
+      "The deadline or the cap on windows a run reviews left windows unreviewed, so the next run is dispatched.",
+    );
   // The first window that did not pass ends the prefix, and in range mode its base is where a resume starts
   if (passedCount < windows.length) {
     const { base } = takeOne(windows, passedCount);
