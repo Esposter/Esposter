@@ -46,8 +46,6 @@ Every deferred hardening step is gated on the app moving off key-based Azure SDK
 - Web PubSub local auth, REST API access, and public client access stay while clients connect directly and service clients use connection strings.
 - Storage network default-deny waits for a complete allowlist, private endpoint, or identity/network migration.
 
-The unblocked versions of these are tracked on the [infra roadmap](../../../changes/infra-roadmap/tasks.md).
-
 ## Review principles
 
 Carried forward for any future infra change: keep `protect: true` on imported resources; prefer reducing exposed surface area before adding recurring cost; review dev and prod separately even though one stack owns both; never delete a resource before checking downstream app, Function, Event Grid, and Logic App references.

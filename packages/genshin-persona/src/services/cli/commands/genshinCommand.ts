@@ -16,7 +16,6 @@ import { unpinCommand } from "#src/services/cli/commands/unpinCommand";
 import { untranslatedCommand } from "#src/services/cli/commands/untranslatedCommand";
 import { unverbedCommand } from "#src/services/cli/commands/unverbedCommand";
 import { useCommand } from "#src/services/cli/commands/useCommand";
-import { viewerCommand } from "#src/services/cli/commands/viewerCommand";
 import { voiceCommand } from "#src/services/cli/commands/voiceCommand";
 import { volumeCommand } from "#src/services/cli/commands/volumeCommand";
 import { defineCommand } from "citty";
@@ -41,7 +40,6 @@ export const genshinCommand: CommandDef = defineCommand({
     [GenshinVerb.Untranslated]: untranslatedCommand,
     [GenshinVerb.Unverbed]: unverbedCommand,
     [GenshinVerb.Use]: useCommand,
-    [GenshinVerb.Viewer]: viewerCommand,
     [GenshinVerb.Voice]: voiceCommand,
     [GenshinVerb.Volume]: volumeCommand,
   },

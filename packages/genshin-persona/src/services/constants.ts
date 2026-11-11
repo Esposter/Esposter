@@ -1,11 +1,8 @@
 import type { ReplyPiece } from "#src/models/ReplyPiece";
-import type { ViewerConfiguration } from "#src/models/ViewerConfiguration";
 import type { VoiceDeviceLadder } from "#src/models/VoiceDeviceLadder";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 
 import { GameLanguage } from "#src/generated/genshinText/models/GameLanguage";
-import { ViewerMoment } from "#src/models/ViewerMoment";
-import { ViewerSoundForm } from "#src/models/ViewerSoundForm";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -29,9 +26,7 @@ export const RUNTIME_MODULES_DIRECTORY: string = join(RUNTIME_DIRECTORY, "node_m
 export const MODELS_DIRECTORY: string = join(STATE_DIRECTORY, "models");
 export const REFERENCES_DIRECTORY: string = join(STATE_DIRECTORY, "references");
 export const VOICE_LOG_PATH: string = join(STATE_DIRECTORY, "voice.log");
-// The viewer the spoken lines are shown on, written by the `viewer` verb: its address, its model and its motion map
-export const VIEWER_PATH: string = join(STATE_DIRECTORY, "viewer");
-// Everything the `voice` and `viewer` verbs wrote, and not the pick records or the pin, which are the persona's
+// Everything the `voice` verb wrote, and not the pick records or the pin, which are the persona's
 export const VOICE_STATE_PATHS: string[] = [
   VOICE_LANGUAGE_PATH,
   VOICE_DEVICE_PATH,
@@ -39,7 +34,6 @@ export const VOICE_STATE_PATHS: string[] = [
   MODELS_DIRECTORY,
   REFERENCES_DIRECTORY,
   VOICE_LOG_PATH,
-  VIEWER_PATH,
 ];
 export const SOURCE_DIRECTORY: string = join(import.meta.dirname, "..");
 const PLUGIN_DIRECTORY = join(SOURCE_DIRECTORY, "..");
@@ -208,31 +202,6 @@ export const MIN_SPEECH_TOKEN_CEILING = 100;
 export const WARM_TEXT = "Ready.";
 // What the `voice` verb speaks once set up, so the person hears the voice before the first reply does
 export const VOICE_PROOF_TEXT = "The voice is set up, and a reply's spoken lines are read from the next session on.";
-// The motion map before a reader maps anything: every moment is there, each with no motion
-export const EMPTY_VIEWER_MOTIONS: ViewerConfiguration["motions"] = {
-  [ViewerMoment.Attention]: "",
-  [ViewerMoment.TurnEnd]: "",
-};
-// The viewer's socket: the budget a connection and its registration get to answer, the state of an open socket, the
-// Message numbers start, and the channel and volume every sound plays on
-export const VIEWER_CONNECT_TIMEOUT_MS: number = Temporal.Duration.from({ seconds: 3 }).total("milliseconds");
-export const VIEWER_OPEN_READY_STATE = 1;
-export const VIEWER_MESSAGE_ID_START = 1;
-export const VIEWER_SOUND_CHANNEL = 0;
-export const VIEWER_SOUND_VOLUME = 1;
-// The form the viewer takes a clip's sound in. The probe on the reader's install (infra-viewer-stage task 1.1)
-// Decides it; until then a WAV path is the form the sink is built for, and a compressed-only form keeps the sound on
-// The stock player
-export const VIEWER_SOUND_FORM: ViewerSoundForm = ViewerSoundForm.WavPath;
-// How long the proof bubble the `viewer` verb shows stays on the model
-export const VIEWER_PROOF_DURATION_MS: number = Temporal.Duration.from({ seconds: 6 }).total("milliseconds");
-// A bubble outlasts its clip by this much, so the last words are still read when the sound ends
-export const VIEWER_BUBBLE_BEAT_MS = 800;
-// A bubble with no words and no time on screen clears the one a superseded reply left
-export const VIEWER_CLEAR_DURATION_MS = 0;
-export const VIEWER_TEXT_COLOR = 0xff_ff_ff;
-export const VIEWER_DEFAULT_FRAME_COLOR = 0xff_ff_ff;
-export const VIEWER_DEFAULT_MODEL_ID = 0;
 // The synthesizer exits when no request has arrived for this long, freeing the GPU memory the model holds
 export const VOICE_IDLE_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 // The tool's own default timeout on a MessageDisplay hook, which bounds two waits: how long a hook keeps trying to

@@ -1,5 +1,5 @@
 import { connectVoiceServer } from "#src/services/connectVoiceServer";
-import { VIEWER_PATH } from "#src/services/constants";
+import { VOICE_LOG_PATH } from "#src/services/constants";
 import { deleteVoiceState } from "#src/services/deleteVoiceState";
 import { rmSync } from "node:fs";
 import { describe, expect, test, vi } from "vitest";
@@ -8,12 +8,17 @@ vi.mock(import("#src/services/connectVoiceServer"), () => ({ connectVoiceServer:
 vi.mock(import("node:fs"), () => ({ rmSync: vi.fn<typeof rmSync>() }));
 
 describe(deleteVoiceState, () => {
-  test("teardown removes the viewer setup", async () => {
+  test("teardown removes the voice state", async () => {
     expect.hasAssertions();
 
     await deleteVoiceState();
 
     expect(connectVoiceServer).toHaveBeenCalledTimes(1);
-    expect(rmSync).toHaveBeenCalledWith(VIEWER_PATH, { force: true, maxRetries: 10, recursive: true, retryDelay: 200 });
+    expect(rmSync).toHaveBeenCalledWith(VOICE_LOG_PATH, {
+      force: true,
+      maxRetries: 10,
+      recursive: true,
+      retryDelay: 200,
+    });
   });
 });

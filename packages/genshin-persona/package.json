@@ -6,7 +6,6 @@
     "claude-code",
     "claude-code-plugin",
     "genshin-impact",
-    "mcp",
     "output-style",
     "persona",
     "text-to-speech",
@@ -24,7 +23,6 @@
   },
   "files": [
     ".claude-plugin",
-    ".mcp.json",
     "hooks",
     "output-styles",
     "runtime",
@@ -53,7 +51,6 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.2",
     "@typesafe-ai/sdk": "^0.7.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "citty": "^0.2.2",

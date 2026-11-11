@@ -14,7 +14,6 @@ export const GenshinVerb = {
   Untranslated: "untranslated",
   Unverbed: "unverbed",
   Use: "use",
-  Viewer: "viewer",
   Voice: "voice",
   Volume: "volume",
 } as const;

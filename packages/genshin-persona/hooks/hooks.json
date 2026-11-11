@@ -1,14 +1,6 @@
 {
   "hooks": {
-    "Notification": [
-      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/react.mjs\" attention" }] }
-    ],
-    "SessionStart": [
-      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pick.mjs\"" }] }
-    ],
-    "Stop": [
-      { "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/react.mjs\" turnEnd" }] }
-    ]
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/pick.mjs\"" }] }]
   },
   "modules": ["../mod/register.ts"]
 }

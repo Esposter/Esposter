@@ -30,7 +30,7 @@ The agent reaches Esposter through the MCP server entry the follow-ups plugin sh
 ## Decisions
 
 - **The person carries the prompt.** The command needs no pairing, no session picker and no folder. A paired host that received the prompt was rejected: it kept a host program, its pairing, a release asset and an Agent SDK dependency alive for one button, and it tied the feature to one agent, where a pasted prompt works in the terminal, the desktop app, an agent IDE or a harness pointed at another model. The cost is one paste where there was one click.
-- **A pushed line is the upgrade.** When [channel chat](../../../../changes/infra-channel-chat/design.md) ships, Ask Claude pushes the line into the open session through the channel, and the pasted prompt stays the fallback for a surface without one.
+- **A pasted prompt is the whole route.** Ask Claude hands the person a line to paste into the session they have open. Pushing it into the session through a channel was rejected with [the desktop stage](../../../../rejected/infra/persona-desktop-stage/design.md), since nothing else types into the session but the terminal.
 
 ## Free
 

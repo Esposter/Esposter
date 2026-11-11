@@ -48,7 +48,7 @@ Every hardening the estate declines — shared-key and public blob access, local
 ## Docs
 
 - Durable infrastructure docs live in `apps/infra/docs/`, one directory per provider that has any (`azure/`) with the cross-cutting pages at its root. The convention is the layout, not a list: `ls apps/infra/docs` names the current set, and each page's title says what it holds.
-- The forward roadmap is `openspec/changes/infra-roadmap/tasks.md` (every item links an `infra-` change under `openspec/changes/`); the area index + shipped log is `openspec/specs/infra/README.md`; phase-2 cost/security findings are in `openspec/specs/infra/cost-and-security-posture/design.md`.
+- Open infra work is each its own `infra-` change under `openspec/changes/`; the area index + shipped log is `openspec/specs/infra/README.md`; phase-2 cost/security findings are in `openspec/specs/infra/cost-and-security-posture/design.md`.
 - Move completed one-off migration notes out of the package once their durable content is represented in `docs/`.
 
 ## Deep Dives

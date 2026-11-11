@@ -21,11 +21,11 @@ describe(runHookCommand, () => {
       runHookCommand(
         defineCommand({
           run: () => {
-            throw new Error("A viewer file that is not JSON");
+            throw new Error("A state file that is not JSON");
           },
         }),
       ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: A viewer file that is not JSON]`);
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: A state file that is not JSON]`);
   });
 
   test("prints the usage rather than running the command on --help", async () => {

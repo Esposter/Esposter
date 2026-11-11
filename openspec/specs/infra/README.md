@@ -11,7 +11,6 @@
 - [Pulumi source of truth](pulumi-source-of-truth/design.md) — Function App runtime settings managed in Pulumi.
 - [Review](review/design.md) — how what lands on `ai/queue` is reviewed: read-only haiku reviewers over amount-capped windows, one haiku fixer, and `main` advanced to each reviewed window — replacing CodeRabbit and the review collector.
 - [Typed decisions](typed-decisions/design.md) — which tier answers a gate, a severity or a triage, and why the cheapest session is the one never spawned.
-- [Roadmap](../../changes/infra-roadmap/tasks.md) — open items (key-auth-gated hardening); every item links its proposal.
 - [Deferred](../../deferred/infra/) — ideas waiting on a trigger.
 - [Rejected](../../rejected/infra/) — ideas decided against, one page each.
 

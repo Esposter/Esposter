@@ -2,53 +2,36 @@ import type { AudioPlayer } from "#src/models/AudioPlayer";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
 import type { SpeechRequest } from "#src/models/SpeechRequest";
-import type { ViewerCaption } from "#src/models/ViewerCaption";
 
 import { VoiceRequestType } from "#src/models/VoiceRequestType";
 import { VoiceStatus } from "#src/models/VoiceStatus";
-import { connectViewer } from "#src/services/connectViewer";
 import {
   MAX_VOLUME,
   MESSAGE_DISPLAY_HOOK_TIMEOUT_MS,
   MODELS_DIRECTORY,
   RUNTIME_MANIFEST_PATH,
-  VIEWER_SOUND_FORM,
   VOICE_IDLE_TIMEOUT_MS,
   VOICE_STATUS_SEPARATOR,
 } from "#src/services/constants";
 import { createAudioPlayer } from "#src/services/createAudioPlayer";
 import { createClipDecoder } from "#src/services/createClipDecoder";
-import { createReadingPlayer } from "#src/services/createReadingPlayer";
 import { createReplyQueue } from "#src/services/createReplyQueue";
 import { createSpokenLineReader } from "#src/services/createSpokenLineReader";
-import { createViewerOpener } from "#src/services/createViewerOpener";
-import { createViewerPlayer } from "#src/services/createViewerPlayer";
 import { createVoiceSynthesizer } from "#src/services/createVoiceSynthesizer";
-import { getViewerFrameColor } from "#src/services/getViewerFrameColor";
 import { getWavBytes } from "#src/services/getWavBytes";
 import { listenVoiceSocket } from "#src/services/listenVoiceSocket";
 import { parseVoiceRequest } from "#src/services/parseVoiceRequest";
 import { readReferenceClip } from "#src/services/readReferenceClip";
-import { readViewerConfiguration } from "#src/services/readViewerConfiguration";
 import { readVoiceDevice } from "#src/services/readVoiceDevice";
 import { readVoiceRuntime } from "#src/services/readVoiceRuntime";
 import { writeVoiceDevice } from "#src/services/writeVoiceDevice";
 import { writeVoiceLog } from "#src/services/writeVoiceLog";
 import { createServer } from "node:net";
 
-// The viewer a reading is shown on, when a `viewer` address is on file: connected at a reading's start and held until
-// The synthesizer exits, since a tap on the model plays the last line again over the same connection
-const viewerOpener = createViewerOpener({
-  connect: connectViewer,
-  createPlayer: createViewerPlayer,
-  readConfiguration: readViewerConfiguration,
-});
 // The address is bound before the engine loads, so a second hook finds it taken rather than loading a second engine;
-// Every failure is logged, since the hooks stay silent on its behalf. The viewer is disposed too, so its last clip
-// Does not outlive the process
+// Every failure is logged, since the hooks stay silent on its behalf
 const exit = (message: string) => {
   writeVoiceLog(message);
-  viewerOpener.dispose();
   process.exit(1);
 };
 process.on("uncaughtException", (error) => {
@@ -63,7 +46,6 @@ if (!(await listenVoiceSocket(server))) process.exit(0);
 // Nothing between the bind and the connection handler below yields to the event loop: a hook connecting in such a gap
 // Is accepted by nobody and waits for an answer that never comes, so every load is started here and awaited later
 const idleTimer = setTimeout(() => {
-  viewerOpener.dispose();
   process.exit(0);
 }, VOICE_IDLE_TIMEOUT_MS);
 const runtime = readVoiceRuntime(RUNTIME_MANIFEST_PATH);
@@ -111,16 +93,9 @@ const speak = async (
   }
 
   const gain = request.volume / MAX_VOLUME;
-  const color = getViewerFrameColor(request.name);
-  // The caption is the line and the clip's own length, which is what a viewer shows and paces the next clip by
-  const play = async ({ play: playAudio }: AudioPlayer, clip: PcmClip, line: string) => {
+  const play = async ({ play: playAudio }: AudioPlayer, clip: PcmClip) => {
     const audio = getWavBytes({ ...clip, samples: clip.samples.map((sample) => sample * gain) });
-    const caption: ViewerCaption = {
-      color,
-      durationMs: Math.round((clip.samples.length / clip.sampleRate) * 1000),
-      text: line,
-    };
-    const playerFailure = await playAudio(audio, caption);
+    const playerFailure = await playAudio(audio);
     if (playerFailure) writeVoiceLog(`the player did not play: ${playerFailure}`);
   };
   let playback: Promise<void> = Promise.resolve();
@@ -145,7 +120,7 @@ const speak = async (
     await playback;
     if (checkIsSuperseded()) return VoiceStatus.Superseded;
 
-    playback = play(player, clip, line);
+    playback = play(player, clip);
   }
 
   await playback;
@@ -156,13 +131,8 @@ const speak = async (
 const queue = createReplyQueue(async (request: SpeechRequest, checkIsSuperseded: () => boolean) => {
   const lines = readSpokenLines(request);
   const isSpoken = request.type === VoiceRequestType.Speak && lines.length > 0;
-  // A viewer on file carries the reading, with the stock player behind it; with none, the reading is the stock player's
-  const viewer = isSpoken ? await viewerOpener.open() : undefined;
-  let player: AudioPlayer | undefined;
-  if (isSpoken)
-    player = viewer ? createReadingPlayer(viewer, createAudioPlayer, VIEWER_SOUND_FORM) : createAudioPlayer();
+  const player = isSpoken ? createAudioPlayer() : undefined;
   const [outcome] = await Promise.allSettled([speak(request, lines, player, checkIsSuperseded)]);
-  if (outcome?.status === "fulfilled" && outcome.value === VoiceStatus.Superseded) player?.stop?.();
   await player?.close();
   if (outcome?.status === "fulfilled") return outcome.value;
 
@@ -176,7 +146,6 @@ const handleLine = (line: string): Promise<VoiceStatus> => {
   idleTimer.refresh();
   if (request.type === VoiceRequestType.Stop) {
     setImmediate(() => {
-      viewerOpener.dispose();
       process.exit(0);
     });
     return Promise.resolve(VoiceStatus.Ok);
