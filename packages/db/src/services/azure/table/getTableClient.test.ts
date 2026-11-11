@@ -41,6 +41,19 @@ describe(getTableClient, () => {
     );
   });
 
+  test("a table endpoint whose userinfo is a loopback name but whose host is elsewhere is not allowed an insecure connection", async () => {
+    expect.hasAssertions();
+
+    const connectionString = "TableEndpoint=http://localhost:80@example.table.core.windows.net/a;";
+    await getTableClient(connectionString, AzureTable.Messages);
+
+    expect(AzureTableClient.fromConnectionString).toHaveBeenCalledExactlyOnceWith(
+      connectionString,
+      AzureTable.Messages,
+      { allowInsecureConnection: false },
+    );
+  });
+
   test("a secure table endpoint is not allowed an insecure connection", async () => {
     expect.hasAssertions();
 

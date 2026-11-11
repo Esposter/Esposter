@@ -3,16 +3,15 @@ import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@espost
 import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
 import { checkIsConflict } from "#src/services/azure/error/checkIsConflict";
 import { TableClient } from "@azure/data-tables";
-import { getResultAsync, noop } from "@esposter/shared";
+import { checkIsLocalUrl, getResultAsync, noop } from "@esposter/shared";
 
 const provisionTableClient = async (connectionString: string, tableName: AzureTable) => {
   // The library allows an unencrypted connection only for the literal `UseDevelopmentStorage=true`, so an emulator named
-  // By a loopback http endpoint, on a port of its own, is allowed explicitly. A plaintext endpoint on any other host is
-  // A production table, which stays refused
+  // By a plaintext endpoint whose parsed host is this machine is allowed explicitly. Judged on the parsed host and not on
+  // The text, since `http://localhost@remote.example` begins with a loopback name and connects to the host after the `@`
+  const endpoint = /(?:^|;)TableEndpoint=([^;]*)/iu.exec(connectionString)?.[1] ?? "";
   const tableClient = TableClient.fromConnectionString(connectionString, tableName, {
-    allowInsecureConnection: /TableEndpoint=http:\/\/(?:127\.0\.0\.1|localhost|\[::1\])(?:[:/;]|$)/iu.test(
-      connectionString,
-    ),
+    allowInsecureConnection: endpoint.startsWith("http://") && checkIsLocalUrl(endpoint),
   });
   await getResultAsync(() => tableClient.createTable()).match(noop, (error) => {
     if (!checkIsConflict(error)) throw error;

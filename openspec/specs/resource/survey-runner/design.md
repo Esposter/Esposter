@@ -126,4 +126,4 @@ A required question is unanswered when its answer is absent, text of nothing but
 | `packages/vue-survey-engine-headless/package.json`                                    | the package, which depends on `survey-expression` for expressions and `re2js` for patterns                          |
 | `packages/vue-survey-engine-headless/src/composables/useSurveyRunner.ts`              | the reactive wrapper over the state                                                                                 |
 | `apps/web/app/components/Resource/Survey/Runner.vue`                                  | the page: progress, navigation, the alert and the focus of a blocked move                                           |
-| `apps/web/app/components/Resource/Survey/RunnerElement.vue`                           | one element of the page: a panel as a fieldset, a question as a field with its number                               |
+| `apps/web/app/components/Resource/Survey/RunnerElement.vue`                           | one element of the page: a panel as a labelled group, a question as a field with its number                         |

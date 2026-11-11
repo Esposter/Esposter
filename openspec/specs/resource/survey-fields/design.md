@@ -7,7 +7,7 @@ One field component per question kind, and the chooser that picks one for each q
 ```mermaid
 flowchart TD
   RUNNER["Runner.vue<br/>the page's element views and errors"] --> ELEMENT{"RunnerElement.vue<br/>a panel or a question"}
-  ELEMENT -->|"a panel"| PANEL["a fieldset holding its child elements"]
+  ELEMENT -->|"a panel"| PANEL["a labelled group holding its child elements"]
   ELEMENT -->|"a question"| INDEX["Field/Index.vue<br/>the field for the question's kind"]
   INDEX --> MAP["SurveyFieldComponentMap<br/>one lazily loaded field per kind"]
   MAP --> FIELD["a field<br/>the answer as v-model"]
