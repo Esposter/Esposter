@@ -29,11 +29,9 @@ The line reads the editor's reactive state, so it follows each keystroke and eac
 
 ## Key files
 
-| File                                                       | Role                                    |
-| ---------------------------------------------------------- | --------------------------------------- |
-| `apps/web/app/components/Resource/Note/Editor.vue`         | hosts the count line under the document |
-| `apps/web/app/components/Resource/Note/CountLine.vue`      | draws the words and characters          |
-| `apps/web/app/services/resource/note/getNoteTextCounts.ts` | counts a text's words and characters    |
+| File                                               | Role                                                                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Note/Editor.vue` | hosts the count line under the document; a count line component and a service that counts a text are added beside it |
 
 ## Sources
 

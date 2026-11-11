@@ -49,6 +49,7 @@ flowchart TD
 - **Every open proposal is re-verified each pass** — still unbuilt, still consistent with the code, sources still resolving (`references/verifying-proposals.md`).
 - **A proposal built in the same session** follows the ship lifecycle at once: archived into its capability with the design rewritten as built, and its roadmap line deleted, as the `openspec` skill (`references/page-shapes.md`) sets out.
 - **The pass reports its churn**: proposals added, decisions changed, bugs fixed, and — when all three are zero — that the area converged (`references/convergence.md`).
+- **A pass runs the two spec suites before it lands**: `citations.test.ts` fails a design whose Key files table cites a path that does not exist yet (a file the change will add is named in the Role column, with no path), and `openspecScenarioTasks.test.ts` fails a task naming a scenario its delta lacks, so the change's tasks and its `spec.md` name the same scenarios.
 - **Starting a pass** uses the prompt in `references/prompts.md`, so every run asks the same questions.
 
 ## Reference pages

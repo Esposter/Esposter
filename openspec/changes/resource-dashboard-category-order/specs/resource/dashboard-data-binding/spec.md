@@ -28,3 +28,10 @@ The owner SHALL order a bound visual's categories by the category or by one of t
 - **GIVEN** a stored visual whose order names a series its query does not have
 - **WHEN** the dashboard is saved
 - **THEN** the save is refused
+
+#### Scenario: The owner orders a bar chart by its series
+
+- **GIVEN** a bar chart bound to a query with a sales series, selected in the editor
+- **WHEN** the owner chooses the sales series and descending in the Order control
+- **THEN** the dashboard saves the order with the visual
+- **AND** the canvas redraws the bars in that order
