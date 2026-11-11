@@ -6,11 +6,11 @@
     "azure",
     "azure-search",
     "azure-storage",
+    "azure-table-storage",
     "blob-storage",
     "eventgrid",
     "mock",
     "service-bus",
-    "table-storage",
     "testing",
     "web-pubsub"
   ],

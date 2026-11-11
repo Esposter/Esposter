@@ -7,7 +7,7 @@
     "html-sanitization",
     "indexeddb",
     "json-patch",
-    "mime-types",
+    "mime-db",
     "neverthrow",
     "utilities",
     "zod"

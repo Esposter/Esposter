@@ -3,8 +3,9 @@ import type { CreatePackageOptions } from "#src/models/package/CreatePackageOpti
 
 import { PackageKind } from "#src/models/package/PackageKind";
 import { checkIsPrivateKind } from "#src/services/package/new/checkIsPrivateKind";
-import { GITHUB_REPOSITORY_URL, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
+import { GITHUB_ISSUES_URL, GITHUB_REPOSITORY_URL } from "#src/services/package/new/constants";
 import { getEntryPath } from "#src/services/package/new/getEntryPath";
+import { getPackageHomepage } from "#src/services/package/new/getPackageHomepage";
 import { getPackageName } from "#src/services/package/new/getPackageName";
 
 // The manifest a package is created with. Its version is lerna's one version, so `lernaPackages` holds it from the first commit.
@@ -14,9 +15,9 @@ export const getManifest = (options: CreatePackageOptions, version: string): Rec
   const packageName = getPackageName(options);
   const manifest = {
     author: "Jimmy Chen",
-    bugs: { url: `${GITHUB_REPOSITORY_URL}/issues` },
+    bugs: { url: GITHUB_ISSUES_URL },
     description,
-    homepage: `${GITHUB_REPOSITORY_URL}/blob/main/${PACKAGES_DIRECTORY}/${name}#readme`,
+    homepage: getPackageHomepage(name),
     imports: { "#src/*": "./src/*.ts" },
     license: "Apache-2.0",
     name: packageName,

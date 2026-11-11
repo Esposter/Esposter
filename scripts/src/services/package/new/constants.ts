@@ -11,6 +11,8 @@ export const README_FILE = "README.md";
 export const QUALITY_LEDGER_FILE: string = `${LEDGER_DIRECTORY}/quality/packages.md`;
 export const APP_MODULES_FILE = "apps/web/configuration/modules.ts";
 export const GITHUB_REPOSITORY_URL = "https://github.com/Esposter/Esposter";
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
+export const GITHUB_ISSUES_URL: string = `${GITHUB_REPOSITORY_URL}/issues`;
 // The specs, which the generated README links for documentation until the package has a capability of its own
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const SPECS_URL: string = `${GITHUB_REPOSITORY_URL}/tree/main/openspec/specs`;

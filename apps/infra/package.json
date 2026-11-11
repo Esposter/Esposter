@@ -3,18 +3,6 @@
   "version": "4.8.0",
   "private": true,
   "description": "Pulumi infrastructure code for Esposter Azure resources.",
-  "keywords": [
-    "azure",
-    "azure-native",
-    "cloud",
-    "deployment",
-    "devops",
-    "iac",
-    "infrastructure",
-    "pulumi",
-    "ts",
-    "typescript"
-  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/infra#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

@@ -3,13 +3,6 @@
   "version": "4.8.0",
   "private": true,
   "description": "A Claude Code plugin that writes the follow-ups a session leaves unfinished into an Esposter TodoList, and drains them again one change at a time until none is left.",
-  "keywords": [
-    "claude-code",
-    "claude-code-plugin",
-    "follow-ups",
-    "mcp",
-    "todo-list"
-  ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

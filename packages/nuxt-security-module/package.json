@@ -6,6 +6,7 @@
     "basic-auth",
     "content-security-policy",
     "cors",
+    "h3",
     "nitro",
     "nuxt",
     "nuxt-module",
