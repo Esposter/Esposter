@@ -4,6 +4,7 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
+import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
@@ -78,6 +79,34 @@ describe("uiSchemaForm", () => {
       expect(warn.mock.calls.filter(([warning]) => String(warning).includes("made a reactive object"))).toStrictEqual(
         [],
       );
+    });
+
+    test("draws the variant its data carries though the data holds more than the schema and a field is emptied, and redraws the fields of the variant chosen", async () => {
+      expect.hasAssertions();
+
+      const unionValidationSchema = z.discriminatedUnion("type", [
+        z.object({ name: z.string().min(1), type: z.literal("Text").readonly() }),
+        z.object({ name: z.string().min(1), step: z.number(), type: z.literal("Count").readonly() }),
+      ]);
+      const component = await mountSuspended(UiSchemaForm, {
+        props: {
+          modelValue: { id: "id", name: "", step: 1, type: "Count" },
+          "onUpdate:modelValue": (modelValue: unknown) => component.setProps({ modelValue }),
+          schema: zodToJsonSchema(unionValidationSchema),
+          validationSchema: unionValidationSchema,
+        },
+      });
+      await flushPromises();
+
+      expect(component.findComponent(UiSelect).props("modelValue")).toBe("1");
+      expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(2);
+
+      component.findComponent(UiSelect).vm.$emit("update:modelValue", "0");
+      await flushPromises();
+
+      expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([{ id: "id", name: "", type: "Text" }]);
+      expect(component.findComponent(UiSelect).props("modelValue")).toBe("0");
+      expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(1);
     });
 
     test("draws the ranked fields of a schema with a node nothing draws, and no notice for that node", async () => {

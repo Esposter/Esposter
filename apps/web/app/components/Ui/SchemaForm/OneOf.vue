@@ -4,6 +4,7 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { JsonSchema } from "@jsonforms/core";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getSchemaFormVariantIndex } from "@/services/ui/schemaForm/getSchemaFormVariantIndex";
 import { getSchemaFormVariantValue } from "@/services/ui/schemaForm/getSchemaFormVariantValue";
 import { createCombinatorRenderInfos, mapDispatchToControlProps, mapStateToOneOfProps } from "@jsonforms/core";
 
@@ -24,8 +25,9 @@ const renderInfos = computed(() =>
     control.value.uischemas,
   ),
 );
-// The variant the data is in is the one whose fixed discriminant it carries, or the first while it carries none
-const selectedIndex = computed(() => Math.max(control.value.indexOfFittingSchema, 0));
+const selectedIndex = computed(() =>
+  getSchemaFormVariantIndex(control.value.data, variants.value, control.value.indexOfFittingSchema),
+);
 const selectedRenderInfo = computed(() => renderInfos.value[selectedIndex.value]);
 const items = computed<UiSelectItem<string>[]>(() =>
   renderInfos.value.map(({ label }, index) => ({
