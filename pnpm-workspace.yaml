@@ -111,7 +111,7 @@ catalog:
   "@typesafe-ai/sdk": ^0.7.0
   "@unocss/eslint-config": ^66.12.0
   "@unocss/nuxt": ^66.12.0
-  "@unplugin-pwa/core": ^0.0.5
+  "@unplugin-pwa/core": ^0.0.6
   "@unplugin-pwa/vite": ^0.0.5
   "@vite-pwa/workbox-build": ^8.0.15
   "@vite-pwa/workbox-swkit": ^8.0.15
