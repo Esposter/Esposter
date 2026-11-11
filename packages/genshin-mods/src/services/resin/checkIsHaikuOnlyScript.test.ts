@@ -17,6 +17,10 @@ describe(checkIsHaikuOnlyScript, () => {
       "// await agent('', { model: 'opus' });\nawait agent('', { model: 'haiku' });",
     ],
     [
+      "a haiku agent beside a comment that follows an earlier line",
+      "await agent('', { model: 'haiku' });\n// note\nawait agent('', { model: 'haiku' });",
+    ],
+    [
       "a haiku agent beside a comment naming masked words",
       "// process the window\nawait agent('', { model: 'haiku' });",
     ],

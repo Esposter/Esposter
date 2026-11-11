@@ -64,7 +64,7 @@ The persona plugin runs its TypeScript under plain `node`: its enums are `const`
 | File                                          | Role                                                                                   |
 | :-------------------------------------------- | :------------------------------------------------------------------------------------- |
 | `vite.config.ts`                              | composes the formatter, linter and `run` settings; the tasks themselves are in `vite/` |
-| `vite/*Tasks.ts`, `vite/services/`            | each cached build and check, with the files it rewrites subtracted                     |
+| `vite/*Tasks.ts`, `vite/services/`            | each cached build and check; a build subtracts the files it writes                     |
 | `pnpm-workspace.yaml`                         | the `vite-plus` catalog entry and the overrides that leave one copy of each tool       |
 | `.github/actions/run-cached-task/action.yaml` | restores the task cache, runs the task, saves the cache when it executed               |
 | `scripts/src/updateNode/index.ts`             | pins node through `vp env pin` and cleans through `vp env clean`                       |

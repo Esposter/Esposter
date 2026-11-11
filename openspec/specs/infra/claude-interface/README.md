@@ -43,7 +43,7 @@ Every stage costs nothing beyond the subscription: a feature whose platform rout
 ## Not taken
 
 - **A second session beside the terminal's** over the Agent SDK: every turn out of the limits the work needs, holding none of the work. The [SDK-driven companion](../../../rejected/infra/sdk-driven-companion/design.md) is that answer.
-- **Third-party graphical front-ends**: every one surveyed solves parallel sessions and diff review, which the desktop app does, and none carries personality. The Live2D companions written for coding agents spectate the same hooks this plugin does, and each brings a window, a renderer and a voice of its own — where the viewer already on the desk and the clone already built are both the better half, and a line typed into the running session was the one thing they lack, which nobody here needs.
+- **Third-party graphical front-ends**: every one surveyed solves parallel sessions and diff review, which the desktop app does, and none carries personality. The Live2D companions written for coding agents spectate the same hooks this plugin does, and each brings a window, a renderer and a voice of its own — where the clone already built is the better half, and neither a viewer on the desk nor a line typed into the running session is wanted here.
 - **A terseness plugin kept alongside**: two forces on the voice at once is how a persona becomes a long prompt. If terseness is wanted, it is one line in the output style.
 
 ## Notes

@@ -1,7 +1,8 @@
 import { MaskFrame } from "../../models/MaskFrame";
 
-// The characters that end a line comment, as the language defines its line terminators
-const LINE_TERMINATOR_REGEX = /[\n\r\u2028\u2029]/u;
+// The characters that end a line comment, as the language defines its line terminators. Global, so the `lastIndex` set before
+// Each search is honoured and the first terminator at or after the comment is found, not the first in the script
+const LINE_TERMINATOR_REGEX = /[\n\r\u2028\u2029]/gu;
 // A quoted string's whole literal, escapes read, which a line ending before its closing quote fails to match
 const STRING_LITERAL_REGEX = /'(?:[^'\\\n]|\\[\s\S])*'|"(?:[^"\\\n]|\\[\s\S])*"/uy;
 // The template text from a position, up to its closing backtick or an interpolation's `${`
