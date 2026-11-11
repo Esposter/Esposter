@@ -34,10 +34,16 @@ interface Props {
 defineOptions({ inheritAttrs: false });
 // The content's own commands stand in the title bar before the dialog's, as an editor's save and delete do. The default
 // Slot is the body, which scrolls inside the frame; the footer slot is the row drawn under it, which never does
-defineSlots<{ actions?: () => VNode; default: () => VNode; footer?: () => VNode }>();
+defineSlots<{
+  actions?: () => VNode;
+  default: (props: { formId: string }) => VNode;
+  footer?: (props: { formId: string }) => VNode;
+}>();
 const isOpen = defineModel<boolean>({ default: false });
 const isExpanded = defineModel<boolean>("isExpanded", { default: false });
 const { isExpandable, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
+// The body and the footer both take this id, so a footer's submit names the form the body holds
+const formId = useId();
 const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
 // A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {
@@ -108,10 +114,10 @@ watchImmediate(isOpen, async (newIsOpen) => {
           </div>
         </header>
         <div v-if="$slots.default" ui-region-body :class="isBodyBare ? undefined : 'p-3'">
-          <slot />
+          <slot :form-id />
         </div>
         <footer v-if="$slots.footer" ui-region-footer>
-          <slot name="footer" />
+          <slot name="footer" :form-id />
         </footer>
       </section>
     </Dialog.Content>

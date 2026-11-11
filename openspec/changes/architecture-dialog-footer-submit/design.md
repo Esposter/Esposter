@@ -16,9 +16,10 @@ The shell already binds the submit for a dialog that composes it: `StyledFormDia
 
 ## Decisions
 
-- **Compose the form shell where the footer is only the shell's.** A dialog whose footer is Cancel and one submit takes `StyledFormDialog`, which already owns the pairing. Rejected as the only route: a dialog whose footer carries more than the shell's confirm, such as Notes, would lose its own actions.
-- **The base dialog takes the binding for a footer it does not draw.** A footer-submit binding on the base dialog hands the id to its footer slot, so a dialog with its own footer names the form without a `useId`. Rejected: a generated id in each dialog, which is the copy this change removes.
-- **The choice between the two is made in review of this change.** Both routes remove the copies. The owner picks the route before the tasks run, since the first changes which dialogs compose the shell.
+- **The base dialog hands one generated id to both its body and its footer, as a slot prop named `formId`.** A dialog that draws its own footer writes `#default="{ formId }"` on the form and `#footer="{ formId }"` on the submit, so it names the form without a `useId`. One mechanism serves all five dialogs, whatever their footer holds.
+- **Rejected: composing `StyledFormDialog` for the dialogs.** It draws Cancel beside one confirm and leaves no place for another footer action. The notes dialog has no Cancel, and its add-note submit keeps the dialog open, so the shell would change what it shows. The shell also needs a submit that answers and closes, which an add-note does not.
+- **Rejected: a generated id in each dialog.** That is the copy this change removes.
+- **`StyledFormDialog` keeps the id it already generates.** It passes the id to the styled shell as a prop and draws no footer of its own through the slot, so it has no copy of the pairing to remove.
 
 ## Key files
 

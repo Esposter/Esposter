@@ -32,8 +32,6 @@ const shareMessage = computed(() =>
   getShareMessage(note.value, `${origin}${RoutePath.View(resource.type, resource.id)}`),
 );
 const isValid = ref(true);
-// The footer sits outside the form, so its Share submits the form by this id
-const formId = useId();
 const noteRules = computed(() => [
   () =>
     shareMessage.value.length <= MESSAGE_MAX_LENGTH ||
@@ -81,34 +79,36 @@ const share = async () => {
     :title="`Share “${resource.name}”`"
     :size="UiDialogSize.Medium"
   >
-    <div v-if="isLoadingRooms" flex flex-col gap-2>
-      <UiSkeleton h-8 />
-      <UiSkeleton h-20 />
-    </div>
-    <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
-    <UiEmptyState
-      v-else-if="roomItems.length === 0"
-      description="Join or create a room in esbabbler and the public link can go straight there."
-      :meaning="UiIconMeaning.Comment"
-      title="You're not in any rooms yet"
-    >
-      <UiButtonLink :to="RoutePath.MessagesIndex">Go to esbabbler</UiButtonLink>
-    </UiEmptyState>
-    <UiForm v-else :id="formId" v-model:is-valid="isValid" flex flex-col gap-3 @submit="answer(share)">
-      <div flex flex-col gap-1>
-        <span text-muted>Room</span>
-        <UiSelect v-model="roomId" :items="roomItems" label="Room" />
+    <template #default="{ formId }">
+      <div v-if="isLoadingRooms" flex flex-col gap-2>
+        <UiSkeleton h-8 />
+        <UiSkeleton h-20 />
       </div>
-      <UiTextField
-        v-model="note"
-        :counter="MESSAGE_MAX_LENGTH"
-        label="Message (optional)"
-        :rows="3"
-        :rules="noteRules"
-      />
-      <p text-muted>The public link is posted as your own message in the room.</p>
-    </UiForm>
-    <template v-if="!isLoadingRooms && roomItems.length > 0" #footer>
+      <!-- Nothing to pick from is a reason to go make a room, not a disabled button with no explanation -->
+      <UiEmptyState
+        v-else-if="roomItems.length === 0"
+        description="Join or create a room in esbabbler and the public link can go straight there."
+        :meaning="UiIconMeaning.Comment"
+        title="You're not in any rooms yet"
+      >
+        <UiButtonLink :to="RoutePath.MessagesIndex">Go to esbabbler</UiButtonLink>
+      </UiEmptyState>
+      <UiForm v-else :id="formId" v-model:is-valid="isValid" flex flex-col gap-3 @submit="answer(share)">
+        <div flex flex-col gap-1>
+          <span text-muted>Room</span>
+          <UiSelect v-model="roomId" :items="roomItems" label="Room" />
+        </div>
+        <UiTextField
+          v-model="note"
+          :counter="MESSAGE_MAX_LENGTH"
+          label="Message (optional)"
+          :rows="3"
+          :rules="noteRules"
+        />
+        <p text-muted>The public link is posted as your own message in the room.</p>
+      </UiForm>
+    </template>
+    <template v-if="!isLoadingRooms && roomItems.length > 0" #footer="{ formId }">
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="!roomId || !isValid"

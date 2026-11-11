@@ -30,8 +30,6 @@ const { createErrorNotification } = notificationStore;
 const isOpen = ref(false);
 const parameterValues = ref<Record<string, string>>({});
 const deployments = ref<BlueprintDeployment[]>([]);
-// The footer sits outside the form, so its Deploy submits the form by this id
-const formId = useId();
 // Each open starts fresh: fields prefilled from their defaults, previous results cleared
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) return;
@@ -71,44 +69,46 @@ const deploy = async () => {
     Deploy
   </UiButton>
   <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Deploy blueprint" :size="UiDialogSize.Medium">
-    <UiForm v-if="deployments.length === 0" :id="formId" flex flex-col gap-3 @submit="deploy()">
-      <p v-if="blueprint.parameters.length === 0" text-muted>
-        This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
-      </p>
-      <div v-for="{ description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
-        <UiTextField
-          :label="title || key"
-          :model-value="parameterValues[key] ?? ''"
-          @update:model-value="parameterValues[key] = $event"
-        />
-        <p v-if="description" text-muted>{{ description }}</p>
-      </div>
-      <!-- Each entry is a row leading with its type's mark, the name it will be created with after it -->
-      <div v-if="deployReviews.length > 0" flex flex-col gap-1>
-        <p>Creates {{ deployReviews.length }} {{ pluralize("resource", deployReviews.length) }}:</p>
+    <template #default="{ formId }">
+      <UiForm v-if="deployments.length === 0" :id="formId" flex flex-col gap-3 @submit="deploy()">
+        <p v-if="blueprint.parameters.length === 0" text-muted>
+          This blueprint has no parameters. Deploy creates every entry as a new, fully wired resource.
+        </p>
+        <div v-for="{ description, key, title } of blueprint.parameters" :key flex flex-col gap-1>
+          <UiTextField
+            :label="title || key"
+            :model-value="parameterValues[key] ?? ''"
+            @update:model-value="parameterValues[key] = $event"
+          />
+          <p v-if="description" text-muted>{{ description }}</p>
+        </div>
+        <!-- Each entry is a row leading with its type's mark, the name it will be created with after it -->
+        <div v-if="deployReviews.length > 0" flex flex-col gap-1>
+          <p>Creates {{ deployReviews.length }} {{ pluralize("resource", deployReviews.length) }}:</p>
+          <ul flex flex-col>
+            <li v-for="{ description, icon, key, title } of deployReviews" :key>
+              <UiItemContent :description :icon :title />
+            </li>
+          </ul>
+        </div>
+      </UiForm>
+      <div v-else flex flex-col gap-3>
+        <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
+        <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
         <ul flex flex-col>
-          <li v-for="{ description, icon, key, title } of deployReviews" :key>
-            <UiItemContent :description :icon :title />
+          <li v-for="{ key, resource: deployed } of deployments" :key="deployed.id">
+            <NuxtLink :to="RoutePath.Resource(deployed.id)" ui-item>
+              <UiItemContent
+                :description="key"
+                :icon="ResourceDefinitionMap[deployed.type].icon"
+                :title="deployed.name"
+              />
+            </NuxtLink>
           </li>
         </ul>
       </div>
-    </UiForm>
-    <div v-else flex flex-col gap-3>
-      <p>Created {{ deployments.length }} {{ pluralize("resource", deployments.length) }}:</p>
-      <!-- Each created resource is a row leading with its type's mark, the manifest alias it came from after its name -->
-      <ul flex flex-col>
-        <li v-for="{ key, resource: deployed } of deployments" :key="deployed.id">
-          <NuxtLink :to="RoutePath.Resource(deployed.id)" ui-item>
-            <UiItemContent
-              :description="key"
-              :icon="ResourceDefinitionMap[deployed.type].icon"
-              :title="deployed.name"
-            />
-          </NuxtLink>
-        </li>
-      </ul>
-    </div>
-    <template v-if="deployments.length === 0" #footer>
+    </template>
+    <template v-if="deployments.length === 0" #footer="{ formId }">
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
         :disabled="isDeployBlocked"

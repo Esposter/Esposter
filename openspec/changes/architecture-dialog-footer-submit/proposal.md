@@ -5,7 +5,7 @@ Five dialogs put a submit in their own footer and point it at their form with th
 ## What Changes
 
 - The dialogs that submit a form from their own footer take the form id from one shared mechanism, not from a `useId` they each declare.
-- The choice is between two shapes, decided in the design: the dialogs compose the form dialog shell with their own actions in its footer, or the base dialog takes the footer-submit binding for a footer it does not draw.
+- The base dialog hands one generated form id to its body and its footer as a slot prop, decided in the design over composing the form dialog shell.
 
 ## Capabilities
 

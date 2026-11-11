@@ -12,8 +12,6 @@ const { $trpc } = useNuxtApp();
 const memberStore = useMemberStore();
 const { storeUpdateMembers } = memberStore;
 const { answer, isPending } = useDialogAnswer(isOpen);
-// The save sits in the footer, beside the form it submits, so it names the form by id
-const formId = useId();
 // The field starts on the name the row shows, so saving it as it stands writes nothing
 const editedDisplayName = ref(displayName);
 // The field saves on blur and on Enter, and Save submits. A save that changes nothing returns false, so the dialog
@@ -40,10 +38,12 @@ const save = () =>
     :title="`Display name for ${displayName}`"
     :size="UiDialogSize.Medium"
   >
-    <UiForm :id="formId" flex flex-col gap-3 @submit="save()">
-      <MessageModelRoomSettingsTypeProfileDisplayNameField v-model="editedDisplayName" @save="save()" />
-    </UiForm>
-    <template #footer>
+    <template #default="{ formId }">
+      <UiForm :id="formId" flex flex-col gap-3 @submit="save()">
+        <MessageModelRoomSettingsTypeProfileDisplayNameField v-model="editedDisplayName" @save="save()" />
+      </UiForm>
+    </template>
+    <template #footer="{ formId }">
       <UiButton :variant="UiButtonVariant.Quiet" autofocus @click="isOpen = false">Cancel</UiButton>
       <UiButton :is-pending :form="formId" type="submit" :variant="UiButtonVariant.Accent">Save</UiButton>
     </template>

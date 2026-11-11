@@ -8,7 +8,7 @@ import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
 import { noop } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe("uiDialog", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
@@ -62,7 +62,7 @@ describe("uiDialog", () => {
 
     // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the
     // Class is what is checked
-    test("A named size sets the width", async () => {
+    test("a named size sets the width", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -77,7 +77,7 @@ describe("uiDialog", () => {
       ).toStrictEqual([UiDialogSizeClassMap[UiDialogSize.Large]]);
     });
 
-    test.each(Object.values(UiDialogSize))("Each named size draws its own width class: %s", async (size) => {
+    test.each(Object.values(UiDialogSize))("each named size draws its own width class: %s", async (size) => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -92,7 +92,7 @@ describe("uiDialog", () => {
       ).toStrictEqual([UiDialogSizeClassMap[size]]);
     });
 
-    test("A named size sets the width, and no size class when none is given", async () => {
+    test("a named size sets the width, and no size class when none is given", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -113,7 +113,7 @@ describe("uiDialog", () => {
       UiDialogPlacement.DrawerEnd,
       UiDialogPlacement.DrawerStart,
       UiDialogPlacement.FullScreen,
-    ])("A named size leaves a drawer or the full screen to its own width: %s", async (placement) => {
+    ])("a named size leaves a drawer or the full screen to its own width: %s", async (placement) => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -164,8 +164,8 @@ describe("uiDialog", () => {
     });
 
     // The body is the one region the frame's flex column scrolls, so a list taller than the frame is held inside it.
-    // jsdom measures no layout, so the overflow itself is proven in a driven browser; this pins the structure it needs
-    test("A long list scrolls inside the body", async () => {
+    // Jsdom measures no layout, so the overflow itself is proven in a driven browser; this pins the structure it needs
+    test("a long list scrolls inside the body", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -183,7 +183,7 @@ describe("uiDialog", () => {
     // A tall frame stands at its placement's height rather than only being capped by it, so a two-pane body has a height
     // To divide and each pane scrolls on its own
     test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
-      "A tall dialog stands at a definite height: %s",
+      "a tall dialog stands at a definite height: %s",
       async (placement) => {
         expect.hasAssertions();
 
@@ -200,7 +200,7 @@ describe("uiDialog", () => {
     );
 
     test.each([UiDialogPlacement.High, UiDialogPlacement.Middle])(
-      "A dialog that is not tall keeps the cap its placement gives it: %s",
+      "a dialog that is not tall keeps the cap its placement gives it: %s",
       async (placement) => {
         expect.hasAssertions();
 
@@ -219,7 +219,7 @@ describe("uiDialog", () => {
       UiDialogPlacement.DrawerEnd,
       UiDialogPlacement.DrawerStart,
       UiDialogPlacement.FullScreen,
-    ])("A tall drawer or the full screen keeps its own height: %s", async (placement) => {
+    ])("a tall drawer or the full screen keeps its own height: %s", async (placement) => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -233,7 +233,7 @@ describe("uiDialog", () => {
 
     // A body draws no height of its own, so the frame sizes it to its content and only its maximum limits it. Whether a
     // Short one shows a scrollbar is the layout the browser decides, which the driven browser run proves
-    test("A short body does not scroll", async () => {
+    test("a short body does not scroll", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -246,7 +246,7 @@ describe("uiDialog", () => {
       expect(component.get("[ui-region-body]").classes()).toStrictEqual(["p-3"]);
     });
 
-    test("A bare body keeps the scroll without the padding", async () => {
+    test("a bare body keeps the scroll without the padding", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -260,7 +260,7 @@ describe("uiDialog", () => {
     });
 
     // The footer is drawn after the body rather than inside it, so a long body scrolls above the actions and not over them
-    test("The footer stays in view", async () => {
+    test("the footer stays in view", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -275,8 +275,62 @@ describe("uiDialog", () => {
       expect(component.get("[ui-region-body]").element.nextElementSibling).toBe(footer.element);
     });
 
+    // The body and the footer receive one id from the dialog, so a footer's submit names the form the body holds
+    test("a footer submit names the form its dialog holds", async () => {
+      expect.hasAssertions();
+
+      const submit = vi.fn<() => void>();
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: {
+          default: ({ formId }: { formId: string }) =>
+            h("form", {
+              id: formId,
+              onSubmit: (event: Event) => {
+                event.preventDefault();
+                submit();
+              },
+            }),
+          footer: ({ formId }: { formId: string }) => h("button", { form: formId, type: "submit" }),
+        },
+      });
+      await flushPromises();
+      component.get<HTMLButtonElement>('button[type="submit"]').element.click();
+
+      expect(submit).toHaveBeenCalledTimes(1);
+    });
+
+    // A footer can draw more than the submit, and the submit still names the form the body holds beside that action
+    test("a dialog with an extra footer action keeps it beside the submit", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, title },
+        slots: {
+          default: ({ formId }: { formId: string }) => h("form", { id: formId }),
+          footer: ({ formId }: { formId: string }) => [
+            h("button", { type: "button" }),
+            h("button", { form: formId, type: "submit" }),
+          ],
+        },
+      });
+      await flushPromises();
+
+      expect(
+        component
+          .get("footer")
+          .findAll("button")
+          .map((button) => button.attributes("type")),
+      ).toStrictEqual(["button", "submit"]);
+      expect(component.get<HTMLButtonElement>('button[type="submit"]').element.form).toBe(
+        component.get("form").element,
+      );
+    });
+
     // The body is there either way, so the footer's absence is what is checked rather than a dialog with no body at all
-    test("No footer content draws no region", async () => {
+    test("no footer content draws no region", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
@@ -291,7 +345,7 @@ describe("uiDialog", () => {
     });
 
     // The title bar draws the title and a close control beside it, so the reader can name the dialog and dismiss it
-    test("A dialog shows its title with a close control", async () => {
+    test("a dialog shows its title with a close control", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, { attachTo: document.body, props: { modelValue: true, title } });
@@ -303,7 +357,7 @@ describe("uiDialog", () => {
 
     // The body is the one region that scrolls, and the title bar and the footer sit outside it, so a long body scrolls
     // Between them and leaves both in view. jsdom lays nothing out, so the scroll itself is proven in a driven browser
-    test("A long body scrolls inside the dialog", async () => {
+    test("a long body scrolls inside the dialog", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
