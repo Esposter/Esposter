@@ -33,7 +33,7 @@ flowchart TD
 - **Each renderer maps its own props.** A layout, an object, an array or a variant calls its one core mapping function in a computed. A field calls `mapStateToControlProps` and `mapDispatchToControlProps` through `useSchemaFormControl`, which adds the field's layout meta and its issue. The state is shallow: JSON Forms' reducers return a new core for every change, so the replaced property is the only change to track, and the renderer components are never proxied.
 - **Layout meta is typed data.** A field that wants several lines, or a choice among items only the dialog knows, says so in its `layout` meta, a flag or a key of the dialog's context interface, never an expression string evaluated at runtime.
 - **The Zod schema validates.** JSON Forms runs with its validation off. The form's Zod schema checks the whole value on every change, as the dialog's error icon does, and each issue reaches the field at its path through the form's config, shown once the reader has changed that field. A rule that reads live state, a column name unique among the sheet's, is a refinement the dialog's composable builds.
-- **A variant is its discriminant.** A union's variants each fix their discriminant to a literal, which the form hides and the variant choice sets. Switching keeps the fields the variants share and anything the schema does not describe, such as a column's id, and drops the old variant's own, and a shared field the two variants pick from different lists of the dialog's context, since the new picker never offered the old choice.
+- **A variant is its discriminant.** A union's variants each fix their discriminant to a literal, which the form hides and the variant choice sets. The variant the data is in is the one whose literals it carries (`getSchemaFormVariantIndex`), never the one JSON Forms' validation accepts: data holding a column's id, or a name cleared below its minimum length, fits no variant by validation, and no variant would draw. Only a union with no literal falls back to JSON Forms' pick. Switching keeps the fields the variants share and anything the schema does not describe, such as a column's id, and drops the old variant's own, and a shared field the two variants pick from different lists of the dialog's context, since the new picker never offered the old choice.
 
 ## Decisions
 
@@ -167,6 +167,7 @@ Every issue and pull request the audit of @jsonforms/vue selected from [the JSON
 | `apps/web/app/models/ui/schemaForm/UiSchemaFormBinding.ts`         | The form a renderer takes: the core state it maps, and the dispatch its changes go through  |
 | `apps/web/app/models/ui/schemaForm/UiSchemaFormRendererProps.ts`   | What every renderer takes, the form among it                                                |
 | `apps/web/app/services/ui/schemaForm/SchemaFormRenderers.ts`       | Which renderer draws which node, by rank                                                    |
+| `apps/web/app/services/ui/schemaForm/getSchemaFormVariantIndex.ts` | The variant a union's data is in, read from its fixed discriminant                          |
 | `apps/web/app/services/ui/schemaForm/getSchemaFormVariantValue.ts` | The value a union switched to another variant keeps                                         |
 | `apps/web/app/services/ui/schemaForm/getSchemaFormLayout.ts`       | The layout meta read off a node, which JSON Forms' types leave out                          |
 | `apps/web/app/services/jsonSchema/zodToJsonSchema.ts`              | The form's JSON Schema, with its layout meta                                                |
@@ -176,7 +177,7 @@ Every issue and pull request the audit of @jsonforms/vue selected from [the JSON
 
 ## Notes
 
-- **AJV is JSON Forms'.** JSON Forms' core imports AJV and builds an instance when a form mounts, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`apps/web/configuration/vite.ts`). The app writes nothing on top of AJV: it carries no validation keywords of its own and no error-message or translation package.
+- **AJV is JSON Forms'.** JSON Forms' core imports AJV and builds an instance when a form mounts, which picks the variant of a union with no fixed discriminant. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`apps/web/configuration/vite.ts`). The app writes nothing on top of AJV: it carries no validation keywords of its own and no error-message or translation package.
 - **Every change runs each renderer's mapping again.** The reuse that keeps an unchanged binding the same object, so that a change re-renders only the fields it touches, is in the package's master branch and not taken here, so a change re-runs every mapping on the form. The package's 3.8.0 bindings did the same.
 
 ## Sources
