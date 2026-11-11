@@ -68,26 +68,25 @@ An aggregate check SHALL run its leaves, and each cached leaf SHALL replay on it
 - **THEN** each leaf replays its own recorded result
 - **AND** the aggregate records no verdict that no leaf produced
 
-### Requirement: The workspace type check runs again on every invocation
+### Requirement: The workspace type check replays on an unchanged tree and runs again on a change
 
-The workspace type check SHALL run again on every invocation rather than replay a recorded verdict.
+The workspace type check SHALL replay its recorded verdict when nothing it read changed, and SHALL run again when a file it read changed or one it looks for appears.
 
-#### Scenario: The type check on an unchanged source tree still runs
+#### Scenario: The type check on an unchanged tree replays
 
-- **GIVEN** the app's generated types can change without a source edit
-- **WHEN** the workspace type check runs on an unchanged source tree
+- **GIVEN** the workspace type check has a recorded run
+- **WHEN** it runs on an unchanged tree
+- **THEN** it replays the recorded verdict
+
+#### Scenario: The type check runs again when a file it read changes
+
+- **GIVEN** the workspace type check has a recorded run
+- **WHEN** a source file it read is edited
 - **THEN** the check runs again
 
-### Requirement: Files a command rewrites are outputs, and a build that reads what it rewrites is refused
+### Requirement: Files a command rewrites are outputs
 
-A cached task SHALL record the files its command rewrites as outputs, and the cache SHALL refuse a build that rewrites a file it also reads, naming that file.
-
-#### Scenario: A build that rewrites one of its own inputs is refused by the cache
-
-- **GIVEN** a build rewrites a file it also reads
-- **WHEN** the build is set up as a cached task
-- **THEN** the cache refuses it
-- **AND** the refusal names the file
+A cached task SHALL record the files its command rewrites as outputs, including a file it also reads.
 
 #### Scenario: A replay restores the files the task rewrites
 
