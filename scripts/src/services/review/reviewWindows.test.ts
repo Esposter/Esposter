@@ -1,9 +1,9 @@
 import type { ReviewBatchOutcome } from "#src/models/review/ReviewBatchOutcome";
 import type { ReviewWindow } from "#src/models/review/ReviewWindow";
+import type { runGit } from "#src/services/shared/runGit";
 
 import { reviewBatch } from "#src/services/review/reviewBatch";
 import { reviewWindows } from "#src/services/review/reviewWindows";
-import { runGit } from "#src/services/shared/runGit";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/review/reviewBatch"), () => ({ reviewBatch: vi.fn<typeof reviewBatch>() }));

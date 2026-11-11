@@ -9,7 +9,7 @@ const provisionTableClient = async (connectionString: string, tableName: AzureTa
   // The library allows an unencrypted connection only for the literal `UseDevelopmentStorage=true`, so an emulator named
   // By a plaintext endpoint whose parsed host is this machine is allowed explicitly. Judged on the parsed host and not on
   // The text, since `http://localhost@remote.example` begins with a loopback name and connects to the host after the `@`
-  const endpoint = /(?:^|;)TableEndpoint=([^;]*)/iu.exec(connectionString)?.[1] ?? "";
+  const endpoint = /(?:^|;)TableEndpoint=(?<endpoint>[^;]*)/iu.exec(connectionString)?.groups?.endpoint ?? "";
   const tableClient = TableClient.fromConnectionString(connectionString, tableName, {
     allowInsecureConnection: endpoint.startsWith("http://") && checkIsLocalUrl(endpoint),
   });
