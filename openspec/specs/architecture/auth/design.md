@@ -40,4 +40,5 @@ Paths relative to `apps/web`.
 ## Notes
 
 - OAuth-only is deliberate — see [users rejected: password auth](../../../rejected/user/password-auth/design.md).
+- The provider-only requirement has one exception: the development-only session route, reachable only in a development build against a local database and never in a production build. See [driven session](../driven-session/design.md).
 - Anonymous users are first-class where products support it (games persist to localStorage; the feed is readable rate-limited) — auth gates writing and personal state, not browsing.
