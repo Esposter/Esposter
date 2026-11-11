@@ -11,11 +11,15 @@ const toXmlText = (value: string) =>
   ).replaceAll("\r", "&#13;");
 
 // A name that is a valid XML name is the element's own name. Any other rides on a cell element as an attribute, and
-// The attribute is quoted, so its quotes are escaped on top of the text escape the cell's text gets
+// The attribute is quoted, so its quotes are escaped on top of the text escape the cell's text gets, and a tab or a
+// Newline is written as its reference, since a reader folds each raw one into a space
 export const serializeXmlCell = (columnName: string, cellText: string) => {
   const text = toXmlText(cellText);
   if (XML_NAME_REGEX.test(columnName)) return `<${columnName}>${text}</${columnName}>`;
 
-  const attributeValue = toXmlText(columnName).replaceAll('"', "&quot;");
+  const attributeValue = toXmlText(columnName)
+    .replaceAll('"', "&quot;")
+    .replaceAll("\t", "&#9;")
+    .replaceAll("\n", "&#10;");
   return `<${XML_CELL_ELEMENT_NAME} name="${attributeValue}">${text}</${XML_CELL_ELEMENT_NAME}>`;
 };

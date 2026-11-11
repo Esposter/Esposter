@@ -17,7 +17,7 @@ const roundTrip = async (dataSource: DataSource) => {
 };
 
 describe(serializeXml, () => {
-  test("Export and import round trip", async () => {
+  test("export and import round trip", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a b")], [createRow({ "a b": "&<" })]);
@@ -27,7 +27,7 @@ describe(serializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ "a b": "&<" }]);
   });
 
-  test("Control characters XML cannot hold are dropped and a carriage return survives the round trip", async () => {
+  test("control characters XML cannot hold are dropped and a carriage return survives the round trip", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x\u0001y\r\nz" })]);
@@ -36,7 +36,17 @@ describe(serializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "xy\r\nz" }]);
   });
 
-  test("A column name that is not a valid XML name is written as a cell name", async () => {
+  test("a tab or a newline in a column name that is not a valid XML name survives the round trip", async () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource([createColumn("a\tb\nc")], [createRow({ "a\tb\nc": "x" })]);
+    const { columns, rows } = await roundTrip(dataSource);
+
+    expect(columns.map(({ name }) => name)).toStrictEqual(["a\tb\nc"]);
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ "a\tb\nc": "x" }]);
+  });
+
+  test("a column name that is not a valid XML name is written as a cell name", async () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource(
@@ -45,7 +55,7 @@ describe(serializeXml, () => {
     );
     const blob = await serializeXml(dataSource, XML_SETTINGS, XML_MIME_TYPE);
 
-    expect(await blob.text()).toBe(
+    await expect(blob.text()).resolves.toBe(
       '<?xml version="1.0" encoding="UTF-8"?>\n<rows>\n<row><a>0</a><cell name="&quot;b&quot; &amp; c">1</cell></row>\n</rows>',
     );
   });
