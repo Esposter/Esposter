@@ -1,4 +1,4 @@
-import type { EngineInterface, On } from "claude-code";
+import type { EngineInterface } from "claude-code";
 
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -11,7 +11,7 @@ import { registerReserveGate } from "./registerReserveGate";
 // The engine's state, keyed as the gate's atoms are, set per test
 const { stateByKey } = vi.hoisted(() => ({ stateByKey: {} as Record<string, unknown> }));
 
-vi.mock("claude-code", () => ({
+vi.mock(import("claude-code"), () => ({
   atom: ({ key }: { key: string }) => ({ key }),
   read: (_$: unknown, { key }: { key: string }) => Promise.resolve(stateByKey[key]),
 }));
@@ -24,7 +24,7 @@ type Next = (launch: WorkflowLaunch) => { deny?: string };
 const register = (): { handler: Handler; letLaunchThrough: LetLaunchThrough } => {
   const catchHandler = vi.fn<(..._args: unknown[]) => void>();
   const on = vi.fn<(..._args: unknown[]) => { catch: typeof catchHandler }>(() => ({ catch: catchHandler }));
-  registerReserveGate(on as unknown as On);
+  registerReserveGate(on);
   const handler = on.mock.calls[0]?.[2] as Handler;
   const letLaunchThrough = catchHandler.mock.calls[0]?.[0] as LetLaunchThrough;
   return { handler, letLaunchThrough };
@@ -38,14 +38,13 @@ describe("registerReserveGate", () => {
   const HAIKU_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'haiku' });";
   const MIXED_SCRIPT = "await agent('first', { model: 'haiku' });\nawait agent('second', { model: 'opus' });";
 
-  const createEngine = (files: Record<string, string>, now = NOW): EngineInterface =>
-    ({
-      clock: { now: () => Promise.resolve(now) },
-      fs: {
-        exists: (path: string) => Promise.resolve(path in files),
-        read: (path: string) => Promise.resolve(files[path]),
-      },
-    }) as unknown as EngineInterface;
+  const createEngine = (files: Record<string, string>, now = NOW): EngineInterface => ({
+    clock: { now: () => Promise.resolve(now) },
+    fs: {
+      exists: (path: string) => Promise.resolve(path in files),
+      read: (path: string) => Promise.resolve(files[path]),
+    },
+  });
 
   const setReserve = (resetsAt = FUTURE_RESET) => {
     stateByKey.enabledMods = { resin: true };
@@ -62,7 +61,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { script: HAIKU_SCRIPT }, next)).toStrictEqual({});
+    await expect(handler(createEngine({}), { script: HAIKU_SCRIPT }, next)).resolves.toStrictEqual({});
     expect(next).toHaveBeenCalledWith({ script: HAIKU_SCRIPT });
   });
 
@@ -72,9 +71,9 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(
-      await handler(createEngine({ "/scripts/cleanup.js": HAIKU_SCRIPT }), { scriptPath: "/scripts/cleanup.js" }, next),
-    ).toStrictEqual({});
+    await expect(
+      handler(createEngine({ "/scripts/cleanup.js": HAIKU_SCRIPT }), { scriptPath: "/scripts/cleanup.js" }, next),
+    ).resolves.toStrictEqual({});
     expect(next).toHaveBeenCalledWith({ scriptPath: "/scripts/cleanup.js" });
   });
 
@@ -84,7 +83,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { script: MIXED_SCRIPT }, next)).toStrictEqual({
+    await expect(handler(createEngine({}), { script: MIXED_SCRIPT }, next)).resolves.toStrictEqual({
       deny: `${getReserveSummary(RESERVE_WINDOW)}. ${RESERVE_REFUSAL_INSTRUCTION}`,
     });
     expect(next).not.toHaveBeenCalled();
@@ -96,7 +95,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { name: "other" }, next)).toStrictEqual({
+    await expect(handler(createEngine({}), { name: "other" }, next)).resolves.toStrictEqual({
       deny: `${getReserveSummary(RESERVE_WINDOW)}. ${RESERVE_REFUSAL_INSTRUCTION}`,
     });
     expect(next).not.toHaveBeenCalled();
@@ -108,7 +107,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { scriptPath: "/scripts/missing.js" }, next)).toStrictEqual({
+    await expect(handler(createEngine({}), { scriptPath: "/scripts/missing.js" }, next)).resolves.toStrictEqual({
       deny: `${getReserveSummary(RESERVE_WINDOW)}. ${RESERVE_REFUSAL_INSTRUCTION}`,
     });
     expect(next).not.toHaveBeenCalled();
@@ -121,7 +120,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { script: MIXED_SCRIPT }, next)).toStrictEqual({});
+    await expect(handler(createEngine({}), { script: MIXED_SCRIPT }, next)).resolves.toStrictEqual({});
     expect(next).toHaveBeenCalledWith({ script: MIXED_SCRIPT });
   });
 
@@ -132,7 +131,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { script: MIXED_SCRIPT }, next)).toStrictEqual({});
+    await expect(handler(createEngine({}), { script: MIXED_SCRIPT }, next)).resolves.toStrictEqual({});
     expect(next).toHaveBeenCalledWith({ script: MIXED_SCRIPT });
   });
 
@@ -143,7 +142,7 @@ describe("registerReserveGate", () => {
     const { handler } = register();
     const next = vi.fn<Next>(() => ({}));
 
-    expect(await handler(createEngine({}), { script: MIXED_SCRIPT }, next)).toStrictEqual({});
+    await expect(handler(createEngine({}), { script: MIXED_SCRIPT }, next)).resolves.toStrictEqual({});
     expect(next).toHaveBeenCalledWith({ script: MIXED_SCRIPT });
   });
 
