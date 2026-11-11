@@ -206,7 +206,7 @@ catalog:
   re2js: ^2.10.0
   read-excel-file: ^9.3.14
   # @TODO: no upstream issue — waits on a vite release that depends on the next rolldown minor; the reason is the `renovate.json` rule's description
-  rolldown: ~1.2.18
+  rolldown: ~1.2.19
   rollup-plugin-visualizer: ^7.1.3
   rou3: ^1.0.0
   rxjs: ^7.8.2
