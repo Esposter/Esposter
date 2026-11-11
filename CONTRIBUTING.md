@@ -48,7 +48,7 @@ All commands run from `apps/web/` unless noted.
 pnpm dev              # start dev server
 pnpm typecheck        # type check (tsrs)
 pnpm lint             # eslint only — see the root vp run lint below for oxlint
-vp run lint:fix         # auto-fix linting — always use this, never fix manually
+vp run lint:fix       # auto-fix linting — always use this, never fix manually
 pnpm test             # vitest watch mode
 ```
 
