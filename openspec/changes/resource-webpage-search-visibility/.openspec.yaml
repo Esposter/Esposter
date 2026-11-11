@@ -1,0 +1,5 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches:
+  ["apps/web/app/components/Resource/Webpage/Settings.vue", "apps/web/app/components/Resource/Webpage/View.vue"]
