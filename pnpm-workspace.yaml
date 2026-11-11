@@ -203,7 +203,7 @@ catalog:
   postgres: ^4.1.0
   publint: ^0.3.25
   rate-limiter-flexible: ^11.4.0
-  re2js: ^2.9.1
+  re2js: ^2.10.0
   read-excel-file: ^9.3.14
   # @TODO: no upstream issue — waits on a vite release that depends on the next rolldown minor; the reason is the `renovate.json` rule's description
   rolldown: ~1.2.18
