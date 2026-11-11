@@ -19,7 +19,7 @@ const knipConfiguration: KnipConfig = {
     "apps/functions": { entry: ["src/**/*.ts"] },
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {
-      // A development route is registered by its path from a module under `nuxt dev` alone, so nothing imports it
+      // A development route's handler is registered by its path from a module under `nuxt dev` alone, so nothing imports it
       // `scripts/*/index.ts` is launched by path through `vpx` in `apps/web/package.json`, and `service-worker/sw.ts` by the
       // PWA module from `srcDir`, which knip does not follow
       entry: [
@@ -27,6 +27,7 @@ const knipConfiguration: KnipConfig = {
         "app/components/**/*.vue",
         "scripts/*/index.ts",
         "server/development/*.ts",
+        "server/services/devSession/postDevSession.ts",
         "service-worker/sw.ts",
       ],
       ignore: ["public/**", "shared/generated/**"],
@@ -75,7 +76,6 @@ const knipConfiguration: KnipConfig = {
         "src/personaCards/**/*.ts",
         "src/services/**/*.ts",
       ],
-      ignore: ["src/generated/**"],
       ignoreDependencies: ["claude-code"],
     },
     "packages/genshin-world": {

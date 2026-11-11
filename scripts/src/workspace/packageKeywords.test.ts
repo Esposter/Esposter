@@ -12,27 +12,27 @@ import { describe, expect, test } from "vitest";
  * keeps a list from being noise. Which words describe a package stays a judgement, written beside the manifest's
  * description and checked by a reader (`file-organization`, `references/new-package.md`).
  */
-// The room a list has to name what the package is, what it plugs into and what it is for, and the room past which a
-// List stops naming a package and starts listing the vocabulary near it
-const KEYWORD_COUNT_RANGE = { maximum: 10, minimum: 5 };
-// One lowercase word or hyphenated phrase: npm search matches whole tokens, so a dotted or cased spelling is a second
-// Spelling of one word
-const KEYWORD_REGEX = /^[a-z\d]+(?:-[a-z\d]+)*$/u;
-// Words true of every package here, or of the repository rather than the package, so a search for them finds nothing
-// Distinct: the language every package shares (npm shows a package's types itself), the registry, the repository
-const NOISE_KEYWORDS = new Set([
-  "javascript",
-  "js",
-  "monorepo",
-  "npm",
-  "package",
-  "shared",
-  SITE_NAME.toLowerCase(),
-  "ts",
-  "typescript",
-]);
-
 describe("package keywords", () => {
+  // The room a list has to name what the package is, what it plugs into and what it is for, and the room past which a
+  // List stops naming a package and starts listing the vocabulary near it
+  const KEYWORD_COUNT_RANGE = { maximum: 10, minimum: 5 };
+  // One lowercase word or hyphenated phrase: npm search matches whole tokens, so a dotted or cased spelling is a second
+  // Spelling of one word
+  const KEYWORD_REGEX = /^[a-z\d]+(?:-[a-z\d]+)*$/u;
+  // Words true of every package here, or of the repository rather than the package, so a search for them finds nothing
+  // Distinct: the language every package shares (npm shows a package's types itself), the registry, the repository
+  const NOISE_KEYWORDS = new Set([
+    "javascript",
+    "js",
+    "monorepo",
+    "npm",
+    "package",
+    "shared",
+    SITE_NAME.toLowerCase(),
+    "ts",
+    "typescript",
+  ]);
+
   const PUBLISHED_PACKAGES = readdirSync(resolve(REPOSITORY_ROOT, PACKAGES_DIRECTORY), { withFileTypes: true })
     .filter(
       (entry) =>
