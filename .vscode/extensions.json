@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "antfu.unocss",
-    "eamodio.gitlens",
     "GitHub.vscode-github-actions",
     "ms-azuretools.vscode-azurefunctions",
     "ms-vscode.PowerShell",
