@@ -45,6 +45,8 @@ What separates that from a computed whose browser read is genuinely safe is **wh
 
 A genuine fork, where both branches are real and reachable: `serialize`/`deserialize` choosing `Buffer` over `btoa` and `useCursorPaginationOperationData` writing into the Nuxt payload only on the server. These are the forks this page names, not the whole list. Each one exists because the _answer_ differs by environment, not because the _API_ is missing, and any other use stays only where both of its branches are real and reachable.
 
+**The alert and notification stores are forks, and their guard stays at the sink.** Each drops an entry on the server and enqueues it in the browser, and both branches are meant: the error link is registered in both environments and a top-level read in setup can fail while the server renders, so each reaches the store there, and a toast has no one to read it. The guard is the one place that decision is made. Pushing it into the callers would repeat it at every error path and leave any path that forgets it reaching the alert store's browser timer on the server. A sink with callers on both sides of the environment is not a leaf.
+
 `checkIsServer()` appearing at the top of a browser leaf is the smell this page exists to name. The question it asks there has already been answered — by a ref that reads a default, or by a phase that does not run — and asking it again is how the answers drift apart.
 
 ## Key files
