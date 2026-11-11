@@ -22,7 +22,7 @@ The primary key is `(sourceId, type, targetId)`, and `resourceLinks_target_index
 
 ## The law: a link is declared where its field is
 
-A field that holds another resource's id is written as `createResourceLinkSchema(ResourceLinkType.X)`, a `z.uuid()` registered in `resourceLinkRegistry` with its role. **That declaration is the link, and nothing else lists links**: no map per type, no projector to keep beside the schema. This is the [write once](../write-once/design.md) rule applied to references — the content schema already describes every field, so the mechanism reads it, and a new reference field anywhere is indexed by being declared.
+A field that holds another resource's id is written as `createResourceLinkSchema(ResourceLinkType.X)`, a `z.uuidv4()` registered in `resourceLinkRegistry` with its role. **That declaration is the link, and nothing else lists links**: no map per type, no projector to keep beside the schema. This is the [write once](../write-once/design.md) rule applied to references — the content schema already describes every field, so the mechanism reads it, and a new reference field anywhere is indexed by being declared.
 
 - `DatasetReference.id` is a `Dataset` link, which covers a Dashboard visual's binding, an Email's merge source and a Program's audience at once.
 - A Program's `emailId` and `surveyId` are `Email` and `Survey` links, each `.or(z.literal(""))` so the empty sentinel stays its absence.
