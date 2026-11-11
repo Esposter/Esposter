@@ -4,7 +4,7 @@
 
 ## Why not
 
-**It is the marker's shape, not an incremental one.** The app build is already gated by a [content-hash marker](../../../specs/architecture/monorepo-tooling/design.md) over every tracked file the build could read, and both invalidate on the same event — an app source edit. The only commits where they differ are those confined to `server/**` or `public/**`, which Nuxt's hash excludes; there it would skip the Vue bundle and still run Nitro.
+**It would be the only cache in front of the app build, and keyed on less than the build reads.** The app build runs on every push, and Nuxt's hash covers `srcDir/**` and its config, not the server code, the public files or the packages' built output the build also reads. A commit confined to `server/**` or `public/**` falls outside that hash, where a hit would skip the Vue bundle and still run Nitro.
 
 **That sliver is bought against correctness.** A marker key that is wrong costs a rebuild. A tar restored against Nuxt's own hash of config objects ships a bundle that does not match the source, and says nothing about having done so.
 

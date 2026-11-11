@@ -12,8 +12,8 @@ Each library package and the two apps held their built bundle and its declaratio
 
 ## What stands instead
 
-One committed record of every built file's exact size and one workspace test holding it to a fresh build. The builds are byte-identical on Windows and Linux except for the two Vue component packages, whose files that follow the checkout folder are accepted within a tolerance, so no per-platform record is needed. An equality snapshot per package had to be split by platform before, and a record that comes from the build instead of the test does not.
+One committed record of every built file's exact size and one workspace test holding it to a fresh build. The builds are byte-identical from any checkout, so no per-platform record is needed. An equality snapshot per package had to be split by platform before, and a record that comes from the build instead of the test does not.
 
 ## The revisit trigger
 
-A file outside the tolerance list turns out to differ between two machines for a reason other than the checkout folder. Then the record is written per platform, as the bench reports of a host-dependent workload are.
+A file turns out to differ between two machines. Then the record is written per platform, as the bench reports of a host-dependent workload are.

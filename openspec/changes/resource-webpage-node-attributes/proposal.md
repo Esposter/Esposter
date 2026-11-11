@@ -6,7 +6,7 @@ A webpage button can only open its link in the same tab, and no webpage node tak
 
 - A webpage button chooses the same tab or a new tab, and a new-tab link always carries the relationship that keeps the new page from reaching back.
 - Every webpage node takes an element id and a title, which its published element carries.
-- The document refuses an element id with a space, and two nodes that share an element id.
+- The document refuses an element id that is not letters, digits, hyphens and underscores within sixty-four characters, and two nodes that share an element id.
 - The Content panel edits the new-tab choice, the element id and the title.
 
 ## Capabilities

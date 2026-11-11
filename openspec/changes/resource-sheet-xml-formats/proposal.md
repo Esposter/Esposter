@@ -6,7 +6,7 @@ A sheet imports and exports CSV, JSON and XLSX. XML is the exchange format of a 
 
 - A sheet imports an XML file, reading each repeated child of the root as a row and each of the row's children as a cell.
 - A sheet exports XML, one element per row and one element per cell, with the column's name kept exactly.
-- The format is one more entry in the sheet's format map, so it appears in the import and export submenus beside the others and in the create-from-file flow, with no second place to register it.
+- The format is one more entry in the sheet's format map, so it appears in the import and export submenus beside the others and in the create-from-file flow, beside the sheet settings union and its defaults, which each take the new type.
 
 ## Capabilities
 
@@ -16,4 +16,4 @@ A sheet imports and exports CSV, JSON and XLSX. XML is the exchange format of a 
 
 ## Impact
 
-One new data source type with an empty settings schema, one codec pair, and one entry in each of the format map and the portable format map. The import goes through the same type inference, preview and content size limit as the other formats.
+One new data source type with an empty settings schema, one codec pair, and one entry in each of the format map and the portable format map, and one member in the sheet settings union and the function that builds its defaults. The import goes through the same type inference, preview and content size limit as the other formats.

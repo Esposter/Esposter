@@ -71,3 +71,22 @@ A selected shape SHALL show a handle at each connection point, and dragging a ha
 - **GIVEN** a selected Annotation shape
 - **WHEN** the owner views the canvas
 - **THEN** no connection handle shows on the annotation
+
+## MODIFIED Requirements
+
+### Requirement: An arrow binds its ends to shapes and carries arrowheads at either end
+
+An arrow SHALL bind each end to a connection point of a shape, or leave the end free at a position. It SHALL take an arrowhead at either end, each end's head being a kind of its own, and one of three path kinds: straight, curved or right-angled.
+
+#### Scenario: An arrow binds its ends to two shapes' connection points
+
+- **GIVEN** a Decision shape and a Process shape on the canvas
+- **WHEN** the owner draws an arrow from the decision's bottom point to the process's left point
+- **THEN** the arrow is bound at both ends to those connection points
+- **AND** moving either shape keeps the arrow attached to its point
+
+#### Scenario: An arrow with an arrowhead at each end
+
+- **GIVEN** an arrow bound at both ends
+- **WHEN** the owner sets an arrowhead of some kind on its start and on its end
+- **THEN** the arrow draws an arrowhead at both ends

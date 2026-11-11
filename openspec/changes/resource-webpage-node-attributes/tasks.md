@@ -8,7 +8,7 @@
 ## 2. The element id and title
 
 - [ ] 2.1 Add an element id and a title to every webpage node and write them onto the node's published element, leaving out an empty id. Verify: tests named after the scenarios 'An element id links to its element from a button', 'A title shows as the tooltip of its element' and 'An empty element id publishes no id' written first and seen failing.
-- [ ] 2.2 Refuse on save an element id that holds a space, and two nodes that share one element id. Verify: tests named after the scenarios 'An element id with a space is refused on save' and 'Two nodes with one element id are refused on save' written first and seen failing.
+- [ ] 2.2 Refuse on save an element id outside letters, digits, hyphens and underscores or past sixty-four characters, and two nodes that share one element id. Verify: tests named after the scenarios 'An element id with an unreachable character is refused on save' and 'Two nodes with one element id are refused on save' written first and seen failing.
 
 ## 3. The Content panel
 

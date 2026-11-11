@@ -18,6 +18,7 @@ The answers a completion passes are the payload a save stores, so the preview ca
 ## Decisions
 
 - **The end state reads the completion event.** The runner emits the answers of a passing completion, and that event is the preview's end state. Rejected: drawing the end state inside the runner from its completed flag. The public page's end state waits on a save that can fail, so a runner-drawn end state would show a completion the page has not stored, and the preview would need a second flag to tell the two apart.
+- **The shared column list gains the calculated values flagged for the result.** The Responses blade's columns come from the content questions alone today, so a calculated value flagged for the result has no column in either place. The list moved into shared code takes a column for each, built by the same cell builder, and the Responses blade shows them too. Rejected: a result-only column in the preview, which is the second copy of the rules that the next decision refuses.
 - **Results are read through the Responses blade's cells.** The completed answers are the payload a save stores, so the preview reads them with the dataset's column list and cell builders, moved from the server folder into shared code. Rejected: a formatter written for the preview. It would hold a second copy of the rules for checkbox answers, record answers and calculated values, and could show an owner a result the Responses blade does not then show.
 - **Restart remounts the runner.** `Preview.vue` keys the runner by a run number, and a restart raises it. The new mount starts with no answers, on the first page and with a new choice-order seed, as the runner already does each time Preview is shown. Rejected: a restart method exposed by the runner, which would be a second reset path beside the mount's own state.
 - **The results live in the preview component.** `Preview.vue` is mounted only while the preview flag is on, so leaving the preview discards its results. Rejected: the creator store holding the results, which outlives the flag and would need clearing on every toggle.
@@ -45,7 +46,7 @@ flowchart TD
 
 ## Open questions
 
-- Task 2.5's 'Completing a preview saves no response' scenario already holds: the preview passes a no-op completion listener and no save path is wired to it, so a test of that scenario passes before the change. The change owner decides whether it stays a test-first task, becomes a guard, or is dropped.
+- Task 2.5's 'Completing a preview saves no response' scenario already holds: the preview passes a no-op completion listener and no save path is wired to it, so a test of that scenario passes before the change. It stays as a test that pins it, written first and seen passing, beside the other scenario of that task, which is the one seen failing.
 
 ## Key files
 

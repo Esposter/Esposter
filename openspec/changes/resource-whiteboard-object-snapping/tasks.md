@@ -12,4 +12,5 @@
 
 ## 3. The record
 
-- [ ] 3.1 Update the whiteboard design's Decisions so 'nothing snaps' says snapping applies during a drag, and move object snapping from its deferred sentence to Features. Verify: `pnpm exec openspec validate resource-whiteboard-object-snapping --strict --no-interactive` passes.
+- [ ] 3.1 Narrow the plain-canvas requirement to a move that does not snap, and keep the snap distance as one constant in screen pixels. Verify: tests named after the scenarios 'A moved shape lands where the pointer puts it' and 'The canvas draws no grid' still pass.
+- [ ] 3.2 Update the whiteboard design's Decisions so 'nothing snaps' says snapping applies during a drag, and move object snapping from its deferred sentence to Features. Verify: `pnpm exec openspec validate resource-whiteboard-object-snapping --strict --no-interactive` passes.

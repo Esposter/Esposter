@@ -72,9 +72,9 @@ The owner SHALL set a shape's corners to sharp or round, and a round corner SHAL
 - **THEN** the patch is refused
 - **AND** the saved content is unchanged
 
-### Requirement: A freehand stroke is drawn smoothed through its points
+### Requirement: A freehand stroke is drawn smoothed along its points
 
-A freehand stroke SHALL be drawn as a smooth curve through the points the pointer passed, on the canvas and in the export.
+A freehand stroke SHALL be drawn as a smooth curve that follows the points the pointer passed, on the canvas and in the export.
 
 #### Scenario: A freehand stroke draws smoothed
 
@@ -87,4 +87,4 @@ A freehand stroke SHALL be drawn as a smooth curve through the points the pointe
 
 - **GIVEN** a freehand stroke saved before this change
 - **WHEN** the owner opens the whiteboard
-- **THEN** the stroke draws smoothed through the points it was saved with
+- **THEN** the stroke draws smoothed along the points it was saved with

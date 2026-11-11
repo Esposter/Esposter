@@ -1,6 +1,6 @@
 # Published package metadata
 
-The published packages declare no `engines`, no `repository.directory`, and ship no `LICENSE` file beside the `license` field that names one. Each is a field a stranger's install can read, none is filled, and all three stay that way.
+The published library packages declare no `engines`, except the one plugin whose runtime floor is its own, no `repository.directory`, and ship no `LICENSE` file beside the `license` field that names one. Each is a field a stranger's install can read, none is filled, and all three stay that way.
 
 ## The property they lack
 

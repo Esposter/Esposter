@@ -2,6 +2,6 @@
 
 Searching posts by title/description text.
 
-**Why deferred:** The feed is small enough to scroll, and a good implementation wants either Postgres full-text indexes or the Azure AI Search route the platform already deliberated ([platform deferred](../../resource/)) — infrastructure that should be decided once, platform-wide, not per-product.
+**Why deferred:** The feed is small enough to scroll. The platform's search is decided: the resource search tolerates typos on Postgres trigrams with no new service ([global search relevance](../../../specs/resource/global-search-relevance/design.md)), and message search runs on Azure AI Search, so a post's search would join the first as a source rather than build a third. That needs a posts group in the palette and a query over titles and descriptions, which a feed nobody has outgrown does not yet earn.
 
-**Revisit when:** the platform-level search decision lands (whichever backend), at which point posts join it as a source rather than building their own.
+**Revisit when:** a reader has to scroll past a page of the feed to find a post they know exists, and the resource search's trigram query can take posts as a source.

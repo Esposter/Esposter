@@ -10,6 +10,8 @@ Nothing of the sort runs on any upload path. Every upload in the app follows one
 - What the bytes could do is bounded by what serves them, though not uniformly. Attachments, resource assets and room emoji are reachable only through a short-lived signed url, and where the response type matters that url is signed with the type the server chose rather than the one the upload set. **Profile images are the exception** — room and user images are written into `PublicUserAssets` and handed back as the blob's own unsigned url, so what bounds those is the container being read-only to the world, not a signature. Nothing on the origin executes any of them, and every surface renders one as an `<img>`, a media element or a document viewer. The realistic exposure is a decoder bug in the reader's own browser.
 - Every upload path has the same gap, so the check belongs in one shared mechanism or nowhere. Adding it per feature produces the worst version: some paths validated, no way to tell which, and a claim of safety that only holds where somebody remembered.
 
+[Upload virus scanning](../../esbabbler/virus-scanning/design.md) is the scanning half of this check and waits on the same trigger, so the two are built as one shared mechanism.
+
 ## Revisit when
 
 The app accepts uploads from people who are not already trusted members of the room or workspace they are uploading into — a public form, an anonymous surface, or a shared drop — or a stored file starts being served to third parties outside a signed url. Either turns the decoder-bug exposure into somebody else's problem, which is when a single validating path earns its cost.

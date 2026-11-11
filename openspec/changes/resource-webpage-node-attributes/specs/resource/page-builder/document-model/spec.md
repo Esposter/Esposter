@@ -31,7 +31,7 @@ A webpage button SHALL open its link in the same tab or in a new tab, as its tar
 
 ### Requirement: A webpage node takes an element id and a title
 
-A webpage node SHALL take an element id and a title, which its published element carries.
+A webpage node SHALL take an element id and a title, which its published element carries. An element id SHALL be letters, digits, hyphens and underscores within sixty-four characters.
 
 #### Scenario: An element id links to its element from a button
 
@@ -51,9 +51,9 @@ A webpage node SHALL take an element id and a title, which its published element
 - **WHEN** the webpage is published
 - **THEN** the published element carries no id attribute
 
-#### Scenario: An element id with a space is refused on save
+#### Scenario: An element id with an unreachable character is refused on save
 
-- **GIVEN** a node whose element id holds a space
+- **GIVEN** a node whose element id holds a space or a hash
 - **WHEN** the owner saves the document
 - **THEN** the save is refused
 

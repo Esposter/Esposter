@@ -6,6 +6,6 @@ The account sweep would publish each message and reaction it removes from a shar
 
 ## Why it loses
 
-- A removal made by the sweep would reach open views by a second route, Web PubSub, that no other change in the room takes.
+- A removal made by the sweep would reach open views by a publish the sweep has never made: the functions host broadcasts a new room message to the room's Web PubSub group, but nothing it does when it removes one.
 - It adds a client event and its handling for one case: an account deleted while someone has its room open.
 - The data is already out of storage when the event is sent, so the event only corrects a view that a reload corrects too.

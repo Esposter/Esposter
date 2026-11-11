@@ -6,4 +6,4 @@ SurveyJS lets an owner translate every string of a survey into other languages i
 
 Translations touch every string a survey holds: titles, descriptions, choices, validator messages and the completion message. Each would become a map from language to text, which changes the document schema, the property grid's every text field, the runner and the summary's labels. No owner has asked for it, and the stored surveys are deleted, so the cost would be paid for a use nobody has shown.
 
-**Revisit when:** an owner asks to run one survey in two languages, or the game text work gives the app a language picker whose strings a survey should follow.
+**Revisit when:** an owner asks to run one survey in two languages, or the app gets a language picker ([internationalization](../../architecture/i18n/design.md)) whose strings a survey should follow.

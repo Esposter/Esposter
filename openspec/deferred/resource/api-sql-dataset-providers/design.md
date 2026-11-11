@@ -8,7 +8,7 @@ Both need per-user secret storage (connection strings, API keys), server-side eg
 
 ## Revisit when
 
-A user-facing need for external data materializes.
+An owner asks to chart or tabulate data that lives in a database or behind an API the app does not hold.
 
 ## Cheaper interim
 

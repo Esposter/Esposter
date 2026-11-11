@@ -8,7 +8,7 @@ A deployed resource carries no link back to its blueprint, by design ([blueprint
 
 ## Revisit when
 
-An owner deploys one blueprint often enough to lose track of its deployments — the survey funnel per client is the case to watch.
+An owner asks which deploys of a blueprint exist, or which one made a resource — the survey funnel per client is the case to watch.
 
 ## Cheaper interim
 

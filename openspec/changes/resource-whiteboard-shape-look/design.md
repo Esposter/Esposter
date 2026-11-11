@@ -4,7 +4,7 @@ This change builds on the [stroke-and-fill change](../resource-whiteboard-stroke
 
 A shape's outline, a sticky note's box and an arrow's route are sketched by a fixed offset on each point. The offset is keyed on the element's id and the point's index, and its reach is a limit constant in the export. A shape's outline is a polygon of its corners, so every shape corner is sharp today. An ellipse is a sampled outline with no corner.
 
-A freehand stroke is drawn unsketched on purpose: the export's comment says the hand that drew it is the look. It draws as a polyline through the points the pointer sampled, so a quick stroke has a visible corner at each sample. The audit rows this change takes are the rough outline, sloppiness, edge roundness, freehand smoothing and the freehand tool's look. The rough-outline row and the sloppiness row describe one control, since the reference's architect level is the one that drops the sketch.
+A freehand stroke is drawn unsketched on purpose: the export's comment says the hand that drew it is the look. It draws as a polyline through the points the pointer sampled, so a quick stroke has a visible corner at each sample. The features this change takes are the rough outline, sloppiness, edge roundness, freehand smoothing and the freehand tool's look. The rough-outline row and the sloppiness row describe one control, since the reference's architect level is the one that drops the sketch.
 
 ## How it works
 
@@ -22,14 +22,14 @@ flowchart LR
 
 ## Gap analysis
 
-The shape-look rows of the whiteboard audit, with the verdict this change gives each.
+The shape-look features of the reference whiteboard, with the verdict this change gives each.
 
 | Feature                                          | Verdict                                                                                                                                 |
 | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
 | Rough hand-drawn outline                         | Built: the architect level draws the outline without its sketch, so the sketch level is the roughness control.                          |
 | Sloppiness (architect, artist, cartoonist)       | Built on shape outlines, sticky note boxes and arrow routes. Artist is the sketch the outlines draw today.                              |
 | Edge roundness (sharp or round, adaptive radius) | Built on shapes except the ellipse, which has no corner. Sharp is the default.                                                          |
-| Freehand smoothing                               | Built on freehand strokes as one curve through the stored points, with no control.                                                      |
+| Freehand smoothing                               | Built on freehand strokes as one curve along the stored points, with no control.                                                        |
 | Freehand (draw)                                  | Built as the tool's look, which is the smoothing above. Its width is in the stroke-and-fill change, and its pressure taper is deferred. |
 
 ## Decisions
@@ -40,9 +40,9 @@ The shape-look rows of the whiteboard audit, with the verdict this change gives 
 - **The level applies to every sketched element: shapes, sticky notes and arrows.** These are the three the export sketches today. A freehand stroke is not sketched, since the hand that moved the pointer is its look, and text is not an outline. The alternative was the level on strokes too, which would sketch the one element the design keeps unsketched.
 - **The sketch moves the corners before they are rounded.** The sketch offsets each polygon corner, and rounding then joins the sketched corners with curves. The alternative was rounding first, which would give each sampled point of every arc its own offset and make each rounded corner jitter.
 - **A round corner's radius grows with the shape's size up to a limit.** The radius is a share of the shorter side, capped, so a small shape keeps its corners and a large one does not round to a pill. The alternative was one fixed radius, which rounds a small box too far or leaves a large one barely rounded. The share and the cap sit in the export constants.
-- **Corners apply to shapes, not sticky notes.** The corner setting sits on the shape model, as the audit names it, and a sticky note is a card whose corners stay sharp. The alternative was the setting on sticky notes too, which no row asks for.
+- **Corners apply to shapes, not sticky notes.** The corner setting sits on the shape model, as the reference has it, and a sticky note is a card whose corners stay sharp. The alternative was the setting on sticky notes too, which no row asks for.
 - **Every shape with corners takes the rounding, and the ellipse does not.** The rounding works on the polygon every other outline already is, so the rectangle, process, terminal, predefined process, input and output, annotation, diamond and decision all take it. The alternative was a rounding per kind, which would copy one routine into each shape.
-- **Smoothing has no control and stores nothing new.** Every freehand stroke draws as a curve through its stored points, so the stored points stay as the pointer passed them. A stroke saved before the change draws smoothed with no rewrite. The alternative was smoothing the points when the stroke is drawn, which would change the stored document, and the audit says this change needs no model change.
+- **Smoothing has no control and stores nothing new.** Every freehand stroke draws as a curve along its stored points, so the stored points stay as the pointer passed them. A stroke saved before the change draws smoothed with no rewrite. The alternative was smoothing the points when the stroke is drawn, which would change the stored document, and this change needs no model change.
 - **Smoothing is our own path function.** The curve is a quadratic through the midpoints between stored points, written in the export's path code. The alternative was the stroke library the reference uses, a new third-party dependency, and the whiteboard takes no new third-party dependency ([the rejected third-party engine](../../rejected/resource/whiteboard-third-party-engine/design.md)).
 
 ## Rejected
@@ -52,7 +52,7 @@ The shape-look rows of the whiteboard audit, with the verdict this change gives 
 
 ## Risks and trade-offs
 
-- A freehand stroke already on a board draws softer on the next view, since it is now a curve through the same points. This is the look the audit asks for, and no stored point moves.
+- A freehand stroke already on a board draws softer on the next view, since it is now a curve along the same points. This is the look the change is for, and no stored point moves.
 - A stroke with few points draws with few curves, so a short stroke stays close to a polyline. Accepted.
 - A label is centred in its box, and a round corner removes only the corner's point, so text near a corner of a small shape at the cartoonist level can touch the curve. The owner can choose a larger shape or a smaller level.
 - The canvas and the export must read the same path functions, or a sketch level or a corner would draw differently in each. Each new path function is one function both call.
@@ -91,7 +91,7 @@ Existing files this change touches, with the role each plays after it.
 New files, in a tree:
 
 ```text
-packages/vue-block-editor-headless/src/services/export/toSmoothedPathData.ts   a freehand stroke's curve through its stored points
+packages/vue-block-editor-headless/src/services/export/toSmoothedPathData.ts   a freehand stroke's curve along its stored points
 packages/vue-block-editor-headless/src/services/export/toRoundedPathData.ts    a closed outline with each sketched corner curved by the radius
 apps/web/app/components/Resource/Whiteboard/EditorPropertiesSketch.vue         the sketch level and corner controls of one element
 ```

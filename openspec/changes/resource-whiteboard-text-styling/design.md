@@ -6,7 +6,7 @@ Every text on the whiteboard is drawn by one layout. The wrap estimate reads a c
 
 Text is edited in place. The draft lives in the edit composable and is written on commit, while the element keeps drawing its committed text until then. The overlay textarea shows the draft at the placement anchor, so when the owner commits, the element's lines move to the committed text's layout.
 
-The audit rows this change takes are the text tool, the text preview while typing, font size, text alignment, text wrapping and the auto-resizing text box. Font families are a separate deferred row, since they need bundled font files and a width measure the estimate can read.
+The features this change takes are the text tool, the text preview while typing, font size, text alignment, text wrapping and the auto-resizing text box. Font families are a separate deferred row, since they need bundled font files and a width measure the estimate can read.
 
 ## How it works
 
@@ -24,7 +24,7 @@ flowchart TD
 
 ## Gap analysis
 
-The text rows of the whiteboard audit, with the verdict this change gives each.
+The text features of the reference whiteboard, with the verdict this change gives each.
 
 | Feature                               | Verdict                                                                                                                                           |
 | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -43,7 +43,7 @@ The text rows of the whiteboard audit, with the verdict this change gives each.
 - **Size applies to every text, and alignment does not reach an arrow's label.** A label's size changes its lines but not its place. Alignment would move the label off the midpoint it is placed at. The alternative was alignment on labels, which moves each label away from its anchor.
 - **Vertical alignment applies to shapes and sticky notes.** A text box's height follows its lines, so there is no box to align within. The alternative was vertical alignment on text boxes, which would have nothing to align within.
 - **An absent alignment is the kind's own alignment.** A shape's and a sticky note's text is centred, and a text box's text starts at its corner, as the placement already does, so no stored text moves. The alternative was a stored left default for every kind, which would move every existing label off centre.
-- **Auto width is the unwrapped flag, and it applies to text boxes only.** The audit names auto width as the unwrapped mode with the box sized to its text, so one flag does both. A text in a shape or a sticky note stays wrapped, since an unwrapped line would run out of its outline. The alternative was the flag on shapes, which would need the shape's own width to follow its text and so resize the shape.
+- **Auto width is the unwrapped flag, and it applies to text boxes only.** Auto width is the unwrapped mode with the box sized to its text, so one flag does both. A width handle dragged on an auto-width text box sets the box back to a wrapped width at the dragged width, since a box the owner sizes by hand is a wrapped one; a height handle leaves the flag alone. A text in a shape or a sticky note stays wrapped, since an unwrapped line would run out of its outline. The alternative was the flag on shapes, which would need the shape's own width to follow its text and so resize the shape.
 - **Auto width is measured by the estimate that wraps.** The widest line's width comes from the same estimate that wraps, so the box and its lines agree on the canvas and in the export. The alternative was measuring the rendered text in the browser, which the export cannot read, so the box and the export would fall out of step. The whiteboard design already settles the estimate.
 - **The draft is laid out as the committed text is.** The element draws its draft through the same layout, so it keeps its place and, for an auto width text box, grows as the owner types. The alternative was leaving the draft in the overlay alone, where the element is not yet drawn to fit it, so a box sized to its text would jump on commit. The overlay remains the input.
 - **The export draws committed text only.** The export is drawn from the saved document, and a draft is not saved until commit, so an export never holds a draft. This follows the whiteboard design's decision that the export is drawn from the model.

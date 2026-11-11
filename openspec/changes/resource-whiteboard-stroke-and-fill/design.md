@@ -2,7 +2,7 @@
 
 The whiteboard draws every outline, arrow route, arrowhead and label in the page's text colour, and every outline and arrow at one fixed width. The export sets the same widths from its own constants, and a freehand stroke takes the width the gesture gives it. A stroke already stores its width on the element, so the gesture's value is the only thing that sets it. No element has a dash pattern.
 
-A new shape takes its fill from the palette constants, which is white. The label on a shape draws in the page's text colour, so on a dark page a white box hides its own text. The panel holds the fill for a shape or a sticky note, and the arrow panel holds the route and the heads. Each value the panel sets goes through one property command, which the store commits as one edit. The freehand row of the audit names width as part of this work, so a freehand stroke takes the same width control.
+A new shape takes its fill from the palette constants, which is white. The label on a shape draws in the page's text colour, so on a dark page a white box hides its own text. The panel holds the fill for a shape or a sticky note, and the arrow panel holds the route and the heads. Each value the panel sets goes through one property command, which the store commits as one edit. The reference gives a freehand stroke the same width choice, so a freehand stroke takes the same width control.
 
 ## How it works
 
@@ -18,7 +18,7 @@ flowchart LR
 
 ## Gap analysis
 
-The stroke and fill rows of the whiteboard audit, with the verdict this change gives each.
+The stroke and fill features of the reference whiteboard, with the verdict this change gives each.
 
 | Feature                                 | Verdict                                                                                                                           |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
@@ -32,9 +32,9 @@ The stroke and fill rows of the whiteboard audit, with the verdict this change g
 - **An empty colour is the page text colour.** An element with no colour stored draws in the page text colour, so the page's light and dark mode still switches it. Empty is the absent value of a string under the absent-values rule. The alternative was the reference's default dark colour, which is close to invisible on a dark page, while the interface's colours are tokens that follow the selected theme ([design language](../../specs/architecture/design-language/design.md)).
 - **A new shape starts with no fill, and empty is no fill.** A shape's fill is a hex colour today. An empty value stands for no fill, which the absent-values rule allows for a string. The alternative was a word for none, a second spelling of empty, or a null value, which the repository bans.
 - **A stored shape keeps the fill it has.** Only a shape placed after this change starts with no fill. A stored white cannot be told from a white the owner chose, so a rewrite that empties every stored white would undo choices. The alternative was a backfill, which this change does not write.
-- **A sticky note keeps its yellow fill.** The audit's reason is a white default hiding light text on a shape. A sticky note is a coloured card whose fill is its colour, so only shapes start empty. The alternative was an empty fill on sticky notes, which would make a sticky note a plain box.
-- **Width takes three steps, and medium is today's width.** Medium is the width each outline, arrow and stroke already draws at, so the default changes no drawing. A stored stroke keeps the width it has. The alternative was a free number: the stored width accepts any positive value today, so a patch could draw a hairline, and the reference offers three steps.
-- **A dash pattern draws on the outline and the route.** The audit names the outline and the route paths, and no row asks for dashes on freehand strokes. The alternative was a dash pattern on every element, which is a look the verdict does not name.
+- **A sticky note keeps its yellow fill.** The reason is a white default hiding light text on a shape. A sticky note is a coloured card whose fill is its colour, so only shapes start empty. The alternative was an empty fill on sticky notes, which would make a sticky note a plain box.
+- **Width takes three steps, and medium is today's width.** Medium is the width each outline, arrow and stroke already draws at, so the default changes no drawing. A stored stroke keeps its numeric width, which the schema narrows to the three step values: the one gesture that writes a stroke has always written medium, so every stored stroke already holds a valid value and no backfill is owed. The alternative was a free number: the stored width accepts any positive value today, so a patch could draw a hairline, and the reference offers three steps.
+- **A dash pattern draws on the outline and the route.** Dashes go to the outline and the route, and nothing asks for them on freehand strokes. The alternative was a dash pattern on every element, which is a look the verdict does not name.
 - **The label takes its element's colour, and there is no separate text colour.** The label is the element's text, so one colour on the element colours both, as the reference does. The alternative was a second text colour on the same element, which no row asks for.
 - **Each value is a member of the property type.** Colour, width and dash join the fill and the arrow's route as members of the one property type the command sets, so each command sets one value and the store commits it as one edit. The alternative was a style object that the command replaces whole, which would rewrite the colour when the owner changes only the width.
 - **A stored element reads each new field's default.** A colour or a fill is a string whose empty value is its absence, under the absent-values rule, so an element with no colour draws the page text colour and a shape with no fill draws none. A width and a dash pattern are enums, and an enum takes no absent member, so each reads the value it draws at today: medium and solid. The alternative was an optional field, which the absent-values rule keeps for an absence that differs from every value, and an empty colour is not one.
@@ -43,7 +43,7 @@ The stroke and fill rows of the whiteboard audit, with the verdict this change g
 
 ## Rejected
 
-- A style preset menu of named looks. The audit asks for per-element controls, and a preset menu would be a second place to choose the same values.
+- A style preset menu of named looks. The controls are per element, and a preset menu would be a second place to choose the same values.
 - A canvas-level default for the stroke or the fill. The whiteboard has no document setting ([whiteboard layout](../../specs/resource/whiteboard-layout/design.md)), so a default lives in the code and not on the board.
 - Dashes on freehand strokes. See the decision on the dash pattern.
 
@@ -67,7 +67,7 @@ Existing files this change touches, with the role each plays after it.
 | `packages/vue-block-editor-headless/src/models/ShapeElement.ts`                      | the shape's optional colour, width and dash pattern, and an empty fill              |
 | `packages/vue-block-editor-headless/src/models/ArrowElement.ts`                      | the arrow's optional colour, width and dash pattern                                 |
 | `packages/vue-block-editor-headless/src/models/StickyNoteElement.ts`                 | the sticky note's optional colour, width and dash pattern                           |
-| `packages/vue-block-editor-headless/src/models/StrokeElement.ts`                     | the freehand stroke's optional colour, with the width it already stores             |
+| `packages/vue-block-editor-headless/src/models/StrokeElement.ts`                     | the freehand stroke's optional colour, and its width narrowed to the three steps    |
 | `packages/vue-block-editor-headless/src/models/TextElement.ts`                       | the text box's optional colour                                                      |
 | `packages/vue-block-editor-headless/src/models/PositionedElementProperty.ts`         | the property type the command sets, with a member for each new value                |
 | `packages/vue-block-editor-headless/src/services/updatePositionedElementProperty.ts` | sets each new value on the element as one edit                                      |

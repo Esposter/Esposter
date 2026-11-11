@@ -14,7 +14,7 @@ A webpage button renders a link with its address and its label, and has no targe
 - **The target is one of two choices.** Same tab and new tab are the choices an author needs, and a named target opens into a browsing context the reader may already have open. Rejected: a free target name, which would accept a window name a reader can open into.
 - **A new-tab link always carries the safe relationship, and keeps the author's own.** The new page can reach back to the page that opened it unless the link carries that relationship, and an author who sets a relationship such as nofollow would otherwise drop it. Rejected: adding the relationship only when the author sets none, which drops it the moment an author sets another. Rejected: leaving the relationship to the author, which publishes an unsafe link by default.
 - **The element id is its own prop, apart from the node id.** The node id is minted, names the node's class, and renaming it would break the node's styles. Rejected: using the node id as the element id, for that reason.
-- **An element id is letters, digits, hyphens and underscores, within a length bound.** The HTML rule admits every character but whitespace, and a hash or a question mark in an id is one a fragment link cannot reach, so the author's link would silently miss it. Rejected: the HTML rule's character set, for that reason.
+- **An element id is letters, digits, hyphens and underscores, within sixty-four characters.** The HTML rule admits every character but whitespace, and a hash or a question mark in an id is one a fragment link cannot reach, so the author's link would silently miss it. Rejected: the HTML rule's character set, for that reason.
 - **A repeated element id is refused on save.** A fragment link goes to the first element with that id, so a second element is unreachable and the author would not see why. Rejected: renaming the second element silently, which sends a link to the wrong element with no message. The save refusal is the one the document already gives a repeated node id.
 - **The title is free text in the node text bound, and the render escapes it.** Any element can carry a tooltip, so the title is on every node rather than on the types that show one. Rejected: a title only on images, which leaves a link or a heading without one.
 
@@ -30,10 +30,6 @@ A webpage button renders a link with its address and its label, and has no targe
 ## Not built
 
 - A check that a fragment link names an element id the page holds. The critique reports the links it can read from the document, and a fragment check is a separate rule over the page's ids.
-
-## Open questions
-
-- The element id rule conflicts across the change. The Decision above admits only letters, digits, hyphens and underscores within a length bound, but the proposal, the document-model scenarios and task 2.2 refuse only an id with a space, so an id such as `price#1` is refused under this design and accepted under the spec. The owner decides which rule governs, and what the length bound is, since the design names none.
 
 ## Key files
 

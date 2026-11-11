@@ -1,6 +1,6 @@
 # Zen mode
 
-A control that hides the toolbar, the view and the properties panel, so that only the canvas is shown.
+A control that hides the toolbar, the view and the properties panel, so that only the canvas is shown. The page builders' "Fullscreen editor" rows are the same control, since the browser's own full-screen mode already gives an editor the whole window and an in-app one is only the editor shell hiding its regions, so this is the one record for hiding an editor's chrome.
 
 ## Why deferred
 

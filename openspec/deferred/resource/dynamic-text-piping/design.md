@@ -4,6 +4,6 @@ SurveyJS pipes an answer into a title, a description or a choice text, so a ques
 
 ## Why deferred
 
-Titles and choice texts render as stored, and no text substitution runs in them (`apps/web/app/components/Resource/Survey/Runner.vue`). The expression language returns values to checks and calculated values, not to a title. A piped text needs the language to hand text-valued reads to the runner, and the titles to take them. The [inline-editing change](../../../changes/resource-survey-creator-inline-editing/design.md) defers it until that expression-language change comes first.
+Titles and choice texts render as stored, and no text substitution runs in them (`apps/web/app/components/Resource/Survey/Runner.vue`). The expression language reads and returns text, since it has text functions, but it hands its values to checks and calculated values, not to a title. A piped text needs the runner to substitute a read into a title, a description or a choice text, and those to take it. The [inline-editing change](../../../changes/resource-survey-creator-inline-editing/design.md) defers it until that expression-language change comes first.
 
-**Revisit when:** the expression language gains text-valued reads.
+**Revisit when:** an owner asks to name an earlier answer in a later title, and a calculated value in the text does not do.

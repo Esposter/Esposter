@@ -38,3 +38,22 @@ The canvas SHALL draw a guide line for each alignment a drag currently holds and
 - **WHEN** the owner is still dragging
 - **THEN** a guide line runs along the aligned edge
 - **AND** the guide is gone once the owner releases the pointer
+
+## MODIFIED Requirements
+
+### Requirement: The canvas is plain
+
+The canvas SHALL draw its elements on a plain background and SHALL draw no grid. A resize and a placement SHALL land where the pointer puts them, a move SHALL land where the pointer puts it unless it snaps to another element, and the editor SHALL hold no snap setting.
+
+#### Scenario: A moved shape lands where the pointer puts it
+
+- **GIVEN** a Process shape on the canvas with no other element within the snap distance
+- **WHEN** the owner drags the shape by an offset that is not a multiple of any step
+- **THEN** the shape's top-left corner has moved by exactly that offset
+
+#### Scenario: The canvas draws no grid
+
+- **GIVEN** an open whiteboard
+- **WHEN** the canvas is drawn
+- **THEN** it draws no grid pattern behind the elements
+- **AND** the toolbar offers no snap toggle

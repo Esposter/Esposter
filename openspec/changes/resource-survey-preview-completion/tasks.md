@@ -6,9 +6,9 @@
 
 - [ ] 2.1 Mount the preview in place of the canvas with the runner keyed by the run number, replacing the no-op completion listener with a handler that holds the answers, and draw them as a table of the Responses blade's columns and cells. Verify: a test named after the scenario 'Completing a preview shows its answers as a table' written first and seen failing.
 - [ ] 2.2 Add the JSON view of the same answers beside the table. Verify: a test named after the scenario 'The JSON view shows the same answers' written first and seen failing.
-- [ ] 2.3 Include the calculated values flagged for the result in the answers the results show. Verify: a test named after the scenario 'A calculated value flagged for the result is in the results' written first and seen failing.
+- [ ] 2.3 Include the calculated values flagged for the result in the answers the results show, as a column of the shared column list the Responses blade also reads, so the blade shows them too. Verify: a test named after the scenario 'A calculated value flagged for the result is in the results' written first and seen failing.
 - [ ] 2.4 Offer Preview Survey Again, which raises the run number, and clear the results when the owner leaves the preview. Verify: tests named after the scenarios 'Preview Survey Again starts the survey from its first page' and 'Leaving the preview clears its results' written first and seen failing.
-- [ ] 2.5 Save nothing on completion, and show a blocked completion's error with no results. Verify: tests named after the scenarios 'Completing a preview saves no response' and 'A preview blocked by an error shows the error and no results' written first and seen failing.
+- [ ] 2.5 Save nothing on completion, and show a blocked completion's error with no results. Verify: a test named after the scenario 'A preview blocked by an error shows the error and no results' written first and seen failing, and a test named after 'Completing a preview saves no response' written first and seen passing, since the preview already wires no save and the test pins it.
 
 ## 3. The record
 
