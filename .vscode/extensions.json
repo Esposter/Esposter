@@ -1,14 +1,11 @@
 {
   "recommendations": [
-    "aaron-bond.better-comments",
     "antfu.unocss",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
     "GitHub.vscode-github-actions",
     "ms-azuretools.vscode-azurefunctions",
     "ms-vscode.PowerShell",
     "oxc.oxc-vscode",
-    "PKief.material-icon-theme",
     "pulumi.pulumi-vscode-tools",
     "ubugeeei.vize",
     "vitest.explorer",
