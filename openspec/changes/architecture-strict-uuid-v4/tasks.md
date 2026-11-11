@@ -2,7 +2,7 @@
 
 ## 1. The fixed ids
 
-- [ ] 1.1 The shared constant is the all-zero v4 and every fixed id builds on it. Verify: `AUTOMOD_USER_ID` and `NO_SURVEY_ID` read `ZERO_UUID`, and a hand-typed id no test holds remains.
+- [x] 1.1 The shared constant is the all-zero v4 and every fixed id builds on it. Verify: `AUTOMOD_USER_ID` and `NO_SURVEY_ID` read `ZERO_UUID`, and a search of the test files finds no spelled-out id but the seeded ones of the SVG test.
 
 ## 2. The id sources
 

@@ -27,7 +27,7 @@ flowchart TB
   read --> authed[Authed middleware passes the request]
 ```
 
-A run stays off the owner's data at both stores. The seed writes to a database of its own on the owner's local Postgres server, and the driver starts the server with the database address overridden to that database. The configuration loader fills a key from the `.env` file only when the process environment does not already hold it, so the override reaches the app and the migrator that runs with it. The seed's messages go to a storage emulator the driver starts at its own location and ports, and the driver overrides the storage connection string to point there. The owner's emulator starts only for the default connection string, which the run no longer uses.
+A run stays off the owner's data at both stores. The seed writes to a database of its own on the owner's local Postgres server, and the driver starts the server with the database address overridden to that database. The configuration loader fills a key from the `.env` file only when the process environment does not already hold it, so the override reaches the app and the migrator that runs with it. The seed's messages go to a storage emulator the driver starts at its own location and ports, and the driver overrides the storage connection string to point there. The owner's emulator starts only for the default connection string, so a run that names its own never starts it.
 
 ```mermaid
 flowchart TB
@@ -54,7 +54,7 @@ The driver step itself is a post to the route followed by the page visits, writt
 
 **Infrastructure** is what the owner's machine already runs: the local Postgres server and the local storage emulator. A run adds one database on that Postgres server and one emulator at its own location and ports. No Azure resource is created or written, and no new service is introduced.
 
-**Failure and retry.** The route writes one session row per accepted post, and the driver posts once per run. A refused post writes nothing. The seed upserts by fixed identifiers, so a run that fails partway is finished by the next run. A seed aimed at a forbidden target stops before its first write, so a refusal leaves both stores as they were. A run whose emulator is missing fails at the seed's first table write, and the Postgres rows the seed wrote before that stay in place for the next run to converge.
+**Failure and retry.** The route writes one session row per accepted post, and the driver posts once per run. A refused post writes nothing. The seed upserts by fixed identifiers, so a run that fails partway is finished by the next run. A seed aimed at a forbidden target stops before its first write, so a refusal leaves both stores as they were. A run whose emulator is missing fails while the seed provisions its tables, before any row is written.
 
 ## Decisions
 

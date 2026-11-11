@@ -6,8 +6,25 @@ import { maskScriptCode } from "./maskScriptCode";
 
 // Names a script can reach an agent, or a run of other code, through without spelling `agent(` in its code: a saved
 // Workflow, code evaluated from a string, a constructor reached through a value, and the objects a name is looked up on
-const HIDDEN_CALL_REGEX =
-  /(?<![\w$])(?:Function|Reflect|constructor|eval|globalThis|import|process|require|self|this|window|workflow)(?![\w$])/u;
+const HIDDEN_NAMES = [
+  "Function",
+  "Reflect",
+  "constructor",
+  "eval",
+  "global",
+  "globalThis",
+  "import",
+  "process",
+  "require",
+  "self",
+  "this",
+  "window",
+  "workflow",
+];
+const HIDDEN_CALL_REGEX = new RegExp(String.raw`(?<![\w$])(?:${HIDDEN_NAMES.join("|")})(?![\w$])`, "u");
+// A name written as a quoted property, which the mask blanks with the rest of the string: `hub['agent']` reaches the agent
+// And `({})['constructor']` reaches the constructor, neither spelling `agent(` nor the name in code
+const QUOTED_ACCESS_REGEX = new RegExp(String.raw`\[\s*(['"${"`"}])(?:agent|${HIDDEN_NAMES.join("|")})\1\s*\]`, "u");
 const AGENT_CALL_REGEX = /(?<![\w$])agent\s*\(/gu;
 const AGENT_NAME_REGEX = /(?<![\w$])agent(?![\w$])/gu;
 
@@ -17,7 +34,7 @@ const AGENT_NAME_REGEX = /(?<![\w$])agent(?![\w$])/gu;
 export const checkIsHaikuOnlyScript = (script: string | undefined): boolean => {
   if (script === undefined) return false;
   const code = maskScriptCode(script);
-  if (code === undefined || HIDDEN_CALL_REGEX.test(code)) return false;
+  if (code === undefined || HIDDEN_CALL_REGEX.test(code) || QUOTED_ACCESS_REGEX.test(script)) return false;
   const calls = [...code.matchAll(AGENT_CALL_REGEX)];
   const names = [...code.matchAll(AGENT_NAME_REGEX)];
   // The second argument of each call is the options, an object literal and nothing else after it in the call

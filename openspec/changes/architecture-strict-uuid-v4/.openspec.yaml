@@ -1,11 +1,4 @@
 schema: spec-driven
 affected_areas: [architecture]
 x-model: claude-sonnet-5-5
-x-touches:
-  [
-    "packages/shared/src/services/uuid/constants.ts",
-    "packages/db-schema/src/services/message/constants.ts",
-    "apps/web/shared/services/pageBuilder/constants.ts",
-    ".agents/skills/zod/references/zod-4-apis.md",
-    ".agents/skills/test-values/references/canonical-values.md",
-  ]
+x-touches: [".agents/skills/zod/references/zod-4-apis.md", ".agents/skills/test-values/references/canonical-values.md"]

@@ -25,6 +25,7 @@ describe(checkIsHaikuOnlyScript, () => {
       "await agent(\"write agent('', { model: 'opus' }) into the report\", { model: 'haiku' });",
     ],
     ["a haiku agent whose prompt names masked words", "await agent('process the window', { model: 'haiku' });"],
+    ["a trailing comma after the options", "await agent('', { model: 'haiku' },);"],
     [
       "a haiku agent after an emoji in an earlier prompt",
       "await agent('🚀', { model: 'haiku' });\nawait agent('', { model: 'haiku' });",
@@ -119,6 +120,9 @@ describe(checkIsHaikuOnlyScript, () => {
     ["globalThis", "const hub = globalThis;"],
     ["self", "const hub = self;"],
     ["window", "const hub = window;"],
+    ["global", "const hub = global;"],
+    ["a name in a quoted bracket", "const run = hub['agent'];"],
+    ["a constructor in a quoted bracket", "const make = ({})['constructor']['constructor'];"],
   ])("refuses a script that reaches %s beside a haiku agent", (_name, reach) => {
     expect.hasAssertions();
 

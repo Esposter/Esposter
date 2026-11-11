@@ -85,7 +85,7 @@ Do not assemble the boolean structure by hand. `deserializeClause` is the invers
 ```ts
 import { BinaryOperator, CompositeKeyPropertyNames, getTableNullClause, serializeClauses } from "@esposter/azure";
 
-const roomId = "00000000-0000-0000-0000-000000000000";
+const roomId = crypto.randomUUID();
 const filter = serializeClauses([
   { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
   getTableNullClause("deletedAt"),

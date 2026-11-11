@@ -23,7 +23,7 @@ Sources of ids that might not be v4 are listed and answered first: the auth libr
 
 | Source                                                 | Role                                                      |
 | :----------------------------------------------------- | :-------------------------------------------------------- |
-| `packages/shared/src/services/uuid/constants.ts`       | `ZERO_UUID`, the all-zero v4 every fixed id builds on     |
+| `packages/shared/src/util/id/uuid/constants.ts`        | `ZERO_UUID`, the all-zero v4 every fixed id builds on     |
 | `packages/db-schema/src/services/message/constants.ts` | `AUTOMOD_USER_ID`, the reserved moderation actor          |
 | `apps/web/shared/services/pageBuilder/constants.ts`    | `NO_SURVEY_ID`, the "no survey" sentinel                  |
 | `apps/web/shared/util/id/uuid/checkIsUuidV4.ts`        | The strict v4 check the client already guards routes with |

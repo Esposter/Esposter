@@ -41,8 +41,8 @@ export const maskScriptCode = (script: string): string | undefined => {
       frames.push(MaskFrame.Template);
       index++;
     } else if (script.startsWith("//", index)) {
-      const end = script.slice(index).search(LINE_TERMINATOR_REGEX);
-      const stop = end === -1 ? script.length : index + end;
+      LINE_TERMINATOR_REGEX.lastIndex = index;
+      const stop = LINE_TERMINATOR_REGEX.exec(script)?.index ?? script.length;
       spans.push([index, stop]);
       index = stop;
     } else if (script.startsWith("/*", index)) {

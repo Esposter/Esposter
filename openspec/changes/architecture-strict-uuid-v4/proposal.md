@@ -1,6 +1,6 @@
 ## Why
 
-Every id the repo mints is a v4: Postgres `gen_random_uuid()` for a row, `crypto.randomUUID()` for a client-made one. The validators accept more than that: `z.uuid()` takes versions 1 to 8 and the all-zero nil UUID, so an id that no code path makes still passes input validation, and a fixed id written by hand can be spelled in a form that only some validators accept. One strictness, applied everywhere, makes the validators say what the data is.
+Every id the app mints for its own rows is a v4: Postgres `gen_random_uuid()` for a row, `crypto.randomUUID()` for a client-made one. The validators accept more than that: `z.uuid()` takes versions 1 to 8 and the all-zero nil UUID, so an id that no code path makes still passes input validation, and a fixed id written by hand can be spelled in a form that only some validators accept. One strictness, applied everywhere, makes the validators say what the data is.
 
 ## What Changes
 
@@ -16,4 +16,4 @@ Every id the repo mints is a v4: Postgres `gen_random_uuid()` for a row, `crypto
 
 ## Impact
 
-Every schema that declares an id field, the id schemas shared between packages, and the router inputs that take an id. No stored data changes, since every stored id is already v4 and the two fixed ones (`AUTOMOD_USER_ID`, `NO_SURVEY_ID`) are the all-zero v4.
+Every schema that declares an id field, the id schemas shared between packages, and the router inputs that take an id. No stored row changes: `AUTOMOD_USER_ID` was already the all-zero v4, and `NO_SURVEY_ID` moved from the nil UUID to it with no migration, since nothing is in production.
