@@ -54,7 +54,13 @@ const items = computed<UiSelectItem<string>[]>(() =>
             if (variant)
               handleChange(
                 control.path,
-                getSchemaFormVariantValue(control.data, variants, variant, control.rootSchema),
+                getSchemaFormVariantValue(
+                  control.data,
+                  variants,
+                  variant,
+                  control.rootSchema,
+                  control.indexOfFittingSchema,
+                ),
               );
           }
         "

@@ -7,12 +7,14 @@ import { createDefaultValue } from "@jsonforms/core";
 // A union switched to another variant keeps what the reader filled in that the new variant has too, and anything the
 // Schema does not describe — a column's id — while the fields only the other variants have go, and the new variant's
 // Fixed discriminant is set. A shared field picked from a different list of the context goes too: a number column
-// Kept by a variant that picks among string columns is a choice the new picker never offered
+// Kept by a variant that picks among string columns is a choice the new picker never offered. The variant the data is
+// In is read the same way the form shows it, with the same fitting index
 export const getSchemaFormVariantValue = (
   data: unknown,
   variants: JsonSchema[],
   variant: JsonSchema,
   rootSchema: JsonSchema,
+  fittingIndex = 0,
 ) => {
   const variantProperties = variant.properties ?? {};
   const otherVariantKeys = new Set(
@@ -20,7 +22,7 @@ export const getSchemaFormVariantValue = (
   );
   const value: Record<string, unknown> = { ...createDefaultValue(variant, rootSchema) };
   if (typeof data === "object" && data !== null) {
-    const sourceProperties = variants[getSchemaFormVariantIndex(data, variants)]?.properties ?? {};
+    const sourceProperties = variants[getSchemaFormVariantIndex(data, variants, fittingIndex)]?.properties ?? {};
     for (const [key, keyValue] of Object.entries(data))
       if (
         !otherVariantKeys.has(key) &&

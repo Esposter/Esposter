@@ -22,6 +22,27 @@ describe(getSchemaFormVariantValue, () => {
     });
   });
 
+  test("reads the variant the data is in from the fitting index when the union has no fixed discriminant", () => {
+    expect.hasAssertions();
+
+    const stringsVariant: JsonSchema = {
+      properties: { col: { layout: { itemsKey: "strings" }, type: "number" }, n: { type: "number" } },
+    };
+    const numbersVariant: JsonSchema = {
+      properties: { col: { layout: { itemsKey: "numbers" }, type: "number" }, size: { type: "number" } },
+    };
+
+    expect(
+      getSchemaFormVariantValue(
+        { col: 5, size: 1 },
+        [stringsVariant, numbersVariant],
+        stringsVariant,
+        stringsVariant,
+        1,
+      ),
+    ).toStrictEqual({});
+  });
+
   test("drops a picked field whose picker reads another list of the context, and keeps it where the list is the same", () => {
     expect.hasAssertions();
 
