@@ -37,7 +37,7 @@ onUnmounted(() => {
      close mark, rather than on a row of its own, and the heading stays put while the list under it scrolls -->
 <template>
   <aside aria-label="Version history" w="full sm:1/3" flex flex-col min-h-0 ui-guide ui-body>
-    <div py-2 pl-3 pr-2 flex gap-1 shrink-0 items-center>
+    <div py-2 pl-3 pr-2 flex shrink-0 gap-1 items-center>
       <h2 flex-1 min-w-0 truncate ui-heading>Version history</h2>
       <!-- Only a publishable type has two channels to tell apart, so the filter exists where it means something and
         nowhere else — on every other type the timeline is revisions and nothing but -->
