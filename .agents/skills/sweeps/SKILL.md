@@ -13,6 +13,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 ## Settled — do not re-propose
 
+- **Copying a reading pass's findings into a ledger's rows.** A row is a unit and its state, and the findings are what the sweep's own read of that unit finds again, so a copy goes stale with every edit and carries the file and line citations the repo's prose does not hold. A finding that names a shape in several units is judged once, as built, deferred or rejected, and a single-site one is fixed where it stands or found again by the sweep of its unit.
 - **Filing a sweep as an OpenSpec change.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`openspec/changes/`).
 - **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts; state lives at the leaf (`references/ledger-files.md`).
 - **Splitting a ledger's units across parallel agents before a pilot has set the carve-outs.** A unit's carve-outs carry to the next, so one row is read first and its findings written into the brief; only then do the rows run one agent each, in parallel (`references/one-pass.md`, "Who decides the edit").

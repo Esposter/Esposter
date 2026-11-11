@@ -31,7 +31,7 @@ Each row is a feature of Excalidraw, the reference product, with the verdict thi
 
 ## Risks and trade-offs
 
-- The stored arrows are rewritten once. Until the rewrite reaches a whiteboard, a save of that whiteboard fails its parse, so the rewrite runs on each store until it reports no flag left.
+- The stored arrows are brought to the new shape by a backfill, as the `backfills` skill sets out: a throwaway script, run on dev and then on prod, that leaves no trace in the tree. Until it reaches a whiteboard, a save of that whiteboard fails its parse, so it is re-run until it reports no flag left.
 - The helper copies the kind of the shape it starts from. A flowchart step of another kind takes one change in the panel.
 - The helper places its shape where the pointer is released, at the default size, so a release close to the source can place the new shape over it.
 

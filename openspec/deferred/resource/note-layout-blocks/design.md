@@ -8,4 +8,4 @@ None of them is in Tiptap's StarterKit, and each needs a custom node designed tw
 
 ## Revisit when
 
-The slash menu has shipped and someone asks for one of these blocks by name. That one block is proposed on its own, not the set.
+Someone asks for one of these blocks by name; the slash menu is built, so a block is one more item in it. That one block is proposed on its own, not the set.

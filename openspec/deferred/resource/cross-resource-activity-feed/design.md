@@ -8,7 +8,7 @@ The [activity log](../../../specs/resource/activity-log/design.md) partitions by
 
 ## Revisit when
 
-The per-resource activity blade ships and multi-resource workflows make "what changed lately across everything" a question users actually ask — or collaboration lands, at which point the feed shows _other people's_ actions and earns the second table.
+Multi-resource workflows make "what changed lately across everything" a question users actually ask — or collaboration lands, at which point the feed shows _other people's_ actions and earns the second table.
 
 ## Cheaper interim
 
