@@ -21,7 +21,7 @@ flowchart LR
 
 ## What is deliberately not in it
 
-- **No multi-card, categories, callout images or conditional formatting** (the modern Power BI card's layout options). One number per Card; a second number is a second Card on the grid.
+- **No multi-card, categories, callout images or conditional formatting** ([a Table's conditional formatting is deferred](../../../deferred/resource/dashboard-conditional-formatting/design.md); the modern Power BI card's layout options). One number per Card; a second number is a second Card on the grid.
 - **No matrix (pivot) visual.** A Table grouped by one column covers the exact-values need; a pivot is the Sheet's job.
 - **No cross-highlighting from a Table row.** Linked highlighting belongs to the charts.
 - **The binding form asks for an X column a card ignores.** A card's query takes its one value over every row, but `DatasetQuery.xColumn` is required, so the field stays until that query shape is made optional, a change to the shared dataset query rather than to the card.
