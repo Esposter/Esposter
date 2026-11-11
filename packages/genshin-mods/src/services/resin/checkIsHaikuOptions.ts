@@ -5,8 +5,8 @@ const MODEL_KEY_REGEX = /(?<![\w$])model(?![\w$])/gu;
 const HAIKU = "haiku";
 
 // Whether the options object between openIndex and closeIndex names the haiku model as its one `model` key, at its own
-// top level, with a plain quoted literal as the value. A spread, a computed key, a quoted or escaped key, a second or
-// non-key `model` and any value beyond the literal each refuse it, since each could move the model somewhere else
+// Top level, with a plain quoted literal as the value. A spread, a computed key, a quoted or escaped key, a second or
+// Non-key `model` and any value beyond the literal each refuse it, since each could move the model somewhere else
 export const checkIsHaikuOptions = (script: string, code: string, openIndex: number, closeIndex: number): boolean => {
   let depth = 0;
   let topLevel = "";

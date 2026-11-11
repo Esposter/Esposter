@@ -12,6 +12,8 @@ import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
+const mountCard = () => mountSuspended(UserSessionsCard, { props: { section: UserSettingsPageSection.Sessions } });
+
 describe("userSessionsCard", () => {
   const { trpcMsw } = setupMswTrpc();
   const session: SessionSummary = {
@@ -20,7 +22,6 @@ describe("userSessionsCard", () => {
     isCurrent: false,
     updatedAt: new Date(0),
   };
-  const mountCard = () => mountSuspended(UserSessionsCard, { props: { section: UserSettingsPageSection.Sessions } });
 
   test("draws the loading rows while the sessions are out", async () => {
     expect.hasAssertions();

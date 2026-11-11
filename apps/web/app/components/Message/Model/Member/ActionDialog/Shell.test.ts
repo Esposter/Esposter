@@ -14,6 +14,18 @@ vi.mock(import("@/composables/message/moderation/useExecuteAdminAction"), () => 
   useExecuteAdminAction: vi.fn<typeof useExecuteAdminAction>(),
 }));
 
+const mountShell = () =>
+  mount(Shell, {
+    attachTo: document.body,
+    props: {
+      getInput: () => ({ roomId: "", targetUserId: "", type: AdminActionType.Warn }),
+      modelValue: true,
+      submitLabel: "Timeout",
+      submitVariant: UiButtonVariant.Danger,
+      title: "Timeout user",
+    },
+  });
+
 describe("messageModelMemberActionDialogShell", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
@@ -21,18 +33,6 @@ describe("messageModelMemberActionDialogShell", () => {
     beforeEach(() => {
       setActivePinia(createPinia());
     });
-
-    const mountShell = () =>
-      mount(Shell, {
-        attachTo: document.body,
-        props: {
-          getInput: () => ({ roomId: "", targetUserId: "", type: AdminActionType.Warn }),
-          modelValue: true,
-          submitLabel: "Timeout",
-          submitVariant: UiButtonVariant.Danger,
-          title: "Timeout user",
-        },
-      });
 
     // `happy-dom` does not apply autofocus, so the attribute is what holds the focus: Dialog.vue leaves the dialog
     // Unfocused for a control that asks for it, and the browser then focuses Cancel rather than the submit

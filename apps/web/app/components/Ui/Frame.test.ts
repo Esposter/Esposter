@@ -7,7 +7,7 @@ describe("uiFrame", () => {
   // The body is the one region the frame's column scrolls, so a body taller than the frame is held inside it while the
   // Title bar and the footer stay pinned around it. jsdom measures no layout, so the overflow itself is proven in a
   // Driven browser; this pins the order and the scroll owner it needs
-  test("A long body scrolls under a pinned title bar and footer", () => {
+  test("a long body scrolls under a pinned title bar and footer", () => {
     expect.hasAssertions();
 
     const component = mount(UiFrame, {
@@ -17,7 +17,7 @@ describe("uiFrame", () => {
     const body = component.get("[ui-region-body]");
     const section = component.get("section").element;
 
-    expect(Array.from(section.children)).toStrictEqual([
+    expect([...section.children]).toStrictEqual([
       component.get("header").element,
       body.element,
       component.get("footer").element,
@@ -26,7 +26,7 @@ describe("uiFrame", () => {
   });
 
   // A frame with no title, actions or footer has nothing to pin, so it draws its body alone
-  test("A frame with no title draws only the body", () => {
+  test("a frame with no title draws only the body", () => {
     expect.hasAssertions();
 
     const component = mount(UiFrame, { slots: { default: () => h("p", "a") } });
@@ -36,7 +36,7 @@ describe("uiFrame", () => {
     expect(component.find("[ui-region-body]").exists()).toBe(true);
   });
 
-  test("A frame body is padded", () => {
+  test("a frame body is padded", () => {
     expect.hasAssertions();
 
     const component = mount(UiFrame, { props: { title: "title" }, slots: { default: () => h("p", "a") } });

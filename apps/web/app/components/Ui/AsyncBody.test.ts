@@ -18,7 +18,7 @@ describe("uiAsyncBody", () => {
     const emptyState = { description: "", meaning: UiIconMeaning.Tag, title: "d" };
     const slots = { default: () => h("p", content), empty: () => h("p", empty), loading: () => h("p", loading) };
 
-    test("A pending read draws the loading slot", () => {
+    test("a pending read draws the loading slot", () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, { props: { error: "", isPending: true }, slots });
@@ -26,7 +26,7 @@ describe("uiAsyncBody", () => {
       expect(component.text()).toBe(loading);
     });
 
-    test("A failed read draws the error slot with a retry", async () => {
+    test("a failed read draws the error slot with a retry", async () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, { props: { error: " " }, slots });
@@ -38,7 +38,7 @@ describe("uiAsyncBody", () => {
       expect(component.emitted("retry")).toStrictEqual([[]]);
     });
 
-    test("A failed read draws the error slot over a pending flag", () => {
+    test("a failed read draws the error slot over a pending flag", () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, { props: { error: " ", isPending: true }, slots });
@@ -46,7 +46,7 @@ describe("uiAsyncBody", () => {
       expect(component.findComponent(UiErrorState).exists()).toBe(true);
     });
 
-    test("An empty read draws the empty slot", () => {
+    test("an empty read draws the empty slot", () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, { props: { emptyState, error: "", isEmpty: true }, slots });
@@ -54,7 +54,7 @@ describe("uiAsyncBody", () => {
       expect(component.text()).toBe(empty);
     });
 
-    test("An empty read draws the empty state when no empty slot is given", () => {
+    test("an empty read draws the empty state when no empty slot is given", () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, {
@@ -65,7 +65,7 @@ describe("uiAsyncBody", () => {
       expect(component.findComponent(UiEmptyState).props("title")).toBe(emptyState.title);
     });
 
-    test("A read that holds rows draws its content", () => {
+    test("a read that holds rows draws its content", () => {
       expect.hasAssertions();
 
       const component = mount(UiAsyncBody, { props: { error: "" }, slots });

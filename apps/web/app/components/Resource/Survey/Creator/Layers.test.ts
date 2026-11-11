@@ -104,7 +104,7 @@ describe("resourceSurveyCreatorLayers", () => {
   });
 
   // The places a node can move to are the move dialog's body, so the list is what the dialog scrolls
-  test("Move to lists the places the node can go in the dialog's body", async () => {
+  test("move to lists the places the node can go in the dialog's body", async () => {
     expect.hasAssertions();
 
     const surveyCreatorStore = useSurveyCreatorStore();

@@ -56,7 +56,7 @@ describe("uiConfirmDialog", () => {
     test.each([
       { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
       { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
-    ])("A named size sets the width, $description", async ({ expected, props }) => {
+    ])("a named size sets the width, $description", async ({ expected, props }) => {
       expect.hasAssertions();
 
       const component = await mountDialog(props);

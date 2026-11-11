@@ -12,10 +12,10 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
-describe("userLinkedAccountsCard", () => {
-  const mountCard = () =>
-    mountSuspended(UserLinkedAccountsCard, { props: { section: UserSettingsPageSection.LinkedAccounts } });
+const mountCard = () =>
+  mountSuspended(UserLinkedAccountsCard, { props: { section: UserSettingsPageSection.LinkedAccounts } });
 
+describe("userLinkedAccountsCard", () => {
   test("draws the loading rows while the accounts are out", async () => {
     expect.hasAssertions();
 

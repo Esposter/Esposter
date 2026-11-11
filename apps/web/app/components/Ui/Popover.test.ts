@@ -71,7 +71,7 @@ describe("uiPopover", () => {
     });
 
     // The panel's limit is the body's own, so a list taller than it scrolls inside the panel rather than past it
-    test("A long list scrolls inside the popover", () => {
+    test("a long list scrolls inside the popover", () => {
       expect.hasAssertions();
 
       const component = mount(UiPopover, {

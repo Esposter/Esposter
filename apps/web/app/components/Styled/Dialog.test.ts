@@ -94,7 +94,7 @@ describe("styledDialog", () => {
   test.each([
     { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
     { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
-  ])("A named size sets the width, $description", async ({ expected, props }) => {
+  ])("a named size sets the width, $description", async ({ expected, props }) => {
     expect.hasAssertions();
 
     const component = await mountDialog(props);
@@ -112,7 +112,7 @@ describe("styledDialog", () => {
       expected: UiButtonVariant.Danger,
       props: { confirmVariant: UiButtonVariant.Danger },
     },
-  ])("A confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
+  ])("a confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
     expect.hasAssertions();
 
     const component = await mountDialog({ confirmLabel, ...props });
@@ -144,7 +144,7 @@ describe("styledFormDialog", () => {
   test.each([
     { description: "Medium when no size is given", expected: UiDialogSize.Medium, props: {} },
     { description: "the size it is given", expected: UiDialogSize.Large, props: { size: UiDialogSize.Large } },
-  ])("A named size sets the width, $description", async ({ expected, props }) => {
+  ])("a named size sets the width, $description", async ({ expected, props }) => {
     expect.hasAssertions();
 
     const component = mount(StyledFormDialog, {
@@ -167,7 +167,7 @@ describe("styledFormDialog", () => {
       expected: UiButtonVariant.Danger,
       props: { confirmVariant: UiButtonVariant.Danger },
     },
-  ])("A confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
+  ])("a confirm variant restyles the confirm button, $description", async ({ expected, props }) => {
     expect.hasAssertions();
 
     const component = mount(StyledFormDialog, {
@@ -181,7 +181,7 @@ describe("styledFormDialog", () => {
   });
 
   // The confirm is the form's submit, so it goes through the form's own validation
-  test("The footer's submit submits the body's form", async () => {
+  test("the footer's submit submits the body's form", async () => {
     expect.hasAssertions();
 
     const submit = vi.fn<() => boolean>(() => true);
@@ -202,7 +202,7 @@ describe("styledFormDialog", () => {
   });
 
   // A failed write keeps the dialog open over the draft
-  test("A failed submit keeps the dialog open", async () => {
+  test("a failed submit keeps the dialog open", async () => {
     expect.hasAssertions();
 
     const submit = vi.fn<() => boolean>(() => false);
@@ -221,7 +221,7 @@ describe("styledFormDialog", () => {
   });
 
   // A field the rule rejects reports to the form, and the form's verdict holds the footer's submit disabled
-  test("The submit is disabled while a field fails", async () => {
+  test("the submit is disabled while a field fails", async () => {
     expect.hasAssertions();
 
     const label = "label";

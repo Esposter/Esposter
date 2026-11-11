@@ -12,9 +12,10 @@ import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
+const mountCard = () => mountSuspended(UserApiKeysCard, { props: { section: UserSettingsPageSection.ApiKeys } });
+
 describe("userApiKeysCard", () => {
   const apiKey = { createdAt: new Date(0), id: crypto.randomUUID(), name: "a", permissions: null, start: "a" };
-  const mountCard = () => mountSuspended(UserApiKeysCard, { props: { section: UserSettingsPageSection.ApiKeys } });
 
   test("draws the loading rows while the keys are out", async () => {
     expect.hasAssertions();

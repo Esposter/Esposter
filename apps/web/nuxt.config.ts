@@ -22,7 +22,7 @@ import { vite } from "./configuration/vite.ts";
 
 export default defineNuxtConfig({
   // The dev server skips Vize's pre-compile of every component: the transform compiles each component on its first
-  // request anyway, and the pre-compile held the first request back. Builds keep the pre-compile.
+  // Request anyway, and the pre-compile held the first request back. Builds keep the pre-compile.
   $development: { vize: { compiler: { scanPatterns: [] } } },
   app,
   build,

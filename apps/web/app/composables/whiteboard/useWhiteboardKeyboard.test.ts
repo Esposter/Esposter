@@ -292,7 +292,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(tool.value).toBe(GestureTool.Select);
   });
 
-  test("Select all selects every element", async () => {
+  test("select all selects every element", async () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] }));
@@ -307,7 +307,7 @@ describe(useWhiteboardKeyboard, () => {
 
   // The same key selects every element off a field, and is left to the field while one has focus, so the element selection
   // Stays where it was while the text is being edited
-  test("Select all while editing text selects the text", async () => {
+  test("select all while editing text selects the text", async () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS, WHITEBOARD_ARROW] }));
@@ -331,7 +331,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
   });
 
-  test("Cut and its paste undo separately", async () => {
+  test("cut and its paste undo separately", async () => {
     expect.hasAssertions();
 
     const clipboard = stubClipboard();

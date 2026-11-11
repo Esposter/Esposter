@@ -20,7 +20,7 @@ describe(pasteWhiteboardElements, () => {
     },
   };
 
-  test("Paste adds offset copies with fresh ids", () => {
+  test("paste adds offset copies with fresh ids", () => {
     expect.hasAssertions();
 
     const state = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
@@ -38,7 +38,7 @@ describe(pasteWhiteboardElements, () => {
     });
   });
 
-  test("A pasted arrow is bound to the pasted shapes", () => {
+  test("a pasted arrow is bound to the pasted shapes", () => {
     expect.hasAssertions();
 
     const state = createWhiteboardEditState({ elements: [] });
@@ -65,7 +65,7 @@ describe(pasteWhiteboardElements, () => {
     expect(processCopyId).not.toBe(WHITEBOARD_PROCESS_ID);
   });
 
-  test("An arrow pasted without its shapes has free ends", () => {
+  test("an arrow pasted without its shapes has free ends", () => {
     expect.hasAssertions();
 
     const state = createWhiteboardEditState({ elements: [] });
@@ -89,7 +89,7 @@ describe(pasteWhiteboardElements, () => {
     expect(arrowCopyId).not.toBe(WHITEBOARD_ARROW_ID);
   });
 
-  test("Clipboard text without the marker is ignored", () => {
+  test("clipboard text without the marker is ignored", () => {
     expect.hasAssertions();
 
     const state = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });

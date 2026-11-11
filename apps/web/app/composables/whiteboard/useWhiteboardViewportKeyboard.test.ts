@@ -13,7 +13,14 @@ import { describe, expect, onTestFinished, test } from "vitest";
 
 // The viewport keyboard mounted as a surface, so its commands and key listeners are bound for as long as the mount lasts
 const mountViewportKeyboard = () =>
-  mountSuspended(defineComponent({ render: () => h("div"), setup: () => useWhiteboardViewportKeyboard() }));
+  mountSuspended(
+    defineComponent({
+      render: () => h("div"),
+      setup: () => {
+        useWhiteboardViewportKeyboard();
+      },
+    }),
+  );
 
 describe(useWhiteboardViewportKeyboard, () => {
   // A canvas 400 units square, so a 100-unit process fits it at full size

@@ -236,7 +236,7 @@ describe(reduceWhiteboardGesture, () => {
     expect(up.state.viewport).toStrictEqual({ scale: 2, x: -10, y: -20 });
   });
 
-  test("Space and a drag pan", () => {
+  test("space and a drag pan", () => {
     expect.hasAssertions();
 
     // The press lands on the process, which a Select drag would move. With Space held the same drag pans the view and leaves the document alone

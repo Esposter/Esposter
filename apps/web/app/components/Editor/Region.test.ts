@@ -28,7 +28,7 @@ describe("editorRegion", () => {
 
   // A region's body is full-bleed in every orientation, a bar and a column alike: each panel pads what it draws, so the
   // Body that holds the panel adds no padding of its own
-  test("A full-bleed region opts out of the padding", () => {
+  test("a full-bleed region opts out of the padding", () => {
     expect.hasAssertions();
 
     const bar = mount(EditorRegion, {

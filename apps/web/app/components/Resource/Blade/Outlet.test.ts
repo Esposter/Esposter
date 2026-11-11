@@ -29,8 +29,8 @@ describe("resourceBladeOutlet", () => {
   const resource = { id: "resource", type: ResourceType.Sheet } as ResourceInResource;
 
   // The outlet owns the padding and the scroll a blade used to write, so a blade's content is padded and scrolls
-  // inside the outlet's body. jsdom measures no layout, so the overflow itself is proven in a driven browser
-  test("A blade's content is padded and scrolls", async () => {
+  // Inside the outlet's body. jsdom measures no layout, so the overflow itself is proven in a driven browser
+  test("a blade's content is padded and scrolls", async () => {
     expect.hasAssertions();
 
     const component = mount(ResourceBladeOutlet, { props: { activeBlade: ResourceBladeSlug.Data, resource } });
@@ -42,7 +42,7 @@ describe("resourceBladeOutlet", () => {
   });
 
   // The editor is a full-bleed canvas that lays out its own regions, so the outlet draws it with no wrapper and no padding
-  test("The editor blade is full-bleed and keeps no wrapper", async () => {
+  test("the editor blade is full-bleed and keeps no wrapper", async () => {
     expect.hasAssertions();
 
     const component = mount(ResourceBladeOutlet, { props: { activeBlade: "editor", resource } });

@@ -11,7 +11,7 @@ describe("uiFieldLabel", () => {
 
     const label = "label";
 
-    test("A required label draws its mark", () => {
+    test("a required label draws its mark", () => {
       expect.hasAssertions();
 
       const component = mount(UiFieldLabel, { props: { isRequired: true, label } });
@@ -20,7 +20,7 @@ describe("uiFieldLabel", () => {
       expect(component.text()).toBe(`${label} * required`);
     });
 
-    test("An optional label draws none", () => {
+    test("an optional label draws none", () => {
       expect.hasAssertions();
 
       const component = mount(UiFieldLabel, { props: { label } });

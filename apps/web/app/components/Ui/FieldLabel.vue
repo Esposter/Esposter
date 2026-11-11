@@ -5,8 +5,8 @@ interface Props {
   label: string;
 }
 // The caption a control names itself by through aria-labelledby, so it is a span: a popover trigger or a slider has no
-// control a label's for could point at
-const { isRequired, label } = defineProps<Props>();
+// Control a label's for could point at
+defineProps<Props>();
 </script>
 
 <template>
