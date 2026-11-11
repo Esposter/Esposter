@@ -25,7 +25,7 @@ How CI carries the cache and why a hit needs the install are in [monorepo toolin
 
 **Rejected: keeping `format:check` a script.** A hit still pays the install, so caching looks like it saves little. It is a task because the check reruns on an unchanged tree (a rerun, a re-push), where a hit restores the verdict and a pass runs the formatter over the whole workspace. Do not move it back to a script.
 
-**Rejected: caching the app build.** A replay of `build:app` would have to restore `apps/web/.output`, which the build itself creates. A fresh CI checkout lacks it, while the recorded run's listing of `apps/web` names it, so the listing misses, and no sampled CI run replayed. Carrying the output would restore and save a large directory on every run, most of them a new commit that rebuilds anyway, to save only a rerun of an unchanged tree. The app build is therefore the call site `pnpm -C apps/web build`, uncached in CI, and not a task.
+**Rejected: caching the app build.** A replay of `build:app` would have to restore the app's build output directory, which the build itself creates. A fresh CI checkout lacks it, while the recorded run's listing of `apps/web` names it, so the listing misses, and no sampled CI run replayed. Carrying the output would restore and save a large directory on every run, most of them a new commit that rebuilds anyway, to save only a rerun of an unchanged tree. The app build is therefore the call site `pnpm -C apps/web build`, uncached in CI, and not a task.
 
 **Rejected: caching the test and coverage shards with the task cache.** No shard replayed in a measured run, because a test's inputs are the whole app, so every commit changes them. The cost was a second task layer to keep.
 

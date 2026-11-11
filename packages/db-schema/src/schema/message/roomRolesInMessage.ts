@@ -42,8 +42,8 @@ export const roomRolesInMessage = pgTable(
 export type RoomRoleInMessage = typeof roomRolesInMessage.$inferSelect;
 
 export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessage, {
-  id: () => z.uuidv4(),
   color: (schema) => createNormalizedStringSchema(ROOM_ROLE_COLOR_MAX_LENGTH, schema),
+  id: () => z.uuidv4(),
   name: (schema) => createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH, schema),
   position: (schema) => schema.nonnegative(),
   roomId: () => z.uuidv4(),
