@@ -46,8 +46,8 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Delta content saves](delta-content-saves/design.md) — a large document's save as a zstd delta against the bytes the server stores, falling back to a full save on any mismatch
 - [Shell cohesion](shell-cohesion/design.md) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](breadcrumb-trail/design.md) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
-- [Sheet resource](sheet-resource/design.md) — CSV/JSON/XLSX files as resources with Data + Settings blades
-- [Create from file](create-from-file/design.md) — drop a CSV/JSON/XLSX on the Sheet create form and land in a ready Data blade
+- [Sheet resource](sheet-resource/design.md) — CSV/JSON/XLSX/XML files as resources with Data + Settings blades
+- [Create from file](create-from-file/design.md) — drop a CSV/JSON/XLSX/XML on the Sheet create form and land in a ready Data blade
 - [Sheet editor](sheet/README.md) — the grid editor behind the Sheet resource's Data blade: inline editing, data cleaning, computed columns, statistics, clipboard
 - [Survey resource](survey-resource/design.md) — authoring the typed survey document in the Creator, public respondent page, responses dataset
 - [Survey respondent](survey-respondent/design.md) — the public respondent page: the runner, a draft saved as the respondent moves, resume and submit, and the server's check of each answer

@@ -1,6 +1,6 @@
 # Create From File
 
-Creating a [Sheet](../sheet-resource/design.md) from a file you already have is one step. Drop or pick a CSV, JSON, or XLSX on `/resource-explorer/create/Sheet` and you arrive at a resource whose Data blade already holds the parsed rows — instead of creating an empty sheet, opening the Data blade, and running Import as a second act.
+Creating a [Sheet](../sheet-resource/design.md) from a file you already have is one step. Drop or pick a CSV, JSON, XLSX, or XML on `/resource-explorer/create/Sheet` and you arrive at a resource whose Data blade already holds the parsed rows — instead of creating an empty sheet, opening the Data blade, and running Import as a second act.
 
 The file input is **optional**: a name-only create is unaffected, as is every other resource type.
 

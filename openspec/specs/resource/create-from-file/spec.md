@@ -1,12 +1,12 @@
 ## Purpose
 
-Drop a CSV/JSON/XLSX on the Sheet create form to parse, pre-fill the name, and land in a ready Data blade. The file is optional, so a name-only create still works as it always did.
+Drop a CSV/JSON/XLSX/XML on the Sheet create form to parse, pre-fill the name, and land in a ready Data blade. The file is optional, so a name-only create still works as it always did.
 
 ## Requirements
 
 ### Requirement: Dropping a file on the Sheet create form pre-fills it
 
-The creator SHALL be able to drop or pick a CSV, JSON or XLSX file on the Sheet create form, which parses it into a preview and pre-fills the name from the file name.
+The creator SHALL be able to drop or pick a CSV, JSON, XLSX or XML file on the Sheet create form, which parses it into a preview and pre-fills the name from the file name.
 
 #### Scenario: A dropped file is previewed and named
 

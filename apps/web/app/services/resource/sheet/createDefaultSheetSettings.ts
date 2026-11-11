@@ -12,6 +12,8 @@ export const createDefaultSheetSettings = (type: DataSourceType): SheetSettings 
       return { configuration: {}, type };
     case DataSourceType.Xlsx:
       return { configuration: { sheetIndex: 0 }, type };
+    case DataSourceType.Xml:
+      return { configuration: {}, type };
     default:
       return exhaustiveGuard(type);
   }

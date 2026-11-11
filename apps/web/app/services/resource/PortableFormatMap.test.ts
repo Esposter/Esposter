@@ -2,6 +2,7 @@
 import type { JSONContent } from "@tiptap/core";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
@@ -120,5 +121,20 @@ describe("portableFormatMap", () => {
 
     expect(titles).toContain("Export PNG");
     expect(titles.filter((title) => title?.startsWith("Import"))).toStrictEqual([]);
+  });
+
+  // XML is one more entry in the sheet's format list, so the export submenu lists it after the others it sits beside
+  test("The format is offered beside the others", () => {
+    expect.hasAssertions();
+
+    const sheet = createResourceListItem({ id: crypto.randomUUID(), type: ResourceType.Sheet });
+    const { exportFormats } = usePortableFormats(() => sheet);
+
+    expect(exportFormats.value.map(({ label }) => label)).toStrictEqual([
+      DataSourceType.Csv,
+      DataSourceType.Json,
+      DataSourceType.Xlsx,
+      DataSourceType.Xml,
+    ]);
   });
 });

@@ -22,6 +22,11 @@ export const DataSourceTypeItemCategoryDefinitionMap = {
     icon: "i-mdi:file-excel",
     title: DataSourceType.Xlsx,
   },
+  [DataSourceType.Xml]: {
+    description: "Row elements, one cell to an element",
+    icon: "i-mdi:file-xml-box",
+    title: DataSourceType.Xml,
+  },
 } as const satisfies Record<DataSourceType, { description: string; icon: string; title: string }>;
 
 export const DataSourceTypeItemCategoryDefinitions: (SelectItemCategoryDefinition<DataSourceType> & {

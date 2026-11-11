@@ -86,6 +86,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     createSheetPortableFormat(DataSourceType.Csv),
     createSheetPortableFormat(DataSourceType.Json),
     createSheetPortableFormat(DataSourceType.Xlsx),
+    createSheetPortableFormat(DataSourceType.Xml),
     // A survey is a source rather than a file format, so it imports and never exports — it sits among the
     // Formats because it is one of the ways a sheet is filled
     {

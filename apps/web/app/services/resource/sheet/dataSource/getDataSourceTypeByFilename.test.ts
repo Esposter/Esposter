@@ -10,6 +10,7 @@ describe(getDataSourceTypeByFilename, () => {
 
     expect(getDataSourceTypeByFilename(`${name}.csv`)).toBe(DataSourceType.Csv);
     expect(getDataSourceTypeByFilename(`${name}.json`)).toBe(DataSourceType.Json);
+    expect(getDataSourceTypeByFilename(`${name}.xml`)).toBe(DataSourceType.Xml);
     expect(getDataSourceTypeByFilename(`${name}.xlsx`)).toBe(DataSourceType.Xlsx);
   });
 
