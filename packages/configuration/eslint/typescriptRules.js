@@ -196,7 +196,7 @@ export default {
       // `z.object()` they refine, since `date`, `time` and `url` are ordinary method names everywhere else — so the
       // Node reported is that opening call
       message:
-        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuid()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
+        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuidv4()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
       selector:
         "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
     },

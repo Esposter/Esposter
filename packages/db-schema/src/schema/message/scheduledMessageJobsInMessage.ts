@@ -9,6 +9,7 @@ import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { sql } from "drizzle-orm";
 import { check, index, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const scheduledMessageJobsInMessage = pgTable(
   "scheduledMessageJobs",
@@ -44,5 +45,7 @@ export const scheduledMessageJobsInMessage = pgTable(
 export type ScheduledMessageJobInMessage = typeof scheduledMessageJobsInMessage.$inferSelect;
 
 export const selectScheduledMessageJobInMessageSchema = createSelectSchema(scheduledMessageJobsInMessage, {
+  id: () => z.uuidv4(),
   payload: scheduledMessageJobPayloadSchema,
+  roomId: () => z.uuidv4(),
 });

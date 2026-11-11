@@ -8,6 +8,7 @@ import { CALL_ID_LENGTH, CALL_ID_REGEX } from "#src/services/message/call/consta
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { check, text, unique, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const callSessionsInMessage = pgTable(
   "callSessions",
@@ -36,4 +37,5 @@ export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
 export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
   id: (schema) => schema.length(CALL_ID_LENGTH).regex(CALL_ID_REGEX),
+  roomId: () => z.uuidv4(),
 });

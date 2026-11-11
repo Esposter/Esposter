@@ -8,6 +8,7 @@ import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { boolean, check, index, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const webhooksInMessage = pgTable(
   "webhooks",
@@ -41,5 +42,8 @@ export const webhooksInMessage = pgTable(
 export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 
 export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
+  id: () => z.uuidv4(),
   name: (schema) => createNameSchema(WEBHOOK_NAME_MAX_LENGTH, schema),
+  roomId: () => z.uuidv4(),
+  userId: () => z.uuidv4(),
 });

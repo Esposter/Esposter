@@ -20,7 +20,7 @@ export const textElementSchema: z.ZodObject<{
   x: z.ZodNumber;
   y: z.ZodNumber;
 }> = z.object({
-  id: z.uuid(),
+  id: z.uuidv4(),
   text: z.string(),
   type: z.literal(PositionedElementType.Text),
   width: z.number().positive(),

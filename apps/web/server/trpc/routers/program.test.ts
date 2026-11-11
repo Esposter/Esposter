@@ -146,7 +146,7 @@ describe("programRouter", () => {
     // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
     for (const { keyValue: participantKeyValue, token } of participants) {
       expect(token).not.toBe(participantKeyValue);
-      expect(z.uuid().safeParse(token).success).toBe(true);
+      expect(z.uuidv4().safeParse(token).success).toBe(true);
     }
   });
 

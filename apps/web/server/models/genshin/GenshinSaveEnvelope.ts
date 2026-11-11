@@ -12,7 +12,7 @@ export interface GenshinSaveEnvelope {
 }
 
 export const genshinSaveEnvelopeSchema = z.object({
-  previousSessionId: z.uuid().optional(),
+  previousSessionId: z.uuidv4().optional(),
   save: genshinSaveSchema,
-  sessionId: z.uuid(),
+  sessionId: z.uuidv4(),
 }) satisfies z.ZodType<GenshinSaveEnvelope>;

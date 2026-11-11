@@ -7,5 +7,5 @@ export interface ExportUserDataEventGridData {
 }
 
 export const exportUserDataEventGridDataSchema = z.object({
-  dataExportId: z.uuid(),
+  dataExportId: z.uuidv4(),
 }) satisfies z.ZodType<ExportUserDataEventGridData>;

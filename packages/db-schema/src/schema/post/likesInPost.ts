@@ -31,4 +31,7 @@ export const likesInPost = pgTable(
 
 export type LikeInPost = typeof likesInPost.$inferSelect;
 
-export const selectLikeInPostSchema = createSelectSchema(likesInPost, { value: z.literal([1, -1]) });
+export const selectLikeInPostSchema = createSelectSchema(likesInPost, {
+  postId: () => z.uuidv4(),
+  value: z.literal([1, -1]),
+});

@@ -17,7 +17,7 @@ export const boxElementSchema: z.ZodObject<{
   y: z.ZodNumber;
 }> = z.object({
   height: z.number().positive(),
-  id: z.uuid(),
+  id: z.uuidv4(),
   width: z.number().positive(),
   x: z.number(),
   y: z.number(),

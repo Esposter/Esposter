@@ -11,6 +11,7 @@ import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sql } from "drizzle-orm";
 import { check, doublePrecision, index, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const postsInPost = pgTable(
   "posts",
@@ -54,9 +55,15 @@ export const postsInPost = pgTable(
 export type PostInPost = typeof postsInPost.$inferSelect;
 
 export const selectPostInPostSchema = createSelectSchema(postsInPost, {
+  ancestorIds: () => z.array(z.uuidv4()),
   description: (schema) => createPostDescriptionSchema(schema, 0),
+  id: () => z.uuidv4(),
+  parentId: () => z.uuidv4(),
   title: (schema) => createNameSchema(POST_TITLE_MAX_LENGTH, schema),
 });
 export const selectCommentInPostSchema = createSelectSchema(postsInPost, {
+  ancestorIds: () => z.array(z.uuidv4()),
   description: (schema) => createPostDescriptionSchema(schema, 1),
+  id: () => z.uuidv4(),
+  parentId: () => z.uuidv4(),
 });

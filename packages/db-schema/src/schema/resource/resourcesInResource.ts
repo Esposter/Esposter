@@ -11,6 +11,7 @@ import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sql } from "drizzle-orm";
 import { check, index, integer, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const resourceTypeEnum = resourceSchema.enum("resourceType", ResourceType);
 // Pure identity + content lifecycle. Publish state is normalized into resourcePublications
@@ -65,6 +66,7 @@ export const resourcesInResource = pgTable(
 export type ResourceInResource = typeof resourcesInResource.$inferSelect;
 
 export const selectResourceInResourceSchema = createSelectSchema(resourcesInResource, {
+  id: () => z.uuidv4(),
   name: (schema) => createNameSchema(RESOURCE_NAME_MAX_LENGTH, schema),
   tags: resourceTagsSchema,
 });

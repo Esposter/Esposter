@@ -7,6 +7,7 @@ import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSq
 import { sql } from "drizzle-orm";
 import { check, index, integer, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const invitesInMessage = pgTable(
   "invites",
@@ -36,4 +37,5 @@ export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
   id: (schema) => schema.length(INVITE_ID_LENGTH).regex(INVITE_ID_REGEX),
+  roomId: () => z.uuidv4(),
 });

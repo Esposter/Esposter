@@ -28,11 +28,11 @@ export class SurveyResponseEntity extends AzureEntity {
 export const SurveyResponseEntityPropertyNames = getPropertyNames<SurveyResponseEntity>();
 
 export const surveyResponseEntitySchema = z.object({
-  ...createAzureEntitySchema(z.object({ partitionKey: selectResourceInResourceSchema.shape.id, rowKey: z.uuid() }))
+  ...createAzureEntitySchema(z.object({ partitionKey: selectResourceInResourceSchema.shape.id, rowKey: z.uuidv4() }))
     .shape,
   isDraft: z.literal(true).optional(),
   model: z.record(z.string().min(1), z.unknown()),
   modelVersion: z.int().nonnegative(),
   pageNo: z.int().nonnegative(),
-  participantToken: z.union([z.literal(""), z.uuid()]),
+  participantToken: z.union([z.literal(""), z.uuidv4()]),
 }) satisfies z.ZodType<ToData<SurveyResponseEntity>>;

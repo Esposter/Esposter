@@ -10,6 +10,7 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const roomRolesInMessage = pgTable(
   "roomRoles",
@@ -41,7 +42,9 @@ export const roomRolesInMessage = pgTable(
 export type RoomRoleInMessage = typeof roomRolesInMessage.$inferSelect;
 
 export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessage, {
+  id: () => z.uuidv4(),
   color: (schema) => createNormalizedStringSchema(ROOM_ROLE_COLOR_MAX_LENGTH, schema),
   name: (schema) => createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH, schema),
   position: (schema) => schema.nonnegative(),
+  roomId: () => z.uuidv4(),
 });

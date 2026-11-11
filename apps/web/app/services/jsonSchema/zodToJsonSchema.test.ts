@@ -321,7 +321,7 @@ describe(zodToJsonSchema, () => {
   test("does not set a resource link type on a plain id", () => {
     expect.hasAssertions();
 
-    const schema = z.object({ surveyId: z.uuid() });
+    const schema = z.object({ surveyId: z.uuidv4() });
     const result = zodToJsonSchema(schema);
 
     expect(result.properties?.surveyId).not.toHaveProperty(RESOURCE_LINK_TYPE_KEYWORD);

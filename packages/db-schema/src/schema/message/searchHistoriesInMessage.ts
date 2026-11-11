@@ -9,6 +9,7 @@ import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthChe
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { check, index, jsonb, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const searchHistoriesInMessage = pgTable(
   "searchHistories",
@@ -35,5 +36,7 @@ export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelec
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   // A row records the filters its search ran with, which are not unique by type — two `has:` narrow together
   filters: filterSchema.array().max(MAX_READ_LIMIT),
+  id: () => z.uuidv4(),
   query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
+  roomId: () => z.uuidv4(),
 });

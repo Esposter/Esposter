@@ -6,4 +6,4 @@ export interface StartGenshinInput {
   sessionId: string;
 }
 
-export const startGenshinInputSchema = z.object({ sessionId: z.uuid() }) satisfies z.ZodType<StartGenshinInput>;
+export const startGenshinInputSchema = z.object({ sessionId: z.uuidv4() }) satisfies z.ZodType<StartGenshinInput>;

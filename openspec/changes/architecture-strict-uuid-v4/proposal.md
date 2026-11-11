@@ -5,7 +5,7 @@ Every id the app mints for its own rows is a v4: Postgres `gen_random_uuid()` fo
 ## What Changes
 
 - Fixed ids (a sentinel, a seed, a fixture's pinned id) are v4-shaped already: `ZERO_UUID` in `@esposter/shared` is the all-zero v4, and a second row of one table steps its last digits. This is built.
-- Every id validator moves from `z.uuid()` to the strict v4 form in one commit, once the sources of ids that are not v4 have been listed and answered.
+- Every id validator is the strict v4 form, `z.uuidv4()`, not `z.uuid()`, which takes versions 1 to 8 and the nil UUID. The sources of ids and their answers are in `design.md`.
 - The `zod` and `test-values` skills carry the rule, so a hand-typed or pure-nil id is not written again.
 
 ## Capabilities

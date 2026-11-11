@@ -17,7 +17,7 @@ describe(createGetResourceLinkTargets, () => {
   test("declares nothing for a schema holding no link", () => {
     expect.hasAssertions();
 
-    expect(createGetResourceLinkTargets(z.object({ id: z.uuid() }))).toBeUndefined();
+    expect(createGetResourceLinkTargets(z.object({ id: z.uuidv4() }))).toBeUndefined();
   });
 
   test.each([

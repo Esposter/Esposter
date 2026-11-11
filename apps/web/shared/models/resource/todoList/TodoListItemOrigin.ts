@@ -16,5 +16,5 @@ export interface TodoListItemOrigin {
 export const todoListItemOriginSchema = z.object({
   handedBackAt: z.coerce.date().optional(),
   repository: z.string().max(TODO_LIST_ITEM_REPOSITORY_MAX_LENGTH).regex(TODO_LIST_ITEM_REPOSITORY_REGEX),
-  sessionId: z.uuid(),
+  sessionId: z.uuidv4(),
 }) satisfies z.ZodType<TodoListItemOrigin>;

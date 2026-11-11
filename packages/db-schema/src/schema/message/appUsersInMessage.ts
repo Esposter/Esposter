@@ -5,6 +5,7 @@ import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { check, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const appUsersInMessage = pgTable(
   "appUsers",
@@ -20,5 +21,6 @@ export const appUsersInMessage = pgTable(
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;
 
 export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, {
+  id: () => z.uuidv4(),
   name: (schema) => createNameSchema(APP_USER_NAME_MAX_LENGTH, schema),
 });

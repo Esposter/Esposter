@@ -11,6 +11,7 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { boolean, check, index, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const notificationTypeEnum = messageSchema.enum("notificationType", NotificationType);
 
@@ -58,7 +59,9 @@ export const usersToRoomsInMessage = pgTable(
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
 
 export const selectUserToRoomInMessageSchema = createSelectSchema(usersToRoomsInMessage, {
+  categoryId: () => z.uuidv4(),
   displayName: (schema) => createNormalizedStringSchema(DISPLAY_NAME_MAX_LENGTH, schema),
   mentionCount: (schema) => schema.nonnegative(),
   notificationType: notificationTypeSchema,
+  roomId: () => z.uuidv4(),
 });

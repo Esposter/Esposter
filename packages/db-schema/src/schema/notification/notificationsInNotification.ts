@@ -6,6 +6,7 @@ import { notificationSchema } from "#src/schema/notification/notificationSchema"
 import { sql } from "drizzle-orm";
 import { boolean, index, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const appNotificationTypeEnum = notificationSchema.enum("appNotificationType", AppNotificationType);
 
@@ -54,4 +55,6 @@ export const notificationsInNotification = pgTable(
 
 export type NotificationInNotification = typeof notificationsInNotification.$inferSelect;
 
-export const selectNotificationInNotificationSchema = createSelectSchema(notificationsInNotification);
+export const selectNotificationInNotificationSchema = createSelectSchema(notificationsInNotification, {
+  id: () => z.uuidv4(),
+});

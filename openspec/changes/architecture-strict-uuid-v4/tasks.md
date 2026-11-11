@@ -6,10 +6,10 @@
 
 ## 2. The id sources
 
-- [ ] 2.1 List every source of an id that reaches a validator and answer whether it is a v4: the auth library's user, session and account ids, external provider ids stored in an id column, and Azure Table keys that hold an id. Verify: each source is named in design.md with its answer, replacing the open section.
+- [x] 2.1 List every source of an id that reaches a validator and answer whether it is a v4: the auth library's user, session and account ids, external provider ids stored in an id column, and Azure Table keys that hold an id. Verify: each source is named in design.md with its answer, replacing the open section.
 
 ## 3. The swap
 
-- [ ] 3.1 Move every id validator to the strict v4 form in one commit. Verify: the test named after the scenario 'An id of another version is refused' written first and seen failing.
-- [ ] 3.2 Confirm the fixed ids pass and the nil UUID does not. Verify: the test named after the scenario 'A fixed id passes' written first and seen failing.
-- [ ] 3.3 Confirm a real id passes. Verify: the test named after the scenario 'A real id passes' written first and seen failing.
+- [x] 3.1 Move every id validator to the strict v4 form in one commit. Verify: the test named after the scenario 'An id of another version is refused' written first and seen failing.
+- [x] 3.2 Confirm the fixed ids pass and the nil UUID does not. Verify: the test named after the scenario 'A fixed id passes' written first and seen failing.
+- [x] 3.3 Confirm a real id passes. Verify: the test named after the scenario 'A real id passes' passes under the strict form, a case the lenient form also passes, so it holds the claim rather than the swap.

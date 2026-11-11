@@ -12,6 +12,7 @@ import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter
 import { sql } from "drizzle-orm";
 import { boolean, check, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const roomTypeEnum = messageSchema.enum("roomType", RoomType);
 
@@ -66,6 +67,7 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   // Unique over an enum, so the enum's size is the most it can hold
   allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema).max(mimeCategorySchema.options.length),
+  id: () => z.uuidv4(),
   image: (schema) => schema.max(URL_MAX_LENGTH),
   maxFileSizeBytes: (schema) => schema.nonnegative(),
   name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),

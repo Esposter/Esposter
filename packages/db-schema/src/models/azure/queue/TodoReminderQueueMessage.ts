@@ -11,6 +11,6 @@ export interface TodoReminderQueueMessage {
 // String)
 export const todoReminderQueueMessageSchema = z.object({
   dueAt: z.coerce.date(),
-  itemId: z.uuid(),
+  itemId: z.uuidv4(),
   resourceId: selectResourceInResourceSchema.shape.id,
 }) satisfies z.ZodType<TodoReminderQueueMessage>;

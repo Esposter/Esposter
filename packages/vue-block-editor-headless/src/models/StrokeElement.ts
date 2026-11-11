@@ -18,7 +18,7 @@ export const strokeElementSchema: z.ZodObject<{
   strokeWidth: z.ZodNumber;
   type: z.ZodLiteral<PositionedElementType.Stroke>;
 }> = z.object({
-  id: z.uuid(),
+  id: z.uuidv4(),
   points: z.array(pointSchema).min(1),
   strokeWidth: z.number().positive(),
   type: z.literal(PositionedElementType.Stroke),

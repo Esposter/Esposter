@@ -25,7 +25,7 @@ export const arrowElementSchema: z.ZodObject<{
   type: z.ZodLiteral<PositionedElementType.Arrow>;
 }> = z.object({
   end: arrowEndSchema,
-  id: z.uuid(),
+  id: z.uuidv4(),
   label: z.string(),
   pathKind: arrowPathKindSchema,
   start: arrowEndSchema,

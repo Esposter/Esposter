@@ -33,10 +33,12 @@ export const roomEmojisInMessage = pgTable(
 export type RoomEmojiInMessage = typeof roomEmojisInMessage.$inferSelect;
 
 export const selectRoomEmojiInMessageSchema = createSelectSchema(roomEmojisInMessage, {
+  id: () => z.uuidv4(),
   // Every constraint sits on the one final pipe output rather than layering a second pipe over the name helper:
   // A JSON schema is emitted from the outermost pipe alone, so a nested layer silently drops the length bounds
   name: (schema) =>
     schema
       .transform(normalizeString)
       .pipe(z.string().min(1).max(ROOM_EMOJI_NAME_MAX_LENGTH).regex(ROOM_EMOJI_NAME_REGEX)),
+  roomId: () => z.uuidv4(),
 });

@@ -5,6 +5,7 @@ import { userSchema } from "#src/schema/user/userSchema";
 import { sql } from "drizzle-orm";
 import { index, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const dataExportStatusEnum = userSchema.enum("dataExportStatus", DataExportStatus);
 
@@ -46,4 +47,4 @@ export const dataExportsInUser = pgTable(
 
 export type DataExportInUser = typeof dataExportsInUser.$inferSelect;
 
-export const selectDataExportInUserSchema = createSelectSchema(dataExportsInUser);
+export const selectDataExportInUserSchema = createSelectSchema(dataExportsInUser, { id: () => z.uuidv4() });

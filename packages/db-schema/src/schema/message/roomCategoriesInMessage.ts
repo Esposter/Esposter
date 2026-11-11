@@ -7,6 +7,7 @@ import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { check, index, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const roomCategoriesInMessage = pgTable(
   "roomCategories",
@@ -32,6 +33,7 @@ export const roomCategoriesInMessage = pgTable(
 export type RoomCategoryInMessage = typeof roomCategoriesInMessage.$inferSelect;
 
 export const selectRoomCategoryInMessageSchema = createSelectSchema(roomCategoriesInMessage, {
+  id: () => z.uuidv4(),
   name: (schema) => createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH, schema),
   position: (schema) => schema.nonnegative(),
 });

@@ -4,6 +4,7 @@ import { messageSchema } from "#src/schema/message/messageSchema";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { primaryKey, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { z } from "zod";
 
 export const bansInMessage = pgTable(
   "bans",
@@ -17,4 +18,4 @@ export const bansInMessage = pgTable(
 
 export type BanInMessage = typeof bansInMessage.$inferSelect;
 
-export const selectBanInMessageSchema = createSelectSchema(bansInMessage);
+export const selectBanInMessageSchema = createSelectSchema(bansInMessage, { roomId: () => z.uuidv4() });
