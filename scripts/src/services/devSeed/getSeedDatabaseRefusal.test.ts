@@ -16,6 +16,11 @@ describe(getSeedDatabaseRefusal, () => {
     expect(getSeedDatabaseRefusal("postgres://localhost/a")).toBe(SeedRefusal.DevDatabase);
   });
 
+  test("a database query parameter overrides the path, so the dev database named there is refused", () => {
+    expect.hasAssertions();
+    expect(getSeedDatabaseRefusal(`${SEED_DATABASE_URL}?database=a`)).toBe(SeedRefusal.DevDatabase);
+  });
+
   test("the seed's database name on a remote server is refused as a non-local database", () => {
     expect.hasAssertions();
     expect(getSeedDatabaseRefusal(`postgres://remote.example/${SEED_DATABASE_NAME}`)).toBe(
