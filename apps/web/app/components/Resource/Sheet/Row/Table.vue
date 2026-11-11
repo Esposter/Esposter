@@ -86,6 +86,7 @@ const getCellProps = (tableColumn: UiDataTableColumn<Row>, row: Row) => {
   if (!columnData || rowIndex === undefined) return {};
   const { column, columnIndex } = columnData;
   return {
+    "data-editing": checkIsEditingCell(rowIndex, column.name) || undefined,
     "data-in-range": checkIsCellInRange(rowIndex, columnIndex) || undefined,
     onMousedown: (event: MouseEvent) => {
       if (

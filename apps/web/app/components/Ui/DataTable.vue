@@ -592,6 +592,12 @@ const onGridKeydown = useGridKeyboard({
   padding-block: var(--ui-step);
 }
 
+/* A cell whose editor has replaced its text gives the editor the cell's whole width, so the field is as wide as the
+   value it edits and not inset by the padding the text sat in */
+.cell[data-editing] {
+  padding-inline: 0;
+}
+
 /* The header stays over the rows it names as they scroll under it, on a divider, sticky cells among them */
 .header {
   background-color: var(--ui-background);
