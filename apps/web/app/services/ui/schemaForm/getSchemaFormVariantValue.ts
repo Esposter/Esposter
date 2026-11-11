@@ -14,7 +14,7 @@ export const getSchemaFormVariantValue = (
   variants: JsonSchema[],
   variant: JsonSchema,
   rootSchema: JsonSchema,
-  fittingIndex = 0,
+  fittingIndex?: number,
 ) => {
   const variantProperties = variant.properties ?? {};
   const otherVariantKeys = new Set(
