@@ -1,5 +1,6 @@
 import type { RunTasks } from "#vite/models/RunTasks";
 
+import { ROOT_TSBUILDINFO_PATH } from "#vite/services/constants";
 import { createTask } from "#vite/services/createTask";
 
 // The checks are cached leaves, each traced like a build: a tree no leaf's reads changed in replays its verdict. A file a
@@ -45,6 +46,6 @@ export const CHECK_TASKS: RunTasks = {
     ...createTask('pnpm -r --filter "./packages/*" --parallel typecheck'),
     dependsOn: ["build:packages"],
   },
-  "typecheck:root": createTask("tsrs --fast"),
+  "typecheck:root": createTask(`tsrs --fast --tsBuildInfoFile ${ROOT_TSBUILDINFO_PATH}`),
   "typecheck:workspace": createTask("pnpm -r --parallel typecheck"),
 };

@@ -1,6 +1,6 @@
 import type { PackageManifest } from "#vite/models/PackageManifest";
 
-import { ROOT_URL } from "#vite/constants";
+import { ROOT_URL } from "#vite/services/constants";
 import { existsSync, readFileSync } from "node:fs";
 
 export const readManifest = (relativeDirectory: string): PackageManifest | undefined => {

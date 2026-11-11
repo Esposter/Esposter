@@ -1,7 +1,7 @@
 import type { CachePattern } from "#vite/models/CachePattern";
 import type { RunTask } from "#vite/models/RunTask";
 
-import { PNPM_STATE_PATTERNS } from "#vite/constants";
+import { PNPM_STATE_PATTERNS } from "#vite/services/constants";
 
 // A file a task reads and also rewrites is traced like any other input and restored from the outputs on a hit
 export const createTask = (

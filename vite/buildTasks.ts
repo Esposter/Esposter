@@ -1,6 +1,6 @@
 import type { RunTasks } from "#vite/models/RunTasks";
 
-import { PACKAGE_REWRITTEN_PATTERNS, PACKAGES_DIRECTORY } from "#vite/constants";
+import { PACKAGE_REWRITTEN_PATTERNS, PACKAGES_DIRECTORY } from "#vite/services/constants";
 import { createBuildCache } from "#vite/services/createBuildCache";
 import { getBuildTaskName } from "#vite/services/getBuildTaskName";
 import { readPackageBuildTasks } from "#vite/services/readPackageBuildTasks";
