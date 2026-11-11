@@ -1,6 +1,7 @@
 import { GITHUB_REPOSITORY_URL, PACKAGES_DIRECTORY } from "#src/services/package/new/constants";
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readJsonFile } from "#src/workspace/readJsonFile.test";
+import { SITE_NAME } from "@esposter/shared";
 import { existsSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -20,13 +21,13 @@ const KEYWORD_REGEX = /^[a-z\d]+(?:-[a-z\d]+)*$/u;
 // Words true of every package here, or of the repository rather than the package, so a search for them finds nothing
 // Distinct: the language every package shares (npm shows a package's types itself), the registry, the repository
 const NOISE_KEYWORDS = new Set([
-  "esposter",
   "javascript",
   "js",
   "monorepo",
   "npm",
   "package",
   "shared",
+  SITE_NAME.toLowerCase(),
   "ts",
   "typescript",
 ]);
@@ -43,11 +44,11 @@ describe("package keywords", () => {
       name,
     }))
     .filter(({ manifest }) => manifest.private !== true);
-  const readKeywords = (manifest: Record<string, unknown>): string[] =>
-    Array.isArray(manifest.keywords) ? (manifest.keywords as string[]) : [];
   // Named rather than counted: the package that fails names itself in the failure
   const getFailingNames = (checkIsFailing: (keywords: string[]) => boolean): string[] =>
-    PUBLISHED_PACKAGES.filter(({ manifest }) => checkIsFailing(readKeywords(manifest))).map(({ name }) => name);
+    PUBLISHED_PACKAGES.filter(({ manifest }) =>
+      checkIsFailing(Array.isArray(manifest.keywords) ? (manifest.keywords as string[]) : []),
+    ).map(({ name }) => name);
 
   test("are as many as name a package and no more", () => {
     expect.hasAssertions();
