@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
+
+### Bug Fixes
+
+* **anime:** the Animate and navigation controls are no longer drawn inside the calculator, whose dark mode inverts them ([6feaaff](https://github.com/Esposter/Esposter/commit/6feaaff7ccfbe83fad9ac89d4d3a027acc3fcd36))
+* **lint:** the 140 oxlint errors on ai/queue are cleared ([d040147](https://github.com/Esposter/Esposter/commit/d040147f58350ecdb57cba686a3f59ab2771fbe4))
+* **message:** the id-list subscriptions split their key on the separator it was joined with, not a comma ([091a247](https://github.com/Esposter/Esposter/commit/091a2470470d95b2807071a2d14e6a18297b7836))
+* **sheet:** a cell's editor takes the cell's whole width, so the field is as wide as the value it edits ([5f9418f](https://github.com/Esposter/Esposter/commit/5f9418f22a25c0c88936ab1c3a68f6438417e247))
+* **sheet:** a column named parsererror and the plane's last two noncharacters round-trip through XML, and a moved context menu opens its groups collapsed ([64a5985](https://github.com/Esposter/Esposter/commit/64a598505f6ab3b73c2364712e2a63dae4dbab0c))
+* **sheet:** a column named parsererror under a default namespace is a column, the parser's failure is read in the namespace it marks its own ([70287b1](https://github.com/Esposter/Esposter/commit/70287b1f5a174a5795a7b80664d4e4f23632bdea))
+* **sheet:** a tab or a newline in a column name is written as its reference, so the attribute reads it back unchanged ([6c50984](https://github.com/Esposter/Esposter/commit/6c509848c8fdc336c56a502d2bbde3c056201ec1))
+* **ui:** a popover moved to another anchor stays open when the old anchor's native dismissal is reported after the move ([0dee5eb](https://github.com/Esposter/Esposter/commit/0dee5ebaebee1798c741c8df4eef655bc4113238))
+* **ui:** a popover moved to another anchor while still shown closes on its own dismissal, and the dead empty-id filter goes ([0eb1f6c](https://github.com/Esposter/Esposter/commit/0eb1f6c4979726512fb8845267fb4699b5c4b8b8))
+* **ui:** a union with no fixed discriminant keeps the fields of the variant the form shows, read from its fitting index ([0be08a0](https://github.com/Esposter/Esposter/commit/0be08a00c95a8a5c74eea83e1f29f5692732ab03))
+* **ui:** a union's chosen variant is read from its fixed discriminant, so a column's type select and fields draw and switch ([2cab2af](https://github.com/Esposter/Esposter/commit/2cab2af98c6814b9d0079a20ee2583f8ee55f331))
+* **ui:** each status colour is the most saturated of its hue that passes, and success parts from the accent ([9726542](https://github.com/Esposter/Esposter/commit/972654224ebece135f8dbca61a54d089f3634162))
+* **ui:** the note editor's focus ring is its scroller's, so it stays put on a long note, and the editor-as-field rule is in the ui-library skill ([e2157ef](https://github.com/Esposter/Esposter/commit/e2157ef98a6f9002e7cf135fb6fe36df366dadc7))
+* **ui:** the rich text editor is one field that takes the focus ring as a unit, not a panel with a ring around its text ([ca298bb](https://github.com/Esposter/Esposter/commit/ca298bbc4d0920ea9248bcf87be3edd274fa820e))
+* **web:** a missing file under /_nuxt/ is no longer cached as immutable for a year ([cc11bc4](https://github.com/Esposter/Esposter/commit/cc11bc4dc4ac8716377b59f18a3dba88234d9126))
+* **web:** skew protection is off, since it left builds/latest.json and the app manifest served longer than their files ([6167e84](https://github.com/Esposter/Esposter/commit/6167e84d5564a3b6c4e41523b6fd0c9d28aa8ed1))
+* **web:** the 27 lint errors on ai/queue are cleared ([ec7d345](https://github.com/Esposter/Esposter/commit/ec7d3451f866d48ccc122b88a0859d8e6ad96b1e))
+* **web:** the menu items iterate the item whole, since a wrapped v-for pattern breaks the typecheck ([a52b4d0](https://github.com/Esposter/Esposter/commit/a52b4d043629237f56650186bc1f0c90d614ddba))
+* **web:** the no-store hook reads the request's url from req, which the response hook's event carries ([8582be4](https://github.com/Esposter/Esposter/commit/8582be4e4aad7d6ee312e362726eff20e7e12ac9))
+* **web:** the schema form test reads the generic select's model through a typed cast, which the lint and the typecheck both accept ([517cfcb](https://github.com/Esposter/Esposter/commit/517cfcba2d5e553e1981ee296efda3093111eb31))
+* **web:** the twelve type errors the Items.vue syntax error hid from the typecheck are cleared ([42cfd3f](https://github.com/Esposter/Esposter/commit/42cfd3fde13f0b2671e1ffdd04904b1ae17e3f9e))
+* **whiteboard:** a click on a free arrow end changes nothing, the nearer end is the one grabbed, and a handle released on an element it cannot join adds no shape ([61f7d19](https://github.com/Esposter/Esposter/commit/61f7d1906d64dd0e4804cbad1e85d7779c5afeee))
+* **whiteboard:** a distribute keeps the box that ends furthest in place, align and distribute disable when they would move nothing, and the menu spec lists stacking for a selection ([058326c](https://github.com/Esposter/Esposter/commit/058326c39958b764950a65afb7e45c1cdd2d2d19))
+* **whiteboard:** a drop that carries no file is left to its target, so text dropped into the text editor is still inserted ([21b4a71](https://github.com/Esposter/Esposter/commit/21b4a71c4232ad832b4a5ac573755572756fe859))
+* **whiteboard:** a menu opened from the keyboard keeps the selection and lists its commands ([2d8741c](https://github.com/Esposter/Esposter/commit/2d8741c971e9f20e66b01c9f3dcee1422012e499))
+* **whiteboard:** a refused Alt-drag release restores the originals as the selection, since its copies were never inserted ([8c579ad](https://github.com/Esposter/Esposter/commit/8c579ad7fbf8e03dc86929bbedbbab215d95757e))
+* **whiteboard:** an edit still open when the editor unmounts clears its element id from the store ([6d640d7](https://github.com/Esposter/Esposter/commit/6d640d79b2c6922c69659adf72387ee10a193d2e))
+* **whiteboard:** an unwrapped draft is never clipped while typed, a stroke's width is described as always given, and committing keeps the text's place, size and alignment ([5876d2d](https://github.com/Esposter/Esposter/commit/5876d2d68ebadbc72e9b1193ca36f61fa439f7e7))
+* **whiteboard:** text edited in place keeps its colour, a filled element draws dark by default, and a selection of shapes clears its fill in one edit ([5e740a3](https://github.com/Esposter/Esposter/commit/5e740a3fdb1c5c1b340f650dd5b140c200bef2ed))
+* **whiteboard:** text is drawn once while edited, selection frames are solid, a right-click opens the board's context menu, and the canvas selects no text ([33a6f19](https://github.com/Esposter/Esposter/commit/33a6f19db343a263ffa38832fb2aac6f8e810a83))
+* **whiteboard:** the typecheck, lint, duplicate-code, constant-scope and spec-link reds on main are cleared ([c466ca7](https://github.com/Esposter/Esposter/commit/c466ca77b6093859016941e9c8cd113ee665185e))
+
+### Features
+
+* **pdf-viewer:** the More menu goes to the first and last page and fits the width ([8c96c68](https://github.com/Esposter/Esposter/commit/8c96c68365b5f90b59d9409c0c212fc4f09f6f64))
+* **post:** a vote moves its like count at once and the count-write-after-settle rule is retired ([1f61db7](https://github.com/Esposter/Esposter/commit/1f61db7e10c23a2423a00bf6fd24728f15e0e670))
+* **resource:** a resource's formats open under one Import and one Export command in the overflow menu ([ddca142](https://github.com/Esposter/Esposter/commit/ddca14271bb08bb7dccedb2f57c2f30da180cb72))
+* **sheet:** a sheet imports and exports XML as rows of cells, one more entry in the format map ([c8fd936](https://github.com/Esposter/Esposter/commit/c8fd9364e64e93bbe908e105d783b2dc956629d3))
+* **whiteboard:** a dragged element snaps to the edges, centres and midpoints of the others, with guides drawn while it holds an alignment ([61822fb](https://github.com/Esposter/Esposter/commit/61822fb9f9a5ed879f02e15a69d4b41f09abadd7))
+* **whiteboard:** a selection aligns to an edge or centre, distributes with equal gaps and stacks as one, with the bracket keys for stacking ([8553341](https://github.com/Esposter/Esposter/commit/8553341fda2c6316e743c092c0f4f2904c897f27))
+* **whiteboard:** a selection shows handles on every edge and corner, several elements scale together, an Alt drag copies, and an auto-width box measures the lines it draws ([252bb2b](https://github.com/Esposter/Esposter/commit/252bb2b7952edc780b4c947d795e8a68693033c9))
+* **whiteboard:** an image file dropped on the canvas lands where it is dropped, an image holds alt text, and Q toggles the tool lock ([4def162](https://github.com/Esposter/Esposter/commit/4def16281220efd4c5ffee297c7f682db3e82ec9))
+* **whiteboard:** arrowheads come in four kinds, a free arrow end drags and binds, and a connection handle draws a connected shape ([cb942b7](https://github.com/Esposter/Esposter/commit/cb942b7922ca6618acfaf5c1c5b73a057acc7469))
+* **whiteboard:** distribute is disabled for a selection in which one box spans the rest, since it has no outer pair to keep ([3e87ced](https://github.com/Esposter/Esposter/commit/3e87cedf5867ad9daeec86d4f53fe4e3edbaba01))
+* **whiteboard:** outlines take a sketch level and round corners, and a freehand stroke draws as one smooth curve ([6d62d26](https://github.com/Esposter/Esposter/commit/6d62d26ac121e898c56b2fc4a1a067be01a512cb))
+* **whiteboard:** shapes, sticky notes, arrows, strokes and text boxes take a colour, a width and a dash pattern, and a new shape starts with no fill ([49d66d3](https://github.com/Esposter/Esposter/commit/49d66d3057e9b09000ce787d6b3856bd52dbdca0))
+* **whiteboard:** text takes four sizes, an alignment and an auto-width text box, and the editor draws at the same layout the commit leaves ([ee4214f](https://github.com/Esposter/Esposter/commit/ee4214fa5d291438f98a2cc2b96e59488ab7ed2b))
+
 # [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
 
 ### Bug Fixes

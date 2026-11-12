@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
+
+### Features
+
+* **post:** a vote moves its like count at once and the count-write-after-settle rule is retired ([1f61db7](https://github.com/Esposter/Esposter/commit/1f61db7e10c23a2423a00bf6fd24728f15e0e670))
+
 # [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
 
 ### Bug Fixes

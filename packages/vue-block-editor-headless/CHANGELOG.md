@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
+
+### Bug Fixes
+
+* **lint:** the 140 oxlint errors on ai/queue are cleared ([d040147](https://github.com/Esposter/Esposter/commit/d040147f58350ecdb57cba686a3f59ab2771fbe4))
+* **whiteboard:** a distribute keeps the box that ends furthest in place, align and distribute disable when they would move nothing, and the menu spec lists stacking for a selection ([058326c](https://github.com/Esposter/Esposter/commit/058326c39958b764950a65afb7e45c1cdd2d2d19))
+* **whiteboard:** an unwrapped draft is never clipped while typed, a stroke's width is described as always given, and committing keeps the text's place, size and alignment ([5876d2d](https://github.com/Esposter/Esposter/commit/5876d2d68ebadbc72e9b1193ca36f61fa439f7e7))
+* **whiteboard:** the typecheck, lint, duplicate-code, constant-scope and spec-link reds on main are cleared ([c466ca7](https://github.com/Esposter/Esposter/commit/c466ca77b6093859016941e9c8cd113ee665185e))
+
+### Features
+
+* **whiteboard:** a selection shows handles on every edge and corner, several elements scale together, an Alt drag copies, and an auto-width box measures the lines it draws ([252bb2b](https://github.com/Esposter/Esposter/commit/252bb2b7952edc780b4c947d795e8a68693033c9))
+* **whiteboard:** an image file dropped on the canvas lands where it is dropped, an image holds alt text, and Q toggles the tool lock ([4def162](https://github.com/Esposter/Esposter/commit/4def16281220efd4c5ffee297c7f682db3e82ec9))
+* **whiteboard:** arrowheads come in four kinds, a free arrow end drags and binds, and a connection handle draws a connected shape ([cb942b7](https://github.com/Esposter/Esposter/commit/cb942b7922ca6618acfaf5c1c5b73a057acc7469))
+* **whiteboard:** outlines take a sketch level and round corners, and a freehand stroke draws as one smooth curve ([6d62d26](https://github.com/Esposter/Esposter/commit/6d62d26ac121e898c56b2fc4a1a067be01a512cb))
+* **whiteboard:** shapes, sticky notes, arrows, strokes and text boxes take a colour, a width and a dash pattern, and a new shape starts with no fill ([49d66d3](https://github.com/Esposter/Esposter/commit/49d66d3057e9b09000ce787d6b3856bd52dbdca0))
+* **whiteboard:** text takes four sizes, an alignment and an auto-width text box, and the editor draws at the same layout the commit leaves ([ee4214f](https://github.com/Esposter/Esposter/commit/ee4214fa5d291438f98a2cc2b96e59488ab7ed2b))
+
 # [4.9.0](https://github.com/Esposter/Esposter/compare/v4.8.0...v4.9.0) (2026-11-11)
 
 ### Features
