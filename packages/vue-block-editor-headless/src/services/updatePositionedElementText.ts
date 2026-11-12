@@ -2,7 +2,7 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { getAutoTextWidth } from "#src/services/export/getAutoTextWidth";
+import { getAutoTextWidthOperation } from "#src/services/getAutoTextWidthOperation";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
 import { getPositionedElementText } from "#src/services/getPositionedElementText";
@@ -25,13 +25,6 @@ export const updatePositionedElementText = (
     { op: JsonPatchOperationType.Replace, path: `${pointer}/${property}`, value: text },
   ];
   return element.type === PositionedElementType.Text && !element.isWrapped
-    ? [
-        ...operations,
-        {
-          op: JsonPatchOperationType.Replace,
-          path: `${pointer}/width`,
-          value: getAutoTextWidth(text, element.textSize),
-        },
-      ]
+    ? [...operations, getAutoTextWidthOperation(index, text, element.textSize)]
     : operations;
 };

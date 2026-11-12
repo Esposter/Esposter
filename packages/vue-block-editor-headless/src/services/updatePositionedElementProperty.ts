@@ -6,7 +6,7 @@ import type { JsonPatchOperation } from "@esposter/shared";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
-import { getAutoTextWidth } from "#src/services/export/getAutoTextWidth";
+import { getAutoTextWidthOperation } from "#src/services/getAutoTextWidthOperation";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
 import { exhaustiveGuard, JsonPatchOperationType } from "@esposter/shared";
@@ -65,13 +65,7 @@ const getTextWidthOperations = (
   if (isWrapped) return [];
 
   const textSize = change.property === "textSize" ? change.value : element.textSize;
-  return [
-    {
-      op: JsonPatchOperationType.Replace,
-      path: `${getElementPointer(index)}/width`,
-      value: getAutoTextWidth(element.text, textSize),
-    },
-  ];
+  return [getAutoTextWidthOperation(index, element.text, textSize)];
 };
 
 // Replaces one property of the element at an index, as the change names it, and for an unwrapped text box the width its text takes
