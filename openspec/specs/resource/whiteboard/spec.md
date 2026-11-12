@@ -749,4 +749,5 @@ While the owner edits a text, its element SHALL draw the draft in place of the c
 
 - **GIVEN** a Process shape showing a draft that differs from its committed text
 - **WHEN** the owner commits the draft
-- **THEN** the text draws at the same place and in the same lines as it did while being typed
+- **THEN** the text draws at the same place, size and alignment as it did while being typed
+- **AND** a line the editor wrapped by the glyphs' real widths may break at other words, since the layout wraps by the estimate the export shares

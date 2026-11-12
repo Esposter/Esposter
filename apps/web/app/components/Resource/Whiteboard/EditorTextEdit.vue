@@ -40,7 +40,8 @@ const style = computed(() => {
     top: `${(placement.point.y - viewport.value.y) * scale}px`,
     transform: `translate(${shift}, ${WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP[placement.verticalAlignment]})`,
     whiteSpace: placement.isWrapped ? undefined : "pre",
-    width: `${placement.width * scale}px`,
+    // An unwrapped draft is sized by its own text, so a glyph wider than the estimate is never clipped while it is typed
+    width: placement.isWrapped ? `${placement.width * scale}px` : undefined,
   };
 });
 onMounted(() => {

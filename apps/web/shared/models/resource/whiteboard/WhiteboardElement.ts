@@ -23,7 +23,10 @@ const DASH_PATTERN_DESCRIPTION =
 const FILL_DESCRIPTION =
   "The fill of the shape, as six hex digits. Empty is no fill, so the shape's outline stands on the page alone";
 const STROKE_WIDTH_DESCRIPTION =
-  "The width of the outline, the route or the stroke in document units: 1 for thin, 2 for medium or 4 for bold. Medium when left out";
+  "The width of the outline or the route in document units: 1 for thin, 2 for medium or 4 for bold. Medium when left out";
+// A freehand stroke has no default width, so it is always written with one
+const FREEHAND_STROKE_WIDTH_DESCRIPTION =
+  "The width of the stroke in document units: 1 for thin, 2 for medium or 4 for bold. Always given";
 const SKETCH_LEVEL_DESCRIPTION =
   "How hand-drawn the outline or the route is: architect draws it straight, artist with the usual sketch, or cartoonist with a larger one. Artist when left out";
 const CORNER_STYLE_DESCRIPTION =
@@ -99,7 +102,7 @@ const whiteboardStrokeSchema = z.object({
   ...strokeElementSchema.shape,
   color: strokeElementSchema.shape.color.meta({ description: COLOR_DESCRIPTION }),
   points: strokeElementSchema.shape.points.max(MAX_RESOURCE_CONTENT_SIZE),
-  strokeWidth: strokeElementSchema.shape.strokeWidth.meta({ description: STROKE_WIDTH_DESCRIPTION }),
+  strokeWidth: strokeElementSchema.shape.strokeWidth.meta({ description: FREEHAND_STROKE_WIDTH_DESCRIPTION }),
 });
 
 const whiteboardTextSchema = z.object({
