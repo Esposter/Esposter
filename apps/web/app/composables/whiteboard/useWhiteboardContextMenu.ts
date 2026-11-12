@@ -2,13 +2,13 @@ import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { WhiteboardContextMenuCommands } from "@/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
 
-import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
-import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import {
   getWhiteboardCanvasContextMenuItems,
   getWhiteboardContextMenuItems,
 } from "@/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
+import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
+import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { WHITEBOARD_RESET_SCALE } from "@/services/whiteboard/viewport/constants";
 import { useAlertStore } from "@/store/alert";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
@@ -74,19 +74,22 @@ export const useWhiteboardContextMenu = (
       sendToBack: isSingle && index > 0 ? changeZOrder(0) : undefined,
     });
   };
-  const onOpenContextMenu = (point: UiContextMenuPoint) => {
-    const elementId = getHitElementId(
-      editState.value.document,
-      getWorldPoint({ x: point.x - canvasRect.value.x, y: point.y - canvasRect.value.y }, viewport.value),
-      getHitTolerance(viewport.value.scale),
-    );
-    if (elementId === undefined) selectedIds.value = [];
-    else if (!selectedIds.value.includes(elementId)) selectedIds.value = [elementId];
+  // A menu from the keyboard opens at the canvas's corner, which says nothing about what the reader points at, so it keeps the selection
+  const onOpenContextMenu = (point: UiContextMenuPoint, isFromPointer: boolean) => {
+    if (isFromPointer) {
+      const elementId = getHitElementId(
+        editState.value.document,
+        getWorldPoint({ x: point.x - canvasRect.value.x, y: point.y - canvasRect.value.y }, viewport.value),
+        getHitTolerance(viewport.value.scale),
+      );
+      if (elementId === undefined) selectedIds.value = [];
+      else if (!selectedIds.value.includes(elementId)) selectedIds.value = [elementId];
+    }
 
     openContextMenu({
       ...point,
       items:
-        elementId === undefined
+        selectedIds.value.length === 0
           ? getWhiteboardCanvasContextMenuItems({
               fitToContent,
               paste,

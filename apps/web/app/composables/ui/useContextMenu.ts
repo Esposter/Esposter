@@ -32,7 +32,7 @@ export const useContextMenu = () => {
       swallowingOpener.addEventListener("click", swallowClick, { capture: true, once: true });
       const { onOpen, ...point } = press;
       press = undefined;
-      onOpen(point);
+      onOpen(point, true);
     },
     LONG_PRESS_MS,
     { immediate: false },
@@ -42,10 +42,11 @@ export const useContextMenu = () => {
     stop();
   };
   // A target whose items cost too much to build for every row hands the point on instead, to whatever builds them
-  const getContextMenuGestureProps = (onOpen: (point: UiContextMenuPoint) => void) => {
+  // The flag says whether a pointer opened the menu, since a menu at the element's corner has no point of its own to act on
+  const getContextMenuGestureProps = (onOpen: (point: UiContextMenuPoint, isFromPointer: boolean) => void) => {
     const openAtCorner = (opener: HTMLElement) => {
       const { bottom, left } = opener.getBoundingClientRect();
-      onOpen({ opener, x: left, y: bottom });
+      onOpen({ opener, x: left, y: bottom }, false);
     };
     return {
       onContextmenu: (event: MouseEvent) => {
@@ -58,7 +59,7 @@ export const useContextMenu = () => {
         event.preventDefault();
         // The menu key raises the same event with no pointer behind it, so it opens at the element instead
         const isFromPointer = event.button === 2 || ("pointerType" in event && Boolean(event.pointerType));
-        if (isFromPointer) onOpen({ opener: event.currentTarget, x: event.clientX, y: event.clientY });
+        if (isFromPointer) onOpen({ opener: event.currentTarget, x: event.clientX, y: event.clientY }, true);
         else openAtCorner(event.currentTarget);
       },
       onKeydown: (event: KeyboardEvent) => {
