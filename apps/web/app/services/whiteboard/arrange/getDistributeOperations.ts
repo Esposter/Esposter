@@ -17,7 +17,8 @@ const getPointAt = (bounds: Bounds, axis: DistributeAxis, start: number): Point 
   axis === DistributeAxis.Horizontal ? { x: start, y: bounds.y } : { x: bounds.x, y: start };
 
 // The operations that space the boxes of a selection with equal gaps between neighbours, keeping the outermost two in place. The gap is what the
-// Outermost two leave once the boxes' extents are taken out, so the gaps are equal however the boxes differ in size
+// Outermost two leave once the boxes' extents are taken out, so the gaps are equal however the boxes differ in size. A selection in which one box
+// Spans the rest has no outer pair to keep, so it is given no operations
 export const getDistributeOperations = (
   document: PositionedDocument,
   selectedIds: string[],
@@ -25,6 +26,15 @@ export const getDistributeOperations = (
 ): JsonPatchOperation[] => {
   const boxes = getSelectedBoxes(document, selectedIds);
   if (boxes.length < WHITEBOARD_DISTRIBUTE_MINIMUM_BOXES) return [];
+  // A box that starts no later and ends no earlier than every other box is both outer edges, so there is no outer pair to keep and nothing is moved
+  const hasSpanningBox = boxes.some(({ bounds }) =>
+    boxes.every(
+      ({ bounds: otherBounds }) =>
+        getStart(bounds, axis) <= getStart(otherBounds, axis) &&
+        getStart(bounds, axis) + getExtent(bounds, axis) >= getStart(otherBounds, axis) + getExtent(otherBounds, axis),
+    ),
+  );
+  if (hasSpanningBox) return [];
 
   // The box that ends furthest along the axis is the last, even when it starts before another does, so a box lying inside another's span is never the
   // One that is taken for the outer edge

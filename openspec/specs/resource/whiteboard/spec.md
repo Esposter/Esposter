@@ -981,7 +981,7 @@ Six align commands SHALL each move every box of a selection of two or more so th
 
 ### Requirement: A selection of three or more boxes distributes with equal gaps
 
-Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step.
+Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step. A selection in which one box starts no later than every other box and ends no earlier than every other box along the axis has no outer pair to keep in place, so distribute SHALL be disabled for it and SHALL move no box.
 
 #### Scenario: Distributing horizontally makes every gap equal
 
@@ -995,6 +995,19 @@ Distribute SHALL space a selection of three or more boxes evenly, horizontally o
 - **GIVEN** a selection of two shapes
 - **WHEN** the owner looks at the distribute controls
 - **THEN** every distribute control is disabled
+
+#### Scenario: A box that spans the others disables distribute
+
+- **GIVEN** a selection of three boxes in which one box starts at the left of the others and ends at the right of them
+- **WHEN** the owner looks at the distribute controls
+- **THEN** every distribute control is disabled
+- **AND** pressing none of them moves a box
+
+#### Scenario: Distribute of boxes that do not span the others is unchanged
+
+- **GIVEN** a selection of three boxes in which no box starts no later than every other box and ends no earlier than every other box
+- **WHEN** the owner distributes them horizontally
+- **THEN** the two outermost boxes stay in place and the gaps between neighbours are equal
 
 ### Requirement: A selection stacks as one, keeping its order
 

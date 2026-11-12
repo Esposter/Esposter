@@ -107,4 +107,21 @@ describe(getDistributeOperations, () => {
       50,
     );
   });
+
+  test("A box that spans the others disables distribute", () => {
+    expect.hasAssertions();
+
+    // The first shape starts at the left of the others and ends at the right of them, so it is both outer edges and there is no outer pair to keep
+    const document: PositionedDocument = {
+      elements: [
+        createShape(FIRST_ID, 0, 0, 500, 100),
+        createShape(SECOND_ID, 100, 0, 50, 100),
+        createShape(THIRD_ID, 300, 0, 50, 100),
+      ],
+    };
+
+    expect(getDistributeOperations(document, [FIRST_ID, SECOND_ID, THIRD_ID], DistributeAxis.Horizontal)).toStrictEqual(
+      [],
+    );
+  });
 });
