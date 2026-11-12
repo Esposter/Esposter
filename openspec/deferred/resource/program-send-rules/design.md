@@ -2,7 +2,7 @@
 
 ## Why deferred
 
-The rules and the planner are designed to be built, but the dispatch record they keep is meant to be written by a sender, and sending is itself deferred ([email sending](../email-sending/design.md)). Built now, the only dispatch event is an export, which records a dispatch that may never have been sent, and the planner's invite and reminder counts would drift from what recipients received. A change waiting on a deferred idea would sit open with no unit clearing its blocker, so the whole design waits here with its tasks and its spec delta, ready to move into `changes/` unchanged.
+The rules and the planner are designed to be built, but the dispatch record they keep is meant to be written by a sender, and sending is itself deferred ([email sending](../email-sending/design.md)). Built now, the only dispatch event is an export, which records a dispatch that may never have been sent, and the planner's invite and reminder counts would drift from what recipients received. A change waiting on a deferred idea would sit open with no unit clearing its blocker, so the design waits here until the sender it records for exists.
 
 ## Revisit when
 
