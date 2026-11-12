@@ -8,7 +8,7 @@ The rules and the planner are designed to be built, but the dispatch record they
 
 Email sending is built, or the owner decides that an export is the dispatch event for good and a recorded dispatch means "file produced".
 
-The folder holds the proposal and this design only, as a deferred idea does. The tasks and the spec delta this design was first written with are rewritten from it when the idea moves into `changes/`; the first draft of both is in the history of `openspec/changes/resource-program-send-rules/` at `d3387f9626`.
+The folder holds the proposal and this design only, as a deferred idea does. The tasks and the spec delta this design was first written with are rewritten from it when the idea moves into `changes/`; the first draft of both is in the history of this idea's earlier `changes/` folder at `d3387f9626`.
 
 ## Context
 

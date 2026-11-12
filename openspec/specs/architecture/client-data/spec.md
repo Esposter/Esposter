@@ -196,7 +196,7 @@ A count the server derives from many rows SHALL be re-read from the server on ev
 
 ### Requirement: A vote's effect on a displayed count shows at once, and every other count holds until its write settles
 
-A count the server derives SHALL show the viewer's own vote's effect on it before the write that changes it has settled, and SHALL be restored to the count it held if the write fails. Once the write settles, the count shows the value the server reads back, whatever the estimate was. Every other count SHALL keep its displayed value until the write that changes it has settled. The viewer's own mark MAY change at once, since the client holds it exactly. A first vote's mark waits for the answer, since its row is server-generated, while its count moves at once.
+A count the server derives SHALL show the viewer's own vote's effect on it before the write that changes it has settled, and SHALL be restored to the count it held if the write fails. Once the write settles, the count shows the value the server reads back. Every other count SHALL keep its displayed value until the write that changes it has settled. The viewer's own mark MAY change at once, since the client holds it exactly.
 
 #### Scenario: A vote moves the count at once
 
@@ -221,6 +221,12 @@ A count the server derives SHALL show the viewer's own vote's effect on it befor
 - **GIVEN** a post the viewer has voted on, and a vote the other way
 - **WHEN** the viewer changes the vote and the server has not answered
 - **THEN** the viewer's own vote shows the new value
+
+#### Scenario: A first vote's mark waits for the answer while its count moves
+
+- **GIVEN** a post the viewer has not voted on, whose vote row the server generates
+- **WHEN** the viewer likes the post and the server has not answered
+- **THEN** the like count shows its previous value plus the vote, and the viewer's own mark is not shown until the server answers
 
 ### Requirement: A read in a test settles without waiting for a read sent alongside it
 
