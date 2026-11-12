@@ -8,6 +8,8 @@ The rules and the planner are designed to be built, but the dispatch record they
 
 Email sending is built, or the owner decides that an export is the dispatch event for good and a recorded dispatch means "file produced".
 
+The folder holds the proposal and this design only, as a deferred idea does. The tasks and the spec delta this design was first written with are rewritten from it when the idea moves into `changes/`; the first draft of both is in the history of `openspec/changes/resource-program-send-rules/` at `d3387f9626`.
+
 ## Context
 
 A program today binds three resources and then does the owner's bookkeeping for them: it issues a link per person, joins the links to responses, and exports the email once per person. It states no rule. Who is invited, when a reminder is due and how many reminders one person gets are left to the owner's memory, and the program cannot answer "who is due now". Sending itself is out of reach for now, since the platform has no sender and building one is [deferred](../email-sending/design.md); the export is the only way a message leaves.
