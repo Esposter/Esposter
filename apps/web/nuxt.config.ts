@@ -17,6 +17,7 @@ import { routeRules } from "./configuration/routeRules.ts";
 import { runtimeConfig } from "./configuration/runtimeConfig.ts";
 import { security } from "./configuration/security.ts";
 import { site } from "./configuration/site.ts";
+import { skewProtection } from "./configuration/skewProtection.ts";
 import { typescript } from "./configuration/typescript.ts";
 import { vite } from "./configuration/vite.ts";
 
@@ -43,6 +44,7 @@ export default defineNuxtConfig({
   runtimeConfig,
   security,
   site,
+  skewProtection,
   typescript,
   vite,
 });
