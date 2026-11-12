@@ -97,15 +97,18 @@ describe("uiSchemaForm", () => {
         },
       });
       await flushPromises();
+      // The select is generic, so its props read as `never`; the model it holds is a string here
+      const getSelectModelValue = () =>
+        (component.findComponent(UiSelect).props() as { modelValue?: string }).modelValue;
 
-      expect(component.findComponent(UiSelect).props("modelValue")).toBe("1");
+      expect(getSelectModelValue()).toBe("1");
       expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(2);
 
       component.findComponent(UiSelect).vm.$emit("update:modelValue", "0");
       await flushPromises();
 
       expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([{ id: "id", name: "", type: "Text" }]);
-      expect(component.findComponent(UiSelect).props("modelValue")).toBe("0");
+      expect(getSelectModelValue()).toBe("0");
       expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(1);
     });
 
