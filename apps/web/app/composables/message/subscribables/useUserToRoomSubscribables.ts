@@ -1,3 +1,4 @@
+import { getIdsFromKey } from "@/services/message/subscribables/getIdsFromKey";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
@@ -20,7 +21,7 @@ export const useUserToRoomSubscribables = () => {
       if (!roomIdsString) return undefined;
 
       return getUnsubscribe(
-        $trpc.userToRoom.onUpdateUserToRoom.subscribe(roomIdsString.split(","), {
+        $trpc.userToRoom.onUpdateUserToRoom.subscribe(getIdsFromKey(roomIdsString), {
           onData: getSynchronizedFunction(async (userToRoom) => {
             setMyUserToRoom(userToRoom.roomId, userToRoom);
             // A display name is a server row, so the room's copy of this member is re-read rather than written here

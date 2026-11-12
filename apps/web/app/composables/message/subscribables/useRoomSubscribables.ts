@@ -1,3 +1,4 @@
+import { getIdsFromKey } from "@/services/message/subscribables/getIdsFromKey";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useRoomStore } from "@/store/message/room";
@@ -17,7 +18,7 @@ export const useRoomSubscribables = () => {
     (roomIdsString) => {
       if (!roomIdsString) return undefined;
 
-      const roomIds = roomIdsString.split(",");
+      const roomIds = getIdsFromKey(roomIdsString);
       return getUnsubscribe(
         $trpc.room.onUpdateRoom.subscribe(roomIds, {
           onData: (updatedRoom) => {

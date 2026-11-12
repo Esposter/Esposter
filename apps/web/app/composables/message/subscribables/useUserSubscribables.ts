@@ -1,3 +1,4 @@
+import { getIdsFromKey } from "@/services/message/subscribables/getIdsFromKey";
 import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useMemberStore } from "@/store/message/user/member";
@@ -17,7 +18,7 @@ export const useUserSubscribables = async () => {
     ([memberIdsString, newSession]) => {
       if (!newSession) return undefined;
 
-      const newMemberIds = memberIdsString.split(",").filter((id) => id && id !== newSession.user.id);
+      const newMemberIds = getIdsFromKey(memberIdsString).filter((id) => id && id !== newSession.user.id);
       if (newMemberIds.length === 0) return undefined;
 
       return getUnsubscribe(
