@@ -1,0 +1,12 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-sonnet-5-5
+x-touches:
+  [
+    "apps/web/server/services/program/**",
+    "apps/web/server/services/dataset/programStatus/**",
+    "apps/web/shared/models/resource/program/**",
+    "apps/web/shared/services/resource/program/**",
+    "apps/web/app/components/Resource/Program/**",
+    "packages/db-schema/src/models/program/**",
+  ]

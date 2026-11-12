@@ -1,4 +1,0 @@
-schema: spec-driven
-affected_areas: [resource]
-x-model: claude-sonnet-5-5
-x-touches: ["apps/web/server/services/program/readProgramStatusRows.ts"]
