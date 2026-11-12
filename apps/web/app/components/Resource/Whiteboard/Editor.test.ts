@@ -154,10 +154,9 @@ describe("resourceWhiteboardEditor", () => {
     const canvas = getCanvas(component);
     await sendPointer(canvas, "pointerdown", { x: 50, y: 50 });
     await sendPointer(canvas, "pointerup", { x: 50, y: 50 });
-    const frames = canvas.findAll('rect[stroke="var(--ui-accent)"]');
+    const frames = canvas.findAll('rect[stroke="var(--ui-accent)"][fill="none"]');
 
     expect(frames).toHaveLength(1);
-    expect(frames[0]?.attributes("fill")).toBe("none");
 
     await sendPointer(canvas, "pointerdown", { x: 700, y: 500 });
     await sendPointer(canvas, "pointermove", { x: 750, y: 550 });
@@ -165,6 +164,18 @@ describe("resourceWhiteboardEditor", () => {
 
     expect(marquee).toHaveLength(1);
     expect(canvas.findAll("[stroke-dasharray]")).toHaveLength(0);
+  });
+
+  test("a selected shape shows a drawn handle on each edge and corner", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS]);
+    await flushPromises();
+    const canvas = getCanvas(component);
+    await sendPointer(canvas, "pointerdown", { x: 50, y: 50 });
+    await sendPointer(canvas, "pointerup", { x: 50, y: 50 });
+
+    expect(canvas.findAll('rect[fill="var(--ui-background)"]')).toHaveLength(6);
   });
 
   const rightClick = (canvas: Except<DOMWrapper<Element>, "exists">, point: Point) =>

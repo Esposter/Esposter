@@ -10,6 +10,12 @@ describe(getAutoTextWidth, () => {
     expect(getAutoTextWidth("ab\nabcd", TextSize.Small)).toBe(getTextWidth("abcd", TextSize.Small));
   });
 
+  test("a leading space the layout drops is not counted in the width", () => {
+    expect.hasAssertions();
+
+    expect(getAutoTextWidth(" Review", TextSize.Small)).toBe(getTextWidth("Review", TextSize.Small));
+  });
+
   test("an empty text is one narrow character wide", () => {
     expect.hasAssertions();
 

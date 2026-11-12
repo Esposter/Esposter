@@ -57,6 +57,8 @@ describe(reduceWhiteboardGesture, () => {
   const NEW_ARROW_ID = crypto.randomUUID();
   const PLACED_SHAPE_ID = crypto.randomUUID();
   const STROKE_ID = crypto.randomUUID();
+  const COPY_ID = crypto.randomUUID();
+  const ARROW_COPY_ID = crypto.randomUUID();
   const VIEWPORT: Viewport = { scale: 1, x: 0, y: 0 };
   const PROCESS_BOUNDS: Bounds = { height: 50, width: 100, x: 100, y: 100 };
   // A decision's bottom point to a process's left point, both bound, with its arrowhead at the end only
@@ -78,13 +80,17 @@ describe(reduceWhiteboardGesture, () => {
     type: PositionedElementType.Arrow,
   };
 
-  const createPointer = (action: GesturePointerAction, screen: Point, isShiftKey = false): GesturePointerEvent => ({
-    action,
-    button: PRIMARY_BUTTON,
-    isShiftKey,
-    pointerId: POINTER_ID,
-    screen,
-  });
+  const createPointer = (
+    action: GesturePointerAction,
+    screen: Point,
+    isShiftKey = false,
+    isAltKey = false,
+  ): GesturePointerEvent => ({ action, button: PRIMARY_BUTTON, isAltKey, isShiftKey, pointerId: POINTER_ID, screen });
+  // Stands in for the id generator, handing out the ids given in the order the gesture asks for them
+  const createIdsInOrder = (ids: string[]): (() => string) => {
+    const remainingIds = [...ids];
+    return () => remainingIds.shift() ?? "";
+  };
   const createState = (
     document: PositionedDocument,
     overrides: Partial<WhiteboardGestureState> = {},
@@ -462,6 +468,181 @@ describe(reduceWhiteboardGesture, () => {
       { op: JsonPatchOperationType.Replace, path: "/elements/0/width", value: MINIMUM_ELEMENT_SIZE },
       { op: JsonPatchOperationType.Replace, path: "/elements/0/height", value: MINIMUM_ELEMENT_SIZE },
     ]);
+  });
+
+  test("a press on the handle of several shapes scales each of them in one edit", () => {
+    expect.hasAssertions();
+
+    // The two shapes cover (100, 100) to (300, 150), so the bottom-right handle is at (300, 150). A drag of (100, 50) scales the width by one and a
+    // Half and the height by two, each shape about the top-left corner
+    const firstShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const secondShape = createProcess(SECOND_PROCESS_ID, { height: 50, width: 50, x: 250, y: 100 });
+    const state = createState(
+      { elements: [firstShape, secondShape] },
+      { selectedIds: [PROCESS_ID, SECOND_PROCESS_ID] },
+    );
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 300, y: 150 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 400, y: 200 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 400, y: 200 }));
+
+    expect(up.state.document).toStrictEqual({
+      elements: [
+        { ...firstShape, height: 100, width: 150 },
+        { ...secondShape, height: 100, width: 75, x: 325 },
+      ],
+    });
+    expect(up.state.selectedIds).toStrictEqual([PROCESS_ID, SECOND_PROCESS_ID]);
+  });
+
+  test("A resize stops at the smallest size an element takes", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
+
+    // The right edge's middle is at (200, 125), and the drag takes it past the left edge at x 100
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 50, y: 125 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 50, y: 125 }));
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, width: MINIMUM_ELEMENT_SIZE }] });
+  });
+
+  test("Alt and a drag leaves the originals and moves the copies", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState(
+      { elements: [processShape] },
+      { createId: createIdsInOrder([COPY_ID]), selectedIds: [PROCESS_ID] },
+    );
+
+    // The press lands in the middle of the shape with Alt held, and the drag takes the pointer by (50, 30)
+    const down = reduceWhiteboardGesture(
+      state,
+      createPointer(GesturePointerAction.Down, { x: 150, y: 125 }, false, true),
+    );
+    const move = reduceWhiteboardGesture(
+      down.state,
+      createPointer(GesturePointerAction.Move, { x: 200, y: 155 }, false, true),
+    );
+    const up = reduceWhiteboardGesture(
+      move.state,
+      createPointer(GesturePointerAction.Up, { x: 200, y: 155 }, false, true),
+    );
+
+    expect(up.state.document).toStrictEqual({
+      elements: [processShape, { ...processShape, id: COPY_ID, x: 150, y: 130 }],
+    });
+    expect(up.state.selectedIds).toStrictEqual([COPY_ID]);
+  });
+
+  test("Alt and a drag copies an arrow with the shapes it is bound to", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    // The arrow starts at the shape's right connection point, (200, 125), and its end is free at (300, 300)
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { hasArrowhead: true, point: { x: 300, y: 300 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: {
+        binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
+        hasArrowhead: false,
+        point: { x: 200, y: 125 },
+      },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState(
+      { elements: [processShape, arrow] },
+      { createId: createIdsInOrder([COPY_ID, ARROW_COPY_ID]), selectedIds: [PROCESS_ID, ARROW_ID] },
+    );
+
+    const down = reduceWhiteboardGesture(
+      state,
+      createPointer(GesturePointerAction.Down, { x: 150, y: 125 }, false, true),
+    );
+    const move = reduceWhiteboardGesture(
+      down.state,
+      createPointer(GesturePointerAction.Move, { x: 200, y: 155 }, false, true),
+    );
+    const up = reduceWhiteboardGesture(
+      move.state,
+      createPointer(GesturePointerAction.Up, { x: 200, y: 155 }, false, true),
+    );
+
+    // The shape's copy moves to (150, 130), so its right connection point moves to (250, 155), where the arrow copy's start is rerouted
+    expect(up.state.document).toStrictEqual({
+      elements: [
+        processShape,
+        arrow,
+        { ...processShape, id: COPY_ID, x: 150, y: 130 },
+        {
+          ...arrow,
+          end: { hasArrowhead: true, point: { x: 350, y: 330 } },
+          id: ARROW_COPY_ID,
+          start: {
+            binding: { connectionPointIndex: 1, elementId: COPY_ID },
+            hasArrowhead: false,
+            point: { x: 250, y: 155 },
+          },
+        },
+      ],
+    });
+    expect(up.state.selectedIds).toStrictEqual([COPY_ID, ARROW_COPY_ID]);
+  });
+
+  test("a cancelled Alt drag leaves the originals selected and adds no copy", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState(
+      { elements: [processShape] },
+      { createId: createIdsInOrder([COPY_ID]), selectedIds: [PROCESS_ID] },
+    );
+
+    const down = reduceWhiteboardGesture(
+      state,
+      createPointer(GesturePointerAction.Down, { x: 150, y: 125 }, false, true),
+    );
+    const move = reduceWhiteboardGesture(
+      down.state,
+      createPointer(GesturePointerAction.Move, { x: 200, y: 155 }, false, true),
+    );
+    const cancel = reduceWhiteboardGesture(
+      move.state,
+      createPointer(GesturePointerAction.Cancel, { x: 200, y: 155 }, false, true),
+    );
+
+    expect(cancel.operations).toStrictEqual([]);
+    expect(cancel.state.document).toStrictEqual({ elements: [processShape] });
+    expect(cancel.state.selectedIds).toStrictEqual([PROCESS_ID]);
+  });
+
+  test("An Alt press without travel copies nothing", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(
+      state,
+      createPointer(GesturePointerAction.Down, { x: 150, y: 125 }, false, true),
+    );
+    const up = reduceWhiteboardGesture(
+      down.state,
+      createPointer(GesturePointerAction.Up, { x: 150, y: 125 }, false, true),
+    );
+
+    expect(up.operations).toStrictEqual([]);
+    expect(up.state.document).toStrictEqual({ elements: [processShape] });
   });
 
   test("dragging a stroke moves every point of it", () => {

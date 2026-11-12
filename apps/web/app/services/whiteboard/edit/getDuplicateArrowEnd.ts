@@ -1,12 +1,15 @@
-import type { ArrowEnd } from "vue-block-editor-headless";
+import type { ArrowEnd, Point } from "vue-block-editor-headless";
 
-import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { takeOne } from "@esposter/shared";
 
-// An arrow end of a copy, moved by the duplicate offset. It stays bound to the copy of the shape it was bound to, when that shape is copied with it, and is free otherwise
-export const getDuplicateArrowEnd = (arrowEnd: ArrowEnd, originalIdCopyIdMap: Record<string, string>): ArrowEnd => {
+// An arrow end of a copy, moved by the offset. It stays bound to the copy of the shape it was bound to, when that shape is copied with it, and is free otherwise
+export const getDuplicateArrowEnd = (
+  arrowEnd: ArrowEnd,
+  originalIdCopyIdMap: Record<string, string>,
+  offset: Point,
+): ArrowEnd => {
   const { binding, hasArrowhead, point } = arrowEnd;
-  const copiedPoint = { x: point.x + WHITEBOARD_DUPLICATE_OFFSET, y: point.y + WHITEBOARD_DUPLICATE_OFFSET };
+  const copiedPoint = { x: point.x + offset.x, y: point.y + offset.y };
   if (binding === undefined || !Object.hasOwn(originalIdCopyIdMap, binding.elementId))
     return { hasArrowhead, point: copiedPoint };
 

@@ -31,6 +31,15 @@ export const reducePressedGesture = (
     case GesturePointerAction.Move: {
       if (getPointDistance(gesture.screen, event.screen) < DRAG_START_DISTANCE) return { operations: [], state };
 
+      if (gesture.handle !== undefined) {
+        const resizing: GestureResizing = {
+          handle: gesture.handle,
+          origin: gesture.origin,
+          phase: GesturePhase.Resizing,
+          pointerId: gesture.pointerId,
+        };
+        return reduceResizingGesture({ ...state, gesture: resizing }, resizing, event);
+      }
       if (!gesture.elementId) {
         const marquee: GestureMarquee = {
           baseIds: gesture.isAdditive ? state.selectedIds : [],
@@ -41,15 +50,20 @@ export const reducePressedGesture = (
         };
         return reduceMarqueeGesture({ ...state, gesture: marquee }, marquee, event);
       }
-      if (gesture.handle !== undefined) {
-        const resizing: GestureResizing = {
-          elementId: gesture.elementId,
-          handle: gesture.handle,
+
+      // An Alt drag starts with its copies selected in place of the originals, which a cancel restores
+      if (gesture.originalIdCopyIdMap) {
+        const copying: GestureMoving = {
           origin: gesture.origin,
-          phase: GesturePhase.Resizing,
+          originalIdCopyIdMap: gesture.originalIdCopyIdMap,
+          phase: GesturePhase.Moving,
           pointerId: gesture.pointerId,
         };
-        return reduceResizingGesture({ ...state, gesture: resizing }, resizing, event);
+        return reduceMovingGesture(
+          { ...state, gesture: copying, selectedIds: Object.values(gesture.originalIdCopyIdMap) },
+          copying,
+          event,
+        );
       }
 
       const moving: GestureMoving = {

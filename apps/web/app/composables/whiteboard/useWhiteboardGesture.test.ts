@@ -22,6 +22,7 @@ describe(useWhiteboardGesture, () => {
   const createPointer = (action: GesturePointerAction): GesturePointerEvent => ({
     action,
     button: PRIMARY_BUTTON,
+    isAltKey: false,
     isShiftKey: false,
     pointerId: POINTER_ID,
     screen: { x: 200, y: 125 },
@@ -53,5 +54,24 @@ describe(useWhiteboardGesture, () => {
     expect(editState.value.document).toStrictEqual(document);
     expect(alerts.value).toHaveLength(1);
     expect(takeOne(alerts.value, 0)).toHaveProperty("type", UiToken.Error);
+  });
+
+  test("a refused commit drops the selected ids the document never took", () => {
+    expect.hasAssertions();
+
+    vi.spyOn(crypto, "randomUUID").mockReturnValue(WHITEBOARD_PROCESS_ID);
+    const whiteboardStore = useWhiteboardStore();
+    const { editState } = storeToRefs(whiteboardStore);
+    editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds, tool } = storeToRefs(whiteboardEditorStore);
+    tool.value = GestureTool.Shape;
+    selectedIds.value = [WHITEBOARD_PROCESS_ID, "a copy an Alt press named"];
+    const { onPointer } = useWhiteboardGesture();
+
+    onPointer(createPointer(GesturePointerAction.Down));
+    onPointer(createPointer(GesturePointerAction.Up));
+
+    expect(selectedIds.value).toStrictEqual([WHITEBOARD_PROCESS_ID]);
   });
 });

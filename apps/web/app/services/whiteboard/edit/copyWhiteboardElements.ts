@@ -2,9 +2,9 @@ import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditStat
 import type { PositionedElement } from "vue-block-editor-headless";
 
 import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardEdit";
-import { getChainedOperations } from "@/services/whiteboard/edit/getChainedOperations";
-import { getDuplicateElement } from "@/services/whiteboard/edit/getDuplicateElement";
-import { insertPositionedElement, PositionedElementType } from "vue-block-editor-headless";
+import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
+import { getCopyOperations } from "@/services/whiteboard/edit/getCopyOperations";
+import { takeOne } from "@esposter/shared";
 
 // Inserts a copy of each original on top of the element list under a new id, offset by the duplicate offset, as one edit. The shape
 // Copies are inserted before the arrow copies, so an arrow copy finds the shape copy its binding names. Returns the copies' ids, which
@@ -17,13 +17,13 @@ export const copyWhiteboardElements = (
   const originalIdCopyIdMap: Record<string, string> = Object.fromEntries(
     originals.map(({ id }): [string, string] => [id, crypto.randomUUID()]),
   );
-  const copies = [
-    ...originals.filter(({ type }) => type !== PositionedElementType.Arrow),
-    ...originals.filter(({ type }) => type === PositionedElementType.Arrow),
-  ].map((original) => getDuplicateElement(original, originalIdCopyIdMap));
-  const operations = getChainedOperations(state.document, copies, (document, copy) =>
-    insertPositionedElement(document, document.elements.length, copy),
-  );
+  const operations = getCopyOperations(state.document, originals, originalIdCopyIdMap, {
+    x: WHITEBOARD_DUPLICATE_OFFSET,
+    y: WHITEBOARD_DUPLICATE_OFFSET,
+  });
 
-  return { copiedIds: copies.map(({ id }) => id), state: applyWhiteboardEdit(state, operations) };
+  return {
+    copiedIds: originals.map(({ id }) => takeOne(originalIdCopyIdMap, id)),
+    state: applyWhiteboardEdit(state, operations),
+  };
 };

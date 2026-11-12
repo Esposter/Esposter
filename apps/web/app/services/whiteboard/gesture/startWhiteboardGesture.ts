@@ -14,7 +14,7 @@ import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
 import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingGesture";
-import { applyPatches, exhaustiveGuard, takeOne } from "@esposter/shared";
+import { applyPatches, exhaustiveGuard } from "@esposter/shared";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 // An idle canvas takes a press. The middle button, the hand tool and Space held pan, the freehand tool starts a stroke, and the arrow tool
@@ -72,12 +72,16 @@ export const startWhiteboardGesture = (
     case GestureTool.Select: {
       const tolerance = getHitTolerance(state.viewport.scale);
       const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);
-      const elementId =
-        handle === undefined ? (getHitElementId(state.document, origin, tolerance) ?? "") : takeOne(state.selectedIds);
+      const elementId = handle === undefined ? (getHitElementId(state.document, origin, tolerance) ?? "") : "";
       const selectedIds =
         !elementId || handle !== undefined
           ? state.selectedIds
           : getPressedSelection(state.selectedIds, elementId, event.isShiftKey);
+      // Alt on an element fixes the copy id of each element the press leaves selected, so a drag that starts from the press copies them under those ids
+      const originalIdCopyIdMap =
+        event.isAltKey && elementId
+          ? Object.fromEntries(selectedIds.map((selectedId): [string, string] => [selectedId, state.createId()]))
+          : undefined;
       return {
         operations: [],
         state: {
@@ -87,6 +91,7 @@ export const startWhiteboardGesture = (
             handle,
             isAdditive: event.isShiftKey,
             origin,
+            originalIdCopyIdMap,
             phase: GesturePhase.Pressed,
             pointerId: event.pointerId,
             screen: event.screen,

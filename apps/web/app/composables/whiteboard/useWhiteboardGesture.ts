@@ -39,6 +39,11 @@ export const useWhiteboardGesture = () => {
     viewport.value = result.state.viewport;
     const isCommitted = result.operations.length === 0 || commitOperations(result.operations);
     if (isCommitted) selectedIds.value = result.state.selectedIds;
+    // A refused commit leaves the document as it was, so a selection of copies an Alt press named, which the document never took, is left with what it holds
+    else
+      selectedIds.value = selectedIds.value.filter((id) =>
+        editState.value.document.elements.some((element) => element.id === id),
+      );
   };
   const onWheel = (event: GestureWheelEvent) => {
     viewport.value = getWheelViewport(viewport.value, event);

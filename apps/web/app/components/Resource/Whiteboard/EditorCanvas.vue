@@ -41,6 +41,7 @@ const emitPointer = (action: GesturePointerAction, event: PointerEvent) => {
   emit("pointer", {
     action,
     button: event.button,
+    isAltKey: event.altKey,
     isShiftKey: event.shiftKey,
     pointerId: event.pointerId,
     screen: getScreenPoint(event),

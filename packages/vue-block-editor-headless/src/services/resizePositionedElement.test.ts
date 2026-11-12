@@ -104,4 +104,27 @@ describe(resizePositionedElement, () => {
 
     expect(editedDocument?.elements).toStrictEqual([{ ...textBox, isWrapped: true, width: 120 }]);
   });
+
+  test("a resize that keeps an auto width text box's width leaves it unwrapped", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: false,
+      text: "abcd",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: getTextWidth("abcd", TextSize.Small),
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(
+      document,
+      resizePositionedElement(document, 0, { height: 100, width: textBox.width }, { x: 0, y: 40 }),
+    );
+
+    expect(editedDocument?.elements).toStrictEqual([{ ...textBox, y: 40 }]);
+  });
 });
