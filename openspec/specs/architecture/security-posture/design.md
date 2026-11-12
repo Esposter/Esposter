@@ -65,10 +65,10 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 Paths relative to `apps/web`.
 
-| File                               | Role                                                                |
-| ---------------------------------- | ------------------------------------------------------------------- |
-| `configuration/modules.ts`         | registers `nuxt-security-module` in the production module list only |
-| `configuration/security.ts`        | CSP, permissions policy, request size limits, disabled features     |
-| `server/plugins/nuxtAssets.ts`     | the embedder policy on built scripts, so a dedicated worker starts  |
-| `configuration/experimental.ts`    | the entry import map off, so a chunk's name changes with its bytes  |
-| `shared/services/app/constants.ts` | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                      |
+| File                               | Role                                                                                                                                                                      |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `configuration/modules.ts`         | registers `nuxt-security-module` in the production module list only                                                                                                       |
+| `configuration/security.ts`        | CSP, permissions policy, request size limits, disabled features                                                                                                           |
+| `server/plugins/nuxtAssets.ts`     | the embedder policy on built scripts, so a dedicated worker starts, and `no-store` on a miss under `/_nuxt/`, which Nitro's route rule would stamp `immutable` for a year |
+| `configuration/experimental.ts`    | the entry import map off, so a chunk's name changes with its bytes                                                                                                        |
+| `shared/services/app/constants.ts` | `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`                                                                                                                            |
