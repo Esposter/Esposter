@@ -2,7 +2,7 @@
 
 ### Requirement: A selection of three or more boxes distributes with equal gaps
 
-Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step. A selection in which one box starts before every other box and ends after every other box along the axis has no outer pair to keep in place, so distribute SHALL be disabled for it and SHALL move no box.
+Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step. A selection in which one box starts no later than every other box and ends no earlier than every other box along the axis has no outer pair to keep in place, so distribute SHALL be disabled for it and SHALL move no box.
 
 #### Scenario: Distributing horizontally makes every gap equal
 
