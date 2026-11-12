@@ -1,8 +1,21 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
-### Requirement: A distribute is disabled when one box spans the rest
+### Requirement: A selection of three or more boxes distributes with equal gaps
 
-Distribute SHALL be disabled for a selection in which one box starts before every other box and ends after every other box along the axis, since it has no outer pair to keep in place.
+Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step. A selection in which one box starts before every other box and ends after every other box along the axis has no outer pair to keep in place, so distribute SHALL be disabled for it and SHALL move no box.
+
+#### Scenario: Distributing horizontally makes every gap equal
+
+- **GIVEN** three shapes of different widths with uneven gaps between them
+- **WHEN** the owner distributes them horizontally
+- **THEN** each gap between neighbouring shapes is the same
+- **AND** the leftmost and the rightmost shapes have not moved
+
+#### Scenario: Distribute is disabled below three boxes
+
+- **GIVEN** a selection of two shapes
+- **WHEN** the owner looks at the distribute controls
+- **THEN** every distribute control is disabled
 
 #### Scenario: A box that spans the others disables distribute
 
