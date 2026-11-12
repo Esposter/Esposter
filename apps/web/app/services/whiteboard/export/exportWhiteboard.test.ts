@@ -105,6 +105,7 @@ describe(exportWhiteboard, () => {
     expect.hasAssertions();
 
     const imageElement: ImageElement = {
+      altText: "",
       fileId: IMAGE_FILE_ID,
       height: 100,
       id: IMAGE_ID,

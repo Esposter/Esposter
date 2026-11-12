@@ -11,9 +11,10 @@ import type { VerticalAlignment } from "#src/models/VerticalAlignment";
 
 // A property of a positioned element that a command sets: a colour, a width, a dash pattern or a sketch level on an element that draws a line, a shape's
 // Or sticky note's fill, a shape's corners, an arrow's route, or the arrowhead at one of an arrow's ends, which is absent for none. A text's size and
-// Horizontal alignment, a shape's or sticky note's vertical alignment, and whether a text box wraps its text
+// Horizontal alignment, a shape's or sticky note's vertical alignment, whether a text box wraps its text, and the alt text an image holds
 export type PositionedElementProperty =
   | { end: ArrowEndKey; property: "arrowhead"; value?: ArrowheadKind }
+  | { property: "altText"; value: string }
   | { property: "color"; value: string }
   | { property: "cornerStyle"; value: CornerStyle }
   | { property: "dashPattern"; value: DashPattern }

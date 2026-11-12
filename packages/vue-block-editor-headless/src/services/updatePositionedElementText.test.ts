@@ -41,6 +41,7 @@ describe(updatePositionedElementText, () => {
     expect.hasAssertions();
 
     const image: ImageElement = {
+      altText: "",
       fileId: "0".repeat(64),
       height: 100,
       id: crypto.randomUUID(),

@@ -42,6 +42,8 @@ const ARROWHEAD_DESCRIPTION =
   "The arrowhead drawn at this end of the arrow: triangle, diamond, circle or bar. Left out, the end draws no arrowhead";
 const IS_WRAPPED_DESCRIPTION =
   "Whether a text box wraps its text at its width. False is auto width: the text is not wrapped and the box is as wide as its widest line. Wrapped when left out";
+const ALT_TEXT_DESCRIPTION =
+  "The alt text that names the image to assistive technology, drawn on no picture. Empty when none is set, which is what a new image holds";
 
 // An arrow end's point is the connection point its binding names, so the core derives it and an agent is refused a write to it by path. The end is strict,
 // As the core's end is, since a spread of its fields does not carry the strict mode, so a stored end still holding the old arrowhead flag fails its parse
@@ -103,6 +105,11 @@ const whiteboardStickyNoteSchema = z.object({
   }),
 });
 
+const whiteboardImageSchema = z.object({
+  ...imageElementSchema.shape,
+  altText: imageElementSchema.shape.altText.max(MAX_RESOURCE_CONTENT_SIZE).meta({ description: ALT_TEXT_DESCRIPTION }),
+});
+
 const whiteboardStrokeSchema = z.object({
   ...strokeElementSchema.shape,
   color: strokeElementSchema.shape.color.meta({ description: COLOR_DESCRIPTION }),
@@ -123,7 +130,7 @@ const whiteboardTextSchema = z.object({
 
 export const whiteboardElementSchema = z.discriminatedUnion("type", [
   whiteboardArrowSchema,
-  imageElementSchema,
+  whiteboardImageSchema,
   whiteboardShapeSchema,
   whiteboardStickyNoteSchema,
   whiteboardStrokeSchema,

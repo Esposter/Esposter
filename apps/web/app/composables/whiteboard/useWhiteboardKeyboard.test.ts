@@ -15,6 +15,7 @@ import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardE
 import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { getMoveOperations } from "@/services/whiteboard/gesture/getMoveOperations";
 import { WHITEBOARD_NUDGE_LARGE_STEP, WHITEBOARD_NUDGE_STEP } from "@/services/whiteboard/keyboard/constants";
+import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -290,6 +291,59 @@ describe(useWhiteboardKeyboard, () => {
     pressKey({ bubbles: true, key: "a" }, textarea);
 
     expect(tool.value).toBe(GestureTool.Select);
+  });
+
+  test("Q locks the tool in hand", async () => {
+    expect.hasAssertions();
+
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref<string[]>([]);
+    const deletingIds = ref<string[]>([]);
+    const tool = ref(GestureTool.Shape);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    whiteboardEditorStore.isToolLocked = false;
+    await mountKeyboard(editState, selectedIds, deletingIds, tool);
+
+    pressKey({ bubbles: true, key: "q" });
+
+    expect(whiteboardEditorStore.isToolLocked).toBe(true);
+    expect(tool.value).toBe(GestureTool.Shape);
+  });
+
+  test("Q with the lock on releases it", async () => {
+    expect.hasAssertions();
+
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref<string[]>([]);
+    const deletingIds = ref<string[]>([]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    whiteboardEditorStore.isToolLocked = true;
+    await mountKeyboard(editState, selectedIds, deletingIds);
+
+    pressKey({ bubbles: true, key: "q" });
+
+    expect(whiteboardEditorStore.isToolLocked).toBe(false);
+  });
+
+  test("Q typed into a text edit is not a lock", async () => {
+    expect.hasAssertions();
+
+    const textarea = document.createElement("textarea");
+    document.body.append(textarea);
+    onTestFinished(() => {
+      textarea.remove();
+    });
+    textarea.focus();
+    const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
+    const selectedIds = ref([WHITEBOARD_PROCESS_ID]);
+    const deletingIds = ref<string[]>([]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    whiteboardEditorStore.isToolLocked = false;
+    await mountKeyboard(editState, selectedIds, deletingIds);
+
+    pressKey({ bubbles: true, key: "q" }, textarea);
+
+    expect(whiteboardEditorStore.isToolLocked).toBe(false);
   });
 
   test("select all selects every element", async () => {

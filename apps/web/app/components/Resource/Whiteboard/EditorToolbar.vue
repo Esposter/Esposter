@@ -5,7 +5,11 @@ import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhi
 import { EditorToolbarGroupKind } from "@/models/editor/EditorToolbarGroupKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { WHITEBOARD_IMAGE_ACCEPT, WHITEBOARD_SHAPE_TOOL_ITEM } from "@/services/whiteboard/tool/constants";
+import {
+  WHITEBOARD_IMAGE_ACCEPT,
+  WHITEBOARD_SHAPE_TOOL_ITEM,
+  WHITEBOARD_TOOL_LOCK_SHORTCUT,
+} from "@/services/whiteboard/tool/constants";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
@@ -67,6 +71,7 @@ const groups = computed<EditorToolbarGroup[]>(() => [
         isPressed: isToolLocked.value,
         meaning: UiIconMeaning.Lock,
         onClick: toggleToolLock,
+        shortcut: WHITEBOARD_TOOL_LOCK_SHORTCUT,
         title: "Lock the tool",
         value: "lock",
       },

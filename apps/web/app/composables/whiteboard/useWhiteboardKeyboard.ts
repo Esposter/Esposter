@@ -22,8 +22,10 @@ import {
   requestSelectionDelete,
   writeSelectionToClipboard,
 } from "@/services/whiteboard/keyboard/selectionActions";
+import { WHITEBOARD_TOOL_LOCK_SHORTCUT } from "@/services/whiteboard/tool/constants";
 import { WhiteboardShapeItemMap } from "@/services/whiteboard/tool/WhiteboardShapeItemMap";
 import { WhiteboardToolItemMap } from "@/services/whiteboard/tool/WhiteboardToolItemMap";
+import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
 // The keys of a whiteboard's canvas, registered as its commands over its edit state and selection.
 // Delete and Backspace do not delete at once. They name the selection in deletingIds, the target of the confirmation dialog, and confirmDelete runs the deletion once the owner answers it.
@@ -37,6 +39,8 @@ export const useWhiteboardKeyboard = (
   shapeKind: Ref<ShapeKind>,
 ) => {
   const { isOpen: isDeleteOpen } = useSingletonDialog(deletingIds);
+  const whiteboardEditorStore = useWhiteboardEditorStore();
+  const { toggleToolLock } = whiteboardEditorStore;
 
   const chooseTool = (nextTool: GestureTool) => {
     tool.value = nextTool;
@@ -217,6 +221,14 @@ export const useWhiteboardKeyboard = (
         shortcut,
         title: `${title} tool`,
       })),
+    {
+      group: WHITEBOARD_COMMAND_GROUP,
+      id: "whiteboard-tool-lock",
+      meaning: UiIconMeaning.Lock,
+      run: toggleToolLock,
+      shortcut: WHITEBOARD_TOOL_LOCK_SHORTCUT,
+      title: "Lock the tool",
+    },
   ];
 
   useCommands((): UiCommand[] => {

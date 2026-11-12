@@ -40,7 +40,14 @@ const selected = useWhiteboardSelectedElement();
       :element="selected.element"
       :index="selected.index"
     />
-    <ResourceWhiteboardEditorPropertiesOrder :index="selected.index" />
+    <!-- Keyed by the element, so a draft typed into one image's field is never committed to the image that replaces it in the panel -->
+    <ResourceWhiteboardEditorPropertiesAltText
+      v-if="selected.element.type === PositionedElementType.Image"
+      :key="selected.element.id"
+      :element="selected.element"
+      :index="selected.index"
+    />
+    <ResourceWhiteboardEditorPropertiesOrder />
     <ResourceWhiteboardEditorPropertiesFooter />
   </EditorContextualPanel>
 </template>

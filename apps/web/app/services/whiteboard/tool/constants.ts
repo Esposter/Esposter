@@ -14,3 +14,5 @@ export const WHITEBOARD_SHAPE_TOOL_ITEM: EditorToolbarItem = {
 };
 // The image files the picker offers, the same kinds a paste takes
 export const WHITEBOARD_IMAGE_ACCEPT = NOTE_IMAGE_MIME_TYPES.join(",");
+// The key that toggles the tool lock, which the lock button in the toolbar lists and the keyboard binds
+export const WHITEBOARD_TOOL_LOCK_SHORTCUT = "q";

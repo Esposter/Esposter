@@ -6,6 +6,7 @@ import type { Point } from "vue-block-editor-headless";
 import { MimeType } from "#shared/models/file/MimeType";
 import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
@@ -13,7 +14,8 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 // Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.
 // Each pointer event leaves as a gesture event, in screen pixels from the canvas's top left, so the gesture reducer reads the canvas and no DOM.
 // The canvas selects no text, so a drag on it is a gesture and never a highlight of the page under it.
-// A paste leaves as its clipboard text too, which the whiteboard reads for elements, while the image paste is taken here as before
+// A paste leaves as its clipboard text too, which the whiteboard reads for elements, while the image paste is taken here as before. Image files dropped
+// Here are placed at the document point they land on, through the same insert the paste takes
 defineSlots<{ html?: () => VNode; overlay?: () => VNode }>();
 const emit = defineEmits<{
   doubleClick: [screen: Point];
@@ -37,6 +39,8 @@ watch([height, width, x, y], ([newHeight, newWidth, newX, newY]) => {
   setCanvasRect({ height: newHeight, width: newWidth, x: newX, y: newY });
 });
 const getScreenPoint = (event: MouseEvent): Point => ({ x: event.clientX - x.value, y: event.clientY - y.value });
+// The document point a drop lands on, which a dropped image is centred on
+const getDropPoint = (event: DragEvent): Point => getWorldPoint(getScreenPoint(event), viewport.value);
 const emitPointer = (action: GesturePointerAction, event: PointerEvent) => {
   emit("pointer", {
     action,
@@ -83,6 +87,12 @@ const emitWheel = (event: WheelEvent) => {
       (event) => {
         insertImages([...(event.clipboardData?.files ?? [])]);
         emit('paste', event.clipboardData?.getData(MimeType.PlainText) ?? '');
+      }
+    "
+    @dragover.prevent
+    @drop.prevent="
+      (event) => {
+        insertImages([...(event.dataTransfer?.files ?? [])], getDropPoint(event));
       }
     "
   >

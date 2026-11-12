@@ -954,3 +954,158 @@ The canvas SHALL draw a guide line for each alignment a drag currently holds and
 - **WHEN** the owner is still dragging
 - **THEN** a guide line runs along the aligned edge
 - **AND** the guide is gone once the owner releases the pointer
+
+### Requirement: A selection of boxes aligns to one edge or centre
+
+Six align commands SHALL each move every box of a selection of two or more so the boxes line up with the selection's box at its left, centre, right, top, middle or bottom, as one undo step.
+
+#### Scenario: Aligning to the left edge moves each box to the leftmost edge
+
+- **GIVEN** three shapes whose left edges are at different places
+- **WHEN** the owner chooses align left
+- **THEN** each shape's left edge is at the leftmost of the three
+- **AND** one undo returns the three shapes to where they were
+
+#### Scenario: Aligning leaves a free arrow where it was
+
+- **GIVEN** two selected shapes and a selected arrow with both ends free
+- **WHEN** the owner chooses align top
+- **THEN** the two shapes' top edges are level
+- **AND** the arrow's ends have not moved
+
+#### Scenario: Align is disabled when fewer than two boxes are selected
+
+- **GIVEN** a selection of one shape and one free arrow
+- **WHEN** the owner looks at the align controls
+- **THEN** every align control is disabled
+
+### Requirement: A selection of three or more boxes distributes with equal gaps
+
+Distribute SHALL space a selection of three or more boxes evenly, horizontally or vertically, keeping the two outermost boxes in place, as one undo step.
+
+#### Scenario: Distributing horizontally makes every gap equal
+
+- **GIVEN** three shapes of different widths with uneven gaps between them
+- **WHEN** the owner distributes them horizontally
+- **THEN** each gap between neighbouring shapes is the same
+- **AND** the leftmost and the rightmost shapes have not moved
+
+#### Scenario: Distribute is disabled below three boxes
+
+- **GIVEN** a selection of two shapes
+- **WHEN** the owner looks at the distribute controls
+- **THEN** every distribute control is disabled
+
+### Requirement: A selection stacks as one, keeping its order
+
+Each stacking command SHALL move every selected element together, keeping their order among themselves, and SHALL be disabled when the selection holds an element that cannot move that way.
+
+#### Scenario: Bring to front lifts a selection above the rest in its order
+
+- **GIVEN** four elements in the order A, B, C and D, with A and C selected
+- **WHEN** the owner chooses bring to front
+- **THEN** the order is B, D, A and C
+
+#### Scenario: Bring forward moves a selection one step past the element above it
+
+- **GIVEN** three elements in the order A, B and C, with A and B selected
+- **WHEN** the owner chooses bring forward
+- **THEN** the order is C, A and B
+
+#### Scenario: A selection holding the top element cannot bring forward
+
+- **GIVEN** a selection that holds the topmost element
+- **WHEN** the owner looks at the stacking controls
+- **THEN** bring forward and bring to front are disabled
+
+### Requirement: The bracket keys stack the selection
+
+Cmd or Ctrl with the closing bracket SHALL bring the selection forward and Cmd or Ctrl with the opening bracket SHALL send it backward, and holding Shift as well SHALL take the selection to the front or the back.
+
+#### Scenario: The bracket keys stack the selection
+
+- **GIVEN** two shapes selected
+- **WHEN** the owner presses Cmd or Ctrl with the closing bracket
+- **THEN** the selection is brought forward, as the bring forward control brings it
+
+#### Scenario: Shift with the bracket keys sends the selection to the ends
+
+- **GIVEN** two shapes selected and drawn above the other elements
+- **WHEN** the owner presses Cmd or Ctrl with Shift and the opening bracket
+- **THEN** the selection is sent to the back, as the send to back control sends it
+
+#### Scenario: The stacking keys do nothing with no selection
+
+- **GIVEN** no element selected
+- **WHEN** the owner presses Cmd or Ctrl with the closing bracket
+- **THEN** the order of the elements is unchanged
+
+### Requirement: A dropped image is placed centred on the drop point
+
+An image file dropped onto the canvas SHALL be stored as a file asset of the whiteboard and placed centred on the point where it was dropped.
+
+#### Scenario: A dropped image is stored as a file asset and placed at the drop point
+
+- **GIVEN** a whiteboard open in its editor
+- **WHEN** the owner drops a PNG image on the canvas at a point
+- **THEN** the image is uploaded to the whiteboard's file assets
+- **AND** an image element is centred on the drop point and holds the file's id
+
+#### Scenario: A dropped file that is not an image places nothing
+
+- **GIVEN** a whiteboard open in its editor
+- **WHEN** the owner drops a text file on the canvas
+- **THEN** no element is added
+
+#### Scenario: An image that fails to upload alerts and places nothing
+
+- **GIVEN** a whiteboard open in its editor
+- **WHEN** the owner drops an image whose upload the server refuses
+- **THEN** the owner is alerted
+- **AND** no element is added
+
+### Requirement: An image holds alt text that names it
+
+An image SHALL hold alt text, which the owner sets from the properties panel, and which SHALL name the image to assistive technology on the canvas and in the SVG export.
+
+#### Scenario: Setting alt text from the properties panel names the image
+
+- **GIVEN** a selected image
+- **WHEN** the owner types Quarterly chart as its alt text and leaves the field
+- **THEN** the image is named Quarterly chart on the canvas
+- **AND** the SVG export names the image Quarterly chart
+
+#### Scenario: A new image starts with no alt text
+
+- **GIVEN** an image placed by paste
+- **WHEN** the owner selects the image
+- **THEN** its alt text field is empty
+
+#### Scenario: Clearing alt text removes the name from the export
+
+- **GIVEN** an image with alt text Quarterly chart
+- **WHEN** the owner clears its alt text and exports the whiteboard as SVG
+- **THEN** the export names the image with no alt text
+
+### Requirement: The Q key locks the tool in hand
+
+The Q key SHALL toggle the tool lock, so that a tool stays in hand after one use while the lock is on, as the toolbar's lock button does.
+
+#### Scenario: Q locks the tool in hand
+
+- **GIVEN** the rectangle shape tool selected
+- **WHEN** the owner presses Q and places a shape
+- **THEN** the rectangle tool is still in hand
+
+#### Scenario: Q with the lock on releases it
+
+- **GIVEN** the tool lock on
+- **WHEN** the owner presses Q and then places a shape
+- **THEN** the tool returns to select after the placement
+
+#### Scenario: Q typed into a text edit is not a lock
+
+- **GIVEN** an element's text open for editing
+- **WHEN** the owner types the letter q
+- **THEN** the letter is typed into the text
+- **AND** the tool lock is unchanged

@@ -50,27 +50,30 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                 | Role                                                                                             |
-| :----------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue`                       | the canvas, which takes the paste and now the drop, and reads the point a drop lands on          |
-| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`                   | uploads image files as file assets and inserts their elements, at the centre or at a given point |
-| `apps/web/app/services/whiteboard/createWhiteboardImageElement.ts`                   | the image element a placement creates, centred on a point, with empty alt text                   |
-| `apps/web/app/services/whiteboard/getCentredPosition.ts`                             | the top-left corner of a box centred on a point, which the image placement uses                  |
-| `apps/web/app/services/whiteboard/gesture/getWorldPoint.ts`                          | the document point a screen point lands on, which a drop's point is read through                 |
-| `apps/web/app/components/Resource/Whiteboard/ElementImage.vue`                       | draws an image element from its file, and now names it by its alt text                           |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`              | the panel of one selected element, which gains the alt text field for an image                   |
-| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                      | the toolbar's lock button, whose key is now listed                                               |
-| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                       | registers the Q key beside the tool keys                                                         |
-| `apps/web/app/store/resource/whiteboard/editor.ts`                                   | the tool lock's state, and the toggle the key calls                                              |
-| `packages/vue-block-editor-headless/src/models/ImageElement.ts`                      | the image element, which gains the alt text                                                      |
-| `packages/vue-block-editor-headless/src/models/PositionedElementProperty.ts`         | the property a command sets, which gains the alt text                                            |
-| `packages/vue-block-editor-headless/src/services/updatePositionedElementProperty.ts` | replaces one property, the alt text among them                                                   |
-| `packages/vue-block-editor-headless/src/services/export/toImageSvg.ts`               | draws an image in the SVG export, which now names it by its alt text                             |
+| File                                                                                 | Role                                                                                                                      |
+| :----------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------ |
+| `apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue`                       | the canvas, which takes the paste and now the drop, and reads the point a drop lands on                                   |
+| `apps/web/app/composables/whiteboard/useInsertWhiteboardImages.ts`                   | uploads image files as file assets and inserts their elements, at the centre or at a given point                          |
+| `apps/web/app/services/whiteboard/createWhiteboardImageElement.ts`                   | the image element a placement creates, centred on a point, with empty alt text                                            |
+| `apps/web/app/services/whiteboard/getCentredPosition.ts`                             | the top-left corner of a box centred on a point, which the image placement uses                                           |
+| `apps/web/app/services/whiteboard/gesture/getWorldPoint.ts`                          | the document point a screen point lands on, which a drop's point is read through                                          |
+| `apps/web/app/components/Resource/Whiteboard/ElementImage.vue`                       | draws an image element from its file, and now names it by its alt text                                                    |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`              | the panel of one selected element, which mounts the alt text field for an image, keyed by its element                     |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesAltText.vue`            | the alt text field of an image, committed once when the owner leaves it or presses Enter, and shown as an undo changes it |
+| `apps/web/app/components/Resource/Whiteboard/EditorToolbar.vue`                      | the toolbar's lock button, whose key is now listed                                                                        |
+| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                       | registers the Q key beside the tool keys                                                                                  |
+| `apps/web/app/store/resource/whiteboard/editor.ts`                                   | the tool lock's state, and the toggle the key calls                                                                       |
+| `packages/vue-block-editor-headless/src/models/ImageElement.ts`                      | the image element, which gains the alt text                                                                               |
+| `packages/vue-block-editor-headless/src/models/PositionedElementProperty.ts`         | the property a command sets, which gains the alt text                                                                     |
+| `packages/vue-block-editor-headless/src/services/updatePositionedElementProperty.ts` | replaces one property, the alt text among them                                                                            |
+| `packages/vue-block-editor-headless/src/services/export/toImageSvg.ts`               | draws an image in the SVG export, which now names it by its alt text                                                      |
 
 New files, created by the change:
 
 ```text
 apps/web/app/components/Resource/Whiteboard/ElementImage.test.ts     the image's role and accessible name, tested without a browser
+apps/web/app/components/Resource/Whiteboard/EditorPropertiesAltText.vue       the alt text field a panel mounts for an image, a component of its own so the panel only mounts it
+apps/web/app/components/Resource/Whiteboard/EditorPropertiesAltText.test.ts  the field's commit on Enter, its no-op when unchanged, and its follow of an undo
 ```
 
 ## Sources

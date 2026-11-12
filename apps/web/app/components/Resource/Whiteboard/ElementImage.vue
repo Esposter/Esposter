@@ -13,6 +13,8 @@ const { image } = defineProps<Props>();
 const resourceStore = useResourceStore();
 const { currentResourceId } = storeToRefs(resourceStore);
 const href = computed(() => getResourceAssetUrl(getResourceFileBlobName(currentResourceId.value, image.fileId)));
+// The image is named to assistive technology by its alt text, and is left unnamed while it holds none
+const nameAttributes = computed(() => (image.altText ? { "aria-label": image.altText } : {}));
 </script>
 
 <template>
@@ -23,5 +25,7 @@ const href = computed(() => getResourceAssetUrl(getResourceFileBlobName(currentR
     :height="image.height"
     :href
     preserveAspectRatio="xMidYMid meet"
+    role="img"
+    v-bind="nameAttributes"
   />
 </template>

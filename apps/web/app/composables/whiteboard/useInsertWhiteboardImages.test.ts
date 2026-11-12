@@ -2,7 +2,8 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { useInsertWhiteboardImages } from "@/composables/whiteboard/useInsertWhiteboardImages";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
-import { WHITEBOARD_IMAGE_INSERT_OFFSET } from "@/services/whiteboard/palette/constants";
+import { WHITEBOARD_IMAGE_INSERT_OFFSET, WHITEBOARD_IMAGE_SIZE } from "@/services/whiteboard/palette/constants";
+import { useAlertStore } from "@/store/alert";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
@@ -37,6 +38,45 @@ describe(useInsertWhiteboardImages, () => {
     expect(whiteboardStore.whiteboard.elements).toHaveLength(1);
     expect(image).toHaveProperty("fileId", fileId);
     expect(image).toHaveProperty("type", "image");
+  });
+
+  test("a dropped image is stored as a file asset and placed at the drop point", async () => {
+    expect.hasAssertions();
+    const fileId = await getFileId(file);
+    uploadResourceFileMock.mockResolvedValue(fileId);
+
+    const insertImages = useInsertWhiteboardImages();
+    await insertImages([file], { x: 300, y: 200 });
+
+    const whiteboardStore = useWhiteboardStore();
+    const [image] = whiteboardStore.whiteboard.elements;
+    expect(uploadResourceFileMock).toHaveBeenCalledExactlyOnceWith(file, fileId);
+    expect(whiteboardStore.whiteboard.elements).toHaveLength(1);
+    expect(image).toHaveProperty("fileId", fileId);
+    expect(image).toHaveProperty("x", 300 - WHITEBOARD_IMAGE_SIZE.width / 2);
+    expect(image).toHaveProperty("y", 200 - WHITEBOARD_IMAGE_SIZE.height / 2);
+  });
+
+  test("a dropped file that is not an image places nothing", async () => {
+    expect.hasAssertions();
+    const textFile = new File(["a"], "a.txt", { type: MimeType.PlainText });
+
+    const insertImages = useInsertWhiteboardImages();
+    await insertImages([textFile], { x: 300, y: 200 });
+
+    expect(uploadResourceFileMock).not.toHaveBeenCalled();
+    expect(useWhiteboardStore().whiteboard.elements).toStrictEqual([]);
+  });
+
+  test("an image that fails to upload alerts and places nothing", async () => {
+    expect.hasAssertions();
+    uploadResourceFileMock.mockRejectedValue(new Error("The upload was refused"));
+
+    const insertImages = useInsertWhiteboardImages();
+    await insertImages([file], { x: 300, y: 200 });
+
+    expect(useWhiteboardStore().whiteboard.elements).toStrictEqual([]);
+    expect(useAlertStore().alerts.map(({ text }) => text)).toStrictEqual(["The upload was refused"]);
   });
 
   test("images pasted together are placed in the order they were picked, each a step further along from the one before", async () => {

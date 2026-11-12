@@ -1,3 +1,4 @@
+import type { ImageElement } from "#src/models/ImageElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StrokeElement } from "#src/models/StrokeElement";
 import type { TextElement } from "#src/models/TextElement";
@@ -28,6 +29,32 @@ describe(updatePositionedElementProperty, () => {
     const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
 
     expect(editedDocument?.elements).toStrictEqual([{ ...POSITIONED_RECTANGLE, fill: "#fde68a" }, POSITIONED_ARROW]);
+  });
+
+  test("setting an image's alt text replaces it, and no other element holds one", () => {
+    expect.hasAssertions();
+
+    const image: ImageElement = {
+      altText: "",
+      fileId: "0".repeat(64),
+      height: 50,
+      id: crypto.randomUUID(),
+      type: PositionedElementType.Image,
+      width: 50,
+      x: 0,
+      y: 0,
+    };
+    const imageDocument: PositionedDocument = { elements: [image, POSITIONED_RECTANGLE] };
+    const operations = updatePositionedElementProperty(imageDocument, 0, {
+      property: "altText",
+      value: "Quarterly chart",
+    });
+    const editedDocument = applyPositionedEdit(imageDocument, operations);
+
+    expect(editedDocument?.elements[0]).toStrictEqual({ ...image, altText: "Quarterly chart" });
+    expect(
+      updatePositionedElementProperty(imageDocument, 1, { property: "altText", value: "Quarterly chart" }),
+    ).toStrictEqual([]);
   });
 
   test("setting an arrow's route replaces its path kind", () => {

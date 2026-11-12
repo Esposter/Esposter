@@ -543,6 +543,7 @@ describe(saveResourceContent, () => {
       content: {
         elements: [
           {
+            altText: "",
             fileId: assetHash,
             height: 100,
             id: crypto.randomUUID(),
