@@ -2,7 +2,9 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StickyNoteElement } from "#src/models/StickyNoteElement";
 import type { TextElement } from "#src/models/TextElement";
 
+import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElement } from "#src/services/resizePositionedElement";
@@ -30,6 +32,7 @@ describe(resizePositionedElement, () => {
     expect.hasAssertions();
 
     const textElement: TextElement = {
+      color: "",
       id: crypto.randomUUID(),
       text: "",
       type: PositionedElementType.Text,
@@ -46,9 +49,12 @@ describe(resizePositionedElement, () => {
     expect.hasAssertions();
 
     const stickyNote: StickyNoteElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
+      strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.StickyNote,
       width: 100,

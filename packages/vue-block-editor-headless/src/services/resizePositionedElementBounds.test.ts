@@ -29,6 +29,7 @@ describe(resizePositionedElementBounds, () => {
     expect.hasAssertions();
 
     const textElement: TextElement = {
+      color: "",
       id: crypto.randomUUID(),
       text: "",
       type: PositionedElementType.Text,

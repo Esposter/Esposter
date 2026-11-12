@@ -4,7 +4,13 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-import { PositionedElementType, ShapeKind, toElementTextSvg } from "vue-block-editor-headless";
+import {
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  StrokeWidth,
+  toElementTextSvg,
+} from "vue-block-editor-headless";
 
 describe("resourceWhiteboardLabel", () => {
   beforeEach(() => {
@@ -14,10 +20,13 @@ describe("resourceWhiteboardLabel", () => {
   test("the editor draws a label's lines where the export breaks them", () => {
     expect.hasAssertions();
     const shape = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
       kind: ShapeKind.Process,
+      strokeWidth: StrokeWidth.Medium,
       text: "a b c d",
       type: PositionedElementType.Shape,
       width: 24,
@@ -39,10 +48,13 @@ describe("resourceWhiteboardLabel", () => {
   test("a label is not drawn while its element's text is edited in place, so the editor is the only copy", async () => {
     expect.hasAssertions();
     const shape = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
       kind: ShapeKind.Process,
+      strokeWidth: StrokeWidth.Medium,
       text: "a",
       type: PositionedElementType.Shape,
       width: 100,

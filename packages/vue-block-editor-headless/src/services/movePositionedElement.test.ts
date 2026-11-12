@@ -4,6 +4,7 @@ import type { StrokeElement } from "#src/models/StrokeElement";
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { movePositionedElement } from "#src/services/movePositionedElement";
 import {
   POSITIONED_ARROW,
@@ -18,13 +19,14 @@ import { assert, describe, expect, test } from "vitest";
 describe(movePositionedElement, () => {
   const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
   const stroke: StrokeElement = {
+    color: "",
     id: crypto.randomUUID(),
     points: [
       { x: 10, y: 10 },
       { x: 20, y: 10 },
       { x: 20, y: 30 },
     ],
-    strokeWidth: 2,
+    strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Stroke,
   };
 

@@ -1,7 +1,11 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
+import type { StrokeElement } from "#src/models/StrokeElement";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { DashPattern } from "#src/models/DashPattern";
+import { PositionedElementType } from "#src/models/PositionedElementType";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementProperty } from "#src/services/updatePositionedElementProperty";
@@ -53,5 +57,31 @@ describe(updatePositionedElementProperty, () => {
     expect(
       updatePositionedElementProperty(POSITIONED_DOCUMENT, 1, { property: "fill", value: "#fde68a" }),
     ).toStrictEqual([]);
+  });
+
+  test("a freehand stroke takes a colour and a width, but no dash pattern", () => {
+    expect.hasAssertions();
+
+    const stroke: StrokeElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      points: [
+        { x: 0, y: 0 },
+        { x: 10, y: 10 },
+      ],
+      strokeWidth: StrokeWidth.Medium,
+      type: PositionedElementType.Stroke,
+    };
+    const strokeDocument: PositionedDocument = { elements: [stroke] };
+
+    expect(
+      updatePositionedElementProperty(strokeDocument, 0, { property: "dashPattern", value: DashPattern.Dashed }),
+    ).toStrictEqual([]);
+    const editedDocument = applyPositionedEdit(
+      strokeDocument,
+      updatePositionedElementProperty(strokeDocument, 0, { property: "color", value: "#ff0000" }),
+    );
+
+    expect(editedDocument?.elements[0]).toStrictEqual({ ...stroke, color: "#ff0000" });
   });
 });

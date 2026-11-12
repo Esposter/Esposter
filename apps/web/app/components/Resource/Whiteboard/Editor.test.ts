@@ -394,7 +394,7 @@ describe("resourceWhiteboardEditor", () => {
     await drag(getCanvas(component), CANVAS_CENTRE, CANVAS_CENTRE);
 
     expect(whiteboard.value.elements).toStrictEqual([
-      { id: insertedId, text: "Text", type: PositionedElementType.Text, width: 160, x: 320, y: 280 },
+      { color: "", id: insertedId, text: "Text", type: PositionedElementType.Text, width: 160, x: 320, y: 280 },
     ]);
   });
 

@@ -3,7 +3,7 @@ import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboar
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-import { PositionedElementType } from "vue-block-editor-headless";
+import { DashPattern, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementStickyNote", () => {
   beforeEach(() => {
@@ -13,9 +13,12 @@ describe("resourceWhiteboardElementStickyNote", () => {
   test("a sticky note takes a fill and text", () => {
     expect.hasAssertions();
     const stickyNote = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       fill: "#fde68a",
       height: 120,
       id: crypto.randomUUID(),
+      strokeWidth: StrokeWidth.Medium,
       text: "Review",
       type: PositionedElementType.StickyNote,
       width: 160,

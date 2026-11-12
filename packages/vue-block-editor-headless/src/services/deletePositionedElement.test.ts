@@ -2,7 +2,9 @@ import type { ArrowElement } from "#src/models/ArrowElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { deletePositionedElement } from "#src/services/deletePositionedElement";
 import {
   POSITIONED_ARROW,
@@ -19,6 +21,8 @@ describe(deletePositionedElement, () => {
 
     // Bound to the rectangle at its start and to the process at its end, so it survives with its start unbound
     const arrowToProcess: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: {
         binding: { connectionPointIndex: 3, elementId: POSITIONED_PROCESS_ID },
         hasArrowhead: true,
@@ -28,6 +32,7 @@ describe(deletePositionedElement, () => {
       label: "",
       pathKind: ArrowPathKind.Straight,
       start: POSITIONED_ARROW.start,
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     };
     const document: PositionedDocument = {

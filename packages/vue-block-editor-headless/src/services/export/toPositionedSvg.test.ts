@@ -1,8 +1,10 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { toPositionedSvg } from "#src/services/export/toPositionedSvg";
 import { ZERO_UUID } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -26,10 +28,13 @@ describe(toPositionedSvg, () => {
     const positionedDocument: PositionedDocument = {
       elements: [
         {
+          color: "",
+          dashPattern: DashPattern.Solid,
           fill: "#ffffff",
           height: 100,
           id: PROCESS_ID,
           kind: ShapeKind.Process,
+          strokeWidth: StrokeWidth.Medium,
           text: "a",
           type: PositionedElementType.Shape,
           width: 100,
@@ -37,6 +42,8 @@ describe(toPositionedSvg, () => {
           y: 0,
         },
         {
+          color: "",
+          dashPattern: DashPattern.Solid,
           end: { hasArrowhead: true, point: { x: 150, y: 250 } },
           id: ARROW_ID,
           label: "b",
@@ -46,12 +53,16 @@ describe(toPositionedSvg, () => {
             hasArrowhead: false,
             point: { x: 50, y: 100 },
           },
+          strokeWidth: StrokeWidth.Medium,
           type: PositionedElementType.Arrow,
         },
         {
+          color: "",
+          dashPattern: DashPattern.Solid,
           fill: "#ffff00",
           height: 80,
           id: STICKY_NOTE_ID,
+          strokeWidth: StrokeWidth.Medium,
           text: "c",
           type: PositionedElementType.StickyNote,
           width: 80,
@@ -59,21 +70,25 @@ describe(toPositionedSvg, () => {
           y: 300,
         },
         {
+          color: "",
           id: STROKE_ID,
           points: [
             { x: 0, y: 200 },
             { x: 50, y: 250 },
           ],
-          strokeWidth: 2,
+          strokeWidth: StrokeWidth.Medium,
           type: PositionedElementType.Stroke,
         },
         { fileId: FILE_ID, height: 50, id: IMAGE_ID, type: PositionedElementType.Image, width: 50, x: 100, y: 200 },
-        { id: TEXT_ID, text: "d", type: PositionedElementType.Text, width: 100, x: 400, y: 0 },
+        { color: "", id: TEXT_ID, text: "d", type: PositionedElementType.Text, width: 100, x: 400, y: 0 },
         {
+          color: "",
+          dashPattern: DashPattern.Solid,
           fill: "#ffffff",
           height: 100,
           id: WRAPPED_PROCESS_ID,
           kind: ShapeKind.Process,
+          strokeWidth: StrokeWidth.Medium,
           text: "a b c d",
           type: PositionedElementType.Shape,
           width: 24,
@@ -93,7 +108,7 @@ describe(toPositionedSvg, () => {
 
     const positionedDocument: PositionedDocument = {
       elements: [
-        { id: TEXT_ID, text: '<a href="x">&', type: PositionedElementType.Text, width: 100, x: 0, y: 0 },
+        { color: "", id: TEXT_ID, text: '<a href="x">&', type: PositionedElementType.Text, width: 100, x: 0, y: 0 },
         { fileId: FILE_ID, height: 50, id: IMAGE_ID, type: PositionedElementType.Image, width: 50, x: 0, y: 50 },
       ],
     };

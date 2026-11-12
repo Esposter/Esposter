@@ -2,8 +2,10 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { ShapeElement } from "#src/models/ShapeElement";
 import type { TextElement } from "#src/models/TextElement";
 
+import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TEXT_LINE_HEIGHT } from "#src/services/export/constants";
 import { getHitElementIndex } from "#src/services/getHitElementIndex";
 import { describe, expect, test } from "vitest";
@@ -15,10 +17,13 @@ describe(getHitElementIndex, () => {
     expect.hasAssertions();
 
     const diamond: ShapeElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       fill: "#000000",
       height: 100,
       id: DIAMOND_ID,
       kind: ShapeKind.Diamond,
+      strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.Shape,
       width: 100,
@@ -37,6 +42,7 @@ describe(getHitElementIndex, () => {
     expect.hasAssertions();
 
     const textElement: TextElement = {
+      color: "",
       id: crypto.randomUUID(),
       text: "",
       type: PositionedElementType.Text,

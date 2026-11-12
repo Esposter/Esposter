@@ -17,13 +17,16 @@ import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhi
 import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
+import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
 
 const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
+  color: "",
+  dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: bounds.height,
   id,
   kind: ShapeKind.Process,
+  strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
   width: bounds.width,
@@ -46,6 +49,8 @@ describe(reduceWhiteboardGesture, () => {
   const PROCESS_BOUNDS: Bounds = { height: 50, width: 100, x: 100, y: 100 };
   // A decision's bottom point to a process's left point, both bound, with its arrowhead at the end only
   const BOUND_ARROW: ArrowElement = {
+    color: "",
+    dashPattern: DashPattern.Solid,
     end: { binding: { connectionPointIndex: 3, elementId: PROCESS_ID }, hasArrowhead: true, point: { x: 200, y: 50 } },
     id: NEW_ARROW_ID,
     label: "",
@@ -55,6 +60,7 @@ describe(reduceWhiteboardGesture, () => {
       hasArrowhead: false,
       point: { x: 50, y: 100 },
     },
+    strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Arrow,
   };
 
@@ -85,6 +91,8 @@ describe(reduceWhiteboardGesture, () => {
 
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: {
         binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
         hasArrowhead: true,
@@ -94,6 +102,7 @@ describe(reduceWhiteboardGesture, () => {
       label: "",
       pathKind: ArrowPathKind.Straight,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     };
     const state = createState({ elements: [processShape, arrow] }, { selectedIds: [PROCESS_ID] });
@@ -181,6 +190,7 @@ describe(reduceWhiteboardGesture, () => {
         op: JsonPatchOperationType.Add,
         path: "/elements/0",
         value: {
+          color: "",
           id: STROKE_ID,
           points: [
             { x: 10, y: 10 },
@@ -333,6 +343,8 @@ describe(reduceWhiteboardGesture, () => {
         processShape,
         annotationShape,
         {
+          color: "",
+          dashPattern: DashPattern.Solid,
           end: { hasArrowhead: true, point: { x: 340, y: 125 } },
           id: NEW_ARROW_ID,
           label: "",
@@ -342,6 +354,7 @@ describe(reduceWhiteboardGesture, () => {
             hasArrowhead: false,
             point: { x: 200, y: 125 },
           },
+          strokeWidth: StrokeWidth.Medium,
           type: PositionedElementType.Arrow,
         },
       ],
@@ -359,6 +372,8 @@ describe(reduceWhiteboardGesture, () => {
     const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 300, y: 300 }));
 
     expect(takeOne(up.state.document.elements, 1)).toStrictEqual({
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: { hasArrowhead: true, point: { x: 300, y: 300 } },
       id: NEW_ARROW_ID,
       label: "",
@@ -368,6 +383,7 @@ describe(reduceWhiteboardGesture, () => {
         hasArrowhead: false,
         point: { x: 200, y: 125 },
       },
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     });
   });
@@ -432,6 +448,7 @@ describe(reduceWhiteboardGesture, () => {
     expect.hasAssertions();
 
     const stroke: StrokeElement = {
+      color: "",
       id: STROKE_ID,
       points: [
         { x: 10, y: 10 },
@@ -465,6 +482,8 @@ describe(reduceWhiteboardGesture, () => {
 
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: { hasArrowhead: true, point: { x: 250, y: 250 } },
       id: ARROW_ID,
       label: "",
@@ -474,6 +493,7 @@ describe(reduceWhiteboardGesture, () => {
         hasArrowhead: false,
         point: { x: 150, y: 150 },
       },
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     };
     const state = createState({ elements: [processShape, arrow] });
@@ -500,10 +520,13 @@ describe(reduceWhiteboardGesture, () => {
         op: JsonPatchOperationType.Add,
         path: "/elements/0",
         value: {
+          color: "",
+          dashPattern: DashPattern.Solid,
           fill: WHITEBOARD_SHAPE_FILL,
           height: WHITEBOARD_SHAPE_SIZE.height,
           id: PLACED_SHAPE_ID,
           kind: ShapeKind.Rectangle,
+          strokeWidth: StrokeWidth.Medium,
           text: "",
           type: PositionedElementType.Shape,
           width: WHITEBOARD_SHAPE_SIZE.width,
@@ -529,10 +552,13 @@ describe(reduceWhiteboardGesture, () => {
         op: JsonPatchOperationType.Add,
         path: "/elements/0",
         value: {
+          color: "",
+          dashPattern: DashPattern.Solid,
           fill: WHITEBOARD_SHAPE_FILL,
           height: 60,
           id: PLACED_SHAPE_ID,
           kind: ShapeKind.Rectangle,
+          strokeWidth: StrokeWidth.Medium,
           text: "",
           type: PositionedElementType.Shape,
           width: 100,

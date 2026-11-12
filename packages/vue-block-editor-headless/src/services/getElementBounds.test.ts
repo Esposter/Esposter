@@ -11,6 +11,7 @@ describe(getElementBounds, () => {
 
     // Two narrow characters wide, so "a b c" wraps to three lines
     const textBox: TextElement = {
+      color: "",
       id: crypto.randomUUID(),
       text: "a b c",
       type: PositionedElementType.Text,

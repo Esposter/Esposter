@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import { EXPORT_LINE_WIDTH, getShapeOutline, toClosedSketchedPathData } from "vue-block-editor-headless";
+import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
+import { getShapeOutline, getStrokeAttributes, toClosedSketchedPathData } from "vue-block-editor-headless";
 
 interface Props {
   shape: ShapeElement;
@@ -9,11 +10,19 @@ interface Props {
 
 const { shape } = defineProps<Props>();
 const outline = computed(() => toClosedSketchedPathData(getShapeOutline(shape), shape.id));
+const attributes = computed(() => getStrokeAttributes(shape, WHITEBOARD_TEXT_COLOR));
 </script>
 
 <template>
   <g>
-    <path :d="outline" :fill="shape.fill" stroke="currentColor" :stroke-width="EXPORT_LINE_WIDTH" />
+    <path
+      :d="outline"
+      :fill="shape.fill || 'none'"
+      :stroke="attributes.stroke"
+      :stroke-width="attributes.strokeWidth"
+      :stroke-dasharray="attributes.strokeDasharray"
+      :stroke-linecap="attributes.strokeLinecap"
+    />
     <ResourceWhiteboardLabel :element="shape" />
   </g>
 </template>

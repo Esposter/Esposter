@@ -14,7 +14,14 @@ import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
-import { getExportBounds, PositionedElementType, ShapeKind, toPositionedSvg } from "vue-block-editor-headless";
+import {
+  DashPattern,
+  getExportBounds,
+  PositionedElementType,
+  ShapeKind,
+  StrokeWidth,
+  toPositionedSvg,
+} from "vue-block-editor-headless";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -34,10 +41,13 @@ describe(exportWhiteboard, () => {
   const positionedDocument: PositionedDocument = {
     elements: [
       {
+        color: "",
+        dashPattern: DashPattern.Solid,
         fill: "#ffffff",
         height: 100,
         id: PROCESS_ID,
         kind: ShapeKind.Process,
+        strokeWidth: StrokeWidth.Medium,
         text: "a",
         type: PositionedElementType.Shape,
         width: 100,

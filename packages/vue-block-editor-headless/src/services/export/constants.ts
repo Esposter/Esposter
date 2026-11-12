@@ -2,13 +2,13 @@
 export const EXPORT_PADDING = 16;
 // The fill of an export's canvas, behind every element
 export const EXPORT_BACKGROUND_COLOR = "#ffffff";
-// The colour of an outline, a line, an arrowhead and a text
+// The colour of an outline, a line, an arrowhead and a text that has no colour of its own, which the export draws dark
 export const EXPORT_LINE_COLOR = "#1e1e1e";
-// The width of an outline or an arrow, in document units
-export const EXPORT_LINE_WIDTH = 2;
-// The attributes that draw an outline or an arrow in the export's line colour and width, and leave its fill to the caller
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const EXPORT_LINE_ATTRIBUTES: string = `stroke="${EXPORT_LINE_COLOR}" stroke-width="${EXPORT_LINE_WIDTH}"`;
+// The dash and the gap of a dashed outline or route, in document units
+export const STROKE_DASH_LENGTH = 8;
+export const STROKE_GAP_LENGTH = 6;
+// A dotted outline or route has no dash, so its round caps draw one dot at the start of each gap
+export const DOTTED_STROKE_DASH_LENGTH = 0;
 // How far a hand-drawn offset may move a point, in either direction, in document units
 export const SKETCH_OFFSET_LIMIT = 1.5;
 // The modulus that keeps a sketch's hash in range, a Mersenne prime so the hash spreads across the range

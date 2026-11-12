@@ -33,6 +33,7 @@ describe(getTextPlacement, () => {
     expect.hasAssertions();
 
     const text: TextElement = {
+      color: "",
       id: crypto.randomUUID(),
       text: "",
       type: PositionedElementType.Text,

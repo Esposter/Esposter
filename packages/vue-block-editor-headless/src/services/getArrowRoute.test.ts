@@ -1,7 +1,9 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { StrokeWidth } from "#src/models/StrokeWidth";
 import { ARROW_STUB_LENGTH } from "#src/services/constants";
 import { getArrowRoute } from "#src/services/getArrowRoute";
 import { POSITIONED_RECTANGLE_ID } from "#src/services/positionedConstants.test";
@@ -14,6 +16,8 @@ describe(getArrowRoute, () => {
     expect.hasAssertions();
 
     const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: { hasArrowhead: true, point: { x: 150, y: 250 } },
       id: ARROW_ID,
       label: "",
@@ -23,6 +27,7 @@ describe(getArrowRoute, () => {
         hasArrowhead: false,
         point: { x: 50, y: 100 },
       },
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     };
 
@@ -39,11 +44,14 @@ describe(getArrowRoute, () => {
     expect.hasAssertions();
 
     const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
       end: { hasArrowhead: true, point: { x: 300, y: 0 } },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Curved,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
     };
     const route = getArrowRoute(arrow);

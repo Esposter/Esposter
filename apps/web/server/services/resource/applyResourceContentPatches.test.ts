@@ -6,15 +6,18 @@ import { requireAgentWritableOperations } from "#server/services/resource/requir
 import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ArrowPathKind, PositionedElementType, ShapeKind } from "vue-block-editor-headless";
+import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
 
 describe(applyResourceContentPatches, () => {
   const rectangleId = crypto.randomUUID();
   const rectangle: ShapeElement = {
+    color: "",
+    dashPattern: DashPattern.Solid,
     fill: "#ffffff",
     height: 100,
     id: rectangleId,
     kind: ShapeKind.Rectangle,
+    strokeWidth: StrokeWidth.Medium,
     text: "",
     type: PositionedElementType.Shape,
     width: 100,
@@ -23,6 +26,8 @@ describe(applyResourceContentPatches, () => {
   };
   // An arrow bound at its start to the rectangle's bottom point, free at its end
   const arrow: ArrowElement = {
+    color: "",
+    dashPattern: DashPattern.Solid,
     end: { hasArrowhead: true, point: { x: 150, y: 250 } },
     id: crypto.randomUUID(),
     label: "",
@@ -32,6 +37,7 @@ describe(applyResourceContentPatches, () => {
       hasArrowhead: false,
       point: { x: 50, y: 100 },
     },
+    strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Arrow,
   };
 
