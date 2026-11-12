@@ -1,4 +1,4 @@
-This change builds on the [stroke-and-fill change](../resource-whiteboard-stroke-and-fill/design.md), which adds the colour and width fields and the panel controls this one extends, so it lands after that change.
+This change builds on the [stroke-and-fill change](../2026-11-12-resource-whiteboard-stroke-and-fill/design.md), which adds the colour and width fields and the panel controls this one extends, so it lands after that change.
 
 ## Context
 
@@ -43,7 +43,7 @@ The shape-look features of the reference whiteboard, with the verdict this chang
 - **Corners apply to shapes, not sticky notes.** The corner setting sits on the shape model, as the reference has it, and a sticky note is a card whose corners stay sharp. The alternative was the setting on sticky notes too, which no row asks for.
 - **Every shape with corners takes the rounding, and the ellipse does not.** The rounding works on the polygon every other outline already is, so the rectangle, process, terminal, predefined process, input and output, annotation, diamond and decision all take it. The alternative was a rounding per kind, which would copy one routine into each shape.
 - **Smoothing has no control and stores nothing new.** Every freehand stroke draws as a curve along its stored points, so the stored points stay as the pointer passed them. A stroke saved before the change draws smoothed with no rewrite. The alternative was smoothing the points when the stroke is drawn, which would change the stored document, and this change needs no model change.
-- **Smoothing is our own path function.** The curve is a quadratic through the midpoints between stored points, written in the export's path code. The alternative was the stroke library the reference uses, a new third-party dependency, and the whiteboard takes no new third-party dependency ([the rejected third-party engine](../../rejected/resource/whiteboard-third-party-engine/design.md)).
+- **Smoothing is our own path function.** The curve is a quadratic through the midpoints between stored points, written in the export's path code. The alternative was the stroke library the reference uses, a new third-party dependency, and the whiteboard takes no new third-party dependency ([the rejected third-party engine](../../../rejected/resource/whiteboard-third-party-engine/design.md)).
 
 ## Rejected
 
