@@ -1,10 +1,15 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboard/ElementStickyNote.vue";
 import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, test } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementStickyNote", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   test("a sticky note takes a fill and text", () => {
     expect.hasAssertions();
     const stickyNote = {

@@ -18,6 +18,7 @@ import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { useResourceStore } from "@/store/resource";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -120,6 +121,132 @@ describe("resourceWhiteboardEditor", () => {
         .findAll("text")
         .map((label) => label.text()),
     ).toStrictEqual(["b"]);
+  });
+
+  test("the text being edited is drawn once, by the editor over it, and drawn by the canvas again when the edit ends", async () => {
+    expect.hasAssertions();
+
+    const shape = { ...WHITEBOARD_PROCESS, text: "a" };
+    const component = await mountEditor([shape]);
+    await flushPromises();
+    const getLabels = () =>
+      getCanvas(component)
+        .findAll("text")
+        .map((label) => label.text());
+
+    expect(getLabels()).toStrictEqual(["a"]);
+
+    await getCanvas(component).trigger("dblclick", { clientX: 50, clientY: 50 });
+
+    expect(getLabels()).toStrictEqual([]);
+    expect(component.get("textarea").element.value).toBe("a");
+
+    await component.get("textarea").trigger("keydown", { key: "Escape" });
+
+    expect(getLabels()).toStrictEqual(["a"]);
+  });
+
+  test("a selected shape is framed by a solid frame in the accent and a marquee by a tinted solid one, with no dashes beside the outlines", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS]);
+    await flushPromises();
+    const canvas = getCanvas(component);
+    await sendPointer(canvas, "pointerdown", { x: 50, y: 50 });
+    await sendPointer(canvas, "pointerup", { x: 50, y: 50 });
+    const frames = canvas.findAll('rect[stroke="var(--ui-accent)"]');
+
+    expect(frames).toHaveLength(1);
+    expect(frames[0]?.attributes("fill")).toBe("none");
+
+    await sendPointer(canvas, "pointerdown", { x: 700, y: 500 });
+    await sendPointer(canvas, "pointermove", { x: 750, y: 550 });
+    const marquee = canvas.findAll('rect[fill="var(--ui-accent)"]');
+
+    expect(marquee).toHaveLength(1);
+    expect(canvas.findAll("[stroke-dasharray]")).toHaveLength(0);
+  });
+
+  const rightClick = (canvas: Except<DOMWrapper<Element>, "exists">, point: Point) =>
+    canvas.trigger("contextmenu", { button: 2, clientX: point.x, clientY: point.y });
+  const getMenuTitles = () => {
+    const contextMenuStore = useContextMenuStore();
+    const { contextMenu } = storeToRefs(contextMenuStore);
+    return contextMenu.value?.items.map(({ title }) => title);
+  };
+
+  test("a right-click on an unselected element selects it and opens its menu", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([createShape(FIRST_SHAPE_ID, 0), createShape(SECOND_SHAPE_ID, 500)]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    await flushPromises();
+    await rightClick(getCanvas(component), { x: 50, y: 50 });
+
+    expect(selectedIds.value).toStrictEqual([FIRST_SHAPE_ID]);
+    expect(getMenuTitles()).toStrictEqual([
+      "Edit text",
+      "Cut",
+      "Copy",
+      "Paste",
+      "Duplicate",
+      "Bring forward",
+      "Bring to front",
+      "Delete",
+    ]);
+  });
+
+  test("a right-click on a selected element keeps the selection and lists no stacking for several", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([createShape(FIRST_SHAPE_ID, 0), createShape(SECOND_SHAPE_ID, 500)]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    await flushPromises();
+    selectedIds.value = [FIRST_SHAPE_ID, SECOND_SHAPE_ID];
+    await rightClick(getCanvas(component), { x: 50, y: 50 });
+
+    expect(selectedIds.value).toStrictEqual([FIRST_SHAPE_ID, SECOND_SHAPE_ID]);
+    expect(getMenuTitles()).toStrictEqual(["Cut", "Copy", "Paste", "Duplicate", "Delete"]);
+  });
+
+  test("a right-click on empty canvas clears the selection and opens the board's menu", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([WHITEBOARD_PROCESS]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    await flushPromises();
+    selectedIds.value = [WHITEBOARD_PROCESS.id];
+    await rightClick(getCanvas(component), { x: 700, y: 500 });
+
+    expect(selectedIds.value).toStrictEqual([]);
+    expect(getMenuTitles()).toStrictEqual(["Paste", "Select all", "Zoom to fit", "Reset zoom"]);
+  });
+
+  test("the menu's Select all selects every element and its Delete asks first", async () => {
+    expect.hasAssertions();
+
+    const component = await mountEditor([createShape(FIRST_SHAPE_ID, 0), createShape(SECOND_SHAPE_ID, 500)]);
+    const whiteboardStore = useWhiteboardStore();
+    const { whiteboard } = storeToRefs(whiteboardStore);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    const contextMenuStore = useContextMenuStore();
+    const { contextMenu } = storeToRefs(contextMenuStore);
+    await flushPromises();
+    await rightClick(getCanvas(component), { x: 700, y: 500 });
+    await contextMenu.value?.items.find(({ title }) => title === "Select all")?.onClick?.();
+
+    expect(selectedIds.value).toStrictEqual([FIRST_SHAPE_ID, SECOND_SHAPE_ID]);
+
+    await rightClick(getCanvas(component), { x: 50, y: 50 });
+    await contextMenu.value?.items.find(({ title }) => title === "Delete")?.onClick?.();
+    await flushPromises();
+
+    expect(whiteboard.value.elements).toHaveLength(2);
+    expect(component.findComponent(UiConfirmDialog).props("modelValue")).toBe(true);
   });
 
   // A paste is an image file's clipboard event, which the canvas inserts unless the paste comes from the text box being edited

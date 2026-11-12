@@ -2,6 +2,7 @@
 import type { Point } from "vue-block-editor-headless";
 import type { Context } from "vue-editor-layout-headless";
 
+import { useWhiteboardContextMenu } from "@/composables/whiteboard/useWhiteboardContextMenu";
 import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
 import { useWhiteboardTextEdit } from "@/composables/whiteboard/useWhiteboardTextEdit";
@@ -27,18 +28,21 @@ await loadContent();
 watchAutosave(whiteboard, saveWhiteboard);
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { canvasRect, selectedIds, shapeKind, tool, viewport } = storeToRefs(whiteboardEditorStore);
-const { fitTo } = whiteboardEditorStore;
+const { fitTo, setTextEditElementId } = whiteboardEditorStore;
 const { onPointer, onWheel } = useWhiteboardGesture();
 useWhiteboardViewportKeyboard();
 const whiteboardDialogStore = useWhiteboardDialogStore();
 const { deletingIds } = storeToRefs(whiteboardDialogStore);
-const { confirmDelete, isDeleteOpen, pasteClipboardText } = useWhiteboardKeyboard(
-  editState,
-  selectedIds,
-  deletingIds,
-  tool,
-  shapeKind,
-);
+const {
+  confirmDelete,
+  copySelectionToClipboard,
+  cutSelection,
+  deleteSelection,
+  duplicateSelection,
+  isDeleteOpen,
+  pasteClipboardText,
+  selectAll,
+} = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind);
 const {
   draft,
   onBlur,
@@ -48,11 +52,28 @@ const {
   startTextEdit,
   textEdit,
 } = useWhiteboardTextEdit(editState);
+const { getContextMenuGestureProps } = useContextMenu();
+const { onOpenContextMenu } = useWhiteboardContextMenu(editState, {
+  copy: copySelectionToClipboard,
+  cut: cutSelection,
+  deleteSelection,
+  duplicate: duplicateSelection,
+  editText: startTextEdit,
+  pasteText: pasteClipboardText,
+  selectAll,
+});
 // A key the text box takes stays in it: Escape discards the edit, and the window's shortcuts would otherwise clear the selection on that same key
 const onTextKeydown = (event: KeyboardEvent) => {
   onTextEditKeydown(event);
   if (event.defaultPrevented) event.stopPropagation();
 };
+// The canvas draws no text of the element being edited, since the editor over it is that text
+watch(
+  () => textEdit.value?.elementId,
+  (newElementId) => {
+    setTextEditElementId(newElementId);
+  },
+);
 const textEditElement = computed(() =>
   editState.value.document.elements.find(({ id }) => id === textEdit.value?.elementId),
 );
@@ -89,6 +110,7 @@ if (editState.value.document.elements.length > 0)
       :registry="WhiteboardContentComponentMap"
     >
       <ResourceWhiteboardEditorCanvas
+        :="getContextMenuGestureProps(onOpenContextMenu)"
         @double-click="
           (screen) => {
             const elementId = getElementIdAt(screen);

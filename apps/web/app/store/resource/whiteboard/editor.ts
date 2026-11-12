@@ -10,7 +10,8 @@ import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewp
 import { ShapeKind } from "vue-block-editor-headless";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, and the viewport.
-// It also holds whether the tool stays in hand after a placement, and the gesture in progress with the document it would leave. None of it is saved
+// It also holds whether the tool stays in hand after a placement, the gesture in progress with the document it would leave, and the element whose text is
+// Being edited in place. None of it is saved
 export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor", () => {
   const canvasRect = ref<CanvasRect>({ height: 0, width: 0, x: 0, y: 0 });
   const gesture = shallowRef<WhiteboardGesture>();
@@ -19,6 +20,7 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const preview = shallowRef<PositionedDocument>();
   const selectedIds = ref<string[]>([]);
   const shapeKind = ref(ShapeKind.Rectangle);
+  const textEditElementId = ref<string>();
   const tool = ref(GestureTool.Select);
   const viewport = ref<Viewport>({ scale: 1, x: 0, y: 0 });
   const getCentreScreen = (): Point => ({ x: canvasRect.value.width / 2, y: canvasRect.value.height / 2 });
@@ -29,6 +31,9 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   };
   const selectElement = (id: string) => {
     selectedIds.value = [id];
+  };
+  const setTextEditElementId = (id?: string) => {
+    textEditElementId.value = id;
   };
   const toggleToolLock = () => {
     isToolLocked.value = !isToolLocked.value;
@@ -53,7 +58,9 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
     selectedIds,
     selectElement,
     setCanvasRect,
+    setTextEditElementId,
     shapeKind,
+    textEditElementId,
     toggleToolLock,
     tool,
     viewport,

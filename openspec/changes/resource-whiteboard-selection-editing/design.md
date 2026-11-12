@@ -1,6 +1,6 @@
 ## Context
 
-A selected element is framed by a dashed box that nothing grabs. The resize reads a press on one of two corners of a single selected element that takes a size, and returns no handle for a selection of several. A press on an element moves the selection, and a drag that starts with the Alt key held is read as a move too. Each gesture is a preview of one list of operations that the release commits as one edit, so a new handle or a new copy is another list of the same kind. The Duplicate key and the footer button copy the selection with an offset, and the copies take the selection.
+A selected element is framed by a solid box that nothing grabs. The resize reads a press on one of two corners of a single selected element that takes a size, and returns no handle for a selection of several. A press on an element moves the selection, and a drag that starts with the Alt key held is read as a move too. Each gesture is a preview of one list of operations that the release commits as one edit, so a new handle or a new copy is another list of the same kind. The Duplicate key and the footer button copy the selection with an offset, and the copies take the selection.
 
 ## Gap analysis
 

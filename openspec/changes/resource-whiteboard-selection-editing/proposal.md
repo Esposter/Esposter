@@ -1,6 +1,6 @@
 ## Why
 
-A selected element shows a dashed frame and two corner hit zones, with nothing drawn to grab, so a reader cannot see where to resize it from the edges. A selection of several cannot be resized at all. Copying a selection is a key or a footer button that offsets the copy, not a drag that places it under the pointer. Excalidraw, the reference for how a whiteboard feels, draws eight transform handles, scales a selection as one box, and copies on Alt-drag.
+A selected element shows a solid frame and two corner hit zones, with nothing drawn to grab, so a reader cannot see where to resize it from the edges. A selection of several cannot be resized at all. Copying a selection is a key or a footer button that offsets the copy, not a drag that places it under the pointer. Excalidraw, the reference for how a whiteboard feels, draws eight transform handles, scales a selection as one box, and copies on Alt-drag.
 
 ## What Changes
 

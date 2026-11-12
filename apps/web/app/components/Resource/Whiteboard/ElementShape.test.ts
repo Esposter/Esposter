@@ -1,10 +1,15 @@
 // @vitest-environment happy-dom
 import ResourceWhiteboardElementShape from "@/components/Resource/Whiteboard/ElementShape.vue";
 import { mount } from "@vue/test-utils";
-import { describe, expect, test } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, test } from "vitest";
 import { PositionedElementType, ShapeKind, toShapeSvg } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementShape", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   test("a shape draws the same hand-drawn outline on every render", () => {
     expect.hasAssertions();
     const shape = {

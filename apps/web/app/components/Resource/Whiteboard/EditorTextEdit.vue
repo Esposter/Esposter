@@ -2,15 +2,22 @@
 import type { PositionedElement } from "vue-block-editor-headless";
 
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getTextPlacement, TextAnchor } from "vue-block-editor-headless";
+import {
+  getTextPlacement,
+  TEXT_FONT_FAMILY,
+  TEXT_FONT_SIZE,
+  TEXT_LINE_HEIGHT,
+  TextAnchor,
+} from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
 }
 
-// The text being edited in place, laid over its element at the screen point of the text's placement: centred on that point where the text
-// Is centred, and hanging from it where a text box's text starts. It takes focus as it opens, and a press or a double click in it is no
-// Gesture of the canvas
+// The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the element's own text out. It is
+// Laid over the element where the text is drawn, at the text's font, size and wrap width scaled with the viewport, with no box of its own, so
+// It reads as the text itself: centred on the placement point where the text is centred, and hanging from it where a text box's text starts.
+// It takes focus as it opens, and a press or a double click in it is no gesture of the canvas
 const draft = defineModel<string>({ required: true });
 const { element } = defineProps<Props>();
 const emit = defineEmits<{ blur: []; compositionEnd: []; compositionStart: []; keydown: [event: KeyboardEvent] }>();
@@ -21,10 +28,19 @@ const style = computed(() => {
   const placement = getTextPlacement(element);
   if (placement === undefined) return undefined;
 
+  const { scale } = viewport.value;
+  const isMiddle = placement.textAnchor === TextAnchor.Middle;
   return {
-    left: `${(placement.point.x - viewport.value.x) * viewport.value.scale}px`,
-    top: `${(placement.point.y - viewport.value.y) * viewport.value.scale}px`,
-    transform: placement.textAnchor === TextAnchor.Middle ? "translate(-50%, -50%)" : undefined,
+    background: "transparent",
+    fieldSizing: "content",
+    fontFamily: TEXT_FONT_FAMILY,
+    fontSize: `${TEXT_FONT_SIZE * scale}px`,
+    left: `${(placement.point.x - viewport.value.x) * scale}px`,
+    lineHeight: `${TEXT_LINE_HEIGHT * scale}px`,
+    textAlign: isMiddle ? "center" : "left",
+    top: `${(placement.point.y - viewport.value.y) * scale}px`,
+    transform: isMiddle ? "translate(-50%, -50%)" : undefined,
+    width: `${placement.width * scale}px`,
   };
 });
 onMounted(() => {
@@ -37,10 +53,14 @@ onMounted(() => {
     ref="textarea"
     v-model="draft"
     aria-label="Element text"
-    w-48
+    rows="1"
+    p-0
+    outline-none
+    of-hidden
     resize-none
+    select-text
+    text-text
     absolute
-    ui-field
     :style
     @blur="emit('blur')"
     @compositionend="emit('compositionEnd')"

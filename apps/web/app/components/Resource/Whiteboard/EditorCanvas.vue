@@ -12,6 +12,7 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 // The canvas draws the document in z-order under its viewport, or the preview of the gesture in progress in its place. Its overlay slot is drawn
 // Over the elements in the document's coordinates, and its html slot over the page, for whatever a gesture or a text edit shows while it lasts.
 // Each pointer event leaves as a gesture event, in screen pixels from the canvas's top left, so the gesture reducer reads the canvas and no DOM.
+// The canvas selects no text, so a drag on it is a gesture and never a highlight of the page under it.
 // A paste leaves as its clipboard text too, which the whiteboard reads for elements, while the image paste is taken here as before
 defineSlots<{ html?: () => VNode; overlay?: () => VNode }>();
 const emit = defineEmits<{
@@ -62,6 +63,7 @@ const emitWheel = (event: WheelEvent) => {
     w-full
     relative
     of-hidden
+    select-none
     tabindex="0"
     role="application"
     aria-label="Whiteboard"

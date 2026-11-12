@@ -226,5 +226,14 @@ export const useWhiteboardKeyboard = (
     return [...historyCommands, ...editCommands, ...toolCommands, ...selectionCommands];
   });
 
-  return { confirmDelete, isDeleteOpen, pasteClipboardText };
+  return {
+    confirmDelete,
+    copySelectionToClipboard,
+    cutSelection,
+    deleteSelection,
+    duplicateSelection,
+    isDeleteOpen,
+    pasteClipboardText,
+    selectAll,
+  };
 };
