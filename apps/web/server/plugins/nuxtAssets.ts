@@ -11,7 +11,7 @@ export default definePlugin(({ hooks }) => {
   // Nitro's route rule for the build's folder stamps every response under it `immutable` for a year, a miss included. A
   // File requested before its deploy has finished would stay missing for that long in every cache that kept the answer
   hooks.hook("response", (response, event) => {
-    if (response.status === 404 && event.url.pathname.startsWith("/_nuxt/"))
+    if (response.status === 404 && new URL(event.req.url).pathname.startsWith("/_nuxt/"))
       response.headers.set("Cache-Control", "no-store");
   });
 });

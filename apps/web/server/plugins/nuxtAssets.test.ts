@@ -5,7 +5,7 @@ const getResponseHook = () => {
   const hook = vi.fn();
   nuxtAssets({ hooks: { hook } } as never);
   const call = hook.mock.calls.find(([name]) => name === "response");
-  return call?.[1] as (response: Response, event: { url: URL }) => void;
+  return call?.[1] as (response: Response, event: { req: { url: string } }) => void;
 };
 
 describe("nuxtAssets", () => {
@@ -16,7 +16,7 @@ describe("nuxtAssets", () => {
       headers: { "Cache-Control": "public, max-age=31536000, immutable" },
       status: 404,
     });
-    getResponseHook()(response, { url: new URL("https://example.com/_nuxt/builds/meta/missing.json") });
+    getResponseHook()(response, { req: { url: "https://example.com/_nuxt/builds/meta/missing.json" } });
 
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
@@ -26,7 +26,7 @@ describe("nuxtAssets", () => {
 
     const cacheControl = "public, max-age=31536000, immutable";
     const response = new Response("", { headers: { "Cache-Control": cacheControl }, status: 200 });
-    getResponseHook()(response, { url: new URL("https://example.com/_nuxt/entry.js") });
+    getResponseHook()(response, { req: { url: "https://example.com/_nuxt/entry.js" } });
 
     expect(response.headers.get("Cache-Control")).toBe(cacheControl);
   });
@@ -35,7 +35,7 @@ describe("nuxtAssets", () => {
     expect.hasAssertions();
 
     const response = new Response("", { headers: { "Cache-Control": "public" }, status: 404 });
-    getResponseHook()(response, { url: new URL("https://example.com/missing") });
+    getResponseHook()(response, { req: { url: "https://example.com/missing" } });
 
     expect(response.headers.get("Cache-Control")).toBe("public");
   });
