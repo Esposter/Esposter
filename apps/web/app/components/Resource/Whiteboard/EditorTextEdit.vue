@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { PositionedElement } from "vue-block-editor-headless";
 
+import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
 import {
   WHITEBOARD_TEXT_EDIT_ANCHOR_MAP,
   WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP,
 } from "@/services/whiteboard/text/constants";
-import { getDefaultColor } from "@/services/whiteboard/palette/getDefaultColor";
 import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getStrokeAttributes, getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
+import { getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
@@ -32,7 +32,7 @@ const style = computed(() => {
   const { shift, textAlign } = WHITEBOARD_TEXT_EDIT_ANCHOR_MAP[placement.textAnchor];
   return {
     background: "transparent",
-    color: getStrokeAttributes(element, getDefaultColor(element)).stroke,
+    color: getElementStrokeAttributes(element).stroke,
     fieldSizing: "content",
     fontFamily: TEXT_FONT_FAMILY,
     fontSize: `${placement.textSize * scale}px`,
@@ -59,10 +59,10 @@ onMounted(() => {
     rows="1"
     p-0
     outline-none
-    of-hidden
     resize-none
     select-text
     absolute
+    of-hidden
     :style
     @blur="emit('blur')"
     @compositionend="emit('compositionEnd')"

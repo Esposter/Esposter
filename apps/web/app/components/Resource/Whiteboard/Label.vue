@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { getDefaultColor } from "@/services/whiteboard/palette/getDefaultColor";
+import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import {
-  getPositionedElementText,
-  getStrokeAttributes,
-  getTextLayout,
-  getTextPlacement,
-  TEXT_FONT_FAMILY,
-} from "vue-block-editor-headless";
+import { getPositionedElementText, getTextLayout, getTextPlacement, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
@@ -22,7 +16,7 @@ const { textEditElementId } = storeToRefs(whiteboardEditorStore);
 const placement = computed(() => getTextPlacement(element));
 const labelText = computed(() => getPositionedElementText(element));
 // The label takes its element's colour, or the page's text colour when the element has none
-const labelColor = computed(() => getStrokeAttributes(element, getDefaultColor(element)).stroke);
+const labelColor = computed(() => getElementStrokeAttributes(element).stroke);
 // The layout the export sets this text out with, so the editor and the export wrap a label at the same words and put it on the same baseline and line steps
 const layout = computed(() =>
   placement.value && labelText.value ? getTextLayout(labelText.value, placement.value) : undefined,
