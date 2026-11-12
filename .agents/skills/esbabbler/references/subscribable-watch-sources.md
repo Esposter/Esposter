@@ -13,13 +13,13 @@ useOnlineSubscribable(
   () => getIdsKey(directMessages.value),
   (roomIdsString) => {
     if (!roomIdsString) return undefined;
-    const roomIds = roomIdsString.split(",");
+    const roomIds = getIdsFromKey(roomIdsString);
     // set up subscriptions…
   },
 );
 ```
 
-- **`getIdsKey(items)`** (`apps/web/app/services/message/subscribables/getIdsKey.ts`) is the canonical order-insensitive membership key (`map(id).toSorted().join(ID_SEPARATOR)`) — never hand-roll it.
+- **`getIdsKey(items)`** (`apps/web/app/services/message/subscribables/getIdsKey.ts`) is the canonical order-insensitive membership key (`map(id).toSorted().join(ID_SEPARATOR)`) — never hand-roll it. **`getIdsFromKey(key)`** (same folder) is its inverse and the only way back to the ids: a hand-written `split(",")` reads a `|`-joined key as one id, which every id-list subscription then rejects as a malformed uuid.
 - A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.
 - **`getOnlineSubscribableContext()`** (`apps/web/app/composables/shared/getOnlineSubscribableContext.ts`) captures `getCurrentInstance()`/`getCurrentScope()` for async subscribable composables — call it into a `const` BEFORE any `await` (context is lost after suspension); never inline the two calls.
 - **`requirePartitionKey(value, name)`** (`apps/web/app/services/message/requirePartitionKey.ts`) is the guard for room-scoped reads needing a non-empty current room id (or user id): `const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);` — never hand-write the `InvalidOperationError` throw.
