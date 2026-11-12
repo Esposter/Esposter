@@ -51,6 +51,6 @@ describe(createPortableFormatItems, () => {
       { icon: "i-test:Csv", title: "Csv" },
       { icon: "i-test:Json", title: "Json" },
     ]);
-    expect(csv.import).toHaveBeenCalledTimes(1);
+    expect(csv.import).toHaveBeenCalledExactlyOnceWith();
   });
 });
