@@ -5,8 +5,8 @@ import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { PositionedElementType, updatePositionedElementProperty } from "vue-block-editor-headless";
 
-// The panel a selection of several opens: the fill the shapes and sticky notes in it share, or Mixed where they differ, and the footer.
-// A change to the fill is one edit that writes it to each of them, and No fill is one edit that clears the fill of each shape in it, since a sticky note keeps its fill
+// The panel a selection of several opens: the fill the shapes and sticky notes in it share, or Mixed where they differ, the align, distribute and
+// Stacking controls, and the footer. A change to the fill is one edit that writes it to each of them, and No fill is one edit that clears the fill of each shape in it, since a sticky note keeps its fill
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations } = whiteboardStore;
 const { editState, whiteboard } = storeToRefs(whiteboardStore);
@@ -52,6 +52,8 @@ const clearFill = () => {
       <span v-if="fill.isMixed" ui-body>Mixed</span>
       <UiButton v-if="hasShapeFill" @click="clearFill()">No fill</UiButton>
     </div>
+    <ResourceWhiteboardEditorPropertiesArrange />
+    <ResourceWhiteboardEditorPropertiesOrder />
     <ResourceWhiteboardEditorPropertiesFooter />
   </EditorContextualPanel>
 </template>

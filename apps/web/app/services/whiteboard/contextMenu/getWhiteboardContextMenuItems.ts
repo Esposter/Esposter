@@ -3,7 +3,7 @@ import type { Item } from "@/models/shared/Item";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 // What a whiteboard's context menu runs, each the function the same command's shortcut runs, so the menu and the keys never disagree.
-// The stacking steps are given by their target index, and are absent unless exactly one element is selected
+// The stacking steps are absent when the selection cannot move that way, as the properties panel disables them
 export interface WhiteboardContextMenuCommands {
   bringForward?: () => void;
   bringToFront?: () => void;
@@ -20,8 +20,8 @@ export interface WhiteboardContextMenuCommands {
   sendToBack?: () => void;
 }
 
-// The items over a selection: the clipboard commands, the stacking of one element, the text of an element that has some, and delete last in the
-// Danger colour. A stacking step is listed only when it can move the element, as the properties panel disables the others
+// The items over a selection: the clipboard commands, the stacking of the selection, the text of an element that has some, and delete last in the
+// Danger colour. A stacking step is listed only when the selection can move that way, as the properties panel disables the others
 export const getWhiteboardContextMenuItems = (commands: WhiteboardContextMenuCommands): Item[] => {
   const {
     bringForward,

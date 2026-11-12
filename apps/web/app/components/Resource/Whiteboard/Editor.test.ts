@@ -208,7 +208,7 @@ describe("resourceWhiteboardEditor", () => {
     ]);
   });
 
-  test("a right-click on a selected element keeps the selection and lists no stacking for several", async () => {
+  test("a right-click on a selected element keeps the selection and lists no stacking when it holds the top and the bottom", async () => {
     expect.hasAssertions();
 
     const component = await mountEditor([createShape(FIRST_SHAPE_ID, 0), createShape(SECOND_SHAPE_ID, 500)]);
@@ -220,6 +220,33 @@ describe("resourceWhiteboardEditor", () => {
 
     expect(selectedIds.value).toStrictEqual([FIRST_SHAPE_ID, SECOND_SHAPE_ID]);
     expect(getMenuTitles()).toStrictEqual(["Cut", "Copy", "Paste", "Duplicate", "Delete"]);
+  });
+
+  test("a right-click on a selection of several lists the stacking that moves it", async () => {
+    expect.hasAssertions();
+
+    // The third shape is drawn above the selected pair, so the pair can move forward and to the front, but not back, since it holds the bottom element
+    const THIRD_SHAPE_ID = crypto.randomUUID();
+    const component = await mountEditor([
+      createShape(FIRST_SHAPE_ID, 0),
+      createShape(SECOND_SHAPE_ID, 500),
+      createShape(THIRD_SHAPE_ID, 250),
+    ]);
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const { selectedIds } = storeToRefs(whiteboardEditorStore);
+    await flushPromises();
+    selectedIds.value = [FIRST_SHAPE_ID, SECOND_SHAPE_ID];
+    await rightClick(getCanvas(component), { x: 50, y: 50 });
+
+    expect(getMenuTitles()).toStrictEqual([
+      "Cut",
+      "Copy",
+      "Paste",
+      "Duplicate",
+      "Bring forward",
+      "Bring to front",
+      "Delete",
+    ]);
   });
 
   test("a right-click on empty canvas clears the selection and opens the board's menu", async () => {

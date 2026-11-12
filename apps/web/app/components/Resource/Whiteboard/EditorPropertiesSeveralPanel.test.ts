@@ -32,4 +32,22 @@ describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
     });
     expect(whiteboardStore.editState.history.past).toHaveLength(1);
   });
+
+  test("Bring forward moves the selection of several past the element above it in one edit", async () => {
+    expect.hasAssertions();
+
+    const whiteboardStore = useWhiteboardStore();
+    const whiteboardEditorStore = useWhiteboardEditorStore();
+    const first: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID() };
+    const second: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID(), x: 200 };
+    const third: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID(), x: 400 };
+    whiteboardStore.editState = createWhiteboardEditState({ elements: [first, second, third] });
+    whiteboardEditorStore.selectedIds = [first.id, second.id];
+    const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSeveralPanel);
+
+    await wrapper.get('button[aria-label="Bring forward"]').trigger("click");
+
+    expect(whiteboardStore.editState.document.elements).toStrictEqual([third, first, second]);
+    expect(whiteboardStore.editState.history.past).toHaveLength(1);
+  });
 });

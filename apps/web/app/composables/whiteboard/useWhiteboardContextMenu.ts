@@ -2,6 +2,8 @@ import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
 import type { WhiteboardEditState } from "@/models/whiteboard/WhiteboardEditState";
 import type { WhiteboardContextMenuCommands } from "@/services/whiteboard/contextMenu/getWhiteboardContextMenuItems";
 
+import { StackMove } from "@/models/whiteboard/StackMove";
+import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
 import {
   getWhiteboardCanvasContextMenuItems,
   getWhiteboardContextMenuItems,
@@ -15,11 +17,11 @@ import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { getResultAsync } from "@esposter/shared";
-import { changePositionedElementZOrder, getPositionedElementText } from "vue-block-editor-headless";
+import { getPositionedElementText } from "vue-block-editor-headless";
 
 // The whiteboard's own context menu, opened on a right-click of its canvas. The element under the pointer is selected first unless the selection
 // Already holds it, and empty canvas clears the selection, so the menu is always about what is selected when it opens. Every item runs the
-// Function its shortcut runs, handed in by the keyboard, and the stacking steps are listed for one selected element that they can move
+// Function its shortcut runs, handed in by the keyboard, and the stacking steps are the stacking keys' own operations, listed for a selection that they can move
 export const useWhiteboardContextMenu = (
   editState: Ref<WhiteboardEditState>,
   commands: Pick<WhiteboardContextMenuCommands, "copy" | "cut" | "deleteSelection" | "duplicate" | "selectAll"> & {
@@ -48,29 +50,33 @@ export const useWhiteboardContextMenu = (
   const resetZoom = () => {
     zoomTo(WHITEBOARD_RESET_SCALE);
   };
+  // A stacking step is listed only when the selection can move that way, and runs the operations the stacking keys run over the selection as it is then
+  const getStackCommand = (move: StackMove) => {
+    if (getStackOperations(editState.value.document, selectedIds.value, move).length === 0) return undefined;
+
+    return () => {
+      commitOperations(getStackOperations(editState.value.document, selectedIds.value, move));
+    };
+  };
   const getSelectionItems = () => {
     const { elements } = editState.value.document;
     const [selectedId] = selectedIds.value;
     const index = elements.findIndex(({ id }) => id === selectedId);
-    const lastIndex = elements.length - 1;
     const isSingle = selectedIds.value.length === 1 && index !== -1;
     const element = elements[index];
     const hasText = element !== undefined && getPositionedElementText(element) !== undefined;
-    const changeZOrder = (toIndex: number) => () => {
-      commitOperations(changePositionedElementZOrder(editState.value.document, index, toIndex));
-    };
     return getWhiteboardContextMenuItems({
       ...selectionCommands,
-      bringForward: isSingle && index < lastIndex ? changeZOrder(index + 1) : undefined,
-      bringToFront: isSingle && index < lastIndex ? changeZOrder(lastIndex) : undefined,
+      bringForward: getStackCommand(StackMove.BringForward),
+      bringToFront: getStackCommand(StackMove.BringToFront),
       editText:
         isSingle && hasText && selectedId !== undefined ? () => selectionCommands.editText(selectedId) : undefined,
       fitToContent,
       paste,
       resetZoom,
       selectAll: selectionCommands.selectAll,
-      sendBackward: isSingle && index > 0 ? changeZOrder(index - 1) : undefined,
-      sendToBack: isSingle && index > 0 ? changeZOrder(0) : undefined,
+      sendBackward: getStackCommand(StackMove.SendBackward),
+      sendToBack: getStackCommand(StackMove.SendToBack),
     });
   };
   // A menu from the keyboard opens at the canvas's corner, which says nothing about what the reader points at, so it keeps the selection

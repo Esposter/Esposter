@@ -2,6 +2,7 @@
 import type { Point } from "vue-block-editor-headless";
 import type { Context } from "vue-editor-layout-headless";
 
+import { useWhiteboardArrangeKeyboard } from "@/composables/whiteboard/useWhiteboardArrangeKeyboard";
 import { useWhiteboardContextMenu } from "@/composables/whiteboard/useWhiteboardContextMenu";
 import { useWhiteboardGesture } from "@/composables/whiteboard/useWhiteboardGesture";
 import { useWhiteboardKeyboard } from "@/composables/whiteboard/useWhiteboardKeyboard";
@@ -43,6 +44,7 @@ const {
   pasteClipboardText,
   selectAll,
 } = useWhiteboardKeyboard(editState, selectedIds, deletingIds, tool, shapeKind);
+useWhiteboardArrangeKeyboard(editState, selectedIds, isDeleteOpen);
 const {
   draft,
   onBlur,

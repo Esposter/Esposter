@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { StackMove } from "@/models/whiteboard/StackMove";
+import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { changePositionedElementZOrder } from "vue-block-editor-headless";
+import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 
-interface Props {
-  index: number;
-}
-
-// The stacking of the selected element: one step forward or back, or to the front or the back. Each is one commit, so one undo step
-const { index } = defineProps<Props>();
+// The stacking of the selection, which is the one element when one is selected: one step forward or back, or to the front or the back. Each is one
+// Commit, so one undo step, and each is disabled when the selection cannot move that way
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations } = whiteboardStore;
-const { whiteboard } = storeToRefs(whiteboardStore);
-const lastIndex = computed(() => whiteboard.value.elements.length - 1);
-const changeZOrder = (toIndex: number) => {
-  commitOperations(changePositionedElementZOrder(whiteboard.value, index, toIndex));
+const { editState } = storeToRefs(whiteboardStore);
+const whiteboardEditorStore = useWhiteboardEditorStore();
+const { selectedIds } = storeToRefs(whiteboardEditorStore);
+const getStackMoveOperations = (move: StackMove) =>
+  getStackOperations(editState.value.document, selectedIds.value, move);
+const isStackDisabled = (move: StackMove) => getStackMoveOperations(move).length === 0;
+const stack = (move: StackMove) => {
+  commitOperations(getStackMoveOperations(move));
 };
 </script>
 
@@ -23,26 +25,26 @@ const changeZOrder = (toIndex: number) => {
     <UiIconButton
       label="Send to back"
       :meaning="UiIconMeaning.SendToBack"
-      :disabled="index === 0"
-      @click="changeZOrder(0)"
+      :disabled="isStackDisabled(StackMove.SendToBack)"
+      @click="stack(StackMove.SendToBack)"
     />
     <UiIconButton
       label="Send backward"
       :meaning="UiIconMeaning.SendBackward"
-      :disabled="index === 0"
-      @click="changeZOrder(index - 1)"
+      :disabled="isStackDisabled(StackMove.SendBackward)"
+      @click="stack(StackMove.SendBackward)"
     />
     <UiIconButton
       label="Bring forward"
       :meaning="UiIconMeaning.BringForward"
-      :disabled="index === lastIndex"
-      @click="changeZOrder(index + 1)"
+      :disabled="isStackDisabled(StackMove.BringForward)"
+      @click="stack(StackMove.BringForward)"
     />
     <UiIconButton
       label="Bring to front"
       :meaning="UiIconMeaning.BringToFront"
-      :disabled="index === lastIndex"
-      @click="changeZOrder(lastIndex)"
+      :disabled="isStackDisabled(StackMove.BringToFront)"
+      @click="stack(StackMove.BringToFront)"
     />
   </div>
 </template>

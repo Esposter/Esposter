@@ -21,7 +21,9 @@ Each row is a feature of Excalidraw, the reference product, with the verdict thi
 - **Distribute needs three boxes.** With two there is no gap to share, so the control is disabled, rather than doing nothing when pressed. Rejected: a control that is enabled and does nothing.
 - **A selection stacks by its own order.** Bring forward moves the selection up past the next element above it that is not selected, so the selected elements keep their order among themselves. Rejected: moving each selected element one step on its own, which can swap two selected elements that sit side by side.
 - **The stacking keys are the bracket keys with Cmd or Ctrl.** Cmd or Ctrl with the closing bracket brings the selection forward, with the opening bracket sends it backward, and holding Shift as well takes it to the front or the back, as the reference does. Rejected: keys without a modifier, which would collide with the letter keys of the tools.
-- **The stacking keys are bound only with a selection.** They are registered with the selection's commands, so with nothing selected they do not fire.
+- **The stacking keys are bound only with a selection.** They are registered by a composable of their own, which binds them only with a selection and not while the delete confirmation asks, so with nothing selected they do not fire. The keys sit in their own composable rather than in the keyboard composable, so the two can be built apart.
+- **One stacking control serves the one-element and the several panels.** The stacking component reads the selection, so a selection of one draws the same four controls as before and a selection of several draws them beside the align and distribute controls. Rejected: a second stacking component that mirrors the four controls, which would copy their disabled rules.
+- **The context menu lists the selection's stacking.** The menu's stacking steps are the operations the keys and the panel run, so a right-click on a selection of several offers the steps that move it. Rejected: leaving the menu on one element, which would show no stacking for a selection the keys and the panel stack.
 
 ## Risks and trade-offs
 
@@ -29,18 +31,19 @@ Each row is a feature of Excalidraw, the reference product, with the verdict thi
 
 ## Key files
 
-| File                                                                               | Role                                                                                                |
-| :--------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue`     | the panel of a selection of several: the fill it shares, and now the align, distribute and stacking |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`            | the stacking of one element, whose four controls the selection's controls mirror                    |
-| `apps/web/app/composables/whiteboard/useWhiteboardKeyboard.ts`                     | registers the stacking keys beside the selection's commands                                         |
-| `apps/web/app/services/whiteboard/keyboard/constants.ts`                           | the command group the keys are registered under                                                     |
-| `apps/web/app/services/whiteboard/gesture/getMoveOperations.ts`                    | the move of each element of a selection by one delta, which align and distribute reuse              |
-| `apps/web/app/services/whiteboard/getSelectedElements.ts`                          | the selected elements with their indices, which align, distribute and stacking read                 |
-| `apps/web/app/store/resource/whiteboard/index.ts`                                  | commits a command's operations as one edit                                                          |
-| `apps/web/app/models/ui/UiIconMeaning.ts`                                          | the icon meanings the controls draw, with new meanings for the align and distribute controls        |
-| `packages/vue-block-editor-headless/src/services/changePositionedElementZOrder.ts` | the z-order move of one element, which a selection's stacking repeats for each member               |
-| `packages/vue-block-editor-headless/src/services/movePositionedElement.ts`         | the move of one element, rerouting the arrows bound to a moved shape in the same edit               |
+| File                                                                               | Role                                                                                                              |
+| :--------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesSeveralPanel.vue`     | the panel of a selection of several: the fill it shares, and now the align, distribute and stacking               |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesOrder.vue`            | the stacking of the selection, which is one element's when one is selected, in the one-element and several panels |
+| `apps/web/app/composables/whiteboard/useWhiteboardArrangeKeyboard.ts`              | registers the stacking keys, bound only with a selection and not while the delete confirmation asks               |
+| `apps/web/app/services/whiteboard/contextMenu/getWhiteboardContextMenuItems.ts`    | the stacking steps of a selection, listed when the selection can move that way                                    |
+| `apps/web/app/services/whiteboard/keyboard/constants.ts`                           | the command group the keys are registered under                                                                   |
+| `apps/web/app/services/whiteboard/gesture/getMoveOperations.ts`                    | the move of each element of a selection by one delta, which align and distribute reuse                            |
+| `apps/web/app/services/whiteboard/getSelectedElements.ts`                          | the selected elements with their indices, which align, distribute and stacking read                               |
+| `apps/web/app/store/resource/whiteboard/index.ts`                                  | commits a command's operations as one edit                                                                        |
+| `apps/web/app/models/ui/UiIconMeaning.ts`                                          | the icon meanings the controls draw, with new meanings for the align and distribute controls                      |
+| `packages/vue-block-editor-headless/src/services/changePositionedElementZOrder.ts` | the z-order move of one element, which a selection's stacking repeats for each member                             |
+| `packages/vue-block-editor-headless/src/services/movePositionedElement.ts`         | the move of one element, rerouting the arrows bound to a moved shape in the same edit                             |
 
 New files, created by the change:
 
@@ -48,6 +51,13 @@ New files, created by the change:
 apps/web/app/services/whiteboard/arrange/getAlignOperations.ts        the moves that line the boxes of a selection up at one edge or centre
 apps/web/app/services/whiteboard/arrange/getDistributeOperations.ts   the moves that space the boxes of a selection with equal gaps
 apps/web/app/services/whiteboard/arrange/getStackOperations.ts        the z-order moves that stack a selection, keeping its order
+apps/web/app/services/whiteboard/arrange/getSelectedBoxes.ts         the selected elements that take a size, with their indices and bounds
+apps/web/app/services/whiteboard/arrange/constants.ts                the fewest boxes an align takes, two, and a distribute takes, three
+apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrange.vue  the align and distribute controls of a selection
+apps/web/app/composables/whiteboard/useWhiteboardArrangeKeyboard.ts  the stacking keys, called from the editor beside the keyboard composable
+apps/web/app/models/whiteboard/AlignEdge.ts                          the six edges and centres an align lines up at
+apps/web/app/models/whiteboard/DistributeAxis.ts                     the horizontal and vertical axes a distribute spaces along
+apps/web/app/models/whiteboard/StackMove.ts                          the four stacking steps a selection takes
 ```
 
 ## Sources
