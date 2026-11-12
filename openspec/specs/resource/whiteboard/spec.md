@@ -391,7 +391,7 @@ The whiteboard SHALL open a context menu at the pointer on a right-click, select
 
 ### Requirement: The element menu lists the selection's commands
 
-The menu over an element SHALL list cut, copy, paste, duplicate, the four stacking steps for one element, edit text for an element that has text, and delete, each running what its shortcut runs.
+The menu over an element SHALL list cut, copy, paste, duplicate, the stacking steps that can move one selected element, edit text for an element that has text, and delete, each running what its shortcut runs.
 
 #### Scenario: Duplicate in the menu copies the selection
 
