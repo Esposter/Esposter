@@ -8,7 +8,7 @@ Each row is a feature of Excalidraw, the reference product, with the verdict thi
 
 | Feature                                                            | Verdict                                                                                      |
 | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Arrowheads: type and start/end choice                              | Built here: five head kinds, one chosen for each end                                         |
+| Arrowheads: type and start/end choice                              | Built here: four head kinds, one chosen for each end                                         |
 | Drag an arrow's free end                                           | Built here: a handle on each free end, which binds the end when it is released on a shape    |
 | Flowchart helper (drag from a shape to add a connected next shape) | Built here: a handle at each connection point of a selected shape, adding or joining a shape |
 
