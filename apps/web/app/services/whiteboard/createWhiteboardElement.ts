@@ -18,32 +18,18 @@ export const createWhiteboardElement = (
 ): WhiteboardElement => {
   if (placement.type === PositionedElementType.Text)
     return { color: "", id, text: WHITEBOARD_TEXT_BOX_TEXT, type: placement.type, width, x, y };
-  if (placement.type === PositionedElementType.StickyNote)
-    return {
-      color: "",
-      dashPattern: DashPattern.Solid,
-      fill: WHITEBOARD_STICKY_NOTE_FILL,
-      height,
-      id,
-      strokeWidth: StrokeWidth.Medium,
-      text: "",
-      type: placement.type,
-      width,
-      x,
-      y,
-    };
-  return {
+  const element = {
     color: "",
     dashPattern: DashPattern.Solid,
-    fill: WHITEBOARD_SHAPE_FILL,
     height,
     id,
-    kind: placement.kind,
     strokeWidth: StrokeWidth.Medium,
     text: "",
-    type: placement.type,
     width,
     x,
     y,
   };
+  if (placement.type === PositionedElementType.StickyNote)
+    return { ...element, fill: WHITEBOARD_STICKY_NOTE_FILL, type: placement.type };
+  return { ...element, fill: WHITEBOARD_SHAPE_FILL, kind: placement.kind, type: placement.type };
 };
