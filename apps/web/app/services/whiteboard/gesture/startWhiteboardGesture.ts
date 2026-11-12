@@ -102,7 +102,6 @@ export const startWhiteboardGesture = (
             gesture: {
               arrowId: pressedHandle.arrowId,
               endKey: pressedHandle.endKey,
-              origin,
               phase: GesturePhase.End,
               pointerId: event.pointerId,
               screen: event.screen,

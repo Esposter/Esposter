@@ -6,6 +6,8 @@ import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestu
 import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
 import { getConnectOperations } from "@/services/whiteboard/gesture/getConnectOperations";
+import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
+import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
 import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
@@ -29,6 +31,13 @@ export const reduceConnectGesture = (
     const release = getWorldPoint(event.screen, state.viewport);
     // The release joins the shape it lands on by the rule drawing uses, so the source itself and an empty canvas both leave it unbound
     const target = getArrowEnd(state, release, gesture.elementId).binding;
+    // A release on an element it cannot join, the source itself or one that takes no connection, adds nothing, since a new shape there would stack on it
+    if (
+      target === undefined &&
+      getHitElementId(state.document, release, getHitTolerance(state.viewport.scale)) !== undefined
+    )
+      return [];
+
     return getConnectOperations(state.document, source, gesture.connectionIndex, {
       arrowId: gesture.arrowId,
       release,

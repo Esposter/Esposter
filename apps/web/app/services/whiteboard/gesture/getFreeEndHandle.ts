@@ -17,8 +17,10 @@ export const getFreeEndHandle = (
   point: Point,
   tolerance: number,
 ): FreeEndHandle | undefined => {
-  const item = getFreeEndHandleItems(document, selectedIds).find(
-    ({ point: handlePoint }) => getPointDistance(point, handlePoint) <= tolerance,
-  );
-  return item === undefined ? undefined : { arrowId: takeOne(selectedIds), endKey: item.endKey };
+  // The nearer end wins where both lie within the tolerance of the point
+  const [nearest] = getFreeEndHandleItems(document, selectedIds)
+    .map(({ endKey, point: handlePoint }) => ({ distance: getPointDistance(point, handlePoint), endKey }))
+    .filter(({ distance }) => distance <= tolerance)
+    .toSorted((first, second) => first.distance - second.distance);
+  return nearest === undefined ? undefined : { arrowId: takeOne(selectedIds), endKey: nearest.endKey };
 };

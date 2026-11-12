@@ -722,6 +722,71 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
+  test("A press on a free end released without travel moves and binds nothing", () => {
+    expect.hasAssertions();
+
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 250, y: 250 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: { point: { x: 150, y: 150 } },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState({ elements: [arrow] }, { selectedIds: [ARROW_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 250, y: 250 }));
+    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 250, y: 250 }));
+
+    expect(up.operations).toStrictEqual([]);
+  });
+
+  test("The nearer of two free ends within reach is the one grabbed", () => {
+    expect.hasAssertions();
+
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 254, y: 250 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: { point: { x: 250, y: 250 } },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState({ elements: [arrow] }, { selectedIds: [ARROW_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 254, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 300, y: 300 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 300, y: 300 }));
+
+    expect(up.operations).toStrictEqual([
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/end/point", value: { x: 300, y: 300 } },
+    ]);
+  });
+
+  test("Releasing a handle on the source shape or an element that takes no connection adds nothing", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
+
+    // The bottom handle is dragged back into the shape it came from, where a new shape would stack on it
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 120 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 120 }));
+
+    expect(up.operations).toStrictEqual([]);
+  });
+
   test("A press on an arrow's body away from its ends moves the whole arrow", () => {
     expect.hasAssertions();
 

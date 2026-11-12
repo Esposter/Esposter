@@ -6,7 +6,6 @@ import type { ArrowEndKey, Point } from "vue-block-editor-headless";
 export interface GestureEnd {
   arrowId: string;
   endKey: ArrowEndKey;
-  origin: Point;
   phase: GesturePhase.End;
   pointerId: number;
   screen: Point;
