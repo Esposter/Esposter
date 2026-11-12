@@ -11,9 +11,13 @@ export const deserializeXml = async (file: File, _settings: XmlFileSettings) => 
   const text = await file.text();
   const xmlDocument = new DOMParser().parseFromString(text, MimeType.Xml);
   // The parser returns a document rather than throwing on bad markup, and it marks the failure as a parsererror element
-  // In a namespace of its own, so a cell element the file names parsererror, which has none, is no failure
-  const parserError = Array.from(xmlDocument.getElementsByTagName("parsererror")).find(
-    ({ namespaceURI }) => namespaceURI !== null,
+  // In a namespace of its own, which differs by engine, so that namespace is read from a document the parser refuses
+  // A cell the file names parsererror inherits the document's default namespace, so it is no failure
+  const parserErrorNamespace = new DOMParser()
+    .parseFromString("<", MimeType.Xml)
+    .getElementsByTagName("parsererror")[0]?.namespaceURI;
+  const parserError = [...xmlDocument.getElementsByTagName("parsererror")].find(
+    ({ namespaceURI }) => namespaceURI === parserErrorNamespace,
   );
   // Chromium wraps the line and the cause in a div under its own headings, which are left out of the alert
   if (parserError)
