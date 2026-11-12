@@ -67,13 +67,17 @@ const onTextKeydown = (event: KeyboardEvent) => {
   onTextEditKeydown(event);
   if (event.defaultPrevented) event.stopPropagation();
 };
-// The canvas draws no text of the element being edited, since the editor over it is that text
+// The canvas draws no text of the element being edited, since the editor over it is that text. The store outlives the
+// Editor, so an edit still open when it unmounts clears the id here, or the element's text stays hidden on the next open
 watch(
   () => textEdit.value?.elementId,
   (newElementId) => {
     setTextEditElementId(newElementId);
   },
 );
+onUnmounted(() => {
+  setTextEditElementId(undefined);
+});
 const textEditElement = computed(() =>
   editState.value.document.elements.find(({ id }) => id === textEdit.value?.elementId),
 );
