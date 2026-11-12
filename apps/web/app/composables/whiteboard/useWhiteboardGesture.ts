@@ -1,6 +1,7 @@
 import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEvent";
 import type { GestureWheelEvent } from "@/models/whiteboard/GestureWheelEvent";
 
+import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { getWheelViewport } from "@/services/whiteboard/viewport/getWheelViewport";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
@@ -18,6 +19,9 @@ export const useWhiteboardGesture = () => {
   const { gesture, isSpaceHeld, isToolLocked, preview, selectedIds, shapeKind, tool, viewport } =
     storeToRefs(whiteboardEditorStore);
   const onPointer = (event: GesturePointerEvent) => {
+    // The originals of an Alt drag, which a refused release restores as the selection, since its copies were never inserted
+    const originalIdCopyIdMap =
+      gesture.value?.phase === GesturePhase.Moving ? gesture.value.originalIdCopyIdMap : undefined;
     const result = reduceWhiteboardGesture(
       {
         createId: () => crypto.randomUUID(),
@@ -39,7 +43,7 @@ export const useWhiteboardGesture = () => {
     viewport.value = result.state.viewport;
     const isCommitted = result.operations.length === 0 || commitOperations(result.operations);
     if (isCommitted) selectedIds.value = result.state.selectedIds;
-    // A refused commit leaves the document as it was, so a selection of copies an Alt press named, which the document never took, is left with what it holds
+    else if (originalIdCopyIdMap) selectedIds.value = Object.keys(originalIdCopyIdMap);
     else
       selectedIds.value = selectedIds.value.filter((id) =>
         editState.value.document.elements.some((element) => element.id === id),
