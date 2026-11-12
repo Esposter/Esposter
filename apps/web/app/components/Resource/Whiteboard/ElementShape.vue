@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { ShapeElement } from "vue-block-editor-headless";
 
-import { getDefaultColor } from "@/services/whiteboard/palette/getDefaultColor";
-import { getStrokeAttributes, toShapeOutlinePathData } from "vue-block-editor-headless";
+import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
+import { toShapeOutlinePathData } from "vue-block-editor-headless";
 
 interface Props {
   shape: ShapeElement;
@@ -10,7 +10,7 @@ interface Props {
 
 const { shape } = defineProps<Props>();
 const outline = computed(() => toShapeOutlinePathData(shape));
-const attributes = computed(() => getStrokeAttributes(shape, getDefaultColor(shape)));
+const attributes = computed(() => getElementStrokeAttributes(shape));
 </script>
 
 <template>
