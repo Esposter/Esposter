@@ -154,18 +154,32 @@ describe(useLikeOperations, () => {
   test("a count the server refuses to move goes back to what it was", async () => {
     expect.hasAssertions();
 
+    const heldRead = Promise.withResolvers<void>();
+    const isReadReceived = Promise.withResolvers<void>();
     trpcMsw.like.createLike.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    serveLikeCount(1);
+    trpcMsw.post.readPostCounts.query(async () => {
+      isReadReceived.resolve();
+      await heldRead.promise;
+
+      return [{ commentCount: 0, id: postId, likeCount: 1 }];
+    });
     const post = createPost({ id: postId, likeCount: 1 });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);
     items.value = [post];
     const { createLike: sendLike } = useLikeOperations(items);
-    await sendLike({ postId, value: 1 });
+    const pendingSend = sendLike({ postId, value: 1 });
 
-    expect(post.likeCount).toBe(1);
+    // The read-back is only sent after the failed write has run its rollback, so the count seen while it is held is
+    // The one the copy is left with, before the server's answer could mask a missing rollback
+    await isReadReceived.promise;
+    const likeCountWhileReadIsHeld = post.likeCount;
+    heldRead.resolve();
+    await pendingSend;
+
+    expect(likeCountWhileReadIsHeld).toBe(1);
   });
 
   test("the count shows the read-back value once the write settles", async () => {
