@@ -16,4 +16,4 @@ The stroke-and-fill change narrowed a freehand stroke's stored width from any po
 
 ## Impact
 
-Only whiteboard documents that an agent wrote a non-step width into are rewritten. The archived stroke-and-fill design's claim that no backfill is owed is superseded by this change. The rule the backfill applies is stated in [persisted data, latest shape only](../../../specs/architecture/persisted-data-latest-shape-only/design.md).
+Only whiteboard documents that an agent wrote a non-step width into are rewritten. The archived stroke-and-fill design's claim that no backfill is owed is superseded by this change. The rule the backfill applies is stated in [persisted data, latest shape only](../../specs/architecture/persisted-data-latest-shape-only/design.md).
