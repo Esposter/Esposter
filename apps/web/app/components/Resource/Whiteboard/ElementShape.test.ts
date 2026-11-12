@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import {
   CornerStyle,
   DashPattern,
+  EXPORT_LINE_COLOR,
   PositionedElementType,
   ShapeKind,
   SketchLevel,
@@ -91,13 +92,25 @@ describe("resourceWhiteboardElementShape", () => {
     expect(component.find("text").attributes("fill")).toBe("currentColor");
   });
 
-  test("a new shape starts with no fill", () => {
+  test("a shape with no fill draws an open outline", () => {
     expect.hasAssertions();
 
     const component = mount(ResourceWhiteboardElementShape, { props: { shape } });
 
     expect(component.find("path").attributes("fill")).toBe("none");
     expect(readExportAttribute(toShapeSvg(shape), "fill")).toBe("none");
+  });
+
+  test("an outline with no colour follows the theme on an open shape and is dark on a filled one, as the export draws it", () => {
+    expect.hasAssertions();
+
+    const filledShape = { ...shape, fill: "#ffffff" } as const;
+    const openComponent = mount(ResourceWhiteboardElementShape, { props: { shape } });
+    const filledComponent = mount(ResourceWhiteboardElementShape, { props: { shape: filledShape } });
+
+    expect(openComponent.find("path").attributes("stroke")).toBe("currentColor");
+    expect(filledComponent.find("path").attributes("stroke")).toBe(EXPORT_LINE_COLOR);
+    expect(readExportAttribute(toShapeSvg(filledShape), "stroke")).toBe(EXPORT_LINE_COLOR);
   });
 
   test("a dashed outline draws with gaps on the canvas and in the export", () => {

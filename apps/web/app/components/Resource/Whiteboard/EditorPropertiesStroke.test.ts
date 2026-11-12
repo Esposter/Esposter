@@ -26,7 +26,7 @@ describe("resourceWhiteboardEditorPropertiesStroke", () => {
     expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...shape, color: "" }] });
   });
 
-  test("a bold width draws the outline and the export at bold", async () => {
+  test("a bold width is committed to the element", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();

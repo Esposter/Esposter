@@ -34,12 +34,14 @@ describe("resourceWhiteboardElementArrow", () => {
     type: PositionedElementType.Arrow,
   };
 
-  test("a new arrow draws at medium width", () => {
+  test("an arrow draws at the width it holds", () => {
     expect.hasAssertions();
 
-    const component = mount(ResourceWhiteboardElementArrow, { props: { arrow } });
+    const component = mount(ResourceWhiteboardElementArrow, {
+      props: { arrow: { ...arrow, strokeWidth: StrokeWidth.Bold } },
+    });
 
-    expect(component.find("path").attributes("stroke-width")).toBe(`${StrokeWidth.Medium}`);
+    expect(component.find("path").attributes("stroke-width")).toBe(`${StrokeWidth.Bold}`);
   });
 
   test("an arrow route draws dotted when the owner chooses dotted", () => {

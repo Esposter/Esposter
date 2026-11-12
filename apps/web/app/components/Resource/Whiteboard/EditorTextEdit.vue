@@ -5,16 +5,17 @@ import {
   WHITEBOARD_TEXT_EDIT_ANCHOR_MAP,
   WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP,
 } from "@/services/whiteboard/text/constants";
+import { getDefaultColor } from "@/services/whiteboard/palette/getDefaultColor";
 import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
-import { getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
+import { getStrokeAttributes, getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
 }
 
 // The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the element's own text out. It is
-// Laid over the element where the text is drawn, in the layout the commit gives the text: its size, its alignment and its wrap, scaled with the viewport.
+// Laid over the element where the text is drawn, in the layout and the colour the commit gives the text: its size, its alignment and its wrap, scaled with the viewport.
 // An unwrapped text box is as wide as the draft's widest line, so it grows as the owner types. It has no box of its own, so it reads as the text itself,
 // And it takes focus as it opens. A press or a double click in it is no gesture of the canvas
 const draft = defineModel<string>({ required: true });
@@ -31,6 +32,7 @@ const style = computed(() => {
   const { shift, textAlign } = WHITEBOARD_TEXT_EDIT_ANCHOR_MAP[placement.textAnchor];
   return {
     background: "transparent",
+    color: getStrokeAttributes(element, getDefaultColor(element)).stroke,
     fieldSizing: "content",
     fontFamily: TEXT_FONT_FAMILY,
     fontSize: `${placement.textSize * scale}px`,
@@ -60,7 +62,6 @@ onMounted(() => {
     of-hidden
     resize-none
     select-text
-    text-text
     absolute
     :style
     @blur="emit('blur')"

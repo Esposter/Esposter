@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { StickyNoteElement } from "vue-block-editor-headless";
 
-import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
+import { getDefaultColor } from "@/services/whiteboard/palette/getDefaultColor";
 import { getBoundsCorners, getStrokeAttributes, toClosedSketchedPathData } from "vue-block-editor-headless";
 
 interface Props {
@@ -12,7 +12,7 @@ const { stickyNote } = defineProps<Props>();
 const box = computed(() =>
   toClosedSketchedPathData(getBoundsCorners(stickyNote), stickyNote.id, stickyNote.sketchLevel),
 );
-const attributes = computed(() => getStrokeAttributes(stickyNote, WHITEBOARD_TEXT_COLOR));
+const attributes = computed(() => getStrokeAttributes(stickyNote, getDefaultColor(stickyNote)));
 </script>
 
 <template>
