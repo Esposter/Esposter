@@ -5,10 +5,9 @@ import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestu
 
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
+import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
 import { getDraggedBounds } from "@/services/whiteboard/gesture/getDraggedBounds";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { getPreviewOrCommitResult } from "@/services/whiteboard/gesture/getPreviewOrCommitResult";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { reducePreviewOrCommitGesture } from "@/services/whiteboard/gesture/reducePreviewOrCommitGesture";
@@ -24,7 +23,7 @@ export const reducePlacingGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePreviewOrCommitGesture(state, event, (action) => {
-    const isDragged = getPointDistance(gesture.screen, event.screen) >= DRAG_START_DISTANCE;
+    const isDragged = checkIsDragStarted(gesture.screen, event.screen);
     // Nothing is previewed before a drag, so a click's element does not appear at one size and then change to another
     if (!isDragged && action === GesturePointerAction.Move) return { operations: [], state };
 

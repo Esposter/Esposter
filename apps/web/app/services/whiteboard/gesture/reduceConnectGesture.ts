@@ -3,12 +3,11 @@ import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEven
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
+import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
 import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
 import { getConnectOperations } from "@/services/whiteboard/gesture/getConnectOperations";
 import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
 import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
 import { PositionedElementType } from "vue-block-editor-headless";
@@ -22,7 +21,7 @@ export const reduceConnectGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePointerGesture(state, event, () => {
-    const isDragged = getPointDistance(gesture.screen, event.screen) >= DRAG_START_DISTANCE;
+    const isDragged = checkIsDragStarted(gesture.screen, event.screen);
     if (!isDragged) return [];
 
     const source = state.document.elements.find(({ id }) => id === gesture.elementId);

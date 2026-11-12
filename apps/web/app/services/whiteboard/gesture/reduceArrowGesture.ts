@@ -3,10 +3,9 @@ import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEven
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
+import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
 import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
 import { getArrowOperations } from "@/services/whiteboard/gesture/getArrowOperations";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
 import { WHITEBOARD_DEFAULT_ARROWHEAD } from "@/services/whiteboard/palette/constants";
 
@@ -18,7 +17,7 @@ export const reduceArrowGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePointerGesture(state, event, (point) => {
-    const isDragged = getPointDistance(gesture.screen, event.screen) >= DRAG_START_DISTANCE;
+    const isDragged = checkIsDragStarted(gesture.screen, event.screen);
     const end = getArrowEnd(state, point, gesture.start.binding?.elementId);
     return isDragged
       ? getArrowOperations(state.document, gesture.elementId, gesture.start, {

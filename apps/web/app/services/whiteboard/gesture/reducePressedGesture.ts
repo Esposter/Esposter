@@ -8,9 +8,8 @@ import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestu
 
 import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
+import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
 import { getClickSelection } from "@/services/whiteboard/gesture/getClickSelection";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { reduceMarqueeGesture } from "@/services/whiteboard/gesture/reduceMarqueeGesture";
 import { reduceMovingGesture } from "@/services/whiteboard/gesture/reduceMovingGesture";
 import { reduceResizingGesture } from "@/services/whiteboard/gesture/reduceResizingGesture";
@@ -29,7 +28,7 @@ export const reducePressedGesture = (
     case GesturePointerAction.Down:
       return { operations: [], state };
     case GesturePointerAction.Move: {
-      if (getPointDistance(gesture.screen, event.screen) < DRAG_START_DISTANCE) return { operations: [], state };
+      if (!checkIsDragStarted(gesture.screen, event.screen)) return { operations: [], state };
 
       if (gesture.handle !== undefined) {
         const resizing: GestureResizing = {

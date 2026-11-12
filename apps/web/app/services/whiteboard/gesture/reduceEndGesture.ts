@@ -3,10 +3,9 @@ import type { GesturePointerEvent } from "@/models/whiteboard/GesturePointerEven
 import type { WhiteboardGestureResult } from "@/models/whiteboard/WhiteboardGestureResult";
 import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestureState";
 
+import { checkIsDragStarted } from "@/services/whiteboard/gesture/checkIsDragStarted";
 import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
-import { DRAG_START_DISTANCE } from "@/services/ui/constants";
 import { getEndOperations } from "@/services/whiteboard/gesture/getEndOperations";
-import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { reducePointerGesture } from "@/services/whiteboard/gesture/reducePointerGesture";
 
 // A drag of a free arrow end previews the end moved to the pointer, and a release commits it as one edit. Released on a shape, the end binds to the
@@ -19,7 +18,7 @@ export const reduceEndGesture = (
   event: GesturePointerEvent,
 ): WhiteboardGestureResult =>
   reducePointerGesture(state, event, (point) => {
-    if (getPointDistance(gesture.screen, event.screen) < DRAG_START_DISTANCE) return [];
+    if (!checkIsDragStarted(gesture.screen, event.screen)) return [];
 
     const withoutArrow = {
       ...state,
