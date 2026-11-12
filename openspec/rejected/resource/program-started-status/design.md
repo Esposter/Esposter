@@ -8,7 +8,7 @@ A program is a configuration linking an audience, an email and a survey, with th
 
 It also changes no action. Reminders already reach everyone who has not finished, which includes a person who started, so the state would only be displayed. The funnel's middle, if a dashboard wants it, is a read of the survey's own responses and drafts, charted from the survey's dataset rather than from the program's.
 
-The program's status is the run's: when a person was invited, how many reminders they have had and whether they responded ([program send rules](../../../changes/resource-program-send-rules/design.md)).
+The program's status is the run's: when a person was invited, how many reminders they have had and whether they responded ([program send rules](../../../deferred/resource/program-send-rules/design.md)).
 
 ## Revisit when
 
