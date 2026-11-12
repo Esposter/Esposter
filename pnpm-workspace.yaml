@@ -192,7 +192,7 @@ catalog:
   oxc-parser: ^0.158.0
   oxfmt: ^0.78.0
   oxlint: ^1.93.0
-  oxlint-tsgolint: ^7.0.2006
+  oxlint-tsgolint: ^7.0.2007
   parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
   phaser: ^4.2.1
