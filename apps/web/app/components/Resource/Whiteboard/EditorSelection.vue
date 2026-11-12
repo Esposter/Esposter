@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
 import { getFreeEndHandleItems } from "@/services/whiteboard/gesture/getFreeEndHandleItems";
 import { getResizeHandlePoint } from "@/services/whiteboard/gesture/getResizeHandlePoint";
@@ -9,7 +10,6 @@ import {
   WHITEBOARD_OVERLAY_STROKE_WIDTH,
   WHITEBOARD_SELECTION_PADDING,
 } from "@/services/whiteboard/overlay/constants";
-import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { getElementBounds } from "vue-block-editor-headless";

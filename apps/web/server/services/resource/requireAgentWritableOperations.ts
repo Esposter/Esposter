@@ -25,7 +25,7 @@ const getCheckedPaths = (operation: JsonPatchOperation) => {
 };
 // Refuses a patch reaching a node the type's agent JSON Schema marks read-only or undescribed (`x-opaque`), naming the
 // First such path, before the content is read: the refusal is read off the schema the agent was given, so it can know
-// It first. A key the schema does not name at all is allowed, since the save's zod re-parse strips it
+// It first. A key the schema does not name at all is allowed here, and the save's zod re-parse strips it from an object or refuses it from a strict one, as an arrow end is
 export const requireAgentWritableOperations = (type: ResourceType, operations: JsonPatchOperation[]) => {
   const jsonSchema = getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema);
   const unwritablePath = operations
