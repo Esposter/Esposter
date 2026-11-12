@@ -53,8 +53,8 @@ const importAnnotations = async (file: File) => {
     },
   );
 };
-// The occasional commands, in the groups the menu shows them: the search's settings, the pages' view, the annotations
-// And the file
+// The occasional commands, in the groups the menu shows them: the search's settings, the pages' view — first and last
+// Page included, each unavailable on the page it goes to — the annotations and the file
 const items = computed<Item[]>(() => [
   {
     isChecked: isMatchCase.value,
@@ -73,8 +73,24 @@ const items = computed<Item[]>(() => [
     title: "Whole word",
   },
   {
-    disabled: isDisabled.value,
+    disabled: isDisabled.value || currentPageNumber.value === 1,
     isGroupStart: true,
+    meaning: UiIconMeaning.FirstPage,
+    onClick: () => {
+      viewer.goToPage(1);
+    },
+    title: "First page",
+  },
+  {
+    disabled: isDisabled.value || currentPageNumber.value === pagesCount.value,
+    meaning: UiIconMeaning.LastPage,
+    onClick: () => {
+      viewer.goToPage(pagesCount.value);
+    },
+    title: "Last page",
+  },
+  {
+    disabled: isDisabled.value,
     meaning: UiIconMeaning.RotateLeft,
     onClick: () => {
       viewer.rotate(-PDF_ROTATION_STEP);
@@ -88,6 +104,14 @@ const items = computed<Item[]>(() => [
       viewer.rotate(PDF_ROTATION_STEP);
     },
     title: "Rotate right",
+  },
+  {
+    disabled: isDisabled.value,
+    meaning: UiIconMeaning.FitWidth,
+    onClick: () => {
+      viewer.fitWidth();
+    },
+    title: "Fit width",
   },
   {
     disabled: isDisabled.value,

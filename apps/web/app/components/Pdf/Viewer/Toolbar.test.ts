@@ -237,6 +237,66 @@ describe("pdfViewerToolbar", () => {
       expect(viewer.goToPage).toHaveBeenCalledExactlyOnceWith(4);
     });
 
+    test("first page goes to page one", async () => {
+      expect.hasAssertions();
+
+      const viewer = createPdfViewerState({ currentPageNumber: ref(4) });
+      const component = await openMenu(mountToolbar({ viewer }));
+      await getMenuItem(component, "First page")?.trigger("click");
+
+      expect(viewer.goToPage).toHaveBeenCalledExactlyOnceWith(1);
+    });
+
+    test("last page goes to the document's last page", async () => {
+      expect.hasAssertions();
+
+      const viewer = createPdfViewerState();
+      const component = await openMenu(mountToolbar({ viewer }));
+      await getMenuItem(component, "Last page")?.trigger("click");
+
+      expect(viewer.goToPage).toHaveBeenCalledExactlyOnceWith(6);
+    });
+
+    test("last page is unavailable on the last page", async () => {
+      expect.hasAssertions();
+
+      const component = await openMenu(mountToolbar({ viewer: createPdfViewerState({ currentPageNumber: ref(6) }) }));
+
+      expect(getMenuItem(component, "Last page")?.attributes("aria-disabled")).toBe("true");
+      expect(getMenuItem(component, "First page")?.attributes("aria-disabled")).toBeUndefined();
+    });
+
+    test("first page is unavailable on the first page", async () => {
+      expect.hasAssertions();
+
+      const component = await openMenu(mountToolbar());
+
+      expect(getMenuItem(component, "First page")?.attributes("aria-disabled")).toBe("true");
+      expect(getMenuItem(component, "Last page")?.attributes("aria-disabled")).toBeUndefined();
+    });
+
+    test("fit width scales the pages to the viewer's width", async () => {
+      expect.hasAssertions();
+
+      const viewer = createPdfViewerState();
+      const component = await openMenu(mountToolbar({ viewer }));
+      await getMenuItem(component, "Fit width")?.trigger("click");
+
+      expect(viewer.fitWidth).toHaveBeenCalledExactlyOnceWith();
+    });
+
+    test("the view commands are unavailable until a document opens", async () => {
+      expect.hasAssertions();
+
+      const component = await openMenu(mountToolbar({ viewer: createPdfViewerState({ pagesCount: ref(0) }) }));
+
+      expect(
+        ["First page", "Last page", "Fit width"].map((title) =>
+          getMenuItem(component, title)?.attributes("aria-disabled"),
+        ),
+      ).toStrictEqual(["true", "true", "true"]);
+    });
+
     test("zooming past the largest scale", () => {
       expect.hasAssertions();
 
