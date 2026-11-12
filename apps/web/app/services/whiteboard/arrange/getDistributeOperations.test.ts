@@ -67,4 +67,23 @@ describe(getDistributeOperations, () => {
 
     expect(getDistributeOperations(document, [FIRST_ID, SECOND_ID], DistributeAxis.Horizontal)).toStrictEqual([]);
   });
+
+  test("A box lying inside another's span never moves the box that ends furthest", () => {
+    expect.hasAssertions();
+
+    // The second shape ends furthest, at 250, though the third starts after it, so the third is spaced and the second holds still
+    const document: PositionedDocument = {
+      elements: [
+        createShape(FIRST_ID, 0, 0, 100, 100),
+        createShape(SECOND_ID, 50, 0, 200, 100),
+        createShape(THIRD_ID, 120, 0, 20, 100),
+      ],
+    };
+    const operations = getDistributeOperations(document, [FIRST_ID, SECOND_ID, THIRD_ID], DistributeAxis.Horizontal);
+
+    expect(applyPatches(document, operations).document.elements.find(({ id }) => id === SECOND_ID)).toHaveProperty(
+      "x",
+      50,
+    );
+  });
 });

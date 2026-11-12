@@ -31,7 +31,7 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBe("");
   });
 
-  test("Align is enabled with two boxes and distribute stays disabled below three", async () => {
+  test("Align is enabled where two boxes differ and disabled where they already line up, and distribute stays disabled below three", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -42,8 +42,11 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
     whiteboardEditorStore.selectedIds = [FIRST_ID, SECOND_ID];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesArrange);
 
-    for (const label of ALIGN_LABELS)
+    // The two shapes differ in x alone, so the left, centre and right edges would move one and the top, middle and bottom edges already line up
+    for (const label of ALIGN_LABELS.slice(0, 3))
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBeUndefined();
+    for (const label of ALIGN_LABELS.slice(3))
+      expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBe("");
     for (const label of DISTRIBUTE_LABELS)
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBe("");
   });

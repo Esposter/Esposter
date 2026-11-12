@@ -29,7 +29,7 @@ const selected = useWhiteboardSelectedElement();
       :element="selected.element"
       :index="selected.index"
     />
-    <ResourceWhiteboardEditorPropertiesOrder :index="selected.index" />
+    <ResourceWhiteboardEditorPropertiesOrder />
     <ResourceWhiteboardEditorPropertiesFooter />
   </EditorContextualPanel>
 </template>

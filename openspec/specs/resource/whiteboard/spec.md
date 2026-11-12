@@ -409,7 +409,7 @@ The whiteboard SHALL open the same menu from the keyboard, with the menu key or 
 
 ### Requirement: The element menu lists the selection's commands
 
-The menu over an element SHALL list cut, copy, paste, duplicate, the stacking steps that can move one selected element, edit text for an element that has text, and delete, each running what its shortcut runs.
+The menu over an element SHALL list cut, copy, paste, duplicate, the stacking steps that can move the selection, edit text for an element that has text, and delete, each running what its shortcut runs.
 
 #### Scenario: Duplicate in the menu copies the selection
 
@@ -424,11 +424,11 @@ The menu over an element SHALL list cut, copy, paste, duplicate, the stacking st
 - **THEN** the delete confirmation opens
 - **AND** the shape is still on the board
 
-#### Scenario: Stacking is listed for one element only
+#### Scenario: Stacking is listed for a selection that can move
 
-- **GIVEN** two selected elements
+- **GIVEN** two selected elements with another element drawn above them
 - **WHEN** the owner opens the menu on one of them
-- **THEN** the stacking steps are not listed
+- **THEN** bring forward and bring to front are listed
 
 #### Scenario: Edit text opens the editor over the element
 

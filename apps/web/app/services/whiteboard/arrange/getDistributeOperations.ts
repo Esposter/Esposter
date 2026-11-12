@@ -26,9 +26,21 @@ export const getDistributeOperations = (
   const boxes = getSelectedBoxes(document, selectedIds);
   if (boxes.length < WHITEBOARD_DISTRIBUTE_MINIMUM_BOXES) return [];
 
-  const sortedBoxes = boxes.toSorted((first, second) => getStart(first.bounds, axis) - getStart(second.bounds, axis));
+  // The box that ends furthest along the axis is the last, even when it starts before another does, so a box lying inside another's span is never the
+  // One that is taken for the outer edge
+  const lastBox = boxes.reduce((furthest, box) =>
+    getStart(box.bounds, axis) + getExtent(box.bounds, axis) >
+    getStart(furthest.bounds, axis) + getExtent(furthest.bounds, axis)
+      ? box
+      : furthest,
+  );
+  const sortedBoxes = [
+    ...boxes
+      .filter(({ index }) => index !== lastBox.index)
+      .toSorted((first, second) => getStart(first.bounds, axis) - getStart(second.bounds, axis)),
+    lastBox,
+  ];
   const firstStart = getStart(takeOne(sortedBoxes, 0).bounds, axis);
-  const lastBox = takeOne(sortedBoxes, sortedBoxes.length - 1);
   const totalExtent = sortedBoxes.reduce((total, { bounds }) => total + getExtent(bounds, axis), 0);
   const gap =
     (getStart(lastBox.bounds, axis) + getExtent(lastBox.bounds, axis) - firstStart - totalExtent) /
