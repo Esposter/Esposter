@@ -1,6 +1,6 @@
 # Batched Refresh
 
-A value the server derives from many rows is re-read, never moved by the client. A re-read is cheap to batch, and a batch read through one owner cannot race itself, so the primitive that does it is one: `createBatchedRefresh` in `apps/web/app/services/shared/createBatchedRefresh.ts`. Its owner passes a function that re-reads a list of keys, and gets back a function that marks keys as changed and runs the re-read.
+A value the server derives from many rows is re-read, and the client moves it only for the viewer's own vote, whose effect it holds exactly and the re-read replaces. A re-read is cheap to batch, and a batch read through one owner cannot race itself, so the primitive that does it is one: `createBatchedRefresh` in `apps/web/app/services/shared/createBatchedRefresh.ts`. Its owner passes a function that re-reads a list of keys, and gets back a function that marks keys as changed and runs the re-read.
 
 ## The contract
 

@@ -67,8 +67,8 @@ describe(useLikeOperations, () => {
     expect(post.likeCount).toBe(0);
   });
 
-  // The count is the server's to move, so it holds the value it had until the write it follows has settled
-  test("a count stays put while its write is in flight", async () => {
+  // The vote's own effect on the count is known to the client, so the count moves before the server answers
+  test("a count moves at once while its write is in flight", async () => {
     expect.hasAssertions();
 
     const heldWrite = Promise.withResolvers<void>();
@@ -88,9 +88,84 @@ describe(useLikeOperations, () => {
     const pendingLike = sendLike({ postId, value: 1 });
 
     await isWriteReceived.promise;
-    expect(post.likeCount).toBe(1);
+
+    expect(post.likeCount).toBe(2);
+
     heldWrite.resolve();
     await pendingLike;
+  });
+
+  test("a flipped vote moves the count by both its sides and the read-back settles it", async () => {
+    expect.hasAssertions();
+
+    const heldWrite = Promise.withResolvers<void>();
+    const isWriteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.updateLike.mutation(async ({ input }) => {
+      isWriteReceived.resolve();
+      await heldWrite.promise;
+
+      return createLike(input.value);
+    });
+    serveLikeCount(-1);
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { updateLike } = useLikeOperations(items);
+    const pendingVote = updateLike({ postId, value: -1 });
+
+    await isWriteReceived.promise;
+
+    expect(post.likeCount).toBe(-1);
+
+    heldWrite.resolve();
+    await pendingVote;
+
+    expect(post.likeCount).toBe(-1);
+  });
+
+  test("a withdrawn vote takes its value off the count at once", async () => {
+    expect.hasAssertions();
+
+    const heldWrite = Promise.withResolvers<void>();
+    const isWriteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.deleteLike.mutation(async () => {
+      isWriteReceived.resolve();
+      await heldWrite.promise;
+
+      return createLike(1);
+    });
+    serveLikeCount(0);
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { deleteLike } = useLikeOperations(items);
+    const pendingDelete = deleteLike(postId);
+
+    await isWriteReceived.promise;
+
+    expect(post.likeCount).toBe(0);
+
+    heldWrite.resolve();
+    await pendingDelete;
+  });
+
+  test("a count the server refuses to move goes back to what it was", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.like.createLike.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    serveLikeCount(1);
+    const post = createPost({ id: postId, likeCount: 1 });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { createLike: sendLike } = useLikeOperations(items);
+    await sendLike({ postId, value: 1 });
+
+    expect(post.likeCount).toBe(1);
   });
 
   test("the count shows the read-back value once the write settles", async () => {

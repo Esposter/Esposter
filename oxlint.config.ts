@@ -82,8 +82,6 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
         "trpc-procedure/no-hand-rolled-error": "error",
       },
     },
-    // A displayed server count holds until the write that changes it settles, so the client's stores are checked here
-    { files: ["apps/web/app/**/*.ts"], rules: { "count-write-after-settle/no-count-write-before-settle": "error" } },
     { files: ["apps/web/server/trpc/guards/*.ts"], rules: { "trpc-procedure/no-hand-rolled-error": "off" } },
     {
       files: ["apps/web/server/trpc/**/*.ts"],

@@ -9,7 +9,18 @@ import { usePostCountStore } from "@/store/post/count";
 const getRollback = (rollbacks: (() => void)[]) => () => {
   for (const rollback of rollbacks) rollback();
 };
-// Writes the next vote onto each copy that holds one and returns the rollback that restores what each copy held
+// Moves one copy's count by the change its viewer's own vote makes, which the client holds exactly, and returns the
+// Rollback that restores the count the copy held. The count the server reads back is what the copy is left with
+const moveLikeCount = (post: PostInPostWithRelations, delta: number) => {
+  const previousLikeCount = post.likeCount;
+  // eslint-disable-next-line no-restricted-syntax -- the viewer's own vote moves the count before the server answers, and the read-back replaces it
+  post.likeCount += delta;
+  return () => {
+    post.likeCount = previousLikeCount;
+  };
+};
+// Writes the next vote onto each copy that holds one, moves its count by the difference, and returns the rollback that
+// Restores what each copy held
 const applyOptimisticViewerLike = (
   posts: PostInPostWithRelations[],
   getNextViewerLike: (
@@ -21,8 +32,9 @@ const applyOptimisticViewerLike = (
     const previousViewerLike = post.viewerLike;
     if (!previousViewerLike) continue;
 
-    post.viewerLike = getNextViewerLike(previousViewerLike);
-    rollbacks.push(() => {
+    const nextViewerLike = getNextViewerLike(previousViewerLike);
+    post.viewerLike = nextViewerLike;
+    rollbacks.push(moveLikeCount(post, (nextViewerLike?.value ?? 0) - previousViewerLike.value), () => {
       post.viewerLike = previousViewerLike;
     });
   }
@@ -42,18 +54,20 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
   const getPosts = (postId: PostInPostWithRelations["id"]) => [
     ...new Set(toValue(allPosts).filter(({ id }) => id === postId)),
   ];
-  // `createLike` is non-optimistic (the row is server-generated), so viewerLike stays undefined for the whole
-  // Round trip and a rapid second vote would fire another CreateLike, hitting the likes primary-key constraint.
-  // Keying the single-flight guard by postId drops the duplicate create while the first is still in flight.
+  // The vote's row is server-generated, so a create leaves viewerLike undefined for the whole round trip and a rapid
+  // Second vote would fire another CreateLike, hitting the likes primary-key constraint. Keying the single-flight guard
+  // By postId drops the duplicate create while the first is still in flight. Only the count moves at once
   const createLike = async (input: CreateLikeInput) => {
     await executeCreateLikeMutation(() => $trpc.like.createLike.mutate(input), {
+      applyOptimistic: () => getRollback(getPosts(input.postId).map((post) => moveLikeCount(post, input.value))),
       isExclusive: true,
       key: input.postId,
       onSuccess: (newLike) => {
         for (const post of getPosts(newLike.postId)) post.viewerLike = newLike;
       },
     });
-    // The counts are never moved here: the server adjusts them in the write that changes the vote, so they are read back
+    // The count moved ahead of the write is the client's estimate of the vote's own effect, and the server's, which
+    // Also holds every other viewer's votes, is what each copy is left with once it is read back
     await refreshPostCounts([input.postId]);
   };
   const updateLike = async (input: UpdateLikeInput) => {

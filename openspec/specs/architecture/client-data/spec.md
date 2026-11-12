@@ -180,7 +180,7 @@ Each user action SHALL have its own write queue, so that unrelated actions on th
 
 ### Requirement: A server-owned aggregate is re-read, never adjusted by the client
 
-A count the server derives from many rows SHALL be re-read from the server on every change to its inputs, and the client SHALL NOT move it by a delta. Reads of one aggregate SHALL apply only the latest started.
+A count the server derives from many rows SHALL be re-read from the server on every change to its inputs, and the client SHALL NOT move it by a delta, except for the viewer's own vote's effect on its count, which the read-back replaces. Reads of one aggregate SHALL apply only the latest started.
 
 #### Scenario: a leave re-reads the room's totals instead of decrementing them
 
@@ -194,15 +194,21 @@ A count the server derives from many rows SHALL be re-read from the server on ev
 - **WHEN** the newer read finishes first
 - **THEN** the older read's result, when it arrives, is not applied
 
-### Requirement: A displayed count holds its value until the write that changes it settles
+### Requirement: A vote's effect on a displayed count shows at once, and every other count holds until its write settles
 
-A count the server derives SHALL keep its displayed value until the write that changes it has settled. Once that write settles, the count shows the value the server reads back. The viewer's own mark MAY change at once, since the client holds it exactly. A first vote is the exception that proves the rule: its row is server-generated, so the client does not hold it until the write answers, and its mark waits for that answer.
+A count the server derives SHALL show the viewer's own vote's effect on it before the write that changes it has settled, and SHALL be restored to the count it held if the write fails. Once the write settles, the count shows the value the server reads back, whatever the estimate was. Every other count SHALL keep its displayed value until the write that changes it has settled. The viewer's own mark MAY change at once, since the client holds it exactly. A first vote's mark waits for the answer, since its row is server-generated, while its count moves at once.
 
-#### Scenario: A count stays put while its write is in flight
+#### Scenario: A vote moves the count at once
 
 - **GIVEN** a post whose like count is shown with a value
 - **WHEN** the viewer likes the post and the server has not answered
-- **THEN** the like count shows its previous value
+- **THEN** the like count shows its previous value plus the vote
+
+#### Scenario: A failed vote restores the count
+
+- **GIVEN** a post whose like count moved for a vote the server then refuses
+- **WHEN** the write settles with an error
+- **THEN** the like count shows the value it held before the vote
 
 #### Scenario: The count shows the read-back value once the write settles
 
