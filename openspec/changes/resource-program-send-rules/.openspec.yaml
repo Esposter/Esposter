@@ -10,3 +10,4 @@ x-touches:
     "apps/web/app/components/Resource/Program/**",
     "packages/db-schema/src/models/program/**",
   ]
+x-waiting: "3.1, 4.1, 5.1, 5.2, 5.3 and 5.4 write or read the dispatch record, which email sending (openspec/deferred/resource/email-sending) is the first real sender of: until it ships, an export is the only dispatch event and may record a dispatch that was never sent"
