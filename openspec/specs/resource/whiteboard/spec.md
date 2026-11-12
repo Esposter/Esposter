@@ -389,6 +389,24 @@ The whiteboard SHALL open a context menu at the pointer on a right-click, select
 - **THEN** nothing is selected
 - **AND** the menu opens with the board's commands
 
+### Requirement: A menu opened from the keyboard keeps the selection
+
+The whiteboard SHALL open the same menu from the keyboard, with the menu key or Shift+F10 on the focused canvas, at the canvas's corner. A keyboard menu SHALL NOT hit-test the pointer or change the selection, so it lists the commands for what is already selected, or the board's commands when nothing is.
+
+#### Scenario: The menu key on a selected element keeps it selected
+
+- **GIVEN** a shape that is selected
+- **WHEN** the owner presses the menu key on the focused canvas
+- **THEN** the shape stays the selection
+- **AND** the menu opens at the canvas's corner with the selection's commands
+
+#### Scenario: Shift+F10 with nothing selected opens the board's menu
+
+- **GIVEN** nothing is selected
+- **WHEN** the owner presses Shift+F10 on the focused canvas
+- **THEN** nothing is selected
+- **AND** the menu opens with the board's commands
+
 ### Requirement: The element menu lists the selection's commands
 
 The menu over an element SHALL list cut, copy, paste, duplicate, the stacking steps that can move one selected element, edit text for an element that has text, and delete, each running what its shortcut runs.
