@@ -20,6 +20,9 @@ const checkIsHeld = (element: PositionedElement, change: PositionedElementProper
   switch (change.property) {
     case "altText":
       return element.type === PositionedElementType.Image;
+    case "arrowhead":
+    case "pathKind":
+      return element.type === PositionedElementType.Arrow;
     case "color":
       return element.type !== PositionedElementType.Image;
     case "cornerStyle":
@@ -33,9 +36,6 @@ const checkIsHeld = (element: PositionedElement, change: PositionedElementProper
       );
     case "fill":
       return element.type === PositionedElementType.Shape || element.type === PositionedElementType.StickyNote;
-    case "arrowhead":
-    case "pathKind":
-      return element.type === PositionedElementType.Arrow;
     case "horizontalAlignment":
       return (
         element.type === PositionedElementType.Shape ||

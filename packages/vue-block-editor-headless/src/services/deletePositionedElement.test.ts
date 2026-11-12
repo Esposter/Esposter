@@ -27,8 +27,8 @@ describe(deletePositionedElement, () => {
       color: "",
       dashPattern: DashPattern.Solid,
       end: {
-        binding: { connectionPointIndex: 3, elementId: POSITIONED_PROCESS_ID },
         arrowhead: ArrowheadKind.Triangle,
+        binding: { connectionPointIndex: 3, elementId: POSITIONED_PROCESS_ID },
         point: { x: 200, y: 50 },
       },
       id: crypto.randomUUID(),

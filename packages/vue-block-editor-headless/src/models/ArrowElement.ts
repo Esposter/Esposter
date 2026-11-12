@@ -35,8 +35,8 @@ export const arrowElementSchema: z.ZodObject<{
   pathKind: typeof arrowPathKindSchema;
   sketchLevel: z.ZodDefault<typeof sketchLevelSchema>;
   start: typeof arrowEndSchema;
-  textSize: z.ZodDefault<typeof textSizeSchema>;
   strokeWidth: z.ZodDefault<typeof strokeWidthSchema>;
+  textSize: z.ZodDefault<typeof textSizeSchema>;
   type: z.ZodLiteral<PositionedElementType.Arrow>;
 }> = z.object({
   color: elementColorSchema.default(""),

@@ -30,6 +30,7 @@ describe(getHitElementIndex, () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Shape,
       width: 100,
       x: 0,

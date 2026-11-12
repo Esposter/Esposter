@@ -72,8 +72,8 @@ describe(movePositionedElement, () => {
     const boundArrow: ArrowElement = {
       ...POSITIONED_ARROW,
       end: {
-        binding: { connectionPointIndex: 0, elementId: POSITIONED_PROCESS_ID },
         arrowhead: ArrowheadKind.Triangle,
+        binding: { connectionPointIndex: 0, elementId: POSITIONED_PROCESS_ID },
         point: { x: 250, y: 0 },
       },
     };

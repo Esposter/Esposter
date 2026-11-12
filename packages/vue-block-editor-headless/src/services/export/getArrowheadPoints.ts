@@ -34,7 +34,7 @@ export const getArrowheadPoints = (arrowhead: ArrowheadKind, tip: Point, previou
     case ArrowheadKind.Circle: {
       // The circle sits a radius back from its tip, so its front touches the point the arrow ends at
       const centre = getPoint(ARROWHEAD_HALF_WIDTH, 0);
-      return Array.from({ length: ARROWHEAD_CIRCLE_CORNERS }, (_, index) => {
+      return Array.from({ length: ARROWHEAD_CIRCLE_CORNERS }, (_value, index) => {
         const angle = (2 * Math.PI * index) / ARROWHEAD_CIRCLE_CORNERS;
         return {
           x: centre.x + ARROWHEAD_HALF_WIDTH * Math.cos(angle),

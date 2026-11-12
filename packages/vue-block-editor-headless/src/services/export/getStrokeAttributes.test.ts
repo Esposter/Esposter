@@ -83,6 +83,7 @@ describe(getStrokeAttributes, () => {
       id: crypto.randomUUID(),
       label: "",
       pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
       start: { point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,

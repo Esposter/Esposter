@@ -15,18 +15,17 @@ import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-const POSITIONED_STROKE: StrokeElement = {
-  color: "",
-  id: crypto.randomUUID(),
-  points: [
-    { x: 0, y: 0 },
-    { x: 50, y: 50 },
-  ],
-  strokeWidth: StrokeWidth.Medium,
-  type: PositionedElementType.Stroke,
-};
-
 describe("positionedDocumentSchema", () => {
+  const POSITIONED_STROKE: StrokeElement = {
+    color: "",
+    id: crypto.randomUUID(),
+    points: [
+      { x: 0, y: 0 },
+      { x: 50, y: 50 },
+    ],
+    strokeWidth: StrokeWidth.Medium,
+    type: PositionedElementType.Stroke,
+  };
   const POSITIONED_DOCUMENT: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_STROKE] };
 
   test("a document of typed elements parses back unchanged", () => {

@@ -8,4 +8,4 @@ They are two occurrences, below the bar a shared piece earns. The whiteboard's s
 
 ## The revisit trigger
 
-The whiteboard's selection change has shipped and a third frame draws the same rectangle, so the shared piece has the third consumer that earns it. The change is [selection editing](../../../changes/resource-whiteboard-selection-editing/design.md).
+The whiteboard's selection change has shipped and a third frame draws the same rectangle, so the shared piece has the third consumer that earns it. The change is [selection editing](../../../changes/archive/2026-11-12-resource-whiteboard-selection-editing/design.md).

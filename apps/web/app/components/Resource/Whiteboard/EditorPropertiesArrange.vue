@@ -4,26 +4,13 @@ import { AlignEdge } from "@/models/whiteboard/AlignEdge";
 import { DistributeAxis } from "@/models/whiteboard/DistributeAxis";
 import { getAlignOperations } from "@/services/whiteboard/arrange/getAlignOperations";
 import { getDistributeOperations } from "@/services/whiteboard/arrange/getDistributeOperations";
-import { useWhiteboardStore } from "@/store/resource/whiteboard";
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { useWhiteboardSelectionOperations } from "@/composables/whiteboard/useWhiteboardSelectionOperations";
 
 // The align and distribute controls of a selection. Each is one commit, so one undo step, and each is disabled when it would move nothing: below its
 // Minimum number of boxes, since an arrow and a stroke are not moved by either, or when the boxes already lie as it would put them
-const whiteboardStore = useWhiteboardStore();
-const { commitOperations } = whiteboardStore;
-const { editState } = storeToRefs(whiteboardStore);
-const whiteboardEditorStore = useWhiteboardEditorStore();
-const { selectedIds } = storeToRefs(whiteboardEditorStore);
-const checkIsAlignDisabled = (edge: AlignEdge) =>
-  getAlignOperations(editState.value.document, selectedIds.value, edge).length === 0;
-const checkIsDistributeDisabled = (axis: DistributeAxis) =>
-  getDistributeOperations(editState.value.document, selectedIds.value, axis).length === 0;
-const align = (edge: AlignEdge) => {
-  commitOperations(getAlignOperations(editState.value.document, selectedIds.value, edge));
-};
-const distribute = (axis: DistributeAxis) => {
-  commitOperations(getDistributeOperations(editState.value.document, selectedIds.value, axis));
-};
+const { checkIsDisabled: checkIsAlignDisabled, commit: align } = useWhiteboardSelectionOperations(getAlignOperations);
+const { checkIsDisabled: checkIsDistributeDisabled, commit: distribute } =
+  useWhiteboardSelectionOperations(getDistributeOperations);
 </script>
 
 <template>
