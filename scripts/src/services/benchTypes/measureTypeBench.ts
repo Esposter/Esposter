@@ -7,30 +7,39 @@ import { readCompilerFlags } from "#src/services/benchTypes/readCompilerFlags";
 import { readTypeBenchSource } from "#src/services/benchTypes/readTypeBenchSource";
 import { subtractTypeBenchCounts } from "#src/services/benchTypes/subtractTypeBenchCounts";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { getResult } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { readFileSync, rmSync } from "node:fs";
 import { resolve } from "node:path";
 
+const BASELINE_PROGRAM_NAME = "Baseline";
+
 // Each case is its own program: the header every case shares, then that alias alone. The header is measured once as
-// The baseline and subtracted, so a row is what its alias adds over the imports and fixtures beside it. The program
-// Sits beside the source so its relative imports resolve as they do for the source itself.
-export const measureTypeBench = (sourcePath: string): TypeBenchRow[] => {
+// The baseline and subtracted, so a row is what its alias adds over the imports and fixtures beside it. The programs
+// Sit beside the source so their relative imports resolve as they do for the source itself, each under a name of its
+// Own so they are measured together.
+export const measureTypeBench = async (sourcePath: string): Promise<TypeBenchRow[]> => {
   const absolutePath = resolve(REPOSITORY_ROOT, sourcePath);
   const source = readTypeBenchSource(readFileSync(absolutePath, "utf8"));
-  const programPath = `${absolutePath.slice(0, -TYPE_BENCH_SUFFIX.length)}${TYPE_BENCH_PROGRAM_SUFFIX}`;
-  const result = getResult(() => {
+  const getProgramPath = (name: string): string =>
+    `${absolutePath.slice(0, -TYPE_BENCH_SUFFIX.length)}.${name}${TYPE_BENCH_PROGRAM_SUFFIX}`;
+  const programPaths = [BASELINE_PROGRAM_NAME, ...source.cases.map(({ name }) => name)].map(getProgramPath);
+  const result = await getResultAsync(async () => {
     const flags = readCompilerFlags(findPackageTsconfig(absolutePath));
-    const baseline = measureTypeProgram(programPath, flags, source.header);
-    return source.cases.map((caseItem) => {
-      const counts = subtractTypeBenchCounts(
-        measureTypeProgram(programPath, flags, `${source.header}\n${caseItem.text}\n`),
-        baseline,
-      );
-      return { instantiations: counts.instantiations, name: caseItem.name, types: counts.types };
-    });
+    const baselineCounts = measureTypeProgram(getProgramPath(BASELINE_PROGRAM_NAME), flags, source.header);
+
+    return Promise.all(
+      source.cases.map(async ({ name, text }) => {
+        const [baseline, caseCounts] = await Promise.all([
+          baselineCounts,
+          measureTypeProgram(getProgramPath(name), flags, `${source.header}\n${text}\n`),
+        ]);
+        const counts = subtractTypeBenchCounts(caseCounts, baseline);
+        return { instantiations: counts.instantiations, name, types: counts.types };
+      }),
+    );
   });
-  // The program is removed on every path out, so a failed measurement leaves no file for a later run to find
-  rmSync(programPath, { force: true });
+  // The programs are removed on every path out, so a failed measurement leaves no file for a later run to find
+  for (const programPath of programPaths) rmSync(programPath, { force: true });
 
   return result.match(
     (rows) => rows,

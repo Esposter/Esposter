@@ -1564,7 +1564,6 @@
 | `scripts/src/services/shared/set.ts`                                                      | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/setParent.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/setupFixtureRepository.test.ts`                              | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/shared/spawnNuxtModuleEntryLoad.ts`                                 | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/spawnPnpm.ts`                                                | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/stripToFixedPoint.test.ts`                                   | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/shared/stripToFixedPoint.ts`                                        | 2026-10-29 · Haiku 5.5  |       |

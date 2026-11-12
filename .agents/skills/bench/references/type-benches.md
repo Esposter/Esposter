@@ -2,7 +2,7 @@
 
 Read when measuring what a type costs the compiler, adding a `*.typebench.ts`, or changing the `bench:types` runner or its committed `*.typebench.md` results.
 
-A type bench measures the compiler, not the runtime. `pnpm bench:types` (root or `scripts`) counts the Types and Instantiations each case adds over its file's own header, using the repo's `typescript` and nothing older. Those counts are deterministic for a compiler version, so they are compared exactly, which a time never is.
+A type bench measures the compiler, not the runtime. `pnpm bench:types` (root or `scripts`) counts the Types and Instantiations each case adds over its file's own header, using the `tsrs` this repo typechecks with and nothing older. Its counts are `tsrs`'s, which differ from the `typescript` bridge's on the same program, so a count is compared only with another from `tsrs`. Those counts are deterministic for a compiler version, so they are exact, which a time never is.
 
 ## The file
 
@@ -18,11 +18,10 @@ A type bench measures the compiler, not the runtime. `pnpm bench:types` (root or
 - A program with a diagnostic throws rather than being measured.
 - The result is `Foo.typebench.md` beside the source: the compiler version, then a table of case, types and instantiations. Its columns are padded the way the formatter lays a table out, so a format pass never rewrites it. Check time is left out as noise.
 
-## The guard
+## The result
 
-- `pnpm bench:types` fails on any `*.typebench.md` that differs from a fresh measurement, and names the files. `pnpm bench:types -u` rewrites them, the way a snapshot is updated.
-- The same comparison is `scripts/src/workspace/typeBenchResults.test.ts`, so CI checks it in the scripts unit suite. The vitest benches' CI job is a smoke test that compares nothing, and their only committed-artifact check is an existence check (`scripts/src/workspace/benchArtifacts.test.ts`). A type count is exact, so this guard compares it.
-- The whole file is compared, so a change to the compiler version is a change to every result. That is the change a compiler bump owes, made with `-u` in the same commit.
+- `pnpm bench:types` measures every case, the programs side by side, and rewrites each `*.typebench.md`; what a type change did to its counts is the diff. It is a tool for the session optimising a type, and nothing checks the committed counts: no test or CI step compares them, so a result is as current as the last session that ran it.
+- The compiler version is written into each file, so a compiler bump shows in the diff of every result.
 
 ## Code
 
