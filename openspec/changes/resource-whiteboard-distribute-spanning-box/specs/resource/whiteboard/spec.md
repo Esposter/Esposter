@@ -26,6 +26,6 @@ Distribute SHALL space a selection of three or more boxes evenly, horizontally o
 
 #### Scenario: Distribute of boxes that do not span the others is unchanged
 
-- **GIVEN** a selection of three boxes in which no box starts first and ends last
+- **GIVEN** a selection of three boxes in which no box starts no later than every other box and ends no earlier than every other box
 - **WHEN** the owner distributes them horizontally
 - **THEN** the two outermost boxes stay in place and the gaps between neighbours are equal
