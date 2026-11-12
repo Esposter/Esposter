@@ -8,6 +8,15 @@ import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
 
+const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
+  ...WHITEBOARD_PROCESS,
+  height,
+  id,
+  width,
+  x,
+  y,
+});
+
 describe(getScaleOperations, () => {
   const FIRST_ID = crypto.randomUUID();
   const SECOND_ID = crypto.randomUUID();
@@ -16,16 +25,8 @@ describe(getScaleOperations, () => {
   const LARGE_ID = crypto.randomUUID();
   const ARROW_ID = crypto.randomUUID();
   const STROKE_ID = crypto.randomUUID();
-  const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
-    ...WHITEBOARD_PROCESS,
-    height,
-    id,
-    width,
-    x,
-    y,
-  });
 
-  test("Dragging a corner of several shapes scales each of them", () => {
+  test("dragging a corner of several shapes scales each of them", () => {
     expect.hasAssertions();
 
     // The three shapes cover a box from (100, 100) to (350, 400), so the bottom-right corner is at (350, 400). The drag of (250, 150) doubles
@@ -49,7 +50,7 @@ describe(getScaleOperations, () => {
     ]);
   });
 
-  test("An arrow bound to a resized shape follows it", () => {
+  test("an arrow bound to a resized shape follows it", () => {
     expect.hasAssertions();
 
     // The shape's right connection point is at (200, 125), where the arrow starts, and its free end is at (300, 300). The box of the two covers
@@ -74,7 +75,7 @@ describe(getScaleOperations, () => {
     ]);
   });
 
-  test("A resize of several stops where the smallest element stops", () => {
+  test("a resize of several stops where the smallest element stops", () => {
     expect.hasAssertions();
 
     // The small shape is 40 wide and the large one 200, so the scale on the width stops at the minimum size of the small one, which is 0.4
@@ -89,7 +90,7 @@ describe(getScaleOperations, () => {
     ]);
   });
 
-  test("A stroke in a selection scales its points with it", () => {
+  test("a stroke in a selection scales its points with it", () => {
     expect.hasAssertions();
 
     // The shape and the stroke cover (0, 0) to (150, 100), and a drag of 150 to the right doubles the width about the left side

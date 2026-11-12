@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
 import type { TextElement } from "vue-block-editor-headless";
 
 import ResourceWhiteboardEditorPropertiesText from "@/components/Resource/Whiteboard/EditorPropertiesText.vue";
 import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { VueWrapper } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";
 import {
   getTextWidth,
@@ -14,6 +14,13 @@ import {
   TextSize,
   VerticalAlignment,
 } from "vue-block-editor-headless";
+
+// The button that names a choice, found by its text, as the other panel tests find theirs
+const clickButton = async (wrapper: VueWrapper, label: string) => {
+  const button = wrapper.findAll("button").find((candidate) => candidate.text() === label);
+  assert.exists(button);
+  await button.trigger("click");
+};
 
 describe("resourceWhiteboardEditorPropertiesText", () => {
   const TEXT_BOX: TextElement = {
@@ -28,14 +35,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     y: 0,
   };
 
-  // The button that names a choice, found by its text, as the other panel tests find theirs
-  const clickButton = async (wrapper: VueWrapper, label: string) => {
-    const button = wrapper.findAll("button").find((candidate) => candidate.text() === label);
-    assert.exists(button);
-    await button.trigger("click");
-  };
-
-  test("A larger size draws and wraps the text larger", async () => {
+  test("a larger size draws and wraps the text larger", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -51,7 +51,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     });
   });
 
-  test("Auto width sizes the box to its widest line", async () => {
+  test("auto width sizes the box to its widest line", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -67,7 +67,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     });
   });
 
-  test("Returning to a wrapped width keeps the box width", async () => {
+  test("returning to a wrapped width keeps the box width", async () => {
     expect.hasAssertions();
 
     const autoWidthBox: TextElement = { ...TEXT_BOX, isWrapped: false, width: 120 };
@@ -82,7 +82,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     expect(whiteboardStore.editState.document).toStrictEqual({ elements: [{ ...autoWidthBox, isWrapped: true }] });
   });
 
-  test("Shape text aligns to the left and the top", async () => {
+  test("shape text aligns to the left and the top", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -105,7 +105,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     });
   });
 
-  test("Text box text aligns to the right", async () => {
+  test("text box text aligns to the right", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -121,7 +121,7 @@ describe("resourceWhiteboardEditorPropertiesText", () => {
     });
   });
 
-  test("An arrow label has no alignment control", async () => {
+  test("an arrow label has no alignment control", async () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesText, {

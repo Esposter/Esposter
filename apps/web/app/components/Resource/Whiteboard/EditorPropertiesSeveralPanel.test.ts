@@ -9,7 +9,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
-  test("No fill clears the fill of every selected shape in one edit", async () => {
+  test("no fill clears the fill of every selected shape in one edit", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -33,7 +33,7 @@ describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
     expect(whiteboardStore.editState.history.past).toHaveLength(1);
   });
 
-  test("Bring forward moves the selection of several past the element above it in one edit", async () => {
+  test("bring forward moves the selection of several past the element above it in one edit", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();

@@ -9,4 +9,6 @@ export const getMenuItemByValue = (items: Item[], value: string): Item | undefin
     const child = item.children?.find(({ title }) => getMenuItemValue(title, item.title) === value);
     if (child) return child;
   }
+
+  return undefined;
 };

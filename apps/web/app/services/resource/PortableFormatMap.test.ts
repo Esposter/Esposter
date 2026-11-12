@@ -124,7 +124,7 @@ describe("portableFormatMap", () => {
   });
 
   // XML is one more entry in the sheet's format list, so the export submenu lists it after the others it sits beside
-  test("The format is offered beside the others", () => {
+  test("the format is offered beside the others", () => {
     expect.hasAssertions();
 
     const sheet = createResourceListItem({ id: crypto.randomUUID(), type: ResourceType.Sheet });

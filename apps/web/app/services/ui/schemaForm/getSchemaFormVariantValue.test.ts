@@ -8,6 +8,8 @@ const createPickerVariant = (type: string, itemsKey: string): JsonSchema => {
   return { properties: { sourceColumnId, type: { const: type } } };
 };
 
+const createColumn = (itemsKey: string) => ({ layout: { itemsKey }, type: "number" });
+
 describe(getSchemaFormVariantValue, () => {
   const a: JsonSchema = { properties: { a: { type: "string" }, name: { type: "string" }, type: { const: "a" } } };
   const b: JsonSchema = { properties: { b: { type: "string" }, name: { type: "string" }, type: { const: "b" } } };
@@ -25,7 +27,6 @@ describe(getSchemaFormVariantValue, () => {
   test("reads the variant the data is in from the fitting index when the union has no fixed discriminant", () => {
     expect.hasAssertions();
 
-    const createColumn = (itemsKey: string) => ({ layout: { itemsKey }, type: "number" });
     const stringsVariant: JsonSchema = { properties: { col: createColumn("strings"), n: { type: "number" } } };
     const numbersVariant: JsonSchema = { properties: { col: createColumn("numbers"), size: { type: "number" } } };
 

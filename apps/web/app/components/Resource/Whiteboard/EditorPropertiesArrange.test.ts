@@ -8,17 +8,18 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
+const createShape = (id: string, x: number): ShapeElement => ({ ...WHITEBOARD_PROCESS, id, x });
+
 describe("resourceWhiteboardEditorPropertiesArrange", () => {
   const FIRST_ID = crypto.randomUUID();
   const SECOND_ID = crypto.randomUUID();
   const ARROW_ID = crypto.randomUUID();
   const ALIGN_LABELS = ["Align left", "Align centre", "Align right", "Align top", "Align middle", "Align bottom"];
   const DISTRIBUTE_LABELS = ["Distribute horizontally", "Distribute vertically"];
-  const createShape = (id: string, x: number): ShapeElement => ({ ...WHITEBOARD_PROCESS, id, x });
   // A free arrow, which takes no part in an align or a distribute
   const FREE_ARROW: ArrowElement = { ...WHITEBOARD_ARROW, id: ARROW_ID, start: { point: { x: 500, y: 500 } } };
 
-  test("Align and distribute are disabled with one box and an arrow selected", async () => {
+  test("align and distribute are disabled with one box and an arrow selected", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -31,7 +32,7 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBe("");
   });
 
-  test("Align is enabled where two boxes differ and disabled where they already line up, and distribute stays disabled below three", async () => {
+  test("align is enabled where two boxes differ and disabled where they already line up, and distribute stays disabled below three", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();
@@ -51,7 +52,7 @@ describe("resourceWhiteboardEditorPropertiesArrange", () => {
       expect(wrapper.get(`button[aria-label="${label}"]`).attributes("disabled")).toBe("");
   });
 
-  test("Aligning to the left edge from the panel is one edit", async () => {
+  test("aligning to the left edge from the panel is one edit", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();

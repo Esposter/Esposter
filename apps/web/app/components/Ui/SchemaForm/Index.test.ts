@@ -98,14 +98,14 @@ describe("uiSchemaForm", () => {
       });
       await flushPromises();
 
-      expect(component.findComponent(UiSelect).props()).toMatchObject({ modelValue: "1" });
+      expect(component.findComponent(UiSelect).props("modelValue")).toBe("1");
       expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(2);
 
       component.findComponent(UiSelect).vm.$emit("update:modelValue", "0");
       await flushPromises();
 
       expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([{ id: "id", name: "", type: "Text" }]);
-      expect(component.findComponent(UiSelect).props()).toMatchObject({ modelValue: "0" });
+      expect(component.findComponent(UiSelect).props("modelValue")).toBe("0");
       expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(1);
     });
 

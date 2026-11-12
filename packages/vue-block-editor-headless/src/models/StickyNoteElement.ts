@@ -15,7 +15,7 @@ import { HEX_COLOR_REGEX } from "#src/services/constants";
 import { z } from "zod";
 
 // A sticky note: a box with a fill and text, drawn in the sticky-note look. Its outline draws in its colour, at its width, in its dash pattern and at
-// its sketch level. Its text draws at its size, and at the alignments it sets, which the note takes by default until one is set
+// Its sketch level. Its text draws at its size, and at the alignments it sets, which the note takes by default until one is set
 export interface StickyNoteElement
   extends BoxElement, ItemEntityType<PositionedElementType.StickyNote>, TextBoxElement {
   color: string;

@@ -16,7 +16,9 @@ const mountArrangeKeyboard = (
   mountSuspended(
     defineComponent({
       render: () => h("div"),
-      setup: () => useWhiteboardArrangeKeyboard(editState, selectedIds, isDeleteOpen),
+      setup: () => {
+        useWhiteboardArrangeKeyboard(editState, selectedIds, isDeleteOpen);
+      },
     }),
   );
 
@@ -27,7 +29,7 @@ describe(useWhiteboardArrangeKeyboard, () => {
   const SECOND_ID = crypto.randomUUID();
   const THIRD_ID = crypto.randomUUID();
 
-  test("The bracket keys stack the selection", async () => {
+  test("the bracket keys stack the selection", async () => {
     expect.hasAssertions();
 
     const editState = ref(
@@ -45,7 +47,7 @@ describe(useWhiteboardArrangeKeyboard, () => {
     expect(editState.value.document.elements.map(({ id }) => id)).toStrictEqual([FIRST_ID, SECOND_ID, THIRD_ID]);
   });
 
-  test("Shift with the bracket keys sends the selection to the ends", async () => {
+  test("shift with the bracket keys sends the selection to the ends", async () => {
     expect.hasAssertions();
 
     // The shapes are drawn above the first element, so each shift key takes them to the one end the shift names
@@ -64,7 +66,7 @@ describe(useWhiteboardArrangeKeyboard, () => {
     expect(editState.value.document.elements.map(({ id }) => id)).toStrictEqual([THIRD_ID, FIRST_ID, SECOND_ID]);
   });
 
-  test("The stacking keys do nothing with no selection", async () => {
+  test("the stacking keys do nothing with no selection", async () => {
     expect.hasAssertions();
 
     const document = { elements: [createShape(FIRST_ID), createShape(SECOND_ID)] };

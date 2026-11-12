@@ -5,13 +5,13 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createPortableFormatItems } from "@/services/resource/createPortableFormatItems";
 import { describe, expect, test, vi } from "vitest";
 
-describe(createPortableFormatItems, () => {
-  const createFormat = (label: string): PortableFormat => ({
-    icon: `i-test:${label}`,
-    import: vi.fn<() => Promise<void>>(),
-    label,
-  });
+const createFormat = (label: string): PortableFormat => ({
+  icon: `i-test:${label}`,
+  import: vi.fn<() => Promise<void>>(),
+  label,
+});
 
+describe(createPortableFormatItems, () => {
   test("lists nothing for a resource with no formats", () => {
     expect.hasAssertions();
 
@@ -51,6 +51,6 @@ describe(createPortableFormatItems, () => {
       { icon: "i-test:Csv", title: "Csv" },
       { icon: "i-test:Json", title: "Json" },
     ]);
-    expect(csv.import).toHaveBeenCalledOnce();
+    expect(csv.import).toHaveBeenCalledTimes(1);
   });
 });

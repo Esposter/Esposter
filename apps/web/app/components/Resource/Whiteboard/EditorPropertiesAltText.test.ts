@@ -11,7 +11,7 @@ import { describe, expect, test } from "vitest";
 describe("resourceWhiteboardEditorPropertiesAltText", () => {
   const FILE_ID = "0".repeat(64);
 
-  test("Enter commits the alt text as one edit", async () => {
+  test("enter commits the alt text as one edit", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });

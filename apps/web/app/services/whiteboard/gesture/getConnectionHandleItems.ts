@@ -6,7 +6,7 @@ import { takeOne } from "@esposter/shared";
 import { CONNECTION_POINT_COUNT, getBindableShape, PositionedElementType } from "vue-block-editor-headless";
 
 // Each connection handle a single selected shape shows, with the index of its connection point and the point it is drawn at. None for a selection of
-// several, for an element that is not a shape, or for an annotation, which takes no connection
+// Several, for an element that is not a shape, or for an annotation, which takes no connection
 export const getConnectionHandleItems = (
   document: PositionedDocument,
   selectedIds: string[],

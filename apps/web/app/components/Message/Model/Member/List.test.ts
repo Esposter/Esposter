@@ -28,7 +28,8 @@ describe("messageModelMemberList", () => {
     trpcMsw.room.readMutualRooms.query(() => []);
     trpcMsw.user.readStatuses.query(() => []);
     trpcMsw.role.readMemberRoles.query(() => []);
-    useRoomStore().pushRooms({ ...room });
+    const roomStore = useRoomStore();
+    roomStore.pushRooms({ ...room });
     const component = await mountSuspended(
       defineComponent({
         setup() {

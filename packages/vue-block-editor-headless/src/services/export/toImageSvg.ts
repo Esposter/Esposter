@@ -3,7 +3,7 @@ import type { ImageElement } from "#src/models/ImageElement";
 import { escapeSvgValue } from "#src/services/export/escapeSvgValue";
 
 // An image as the export draws it: a reference to its asset's url, never the file's bytes. It is an image to assistive technology, named by its alt text
-// when it holds one, and nothing is drawn on the picture
+// When it holds one, and nothing is drawn on the picture
 export const toImageSvg = (
   { altText, fileId, height, width, x, y }: ImageElement,
   getAssetUrl: (fileId: string) => string,

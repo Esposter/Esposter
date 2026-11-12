@@ -70,7 +70,11 @@ export const useWhiteboardContextMenu = (
       bringForward: getStackCommand(StackMove.BringForward),
       bringToFront: getStackCommand(StackMove.BringToFront),
       editText:
-        isSingle && hasText && selectedId !== undefined ? () => selectionCommands.editText(selectedId) : undefined,
+        isSingle && hasText && selectedId !== undefined
+          ? () => {
+              selectionCommands.editText(selectedId);
+            }
+          : undefined,
       fitToContent,
       paste,
       resetZoom,

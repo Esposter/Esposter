@@ -76,7 +76,7 @@ describe(applyResourceContentPatches, () => {
     `);
   });
 
-  test("A patch naming an unknown arrowhead is refused", () => {
+  test("a patch naming an unknown arrowhead is refused", () => {
     expect.hasAssertions();
 
     // The arrowhead is one of the four kinds, so a fifth name fails the parse, and the refused patch leaves no document to save

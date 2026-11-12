@@ -25,6 +25,17 @@ import {
   TextSize,
 } from "vue-block-editor-headless";
 
+const createState = (document: PositionedDocument, selectedIds: string[]): WhiteboardGestureState => ({
+  createId: () => crypto.randomUUID(),
+  document,
+  isSpaceHeld: false,
+  isToolLocked: false,
+  selectedIds,
+  shapeKind: ShapeKind.Rectangle,
+  tool: GestureTool.Select,
+  viewport: { scale: 1, x: 0, y: 0 },
+});
+
 describe(getResizeHandle, () => {
   const POINTER_ID = 0;
   const TEXT_ID = crypto.randomUUID();
@@ -50,18 +61,8 @@ describe(getResizeHandle, () => {
     pointerId: POINTER_ID,
     screen,
   });
-  const createState = (document: PositionedDocument, selectedIds: string[]): WhiteboardGestureState => ({
-    createId: () => crypto.randomUUID(),
-    document,
-    isSpaceHeld: false,
-    isToolLocked: false,
-    selectedIds,
-    shapeKind: ShapeKind.Rectangle,
-    tool: GestureTool.Select,
-    viewport: { scale: 1, x: 0, y: 0 },
-  });
 
-  test("An edge handle changes one dimension only", () => {
+  test("an edge handle changes one dimension only", () => {
     expect.hasAssertions();
 
     const state = createState({ elements: [WHITEBOARD_PROCESS] }, [WHITEBOARD_PROCESS_ID]);
@@ -78,7 +79,7 @@ describe(getResizeHandle, () => {
     expect(up.state.document).toStrictEqual({ elements: [{ ...WHITEBOARD_PROCESS, width: 130 }] });
   });
 
-  test("A text box shows only its left and right handles", () => {
+  test("a text box shows only its left and right handles", () => {
     expect.hasAssertions();
 
     const { height } = getElementBounds(TEXT_BOX);
@@ -91,7 +92,7 @@ describe(getResizeHandle, () => {
     expect(getResizeHandle(document, [TEXT_ID], { x: 80, y: height }, HIT_TOLERANCE)).toBeUndefined();
   });
 
-  test("A selected arrow or stroke shows no resize handle", () => {
+  test("a selected arrow or stroke shows no resize handle", () => {
     expect.hasAssertions();
 
     const stroke: StrokeElement = {
@@ -115,7 +116,7 @@ describe(getResizeHandle, () => {
     expect(getResizeHandle({ elements: [stroke] }, [STROKE_ID], { x: 40, y: 40 }, HIT_TOLERANCE)).toBeUndefined();
   });
 
-  test("A selection with no height has no top or bottom handle", () => {
+  test("a selection with no height has no top or bottom handle", () => {
     expect.hasAssertions();
 
     // Two free arrows lie on the line y = 100, so the selection's box has no height: its right handle is at (400, 100), and its top and

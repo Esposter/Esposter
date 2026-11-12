@@ -12,7 +12,7 @@ import { describe, expect, test } from "vitest";
 describe("resourceWhiteboardElementImage", () => {
   const FILE_ID = "0".repeat(64);
 
-  test("Setting alt text from the properties panel names the image", async () => {
+  test("setting alt text from the properties panel names the image", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });
@@ -32,7 +32,7 @@ describe("resourceWhiteboardElementImage", () => {
     expect(canvasImage.get("image").attributes("aria-label")).toBe("Quarterly chart");
   });
 
-  test("A new image starts with no alt text", async () => {
+  test("a new image starts with no alt text", async () => {
     expect.hasAssertions();
 
     const image = createWhiteboardImageElement(FILE_ID, { x: 0, y: 0 });

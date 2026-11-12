@@ -50,7 +50,8 @@ describe("resourceWhiteboardEditorCanvas", () => {
     await uploadCalled;
     await flushPromises();
 
-    const [image] = useWhiteboardStore().whiteboard.elements;
+    const whiteboardStore = useWhiteboardStore();
+    const [image] = whiteboardStore.whiteboard.elements;
     expect(uploadResourceFileMock).toHaveBeenCalledExactlyOnceWith(imageFile, fileId);
     expect(image).toHaveProperty("fileId", fileId);
     expect(image).toHaveProperty("x", 300 - WHITEBOARD_IMAGE_SIZE.width / 2);
@@ -65,8 +66,9 @@ describe("resourceWhiteboardEditorCanvas", () => {
     dropFiles(wrapper.element, [textFile], 300, 200);
     await flushPromises();
 
+    const whiteboardStore = useWhiteboardStore();
     expect(uploadResourceFileMock).not.toHaveBeenCalled();
-    expect(useWhiteboardStore().whiteboard.elements).toStrictEqual([]);
+    expect(whiteboardStore.whiteboard.elements).toStrictEqual([]);
   });
 
   test("a drop that carries no file is left to its target", async () => {

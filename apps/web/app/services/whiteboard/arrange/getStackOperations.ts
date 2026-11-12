@@ -52,8 +52,8 @@ export const getStackOperations = (
     case StackMove.SendToBack:
       return lowestIndex === 0
         ? []
-        : [...indexes]
-            .reverse()
+        : indexes
+            .toReversed()
             .flatMap((index, position) => changePositionedElementZOrder(document, index + position, 0));
     default:
       return exhaustiveGuard(move);

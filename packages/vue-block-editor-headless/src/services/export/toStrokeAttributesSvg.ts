@@ -15,5 +15,5 @@ export const toStrokeAttributesSvg = ({
     strokeDasharray ? `stroke-dasharray="${strokeDasharray}"` : "",
     strokeLinecap ? `stroke-linecap="${strokeLinecap}"` : "",
   ]
-    .filter((attribute) => Boolean(attribute))
+    .filter(Boolean)
     .join(" ");

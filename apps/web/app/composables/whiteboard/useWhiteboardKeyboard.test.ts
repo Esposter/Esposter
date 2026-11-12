@@ -293,7 +293,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(tool.value).toBe(GestureTool.Select);
   });
 
-  test("Q locks the tool in hand", async () => {
+  test("q locks the tool in hand", async () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
@@ -310,7 +310,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(tool.value).toBe(GestureTool.Shape);
   });
 
-  test("Q with the lock on releases it", async () => {
+  test("q with the lock on releases it", async () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] }));
@@ -325,7 +325,7 @@ describe(useWhiteboardKeyboard, () => {
     expect(whiteboardEditorStore.isToolLocked).toBe(false);
   });
 
-  test("Q typed into a text edit is not a lock", async () => {
+  test("q typed into a text edit is not a lock", async () => {
     expect.hasAssertions();
 
     const textarea = document.createElement("textarea");

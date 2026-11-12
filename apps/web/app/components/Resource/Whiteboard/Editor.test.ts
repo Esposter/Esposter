@@ -51,6 +51,14 @@ const createShape = (id: string, x: number): ShapeElement => ({ ...WHITEBOARD_PR
 // The canvas is the one application-role surface, where every pointer and key of a gesture lands
 const getCanvas = (component: VueWrapper) => component.get('[role="application"]');
 
+const rightClick = (canvas: Except<DOMWrapper<Element>, "exists">, point: Point) =>
+  canvas.trigger("contextmenu", { button: 2, clientX: point.x, clientY: point.y });
+const getMenuTitles = () => {
+  const contextMenuStore = useContextMenuStore();
+  const { contextMenu } = storeToRefs(contextMenuStore);
+  return contextMenu.value?.items.map(({ title }) => title);
+};
+
 describe("resourceWhiteboardEditor", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
@@ -177,14 +185,6 @@ describe("resourceWhiteboardEditor", () => {
 
     expect(canvas.findAll('rect[fill="var(--ui-background)"]')).toHaveLength(6);
   });
-
-  const rightClick = (canvas: Except<DOMWrapper<Element>, "exists">, point: Point) =>
-    canvas.trigger("contextmenu", { button: 2, clientX: point.x, clientY: point.y });
-  const getMenuTitles = () => {
-    const contextMenuStore = useContextMenuStore();
-    const { contextMenu } = storeToRefs(contextMenuStore);
-    return contextMenu.value?.items.map(({ title }) => title);
-  };
 
   test("a right-click on an unselected element selects it and opens its menu", async () => {
     expect.hasAssertions();

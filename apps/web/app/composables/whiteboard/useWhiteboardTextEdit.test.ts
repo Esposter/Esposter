@@ -113,7 +113,7 @@ describe(useWhiteboardTextEdit, () => {
     expect(editState.value.history.past).toHaveLength(0);
   });
 
-  test("Auto width grows the box as a longer line is committed", () => {
+  test("auto width grows the box as a longer line is committed", () => {
     expect.hasAssertions();
 
     const textBox: TextElement = {
@@ -139,7 +139,7 @@ describe(useWhiteboardTextEdit, () => {
     });
   });
 
-  test("Escape returns the element to its committed text", () => {
+  test("escape returns the element to its committed text", () => {
     expect.hasAssertions();
 
     const editState = ref(createWhiteboardEditState({ elements: [processShape] }));
@@ -153,7 +153,7 @@ describe(useWhiteboardTextEdit, () => {
     expect(editState.value.document).toStrictEqual({ elements: [processShape] });
   });
 
-  test("Committing does not move the text", () => {
+  test("committing does not move the text", () => {
     expect.hasAssertions();
 
     // A right-aligned box is anchored at its right edge, so a box that grew on commit would move a text drawn from its old edge

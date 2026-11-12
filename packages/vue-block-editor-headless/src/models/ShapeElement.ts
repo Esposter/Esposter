@@ -18,7 +18,7 @@ import { z } from "zod";
 
 // A shape: an outline of one kind, placed by its box, with a fill and text its box holds. Its outline draws in its colour, at its width, in its dash
 // Pattern and at its sketch level, and with round corners when its corner style is round. Its text draws at its size, and at the alignments it sets,
-// which its kind takes until one is set
+// Which its kind takes until one is set
 export interface ShapeElement extends BoxElement, ItemEntityType<PositionedElementType.Shape>, TextBoxElement {
   color: string;
   cornerStyle: CornerStyle;

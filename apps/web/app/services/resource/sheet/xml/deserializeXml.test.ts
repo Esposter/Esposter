@@ -6,7 +6,7 @@ import { deserializeXml } from "@/services/resource/sheet/xml/deserializeXml";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeXml, () => {
-  test("Rows and cells are read", async () => {
+  test("rows and cells are read", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a>0</a><b>1</b></row><row><a>2</a><b>3</b></row></rows>");
@@ -19,7 +19,7 @@ describe(deserializeXml, () => {
     ]);
   });
 
-  test("A column first seen in a later row is a column", async () => {
+  test("a column first seen in a later row is a column", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a>0</a></row><row><a>2</a><b>3</b></row></rows>");
@@ -32,7 +32,7 @@ describe(deserializeXml, () => {
     ]);
   });
 
-  test("A cell named by attribute keeps its name", async () => {
+  test("a cell named by attribute keeps its name", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile('<rows><row><cell name="a b">0</cell></row></rows>');
@@ -42,7 +42,7 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ "a b": 0 }]);
   });
 
-  test("A row's attributes are read as cells", async () => {
+  test("a row's attributes are read as cells", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile('<rows><row id="0"><a>1</a></row></rows>');
@@ -52,7 +52,7 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 1, id: 0 }]);
   });
 
-  test("A cell a row repeats is a column of its own", async () => {
+  test("a cell a row repeats is a column of its own", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a>0</a><a>1</a></row></rows>");
@@ -62,7 +62,7 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 0, "a (2)": 1 }]);
   });
 
-  test("A file with one row reads that row", async () => {
+  test("a file with one row reads that row", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a>0</a></row></rows>");
@@ -72,7 +72,7 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
   });
 
-  test("A column named parsererror is a column, not a failure to parse", async () => {
+  test("a column named parsererror is a column, not a failure to parse", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><parsererror>0</parsererror></row></rows>");
@@ -81,7 +81,7 @@ describe(deserializeXml, () => {
     expect(columns.map(({ name }) => name)).toStrictEqual(["parsererror"]);
   });
 
-  test("A column named parsererror under a default namespace is a column too", async () => {
+  test("a column named parsererror under a default namespace is a column too", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile('<rows xmlns="urn:example"><row><parsererror>0</parsererror></row></rows>');
@@ -91,7 +91,7 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ parsererror: 0 }]);
   });
 
-  test("A malformed document is refused", async () => {
+  test("a malformed document is refused", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a>0</row></rows>");
@@ -102,7 +102,7 @@ describe(deserializeXml, () => {
     `);
   });
 
-  test("A document with a doctype is refused", async () => {
+  test("a document with a doctype is refused", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<!DOCTYPE rows><rows><row><a>0</a></row></rows>");
@@ -112,7 +112,7 @@ describe(deserializeXml, () => {
     );
   });
 
-  test("A nested cell is refused", async () => {
+  test("a nested cell is refused", async () => {
     expect.hasAssertions();
 
     const file = createXmlFile("<rows><row><a><b>0</b></a></row></rows>");

@@ -168,7 +168,7 @@ describe(toPositionedSvg, () => {
     );
   });
 
-  test("Clearing alt text removes the name from the export", () => {
+  test("clearing alt text removes the name from the export", () => {
     expect.hasAssertions();
 
     const imageDocument: PositionedDocument = {

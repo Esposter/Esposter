@@ -37,7 +37,7 @@ describe(toElementTextSvg, () => {
     expect(readLines(largestSvg)).toStrictEqual(["a", "b", "c", "d"]);
   });
 
-  test("Text draws at the smallest size until a size is chosen", () => {
+  test("text draws at the smallest size until a size is chosen", () => {
     expect.hasAssertions();
 
     // A stored shape with no size reads the smallest, the size its text drew at before a size could be chosen
@@ -56,7 +56,7 @@ describe(toElementTextSvg, () => {
     expect(readTextAttribute(toElementTextSvg(storedShape), "font-size")).toBe(`${TextSize.Small}`);
   });
 
-  test("Shape text aligns to the left and the top", () => {
+  test("shape text aligns to the left and the top", () => {
     expect.hasAssertions();
 
     const shape: ShapeElement = {
@@ -73,7 +73,7 @@ describe(toElementTextSvg, () => {
     expect(readTextAttribute(svg, "y")).toBe(`${TextSize.Small}`);
   });
 
-  test("Shape text aligns to the bottom", () => {
+  test("shape text aligns to the bottom", () => {
     expect.hasAssertions();
 
     const middleY = readTextAttribute(toElementTextSvg({ ...POSITIONED_RECTANGLE, text: "Review" }), "y");
@@ -85,7 +85,7 @@ describe(toElementTextSvg, () => {
     expect(Number(bottomY)).toBeGreaterThan(Number(middleY));
   });
 
-  test("Text box text aligns to the right", () => {
+  test("text box text aligns to the right", () => {
     expect.hasAssertions();
 
     const text: TextElement = {
@@ -107,7 +107,7 @@ describe(toElementTextSvg, () => {
     expect(readTextAttribute(svg, "x")).toBe("300");
   });
 
-  test("Shape text is centred until an alignment is chosen", () => {
+  test("shape text is centred until an alignment is chosen", () => {
     expect.hasAssertions();
 
     const svg = toElementTextSvg({ ...POSITIONED_RECTANGLE, text: "Review" });
@@ -116,7 +116,7 @@ describe(toElementTextSvg, () => {
     expect(readTextAttribute(svg, "x")).toBe("50");
   });
 
-  test("A long label wraps inside its shape", () => {
+  test("a long label wraps inside its shape", () => {
     expect.hasAssertions();
 
     const lines = readLines(toElementTextSvg({ ...POSITIONED_RECTANGLE, text: "a long label that must wrap" }));

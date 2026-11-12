@@ -23,7 +23,7 @@ export const WHITEBOARD_VERTICAL_ALIGNMENT_ITEMS: UiMenuItem<VerticalAlignment>[
   { title: "Bottom", value: VerticalAlignment.Bottom },
 ];
 // How the draft in the overlay editor lines up with the text it stands for: the CSS text alignment, and the share of its own width that its box moves by
-// so its anchor sits on the point the text is drawn from
+// So its anchor sits on the point the text is drawn from
 export const WHITEBOARD_TEXT_EDIT_ANCHOR_MAP: Record<
   TextAnchor,
   { shift: string; textAlign: CSSProperties["textAlign"] }

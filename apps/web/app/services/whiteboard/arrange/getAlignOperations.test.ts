@@ -7,21 +7,22 @@ import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind } from "vue-block-editor-headless";
 
+const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
+  ...WHITEBOARD_PROCESS,
+  height,
+  id,
+  width,
+  x,
+  y,
+});
+
 describe(getAlignOperations, () => {
   const FIRST_ID = crypto.randomUUID();
   const SECOND_ID = crypto.randomUUID();
   const THIRD_ID = crypto.randomUUID();
   const ARROW_ID = crypto.randomUUID();
-  const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
-    ...WHITEBOARD_PROCESS,
-    height,
-    id,
-    width,
-    x,
-    y,
-  });
 
-  test("Aligning to the left edge moves each box to the leftmost edge", () => {
+  test("aligning to the left edge moves each box to the leftmost edge", () => {
     expect.hasAssertions();
 
     // The leftmost edge is the second shape's, at 10, so the first and third shapes move to it and keep their heights
@@ -41,7 +42,7 @@ describe(getAlignOperations, () => {
     ]);
   });
 
-  test("Aligning leaves a free arrow where it was", () => {
+  test("aligning leaves a free arrow where it was", () => {
     expect.hasAssertions();
 
     const arrow: ArrowElement = {
@@ -62,7 +63,7 @@ describe(getAlignOperations, () => {
     ]);
   });
 
-  test("Aligning a bound box reroutes the arrow bound to it in the same edit", () => {
+  test("aligning a bound box reroutes the arrow bound to it in the same edit", () => {
     expect.hasAssertions();
 
     // The second shape's bottom connection point is at (250, 110) before the align, and at (250, 60) once its top edge is level with the first's
@@ -83,7 +84,7 @@ describe(getAlignOperations, () => {
     ]);
   });
 
-  test("Align is disabled when fewer than two boxes are selected", () => {
+  test("align is disabled when fewer than two boxes are selected", () => {
     expect.hasAssertions();
 
     const arrow: ArrowElement = { ...WHITEBOARD_ARROW, id: ARROW_ID };

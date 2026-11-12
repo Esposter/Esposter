@@ -6,20 +6,21 @@ import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
+  ...WHITEBOARD_PROCESS,
+  height,
+  id,
+  width,
+  x,
+  y,
+});
+
 describe(getDistributeOperations, () => {
   const FIRST_ID = crypto.randomUUID();
   const SECOND_ID = crypto.randomUUID();
   const THIRD_ID = crypto.randomUUID();
-  const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
-    ...WHITEBOARD_PROCESS,
-    height,
-    id,
-    width,
-    x,
-    y,
-  });
 
-  test("Distributing horizontally makes every gap equal", () => {
+  test("distributing horizontally makes every gap equal", () => {
     expect.hasAssertions();
 
     // The three shapes span from 0 to 580 and their widths total 230, so the two gaps share the 350 left over, 175 each. The first and last hold still
@@ -39,7 +40,7 @@ describe(getDistributeOperations, () => {
     ]);
   });
 
-  test("Distributing vertically makes every gap equal", () => {
+  test("distributing vertically makes every gap equal", () => {
     expect.hasAssertions();
 
     const document: PositionedDocument = {
@@ -58,7 +59,7 @@ describe(getDistributeOperations, () => {
     ]);
   });
 
-  test("Distribute is disabled below three boxes", () => {
+  test("distribute is disabled below three boxes", () => {
     expect.hasAssertions();
 
     const document: PositionedDocument = {
@@ -68,7 +69,7 @@ describe(getDistributeOperations, () => {
     expect(getDistributeOperations(document, [FIRST_ID, SECOND_ID], DistributeAxis.Horizontal)).toStrictEqual([]);
   });
 
-  test("Distribute of boxes that do not span the others is unchanged", () => {
+  test("distribute of boxes that do not span the others is unchanged", () => {
     expect.hasAssertions();
 
     // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but starts at 400, after the first.
@@ -89,7 +90,7 @@ describe(getDistributeOperations, () => {
     ]);
   });
 
-  test("A box lying inside another's span never moves the box that ends furthest", () => {
+  test("a box lying inside another's span never moves the box that ends furthest", () => {
     expect.hasAssertions();
 
     // The second shape ends furthest, at 250, though the third starts after it, so the third is spaced and the second holds still
@@ -108,7 +109,7 @@ describe(getDistributeOperations, () => {
     );
   });
 
-  test("A box that spans the others disables distribute", () => {
+  test("a box that spans the others disables distribute", () => {
     expect.hasAssertions();
 
     // The first shape starts at the left of the others and ends at the right of them, so it is both outer edges and there is no outer pair to keep

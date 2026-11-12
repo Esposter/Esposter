@@ -1,10 +1,11 @@
 import type { Point } from "#src/models/Point";
+import type { StrokeWidth } from "#src/models/StrokeWidth";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { elementColorSchema } from "#src/models/ElementColor";
 import { pointSchema } from "#src/models/Point";
 import { PositionedElementType } from "#src/models/PositionedElementType";
-import { StrokeWidth, strokeWidthSchema } from "#src/models/StrokeWidth";
+import { strokeWidthSchema } from "#src/models/StrokeWidth";
 import { z } from "zod";
 
 // A freehand stroke: the path of points the pointer took, drawn in its colour at one of the three stroke widths

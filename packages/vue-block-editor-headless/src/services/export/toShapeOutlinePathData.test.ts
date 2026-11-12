@@ -11,6 +11,10 @@ import { toShapeOutlinePathData } from "#src/services/export/toShapeOutlinePathD
 import { toShapeSvg } from "#src/services/export/toShapeSvg";
 import { describe, expect, test } from "vitest";
 
+// Each path starts on the left edge, at the radius its corner curves by, so the start shows how far a corner has grown
+const getStartOfCurve = (width: number, height: number): string | undefined =>
+  toShapeOutlinePathData(createRectangle(width, height, CornerStyle.Round, SketchLevel.Architect)).split(" Q")[0];
+
 // A rectangle at the origin with its corners set and its sketch at the level given, so its outline has exact corners to check
 const createRectangle = (
   width: number,
@@ -53,10 +57,6 @@ describe(toShapeOutlinePathData, () => {
 
   test("a round corner stops growing at the limit", () => {
     expect.hasAssertions();
-
-    // Each path starts on the left edge, at the radius its corner curves by, so the start shows how far a corner has grown
-    const getStartOfCurve = (width: number, height: number): string | undefined =>
-      toShapeOutlinePathData(createRectangle(width, height, CornerStyle.Round, SketchLevel.Architect)).split(" Q")[0];
 
     expect(getStartOfCurve(40, 40)).toBe("M0 10");
     expect(getStartOfCurve(200, 200)).toBe("M0 12");

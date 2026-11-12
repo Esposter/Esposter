@@ -12,7 +12,7 @@ import {
 } from "vue-block-editor-headless";
 
 describe(getDraftPlacement, () => {
-  test("The element shows the draft as the owner types", () => {
+  test("the element shows the draft as the owner types", () => {
     expect.hasAssertions();
 
     // An unwrapped text box is as wide as the draft's widest line while it is typed, so the draft breaks where the commit will
@@ -35,7 +35,7 @@ describe(getDraftPlacement, () => {
     expect(getTextLayout(draft, placement).lines.map(({ text }) => text)).toStrictEqual(["Review the order", "now"]);
   });
 
-  test("A wrapped element keeps its own placement while its draft is typed", () => {
+  test("a wrapped element keeps its own placement while its draft is typed", () => {
     expect.hasAssertions();
 
     expect(getDraftPlacement(WHITEBOARD_PROCESS, "Review the order")).toStrictEqual(

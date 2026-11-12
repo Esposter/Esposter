@@ -35,7 +35,7 @@ describe("resourceWhiteboardEditorPropertiesArrow", () => {
     });
   });
 
-  test("An arrow takes a different arrowhead at each end", async () => {
+  test("an arrow takes a different arrowhead at each end", async () => {
     expect.hasAssertions();
 
     const whiteboardStore = useWhiteboardStore();

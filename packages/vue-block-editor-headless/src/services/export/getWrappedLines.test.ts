@@ -3,10 +3,11 @@ import { getTextWidth } from "#src/services/export/getTextWidth";
 import { getWrappedLines } from "#src/services/export/getWrappedLines";
 import { describe, expect, test } from "vitest";
 
+const wrappedAt = (width: number) => ({ isWrapped: true, textSize: TextSize.Small, width });
+
 describe(getWrappedLines, () => {
   // The width of one narrow character at the smallest size, in document units, which every width below is a multiple of
   const NARROW_WIDTH = getTextWidth("a", TextSize.Small);
-  const wrappedAt = (width: number) => ({ isWrapped: true, textSize: TextSize.Small, width });
 
   test("a word that would pass the width starts the next line", () => {
     expect.hasAssertions();
