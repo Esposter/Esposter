@@ -21,7 +21,7 @@ const getItemRole = (isChecked: boolean | undefined, isSelected: boolean | undef
 
 <template>
   <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
-    <!-- @TODO: no upstream issue — vize's virtual code comments a v-for's destructured pattern on its first line only, so a pattern the formatter wraps over several lines breaks the typecheck; destructure the item again once it is fixed -->
+    <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/12932 — destructure the item again once vize's mapper keeps a multi-line v-for pattern in its comment -->
     <template v-for="(item, index) of items" :key="item.value">
       <div
         v-if="item.isGroupStart && index > 0"

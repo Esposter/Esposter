@@ -44,7 +44,6 @@ A marker is revisited on every bump of the package it links and whenever its iss
 
 Each row is a marker in the unfiled form, waiting for its issue to be filed: the file, where it goes, and its title. The repository's owner files them by hand when one is wanted, so a session leaves the list as it is and never asks to file one.
 
-- `apps/web/app/components/Ui/Menu/Items.vue` — vizejs/vize: "The Vue language code comments a `v-for` alias on its first line only, so a destructured pattern wrapped over several lines leaves its other lines as code"
 - `apps/web/app/components/Ui/Slider.vue` — vuetifyjs/0: "Slider: `end` is emitted only on pointerup, never for a keyboard change"
 - `apps/web/app/services/trpc/mswTrpc.test.ts` — nuxt/test-utils: "In the nuxt environment `fetch` and `Request` are happy-dom's while `Headers` stays Node's, so a library mixing the globals (msw 3) loses requests and headers"
 - `apps/web/app/composables/auth/useAuthSession.ts` — better-auth/better-auth: "Vue client: `useSession(useFetch)` no longer typechecks on Nuxt 5, whose `useFetch` overloads are generic over the route"
