@@ -1,6 +1,16 @@
+# Program send rules
+
+## Why deferred
+
+The rules and the planner are designed to be built, but the dispatch record they keep is meant to be written by a sender, and sending is itself deferred ([email sending](../email-sending/design.md)). Built now, the only dispatch event is an export, which records a dispatch that may never have been sent, and the planner's invite and reminder counts would drift from what recipients received. A change waiting on a deferred idea would sit open with no unit clearing its blocker, so the whole design waits here with its tasks and its spec delta, ready to move into `changes/` unchanged.
+
+## Revisit when
+
+Email sending is built, or the owner decides that an export is the dispatch event for good and a recorded dispatch means "file produced".
+
 ## Context
 
-A program today binds three resources and then does the owner's bookkeeping for them: it issues a link per person, joins the links to responses, and exports the email once per person. It states no rule. Who is invited, when a reminder is due and how many reminders one person gets are left to the owner's memory, and the program cannot answer "who is due now". Sending itself is out of reach for now, since the platform has no sender and building one is [deferred](../../deferred/resource/email-sending/design.md); the export is the only way a message leaves.
+A program today binds three resources and then does the owner's bookkeeping for them: it issues a link per person, joins the links to responses, and exports the email once per person. It states no rule. Who is invited, when a reminder is due and how many reminders one person gets are left to the owner's memory, and the program cannot answer "who is due now". Sending itself is out of reach for now, since the platform has no sender and building one is [deferred](../email-sending/design.md); the export is the only way a message leaves.
 
 ## The definition
 
@@ -42,9 +52,9 @@ The planner takes each audience person with their run record and whether they re
 
 - **A started state for a person who has a saved draft.** It reads survey drafts into the program, and it changes no action: reminders already reach everyone who has not finished. The survey owns its drafts, so a funnel's middle is a read of the survey, not a program concept. Recorded under rejected as the program started status.
 - **A program with no run state, links derived from a secret.** A link computed from a server secret and the key value would need no participant record and no generate step. It was rejected for this change because it replaces how every link is issued and checked, which is a separate decision from the program's rules, and because the dispatch record still needs a home per person. Revisit when the record's fields prove a burden.
-- **A closing date on the program.** A survey closes by its own switch, and a second clock beside it leaves a link that neither works nor says why. The reasoning is the [link expiry](../../deferred/resource/program-link-expiry/design.md) page's.
-- **Rules that filter the audience.** Which people are in scope is a question about a sheet's columns, which needs the sheet's filter model brought into a program. It is [deferred](../../deferred/resource/program-audience-filter/design.md) with its trigger.
-- **Sending on a schedule.** A schedule needs a sender, and the sender is the [deferred](../../deferred/resource/email-sending/design.md) email sending.
+- **A closing date on the program.** A survey closes by its own switch, and a second clock beside it leaves a link that neither works nor says why. The reasoning is the [link expiry](../program-link-expiry/design.md) page's.
+- **Rules that filter the audience.** Which people are in scope is a question about a sheet's columns, which needs the sheet's filter model brought into a program. It is [deferred](../program-audience-filter/design.md) with its trigger.
+- **Sending on a schedule.** A schedule needs a sender, and the sender is the [deferred](../email-sending/design.md) email sending.
 - **Inviting everyone again.** After the email changes an owner may want it to reach everyone. A person already invited is sent a reminder, and the reminder rule's limits apply, so the owner who wants more clears the rule. A reset of the record is not built until someone needs it.
 
 ## Risks and trade-offs
