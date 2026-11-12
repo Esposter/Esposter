@@ -21,34 +21,46 @@ const getItemRole = (isChecked: boolean | undefined, isSelected: boolean | undef
 
 <template>
   <div role="none" max-h="[40dvh]" py-1 flex flex-col of-y-auto ui-lifted>
-    <!-- @TODO: https://github.com/ubugeeei-prod/vize/issues/12932 — destructure the item again once vize's mapper keeps a multi-line v-for pattern in its comment -->
-    <template v-for="(item, index) of items" :key="item.value">
-      <div
-        v-if="item.isGroupStart && index > 0"
-        role="separator"
-        my-1
-        bg-divider
-        shrink-0
-        h="[var(--ui-border-width)]"
-      />
+    <template
+      v-for="(
+        {
+          children,
+          depth,
+          description,
+          icon,
+          isChecked,
+          isDanger,
+          isDisabled,
+          isExpanded,
+          isGroupStart,
+          isSelected,
+          meaning,
+          title,
+          value,
+        },
+        index
+      ) of items"
+      :key="value"
+    >
+      <div v-if="isGroupStart && index > 0" role="separator" my-1 bg-divider shrink-0 h="[var(--ui-border-width)]" />
       <button
         :id="getItemId(index)"
-        :class="{ 'ml-4': item.depth, 'text-error': item.isDanger }"
+        :class="{ 'ml-4': depth, 'text-error': isDanger }"
         class="aria-disabled:op-disabled"
-        :aria-checked="item.isChecked ?? item.isSelected"
-        :aria-disabled="item.isDisabled || undefined"
-        :aria-expanded="item.children ? Boolean(item.isExpanded) : undefined"
-        :role="getItemRole(item.isChecked, item.isSelected)"
-        :tabindex="checkIsTabbable(item.value) ? 0 : -1"
+        :aria-checked="isChecked ?? isSelected"
+        :aria-disabled="isDisabled || undefined"
+        :aria-expanded="children ? Boolean(isExpanded) : undefined"
+        :role="getItemRole(isChecked, isSelected)"
+        :tabindex="checkIsTabbable(value) ? 0 : -1"
         type="button"
         ui-item
-        @click="emit('select', item.value, $event)"
+        @click="emit('select', value, $event)"
       >
-        <UiItemContent :description="item.description" :icon="item.icon" :meaning="item.meaning" :title="item.title">
-          <template v-if="item.children" #append
-            ><UiDisclosureIcon :data-state="item.isExpanded ? 'open' : 'closed'" text-muted
+        <UiItemContent :description :icon :meaning :title>
+          <template v-if="children" #append
+            ><UiDisclosureIcon :data-state="isExpanded ? 'open' : 'closed'" text-muted
           /></template>
-          <template v-else-if="item.isChecked || item.isSelected" #append
+          <template v-else-if="isChecked || isSelected" #append
             ><UiIcon :meaning="UiIconMeaning.Selected" text-accent
           /></template>
         </UiItemContent>

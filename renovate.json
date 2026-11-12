@@ -43,6 +43,11 @@
       "matchPackageNames": ["rolldown"]
     },
     {
+      "allowedVersions": "<0.25",
+      "description": "On Windows the next tsrs minor gets no answer from the Vize content mapper to its `initialize` request within the five seconds the typecheck allows, so the app's typecheck fails before it checks anything, while the mapper answers the same request at once when it is run by hand. The catalog keeps the line that works until a release of tsrs gets the answer.",
+      "matchPackageNames": ["tsrs"]
+    },
+    {
       "description": "`@tsdown/css` pins its tsdown peer to the exact same version, so the two move as one; a bump of either alone leaves the pair mismatched.",
       "groupName": "tsdown",
       "matchPackageNames": ["@tsdown/css", "tsdown"]

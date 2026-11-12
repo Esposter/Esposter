@@ -14,7 +14,7 @@ runs:
     # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else. `cache`
     # stays off: it saves under a key unique to each run, so it would save on every run. The store is keyed below.
     - name: 📦 Install pnpm and node
-      uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+      uses: pnpm/setup@731dfb6463bbd11c11fd0ee11fe00ed0e36d48a1 # v3.2.0
       with:
         install: false
     # Keyed on the lockfile's contents, so a lockfile already saved restores under its exact key and saves nothing.

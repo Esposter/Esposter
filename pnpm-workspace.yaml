@@ -42,8 +42,8 @@ catalog:
   "@azure/storage-queue": ^12.32.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.1.0
-  "@better-auth/api-key": ^1.7.21
-  "@better-auth/drizzle-adapter": ^1.7.21
+  "@better-auth/api-key": ^1.7.22
+  "@better-auth/drizzle-adapter": ^1.7.22
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -57,7 +57,7 @@ catalog:
   "@fontsource/signika": ^5.3.0
   "@hpcc-js/wasm-graphviz": ^1.30.0
   "@huggingface/transformers": ^4.3.2
-  "@iconify-json/lucide": ^1.2.153
+  "@iconify-json/lucide": ^1.2.154
   "@iconify-json/mdi": ^1.2.3
   "@iconify-json/pixelarticons": ^1.2.10
   "@jsonforms/core": ^3.8.0
@@ -65,7 +65,7 @@ catalog:
   "@lerna-lite/cli": ^5.8.0
   "@lerna-lite/publish": ^5.8.0
   "@lezer/highlight": ^1.2.5
-  "@livekit/track-processors": ^0.8.2
+  "@livekit/track-processors": ^0.8.3
   "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.2.0
@@ -82,7 +82,7 @@ catalog:
   "@pinia/nuxt": ^1.0.3
   "@pulumi/azure-native": ^3.30.0
   "@pulumi/github": ^6.15.1
-  "@pulumi/pulumi": ^3.274.1
+  "@pulumi/pulumi": ^3.276.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.20.0
   "@tiptap/core": ^3.33.1
@@ -125,9 +125,9 @@ catalog:
   "@vitest/snapshot": ^5.1.0
   "@vitest/spy": ^5.1.0
   "@vitest/utils": ^5.1.0
-  "@vizejs/native": ^0.746.0
-  "@vizejs/unplugin": ^0.746.0
-  "@vizejs/vite-plugin": ^0.746.0
+  "@vizejs/native": ^0.751.0
+  "@vizejs/unplugin": ^0.751.0
+  "@vizejs/vite-plugin": ^0.751.0
   "@vue/compiler-core": ^3.5.45
   "@vue/test-utils": ^2.5.1
   "@vuetify/v0": ^1.3.2
@@ -137,7 +137,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   apexcharts: ^8.8.1
   azurite: ^3.37.0
-  better-auth: ^1.7.21
+  better-auth: ^1.7.22
   bowser: ^2.15.0
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
   # `chokidar` without declaring it, so the app installs it for the bundle to resolve (nitrojs/nitro)
@@ -166,7 +166,7 @@ catalog:
   knip: ^6.45.1
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
-  livekit-client: ^2.23.0
+  livekit-client: ^2.24.0
   livekit-server-sdk: ^2.19.3
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
@@ -192,7 +192,7 @@ catalog:
   oxc-parser: ^0.158.0
   oxfmt: ^0.78.0
   oxlint: ^1.93.0
-  oxlint-tsgolint: ^7.0.2006
+  oxlint-tsgolint: ^7.0.2007
   parse5: ^8.1.1
   pdfjs-dist: ^6.5.438
   phaser: ^4.2.1
@@ -217,7 +217,8 @@ catalog:
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.7
-  tsrs: ^0.24.0-ts7.1.0-beta
+  # @TODO: no upstream issue — waits on a tsrs release whose typecheck gets its answer from the Vize content mapper on Windows; the reason is the `renovate.json` rule's description
+  tsrs: ~0.24.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
   unicode-emoji-json: ^0.9.0
@@ -228,7 +229,7 @@ catalog:
   vite-plus: ^1.6.0
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
-  vize: ^0.746.0
+  vize: ^0.751.0
   vue: ^3.5.45
   vue-eslint-parser: ^10.4.2
   vue-router: ^5.5.0
