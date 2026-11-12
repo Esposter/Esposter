@@ -36,6 +36,15 @@ describe(serializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "xy\r\nz" }]);
   });
 
+  test("the two noncharacters ending the plane are dropped, so the export imports back", async () => {
+    expect.hasAssertions();
+
+    const dataSource = createDataSource([createColumn("a")], [createRow({ a: "x￿y￾z" })]);
+    const { rows } = await roundTrip(dataSource);
+
+    expect(rows.map(({ data }) => data)).toStrictEqual([{ a: "xyz" }]);
+  });
+
   test("a tab or a newline in a column name that is not a valid XML name survives the round trip", async () => {
     expect.hasAssertions();
 

@@ -194,5 +194,26 @@ describe("uiContextMenuHost", () => {
       expect(contextMenu.value).toBeUndefined();
       expect(document.activeElement).toBe(target.element);
     });
+
+    test("a menu moved by a second right-click opens with its groups collapsed", async () => {
+      expect.hasAssertions();
+
+      const { component } = await mountTarget();
+      const contextMenuStore = useContextMenuStore();
+      const { openContextMenu } = contextMenuStore;
+      const groupItems: Item[] = [{ children: [{ icon: "", title: "Csv" }], icon: "", title: "Import" }];
+      const opener = document.createElement("button");
+      openContextMenu({ items: groupItems, key, opener, x: 0, y: 0 });
+      await flushPromises();
+      await component.get('[aria-expanded="false"]').trigger("click");
+      await flushPromises();
+
+      expect(component.find('[aria-expanded="true"]').exists()).toBe(true);
+
+      openContextMenu({ items: groupItems, key, opener, x: 10, y: 10 });
+      await flushPromises();
+
+      expect(component.find('[aria-expanded="true"]').exists()).toBe(false);
+    });
   });
 });

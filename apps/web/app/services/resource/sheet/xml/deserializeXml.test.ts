@@ -72,6 +72,15 @@ describe(deserializeXml, () => {
     expect(rows.map(({ data }) => data)).toStrictEqual([{ a: 0 }]);
   });
 
+  test("A column named parsererror is a column, not a failure to parse", async () => {
+    expect.hasAssertions();
+
+    const file = createXmlFile("<rows><row><parsererror>0</parsererror></row></rows>");
+    const { columns } = await deserializeXml(file, XML_SETTINGS);
+
+    expect(columns.map(({ name }) => name)).toStrictEqual(["parsererror"]);
+  });
+
   test("A malformed document is refused", async () => {
     expect.hasAssertions();
 

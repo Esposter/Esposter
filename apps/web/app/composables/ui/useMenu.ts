@@ -81,7 +81,7 @@ export const useMenu = <T extends string>(
       if (!focusedItem) return;
       // A child's left arrow shuts its group and goes back to the group's heading, which is the row that opened it
       const parent = toValue(items).find(({ children }) => children?.some(({ value }) => value === focusedItem.value));
-      if (event.key === "ArrowRight" && focusedItem.children && !focusedItem.isExpanded) {
+      if (event.key === "ArrowRight" && focusedItem.children && !focusedItem.isExpanded && !focusedItem.isDisabled) {
         event.preventDefault();
         toggle(focusedItem.value, true);
       } else if (event.key === "ArrowLeft" && focusedItem.children && focusedItem.isExpanded) {
@@ -117,5 +117,10 @@ export const useMenu = <T extends string>(
     else first();
   });
 
-  return { checkIsTabbable, choose, first, getItemId, onMenuKeydown, openAtEnd, rows };
+  // The groups of a menu moved to another point are collapsed, as those of one opened afresh are
+  const collapse = () => {
+    expandedValues.value = [];
+  };
+
+  return { checkIsTabbable, choose, collapse, first, getItemId, onMenuKeydown, openAtEnd, rows };
 };

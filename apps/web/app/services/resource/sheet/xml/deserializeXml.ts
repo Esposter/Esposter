@@ -11,7 +11,10 @@ export const deserializeXml = async (file: File, _settings: XmlFileSettings) => 
   const text = await file.text();
   const xmlDocument = new DOMParser().parseFromString(text, MimeType.Xml);
   // The parser returns a document rather than throwing on bad markup, and it marks the failure as a parsererror element
-  const parserError = xmlDocument.getElementsByTagName("parsererror")[0];
+  // In a namespace of its own, so a cell element the file names parsererror, which has none, is no failure
+  const parserError = Array.from(xmlDocument.getElementsByTagName("parsererror")).find(
+    ({ namespaceURI }) => namespaceURI !== null,
+  );
   // Chromium wraps the line and the cause in a div under its own headings, which are left out of the alert
   if (parserError)
     throw new InvalidOperationError(
