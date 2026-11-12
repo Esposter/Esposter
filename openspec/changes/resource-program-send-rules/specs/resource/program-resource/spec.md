@@ -138,7 +138,7 @@ The owner SHALL be able to export invites for the people due an invite, or remin
 - **WHEN** the owner exports invites
 - **THEN** the export is refused before the audience is read
 
-#### Scenario: An unbound part is named before any read
+#### Scenario: An unbound part is refused before any read
 
 - **GIVEN** the program has no key column bound
 - **WHEN** the owner exports invites
