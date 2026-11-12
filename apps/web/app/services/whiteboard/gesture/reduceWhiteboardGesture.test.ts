@@ -10,8 +10,8 @@ import type {
   StrokeElement,
 } from "vue-block-editor-headless";
 
-import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GesturePhase } from "@/models/whiteboard/GesturePhase";
+import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { SnapAxis } from "@/models/whiteboard/SnapAxis";
 import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
@@ -117,8 +117,8 @@ describe(reduceWhiteboardGesture, () => {
       color: "",
       dashPattern: DashPattern.Solid,
       end: {
-        binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
         arrowhead: ArrowheadKind.Triangle,
+        binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
         point: { x: 150, y: 150 },
       },
       id: ARROW_ID,

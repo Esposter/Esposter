@@ -6,7 +6,11 @@ import { createPortableFormatItems } from "@/services/resource/createPortableFor
 import { describe, expect, test, vi } from "vitest";
 
 describe(createPortableFormatItems, () => {
-  const createFormat = (label: string): PortableFormat => ({ icon: `i-test:${label}`, import: vi.fn(), label });
+  const createFormat = (label: string): PortableFormat => ({
+    icon: `i-test:${label}`,
+    import: vi.fn<() => Promise<void>>(),
+    label,
+  });
 
   test("lists nothing for a resource with no formats", () => {
     expect.hasAssertions();

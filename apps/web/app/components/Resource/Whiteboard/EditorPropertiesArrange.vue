@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useWhiteboardSelectionOperations } from "@/composables/whiteboard/useWhiteboardSelectionOperations";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AlignEdge } from "@/models/whiteboard/AlignEdge";
 import { DistributeAxis } from "@/models/whiteboard/DistributeAxis";
 import { getAlignOperations } from "@/services/whiteboard/arrange/getAlignOperations";
 import { getDistributeOperations } from "@/services/whiteboard/arrange/getDistributeOperations";
-import { useWhiteboardSelectionOperations } from "@/composables/whiteboard/useWhiteboardSelectionOperations";
 
 // The align and distribute controls of a selection. Each is one commit, so one undo step, and each is disabled when it would move nothing: below its
 // Minimum number of boxes, since an arrow and a stroke are not moved by either, or when the boxes already lie as it would put them

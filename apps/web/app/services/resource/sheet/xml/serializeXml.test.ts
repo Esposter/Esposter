@@ -60,7 +60,7 @@ describe(serializeXml, () => {
 
     const dataSource = createDataSource(
       [createColumn("a"), createColumn('"b" & c')],
-      [createRow({ a: 0, '"b" & c': 1 })],
+      [createRow({ '"b" & c': 1, a: 0 })],
     );
     const blob = await serializeXml(dataSource, XML_SETTINGS, XML_MIME_TYPE);
 

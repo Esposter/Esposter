@@ -5,15 +5,15 @@ import type { ArrowElement, PositionedDocument, StrokeElement, TextElement } fro
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
-import { HIT_TOLERANCE, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
-import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
-import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import {
   WHITEBOARD_ARROW,
   WHITEBOARD_ARROW_ID,
   WHITEBOARD_PROCESS,
   WHITEBOARD_PROCESS_ID,
 } from "@/services/whiteboard/constants.test";
+import { HIT_TOLERANCE, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/constants";
+import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
+import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import {

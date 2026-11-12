@@ -26,6 +26,6 @@ const nameAttributes = computed(() => (image.altText ? { "aria-label": image.alt
     :href
     preserveAspectRatio="xMidYMid meet"
     role="img"
-    v-bind="nameAttributes"
+    :="nameAttributes"
   />
 </template>

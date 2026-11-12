@@ -1,9 +1,9 @@
 import type { ArrowElement, PositionedDocument, ShapeElement, StrokeElement } from "vue-block-editor-headless";
 
 import { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
 import { getScaleOperations } from "@/services/whiteboard/gesture/getScaleOperations";
-import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";

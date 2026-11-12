@@ -80,7 +80,7 @@ describe("uiPopover", () => {
       });
       await flushPromises();
       const panel = component.get<HTMLElement>('[role="dialog"]').element;
-      const showPopover = vi.fn();
+      const showPopover = vi.fn<HTMLElement["showPopover"]>();
       panel.showPopover = showPopover;
       await component.setProps({ anchor: secondAnchor });
       panel.dispatchEvent(Object.assign(new Event("toggle"), { newState: "closed" }));
@@ -106,7 +106,7 @@ describe("uiPopover", () => {
       });
       await flushPromises();
       const panel = component.get<HTMLElement>('[role="dialog"]').element;
-      const showPopover = vi.fn();
+      const showPopover = vi.fn<HTMLElement["showPopover"]>();
       panel.showPopover = showPopover;
       panel.matches = () => true;
       await component.setProps({ anchor: secondAnchor });

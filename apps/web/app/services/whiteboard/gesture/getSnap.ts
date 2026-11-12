@@ -46,7 +46,7 @@ const getAxisGuides = (axis: SnapAxis, snappedBounds: Bounds, targetBounds: Boun
   const alignedPositions = getAxisLines(snappedBounds, axis).filter((position) =>
     targetBounds.some((bounds) => checkIsOnLine(bounds, axis, position)),
   );
-  return [...new Set(alignedPositions)].map((position) => {
+  return Array.from(new Set(alignedPositions), (position) => {
     const alignedBounds = [snappedBounds, ...targetBounds.filter((bounds) => checkIsOnLine(bounds, axis, position))];
     const extents = alignedBounds.map((bounds) => getAxisExtent(bounds, otherAxis));
     return {

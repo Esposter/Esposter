@@ -67,9 +67,9 @@ const emitWheel = (event: WheelEvent) => {
     ref="canvas"
     h-full
     w-full
+    select-none
     relative
     of-hidden
-    select-none
     tabindex="0"
     role="application"
     aria-label="Whiteboard"

@@ -101,7 +101,7 @@ watch(isDark, (newIsDark) => {
     />
     <UiSkeleton v-else-if="!isDrawn" inset-0 absolute />
     <template v-else>
-      <VisualDesmosAnimateButton v-if="!isAnimating" z-1 @click="animate" />
+      <VisualDesmosAnimateButton v-if="!isAnimating" z-1 @click="animate()" />
       <VisualDesmosWindowControls
         z-1
         @click-left="emit('clickLeft', $event)"

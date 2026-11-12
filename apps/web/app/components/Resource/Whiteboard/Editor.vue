@@ -74,11 +74,11 @@ const onTextKeydown = (event: KeyboardEvent) => {
 watch(
   () => textEdit.value?.elementId,
   (newElementId) => {
-    setTextEditElementId(newElementId);
+    setTextEditElementId(newElementId || "");
   },
 );
 onUnmounted(() => {
-  setTextEditElementId(undefined);
+  setTextEditElementId("");
 });
 const textEditElement = computed(() =>
   editState.value.document.elements.find(({ id }) => id === textEdit.value?.elementId),

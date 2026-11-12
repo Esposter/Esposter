@@ -8,8 +8,8 @@ import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
 // A handle a press on the select tool lands on: a resize of the selection, a connection of a shape, or a drag of a free arrow end. Each one is
 // The gesture the press starts, and a press on none falls through to the element or the canvas beneath it
 export type PressedHandle =
-  | { connectionIndex: number; elementId: string; kind: "connection" }
   | { arrowId: string; endKey: ArrowEndKey; kind: "end" }
+  | { connectionIndex: number; elementId: string; kind: "connection" }
   | { handle: ResizeHandle; kind: "resize" };
 
 // The handle a press lands on, in the order the handles are drawn over each other: the resize handles on a selection's box first, then the connection

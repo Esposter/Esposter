@@ -7,9 +7,9 @@ export interface UiMenuItem<T extends number | string> {
   // A list of its own that the item opens beneath itself in the same menu: the item shows or hides it rather than
   // Being picked, and a menu's choices stay in one column that works under a finger as under a pointer. One level deep
   children?: Except<UiMenuItem<T>, "children">[];
-  description?: string;
   // How far in the menu draws the row, set on the rows it takes from an item's children
   depth?: number;
+  description?: string;
   // An icon class written whole, drawn before the title
   icon?: string;
   // A picture drawn in the icon's place, or the title's first letter when it is empty: a room's

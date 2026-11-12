@@ -1,11 +1,13 @@
 import nuxtAssets from "#server/plugins/nuxtAssets";
 import { describe, expect, test, vi } from "vitest";
 
+type ResponseHook = (response: Response, event: { req: { url: string } }) => void;
+
 const getResponseHook = () => {
-  const hook = vi.fn();
+  const hook = vi.fn<(name: string, handler: ResponseHook) => void>();
   nuxtAssets({ hooks: { hook } } as never);
   const call = hook.mock.calls.find(([name]) => name === "response");
-  return call?.[1] as (response: Response, event: { req: { url: string } }) => void;
+  return call?.[1] as ResponseHook;
 };
 
 describe("nuxtAssets", () => {

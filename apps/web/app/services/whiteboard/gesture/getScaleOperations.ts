@@ -1,5 +1,5 @@
-import type { JsonPatchOperation } from "@esposter/shared";
 import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { getChainedOperations } from "@/services/whiteboard/edit/getChainedOperations";
@@ -66,14 +66,6 @@ const getScaleElementOperations = (
           path: `${pointer}/${arrowEndKey}/point`,
           value: getScaledPoint(element[arrowEndKey].point),
         }));
-    case PositionedElementType.Stroke:
-      return [
-        {
-          op: JsonPatchOperationType.Replace,
-          path: `${pointer}/points`,
-          value: element.points.map((strokePoint) => getScaledPoint(strokePoint)),
-        },
-      ];
     case PositionedElementType.Image:
     case PositionedElementType.Shape:
     case PositionedElementType.StickyNote:
@@ -86,6 +78,14 @@ const getScaleElementOperations = (
         y: getScaledValue(y, anchor.y, scale.y),
       });
     }
+    case PositionedElementType.Stroke:
+      return [
+        {
+          op: JsonPatchOperationType.Replace,
+          path: `${pointer}/points`,
+          value: element.points.map((strokePoint) => getScaledPoint(strokePoint)),
+        },
+      ];
     default:
       return exhaustiveGuard(element);
   }

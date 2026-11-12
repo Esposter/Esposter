@@ -21,7 +21,7 @@ export const getConnectionHandleItems = (
   const element = takeOne(document.elements, index);
   if (element.type !== PositionedElementType.Shape) return [];
 
-  return Array.from({ length: CONNECTION_POINT_COUNT }, (_, connectionIndex) => connectionIndex)
+  return Array.from({ length: CONNECTION_POINT_COUNT }, (_value, connectionIndex) => connectionIndex)
     .filter(
       (connectionIndex) =>
         getBindableShape(document.elements, { connectionPointIndex: connectionIndex, elementId }) !== undefined,

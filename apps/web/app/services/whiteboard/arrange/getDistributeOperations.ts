@@ -47,7 +47,7 @@ export const getDistributeOperations = (
   const sortedBoxes = [
     ...boxes
       .filter(({ index }) => index !== lastBox.index)
-      .toSorted((first, second) => getStart(first.bounds, axis) - getStart(second.bounds, axis)),
+      .toSorted((firstBox, secondBox) => getStart(firstBox.bounds, axis) - getStart(secondBox.bounds, axis)),
     lastBox,
   ];
   const firstStart = getStart(takeOne(sortedBoxes, 0).bounds, axis);

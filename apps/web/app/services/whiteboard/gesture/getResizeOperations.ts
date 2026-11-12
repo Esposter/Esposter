@@ -1,5 +1,5 @@
-import type { JsonPatchOperation } from "@esposter/shared";
 import type { ResizeHandle } from "@/models/whiteboard/ResizeHandle";
+import type { JsonPatchOperation } from "@esposter/shared";
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
 import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";

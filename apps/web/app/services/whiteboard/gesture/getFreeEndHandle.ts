@@ -21,6 +21,6 @@ export const getFreeEndHandle = (
   const [nearest] = getFreeEndHandleItems(document, selectedIds)
     .map(({ endKey, point: handlePoint }) => ({ distance: getPointDistance(point, handlePoint), endKey }))
     .filter(({ distance }) => distance <= tolerance)
-    .toSorted((first, second) => first.distance - second.distance);
+    .toSorted((firstEnd, secondEnd) => firstEnd.distance - secondEnd.distance);
   return nearest === undefined ? undefined : { arrowId: takeOne(selectedIds), endKey: nearest.endKey };
 };
