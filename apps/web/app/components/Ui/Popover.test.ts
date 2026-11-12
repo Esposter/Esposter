@@ -90,6 +90,33 @@ describe("uiPopover", () => {
       expect(showPopover).toHaveBeenCalledTimes(1);
     });
 
+    test("closes when it is moved to another anchor while still shown and then dismissed", async () => {
+      expect.hasAssertions();
+
+      const firstAnchor = document.createElement("button");
+      const secondAnchor = document.createElement("button");
+      document.body.append(firstAnchor, secondAnchor);
+      onTestFinished(() => {
+        firstAnchor.remove();
+        secondAnchor.remove();
+      });
+      const component = mount(UiPopover, {
+        attachTo: document.body,
+        props: { anchor: firstAnchor, isOpen: true, label },
+      });
+      await flushPromises();
+      const panel = component.get<HTMLElement>('[role="dialog"]').element;
+      const showPopover = vi.fn();
+      panel.showPopover = showPopover;
+      panel.matches = () => true;
+      await component.setProps({ anchor: secondAnchor });
+      panel.dispatchEvent(Object.assign(new Event("toggle"), { newState: "closed" }));
+      await flushPromises();
+
+      expect(component.emitted("update:isOpen")).toStrictEqual([[false]]);
+      expect(showPopover).not.toHaveBeenCalled();
+    });
+
     test("closes when the dismissal of the anchor it hangs off is reported", async () => {
       expect.hasAssertions();
 

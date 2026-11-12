@@ -45,6 +45,14 @@ const isOpenGuarded = computed({
     isOpenModel.value = newIsOpen;
   },
 });
+// A move made while the panel is still natively open, by the keyboard, has no dismissal on its way, so the close that
+// Comes next is the new anchor's own and must be taken
+watch(
+  () => anchor,
+  (newAnchor) => {
+    if (content.value?.matches(":popover-open")) shownAnchor = newAnchor;
+  },
+);
 const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen } = usePopover({
   isOpen: isOpenGuarded,
   positionArea,

@@ -18,7 +18,7 @@ export const useUserSubscribables = async () => {
     ([memberIdsString, newSession]) => {
       if (!newSession) return undefined;
 
-      const newMemberIds = getIdsFromKey(memberIdsString).filter((id) => id && id !== newSession.user.id);
+      const newMemberIds = getIdsFromKey(memberIdsString).filter((id) => id !== newSession.user.id);
       if (newMemberIds.length === 0) return undefined;
 
       return getUnsubscribe(
