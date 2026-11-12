@@ -10,10 +10,11 @@ import { pasteWhiteboardElements } from "@/services/whiteboard/edit/pasteWhitebo
 import { serializeClipboardElements } from "@/services/whiteboard/serializeClipboardElements";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
+import { ArrowheadKind } from "vue-block-editor-headless";
 
 describe(pasteWhiteboardElements, () => {
   const ARROW_COPY_END = {
-    hasArrowhead: true,
+    arrowhead: ArrowheadKind.Triangle,
     point: {
       x: WHITEBOARD_ARROW.end.point.x + WHITEBOARD_DUPLICATE_OFFSET,
       y: WHITEBOARD_ARROW.end.point.y + WHITEBOARD_DUPLICATE_OFFSET,
@@ -56,7 +57,6 @@ describe(pasteWhiteboardElements, () => {
           id: arrowCopyId,
           start: {
             binding: { connectionPointIndex: 2, elementId: processCopyId },
-            hasArrowhead: false,
             point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET },
           },
         },
@@ -79,10 +79,7 @@ describe(pasteWhiteboardElements, () => {
           ...WHITEBOARD_ARROW,
           end: ARROW_COPY_END,
           id: arrowCopyId,
-          start: {
-            hasArrowhead: false,
-            point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET },
-          },
+          start: { point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET } },
         },
       ],
     });

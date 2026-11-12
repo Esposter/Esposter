@@ -68,10 +68,7 @@ describe(bindPositionedArrowEnd, () => {
     expect(boundDocument).toStrictEqual({
       elements: [
         POSITIONED_RECTANGLE,
-        {
-          ...POSITIONED_FREE_ARROW,
-          start: { binding: rectangleBinding, hasArrowhead: false, point: { x: 50, y: 100 } },
-        },
+        { ...POSITIONED_FREE_ARROW, start: { binding: rectangleBinding, point: { x: 50, y: 100 } } },
       ],
     });
   });

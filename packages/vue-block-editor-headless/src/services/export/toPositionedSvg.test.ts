@@ -1,5 +1,6 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
@@ -50,16 +51,12 @@ describe(toPositionedSvg, () => {
         {
           color: "",
           dashPattern: DashPattern.Solid,
-          end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+          end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
           id: ARROW_ID,
           label: "b",
           pathKind: ArrowPathKind.Straight,
           sketchLevel: SketchLevel.Artist,
-          start: {
-            binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
-            hasArrowhead: false,
-            point: { x: 50, y: 100 },
-          },
+          start: { binding: { connectionPointIndex: 2, elementId: PROCESS_ID }, point: { x: 50, y: 100 } },
           strokeWidth: StrokeWidth.Medium,
           textSize: TextSize.Small,
           type: PositionedElementType.Arrow,

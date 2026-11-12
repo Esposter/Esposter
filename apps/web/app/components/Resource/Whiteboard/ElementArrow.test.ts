@@ -6,6 +6,7 @@ import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   DashPattern,
   PositionedElementType,
@@ -23,12 +24,12 @@ describe("resourceWhiteboardElementArrow", () => {
   const arrow: ArrowElement = {
     color: "",
     dashPattern: DashPattern.Solid,
-    end: { hasArrowhead: true, point: { x: 100, y: 0 } },
+    end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,
-    start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+    start: { point: { x: 0, y: 0 } },
     strokeWidth: StrokeWidth.Medium,
     textSize: TextSize.Small,
     type: PositionedElementType.Arrow,

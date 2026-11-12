@@ -11,6 +11,7 @@ import type {
 } from "vue-block-editor-headless";
 
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
+import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
@@ -18,6 +19,7 @@ import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whitebo
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   CornerStyle,
   DashPattern,
@@ -65,16 +67,16 @@ describe(reduceWhiteboardGesture, () => {
   const BOUND_ARROW: ArrowElement = {
     color: "",
     dashPattern: DashPattern.Solid,
-    end: { binding: { connectionPointIndex: 3, elementId: PROCESS_ID }, hasArrowhead: true, point: { x: 200, y: 50 } },
+    end: {
+      arrowhead: ArrowheadKind.Triangle,
+      binding: { connectionPointIndex: 3, elementId: PROCESS_ID },
+      point: { x: 200, y: 50 },
+    },
     id: NEW_ARROW_ID,
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,
-    start: {
-      binding: { connectionPointIndex: 2, elementId: DECISION_ID },
-      hasArrowhead: false,
-      point: { x: 50, y: 100 },
-    },
+    start: { binding: { connectionPointIndex: 2, elementId: DECISION_ID }, point: { x: 50, y: 100 } },
     strokeWidth: StrokeWidth.Medium,
     textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
@@ -115,14 +117,14 @@ describe(reduceWhiteboardGesture, () => {
       dashPattern: DashPattern.Solid,
       end: {
         binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
-        hasArrowhead: true,
+        arrowhead: ArrowheadKind.Triangle,
         point: { x: 150, y: 150 },
       },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,
-      start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      start: { point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
@@ -367,16 +369,12 @@ describe(reduceWhiteboardGesture, () => {
         {
           color: "",
           dashPattern: DashPattern.Solid,
-          end: { hasArrowhead: true, point: { x: 340, y: 125 } },
+          end: { arrowhead: ArrowheadKind.Triangle, point: { x: 340, y: 125 } },
           id: NEW_ARROW_ID,
           label: "",
           pathKind: ArrowPathKind.Straight,
           sketchLevel: SketchLevel.Artist,
-          start: {
-            binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
-            hasArrowhead: false,
-            point: { x: 200, y: 125 },
-          },
+          start: { binding: { connectionPointIndex: 1, elementId: PROCESS_ID }, point: { x: 200, y: 125 } },
           strokeWidth: StrokeWidth.Medium,
           textSize: TextSize.Small,
           type: PositionedElementType.Arrow,
@@ -398,16 +396,12 @@ describe(reduceWhiteboardGesture, () => {
     expect(takeOne(up.state.document.elements, 1)).toStrictEqual({
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 300, y: 300 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 300, y: 300 } },
       id: NEW_ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,
-      start: {
-        binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
-        hasArrowhead: false,
-        point: { x: 200, y: 125 },
-      },
+      start: { binding: { connectionPointIndex: 1, elementId: PROCESS_ID }, point: { x: 200, y: 125 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
@@ -546,16 +540,12 @@ describe(reduceWhiteboardGesture, () => {
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 300, y: 300 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 300, y: 300 } },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,
-      start: {
-        binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
-        hasArrowhead: false,
-        point: { x: 200, y: 125 },
-      },
+      start: { binding: { connectionPointIndex: 1, elementId: PROCESS_ID }, point: { x: 200, y: 125 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
@@ -586,13 +576,9 @@ describe(reduceWhiteboardGesture, () => {
         { ...processShape, id: COPY_ID, x: 150, y: 130 },
         {
           ...arrow,
-          end: { hasArrowhead: true, point: { x: 350, y: 330 } },
+          end: { arrowhead: ArrowheadKind.Triangle, point: { x: 350, y: 330 } },
           id: ARROW_COPY_ID,
-          start: {
-            binding: { connectionPointIndex: 1, elementId: COPY_ID },
-            hasArrowhead: false,
-            point: { x: 250, y: 155 },
-          },
+          start: { binding: { connectionPointIndex: 1, elementId: COPY_ID }, point: { x: 250, y: 155 } },
         },
       ],
     });
@@ -678,36 +664,248 @@ describe(reduceWhiteboardGesture, () => {
     ]);
   });
 
-  test("dragging an arrow moves its free end and leaves its bound end", () => {
+  test("Dragging a free end moves that end only", () => {
     expect.hasAssertions();
 
     const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 250, y: 250 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 250, y: 250 } },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,
-      start: {
-        binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
-        hasArrowhead: false,
-        point: { x: 150, y: 150 },
-      },
+      start: { binding: { connectionPointIndex: 2, elementId: PROCESS_ID }, point: { x: 150, y: 150 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
-    const state = createState({ elements: [processShape, arrow] });
+    // The arrow is selected, so the handle on its free end is the press's target
+    const state = createState({ elements: [processShape, arrow] }, { selectedIds: [ARROW_ID] });
 
-    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 200 }));
-    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 210, y: 220 }));
-    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 210, y: 220 }));
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 250, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 260, y: 270 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 260, y: 270 }));
 
     expect(up.operations).toStrictEqual([
       { op: JsonPatchOperationType.Replace, path: "/elements/1/end/point", value: { x: 260, y: 270 } },
     ]);
+    expect(up.state.document.elements[1]).toStrictEqual({ ...arrow, end: { ...arrow.end, point: { x: 260, y: 270 } } });
+  });
+
+  test("Dragging a free end of an arrow with both ends free leaves the other end where it is", () => {
+    expect.hasAssertions();
+
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 250, y: 250 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: { point: { x: 150, y: 150 } },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState({ elements: [arrow] }, { selectedIds: [ARROW_ID] });
+
+    // Both ends are free, so a move of the whole arrow would move the start too. The handle moves the end alone
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 250, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 260, y: 270 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 260, y: 270 }));
+
+    expect(up.operations).toStrictEqual([
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/end/point", value: { x: 260, y: 270 } },
+    ]);
+  });
+
+  test("A press on an arrow's body away from its ends moves the whole arrow", () => {
+    expect.hasAssertions();
+
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 300, y: 300 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: { point: { x: 200, y: 200 } },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState({ elements: [arrow] }, { selectedIds: [ARROW_ID] });
+
+    // The press lands on the line between the ends, which no end handle covers, so the arrow moves whole
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 250, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 260, y: 250 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 260, y: 250 }));
+
+    expect(up.state.document.elements[0]).toStrictEqual({
+      ...arrow,
+      end: { ...arrow.end, point: { x: 310, y: 300 } },
+      start: { point: { x: 210, y: 200 } },
+    });
+  });
+
+  test("Releasing a dragged end on a shape binds it", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const arrow: ArrowElement = {
+      color: "",
+      dashPattern: DashPattern.Solid,
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 250, y: 250 } },
+      id: ARROW_ID,
+      label: "",
+      pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
+      start: { point: { x: 150, y: 150 } },
+      strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
+      type: PositionedElementType.Arrow,
+    };
+    const state = createState({ elements: [processShape, arrow] }, { selectedIds: [ARROW_ID] });
+
+    // The end is dragged onto the process's bottom point, which is connection point 2, and released there
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 250, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 152 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 152 }));
+
+    expect(up.state.document.elements[1]).toStrictEqual({
+      ...arrow,
+      end: {
+        arrowhead: ArrowheadKind.Triangle,
+        binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
+        point: { x: 150, y: 150 },
+      },
+    });
+  });
+
+  test("An arrow bound at both ends shows no end handle", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const arrow: ArrowElement = {
+      ...BOUND_ARROW,
+      end: { binding: { connectionPointIndex: 3, elementId: PROCESS_ID }, point: { x: 200, y: 50 } },
+      start: { binding: { connectionPointIndex: 2, elementId: DECISION_ID }, point: { x: 50, y: 100 } },
+    };
+    const state = createState({ elements: [processShape, arrow] }, { selectedIds: [NEW_ARROW_ID] });
+
+    // A press on a bound end's point finds no handle, so it is a press on the arrow itself, and the handle the press did not find is no end drag
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 200, y: 50 }));
+
+    expect(down.state.gesture).toStrictEqual(
+      expect.objectContaining({ elementId: NEW_ARROW_ID, handle: undefined, phase: GesturePhase.Pressed }),
+    );
+  });
+
+  test("A selected shape shows a connection handle at each connection point", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
+
+    // A press on the bottom connection point, which sits a gap beyond the shape's frame, is taken as a connection gesture
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+
+    expect(down.state.gesture).toStrictEqual(
+      expect.objectContaining({ connectionIndex: 2, elementId: PROCESS_ID, phase: GesturePhase.Connecting }),
+    );
+  });
+
+  test("An annotation shows no connection handle", () => {
+    expect.hasAssertions();
+
+    const annotation: ShapeElement = { ...createProcess(ANNOTATION_ID, PROCESS_BOUNDS), kind: ShapeKind.Annotation };
+    const state = createState({ elements: [annotation] }, { selectedIds: [ANNOTATION_ID] });
+
+    // The annotation takes no connection, so a press where its bottom handle would sit is a press on the annotation itself
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+
+    expect(down.state.gesture).toStrictEqual(expect.objectContaining({ phase: GesturePhase.Pressed }));
+  });
+
+  test("Dragging a connection handle to empty canvas adds a connected shape", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState(
+      { elements: [processShape] },
+      { createId: createIdsInOrder([NEW_ARROW_ID, PLACED_SHAPE_ID]), selectedIds: [PROCESS_ID] },
+    );
+
+    // The bottom handle of the process is dragged to an empty point and released, so a process is added there, joined by an arrow
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 300 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 300 }));
+
+    expect(up.state.document.elements).toHaveLength(3);
+    expect(up.state.document.elements[1]).toStrictEqual(
+      expect.objectContaining({ id: PLACED_SHAPE_ID, kind: ShapeKind.Process, type: PositionedElementType.Shape }),
+    );
+    expect(up.state.document.elements[2]).toStrictEqual(
+      expect.objectContaining({
+        // The new shape is centred on the release, so its top connection point is the one the arrow ends at
+        end: {
+          arrowhead: ArrowheadKind.Triangle,
+          binding: { connectionPointIndex: 0, elementId: PLACED_SHAPE_ID },
+          point: { x: 150, y: 260 },
+        },
+        id: NEW_ARROW_ID,
+        start: { binding: { connectionPointIndex: 2, elementId: PROCESS_ID }, point: { x: 150, y: 150 } },
+      }),
+    );
+  });
+
+  test("Releasing a handle on another shape joins it without adding a shape", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const decisionShape: ShapeElement = {
+      ...createProcess(DECISION_ID, { height: 100, width: 100, x: 100, y: 300 }),
+      kind: ShapeKind.Decision,
+    };
+    const state = createState(
+      { elements: [processShape, decisionShape] },
+      { createId: () => NEW_ARROW_ID, selectedIds: [PROCESS_ID] },
+    );
+
+    // The bottom handle is released on the decision, whose top connection point is the nearest one the release lands near
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 150, y: 320 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 150, y: 320 }));
+
+    expect(up.state.document.elements).toHaveLength(3);
+    expect(up.state.document.elements[2]).toStrictEqual(
+      expect.objectContaining({
+        end: {
+          arrowhead: ArrowheadKind.Triangle,
+          binding: { connectionPointIndex: 0, elementId: DECISION_ID },
+          point: { x: 150, y: 300 },
+        },
+        id: NEW_ARROW_ID,
+      }),
+    );
+  });
+
+  test("A press that does not travel adds nothing", () => {
+    expect.hasAssertions();
+
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const state = createState({ elements: [processShape] }, { selectedIds: [PROCESS_ID] });
+
+    // The handle is pressed and released where it was pressed, so the release is a click and no shape or arrow is added
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 166 }));
+    const up = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Up, { x: 150, y: 166 }));
+
+    expect(up.operations).toStrictEqual([]);
+    expect(up.state.document).toStrictEqual({ elements: [processShape] });
   });
 
   test("a click with a shape tool places a shape at the point", () => {

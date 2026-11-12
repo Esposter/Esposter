@@ -3,6 +3,7 @@ import type { StrokeElement } from "#src/models/StrokeElement";
 import type { TextElement } from "#src/models/TextElement";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
@@ -41,20 +42,44 @@ describe(updatePositionedElementProperty, () => {
     expect(editedDocument?.elements[1]).toStrictEqual({ ...POSITIONED_ARROW, pathKind: ArrowPathKind.Curved });
   });
 
-  test("setting an arrowhead replaces the flag at its end only", () => {
+  test("setting an arrowhead adds it to its end only", () => {
     expect.hasAssertions();
 
+    // The start has no arrowhead, so setting one adds it there and leaves the end's triangle alone
     const operations = updatePositionedElementProperty(POSITIONED_DOCUMENT, 1, {
-      end: ArrowEndKey.End,
-      property: "hasArrowhead",
-      value: false,
+      end: ArrowEndKey.Start,
+      property: "arrowhead",
+      value: ArrowheadKind.Diamond,
     });
     const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
 
     expect(editedDocument?.elements[1]).toStrictEqual({
       ...POSITIONED_ARROW,
-      end: { ...POSITIONED_ARROW.end, hasArrowhead: false },
+      start: { ...POSITIONED_ARROW.start, arrowhead: ArrowheadKind.Diamond },
     });
+  });
+
+  test("clearing an arrowhead removes it from its end only", () => {
+    expect.hasAssertions();
+
+    const operations = updatePositionedElementProperty(POSITIONED_DOCUMENT, 1, {
+      end: ArrowEndKey.End,
+      property: "arrowhead",
+    });
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, operations);
+
+    expect(editedDocument?.elements[1]).toStrictEqual({
+      ...POSITIONED_ARROW,
+      end: { point: POSITIONED_ARROW.end.point },
+    });
+  });
+
+  test("clearing an end that has no arrowhead leaves the document unchanged", () => {
+    expect.hasAssertions();
+
+    expect(
+      updatePositionedElementProperty(POSITIONED_DOCUMENT, 1, { end: ArrowEndKey.Start, property: "arrowhead" }),
+    ).toStrictEqual([]);
   });
 
   test("a property the element does not hold leaves the document unchanged", () => {

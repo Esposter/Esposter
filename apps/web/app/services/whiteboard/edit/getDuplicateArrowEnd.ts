@@ -8,14 +8,10 @@ export const getDuplicateArrowEnd = (
   originalIdCopyIdMap: Record<string, string>,
   offset: Point,
 ): ArrowEnd => {
-  const { binding, hasArrowhead, point } = arrowEnd;
+  const { arrowhead, binding, point } = arrowEnd;
   const copiedPoint = { x: point.x + offset.x, y: point.y + offset.y };
-  if (binding === undefined || !Object.hasOwn(originalIdCopyIdMap, binding.elementId))
-    return { hasArrowhead, point: copiedPoint };
+  const copiedEnd = arrowhead === undefined ? { point: copiedPoint } : { arrowhead, point: copiedPoint };
+  if (binding === undefined || !Object.hasOwn(originalIdCopyIdMap, binding.elementId)) return copiedEnd;
 
-  return {
-    binding: { ...binding, elementId: takeOne(originalIdCopyIdMap, binding.elementId) },
-    hasArrowhead,
-    point: copiedPoint,
-  };
+  return { ...copiedEnd, binding: { ...binding, elementId: takeOne(originalIdCopyIdMap, binding.elementId) } };
 };

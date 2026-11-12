@@ -2,6 +2,7 @@ import { getArrowOperations } from "@/services/whiteboard/gesture/getArrowOperat
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   DashPattern,
   PositionedElementType,
@@ -18,8 +19,8 @@ describe(getArrowOperations, () => {
     const operations = getArrowOperations(
       { elements: [] },
       arrowId,
-      { hasArrowhead: false, point: { x: 0, y: 0 } },
-      { hasArrowhead: true, point: { x: 100, y: 0 } },
+      { point: { x: 0, y: 0 } },
+      { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
     );
     const { document } = applyPatches({ elements: [] }, operations);
 
@@ -28,12 +29,12 @@ describe(getArrowOperations, () => {
         {
           color: "",
           dashPattern: DashPattern.Solid,
-          end: { hasArrowhead: true, point: { x: 100, y: 0 } },
+          end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
           id: arrowId,
           label: "",
           pathKind: ArrowPathKind.Straight,
           sketchLevel: SketchLevel.Artist,
-          start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+          start: { point: { x: 0, y: 0 } },
           strokeWidth: StrokeWidth.Medium,
           textSize: TextSize.Small,
           type: PositionedElementType.Arrow,

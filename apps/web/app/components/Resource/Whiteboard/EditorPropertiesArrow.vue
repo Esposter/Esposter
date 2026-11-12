@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { ArrowElement, ArrowPathKind } from "vue-block-editor-headless";
+import type { ArrowElement, ArrowheadKind, ArrowPathKind } from "vue-block-editor-headless";
 
-import { WHITEBOARD_PATH_KIND_ITEMS } from "@/services/whiteboard/arrow/constants";
+import { WHITEBOARD_ARROWHEAD_ITEMS, WHITEBOARD_PATH_KIND_ITEMS } from "@/services/whiteboard/arrow/constants";
+import { WHITEBOARD_DEFAULT_ARROWHEAD } from "@/services/whiteboard/palette/constants";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { ArrowEndKey, unbindPositionedArrowEnd } from "vue-block-editor-headless";
 
@@ -10,13 +11,16 @@ interface Props {
   index: number;
 }
 
-// An arrow's route, the arrowhead at each of its ends, and the detach of each end bound to a shape. A detach is one commit
+// An arrow's route, the arrowhead at each of its ends, and the detach of each end bound to a shape. A detach is one commit. An end's box sets its
+// Arrowhead to the default triangle or clears it, and once an end has one, its kind is chosen beside the box
 const { index } = defineProps<Props>();
 const whiteboardStore = useWhiteboardStore();
 const { commitOperations, updateElementProperty } = whiteboardStore;
 const { editState } = storeToRefs(whiteboardStore);
 const detachEnd = (arrowEndKey: ArrowEndKey) =>
   commitOperations(unbindPositionedArrowEnd(editState.value.document, index, arrowEndKey));
+const setArrowhead = (arrowEndKey: ArrowEndKey, arrowhead?: ArrowheadKind) =>
+  updateElementProperty(index, { end: arrowEndKey, property: "arrowhead", value: arrowhead });
 </script>
 
 <template>
@@ -30,22 +34,34 @@ const detachEnd = (arrowEndKey: ArrowEndKey) =>
       "
     />
     <UiCheckbox
-      :model-value="arrow.start.hasArrowhead"
+      :model-value="arrow.start.arrowhead !== undefined"
       is-label-shown
       label="Arrowhead at start"
       @update:model-value="
-        (hasArrowhead) =>
-          updateElementProperty(index, { end: ArrowEndKey.Start, property: 'hasArrowhead', value: hasArrowhead })
+        (isChecked) => setArrowhead(ArrowEndKey.Start, isChecked ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
       "
     />
+    <UiToggleGroup
+      v-if="arrow.start.arrowhead !== undefined"
+      :model-value="arrow.start.arrowhead"
+      label="Start head"
+      :items="WHITEBOARD_ARROWHEAD_ITEMS"
+      @update:model-value="(arrowhead) => setArrowhead(ArrowEndKey.Start, arrowhead)"
+    />
     <UiCheckbox
-      :model-value="arrow.end.hasArrowhead"
+      :model-value="arrow.end.arrowhead !== undefined"
       is-label-shown
       label="Arrowhead at end"
       @update:model-value="
-        (hasArrowhead) =>
-          updateElementProperty(index, { end: ArrowEndKey.End, property: 'hasArrowhead', value: hasArrowhead })
+        (isChecked) => setArrowhead(ArrowEndKey.End, isChecked ? WHITEBOARD_DEFAULT_ARROWHEAD : undefined)
       "
+    />
+    <UiToggleGroup
+      v-if="arrow.end.arrowhead !== undefined"
+      :model-value="arrow.end.arrowhead"
+      label="End head"
+      :items="WHITEBOARD_ARROWHEAD_ITEMS"
+      @update:model-value="(arrowhead) => setArrowhead(ArrowEndKey.End, arrowhead)"
     />
     <UiButton v-if="arrow.start.binding" @click="detachEnd(ArrowEndKey.Start)">Detach start</UiButton>
     <UiButton v-if="arrow.end.binding" @click="detachEnd(ArrowEndKey.End)">Detach end</UiButton>

@@ -1,5 +1,6 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
@@ -16,12 +17,12 @@ describe(toArrowSvg, () => {
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 100, y: 0 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
       id: crypto.randomUUID(),
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Architect,
-      start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      start: { point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,

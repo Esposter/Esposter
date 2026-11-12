@@ -1,4 +1,5 @@
 import type { ArrowEndKey } from "#src/models/ArrowEndKey";
+import type { ArrowheadKind } from "#src/models/ArrowheadKind";
 import type { ArrowPathKind } from "#src/models/ArrowPathKind";
 import type { CornerStyle } from "#src/models/CornerStyle";
 import type { DashPattern } from "#src/models/DashPattern";
@@ -9,10 +10,10 @@ import type { TextSize } from "#src/models/TextSize";
 import type { VerticalAlignment } from "#src/models/VerticalAlignment";
 
 // A property of a positioned element that a command sets: a colour, a width, a dash pattern or a sketch level on an element that draws a line, a shape's
-// Or sticky note's fill, a shape's corners, an arrow's route, or whether an arrow has an arrowhead at one of its ends. A text's size and horizontal
-// Alignment, a shape's or sticky note's vertical alignment, and whether a text box wraps its text
+// Or sticky note's fill, a shape's corners, an arrow's route, or the arrowhead at one of an arrow's ends, which is absent for none. A text's size and
+// Horizontal alignment, a shape's or sticky note's vertical alignment, and whether a text box wraps its text
 export type PositionedElementProperty =
-  | { end: ArrowEndKey; property: "hasArrowhead"; value: boolean }
+  | { end: ArrowEndKey; property: "arrowhead"; value?: ArrowheadKind }
   | { property: "color"; value: string }
   | { property: "cornerStyle"; value: CornerStyle }
   | { property: "dashPattern"; value: DashPattern }

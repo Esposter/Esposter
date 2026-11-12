@@ -3,6 +3,7 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StrokeElement } from "#src/models/StrokeElement";
 import type { JsonPatchOperation } from "@esposter/shared";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { movePositionedElement } from "#src/services/movePositionedElement";
@@ -72,7 +73,7 @@ describe(movePositionedElement, () => {
       ...POSITIONED_ARROW,
       end: {
         binding: { connectionPointIndex: 0, elementId: POSITIONED_PROCESS_ID },
-        hasArrowhead: true,
+        arrowhead: ArrowheadKind.Triangle,
         point: { x: 250, y: 0 },
       },
     };

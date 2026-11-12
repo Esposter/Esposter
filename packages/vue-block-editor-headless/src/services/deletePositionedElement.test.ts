@@ -1,6 +1,7 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
@@ -27,7 +28,7 @@ describe(deletePositionedElement, () => {
       dashPattern: DashPattern.Solid,
       end: {
         binding: { connectionPointIndex: 3, elementId: POSITIONED_PROCESS_ID },
-        hasArrowhead: true,
+        arrowhead: ArrowheadKind.Triangle,
         point: { x: 200, y: 50 },
       },
       id: crypto.randomUUID(),
@@ -46,7 +47,7 @@ describe(deletePositionedElement, () => {
     const remainingDocument = applyPositionedEdit(document, operations);
 
     expect(remainingDocument).toStrictEqual({
-      elements: [POSITIONED_PROCESS, { ...arrowToProcess, start: { hasArrowhead: false, point: { x: 50, y: 100 } } }],
+      elements: [POSITIONED_PROCESS, { ...arrowToProcess, start: { point: { x: 50, y: 100 } } }],
     });
   });
 });

@@ -6,6 +6,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { beforeAll, describe, expect, test } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   CornerStyle,
   DashPattern,
@@ -42,12 +43,12 @@ describe("whiteboardRouter", () => {
   const arrow: ArrowElement = {
     color: "",
     dashPattern: DashPattern.Solid,
-    end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+    end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,
-    start: { binding: { connectionPointIndex: 2, elementId: shapeId }, hasArrowhead: false, point: { x: 50, y: 100 } },
+    start: { binding: { connectionPointIndex: 2, elementId: shapeId }, point: { x: 50, y: 100 } },
     strokeWidth: StrokeWidth.Medium,
     textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
@@ -88,7 +89,11 @@ describe("whiteboardRouter", () => {
 
     const boundArrow: ArrowElement = {
       ...arrow,
-      end: { binding: { connectionPointIndex: 0, elementId: shapeId }, hasArrowhead: true, point: { x: 50, y: 0 } },
+      end: {
+        arrowhead: ArrowheadKind.Triangle,
+        binding: { connectionPointIndex: 0, elementId: shapeId },
+        point: { x: 50, y: 0 },
+      },
     };
     const savedResource = await createSavedWhiteboard(shape, boundArrow);
 

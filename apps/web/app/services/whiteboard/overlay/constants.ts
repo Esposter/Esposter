@@ -6,3 +6,6 @@ export const WHITEBOARD_OVERLAY_STROKE_WIDTH = 1.5;
 export const WHITEBOARD_MARQUEE_FILL_OPACITY = 0.1;
 // The side of a resize handle drawn on a selection's box, in screen pixels at any zoom, so a handle is the same size at every zoom
 export const WHITEBOARD_HANDLE_SIZE = 8;
+// How far a connection handle stands off its connection point, in screen pixels: past the hit tolerance of a resize handle on the frame, so a press
+// Lands on one handle or the other and never on both
+export const WHITEBOARD_CONNECTION_HANDLE_GAP = 16;

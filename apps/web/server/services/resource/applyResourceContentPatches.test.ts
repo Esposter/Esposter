@@ -7,6 +7,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   CornerStyle,
   DashPattern,
@@ -40,16 +41,12 @@ describe(applyResourceContentPatches, () => {
   const arrow: ArrowElement = {
     color: "",
     dashPattern: DashPattern.Solid,
-    end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+    end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,
-    start: {
-      binding: { connectionPointIndex: 2, elementId: rectangleId },
-      hasArrowhead: false,
-      point: { x: 50, y: 100 },
-    },
+    start: { binding: { connectionPointIndex: 2, elementId: rectangleId }, point: { x: 50, y: 100 } },
     strokeWidth: StrokeWidth.Medium,
     textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
@@ -76,6 +73,21 @@ describe(applyResourceContentPatches, () => {
       .toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: ✖ binds no connection point of a shape in the document
         → at elements[1].start.binding]
+    `);
+  });
+
+  test("A patch naming an unknown arrowhead is refused", () => {
+    expect.hasAssertions();
+
+    // The arrowhead is one of the four kinds, so a fifth name fails the parse, and the refused patch leaves no document to save
+    const operations: JsonPatchOperation[] = [
+      { op: JsonPatchOperationType.Replace, path: "/elements/1/end/arrowhead", value: "star" },
+    ];
+
+    expect(() => applyResourceContentPatches(ResourceType.Whiteboard, { elements: [rectangle, arrow] }, operations))
+      .toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: ✖ Invalid option: expected one of "bar"|"circle"|"diamond"|"triangle"
+        → at elements[1].end.arrowhead]
     `);
   });
 

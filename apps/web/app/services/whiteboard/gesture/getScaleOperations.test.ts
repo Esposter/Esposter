@@ -6,7 +6,7 @@ import { getScaleOperations } from "@/services/whiteboard/gesture/getScaleOperat
 import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
+import { ArrowheadKind, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
 
 describe(getScaleOperations, () => {
   const FIRST_ID = crypto.randomUUID();
@@ -57,13 +57,9 @@ describe(getScaleOperations, () => {
     const shape = createShape(FIRST_ID, 100, 100, 100, 50);
     const arrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
-      end: { hasArrowhead: true, point: { x: 300, y: 300 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 300, y: 300 } },
       id: ARROW_ID,
-      start: {
-        binding: { connectionPointIndex: 1, elementId: FIRST_ID },
-        hasArrowhead: false,
-        point: { x: 200, y: 125 },
-      },
+      start: { binding: { connectionPointIndex: 1, elementId: FIRST_ID }, point: { x: 200, y: 125 } },
     };
     const document: PositionedDocument = { elements: [shape, arrow] };
     const operations = getScaleOperations(document, [FIRST_ID, ARROW_ID], ResizeHandle.BottomRight, { x: 100, y: 0 });
@@ -72,7 +68,7 @@ describe(getScaleOperations, () => {
       createShape(FIRST_ID, 100, 100, 150, 50),
       {
         ...arrow,
-        end: { hasArrowhead: true, point: { x: 400, y: 300 } },
+        end: { arrowhead: ArrowheadKind.Triangle, point: { x: 400, y: 300 } },
         start: { ...arrow.start, point: { x: 250, y: 125 } },
       },
     ]);

@@ -80,6 +80,16 @@ apps/web/app/services/whiteboard/gesture/reduceEndGesture.ts          drags a fr
 apps/web/app/services/whiteboard/gesture/reduceConnectGesture.ts      drags a connection handle, adding a shape or joining one
 ```
 
+## Reconciled with the built state
+
+Where the built change differs from the prose above, the built state is the one recorded in the whiteboard design:
+
+- **The connection handle stands a gap off its connection point.** The gap is 16 screen pixels, past the 6 pixel hit tolerance of the resize handle on the same point, so a press lands on one handle or the other.
+- **The new shape of the flowchart helper is centred on the release point,** at the default size and fill of a placed shape of its kind, as the spec scenario states. "Inserted at the release point" above meant that centre.
+- **The arrow the helper adds leaves its source bare** and takes its one arrowhead at the far end, as an arrow the tool draws does.
+- **A dragged free end and a connection release bind by the drawing rule with the dragged arrow left out of the hit,** so the arrow's own line under the pointer does not block the bind.
+- **Two test names differ from the Verify lines.** The headless arrowhead test is named "an arrow takes a different arrowhead at each end" in lower case, and the refused-patch test is in the server's patch test. No test carries the name "An arrow with an arrowhead at each end"; the scenario is covered by the panel test "An arrow takes a different arrowhead at each end" and the headless arrowhead test.
+
 ## Sources
 
 - [Excalidraw](https://github.com/excalidraw/excalidraw): the reference for the head choices and for the drag of a linear element's point. Taken: the arrowhead choices, read in packages/excalidraw/actions/actionProperties.tsx by their labels, and the drag of a point of a linear element, in packages/element/src/linearElementEditor.ts. The flowchart helper's file, packages/excalidraw/components/App.flowchart.ts, was only named, so the helper's behaviour here is the verdict's and not that file's.

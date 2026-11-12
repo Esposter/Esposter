@@ -4,7 +4,9 @@ import type { WhiteboardGestureState } from "@/models/whiteboard/WhiteboardGestu
 
 import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { reduceArrowGesture } from "@/services/whiteboard/gesture/reduceArrowGesture";
+import { reduceConnectGesture } from "@/services/whiteboard/gesture/reduceConnectGesture";
 import { reduceDrawingGesture } from "@/services/whiteboard/gesture/reduceDrawingGesture";
+import { reduceEndGesture } from "@/services/whiteboard/gesture/reduceEndGesture";
 import { reduceMarqueeGesture } from "@/services/whiteboard/gesture/reduceMarqueeGesture";
 import { reduceMovingGesture } from "@/services/whiteboard/gesture/reduceMovingGesture";
 import { reducePanningGesture } from "@/services/whiteboard/gesture/reducePanningGesture";
@@ -27,8 +29,12 @@ export const reduceWhiteboardGesture = (
   switch (gesture.phase) {
     case GesturePhase.Arrow:
       return reduceArrowGesture(state, gesture, event);
+    case GesturePhase.Connecting:
+      return reduceConnectGesture(state, gesture, event);
     case GesturePhase.Drawing:
       return reduceDrawingGesture(state, gesture, event);
+    case GesturePhase.End:
+      return reduceEndGesture(state, gesture, event);
     case GesturePhase.Marquee:
       return reduceMarqueeGesture(state, gesture, event);
     case GesturePhase.Moving:

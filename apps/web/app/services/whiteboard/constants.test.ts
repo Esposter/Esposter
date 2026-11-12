@@ -6,6 +6,7 @@ import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/cons
 import { createHistory } from "@esposter/shared";
 import { describe } from "vitest";
 import {
+  ArrowheadKind,
   ArrowPathKind,
   CornerStyle,
   DashPattern,
@@ -41,16 +42,12 @@ export const WHITEBOARD_PROCESS: ShapeElement = {
 export const WHITEBOARD_ARROW: ArrowElement = {
   color: "",
   dashPattern: DashPattern.Solid,
-  end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+  end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
   id: WHITEBOARD_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
   sketchLevel: SketchLevel.Artist,
-  start: {
-    binding: { connectionPointIndex: 2, elementId: WHITEBOARD_PROCESS_ID },
-    hasArrowhead: false,
-    point: { x: 50, y: 100 },
-  },
+  start: { binding: { connectionPointIndex: 2, elementId: WHITEBOARD_PROCESS_ID }, point: { x: 50, y: 100 } },
   strokeWidth: StrokeWidth.Medium,
   textSize: TextSize.Small,
   type: PositionedElementType.Arrow,

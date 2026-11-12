@@ -1,6 +1,7 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 import type { ShapeElement } from "#src/models/ShapeElement";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
@@ -78,11 +79,11 @@ describe(getStrokeAttributes, () => {
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Dotted,
-      end: { hasArrowhead: true, point: { x: 100, y: 0 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
       id: crypto.randomUUID(),
       label: "",
       pathKind: ArrowPathKind.Straight,
-      start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      start: { point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,

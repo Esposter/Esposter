@@ -15,10 +15,7 @@ describe(unbindPositionedArrowEnd, () => {
     const unboundDocument = applyPositionedEdit(document, operations);
 
     expect(unboundDocument).toStrictEqual({
-      elements: [
-        POSITIONED_RECTANGLE,
-        { ...POSITIONED_ARROW, start: { hasArrowhead: false, point: { x: 50, y: 100 } } },
-      ],
+      elements: [POSITIONED_RECTANGLE, { ...POSITIONED_ARROW, start: { point: { x: 50, y: 100 } } }],
     });
   });
 });

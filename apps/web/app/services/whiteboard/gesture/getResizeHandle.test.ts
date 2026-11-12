@@ -16,7 +16,14 @@ import {
 } from "@/services/whiteboard/constants.test";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { getElementBounds, PositionedElementType, ShapeKind, StrokeWidth, TextSize } from "vue-block-editor-headless";
+import {
+  ArrowheadKind,
+  getElementBounds,
+  PositionedElementType,
+  ShapeKind,
+  StrokeWidth,
+  TextSize,
+} from "vue-block-editor-headless";
 
 describe(getResizeHandle, () => {
   const POINTER_ID = 0;
@@ -115,15 +122,15 @@ describe(getResizeHandle, () => {
     // Bottom handles, which sit at (250, 100), are left out
     const leftArrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
-      end: { hasArrowhead: true, point: { x: 200, y: 100 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 200, y: 100 } },
       id: LEFT_ARROW_ID,
-      start: { hasArrowhead: false, point: { x: 100, y: 100 } },
+      start: { point: { x: 100, y: 100 } },
     };
     const rightArrow: ArrowElement = {
       ...WHITEBOARD_ARROW,
-      end: { hasArrowhead: true, point: { x: 400, y: 100 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 400, y: 100 } },
       id: RIGHT_ARROW_ID,
-      start: { hasArrowhead: false, point: { x: 250, y: 100 } },
+      start: { point: { x: 250, y: 100 } },
     };
     const document: PositionedDocument = { elements: [leftArrow, rightArrow] };
     const selectedIds = [LEFT_ARROW_ID, RIGHT_ARROW_ID];

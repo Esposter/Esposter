@@ -1,3 +1,4 @@
+import type { ArrowElement } from "#src/models/ArrowElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { PositionedElement } from "#src/models/PositionedElement";
 import type { PositionedElementProperty } from "#src/models/PositionedElementProperty";
@@ -30,7 +31,7 @@ const checkIsHeld = (element: PositionedElement, change: PositionedElementProper
       );
     case "fill":
       return element.type === PositionedElementType.Shape || element.type === PositionedElementType.StickyNote;
-    case "hasArrowhead":
+    case "arrowhead":
     case "pathKind":
       return element.type === PositionedElementType.Arrow;
     case "horizontalAlignment":
@@ -50,6 +51,25 @@ const checkIsHeld = (element: PositionedElement, change: PositionedElementProper
     default:
       return exhaustiveGuard(change);
   }
+};
+
+// Sets or clears the arrowhead at one end of an arrow. An end with no arrowhead has nothing to clear, so clearing it changes nothing
+const getArrowheadOperations = (
+  index: number,
+  arrow: ArrowElement,
+  change: Extract<PositionedElementProperty, { property: "arrowhead" }>,
+): JsonPatchOperation[] => {
+  const arrowheadPointer = `${getElementPointer(index)}/${change.end}/arrowhead`;
+  const isSet = arrow[change.end].arrowhead !== undefined;
+  if (change.value === undefined) return isSet ? [{ op: JsonPatchOperationType.Remove, path: arrowheadPointer }] : [];
+
+  return [
+    {
+      op: isSet ? JsonPatchOperationType.Replace : JsonPatchOperationType.Add,
+      path: arrowheadPointer,
+      value: change.value,
+    },
+  ];
 };
 
 // An unwrapped text box is as wide as its widest line at its size, so a change to its wrap or its size sets that width in the same edit. A wrapped
@@ -77,14 +97,15 @@ export const updatePositionedElementProperty = (
 ): JsonPatchOperation[] => {
   const element = getPositionedElement(document, index);
   if (!element || !checkIsHeld(element, change)) return [];
+  if (element.type === PositionedElementType.Arrow && change.property === "arrowhead")
+    return getArrowheadOperations(index, element, change);
 
-  const propertyPath = change.property === "hasArrowhead" ? `${change.end}/hasArrowhead` : change.property;
   // An alignment an element has not set is absent from the document, so the first one is added, and a later one replaces it
   const isAbsentUntilSet = change.property === "horizontalAlignment" || change.property === "verticalAlignment";
   const operations: JsonPatchOperation[] = [
     {
       op: isAbsentUntilSet ? JsonPatchOperationType.Add : JsonPatchOperationType.Replace,
-      path: `${getElementPointer(index)}/${propertyPath}`,
+      path: `${getElementPointer(index)}/${change.property}`,
       value: change.value,
     },
   ];

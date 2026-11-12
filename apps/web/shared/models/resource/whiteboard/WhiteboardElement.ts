@@ -37,12 +37,17 @@ const HORIZONTAL_ALIGNMENT_DESCRIPTION =
   "Where the text sits across its element: left, centre or right. A shape and a sticky note centre their text, and a text box starts it at its left edge, when left out";
 const VERTICAL_ALIGNMENT_DESCRIPTION =
   "Where the text sits down a shape or a sticky note: top, middle or bottom. Middle when left out";
+// An end with no arrowhead leaves the field out, since an enum takes no value for none
+const ARROWHEAD_DESCRIPTION =
+  "The arrowhead drawn at this end of the arrow: triangle, diamond, circle or bar. Left out, the end draws no arrowhead";
 const IS_WRAPPED_DESCRIPTION =
   "Whether a text box wraps its text at its width. False is auto width: the text is not wrapped and the box is as wide as its widest line. Wrapped when left out";
 
-// An arrow end's point is the connection point its binding names, so the core derives it and an agent is refused a write to it by path
-const whiteboardArrowEndSchema = z.object({
+// An arrow end's point is the connection point its binding names, so the core derives it and an agent is refused a write to it by path. The end is strict,
+// As the core's end is, since a spread of its fields does not carry the strict mode, so a stored end still holding the old arrowhead flag fails its parse
+const whiteboardArrowEndSchema = z.strictObject({
   ...arrowEndSchema.shape,
+  arrowhead: arrowEndSchema.shape.arrowhead.meta({ description: ARROWHEAD_DESCRIPTION }),
   binding: arrowEndSchema.shape.binding.meta({
     description:
       "The shape this end is bound to, by its id and the index of one of its four connection points, numbered from the top clockwise. An annotation takes no binding",

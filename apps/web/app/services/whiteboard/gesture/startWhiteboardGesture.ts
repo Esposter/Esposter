@@ -9,8 +9,8 @@ import { MIDDLE_BUTTON, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/con
 import { getArrowEnd } from "@/services/whiteboard/gesture/getArrowEnd";
 import { getHitElementId } from "@/services/whiteboard/gesture/getHitElementId";
 import { getHitTolerance } from "@/services/whiteboard/gesture/getHitTolerance";
+import { getPressedHandle } from "@/services/whiteboard/gesture/getPressedHandle";
 import { getPressedSelection } from "@/services/whiteboard/gesture/getPressedSelection";
-import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
 import { getStrokeOperations } from "@/services/whiteboard/gesture/getStrokeOperations";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { startPlacingGesture } from "@/services/whiteboard/gesture/startPlacingGesture";
@@ -53,7 +53,7 @@ export const startWhiteboardGesture = (
             phase: GesturePhase.Arrow,
             pointerId: event.pointerId,
             screen: event.screen,
-            start: getArrowEnd(state, origin, false),
+            start: getArrowEnd(state, origin),
           },
         },
       };
@@ -71,8 +71,46 @@ export const startWhiteboardGesture = (
     }
     case GestureTool.Select: {
       const tolerance = getHitTolerance(state.viewport.scale);
-      const handle = getResizeHandle(state.document, state.selectedIds, origin, tolerance);
-      const elementId = handle === undefined ? (getHitElementId(state.document, origin, tolerance) ?? "") : "";
+      const pressedHandle = getPressedHandle(
+        state.document,
+        state.selectedIds,
+        origin,
+        tolerance,
+        state.viewport.scale,
+      );
+      if (pressedHandle?.kind === "connection")
+        return {
+          operations: [],
+          state: {
+            ...state,
+            gesture: {
+              arrowId: state.createId(),
+              connectionIndex: pressedHandle.connectionIndex,
+              elementId: pressedHandle.elementId,
+              phase: GesturePhase.Connecting,
+              pointerId: event.pointerId,
+              screen: event.screen,
+              shapeId: state.createId(),
+            },
+          },
+        };
+      if (pressedHandle?.kind === "end")
+        return {
+          operations: [],
+          state: {
+            ...state,
+            gesture: {
+              arrowId: pressedHandle.arrowId,
+              endKey: pressedHandle.endKey,
+              origin,
+              phase: GesturePhase.End,
+              pointerId: event.pointerId,
+              screen: event.screen,
+            },
+          },
+        };
+      const handle = pressedHandle?.kind === "resize" ? pressedHandle.handle : undefined;
+      const elementId = pressedHandle === undefined ? (getHitElementId(state.document, origin, tolerance) ?? "") : "";
       const selectedIds =
         !elementId || handle !== undefined
           ? state.selectedIds

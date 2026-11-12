@@ -1,6 +1,7 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 import type { ShapeElement } from "#src/models/ShapeElement";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
@@ -73,16 +74,12 @@ export const POSITIONED_ANNOTATION: ShapeElement = {
 export const POSITIONED_ARROW: ArrowElement = {
   color: "",
   dashPattern: DashPattern.Solid,
-  end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+  end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
   id: POSITIONED_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
   sketchLevel: SketchLevel.Artist,
-  start: {
-    binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID },
-    hasArrowhead: false,
-    point: { x: 50, y: 100 },
-  },
+  start: { binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID }, point: { x: 50, y: 100 } },
   strokeWidth: StrokeWidth.Medium,
   textSize: TextSize.Small,
   type: PositionedElementType.Arrow,
@@ -91,12 +88,12 @@ export const POSITIONED_ARROW: ArrowElement = {
 export const POSITIONED_FREE_ARROW: ArrowElement = {
   color: "",
   dashPattern: DashPattern.Solid,
-  end: { hasArrowhead: true, point: { x: 250, y: 150 } },
+  end: { arrowhead: ArrowheadKind.Triangle, point: { x: 250, y: 150 } },
   id: POSITIONED_FREE_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
   sketchLevel: SketchLevel.Artist,
-  start: { hasArrowhead: false, point: { x: 150, y: 50 } },
+  start: { point: { x: 150, y: 50 } },
   strokeWidth: StrokeWidth.Medium,
   textSize: TextSize.Small,
   type: PositionedElementType.Arrow,

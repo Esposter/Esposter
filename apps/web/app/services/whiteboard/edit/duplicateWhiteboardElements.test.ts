@@ -9,10 +9,11 @@ import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constant
 import { duplicateWhiteboardElements } from "@/services/whiteboard/edit/duplicateWhiteboardElements";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
+import { ArrowheadKind } from "vue-block-editor-headless";
 
 describe(duplicateWhiteboardElements, () => {
   const ARROW_COPY_END = {
-    hasArrowhead: true,
+    arrowhead: ArrowheadKind.Triangle,
     point: {
       x: WHITEBOARD_ARROW.end.point.x + WHITEBOARD_DUPLICATE_OFFSET,
       y: WHITEBOARD_ARROW.end.point.y + WHITEBOARD_DUPLICATE_OFFSET,
@@ -41,7 +42,6 @@ describe(duplicateWhiteboardElements, () => {
           id: arrowCopyId,
           start: {
             binding: { connectionPointIndex: 2, elementId: processCopyId },
-            hasArrowhead: false,
             point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET },
           },
         },
@@ -60,10 +60,7 @@ describe(duplicateWhiteboardElements, () => {
       ...WHITEBOARD_ARROW,
       end: ARROW_COPY_END,
       id: arrowCopyId,
-      start: {
-        hasArrowhead: false,
-        point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET },
-      },
+      start: { point: { x: 50 + WHITEBOARD_DUPLICATE_OFFSET, y: 100 + WHITEBOARD_DUPLICATE_OFFSET } },
     });
   });
 });

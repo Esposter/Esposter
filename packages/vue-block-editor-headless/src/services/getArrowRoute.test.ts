@@ -1,5 +1,6 @@
 import type { ArrowElement } from "#src/models/ArrowElement";
 
+import { ArrowheadKind } from "#src/models/ArrowheadKind";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
@@ -20,16 +21,12 @@ describe(getArrowRoute, () => {
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 150, y: 250 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.RightAngled,
       sketchLevel: SketchLevel.Artist,
-      start: {
-        binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID },
-        hasArrowhead: false,
-        point: { x: 50, y: 100 },
-      },
+      start: { binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID }, point: { x: 50, y: 100 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
@@ -50,12 +47,12 @@ describe(getArrowRoute, () => {
     const arrow: ArrowElement = {
       color: "",
       dashPattern: DashPattern.Solid,
-      end: { hasArrowhead: true, point: { x: 300, y: 0 } },
+      end: { arrowhead: ArrowheadKind.Triangle, point: { x: 300, y: 0 } },
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Curved,
       sketchLevel: SketchLevel.Artist,
-      start: { hasArrowhead: false, point: { x: 0, y: 0 } },
+      start: { point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
