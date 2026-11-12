@@ -2,8 +2,8 @@
 import { getWhiteboardElementTitle } from "@/services/whiteboard/getWhiteboardElementTitle";
 import { PositionedElementType } from "vue-block-editor-headless";
 
-// The panel an arrow selected opens: its route and arrowheads, its colour, width and dash pattern, its stacking and the footer. It is the content
-// The layout keys to the arrow's selection kind
+// The panel an arrow selected opens: its route and arrowheads, its colour, width, dash pattern and sketch level, its stacking and the footer. It is the
+// Content the layout keys to the arrow's selection kind
 const selected = useWhiteboardSelectedElement();
 </script>
 
@@ -15,6 +15,11 @@ const selected = useWhiteboardSelectedElement();
       :index="selected.index"
     />
     <ResourceWhiteboardEditorPropertiesStroke
+      v-if="selected.element.type === PositionedElementType.Arrow"
+      :element="selected.element"
+      :index="selected.index"
+    />
+    <ResourceWhiteboardEditorPropertiesSketch
       v-if="selected.element.type === PositionedElementType.Arrow"
       :element="selected.element"
       :index="selected.index"

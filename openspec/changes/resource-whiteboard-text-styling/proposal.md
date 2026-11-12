@@ -18,4 +18,4 @@ Every text on the whiteboard draws at one fixed size, centred in its shape or hu
 
 ## Impact
 
-The properties panel gains text controls for the one selected element, chosen by its kind. The stored document gains optional fields on the shape, the sticky note, the text box and the arrow. A stored element that lacks a new field reads that field's default, so no stored text moves or changes size. The export draws the same sizes and alignments as the canvas. This change lands after the stroke-and-fill and shape-look changes, which add controls to the same panel.
+The properties panel gains text controls for the one selected element, chosen by its kind. The stored document gains optional fields on the shape, the sticky note, the text box and the arrow. A stored element that lacks a new field reads that field's default, so no stored text moves or changes size. The export draws the same sizes and alignments as the canvas. This change extends the panel controls the stroke-and-fill and shape-look changes added.

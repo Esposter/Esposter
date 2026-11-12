@@ -16,7 +16,7 @@ interface Props {
 
 const { arrow } = defineProps<Props>();
 const route = computed(() => getArrowRoute(arrow));
-const path = computed(() => toSketchedPathData(route.value, arrow.id));
+const path = computed(() => toSketchedPathData(route.value, arrow.id, arrow.sketchLevel));
 const arrowheads = computed(() => getArrowheads(arrow, route.value).map((points) => toPolygonPoints(points)));
 const attributes = computed(() => getStrokeAttributes(arrow, WHITEBOARD_TEXT_COLOR));
 </script>

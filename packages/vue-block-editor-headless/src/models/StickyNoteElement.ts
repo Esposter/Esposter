@@ -5,15 +5,18 @@ import { boxElementSchema } from "#src/models/BoxElement";
 import { DashPattern, dashPatternSchema } from "#src/models/DashPattern";
 import { elementColorSchema } from "#src/models/ElementColor";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { SketchLevel, sketchLevelSchema } from "#src/models/SketchLevel";
 import { StrokeWidth, strokeWidthSchema } from "#src/models/StrokeWidth";
 import { HEX_COLOR_REGEX } from "#src/services/constants";
 import { z } from "zod";
 
-// A sticky note: a box with a fill and text, drawn in the sticky-note look. Its outline draws in its colour, at its width and in its dash pattern
+// A sticky note: a box with a fill and text, drawn in the sticky-note look. Its outline draws in its colour, at its width, in its dash pattern and at
+// Its sketch level
 export interface StickyNoteElement extends BoxElement, ItemEntityType<PositionedElementType.StickyNote> {
   color: string;
   dashPattern: DashPattern;
   fill: string;
+  sketchLevel: SketchLevel;
   strokeWidth: StrokeWidth;
   text: string;
 }
@@ -23,6 +26,7 @@ export const stickyNoteElementSchema: z.ZodObject<
     color: z.ZodDefault<typeof elementColorSchema>;
     dashPattern: z.ZodDefault<typeof dashPatternSchema>;
     fill: z.ZodString;
+    sketchLevel: z.ZodDefault<typeof sketchLevelSchema>;
     strokeWidth: z.ZodDefault<typeof strokeWidthSchema>;
     text: z.ZodString;
     type: z.ZodLiteral<PositionedElementType.StickyNote>;
@@ -32,6 +36,7 @@ export const stickyNoteElementSchema: z.ZodObject<
   color: elementColorSchema.default(""),
   dashPattern: dashPatternSchema.default(DashPattern.Solid),
   fill: z.string().regex(HEX_COLOR_REGEX),
+  sketchLevel: sketchLevelSchema.default(SketchLevel.Artist),
   strokeWidth: strokeWidthSchema.default(StrokeWidth.Medium),
   text: z.string(),
   type: z.literal(PositionedElementType.StickyNote),

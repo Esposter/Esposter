@@ -2,9 +2,11 @@ import type { ArrowElement } from "#src/models/ArrowElement";
 import type { ShapeElement } from "#src/models/ShapeElement";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { describe } from "vitest";
 
@@ -17,11 +19,13 @@ export const POSITIONED_RECTANGLE_ID: string = crypto.randomUUID();
 // A rectangle at the origin, 100 by 100: its bottom point is at (50, 100)
 export const POSITIONED_RECTANGLE: ShapeElement = {
   color: "",
+  cornerStyle: CornerStyle.Sharp,
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: 100,
   id: POSITIONED_RECTANGLE_ID,
   kind: ShapeKind.Rectangle,
+  sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
@@ -31,11 +35,13 @@ export const POSITIONED_RECTANGLE: ShapeElement = {
 };
 export const POSITIONED_PROCESS: ShapeElement = {
   color: "",
+  cornerStyle: CornerStyle.Sharp,
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: 100,
   id: POSITIONED_PROCESS_ID,
   kind: ShapeKind.Process,
+  sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
@@ -45,11 +51,13 @@ export const POSITIONED_PROCESS: ShapeElement = {
 };
 export const POSITIONED_ANNOTATION: ShapeElement = {
   color: "",
+  cornerStyle: CornerStyle.Sharp,
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: 100,
   id: POSITIONED_ANNOTATION_ID,
   kind: ShapeKind.Annotation,
+  sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
@@ -65,6 +73,7 @@ export const POSITIONED_ARROW: ArrowElement = {
   id: POSITIONED_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
+  sketchLevel: SketchLevel.Artist,
   start: {
     binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID },
     hasArrowhead: false,
@@ -81,6 +90,7 @@ export const POSITIONED_FREE_ARROW: ArrowElement = {
   id: POSITIONED_FREE_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
+  sketchLevel: SketchLevel.Artist,
   start: { hasArrowhead: false, point: { x: 150, y: 50 } },
   strokeWidth: StrokeWidth.Medium,
   type: PositionedElementType.Arrow,

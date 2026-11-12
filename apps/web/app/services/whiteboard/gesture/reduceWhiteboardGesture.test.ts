@@ -17,15 +17,25 @@ import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhi
 import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
+import {
+  ArrowPathKind,
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  SketchLevel,
+  StrokeWidth,
+} from "vue-block-editor-headless";
 
 const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
   color: "",
+  cornerStyle: CornerStyle.Sharp,
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: bounds.height,
   id,
   kind: ShapeKind.Process,
+  sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
@@ -55,6 +65,7 @@ describe(reduceWhiteboardGesture, () => {
     id: NEW_ARROW_ID,
     label: "",
     pathKind: ArrowPathKind.Straight,
+    sketchLevel: SketchLevel.Artist,
     start: {
       binding: { connectionPointIndex: 2, elementId: DECISION_ID },
       hasArrowhead: false,
@@ -101,6 +112,7 @@ describe(reduceWhiteboardGesture, () => {
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,
@@ -349,6 +361,7 @@ describe(reduceWhiteboardGesture, () => {
           id: NEW_ARROW_ID,
           label: "",
           pathKind: ArrowPathKind.Straight,
+          sketchLevel: SketchLevel.Artist,
           start: {
             binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
             hasArrowhead: false,
@@ -378,6 +391,7 @@ describe(reduceWhiteboardGesture, () => {
       id: NEW_ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
       start: {
         binding: { connectionPointIndex: 1, elementId: PROCESS_ID },
         hasArrowhead: false,
@@ -488,6 +502,7 @@ describe(reduceWhiteboardGesture, () => {
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
       start: {
         binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
         hasArrowhead: false,
@@ -521,11 +536,13 @@ describe(reduceWhiteboardGesture, () => {
         path: "/elements/0",
         value: {
           color: "",
+          cornerStyle: CornerStyle.Sharp,
           dashPattern: DashPattern.Solid,
           fill: WHITEBOARD_SHAPE_FILL,
           height: WHITEBOARD_SHAPE_SIZE.height,
           id: PLACED_SHAPE_ID,
           kind: ShapeKind.Rectangle,
+          sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "",
           type: PositionedElementType.Shape,
@@ -553,11 +570,13 @@ describe(reduceWhiteboardGesture, () => {
         path: "/elements/0",
         value: {
           color: "",
+          cornerStyle: CornerStyle.Sharp,
           dashPattern: DashPattern.Solid,
           fill: WHITEBOARD_SHAPE_FILL,
           height: 60,
           id: PLACED_SHAPE_ID,
           kind: ShapeKind.Rectangle,
+          sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "",
           type: PositionedElementType.Shape,

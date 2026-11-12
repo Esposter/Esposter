@@ -2,7 +2,7 @@
 import type { StrokeElement } from "vue-block-editor-headless";
 
 import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
-import { getStrokeAttributes, toPathData } from "vue-block-editor-headless";
+import { getStrokeAttributes, toSmoothedPathData } from "vue-block-editor-headless";
 
 interface Props {
   stroke: StrokeElement;
@@ -14,7 +14,7 @@ const attributes = computed(() => getStrokeAttributes(stroke, WHITEBOARD_TEXT_CO
 
 <template>
   <path
-    :d="toPathData(stroke.points)"
+    :d="toSmoothedPathData(stroke.points)"
     fill="none"
     :stroke="attributes.stroke"
     :stroke-width="attributes.strokeWidth"

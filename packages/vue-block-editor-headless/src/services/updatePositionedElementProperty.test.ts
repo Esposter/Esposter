@@ -3,8 +3,10 @@ import type { StrokeElement } from "#src/models/StrokeElement";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { ShapeKind } from "#src/models/ShapeKind";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
@@ -83,5 +85,15 @@ describe(updatePositionedElementProperty, () => {
     );
 
     expect(editedDocument?.elements[0]).toStrictEqual({ ...stroke, color: "#ff0000" });
+  });
+
+  test("an ellipse holds no corner setting, so setting one makes no operation", () => {
+    expect.hasAssertions();
+
+    const ellipseDocument: PositionedDocument = { elements: [{ ...POSITIONED_RECTANGLE, kind: ShapeKind.Ellipse }] };
+
+    expect(
+      updatePositionedElementProperty(ellipseDocument, 0, { property: "cornerStyle", value: CornerStyle.Round }),
+    ).toStrictEqual([]);
   });
 });

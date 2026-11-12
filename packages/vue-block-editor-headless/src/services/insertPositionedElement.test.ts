@@ -3,6 +3,7 @@ import type { StickyNoteElement } from "#src/models/StickyNoteElement";
 
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { insertPositionedElement } from "#src/services/insertPositionedElement";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
@@ -16,6 +17,7 @@ describe(insertPositionedElement, () => {
     fill: "#000000",
     height: 1,
     id: crypto.randomUUID(),
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
     type: PositionedElementType.StickyNote,

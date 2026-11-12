@@ -15,10 +15,12 @@ import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import {
+  CornerStyle,
   DashPattern,
   getExportBounds,
   PositionedElementType,
   ShapeKind,
+  SketchLevel,
   StrokeWidth,
   toPositionedSvg,
 } from "vue-block-editor-headless";
@@ -42,11 +44,13 @@ describe(exportWhiteboard, () => {
     elements: [
       {
         color: "",
+        cornerStyle: CornerStyle.Sharp,
         dashPattern: DashPattern.Solid,
         fill: "#ffffff",
         height: 100,
         id: PROCESS_ID,
         kind: ShapeKind.Process,
+        sketchLevel: SketchLevel.Artist,
         strokeWidth: StrokeWidth.Medium,
         text: "a",
         type: PositionedElementType.Shape,

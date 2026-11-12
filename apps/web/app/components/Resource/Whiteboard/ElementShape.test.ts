@@ -4,9 +4,11 @@ import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
+  CornerStyle,
   DashPattern,
   PositionedElementType,
   ShapeKind,
+  SketchLevel,
   STROKE_DASH_LENGTH,
   STROKE_GAP_LENGTH,
   StrokeWidth,
@@ -26,11 +28,13 @@ describe("resourceWhiteboardElementShape", () => {
     expect.hasAssertions();
     const shape = {
       color: "",
+      cornerStyle: CornerStyle.Sharp,
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 80,
       id: crypto.randomUUID(),
       kind: ShapeKind.Process,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.Shape,
@@ -51,11 +55,13 @@ describe("resourceWhiteboardElementShape", () => {
 
   const shape = {
     color: "",
+    cornerStyle: CornerStyle.Sharp,
     dashPattern: DashPattern.Solid,
     fill: "",
     height: 80,
     id: crypto.randomUUID(),
     kind: ShapeKind.Process,
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "Review",
     type: PositionedElementType.Shape,
@@ -111,5 +117,26 @@ describe("resourceWhiteboardElementShape", () => {
 
     expect(component.find("path").attributes("stroke-width")).toBe(`${StrokeWidth.Bold}`);
     expect(readExportAttribute(toShapeSvg(boldShape), "stroke-width")).toBe(`${StrokeWidth.Bold}`);
+  });
+
+  test("architect draws a shape with straight edges", () => {
+    expect.hasAssertions();
+
+    const architectShape = { ...shape, sketchLevel: SketchLevel.Architect } as const;
+    const component = mount(ResourceWhiteboardElementShape, { props: { shape: architectShape } });
+
+    expect(component.find("path").attributes("d")).toBe("M0 0 L120 0 L120 80 L0 80 Z");
+  });
+
+  test("round corners curve the outline", () => {
+    expect.hasAssertions();
+
+    const roundShape = { ...shape, cornerStyle: CornerStyle.Round } as const;
+    const outline = mount(ResourceWhiteboardElementShape, { props: { shape: roundShape } })
+      .find("path")
+      .attributes("d");
+
+    expect(outline).toContain("Q");
+    expect(outline).toBe(/<path d="(?<outline>[^"]*)"/u.exec(toShapeSvg(roundShape))?.groups?.outline);
   });
 });

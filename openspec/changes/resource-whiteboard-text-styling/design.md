@@ -1,4 +1,4 @@
-This change builds on the [stroke-and-fill change](../resource-whiteboard-stroke-and-fill/design.md) and the [shape-look change](../resource-whiteboard-shape-look/design.md), which add the fields and the panel controls this one extends, so it lands after both.
+This change builds on the stroke-and-fill and shape-look changes, which have shipped into the [whiteboard design](../../specs/resource/whiteboard/design.md) and added the fields and the panel controls this one extends.
 
 ## Context
 

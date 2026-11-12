@@ -9,7 +9,9 @@ interface Props {
 }
 
 const { stickyNote } = defineProps<Props>();
-const box = computed(() => toClosedSketchedPathData(getBoundsCorners(stickyNote), stickyNote.id));
+const box = computed(() =>
+  toClosedSketchedPathData(getBoundsCorners(stickyNote), stickyNote.id, stickyNote.sketchLevel),
+);
 const attributes = computed(() => getStrokeAttributes(stickyNote, WHITEBOARD_TEXT_COLOR));
 </script>
 

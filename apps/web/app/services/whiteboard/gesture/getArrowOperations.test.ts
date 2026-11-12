@@ -1,7 +1,7 @@
 import { getArrowOperations } from "@/services/whiteboard/gesture/getArrowOperations";
 import { applyPatches } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ArrowPathKind, DashPattern, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
+import { ArrowPathKind, DashPattern, PositionedElementType, SketchLevel, StrokeWidth } from "vue-block-editor-headless";
 
 describe(getArrowOperations, () => {
   test("a new arrow draws at medium width", () => {
@@ -25,6 +25,7 @@ describe(getArrowOperations, () => {
           id: arrowId,
           label: "",
           pathKind: ArrowPathKind.Straight,
+          sketchLevel: SketchLevel.Artist,
           start: { hasArrowhead: false, point: { x: 0, y: 0 } },
           strokeWidth: StrokeWidth.Medium,
           type: PositionedElementType.Arrow,

@@ -4,6 +4,7 @@ import type { TextElement } from "#src/models/TextElement";
 
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
@@ -54,6 +55,7 @@ describe(resizePositionedElement, () => {
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.StickyNote,

@@ -4,6 +4,7 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { deletePositionedElement } from "#src/services/deletePositionedElement";
 import {
@@ -31,6 +32,7 @@ describe(deletePositionedElement, () => {
       id: crypto.randomUUID(),
       label: "",
       pathKind: ArrowPathKind.Straight,
+      sketchLevel: SketchLevel.Artist,
       start: POSITIONED_ARROW.start,
       strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,

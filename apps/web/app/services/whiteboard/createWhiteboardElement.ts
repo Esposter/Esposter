@@ -7,10 +7,11 @@ import {
   WHITEBOARD_STICKY_NOTE_FILL,
   WHITEBOARD_TEXT_BOX_TEXT,
 } from "@/services/whiteboard/palette/constants";
-import { DashPattern, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
+import { CornerStyle, DashPattern, PositionedElementType, SketchLevel, StrokeWidth } from "vue-block-editor-headless";
 
 // A new element of a placement in a box, with the id the caller fixes and the text and fill it starts with. A text box keeps no
-// Height, since its text sets it. A shape and a sticky note start solid at medium width, and an empty colour draws in the page's text colour
+// Height, since its text sets it. A shape and a sticky note start solid at medium width, drawn at the artist sketch, and an empty colour draws in the
+// Page's text colour. A shape starts with sharp corners
 export const createWhiteboardElement = (
   placement: WhiteboardPlacement,
   id: string,
@@ -23,6 +24,7 @@ export const createWhiteboardElement = (
     dashPattern: DashPattern.Solid,
     height,
     id,
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
     width,
@@ -31,5 +33,11 @@ export const createWhiteboardElement = (
   };
   if (placement.type === PositionedElementType.StickyNote)
     return { ...element, fill: WHITEBOARD_STICKY_NOTE_FILL, type: placement.type };
-  return { ...element, fill: WHITEBOARD_SHAPE_FILL, kind: placement.kind, type: placement.type };
+  return {
+    ...element,
+    cornerStyle: CornerStyle.Sharp,
+    fill: WHITEBOARD_SHAPE_FILL,
+    kind: placement.kind,
+    type: placement.type,
+  };
 };

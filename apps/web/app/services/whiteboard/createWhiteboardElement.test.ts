@@ -1,7 +1,14 @@
 import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
 import { WHITEBOARD_STICKY_NOTE_FILL } from "@/services/whiteboard/palette/constants";
 import { describe, expect, test } from "vitest";
-import { DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
+import {
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  SketchLevel,
+  StrokeWidth,
+} from "vue-block-editor-headless";
 
 describe(createWhiteboardElement, () => {
   const ELEMENT_ID = crypto.randomUUID();
@@ -18,11 +25,13 @@ describe(createWhiteboardElement, () => {
 
     expect(shape).toStrictEqual({
       color: "",
+      cornerStyle: CornerStyle.Sharp,
       dashPattern: DashPattern.Solid,
       fill: "",
       height: 80,
       id: ELEMENT_ID,
       kind: ShapeKind.Process,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.Shape,
@@ -43,6 +52,7 @@ describe(createWhiteboardElement, () => {
       fill: WHITEBOARD_STICKY_NOTE_FILL,
       height: 80,
       id: ELEMENT_ID,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.StickyNote,

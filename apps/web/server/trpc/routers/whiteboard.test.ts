@@ -5,7 +5,15 @@ import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { beforeAll, describe, expect, test } from "vitest";
-import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
+import {
+  ArrowPathKind,
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  SketchLevel,
+  StrokeWidth,
+} from "vue-block-editor-headless";
 
 describe("whiteboardRouter", () => {
   const { getCaller } = setupResourceSuite(whiteboardRouter);
@@ -15,11 +23,13 @@ describe("whiteboardRouter", () => {
   // A rectangle at the origin, 100 by 100, with an arrow bound at its start to its bottom point
   const shape: ShapeElement = {
     color: "",
+    cornerStyle: CornerStyle.Sharp,
     dashPattern: DashPattern.Solid,
     fill: "#ffffff",
     height: 100,
     id: shapeId,
     kind: ShapeKind.Rectangle,
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
     type: PositionedElementType.Shape,
@@ -34,6 +44,7 @@ describe("whiteboardRouter", () => {
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
+    sketchLevel: SketchLevel.Artist,
     start: { binding: { connectionPointIndex: 2, elementId: shapeId }, hasArrowhead: false, point: { x: 50, y: 100 } },
     strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Arrow,

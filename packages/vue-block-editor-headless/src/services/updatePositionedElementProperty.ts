@@ -4,17 +4,22 @@ import type { PositionedElementProperty } from "#src/models/PositionedElementPro
 import type { JsonPatchOperation } from "@esposter/shared";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { ShapeKind } from "#src/models/ShapeKind";
 import { getElementPointer } from "#src/services/getElementPointer";
 import { getPositionedElement } from "#src/services/getPositionedElement";
 import { exhaustiveGuard, JsonPatchOperationType } from "@esposter/shared";
 
 // Whether an element holds the property a change sets: a colour every element but an image holds, a width an outline or a stroke holds, a dash
-// Pattern an outline or a route holds, a fill a shape or a sticky note holds, and a route or an arrowhead an arrow holds
+// Pattern and a sketch level an outline or a route holds, a fill a shape or a sticky note holds, corners a shape holds but an ellipse does not, and a route
+// Or an arrowhead an arrow holds
 const checkIsHeld = (element: PositionedElement, change: PositionedElementProperty): boolean => {
   switch (change.property) {
     case "color":
       return element.type !== PositionedElementType.Image;
+    case "cornerStyle":
+      return element.type === PositionedElementType.Shape && element.kind !== ShapeKind.Ellipse;
     case "dashPattern":
+    case "sketchLevel":
       return (
         element.type === PositionedElementType.Arrow ||
         element.type === PositionedElementType.Shape ||

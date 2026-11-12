@@ -5,7 +5,15 @@ import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-e
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
 import { createHistory } from "@esposter/shared";
 import { describe } from "vitest";
-import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
+import {
+  ArrowPathKind,
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  SketchLevel,
+  StrokeWidth,
+} from "vue-block-editor-headless";
 
 export const WHITEBOARD_ARROW_ID = crypto.randomUUID();
 export const WHITEBOARD_PROCESS_ID = crypto.randomUUID();
@@ -13,11 +21,13 @@ export const WHITEBOARD_PROCESS_ID = crypto.randomUUID();
 // A process shape at the origin, 100 by 100: its bottom point is at (50, 100)
 export const WHITEBOARD_PROCESS: ShapeElement = {
   color: "",
+  cornerStyle: CornerStyle.Sharp,
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height: 100,
   id: WHITEBOARD_PROCESS_ID,
   kind: ShapeKind.Process,
+  sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
   type: PositionedElementType.Shape,
@@ -33,6 +43,7 @@ export const WHITEBOARD_ARROW: ArrowElement = {
   id: WHITEBOARD_ARROW_ID,
   label: "",
   pathKind: ArrowPathKind.Straight,
+  sketchLevel: SketchLevel.Artist,
   start: {
     binding: { connectionPointIndex: 2, elementId: WHITEBOARD_PROCESS_ID },
     hasArrowhead: false,

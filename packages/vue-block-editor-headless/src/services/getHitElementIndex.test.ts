@@ -2,9 +2,11 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { ShapeElement } from "#src/models/ShapeElement";
 import type { TextElement } from "#src/models/TextElement";
 
+import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TEXT_LINE_HEIGHT } from "#src/services/export/constants";
 import { getHitElementIndex } from "#src/services/getHitElementIndex";
@@ -18,11 +20,13 @@ describe(getHitElementIndex, () => {
 
     const diamond: ShapeElement = {
       color: "",
+      cornerStyle: CornerStyle.Sharp,
       dashPattern: DashPattern.Solid,
       fill: "#000000",
       height: 100,
       id: DIAMOND_ID,
       kind: ShapeKind.Diamond,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.Shape,

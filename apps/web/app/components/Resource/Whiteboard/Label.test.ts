@@ -5,9 +5,11 @@ import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
+  CornerStyle,
   DashPattern,
   PositionedElementType,
   ShapeKind,
+  SketchLevel,
   StrokeWidth,
   toElementTextSvg,
 } from "vue-block-editor-headless";
@@ -21,11 +23,13 @@ describe("resourceWhiteboardLabel", () => {
     expect.hasAssertions();
     const shape = {
       color: "",
+      cornerStyle: CornerStyle.Sharp,
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
       kind: ShapeKind.Process,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "a b c d",
       type: PositionedElementType.Shape,
@@ -49,11 +53,13 @@ describe("resourceWhiteboardLabel", () => {
     expect.hasAssertions();
     const shape = {
       color: "",
+      cornerStyle: CornerStyle.Sharp,
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
       id: crypto.randomUUID(),
       kind: ShapeKind.Process,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "a",
       type: PositionedElementType.Shape,

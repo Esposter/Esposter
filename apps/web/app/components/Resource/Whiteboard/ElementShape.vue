@@ -2,14 +2,14 @@
 import type { ShapeElement } from "vue-block-editor-headless";
 
 import { WHITEBOARD_TEXT_COLOR } from "@/services/whiteboard/palette/constants";
-import { getShapeOutline, getStrokeAttributes, toClosedSketchedPathData } from "vue-block-editor-headless";
+import { getStrokeAttributes, toShapeOutlinePathData } from "vue-block-editor-headless";
 
 interface Props {
   shape: ShapeElement;
 }
 
 const { shape } = defineProps<Props>();
-const outline = computed(() => toClosedSketchedPathData(getShapeOutline(shape), shape.id));
+const outline = computed(() => toShapeOutlinePathData(shape));
 const attributes = computed(() => getStrokeAttributes(shape, WHITEBOARD_TEXT_COLOR));
 </script>
 

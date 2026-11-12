@@ -10,7 +10,7 @@ import { getBoundsCorners } from "#src/services/getBoundsCorners";
 
 // A sticky note as the export draws it: its box sketched and filled with its colour, with its text centred in it
 export const toStickyNoteSvg = (stickyNote: StickyNoteElement): string => {
-  const { fill, id } = stickyNote;
+  const { fill, id, sketchLevel } = stickyNote;
   const strokeAttributes = toStrokeAttributesSvg(getStrokeAttributes(stickyNote, EXPORT_LINE_COLOR));
-  return `<path d="${toClosedSketchedPathData(getBoundsCorners(stickyNote), id)}" fill="${escapeSvgValue(fill)}" ${strokeAttributes}/>${toElementTextSvg(stickyNote)}`;
+  return `<path d="${toClosedSketchedPathData(getBoundsCorners(stickyNote), id, sketchLevel)}" fill="${escapeSvgValue(fill)}" ${strokeAttributes}/>${toElementTextSvg(stickyNote)}`;
 };

@@ -9,6 +9,7 @@ import {
   DashPattern,
   insertPositionedElement,
   PositionedElementType,
+  SketchLevel,
   StrokeWidth,
 } from "vue-block-editor-headless";
 
@@ -29,6 +30,7 @@ export const getArrowOperations = (
     id: elementId,
     label: "",
     pathKind: ArrowPathKind.Straight,
+    sketchLevel: SketchLevel.Artist,
     start: { hasArrowhead: start.hasArrowhead, point: start.point },
     strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Arrow,

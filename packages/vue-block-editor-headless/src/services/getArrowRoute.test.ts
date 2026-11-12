@@ -3,6 +3,7 @@ import type { ArrowElement } from "#src/models/ArrowElement";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { ARROW_STUB_LENGTH } from "#src/services/constants";
 import { getArrowRoute } from "#src/services/getArrowRoute";
@@ -22,6 +23,7 @@ describe(getArrowRoute, () => {
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.RightAngled,
+      sketchLevel: SketchLevel.Artist,
       start: {
         binding: { connectionPointIndex: 2, elementId: POSITIONED_RECTANGLE_ID },
         hasArrowhead: false,
@@ -50,6 +52,7 @@ describe(getArrowRoute, () => {
       id: ARROW_ID,
       label: "",
       pathKind: ArrowPathKind.Curved,
+      sketchLevel: SketchLevel.Artist,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
       type: PositionedElementType.Arrow,

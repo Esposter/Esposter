@@ -2,9 +2,11 @@ import type { ArrowElement } from "#src/models/ArrowElement";
 import type { ShapeElement } from "#src/models/ShapeElement";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { DOTTED_STROKE_DASH_LENGTH, STROKE_DASH_LENGTH, STROKE_GAP_LENGTH } from "#src/services/export/constants";
 import { getStrokeAttributes } from "#src/services/export/getStrokeAttributes";
@@ -20,11 +22,13 @@ const readAttribute = (svg: string, name: string): string | undefined =>
 describe(getStrokeAttributes, () => {
   const SHAPE: ShapeElement = {
     color: "",
+    cornerStyle: CornerStyle.Sharp,
     dashPattern: DashPattern.Solid,
     fill: "#ffffff",
     height: 100,
     id: crypto.randomUUID(),
     kind: ShapeKind.Process,
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "Review",
     type: PositionedElementType.Shape,

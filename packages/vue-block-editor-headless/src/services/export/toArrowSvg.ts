@@ -17,7 +17,7 @@ export const toArrowSvg = (arrow: ArrowElement): string => {
   if (route.length < 2) return "";
   const attributes = getStrokeAttributes(arrow, EXPORT_LINE_COLOR);
   return [
-    `<path d="${toSketchedPathData(route, arrow.id)}" fill="none" ${toStrokeAttributesSvg(attributes)}/>`,
+    `<path d="${toSketchedPathData(route, arrow.id, arrow.sketchLevel)}" fill="none" ${toStrokeAttributesSvg(attributes)}/>`,
     ...getArrowheads(arrow, route).map(
       (points) => `<polygon points="${toPolygonPoints(points)}" fill="${escapeSvgValue(attributes.stroke)}"/>`,
     ),

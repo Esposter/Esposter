@@ -9,6 +9,7 @@ import {
   ArrowPathKind,
   DashPattern,
   PositionedElementType,
+  SketchLevel,
   STROKE_GAP_LENGTH,
   StrokeWidth,
 } from "vue-block-editor-headless";
@@ -25,6 +26,7 @@ describe("resourceWhiteboardElementArrow", () => {
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
+    sketchLevel: SketchLevel.Artist,
     start: { hasArrowhead: false, point: { x: 0, y: 0 } },
     strokeWidth: StrokeWidth.Medium,
     type: PositionedElementType.Arrow,
@@ -50,5 +52,15 @@ describe("resourceWhiteboardElementArrow", () => {
     // The arrowhead is a filled polygon, which no dash pattern reaches
     expect(component.find("polygon").attributes("stroke-dasharray")).toBeUndefined();
     expect(component.find("polygon").attributes("fill")).toBe("currentColor");
+  });
+
+  test("an arrow route is drawn straight at the architect level", () => {
+    expect.hasAssertions();
+
+    const component = mount(ResourceWhiteboardElementArrow, {
+      props: { arrow: { ...arrow, sketchLevel: SketchLevel.Architect } },
+    });
+
+    expect(component.find("path").attributes("d")).toBe("M0 0 L100 0");
   });
 });

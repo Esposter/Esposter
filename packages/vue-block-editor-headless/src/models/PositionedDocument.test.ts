@@ -6,6 +6,7 @@ import { DashPattern } from "#src/models/DashPattern";
 import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
@@ -36,6 +37,7 @@ describe("positionedDocumentSchema", () => {
       fill: "#000000",
       height: 80,
       id: stickyNoteId,
+      sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
       type: PositionedElementType.StickyNote,
@@ -85,6 +87,26 @@ describe("positionedDocumentSchema", () => {
 
     const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
       { op: JsonPatchOperationType.Replace, path: "/elements/0/dashPattern", value: "wavy" },
+    ]);
+
+    expect(editedDocument).toBeUndefined();
+  });
+
+  test("a sketch level that is not one of the three is refused", () => {
+    expect.hasAssertions();
+
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/sketchLevel", value: "wobbly" },
+    ]);
+
+    expect(editedDocument).toBeUndefined();
+  });
+
+  test("a corner setting that is not sharp or round is refused", () => {
+    expect.hasAssertions();
+
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/cornerStyle", value: "pointed" },
     ]);
 
     expect(editedDocument).toBeUndefined();

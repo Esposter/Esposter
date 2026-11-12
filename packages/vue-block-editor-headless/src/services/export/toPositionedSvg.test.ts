@@ -1,9 +1,11 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
+import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
+import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { toPositionedSvg } from "#src/services/export/toPositionedSvg";
 import { ZERO_UUID } from "@esposter/shared";
@@ -29,11 +31,13 @@ describe(toPositionedSvg, () => {
       elements: [
         {
           color: "",
+          cornerStyle: CornerStyle.Sharp,
           dashPattern: DashPattern.Solid,
           fill: "#ffffff",
           height: 100,
           id: PROCESS_ID,
           kind: ShapeKind.Process,
+          sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "a",
           type: PositionedElementType.Shape,
@@ -48,6 +52,7 @@ describe(toPositionedSvg, () => {
           id: ARROW_ID,
           label: "b",
           pathKind: ArrowPathKind.Straight,
+          sketchLevel: SketchLevel.Artist,
           start: {
             binding: { connectionPointIndex: 2, elementId: PROCESS_ID },
             hasArrowhead: false,
@@ -62,6 +67,7 @@ describe(toPositionedSvg, () => {
           fill: "#ffff00",
           height: 80,
           id: STICKY_NOTE_ID,
+          sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "c",
           type: PositionedElementType.StickyNote,
@@ -83,11 +89,13 @@ describe(toPositionedSvg, () => {
         { color: "", id: TEXT_ID, text: "d", type: PositionedElementType.Text, width: 100, x: 400, y: 0 },
         {
           color: "",
+          cornerStyle: CornerStyle.Sharp,
           dashPattern: DashPattern.Solid,
           fill: "#ffffff",
           height: 100,
           id: WRAPPED_PROCESS_ID,
           kind: ShapeKind.Process,
+          sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "a b c d",
           type: PositionedElementType.Shape,
