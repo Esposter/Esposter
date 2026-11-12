@@ -1,13 +1,13 @@
 import type { CanvasRect } from "@/models/whiteboard/CanvasRect";
 import type { Viewport } from "@/models/whiteboard/Viewport";
 import type { WhiteboardGesture } from "@/models/whiteboard/WhiteboardGesture";
-import type { Bounds, Point, PositionedDocument } from "vue-block-editor-headless";
+import type { Bounds, Point, PositionedDocument, PositionedElement } from "vue-block-editor-headless";
 
 import { GestureTool } from "@/models/whiteboard/GestureTool";
 import { getWorldPoint } from "@/services/whiteboard/gesture/getWorldPoint";
 import { getFitViewport } from "@/services/whiteboard/viewport/getFitViewport";
 import { getZoomedViewport } from "@/services/whiteboard/viewport/getZoomedViewport";
-import { ShapeKind } from "vue-block-editor-headless";
+import { getExportBounds, ShapeKind } from "vue-block-editor-headless";
 
 // The view of an open whiteboard: where its canvas sits on the page, what is selected, the tool and the shape a shape tool places, and the viewport.
 // It also holds whether the tool stays in hand after a placement, the gesture in progress with the document it would leave, and the element whose text is
@@ -47,9 +47,14 @@ export const useWhiteboardEditorStore = defineStore("resource/whiteboard/editor"
   const fitTo = (bounds: Bounds) => {
     viewport.value = getFitViewport(bounds, canvasRect.value);
   };
+  // A fit of nothing has no bounds to show, so no elements leave the view where it is
+  const fitToElements = (elements: PositionedElement[]) => {
+    if (elements.length > 0) fitTo(getExportBounds({ elements }));
+  };
   return {
     canvasRect,
     fitTo,
+    fitToElements,
     gesture,
     getCentrePoint,
     isSpaceHeld,

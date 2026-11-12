@@ -1,5 +1,4 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
-import type { PositionedElement } from "vue-block-editor-headless";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSelectedElements } from "@/services/whiteboard/getSelectedElements";
@@ -10,7 +9,6 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { checkIsElementTarget } from "@/util/dom/checkIsElementTarget";
 import { defaultWindow } from "@vueuse/core";
-import { getExportBounds } from "vue-block-editor-headless";
 
 // The keys that move a whiteboard's view: Ctrl or Cmd with 0 resets the zoom about the view's centre, Shift with 1 fits the content and Shift
 // With 2 the selection. A fit of nothing has no bounds to show, so an empty board leaves the view where it is. Space is read by its key down
@@ -20,10 +18,7 @@ export const useWhiteboardViewportKeyboard = () => {
   const { editState } = storeToRefs(whiteboardStore);
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { isSpaceHeld, selectedIds } = storeToRefs(whiteboardEditorStore);
-  const { fitTo, zoomTo } = whiteboardEditorStore;
-  const fitElements = (elements: PositionedElement[]) => {
-    if (elements.length > 0) fitTo(getExportBounds({ elements }));
-  };
+  const { fitToElements, zoomTo } = whiteboardEditorStore;
   const commands: UiCommand[] = [
     {
       group: WHITEBOARD_COMMAND_GROUP,
@@ -40,7 +35,7 @@ export const useWhiteboardViewportKeyboard = () => {
       id: "whiteboard-fit-content",
       meaning: UiIconMeaning.FitToContent,
       run: () => {
-        fitElements(editState.value.document.elements);
+        fitToElements(editState.value.document.elements);
       },
       shortcut: "shift+!",
       title: "Fit the content",
@@ -50,7 +45,7 @@ export const useWhiteboardViewportKeyboard = () => {
       id: "whiteboard-fit-selection",
       meaning: UiIconMeaning.FitPage,
       run: () => {
-        fitElements(getSelectedElements(editState.value.document, selectedIds.value).map(({ element }) => element));
+        fitToElements(getSelectedElements(editState.value.document, selectedIds.value).map(({ element }) => element));
       },
       shortcut: "shift+@",
       title: "Fit the selection",

@@ -15,7 +15,7 @@ import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 import { getResultAsync } from "@esposter/shared";
-import { changePositionedElementZOrder, getExportBounds, getPositionedElementText } from "vue-block-editor-headless";
+import { changePositionedElementZOrder, getPositionedElementText } from "vue-block-editor-headless";
 
 // The whiteboard's own context menu, opened on a right-click of its canvas. The element under the pointer is selected first unless the selection
 // Already holds it, and empty canvas clears the selection, so the menu is always about what is selected when it opens. Every item runs the
@@ -35,7 +35,7 @@ export const useWhiteboardContextMenu = (
   const { commitOperations } = whiteboardStore;
   const whiteboardEditorStore = useWhiteboardEditorStore();
   const { canvasRect, selectedIds, viewport } = storeToRefs(whiteboardEditorStore);
-  const { fitTo, zoomTo } = whiteboardEditorStore;
+  const { fitToElements, zoomTo } = whiteboardEditorStore;
   const { pasteText, ...selectionCommands } = commands;
   // The paste event cannot fire from a menu, so the clipboard is read when the item is chosen, and a read the browser refuses is told to the owner
   const paste = () =>
@@ -43,8 +43,7 @@ export const useWhiteboardContextMenu = (
       createAlert("Could not read the clipboard.", "error");
     });
   const fitToContent = () => {
-    const { elements } = editState.value.document;
-    if (elements.length > 0) fitTo(getExportBounds({ elements }));
+    fitToElements(editState.value.document.elements);
   };
   const resetZoom = () => {
     zoomTo(WHITEBOARD_RESET_SCALE);
