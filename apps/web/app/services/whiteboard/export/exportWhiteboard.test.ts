@@ -22,6 +22,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
   toPositionedSvg,
 } from "vue-block-editor-headless";
 
@@ -53,6 +54,7 @@ describe(exportWhiteboard, () => {
         sketchLevel: SketchLevel.Artist,
         strokeWidth: StrokeWidth.Medium,
         text: "a",
+        textSize: TextSize.Small,
         type: PositionedElementType.Shape,
         width: 100,
         x: 0,

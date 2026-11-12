@@ -7,18 +7,35 @@ import {
   WHITEBOARD_STICKY_NOTE_FILL,
   WHITEBOARD_TEXT_BOX_TEXT,
 } from "@/services/whiteboard/palette/constants";
-import { CornerStyle, DashPattern, PositionedElementType, SketchLevel, StrokeWidth } from "vue-block-editor-headless";
+import {
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  SketchLevel,
+  StrokeWidth,
+  TextSize,
+} from "vue-block-editor-headless";
 
 // A new element of a placement in a box, with the id the caller fixes and the text and fill it starts with. A text box keeps no
-// Height, since its text sets it. A shape and a sticky note start solid at medium width, drawn at the artist sketch, and an empty colour draws in the
-// Page's text colour. A shape starts with sharp corners
+// Height, since its text sets it, and starts wrapped at the small size. A shape and a sticky note start solid at medium width, drawn at the artist sketch
+// And at the small size, and an empty colour draws in the page's text colour. A shape starts with sharp corners
 export const createWhiteboardElement = (
   placement: WhiteboardPlacement,
   id: string,
   { height, width, x, y }: Bounds,
 ): WhiteboardElement => {
   if (placement.type === PositionedElementType.Text)
-    return { color: "", id, text: WHITEBOARD_TEXT_BOX_TEXT, type: placement.type, width, x, y };
+    return {
+      color: "",
+      id,
+      isWrapped: true,
+      text: WHITEBOARD_TEXT_BOX_TEXT,
+      textSize: TextSize.Small,
+      type: placement.type,
+      width,
+      x,
+      y,
+    };
   const element = {
     color: "",
     dashPattern: DashPattern.Solid,
@@ -27,6 +44,7 @@ export const createWhiteboardElement = (
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
+    textSize: TextSize.Small,
     width,
     x,
     y,

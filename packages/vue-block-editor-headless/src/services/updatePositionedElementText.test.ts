@@ -1,7 +1,10 @@
 import type { ImageElement } from "#src/models/ImageElement";
 import type { PositionedDocument } from "#src/models/PositionedDocument";
+import type { TextElement } from "#src/models/TextElement";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { TextSize } from "#src/models/TextSize";
+import { getTextWidth } from "#src/services/export/getTextWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementText } from "#src/services/updatePositionedElementText";
@@ -48,5 +51,27 @@ describe(updatePositionedElementText, () => {
     };
 
     expect(updatePositionedElementText({ elements: [image] }, 0, EDITED_TEXT)).toStrictEqual([]);
+  });
+
+  test("an unwrapped text box is as wide as its new widest line, in the same edit", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: false,
+      text: "a",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: getTextWidth("a", TextSize.Small),
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(document, updatePositionedElementText(document, 0, "ab\nabcd"));
+
+    expect(editedDocument?.elements).toStrictEqual([
+      { ...textBox, text: "ab\nabcd", width: getTextWidth("abcd", TextSize.Small) },
+    ]);
   });
 });

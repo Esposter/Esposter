@@ -8,6 +8,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { describe } from "vitest";
 
 export const POSITIONED_ANNOTATION_ID: string = crypto.randomUUID();
@@ -28,6 +29,7 @@ export const POSITIONED_RECTANGLE: ShapeElement = {
   sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width: 100,
   x: 0,
@@ -44,6 +46,7 @@ export const POSITIONED_PROCESS: ShapeElement = {
   sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width: 100,
   x: 200,
@@ -60,6 +63,7 @@ export const POSITIONED_ANNOTATION: ShapeElement = {
   sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width: 100,
   x: 400,
@@ -80,6 +84,7 @@ export const POSITIONED_ARROW: ArrowElement = {
     point: { x: 50, y: 100 },
   },
   strokeWidth: StrokeWidth.Medium,
+  textSize: TextSize.Small,
   type: PositionedElementType.Arrow,
 };
 // An arrow free at both ends, from (150, 50) to (250, 150)
@@ -93,6 +98,7 @@ export const POSITIONED_FREE_ARROW: ArrowElement = {
   sketchLevel: SketchLevel.Artist,
   start: { hasArrowhead: false, point: { x: 150, y: 50 } },
   strokeWidth: StrokeWidth.Medium,
+  textSize: TextSize.Small,
   type: PositionedElementType.Arrow,
 };
 

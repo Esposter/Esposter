@@ -5,6 +5,7 @@ import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { ARROW_STUB_LENGTH } from "#src/services/constants";
 import { getArrowRoute } from "#src/services/getArrowRoute";
 import { POSITIONED_RECTANGLE_ID } from "#src/services/positionedConstants.test";
@@ -30,6 +31,7 @@ describe(getArrowRoute, () => {
         point: { x: 50, y: 100 },
       },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
 
@@ -55,6 +57,7 @@ describe(getArrowRoute, () => {
       sketchLevel: SketchLevel.Artist,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
     const route = getArrowRoute(arrow);

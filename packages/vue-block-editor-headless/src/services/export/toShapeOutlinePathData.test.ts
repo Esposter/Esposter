@@ -6,6 +6,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { toShapeOutlinePathData } from "#src/services/export/toShapeOutlinePathData";
 import { toShapeSvg } from "#src/services/export/toShapeSvg";
 import { describe, expect, test } from "vitest";
@@ -27,6 +28,7 @@ const createRectangle = (
   sketchLevel,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width,
   x: 0,

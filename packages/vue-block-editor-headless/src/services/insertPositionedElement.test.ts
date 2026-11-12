@@ -5,6 +5,7 @@ import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { insertPositionedElement } from "#src/services/insertPositionedElement";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
@@ -20,6 +21,7 @@ describe(insertPositionedElement, () => {
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
+    textSize: TextSize.Small,
     type: PositionedElementType.StickyNote,
     width: 1,
     x: 0,

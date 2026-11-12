@@ -6,6 +6,7 @@ import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { deletePositionedElement } from "#src/services/deletePositionedElement";
 import {
   POSITIONED_ARROW,
@@ -35,6 +36,7 @@ describe(deletePositionedElement, () => {
       sketchLevel: SketchLevel.Artist,
       start: POSITIONED_ARROW.start,
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
     const document: PositionedDocument = {

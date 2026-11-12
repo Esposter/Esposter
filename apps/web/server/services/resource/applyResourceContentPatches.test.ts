@@ -6,19 +6,31 @@ import { requireAgentWritableOperations } from "#server/services/resource/requir
 import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { ArrowPathKind, DashPattern, PositionedElementType, ShapeKind, StrokeWidth } from "vue-block-editor-headless";
+import {
+  ArrowPathKind,
+  CornerStyle,
+  DashPattern,
+  PositionedElementType,
+  ShapeKind,
+  SketchLevel,
+  StrokeWidth,
+  TextSize,
+} from "vue-block-editor-headless";
 
 describe(applyResourceContentPatches, () => {
   const rectangleId = crypto.randomUUID();
   const rectangle: ShapeElement = {
     color: "",
+    cornerStyle: CornerStyle.Sharp,
     dashPattern: DashPattern.Solid,
     fill: "#ffffff",
     height: 100,
     id: rectangleId,
     kind: ShapeKind.Rectangle,
+    sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
+    textSize: TextSize.Small,
     type: PositionedElementType.Shape,
     width: 100,
     x: 0,
@@ -32,12 +44,14 @@ describe(applyResourceContentPatches, () => {
     id: crypto.randomUUID(),
     label: "",
     pathKind: ArrowPathKind.Straight,
+    sketchLevel: SketchLevel.Artist,
     start: {
       binding: { connectionPointIndex: 2, elementId: rectangleId },
       hasArrowhead: false,
       point: { x: 50, y: 100 },
     },
     strokeWidth: StrokeWidth.Medium,
+    textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
   };
 

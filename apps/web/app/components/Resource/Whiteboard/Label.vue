@@ -9,13 +9,12 @@ import {
   getTextLayout,
   getTextPlacement,
   TEXT_FONT_FAMILY,
-  TEXT_FONT_SIZE,
 } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
 }
-// The text of an element, drawn as the export draws it. It is left out while the element is edited in place, so the editor over it is the only copy
+// The text of an element, drawn as the export draws it, at the size and alignment the element sets. It is left out while the element is edited in place, so the editor over it is the only copy
 
 const { element } = defineProps<Props>();
 const whiteboardEditorStore = useWhiteboardEditorStore();
@@ -37,7 +36,7 @@ const layout = computed(() =>
     :y="layout.baselineY"
     :text-anchor="placement.textAnchor"
     :font-family="TEXT_FONT_FAMILY"
-    :font-size="TEXT_FONT_SIZE"
+    :font-size="placement.textSize"
     :fill="labelColor"
   >
     <tspan v-for="({ dy, text }, index) in layout.lines" :key="index" :x="placement.point.x" :dy>{{ text }}</tspan>

@@ -8,6 +8,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 describe(createWhiteboardElement, () => {
@@ -34,6 +35,7 @@ describe(createWhiteboardElement, () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Shape,
       width: 120,
       x: 10,
@@ -55,6 +57,7 @@ describe(createWhiteboardElement, () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.StickyNote,
       width: 120,
       x: 10,

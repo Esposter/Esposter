@@ -13,6 +13,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 export const WHITEBOARD_ARROW_ID = crypto.randomUUID();
@@ -30,6 +31,7 @@ export const WHITEBOARD_PROCESS: ShapeElement = {
   sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width: 100,
   x: 0,
@@ -50,6 +52,7 @@ export const WHITEBOARD_ARROW: ArrowElement = {
     point: { x: 50, y: 100 },
   },
   strokeWidth: StrokeWidth.Medium,
+  textSize: TextSize.Small,
   type: PositionedElementType.Arrow,
 };
 

@@ -8,6 +8,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { DOTTED_STROKE_DASH_LENGTH, STROKE_DASH_LENGTH, STROKE_GAP_LENGTH } from "#src/services/export/constants";
 import { getStrokeAttributes } from "#src/services/export/getStrokeAttributes";
 import { toArrowSvg } from "#src/services/export/toArrowSvg";
@@ -31,6 +32,7 @@ describe(getStrokeAttributes, () => {
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "Review",
+    textSize: TextSize.Small,
     type: PositionedElementType.Shape,
     width: 100,
     x: 0,
@@ -82,6 +84,7 @@ describe(getStrokeAttributes, () => {
       pathKind: ArrowPathKind.Straight,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
     const svg = toArrowSvg(arrow);

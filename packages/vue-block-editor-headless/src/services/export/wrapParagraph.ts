@@ -1,14 +1,16 @@
+import type { TextSize } from "#src/models/TextSize";
+
 import { getTextWidth } from "#src/services/export/getTextWidth";
 
 // A paragraph's lines at a width: a word joins the line before it while the line still fits, and otherwise starts the next one
 // A word wider than the width breaks at the character where the width runs out, and no hyphen is drawn
-export const wrapParagraph = (paragraph: string, width: number): string[] => {
+export const wrapParagraph = (paragraph: string, width: number, textSize: TextSize): string[] => {
   const lines: string[] = [];
   let line = "";
   let lineWidth = 0;
   for (const word of paragraph.split(" ")) {
     const joined = line ? ` ${word}` : word;
-    const joinedWidth = getTextWidth(joined);
+    const joinedWidth = getTextWidth(joined, textSize);
     if (lineWidth + joinedWidth <= width) {
       line += joined;
       lineWidth += joinedWidth;
@@ -19,7 +21,7 @@ export const wrapParagraph = (paragraph: string, width: number): string[] => {
     line = "";
     lineWidth = 0;
     for (const character of word) {
-      const characterWidth = getTextWidth(character);
+      const characterWidth = getTextWidth(character, textSize);
       if (line && lineWidth + characterWidth > width) {
         lines.push(line);
         line = "";

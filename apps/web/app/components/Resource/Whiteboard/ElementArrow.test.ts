@@ -12,6 +12,7 @@ import {
   SketchLevel,
   STROKE_GAP_LENGTH,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementArrow", () => {
@@ -29,6 +30,7 @@ describe("resourceWhiteboardElementArrow", () => {
     sketchLevel: SketchLevel.Artist,
     start: { hasArrowhead: false, point: { x: 0, y: 0 } },
     strokeWidth: StrokeWidth.Medium,
+    textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
   };
 

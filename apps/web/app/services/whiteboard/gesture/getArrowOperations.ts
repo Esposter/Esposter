@@ -11,6 +11,7 @@ import {
   PositionedElementType,
   SketchLevel,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 // The operations that add a straight arrow on top of the element list, inserted free and then bound at each end that took a binding.
@@ -33,6 +34,7 @@ export const getArrowOperations = (
     sketchLevel: SketchLevel.Artist,
     start: { hasArrowhead: start.hasArrowhead, point: start.point },
     strokeWidth: StrokeWidth.Medium,
+    textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
   });
   const insertedDocument = applyPatches(document, insertOperations).document;

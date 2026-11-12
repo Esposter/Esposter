@@ -10,14 +10,15 @@ The features this change takes are the text tool, the text preview while typing,
 
 ## How it works
 
-The draft and the committed text feed one layout. While an element is edited, the layout reads the draft, and at other times it reads the committed text. The same size, alignment and wrap width apply to both, so the element draws the draft where the committed text will sit. Commit writes the same text through one edit, so the element is drawn the same before and after it.
+The draft and the committed text feed one layout. While an element is edited, the layout reads the draft, and at other times it reads the committed text. The same size, alignment and wrap width apply to both, so the overlay draws the draft where the committed text will sit. Commit writes the same text through one edit, so the text is drawn in the same place before and after it.
 
 ```mermaid
 flowchart TD
   TYPING["owner types into the overlay"] --> DRAFT["draft held by the edit composable"]
   COMMITTED["committed text on the element"] --> LAYOUT["one layout: size, alignment and wrap width"]
   DRAFT --> LAYOUT
-  LAYOUT --> CANVAS["canvas draws the element"]
+  LAYOUT --> CANVAS["canvas draws the element, leaving out the text being edited"]
+  DRAFT --> OVERLAY["overlay editor draws the draft"]
   DRAFT -->|"commit on blur or Enter"| COMMIT["one edit writes the draft"]
   COMMIT --> COMMITTED
 ```
@@ -45,7 +46,7 @@ The text features of the reference whiteboard, with the verdict this change give
 - **An absent alignment is the kind's own alignment.** A shape's and a sticky note's text is centred, and a text box's text starts at its corner, as the placement already does, so no stored text moves. The alternative was a stored left default for every kind, which would move every existing label off centre.
 - **Auto width is the unwrapped flag, and it applies to text boxes only.** Auto width is the unwrapped mode with the box sized to its text, so one flag does both. A width handle dragged on an auto-width text box sets the box back to a wrapped width at the dragged width, since a box the owner sizes by hand is a wrapped one; a height handle leaves the flag alone. A text in a shape or a sticky note stays wrapped, since an unwrapped line would run out of its outline. The alternative was the flag on shapes, which would need the shape's own width to follow its text and so resize the shape.
 - **Auto width is measured by the estimate that wraps.** The widest line's width comes from the same estimate that wraps, so the box and its lines agree on the canvas and in the export. The alternative was measuring the rendered text in the browser, which the export cannot read, so the box and the export would fall out of step. The whiteboard design already settles the estimate.
-- **The draft is laid out as the committed text is.** The element draws its draft through the same layout, so it keeps its place and, for an auto width text box, grows as the owner types. The alternative was leaving the draft in the overlay alone, where the element is not yet drawn to fit it, so a box sized to its text would jump on commit. The overlay remains the input.
+- **The draft is laid out as the committed text is, in the overlay.** The canvas keeps hiding an element's committed text while it is edited, as it did before this change, so the draft is drawn by the overlay editor and not by the element. The overlay takes the placement the draft has as its own text: its size, alignment and wrap, and for an auto width text box the width of the draft's widest line, which is the width the commit stores. So the committed text is drawn where the draft was, and committing does not move it. The alternative was drawing the draft inside the element, which would draw the text twice while it is edited unless that hiding were undone, and the hiding is settled. The overlay remains the input.
 - **The export draws committed text only.** The export is drawn from the saved document, and a draft is not saved until commit, so an export never holds a draft. This follows the whiteboard design's decision that the export is drawn from the model.
 
 ## Rejected
@@ -69,30 +70,39 @@ The text features of the reference whiteboard, with the verdict this change give
 
 Existing files this change touches, with the role each plays after it.
 
-| File                                                                         | Role after the change                                                                                         |
-| :--------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
-| `packages/vue-block-editor-headless/src/services/export/constants.ts`        | the one size constant becomes the four steps, with the line step and the character width scaled from the size |
-| `packages/vue-block-editor-headless/src/services/export/getTextPlacement.ts` | the anchor and the box of a text, by its element's alignment and kind                                         |
-| `packages/vue-block-editor-headless/src/services/export/getTextLayout.ts`    | the baseline and line steps of a text at its size and alignment                                               |
-| `packages/vue-block-editor-headless/src/services/export/getWrappedLines.ts`  | wraps a text at its element's width, or leaves it whole in auto width                                         |
-| `packages/vue-block-editor-headless/src/services/export/wrapParagraph.ts`    | the wrap rule, which takes the size's character width                                                         |
-| `packages/vue-block-editor-headless/src/services/export/getTextWidth.ts`     | the width estimate of a line at a size, which auto width reads                                                |
-| `packages/vue-block-editor-headless/src/services/export/toTextSvg.ts`        | writes a text at its size, alignment and colour                                                               |
-| `packages/vue-block-editor-headless/src/services/export/toElementTextSvg.ts` | the text of one element at its own size and alignment                                                         |
-| `packages/vue-block-editor-headless/src/models/TextElement.ts`               | the text box's optional size, alignment and wrap setting                                                      |
-| `packages/vue-block-editor-headless/src/models/ShapeElement.ts`              | the shape's optional size, horizontal and vertical alignment                                                  |
-| `packages/vue-block-editor-headless/src/models/StickyNoteElement.ts`         | the sticky note's optional size, horizontal and vertical alignment                                            |
-| `packages/vue-block-editor-headless/src/models/ArrowElement.ts`              | the arrow's optional label size                                                                               |
-| `apps/web/shared/models/resource/whiteboard/WhiteboardElement.ts`            | the element schema an agent reads, which describes each new field                                             |
-| `apps/web/app/components/Resource/Whiteboard/Label.vue`                      | draws a text at its element's size, alignment and colour, and the draft while it is edited                    |
-| `apps/web/app/components/Resource/Whiteboard/EditorTextEdit.vue`             | places the overlay at the text's anchor for its alignment                                                     |
-| `apps/web/app/composables/whiteboard/useWhiteboardTextEdit.ts`               | gives the canvas the draft of the element being edited                                                        |
-| `apps/web/app/services/whiteboard/text/getTextEditOperations.ts`             | the commit writes the draft, and in auto width the box's widest line, as one edit                             |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`      | composes the text controls for one selected shape, sticky note or text box                                    |
-| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrowPanel.vue` | composes the size control for an arrow's label                                                                |
+| File                                                                         | Role after the change                                                                                                             |
+| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/vue-block-editor-headless/src/services/export/constants.ts`        | the one size constant becomes the four steps, with the line step and the character width scaled from the size                     |
+| `packages/vue-block-editor-headless/src/services/export/getTextPlacement.ts` | the anchor and the box of a text, by its element's alignment and kind                                                             |
+| `packages/vue-block-editor-headless/src/services/export/getTextLayout.ts`    | the baseline and line steps of a text at its size and alignment                                                                   |
+| `packages/vue-block-editor-headless/src/services/export/getWrappedLines.ts`  | wraps a text at its element's width, or leaves it whole in auto width                                                             |
+| `packages/vue-block-editor-headless/src/services/export/wrapParagraph.ts`    | the wrap rule, which takes the size's character width                                                                             |
+| `packages/vue-block-editor-headless/src/services/export/getTextWidth.ts`     | the width estimate of a line at a size, which auto width reads                                                                    |
+| `packages/vue-block-editor-headless/src/services/export/toTextSvg.ts`        | writes a text at its size, alignment and colour                                                                                   |
+| `packages/vue-block-editor-headless/src/services/export/toElementTextSvg.ts` | the text of one element at its own size and alignment                                                                             |
+| `packages/vue-block-editor-headless/src/models/TextElement.ts`               | the text box's optional size, alignment and wrap setting                                                                          |
+| `packages/vue-block-editor-headless/src/models/ShapeElement.ts`              | the shape's optional size, horizontal and vertical alignment                                                                      |
+| `packages/vue-block-editor-headless/src/models/StickyNoteElement.ts`         | the sticky note's optional size, horizontal and vertical alignment                                                                |
+| `packages/vue-block-editor-headless/src/models/ArrowElement.ts`              | the arrow's optional label size                                                                                                   |
+| `apps/web/shared/models/resource/whiteboard/WhiteboardElement.ts`            | the element schema an agent reads, which describes each new field                                                                 |
+| `apps/web/app/components/Resource/Whiteboard/Label.vue`                      | draws a text at its element's size, alignment and colour, and leaves it out while it is edited, since the overlay holds the draft |
+| `apps/web/app/components/Resource/Whiteboard/EditorTextEdit.vue`             | places the overlay at the text's anchor for its alignment                                                                         |
+| `apps/web/app/composables/whiteboard/useWhiteboardTextEdit.ts`               | unchanged: the draft stays in the composable, and the overlay draws it                                                            |
+| `apps/web/app/services/whiteboard/text/getTextEditOperations.ts`             | the commit writes the draft as one edit, and the core sets an unwrapped text box's width in that same edit                        |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesPanel.vue`      | composes the text controls for one selected shape, sticky note or text box                                                        |
+| `apps/web/app/components/Resource/Whiteboard/EditorPropertiesArrowPanel.vue` | composes the size control for an arrow's label                                                                                    |
 
 New files, in a tree:
 
 ```text
 apps/web/app/components/Resource/Whiteboard/EditorPropertiesText.vue   the size, alignment and wrap controls of one element
+packages/vue-block-editor-headless/src/models/TextSize.ts                          the four sizes a text draws at
+packages/vue-block-editor-headless/src/models/HorizontalAlignment.ts               the horizontal alignment a text sets
+packages/vue-block-editor-headless/src/models/VerticalAlignment.ts                 the vertical alignment a text sets
+packages/vue-block-editor-headless/src/services/getHorizontalAlignment.ts          the alignment a text draws at, its kind's own until one is set
+packages/vue-block-editor-headless/src/services/getVerticalAlignment.ts            the vertical alignment a shape's or sticky note's text draws at
+packages/vue-block-editor-headless/src/services/export/getAutoTextWidth.ts         the width an unwrapped text takes
+packages/vue-block-editor-headless/src/services/export/getTextLineHeight.ts        the step from one line of a text to the next
+apps/web/app/services/whiteboard/text/getDraftPlacement.ts                         the placement a draft is drawn at while it is edited
+apps/web/app/services/whiteboard/text/constants.ts                                 the text choices the panel offers and the overlay's anchor maps
 ```

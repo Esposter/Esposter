@@ -5,6 +5,7 @@ import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { toArrowSvg } from "#src/services/export/toArrowSvg";
 import { describe, expect, test } from "vitest";
 
@@ -22,6 +23,7 @@ describe(toArrowSvg, () => {
       sketchLevel: SketchLevel.Architect,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
 

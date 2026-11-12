@@ -2,6 +2,7 @@ import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { TextElement } from "#src/models/TextElement";
 
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { TextSize } from "#src/models/TextSize";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElementBounds } from "#src/services/resizePositionedElementBounds";
@@ -31,7 +32,9 @@ describe(resizePositionedElementBounds, () => {
     const textElement: TextElement = {
       color: "",
       id: crypto.randomUUID(),
+      isWrapped: true,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Text,
       width: 100,
       x: 0,

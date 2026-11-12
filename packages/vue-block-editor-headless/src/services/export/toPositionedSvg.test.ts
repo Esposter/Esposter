@@ -7,6 +7,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { toPositionedSvg } from "#src/services/export/toPositionedSvg";
 import { ZERO_UUID } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
@@ -40,6 +41,7 @@ describe(toPositionedSvg, () => {
           sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "a",
+          textSize: TextSize.Small,
           type: PositionedElementType.Shape,
           width: 100,
           x: 200,
@@ -59,6 +61,7 @@ describe(toPositionedSvg, () => {
             point: { x: 50, y: 100 },
           },
           strokeWidth: StrokeWidth.Medium,
+          textSize: TextSize.Small,
           type: PositionedElementType.Arrow,
         },
         {
@@ -70,6 +73,7 @@ describe(toPositionedSvg, () => {
           sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "c",
+          textSize: TextSize.Small,
           type: PositionedElementType.StickyNote,
           width: 80,
           x: 300,
@@ -86,7 +90,17 @@ describe(toPositionedSvg, () => {
           type: PositionedElementType.Stroke,
         },
         { fileId: FILE_ID, height: 50, id: IMAGE_ID, type: PositionedElementType.Image, width: 50, x: 100, y: 200 },
-        { color: "", id: TEXT_ID, text: "d", type: PositionedElementType.Text, width: 100, x: 400, y: 0 },
+        {
+          color: "",
+          id: TEXT_ID,
+          isWrapped: true,
+          text: "d",
+          textSize: TextSize.Small,
+          type: PositionedElementType.Text,
+          width: 100,
+          x: 400,
+          y: 0,
+        },
         {
           color: "",
           cornerStyle: CornerStyle.Sharp,
@@ -98,6 +112,7 @@ describe(toPositionedSvg, () => {
           sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "a b c d",
+          textSize: TextSize.Small,
           type: PositionedElementType.Shape,
           width: 24,
           x: 0,
@@ -116,7 +131,17 @@ describe(toPositionedSvg, () => {
 
     const positionedDocument: PositionedDocument = {
       elements: [
-        { color: "", id: TEXT_ID, text: '<a href="x">&', type: PositionedElementType.Text, width: 100, x: 0, y: 0 },
+        {
+          color: "",
+          id: TEXT_ID,
+          isWrapped: true,
+          text: '<a href="x">&',
+          textSize: TextSize.Small,
+          type: PositionedElementType.Text,
+          width: 100,
+          x: 0,
+          y: 0,
+        },
         { fileId: FILE_ID, height: 50, id: IMAGE_ID, type: PositionedElementType.Image, width: 50, x: 0, y: 50 },
       ],
     };

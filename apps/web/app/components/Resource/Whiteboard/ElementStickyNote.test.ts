@@ -3,7 +3,7 @@ import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboar
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
-import { DashPattern, PositionedElementType, SketchLevel, StrokeWidth } from "vue-block-editor-headless";
+import { DashPattern, PositionedElementType, SketchLevel, StrokeWidth, TextSize } from "vue-block-editor-headless";
 
 describe("resourceWhiteboardElementStickyNote", () => {
   beforeEach(() => {
@@ -21,6 +21,7 @@ describe("resourceWhiteboardElementStickyNote", () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "Review",
+      textSize: TextSize.Small,
       type: PositionedElementType.StickyNote,
       width: 160,
       x: 0,

@@ -1,13 +1,17 @@
 import type { PositionedDocument } from "#src/models/PositionedDocument";
 import type { StrokeElement } from "#src/models/StrokeElement";
+import type { TextElement } from "#src/models/TextElement";
 
 import { ArrowEndKey } from "#src/models/ArrowEndKey";
 import { ArrowPathKind } from "#src/models/ArrowPathKind";
 import { CornerStyle } from "#src/models/CornerStyle";
 import { DashPattern } from "#src/models/DashPattern";
+import { HorizontalAlignment } from "#src/models/HorizontalAlignment";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
+import { getTextWidth } from "#src/services/export/getTextWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementProperty } from "#src/services/updatePositionedElementProperty";
@@ -95,5 +99,122 @@ describe(updatePositionedElementProperty, () => {
     expect(
       updatePositionedElementProperty(ellipseDocument, 0, { property: "cornerStyle", value: CornerStyle.Round }),
     ).toStrictEqual([]);
+  });
+
+  test("turning off a text box's wrap sets its width to its widest line", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: true,
+      text: "ab\nabcd",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: 200,
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(
+      document,
+      updatePositionedElementProperty(document, 0, { property: "isWrapped", value: false }),
+    );
+
+    expect(editedDocument?.elements).toStrictEqual([
+      { ...textBox, isWrapped: false, width: getTextWidth("abcd", TextSize.Small) },
+    ]);
+  });
+
+  test("returning a text box to a wrapped width keeps the width it has", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: false,
+      text: "ab",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: 200,
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(
+      document,
+      updatePositionedElementProperty(document, 0, { property: "isWrapped", value: true }),
+    );
+
+    expect(editedDocument?.elements).toStrictEqual([{ ...textBox, isWrapped: true }]);
+  });
+
+  test("a size change on an unwrapped text box sets the width its text takes at that size", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: false,
+      text: "abcd",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: getTextWidth("abcd", TextSize.Small),
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(
+      document,
+      updatePositionedElementProperty(document, 0, { property: "textSize", value: TextSize.ExtraLarge }),
+    );
+
+    expect(editedDocument?.elements).toStrictEqual([
+      { ...textBox, textSize: TextSize.ExtraLarge, width: getTextWidth("abcd", TextSize.ExtraLarge) },
+    ]);
+  });
+
+  test("a wrap is held by a text box alone", () => {
+    expect.hasAssertions();
+
+    expect(
+      updatePositionedElementProperty(POSITIONED_DOCUMENT, 0, { property: "isWrapped", value: false }),
+    ).toStrictEqual([]);
+  });
+
+  test("setting an alignment a text box has not set adds it, and a later one replaces it", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: true,
+      text: "ab",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: 200,
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const alignedDocument = applyPositionedEdit(
+      document,
+      updatePositionedElementProperty(document, 0, {
+        property: "horizontalAlignment",
+        value: HorizontalAlignment.Right,
+      }),
+    );
+    const realignedDocument = applyPositionedEdit(
+      alignedDocument ?? document,
+      updatePositionedElementProperty(alignedDocument ?? document, 0, {
+        property: "horizontalAlignment",
+        value: HorizontalAlignment.Center,
+      }),
+    );
+
+    expect(alignedDocument?.elements).toStrictEqual([{ ...textBox, horizontalAlignment: HorizontalAlignment.Right }]);
+    expect(realignedDocument?.elements).toStrictEqual([
+      { ...textBox, horizontalAlignment: HorizontalAlignment.Center },
+    ]);
   });
 });

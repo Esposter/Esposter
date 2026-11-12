@@ -2,6 +2,8 @@ import type { TextElement } from "#src/models/TextElement";
 
 import { TextAnchor } from "#src/models/export/TextAnchor";
 import { PositionedElementType } from "#src/models/PositionedElementType";
+import { TextSize } from "#src/models/TextSize";
+import { VerticalAlignment } from "#src/models/VerticalAlignment";
 import { ARROW_LABEL_WIDTH } from "#src/services/constants";
 import { getTextPlacement } from "#src/services/export/getTextPlacement";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
@@ -13,8 +15,11 @@ describe(getTextPlacement, () => {
 
     // The straight arrow runs from (50, 100) to (150, 250), so its midpoint is (100, 175)
     expect(getTextPlacement(POSITIONED_ARROW)).toStrictEqual({
+      isWrapped: true,
       point: { x: 100, y: 175 },
       textAnchor: TextAnchor.Middle,
+      textSize: TextSize.Small,
+      verticalAlignment: VerticalAlignment.Middle,
       width: ARROW_LABEL_WIDTH,
     });
   });
@@ -23,8 +28,11 @@ describe(getTextPlacement, () => {
     expect.hasAssertions();
 
     expect(getTextPlacement(POSITIONED_RECTANGLE)).toStrictEqual({
+      isWrapped: true,
       point: { x: 50, y: 50 },
       textAnchor: TextAnchor.Middle,
+      textSize: TextSize.Small,
+      verticalAlignment: VerticalAlignment.Middle,
       width: 100,
     });
   });
@@ -35,13 +43,22 @@ describe(getTextPlacement, () => {
     const text: TextElement = {
       color: "",
       id: crypto.randomUUID(),
+      isWrapped: true,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Text,
       width: 100,
       x: 200,
       y: 0,
     };
 
-    expect(getTextPlacement(text)).toStrictEqual({ point: { x: 200, y: 0 }, textAnchor: TextAnchor.Start, width: 100 });
+    expect(getTextPlacement(text)).toStrictEqual({
+      isWrapped: true,
+      point: { x: 200, y: 0 },
+      textAnchor: TextAnchor.Start,
+      textSize: TextSize.Small,
+      verticalAlignment: VerticalAlignment.Top,
+      width: 100,
+    });
   });
 });

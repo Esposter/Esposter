@@ -8,7 +8,8 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
-import { TEXT_LINE_HEIGHT } from "#src/services/export/constants";
+import { TextSize } from "#src/models/TextSize";
+import { getTextLineHeight } from "#src/services/export/getTextLineHeight";
 import { getHitElementIndex } from "#src/services/getHitElementIndex";
 import { describe, expect, test } from "vitest";
 
@@ -48,7 +49,9 @@ describe(getHitElementIndex, () => {
     const textElement: TextElement = {
       color: "",
       id: crypto.randomUUID(),
+      isWrapped: true,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Text,
       width: 100,
       x: 0,
@@ -57,7 +60,7 @@ describe(getHitElementIndex, () => {
     const document: PositionedDocument = { elements: [textElement] };
 
     // A text box stores no height, so the core reads it as the one line its text wraps to, and the point one unit below that line misses
-    expect(getHitElementIndex(document, { x: 0, y: TEXT_LINE_HEIGHT / 2 }, 0)).toBe(0);
-    expect(getHitElementIndex(document, { x: 0, y: TEXT_LINE_HEIGHT + 1 }, 0)).toBeUndefined();
+    expect(getHitElementIndex(document, { x: 0, y: getTextLineHeight(TextSize.Small) / 2 }, 0)).toBe(0);
+    expect(getHitElementIndex(document, { x: 0, y: getTextLineHeight(TextSize.Small) + 1 }, 0)).toBeUndefined();
   });
 });

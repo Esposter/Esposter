@@ -12,6 +12,7 @@ import {
   STROKE_DASH_LENGTH,
   STROKE_GAP_LENGTH,
   StrokeWidth,
+  TextSize,
   toShapeSvg,
 } from "vue-block-editor-headless";
 
@@ -37,6 +38,7 @@ describe("resourceWhiteboardElementShape", () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Shape,
       width: 120,
       x: 0,
@@ -64,6 +66,7 @@ describe("resourceWhiteboardElementShape", () => {
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "Review",
+    textSize: TextSize.Small,
     type: PositionedElementType.Shape,
     width: 120,
     x: 0,

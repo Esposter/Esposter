@@ -11,6 +11,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
   toElementTextSvg,
 } from "vue-block-editor-headless";
 
@@ -32,6 +33,7 @@ describe("resourceWhiteboardLabel", () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "a b c d",
+      textSize: TextSize.Small,
       type: PositionedElementType.Shape,
       width: 24,
       x: 0,
@@ -62,6 +64,7 @@ describe("resourceWhiteboardLabel", () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "a",
+      textSize: TextSize.Small,
       type: PositionedElementType.Shape,
       width: 100,
       x: 0,
@@ -77,5 +80,30 @@ describe("resourceWhiteboardLabel", () => {
     await nextTick();
 
     expect(component.findAll("text")).toHaveLength(0);
+  });
+
+  test("a label is drawn at its element's size, as the export draws it", () => {
+    expect.hasAssertions();
+    const shape = {
+      color: "",
+      cornerStyle: CornerStyle.Sharp,
+      dashPattern: DashPattern.Solid,
+      fill: "#ffffff",
+      height: 100,
+      id: crypto.randomUUID(),
+      kind: ShapeKind.Process,
+      sketchLevel: SketchLevel.Artist,
+      strokeWidth: StrokeWidth.Medium,
+      text: "a",
+      textSize: TextSize.ExtraLarge,
+      type: PositionedElementType.Shape,
+      width: 100,
+      x: 0,
+      y: 0,
+    } as const;
+    const label = mount(ResourceWhiteboardLabel, { props: { element: shape } }).get("text");
+
+    expect(label.attributes("font-size")).toBe(`${TextSize.ExtraLarge}`);
+    expect(toElementTextSvg(shape)).toContain(`font-size="${TextSize.ExtraLarge}"`);
   });
 });

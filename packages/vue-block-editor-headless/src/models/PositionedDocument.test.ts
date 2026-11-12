@@ -3,11 +3,13 @@ import type { StickyNoteElement } from "#src/models/StickyNoteElement";
 import type { StrokeElement } from "#src/models/StrokeElement";
 
 import { DashPattern } from "#src/models/DashPattern";
+import { HorizontalAlignment } from "#src/models/HorizontalAlignment";
 import { positionedDocumentSchema } from "#src/models/PositionedDocument";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { JsonPatchOperationType } from "@esposter/shared";
@@ -40,6 +42,7 @@ describe("positionedDocumentSchema", () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.StickyNote,
       width: 80,
       x: 300,
@@ -110,6 +113,39 @@ describe("positionedDocumentSchema", () => {
     ]);
 
     expect(editedDocument).toBeUndefined();
+  });
+
+  test("a text size that is not one of the four is refused", () => {
+    expect.hasAssertions();
+
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/textSize", value: 17 },
+    ]);
+    // One of the four sizes passes the same check, so the refusal is the value and not the path
+    const sizedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Replace, path: "/elements/0/textSize", value: TextSize.Large },
+    ]);
+
+    expect(editedDocument).toBeUndefined();
+    expect(sizedDocument?.elements[0]).toStrictEqual({ ...POSITIONED_RECTANGLE, textSize: TextSize.Large });
+  });
+
+  test("an alignment that is not one of the choices is refused", () => {
+    expect.hasAssertions();
+
+    const editedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Add, path: "/elements/0/horizontalAlignment", value: "justify" },
+    ]);
+    // One of the choices passes the same check, so the refusal is the value and not the path
+    const alignedDocument = applyPositionedEdit(POSITIONED_DOCUMENT, [
+      { op: JsonPatchOperationType.Add, path: "/elements/0/horizontalAlignment", value: HorizontalAlignment.Right },
+    ]);
+
+    expect(editedDocument).toBeUndefined();
+    expect(alignedDocument?.elements[0]).toStrictEqual({
+      ...POSITIONED_RECTANGLE,
+      horizontalAlignment: HorizontalAlignment.Right,
+    });
   });
 
   test("a fill that is neither a hex colour nor empty is refused", () => {

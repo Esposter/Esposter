@@ -1,23 +1,22 @@
 <script setup lang="ts">
 import type { PositionedElement } from "vue-block-editor-headless";
 
-import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import {
-  getTextPlacement,
-  TEXT_FONT_FAMILY,
-  TEXT_FONT_SIZE,
-  TEXT_LINE_HEIGHT,
-  TextAnchor,
-} from "vue-block-editor-headless";
+  WHITEBOARD_TEXT_EDIT_ANCHOR_MAP,
+  WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP,
+} from "@/services/whiteboard/text/constants";
+import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
+import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { getTextLineHeight, TEXT_FONT_FAMILY } from "vue-block-editor-headless";
 
 interface Props {
   element: PositionedElement;
 }
 
 // The text being edited in place, which is the only copy of the text while it is edited: the canvas leaves the element's own text out. It is
-// Laid over the element where the text is drawn, at the text's font, size and wrap width scaled with the viewport, with no box of its own, so
-// It reads as the text itself: centred on the placement point where the text is centred, and hanging from it where a text box's text starts.
-// It takes focus as it opens, and a press or a double click in it is no gesture of the canvas
+// Laid over the element where the text is drawn, in the layout the commit gives the text: its size, its alignment and its wrap, scaled with the viewport.
+// An unwrapped text box is as wide as the draft's widest line, so it grows as the owner types. It has no box of its own, so it reads as the text itself,
+// And it takes focus as it opens. A press or a double click in it is no gesture of the canvas
 const draft = defineModel<string>({ required: true });
 const { element } = defineProps<Props>();
 const emit = defineEmits<{ blur: []; compositionEnd: []; compositionStart: []; keydown: [event: KeyboardEvent] }>();
@@ -25,21 +24,22 @@ const whiteboardEditorStore = useWhiteboardEditorStore();
 const { viewport } = storeToRefs(whiteboardEditorStore);
 const textarea = useTemplateRef("textarea");
 const style = computed(() => {
-  const placement = getTextPlacement(element);
+  const placement = getDraftPlacement(element, draft.value);
   if (placement === undefined) return undefined;
 
   const { scale } = viewport.value;
-  const isMiddle = placement.textAnchor === TextAnchor.Middle;
+  const { shift, textAlign } = WHITEBOARD_TEXT_EDIT_ANCHOR_MAP[placement.textAnchor];
   return {
     background: "transparent",
     fieldSizing: "content",
     fontFamily: TEXT_FONT_FAMILY,
-    fontSize: `${TEXT_FONT_SIZE * scale}px`,
+    fontSize: `${placement.textSize * scale}px`,
     left: `${(placement.point.x - viewport.value.x) * scale}px`,
-    lineHeight: `${TEXT_LINE_HEIGHT * scale}px`,
-    textAlign: isMiddle ? "center" : "left",
+    lineHeight: `${getTextLineHeight(placement.textSize) * scale}px`,
+    textAlign,
     top: `${(placement.point.y - viewport.value.y) * scale}px`,
-    transform: isMiddle ? "translate(-50%, -50%)" : undefined,
+    transform: `translate(${shift}, ${WHITEBOARD_TEXT_EDIT_VERTICAL_SHIFT_MAP[placement.verticalAlignment]})`,
+    whiteSpace: placement.isWrapped ? undefined : "pre",
     width: `${placement.width * scale}px`,
   };
 });

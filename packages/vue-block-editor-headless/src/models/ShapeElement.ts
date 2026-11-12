@@ -1,28 +1,37 @@
 import type { BoxElement } from "#src/models/BoxElement";
+import type { HorizontalAlignment } from "#src/models/HorizontalAlignment";
 import type { ShapeKind } from "#src/models/ShapeKind";
+import type { VerticalAlignment } from "#src/models/VerticalAlignment";
 import type { ItemEntityType } from "@esposter/shared";
 
 import { boxElementSchema } from "#src/models/BoxElement";
 import { CornerStyle, cornerStyleSchema } from "#src/models/CornerStyle";
 import { DashPattern, dashPatternSchema } from "#src/models/DashPattern";
 import { elementColorSchema } from "#src/models/ElementColor";
+import { horizontalAlignmentSchema } from "#src/models/HorizontalAlignment";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { shapeKindSchema } from "#src/models/ShapeKind";
 import { SketchLevel, sketchLevelSchema } from "#src/models/SketchLevel";
 import { StrokeWidth, strokeWidthSchema } from "#src/models/StrokeWidth";
+import { TextSize, textSizeSchema } from "#src/models/TextSize";
+import { verticalAlignmentSchema } from "#src/models/VerticalAlignment";
 import { z } from "zod";
 
 // A shape: an outline of one kind, placed by its box, with a fill and text its box holds. Its outline draws in its colour, at its width, in its dash
-// Pattern and at its sketch level, and with round corners when its corner style is round
+// Pattern and at its sketch level, and with round corners when its corner style is round. Its text draws at its size, and at the alignments it sets,
+// which its kind takes until one is set
 export interface ShapeElement extends BoxElement, ItemEntityType<PositionedElementType.Shape> {
   color: string;
   cornerStyle: CornerStyle;
   dashPattern: DashPattern;
   fill: string;
+  horizontalAlignment?: HorizontalAlignment;
   kind: ShapeKind;
   sketchLevel: SketchLevel;
   strokeWidth: StrokeWidth;
   text: string;
+  textSize: TextSize;
+  verticalAlignment?: VerticalAlignment;
 }
 
 export const shapeElementSchema: z.ZodObject<
@@ -31,11 +40,14 @@ export const shapeElementSchema: z.ZodObject<
     cornerStyle: z.ZodDefault<typeof cornerStyleSchema>;
     dashPattern: z.ZodDefault<typeof dashPatternSchema>;
     fill: typeof elementColorSchema;
+    horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
     kind: typeof shapeKindSchema;
     sketchLevel: z.ZodDefault<typeof sketchLevelSchema>;
     strokeWidth: z.ZodDefault<typeof strokeWidthSchema>;
     text: z.ZodString;
+    textSize: z.ZodDefault<typeof textSizeSchema>;
     type: z.ZodLiteral<PositionedElementType.Shape>;
+    verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
   }
 > = z.object({
   ...boxElementSchema.shape,
@@ -43,9 +55,12 @@ export const shapeElementSchema: z.ZodObject<
   cornerStyle: cornerStyleSchema.default(CornerStyle.Sharp),
   dashPattern: dashPatternSchema.default(DashPattern.Solid),
   fill: elementColorSchema,
+  horizontalAlignment: horizontalAlignmentSchema.optional(),
   kind: shapeKindSchema,
   sketchLevel: sketchLevelSchema.default(SketchLevel.Artist),
   strokeWidth: strokeWidthSchema.default(StrokeWidth.Medium),
   text: z.string(),
+  textSize: textSizeSchema.default(TextSize.Small),
   type: z.literal(PositionedElementType.Shape),
+  verticalAlignment: verticalAlignmentSchema.optional(),
 }) satisfies z.ZodType<ShapeElement>;

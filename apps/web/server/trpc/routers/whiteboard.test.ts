@@ -13,6 +13,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 describe("whiteboardRouter", () => {
@@ -32,6 +33,7 @@ describe("whiteboardRouter", () => {
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
+    textSize: TextSize.Small,
     type: PositionedElementType.Shape,
     width: 100,
     x: 0,
@@ -47,6 +49,7 @@ describe("whiteboardRouter", () => {
     sketchLevel: SketchLevel.Artist,
     start: { binding: { connectionPointIndex: 2, elementId: shapeId }, hasArrowhead: false, point: { x: 50, y: 100 } },
     strokeWidth: StrokeWidth.Medium,
+    textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
   };
 

@@ -25,13 +25,12 @@ export const CORNER_RADIUS_LIMIT = 12;
 // The modulus that keeps a sketch's hash in range, a Mersenne prime so the hash spreads across the range
 export const SKETCH_HASH_MODULUS = 2_147_483_647;
 export const TEXT_FONT_FAMILY = "sans-serif";
-// The size and line height of a text, in document units
-export const TEXT_FONT_SIZE = 16;
-export const TEXT_LINE_HEIGHT = 20;
-// The advance of a narrow character, and of a full-width one at double it, in document units
+// The line step of a text is a share of its size, so a larger text's lines keep the spacing a smaller one's do
+export const TEXT_LINE_HEIGHT_SHARE = 1.25;
+// The advance of a narrow character is a share of its text's size, and a full-width one is this many narrow characters wide
 // A text wraps at these estimates, not at the font's own measures, so every machine and the server break it at the same words
-export const TEXT_CHARACTER_WIDTH: number = TEXT_FONT_SIZE / 2;
-export const TEXT_WIDE_CHARACTER_WIDTH: number = TEXT_CHARACTER_WIDTH * 2;
+export const TEXT_CHARACTER_WIDTH_SHARE = 0.5;
+export const TEXT_WIDE_CHARACTER_FACTOR = 2;
 // The characters a full-width script sets: the Han ideographs, Hangul, kana, and the fullwidth forms
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const TEXT_WIDE_CHARACTER_REGEX: RegExp =

@@ -24,7 +24,7 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
-import { ArrowPathKind, getExportBounds, PositionedElementType } from "vue-block-editor-headless";
+import { ArrowPathKind, getExportBounds, PositionedElementType, TextSize } from "vue-block-editor-headless";
 
 const { display, uploadResourceFileMock } = vi.hoisted(() => ({
   display: { isCompact: false, isMobile: false },
@@ -394,7 +394,17 @@ describe("resourceWhiteboardEditor", () => {
     await drag(getCanvas(component), CANVAS_CENTRE, CANVAS_CENTRE);
 
     expect(whiteboard.value.elements).toStrictEqual([
-      { color: "", id: insertedId, text: "Text", type: PositionedElementType.Text, width: 160, x: 320, y: 280 },
+      {
+        color: "",
+        id: insertedId,
+        isWrapped: true,
+        text: "Text",
+        textSize: TextSize.Small,
+        type: PositionedElementType.Text,
+        width: 160,
+        x: 320,
+        y: 280,
+      },
     ]);
   });
 

@@ -9,7 +9,7 @@ import {
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
 import { describe, expect, test } from "vitest";
-import { PositionedElementType } from "vue-block-editor-headless";
+import { PositionedElementType, TextSize } from "vue-block-editor-headless";
 
 describe(deleteWhiteboardElements, () => {
   test("deleting several elements is one undo step", () => {
@@ -18,7 +18,9 @@ describe(deleteWhiteboardElements, () => {
     const text: TextElement = {
       color: "",
       id: crypto.randomUUID(),
+      isWrapped: true,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Text,
       width: 100,
       x: 200,

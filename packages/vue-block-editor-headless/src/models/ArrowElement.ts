@@ -9,9 +9,10 @@ import { elementColorSchema } from "#src/models/ElementColor";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel, sketchLevelSchema } from "#src/models/SketchLevel";
 import { StrokeWidth, strokeWidthSchema } from "#src/models/StrokeWidth";
+import { TextSize, textSizeSchema } from "#src/models/TextSize";
 import { z } from "zod";
 
-// An arrow: two ends, each bound to a shape's connection point or free, with its path kind and the text it owns as its label. Its route and arrowheads draw in its colour, at its width, in its dash pattern and at its sketch level
+// An arrow: two ends, each bound to a shape's connection point or free, with its path kind and the text it owns as its label. Its route and arrowheads draw in its colour, at its width, in its dash pattern and at its sketch level, and its label at its size
 export interface ArrowElement extends ItemEntityType<PositionedElementType.Arrow> {
   color: string;
   dashPattern: DashPattern;
@@ -22,6 +23,7 @@ export interface ArrowElement extends ItemEntityType<PositionedElementType.Arrow
   sketchLevel: SketchLevel;
   start: ArrowEnd;
   strokeWidth: StrokeWidth;
+  textSize: TextSize;
 }
 
 export const arrowElementSchema: z.ZodObject<{
@@ -33,6 +35,7 @@ export const arrowElementSchema: z.ZodObject<{
   pathKind: typeof arrowPathKindSchema;
   sketchLevel: z.ZodDefault<typeof sketchLevelSchema>;
   start: typeof arrowEndSchema;
+  textSize: z.ZodDefault<typeof textSizeSchema>;
   strokeWidth: z.ZodDefault<typeof strokeWidthSchema>;
   type: z.ZodLiteral<PositionedElementType.Arrow>;
 }> = z.object({
@@ -45,5 +48,6 @@ export const arrowElementSchema: z.ZodObject<{
   sketchLevel: sketchLevelSchema.default(SketchLevel.Artist),
   start: arrowEndSchema,
   strokeWidth: strokeWidthSchema.default(StrokeWidth.Medium),
+  textSize: textSizeSchema.default(TextSize.Small),
   type: z.literal(PositionedElementType.Arrow),
 }) satisfies z.ZodType<ArrowElement>;

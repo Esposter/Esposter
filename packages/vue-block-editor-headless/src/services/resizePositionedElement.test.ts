@@ -6,6 +6,8 @@ import { DashPattern } from "#src/models/DashPattern";
 import { PositionedElementType } from "#src/models/PositionedElementType";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
+import { TextSize } from "#src/models/TextSize";
+import { getTextWidth } from "#src/services/export/getTextWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElement } from "#src/services/resizePositionedElement";
@@ -35,7 +37,9 @@ describe(resizePositionedElement, () => {
     const textElement: TextElement = {
       color: "",
       id: crypto.randomUUID(),
+      isWrapped: true,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.Text,
       width: 100,
       x: 0,
@@ -58,6 +62,7 @@ describe(resizePositionedElement, () => {
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
+      textSize: TextSize.Small,
       type: PositionedElementType.StickyNote,
       width: 100,
       x: 0,
@@ -75,5 +80,28 @@ describe(resizePositionedElement, () => {
     expect.hasAssertions();
 
     expect(resizePositionedElement({ elements: [POSITIONED_ARROW] }, 0, { height: 80, width: 80 })).toStrictEqual([]);
+  });
+
+  test("a width handle on an auto width text box sets it back to a wrapped width at the dragged width", () => {
+    expect.hasAssertions();
+
+    const textBox: TextElement = {
+      color: "",
+      id: crypto.randomUUID(),
+      isWrapped: false,
+      text: "abcd",
+      textSize: TextSize.Small,
+      type: PositionedElementType.Text,
+      width: getTextWidth("abcd", TextSize.Small),
+      x: 0,
+      y: 0,
+    };
+    const document: PositionedDocument = { elements: [textBox] };
+    const editedDocument = applyPositionedEdit(
+      document,
+      resizePositionedElement(document, 0, { height: 100, width: 120 }),
+    );
+
+    expect(editedDocument?.elements).toStrictEqual([{ ...textBox, isWrapped: true, width: 120 }]);
   });
 });

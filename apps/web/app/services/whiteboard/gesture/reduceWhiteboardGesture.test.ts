@@ -25,6 +25,7 @@ import {
   ShapeKind,
   SketchLevel,
   StrokeWidth,
+  TextSize,
 } from "vue-block-editor-headless";
 
 const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
@@ -38,6 +39,7 @@ const createProcess = (id: string, bounds: Bounds): ShapeElement => ({
   sketchLevel: SketchLevel.Artist,
   strokeWidth: StrokeWidth.Medium,
   text: "",
+  textSize: TextSize.Small,
   type: PositionedElementType.Shape,
   width: bounds.width,
   x: bounds.x,
@@ -72,6 +74,7 @@ describe(reduceWhiteboardGesture, () => {
       point: { x: 50, y: 100 },
     },
     strokeWidth: StrokeWidth.Medium,
+    textSize: TextSize.Small,
     type: PositionedElementType.Arrow,
   };
 
@@ -115,6 +118,7 @@ describe(reduceWhiteboardGesture, () => {
       sketchLevel: SketchLevel.Artist,
       start: { hasArrowhead: false, point: { x: 0, y: 0 } },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
     const state = createState({ elements: [processShape, arrow] }, { selectedIds: [PROCESS_ID] });
@@ -368,6 +372,7 @@ describe(reduceWhiteboardGesture, () => {
             point: { x: 200, y: 125 },
           },
           strokeWidth: StrokeWidth.Medium,
+          textSize: TextSize.Small,
           type: PositionedElementType.Arrow,
         },
       ],
@@ -398,6 +403,7 @@ describe(reduceWhiteboardGesture, () => {
         point: { x: 200, y: 125 },
       },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     });
   });
@@ -509,6 +515,7 @@ describe(reduceWhiteboardGesture, () => {
         point: { x: 150, y: 150 },
       },
       strokeWidth: StrokeWidth.Medium,
+      textSize: TextSize.Small,
       type: PositionedElementType.Arrow,
     };
     const state = createState({ elements: [processShape, arrow] });
@@ -545,6 +552,7 @@ describe(reduceWhiteboardGesture, () => {
           sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "",
+          textSize: TextSize.Small,
           type: PositionedElementType.Shape,
           width: WHITEBOARD_SHAPE_SIZE.width,
           x: 200 - WHITEBOARD_SHAPE_SIZE.width / 2,
@@ -579,6 +587,7 @@ describe(reduceWhiteboardGesture, () => {
           sketchLevel: SketchLevel.Artist,
           strokeWidth: StrokeWidth.Medium,
           text: "",
+          textSize: TextSize.Small,
           type: PositionedElementType.Shape,
           width: 100,
           x: 200,
