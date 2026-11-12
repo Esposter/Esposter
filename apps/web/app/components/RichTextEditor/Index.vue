@@ -75,10 +75,10 @@ watch(
 
 <template>
   <div flex flex-col gap-1 w-full>
-    <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as a frame, as every
-      composite is, with its menu bar across the top — and what the document holds is themed from outside by the rich
-      text rules -->
-    <div flex flex-col ui-frame>
+    <!-- Tiptap draws only the document, so the chrome around it is the library's — drawn as one field, with its menu
+      bar across the top, so the whole of it reads as somewhere to type and takes the focus ring as a unit when the
+      document is focused — and what the document holds is themed from outside by the rich text rules -->
+    <div flex flex-col ui-field>
       <RichTextEditorMenuBar :editor />
       <RichTextEditorSuggestions :editor />
       <slot name="prepend-inner-header" />
@@ -108,8 +108,8 @@ watch(
   height: v-bind(height);
   max-height: 15rem;
   overflow-y: auto;
-  /* Its focus ring is drawn just inside the editor, in the padding, since the frame around it has no room outside */
-  outline-offset: var(--ui-focus-inset);
+  /* The field around it draws the focus ring for the whole editor, so the document inside draws none of its own */
+  outline: none;
 
   p.is-editor-empty:first-child::before {
     content: attr(data-placeholder);
