@@ -11,37 +11,41 @@ import { UiToken } from "../app/models/ui/UiToken.ts";
 // Lines in the edge colour, so its lifted panel is its panel and its divider its border
 export const UiPaletteMap = {
   // Radix's slate for the neutrals — app background, a panel a tone above it, a lifted panel a tone further, the
-  // Divider a step fainter than the border, muted and text — and Vue's green as the one accent: the bright one its docs
-  // Lead with in dark, and in light its hue darkened as far as passing on its own tonal fill. Light's panel sits a tone
-  // Below the background, as Material's surface containers do, and what is lifted is white
+  // Divider a step fainter than the border, muted and text — and Vue's green as the one accent: the bright mint of the
+  // Script setup Vue logo's face in dark. Light's panel sits a tone below the background, as Material's surface
+  // Containers do, and what is lifted is white. The accent, error, info and warning are each the most saturated colour of
+  // Their hue that still passes the contrast tests below on every surface, as a link's blue is, so one colour serves a
+  // Fill, a label's text and a mark alike; in light that puts a green far deeper than the logo's, since a green as bright
+  // As it cannot be read on white. Success is a leaf green a hue yellower than the accent's mint, so a saved mark and an
+  // Accent button beside it never read as one colour
   [UiStyle.Standard]: {
     [ThemeMode.Dark]: {
-      [UiToken.Accent]: "#42d392",
+      [UiToken.Accent]: "#28e498",
       [UiToken.Background]: "#111113",
       [UiToken.Border]: "#363a3f",
       [UiToken.Divider]: "#2e3135",
-      [UiToken.Error]: "#ff9592",
-      [UiToken.Info]: "#70b8ff",
+      [UiToken.Error]: "#ff7273",
+      [UiToken.Info]: "#43a5ff",
       [UiToken.Lifted]: "#272a2d",
       [UiToken.Muted]: "#b0b4ba",
       [UiToken.Panel]: "#212225",
-      [UiToken.Success]: "#1fd8a4",
+      [UiToken.Success]: "#77d163",
       [UiToken.Text]: "#edeef0",
-      [UiToken.Warning]: "#ffca16",
+      [UiToken.Warning]: "#fcc701",
     },
     [ThemeMode.Light]: {
-      [UiToken.Accent]: "#23694a",
+      [UiToken.Accent]: "#007245",
       [UiToken.Background]: "#fcfcfd",
       [UiToken.Border]: "#d9d9e0",
       [UiToken.Divider]: "#e0e1e6",
-      [UiToken.Error]: "#ce2c31",
-      [UiToken.Info]: "#0b6ac0",
+      [UiToken.Error]: "#c2001d",
+      [UiToken.Info]: "#0063b7",
       [UiToken.Lifted]: "#ffffff",
       [UiToken.Muted]: "#60646c",
       [UiToken.Panel]: "#f3f3f5",
-      [UiToken.Success]: "#1b7a5f",
+      [UiToken.Success]: "#1f7400",
       [UiToken.Text]: "#1c2024",
-      [UiToken.Warning]: "#9a5b00",
+      [UiToken.Warning]: "#905500",
     },
   },
   [UiStyle.Voxel]: {
