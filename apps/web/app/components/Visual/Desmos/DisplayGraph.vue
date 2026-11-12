@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { Expression } from "@/models/desmos/Expression";
 
-import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
-import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { withDefaultExpressionColor } from "@/services/visual/withDefaultExpressionColor";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
@@ -21,24 +19,6 @@ const { isDark } = storeToRefs(themeModeStore);
 const isAnimating = ref(false);
 // Whether the calculator has drawn: the drawing's shape stands over the element until then
 const isDrawn = ref(false);
-const expressionPanel = ref<HTMLDivElement>();
-const componentsToRender = computed<Parameters<typeof h>[]>(() => {
-  const WindowControlsComponent: Parameters<typeof h> = [
-    WindowControls,
-    {
-      onClickLeft: (event: MouseEvent) => {
-        emit("clickLeft", event);
-      },
-      onClickRight: (event: MouseEvent) => {
-        emit("clickRight", event);
-      },
-    },
-  ];
-  return isAnimating.value
-    ? [WindowControlsComponent]
-    : [[AnimateButton, { onClick: animate }], WindowControlsComponent];
-});
-const render = useRender(expressionPanel);
 // The script's own load slot calls back once the API is in, so the calculator waits for that here. A calculator that
 // Fails to build shows its failure in place of the drawing, as a script that fails to load does through its status below
 const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
@@ -66,11 +46,6 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   }
   newCalculator.setExpressions(expressions.map((expression) => withDefaultExpressionColor(expression)));
   isDrawn.value = true;
-  const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
-  if (newExpressionPanel) {
-    expressionPanel.value = newExpressionPanel;
-    render(componentsToRender.value);
-  }
 
   return newCalculator;
 });
@@ -109,14 +84,11 @@ watch(isDark, (newIsDark) => {
   if (!calculator.value) return;
   calculator.value.updateSettings({ invertedColors: newIsDark });
 });
-
-watch(componentsToRender, (newComponentsToRender) => {
-  render(newComponentsToRender);
-});
 </script>
 
 <!-- The calculator mounts into the element named by its id, so the drawing's shape stands over it until it has
-  drawn -->
+  drawn. The controls are siblings of it, never drawn into it: a dark drawing is the calculator's own container
+  inverted by a filter, which would invert a control inside it too -->
 <template>
   <div size-full relative>
     <div :id size-full />
@@ -128,6 +100,14 @@ watch(componentsToRender, (newComponentsToRender) => {
       @retry="reloadNuxtApp()"
     />
     <UiSkeleton v-else-if="!isDrawn" inset-0 absolute />
+    <template v-else>
+      <VisualDesmosAnimateButton v-if="!isAnimating" z-1 @click="animate" />
+      <VisualDesmosWindowControls
+        z-1
+        @click-left="emit('clickLeft', $event)"
+        @click-right="emit('clickRight', $event)"
+      />
+    </template>
   </div>
 </template>
 

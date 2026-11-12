@@ -18,6 +18,7 @@ Paths relative to `apps/web/app`.
 
 ## Notes
 
+- The previous, next and Animate controls are siblings of the calculator's element, never drawn into it: a dark drawing is the calculator's own container inverted by a filter, which inverts anything inside it, so a control drawn there takes the inverted colours of its variant and loses its contrast.
 - The drawing gives each expression its default colour on a copy, so the expression sets stay as authored and every mount reads them unchanged.
 - Adding a drawing is an expressions file, a component thin enough to be all boilerplate, and a `DRAWINGS` entry.
 - The area is a finished gallery with no roadmap — it grows when someone makes new art, which is an authoring act, not a feature.
