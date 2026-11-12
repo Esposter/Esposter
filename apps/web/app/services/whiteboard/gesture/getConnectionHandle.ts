@@ -1,10 +1,8 @@
 import type { Point, PositionedDocument } from "vue-block-editor-headless";
 
-import { getConnectionHandlePoint } from "@/services/whiteboard/gesture/getConnectionHandlePoint";
-import { getElementIndexById } from "@/services/whiteboard/gesture/getElementIndexById";
+import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
 import { getPointDistance } from "@/services/whiteboard/gesture/getPointDistance";
 import { takeOne } from "@esposter/shared";
-import { CONNECTION_POINT_COUNT, getBindableShape, PositionedElementType } from "vue-block-editor-headless";
 
 // A connection handle a press lands on: the selected shape it belongs to, and the connection point it sits at
 export interface ConnectionHandle {
@@ -21,20 +19,8 @@ export const getConnectionHandle = (
   tolerance: number,
   scale: number,
 ): ConnectionHandle | undefined => {
-  if (selectedIds.length !== 1) return undefined;
-
-  const elementId = takeOne(selectedIds);
-  const index = getElementIndexById(document, elementId);
-  if (index === undefined) return undefined;
-
-  const element = takeOne(document.elements, index);
-  if (element.type !== PositionedElementType.Shape) return undefined;
-
-  const connectionIndexes = Array.from({ length: CONNECTION_POINT_COUNT }, (_, connectionIndex) => connectionIndex);
-  const connectionIndex = connectionIndexes.find(
-    (candidate) =>
-      getBindableShape(document.elements, { connectionPointIndex: candidate, elementId }) !== undefined &&
-      getPointDistance(point, getConnectionHandlePoint(element, candidate, scale)) <= tolerance,
+  const item = getConnectionHandleItems(document, selectedIds, scale).find(
+    ({ point: handlePoint }) => getPointDistance(point, handlePoint) <= tolerance,
   );
-  return connectionIndex === undefined ? undefined : { connectionIndex, elementId };
+  return item === undefined ? undefined : { connectionIndex: item.connectionIndex, elementId: takeOne(selectedIds) };
 };
