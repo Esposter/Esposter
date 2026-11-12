@@ -15,7 +15,8 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 // Each pointer event leaves as a gesture event, in screen pixels from the canvas's top left, so the gesture reducer reads the canvas and no DOM.
 // The canvas selects no text, so a drag on it is a gesture and never a highlight of the page under it.
 // A paste leaves as its clipboard text too, which the whiteboard reads for elements, while the image paste is taken here as before. Image files dropped
-// Here are placed at the document point they land on, through the same insert the paste takes
+// Here are placed at the document point they land on, through the same insert the paste takes, and a drop that carries no file is left to its target, such
+// As text dropped into the editor's textarea
 defineSlots<{ html?: () => VNode; overlay?: () => VNode }>();
 const emit = defineEmits<{
   doubleClick: [screen: Point];
@@ -89,10 +90,18 @@ const emitWheel = (event: WheelEvent) => {
         emit('paste', event.clipboardData?.getData(MimeType.PlainText) ?? '');
       }
     "
-    @dragover.prevent
-    @drop.prevent="
+    @dragover="
       (event) => {
-        insertImages([...(event.dataTransfer?.files ?? [])], getDropPoint(event));
+        if (event.dataTransfer?.types.includes('Files')) event.preventDefault();
+      }
+    "
+    @drop="
+      (event) => {
+        const files = [...(event.dataTransfer?.files ?? [])];
+        if (files.length === 0) return;
+
+        event.preventDefault();
+        insertImages(files, getDropPoint(event));
       }
     "
   >

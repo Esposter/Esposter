@@ -33,12 +33,12 @@ describe("resourceWhiteboardEditorCanvas", () => {
     expect(wrapper.find("pattern").exists()).toBe(false);
   });
 
-  test("A dropped image is stored as a file asset and placed at the drop point", async () => {
+  test("a dropped image is stored as a file asset and placed at the drop point", async () => {
     expect.hasAssertions();
     const imageFile = new File(["a"], "a.png", { type: MimeType.Png });
     const fileId = await getSha256Hex(new Uint8Array(await imageFile.arrayBuffer()));
     // The drop hashes the file before it uploads it, so the test waits for the upload to be called rather than for a fixed number of ticks
-    const isUploadCalled = new Promise<void>((resolve) => {
+    const uploadCalled = new Promise<void>((resolve) => {
       uploadResourceFileMock.mockImplementation((_file, hash) => {
         resolve();
         return Promise.resolve(hash ?? "");
@@ -47,7 +47,7 @@ describe("resourceWhiteboardEditorCanvas", () => {
     const wrapper = await mountSuspended(ResourceWhiteboardEditorCanvas);
 
     dropFiles(wrapper.element, [imageFile], 300, 200);
-    await isUploadCalled;
+    await uploadCalled;
     await flushPromises();
 
     const [image] = useWhiteboardStore().whiteboard.elements;
@@ -57,7 +57,7 @@ describe("resourceWhiteboardEditorCanvas", () => {
     expect(image).toHaveProperty("y", 200 - WHITEBOARD_IMAGE_SIZE.height / 2);
   });
 
-  test("A dropped file that is not an image places nothing", async () => {
+  test("a dropped file that is not an image places nothing", async () => {
     expect.hasAssertions();
     const textFile = new File(["a"], "a.txt", { type: MimeType.PlainText });
     const wrapper = await mountSuspended(ResourceWhiteboardEditorCanvas);
@@ -67,5 +67,16 @@ describe("resourceWhiteboardEditorCanvas", () => {
 
     expect(uploadResourceFileMock).not.toHaveBeenCalled();
     expect(useWhiteboardStore().whiteboard.elements).toStrictEqual([]);
+  });
+
+  test("a drop that carries no file is left to its target", async () => {
+    expect.hasAssertions();
+    const wrapper = await mountSuspended(ResourceWhiteboardEditorCanvas);
+    const event = new MouseEvent("drop", { bubbles: true, cancelable: true });
+    Object.defineProperty(event, "dataTransfer", { value: { files: [] } });
+
+    wrapper.element.dispatchEvent(event);
+
+    expect(event.defaultPrevented).toBe(false);
   });
 });
