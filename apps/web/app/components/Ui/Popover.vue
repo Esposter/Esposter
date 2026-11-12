@@ -28,8 +28,25 @@ const { anchor, positionArea = POPOVER_POSITION_AREA } = defineProps<Props>();
 const trigger = useTemplateRef("trigger");
 const content = useTemplateRef("content");
 const triggerElement = computed(() => anchor ?? trigger.value?.element);
+// The anchor the panel was last shown against
+let shownAnchor = anchor;
+// A press on another anchor light-dismisses the panel natively before its click moves it there, and the browser reports
+// That dismissal as an event after the click: taken as the model closing, it would close the panel the click just
+// Moved. A close that arrives once the anchor has changed is the old anchor's, so the panel is shown again at the new
+const isOpenGuarded = computed({
+  get: () => isOpenModel.value,
+  set: (newIsOpen) => {
+    const element = content.value;
+    if (!newIsOpen && isOpenModel.value && anchor !== shownAnchor && element?.isConnected) {
+      shownAnchor = anchor;
+      if (!element.matches(":popover-open")) element.showPopover();
+      return;
+    }
+    isOpenModel.value = newIsOpen;
+  },
+});
 const { anchorStyles, attach, attachAnchor, close, contentAttrs, contentStyles, id, isOpen } = usePopover({
-  isOpen: isOpenModel,
+  isOpen: isOpenGuarded,
   positionArea,
   positionTry: POPOVER_POSITION_TRY,
 });
@@ -58,6 +75,7 @@ watchImmediate(
 
 watch(isOpen, (newIsOpen) => {
   if (!newIsOpen) return;
+  shownAnchor = anchor;
   const { activeElement } = window.document;
   returnFocusElement =
     activeElement instanceof HTMLElement && activeElement !== window.document.body ? activeElement : undefined;
