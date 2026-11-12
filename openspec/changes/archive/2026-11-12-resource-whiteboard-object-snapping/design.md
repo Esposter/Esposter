@@ -18,8 +18,18 @@ The whiteboard design deferred object snapping until the style panel and the sel
 
 ## Key files
 
-| Source                                                          | Role                                                  |
-| :-------------------------------------------------------------- | :---------------------------------------------------- |
-| `apps/web/app/services/whiteboard/gesture/getMoveOperations.ts` | The move gesture, which takes the snap                |
-| `apps/web/app/services/whiteboard/gesture/getDraggedBounds.ts`  | The dragged element's bounds, read for the snap       |
-| `apps/web/app/components/Resource/Whiteboard/EditorCanvas.vue`  | Draws the guides above the elements while a drag runs |
+| Source                                                                | Role                                                                                         |
+| :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------- |
+| `apps/web/app/services/whiteboard/gesture/reduceMovingGesture.ts`     | The move gesture, which takes the snap and holds its guides on the gesture                   |
+| `apps/web/app/services/whiteboard/gesture/getSnap.ts`                 | The pure snap over the document and the proposed box: the offset on each axis and the guides |
+| `apps/web/app/services/whiteboard/gesture/getBoxedSelectionBounds.ts` | The box of the moving elements that take a size, which is the box a move snaps               |
+| `apps/web/app/components/Resource/Whiteboard/EditorSnapGuides.vue`    | Draws the guides in the canvas's overlay slot, above the elements, while a move holds them   |
+
+## Reconciled with the built state
+
+The build keeps the decisions above and settles four points the prose left open:
+
+- The box a move snaps is the box of the moving elements that take a size: shapes, sticky notes, text boxes and images, which `checkIsResizablePositionedElement` names. An arrow or a stroke has no box of its own, so it moves by the snapped offset but is neither snapped nor a snap target. `getDraggedBounds.ts` is the placing drag's box, and a move does not read it.
+- The guides are drawn by `EditorSnapGuides.vue` in the canvas's overlay slot. `EditorCanvas.vue` keeps drawing the elements and the slots only.
+- An edge midpoint is where an edge line and a centre line cross, so the one per-axis snap takes midpoints with no separate code.
+- Alt is read on each pointer event. Held on a move, it leaves that move unsnapped with no guides, and held on the release it commits unsnapped. "Turns the snapping off for that drag only" means no setting is stored, and each move follows the key as it is held.

@@ -17,4 +17,4 @@ The whiteboard places an element where the pointer puts it, with no alignment ai
 
 ## Impact
 
-The move gesture reads the other elements' bounds and returns a snapped position with the guides it drew. The canvas draws the guides above the elements and clears them when the drag ends. Nothing is stored: a snapped position is the element's ordinary position, so no stored document changes.
+The move gesture reads the other elements' bounds and returns a snapped position with the guides it drew. The canvas's overlay slot draws the guides above the elements through `EditorSnapGuides.vue`, and the guides clear when the drag ends. Nothing is stored: a snapped position is the element's ordinary position, so no stored document changes.

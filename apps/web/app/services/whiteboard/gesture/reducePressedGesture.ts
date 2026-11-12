@@ -53,6 +53,7 @@ export const reducePressedGesture = (
       // An Alt drag starts with its copies selected in place of the originals, which a cancel restores
       if (gesture.originalIdCopyIdMap) {
         const copying: GestureMoving = {
+          guides: [],
           origin: gesture.origin,
           originalIdCopyIdMap: gesture.originalIdCopyIdMap,
           phase: GesturePhase.Moving,
@@ -66,6 +67,7 @@ export const reducePressedGesture = (
       }
 
       const moving: GestureMoving = {
+        guides: [],
         origin: gesture.origin,
         phase: GesturePhase.Moving,
         pointerId: gesture.pointerId,

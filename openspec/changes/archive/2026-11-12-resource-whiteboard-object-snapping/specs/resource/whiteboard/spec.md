@@ -28,6 +28,12 @@ The owner's drag of a shape, sticky note or text box SHALL snap the element's ed
 - **WHEN** the owner drags the first shape with Alt held
 - **THEN** the element lands where the pointer puts it
 
+#### Scenario: The snap distance is held in screen pixels
+
+- **GIVEN** a Process shape and a second shape whose left edge is 4 units from the first shape's left edge
+- **WHEN** the board is zoomed to twice its scale and the owner drags the first shape to that edge
+- **THEN** the first shape lands where the pointer puts it, since 4 units is 8 screen pixels at that zoom
+
 ### Requirement: A guide shows each alignment a drag holds
 
 The canvas SHALL draw a guide line for each alignment a drag currently holds and SHALL clear the guides when the drag ends.

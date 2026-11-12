@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [resource]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/app/services/whiteboard/gesture/reduceMovingGesture.ts",
+    "apps/web/app/services/whiteboard/gesture/getSnap.ts",
+    "apps/web/app/services/whiteboard/gesture/getBoxedSelectionBounds.ts",
+    "apps/web/app/components/Resource/Whiteboard/EditorSnapGuides.vue",
+    "apps/web/app/components/Resource/Whiteboard/Editor.vue",
+  ]

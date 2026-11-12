@@ -13,6 +13,7 @@ import type {
 import { GesturePointerAction } from "@/models/whiteboard/GesturePointerAction";
 import { GesturePhase } from "@/models/whiteboard/GesturePhase";
 import { GestureTool } from "@/models/whiteboard/GestureTool";
+import { SnapAxis } from "@/models/whiteboard/SnapAxis";
 import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/whiteboard/gesture/constants";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
@@ -161,6 +162,111 @@ describe(reduceWhiteboardGesture, () => {
       { op: JsonPatchOperationType.Replace, path: "/elements/0/x", value: 148 },
       { op: JsonPatchOperationType.Replace, path: "/elements/0/y", value: 127 },
     ]);
+  });
+
+  test("A dragged element snaps its edge to a neighbour's edge", () => {
+    expect.hasAssertions();
+
+    // The neighbour's left edge is 3 units left of the shape's left edge, and the pointer takes the shape 6 units right of its press
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
+    const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 156, y: 125 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 156, y: 125 }));
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, x: 103 }, neighbour] });
+  });
+
+  test("An element outside the snap distance does not snap", () => {
+    expect.hasAssertions();
+
+    // The neighbour's left edge is 7 units right of the shape's left edge once the pointer has moved it by 5, past the snap distance
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 20, x: 112, y: 300 });
+    const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 155, y: 125 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 155, y: 125 }));
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, x: 105 }, neighbour] });
+  });
+
+  test("A dragged element snaps its centre to a neighbour's edge midpoint", () => {
+    expect.hasAssertions();
+
+    // The neighbour's bottom edge midpoint is (250, 260). The shape's centre is pointed 2 units short of it on each axis, so it snaps onto it
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 100, x: 200, y: 220 });
+    const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 252, y: 258 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 252, y: 258 }));
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, x: 200, y: 235 }, neighbour] });
+  });
+
+  test("Holding Alt places the element exactly where the pointer is", () => {
+    expect.hasAssertions();
+
+    // The same neighbour as the edge snap, with Alt held through the move and the release, so the shape lands 6 units right of its press
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
+    const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(
+      down.state,
+      createPointer(GesturePointerAction.Move, { x: 156, y: 125 }, false, true),
+    );
+    const up = reduceWhiteboardGesture(
+      move.state,
+      createPointer(GesturePointerAction.Up, { x: 156, y: 125 }, false, true),
+    );
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, x: 106 }, neighbour] });
+  });
+
+  test("The snap distance is held in screen pixels, so a zoomed-in drag snaps less far in document units", () => {
+    expect.hasAssertions();
+
+    // At twice the scale a document unit is two screen pixels, so the neighbour's edge 4 units away is 8 screen pixels off, past the snap distance
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 102, y: 300 });
+    const state = createState(
+      { elements: [processShape, neighbour] },
+      { selectedIds: [PROCESS_ID], viewport: { scale: 2, x: 0, y: 0 } },
+    );
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 300, y: 250 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 312, y: 250 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 312, y: 250 }));
+
+    expect(up.state.document).toStrictEqual({ elements: [{ ...processShape, x: 106 }, neighbour] });
+  });
+
+  test("A guide shows while the drag holds an alignment and clears at its end", () => {
+    expect.hasAssertions();
+
+    // The shape's left edge snaps onto the neighbour's, so the guide runs down that edge from the shape's top to the neighbour's bottom
+    const processShape = createProcess(PROCESS_ID, PROCESS_BOUNDS);
+    const neighbour = createProcess(SECOND_PROCESS_ID, { height: 40, width: 80, x: 103, y: 300 });
+    const state = createState({ elements: [processShape, neighbour] }, { selectedIds: [PROCESS_ID] });
+
+    const down = reduceWhiteboardGesture(state, createPointer(GesturePointerAction.Down, { x: 150, y: 125 }));
+    const move = reduceWhiteboardGesture(down.state, createPointer(GesturePointerAction.Move, { x: 156, y: 125 }));
+    const up = reduceWhiteboardGesture(move.state, createPointer(GesturePointerAction.Up, { x: 156, y: 125 }));
+
+    expect(move.state.gesture).toStrictEqual({
+      guides: [{ axis: SnapAxis.X, end: 340, position: 103, start: 100 }],
+      origin: { x: 150, y: 125 },
+      phase: GesturePhase.Moving,
+      pointerId: POINTER_ID,
+    });
+    expect(up.state.gesture).toBeUndefined();
   });
 
   test("a resized shape's edges follow the pointer", () => {

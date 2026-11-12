@@ -128,6 +128,7 @@ if (editState.value.document.elements.length > 0)
         <template #overlay>
           <ResourceWhiteboardEditorSelection />
           <ResourceWhiteboardEditorMarquee />
+          <ResourceWhiteboardEditorSnapGuides />
         </template>
         <template #html>
           <ResourceWhiteboardEditorTextEdit
