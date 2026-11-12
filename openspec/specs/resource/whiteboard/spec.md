@@ -912,7 +912,7 @@ A selected shape SHALL show a handle at each connection point, and dragging a ha
 
 ### Requirement: A dragged element snaps to the edges and centres of the others
 
-The owner's drag of a shape, sticky note or text box SHALL snap the element's edges and centre to the nearest edge, centre or edge midpoint of another element within a short distance, and SHALL leave the element where the pointer puts it when none is in range.
+The owner's drag of a shape, sticky note, text box or image SHALL snap the element's edges and centre to the nearest edge, centre or edge midpoint of another element within a short distance, and SHALL leave the element where the pointer puts it when none is in range.
 
 #### Scenario: A dragged element snaps its edge to a neighbour's edge
 
