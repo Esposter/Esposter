@@ -65,7 +65,7 @@ catalog:
   "@lerna-lite/cli": ^5.8.0
   "@lerna-lite/publish": ^5.8.0
   "@lezer/highlight": ^1.2.5
-  "@livekit/track-processors": ^0.8.2
+  "@livekit/track-processors": ^0.8.3
   "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.2.0
