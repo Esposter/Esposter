@@ -6,12 +6,12 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | :------------------------- | :----------------------- | ------: | -----: |
 | @esposter/functions        | index.js                 | 5087879 | 4968.6 |
 | @esposter/db-mock          | snapshot.tar.gz          | 5081004 | 4961.9 |
-| genshin-world              | **/*.js                  | 3957225 | 3864.5 |
+| genshin-world              | **/*.js                  | 3957197 | 3864.5 |
 | @esposter/db               | **/*.js                  | 2071692 | 2023.1 |
 | genshin-world              | **/*.d.ts                | 2066788 | 2018.3 |
 | genshin-text               | **/*.js                  |  699964 |  683.6 |
 | genshin-world              | index.d.ts               |  425077 |  415.1 |
-| genshin-world              | index.js                 |  376123 |  367.3 |
+| genshin-world              | index.js                 |  376039 |  367.2 |
 | genshin-engine             | **/*.js                  |  344564 |  336.5 |
 | vue-phaserjs               | **/*.d.ts                |  307683 |  300.5 |
 | genshin-world              | style.css                |  306291 |  299.1 |
@@ -27,18 +27,18 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | math-expression-compiler   | **/*.js                  |  107410 |  104.9 |
 | vue-survey-engine-headless | **/*.js                  |  105470 |  103.0 |
 | vue-phaserjs               | **/*.js                  |   94042 |   91.8 |
+| vue-block-editor-headless  | **/*.js                  |   82497 |   80.6 |
 | mjml-blocks                | **/*.js                  |   78211 |   76.4 |
 | vue-survey-engine-headless | **/*.d.ts                |   70824 |   69.2 |
 | survey-expression          | **/*.js                  |   70119 |   68.5 |
 | mjml-blocks                | **/*.d.ts                |   66941 |   65.4 |
-| vue-block-editor-headless  | **/*.js                  |   66148 |   64.6 |
 | azure-mock                 | **/*.js                  |   61962 |   60.5 |
 | azure-mock                 | **/*.d.ts                |   52864 |   51.6 |
 | genshin-engine             | index.d.ts               |   51541 |   50.3 |
 | nuxt-security-module       | **/*.js                  |   50188 |   49.0 |
+| vue-block-editor-headless  | **/*.d.ts                |   46636 |   45.5 |
 | math-expression-compiler   | **/*.d.ts                |   42763 |   41.8 |
 | genshin-engine             | index.js                 |   37335 |   36.5 |
-| vue-block-editor-headless  | **/*.d.ts                |   37327 |   36.5 |
 | genshin-text               | **/*.d.ts                |   36900 |   36.0 |
 | @esposter/db-schema        | index.js                 |   35844 |   35.0 |
 | vue-pdfjs-headless         | **/*.js                  |   32596 |   31.8 |
@@ -55,6 +55,7 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | math-expression-compiler   | index.js                 |   19240 |   18.8 |
 | trpc-nuxt-module           | **/*.js                  |   17636 |   17.2 |
 | pitch-transcription        | **/*.js                  |   17259 |   16.9 |
+| vue-block-editor-headless  | index.d.ts               |   16739 |   16.3 |
 | @esposter/configuration    | **/*.js                  |   16603 |   16.2 |
 | genshin-interface          | index.js                 |   16569 |   16.2 |
 | @esposter/functions        | tslib.es6-[hash].js      |   16200 |   15.8 |
@@ -62,12 +63,11 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | trpc-nuxt-module           | **/*.d.ts                |   15459 |   15.1 |
 | @esposter/functions        | open-[hash].js           |   15455 |   15.1 |
 | mjml-blocks                | index.d.ts               |   15236 |   14.9 |
-| vue-block-editor-headless  | index.d.ts               |   14585 |   14.2 |
+| vue-block-editor-headless  | index.js                 |   14595 |   14.3 |
 | vue-phaserjs               | index.js                 |   14371 |   14.0 |
 | vue-editor-layout-headless | **/*.js                  |   13255 |   12.9 |
 | survey-expression          | index.js                 |   13196 |   12.9 |
 | nuxt-security-module       | **/*.d.ts                |   12889 |   12.6 |
-| vue-block-editor-headless  | index.js                 |   12531 |   12.2 |
 | @esposter/db               | index.js                 |   11383 |   11.1 |
 | vue-pdfjs-headless         | **/*.d.ts                |   10972 |   10.7 |
 | @esposter/azure            | **/*.js                  |   10877 |   10.6 |
@@ -164,4 +164,4 @@ Every file a workspace package's build emits, largest first, as `pnpm bundle-siz
 | genshin-engine             | constants.d.ts           |      36 |    0.0 |
 | genshin-world              | terrainTileWorker.d.ts   |       9 |    0.0 |
 
-**Total:** 159 files, 24222737 bytes, 23655.0 KiB, 23.10 MiB
+**Total:** 159 files, 24252501 bytes, 23684.1 KiB, 23.13 MiB
