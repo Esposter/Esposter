@@ -14,6 +14,6 @@ export const toShapeOutlinePathData = (shape: ShapeElement): string => {
   const points = getShapeOutline(shape);
   if (shape.cornerStyle === CornerStyle.Sharp || shape.kind === ShapeKind.Ellipse)
     return toClosedSketchedPathData(points, shape.id, shape.sketchLevel);
-  const radius = Math.min(Math.min(shape.width, shape.height) * CORNER_RADIUS_SHARE, CORNER_RADIUS_LIMIT);
+  const radius = Math.min(shape.width * CORNER_RADIUS_SHARE, shape.height * CORNER_RADIUS_SHARE, CORNER_RADIUS_LIMIT);
   return toRoundedPathData(getSketchedPoints(points, shape.id, shape.sketchLevel), radius);
 };
