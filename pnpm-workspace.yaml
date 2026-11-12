@@ -217,8 +217,7 @@ catalog:
   three: ^0.187.0
   three-mesh-bvh: ^0.9.18
   tsdown: ^0.23.7
-  # @TODO: no upstream issue — waits on a tsrs release whose typecheck gets its answer from the Vize content mapper on Windows; the reason is the `renovate.json` rule's description
-  tsrs: ~0.24.0-ts7.1.0-beta
+  tsrs: ^0.25.0-ts7.1.0-beta
   type-fest: ^5.10.0
   typescript: 6.0.3
   unicode-emoji-json: ^0.9.0
