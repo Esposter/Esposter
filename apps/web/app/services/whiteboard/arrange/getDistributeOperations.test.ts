@@ -68,6 +68,27 @@ describe(getDistributeOperations, () => {
     expect(getDistributeOperations(document, [FIRST_ID, SECOND_ID], DistributeAxis.Horizontal)).toStrictEqual([]);
   });
 
+  test("Distribute of boxes that do not span the others is unchanged", () => {
+    expect.hasAssertions();
+
+    // The first box starts first but ends at 120, before the last box ends at 500, and the last box ends last but starts at 400, after the first. The
+    // Gaps total 420 of the 500 left, so each is 40 and the middle box moves from 150 to 160
+    const document: PositionedDocument = {
+      elements: [
+        createShape(FIRST_ID, 0, 0, 120, 100),
+        createShape(SECOND_ID, 150, 0, 200, 100),
+        createShape(THIRD_ID, 400, 0, 100, 100),
+      ],
+    };
+    const operations = getDistributeOperations(document, [FIRST_ID, SECOND_ID, THIRD_ID], DistributeAxis.Horizontal);
+
+    expect(applyPatches(document, operations).document.elements).toStrictEqual([
+      createShape(FIRST_ID, 0, 0, 120, 100),
+      createShape(SECOND_ID, 160, 0, 200, 100),
+      createShape(THIRD_ID, 400, 0, 100, 100),
+    ]);
+  });
+
   test("A box lying inside another's span never moves the box that ends furthest", () => {
     expect.hasAssertions();
 
