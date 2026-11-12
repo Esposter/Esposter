@@ -9,6 +9,7 @@ import {
   WHITEBOARD_PROCESS_ID,
 } from "@/services/whiteboard/constants.test";
 import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import {
   getTextPlacement,
@@ -176,6 +177,6 @@ describe(useWhiteboardTextEdit, () => {
     const draftPlacement = getDraftPlacement(textBox, draft.value);
     onBlur();
 
-    expect(draftPlacement).toStrictEqual(getTextPlacement(editState.value.document.elements[0]));
+    expect(draftPlacement).toStrictEqual(getTextPlacement(takeOne(editState.value.document.elements, 0)));
   });
 });

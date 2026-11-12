@@ -1,4 +1,5 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { CSSProperties } from "vue";
 
 import { HorizontalAlignment, TextAnchor, TextSize, VerticalAlignment } from "vue-block-editor-headless";
 
@@ -23,7 +24,10 @@ export const WHITEBOARD_VERTICAL_ALIGNMENT_ITEMS: UiMenuItem<VerticalAlignment>[
 ];
 // How the draft in the overlay editor lines up with the text it stands for: the CSS text alignment, and the share of its own width that its box moves by
 // so its anchor sits on the point the text is drawn from
-export const WHITEBOARD_TEXT_EDIT_ANCHOR_MAP: Record<TextAnchor, { shift: string; textAlign: string }> = {
+export const WHITEBOARD_TEXT_EDIT_ANCHOR_MAP: Record<
+  TextAnchor,
+  { shift: string; textAlign: CSSProperties["textAlign"] }
+> = {
   [TextAnchor.End]: { shift: "-100%", textAlign: "right" },
   [TextAnchor.Middle]: { shift: "-50%", textAlign: "center" },
   [TextAnchor.Start]: { shift: "0", textAlign: "left" },

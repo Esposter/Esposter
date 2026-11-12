@@ -25,12 +25,9 @@ describe(getSchemaFormVariantValue, () => {
   test("reads the variant the data is in from the fitting index when the union has no fixed discriminant", () => {
     expect.hasAssertions();
 
-    const stringsVariant: JsonSchema = {
-      properties: { col: { layout: { itemsKey: "strings" }, type: "number" }, n: { type: "number" } },
-    };
-    const numbersVariant: JsonSchema = {
-      properties: { col: { layout: { itemsKey: "numbers" }, type: "number" }, size: { type: "number" } },
-    };
+    const createColumn = (itemsKey: string) => ({ layout: { itemsKey }, type: "number" });
+    const stringsVariant: JsonSchema = { properties: { col: createColumn("strings"), n: { type: "number" } } };
+    const numbersVariant: JsonSchema = { properties: { col: createColumn("numbers"), size: { type: "number" } } };
 
     expect(
       getSchemaFormVariantValue(

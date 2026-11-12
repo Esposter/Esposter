@@ -26,7 +26,7 @@ export const getEndOperations = (
   if (element.type !== PositionedElementType.Arrow) return [];
 
   const pointer = `${getElementPointer(index)}/${arrowEndKey}/point`;
-  const moveOperation = { op: JsonPatchOperationType.Replace, path: pointer, value: end.point };
+  const moveOperation: JsonPatchOperation = { op: JsonPatchOperationType.Replace, path: pointer, value: end.point };
   if (end.binding === undefined) return [moveOperation];
 
   return [moveOperation, ...bindPositionedArrowEnd(document, index, arrowEndKey, end.binding)];

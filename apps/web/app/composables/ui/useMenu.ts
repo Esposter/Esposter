@@ -16,7 +16,7 @@ export const useMenu = <T extends string>(
   { onSelect, returnFocusTo }: UiMenuOptions<T>,
 ) => {
   const getItemId = (index: number) => `${id}-item-${index}`;
-  const expandedValues = ref<T[]>([]);
+  const expandedValues = shallowRef<T[]>([]);
   // The rows the menu draws and its arrows walk: the items, each followed by its children while it is open
   const rows = computed<UiMenuItem<T>[]>(() =>
     toValue(items).flatMap((item) => {

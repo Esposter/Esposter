@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { CSSProperties } from "vue";
 import type { PositionedElement } from "vue-block-editor-headless";
 
 import { getElementStrokeAttributes } from "@/services/whiteboard/palette/getElementStrokeAttributes";
@@ -24,7 +25,7 @@ const emit = defineEmits<{ blur: []; compositionEnd: []; compositionStart: []; k
 const whiteboardEditorStore = useWhiteboardEditorStore();
 const { viewport } = storeToRefs(whiteboardEditorStore);
 const textarea = useTemplateRef("textarea");
-const style = computed(() => {
+const style = computed<CSSProperties | undefined>(() => {
   const placement = getDraftPlacement(element, draft.value);
   if (placement === undefined) return undefined;
 

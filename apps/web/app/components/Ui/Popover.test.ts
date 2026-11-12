@@ -108,7 +108,7 @@ describe("uiPopover", () => {
       const panel = component.get<HTMLElement>('[role="dialog"]').element;
       const showPopover = vi.fn<HTMLElement["showPopover"]>();
       panel.showPopover = showPopover;
-      panel.matches = () => true;
+      vi.spyOn(panel, "matches").mockReturnValue(true);
       await component.setProps({ anchor: secondAnchor });
       panel.dispatchEvent(Object.assign(new Event("toggle"), { newState: "closed" }));
       await flushPromises();

@@ -20,8 +20,8 @@ const mountContextMenu = async (editState: Ref<WhiteboardEditState>) => {
     onOpenContextMenu?: ReturnType<typeof useWhiteboardContextMenu>["onOpenContextMenu"];
   } = {};
   const commands = {
-    copy: vi.fn<() => void>(),
-    cut: vi.fn<() => void>(),
+    copy: vi.fn<() => Promise<void>>(),
+    cut: vi.fn<() => Promise<void>>(),
     deleteSelection: vi.fn<() => void>(),
     duplicate: vi.fn<() => void>(),
     editText: vi.fn<(elementId: string) => void>(),
