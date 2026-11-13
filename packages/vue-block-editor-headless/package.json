@@ -1,6 +1,6 @@
 {
   "name": "vue-block-editor-headless",
-  "version": "4.10.0",
+  "version": "4.10.1",
   "description": "A headless Vue block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, and an editing-session composable, with no styling or DOM.",
   "keywords": [
     "block-editor",

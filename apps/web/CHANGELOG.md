@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.1](https://github.com/Esposter/Esposter/compare/v4.10.0...v4.10.1) (2026-11-13)
+
+### Bug Fixes
+
+* **web:** apps/web depends on tresjs-nuxt, so a narrowed install lays down the module's own dependencies ([23ab6d3](https://github.com/Esposter/Esposter/commit/23ab6d30cdb15415258e0122e15557ce1e1fa37f))
+* **web:** the service worker answers a navigation network-first and precaches no page of its own ([219d010](https://github.com/Esposter/Esposter/commit/219d0108c62a2a9ac6fb3d5fde926814c8e9357b))
+* **web:** the typecheck builds one project at a time, so tsrs 0.25 reaches the Vize content mapper on Windows ([d649aa6](https://github.com/Esposter/Esposter/commit/d649aa6833583a07bb74e3eb26de79ecb4e49d0b))
+* **web:** the typecheck drops --builders 1, which tsrs 0.25 no longer needs here ([2ae50a5](https://github.com/Esposter/Esposter/commit/2ae50a5e78d07698508afac3d26ef8a21024c48b))
+
 # [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
 
 ### Bug Fixes

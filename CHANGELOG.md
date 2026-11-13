@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.1](https://github.com/Esposter/Esposter/compare/v4.10.0...v4.10.1) (2026-11-13)
+
+### Bug Fixes
+
+* **functions:** the entry-point test types its manifest read through jsonDateParse's type argument ([389a428](https://github.com/Esposter/Esposter/commit/389a42822b40666a6f718501774a35e3ba982bb2))
+* **scripts:** the paired-shingle pages map through Array.from, and the bundle record takes genshin-world's size from CI's build ([a6ec2f6](https://github.com/Esposter/Esposter/commit/a6ec2f60675a403f7a12d8171665bc4b3f3d0e75))
+* **scripts:** the type bench's baseline program is named with a hyphen, so no case can write over it ([b4c4a38](https://github.com/Esposter/Esposter/commit/b4c4a38aef2c06f3bc7c6751820510f8c141118b))
+* **web:** apps/web depends on tresjs-nuxt, so a narrowed install lays down the module's own dependencies ([23ab6d3](https://github.com/Esposter/Esposter/commit/23ab6d30cdb15415258e0122e15557ce1e1fa37f))
+* **web:** the service worker answers a navigation network-first and precaches no page of its own ([219d010](https://github.com/Esposter/Esposter/commit/219d0108c62a2a9ac6fb3d5fde926814c8e9357b))
+* **web:** the typecheck builds one project at a time, so tsrs 0.25 reaches the Vize content mapper on Windows ([d649aa6](https://github.com/Esposter/Esposter/commit/d649aa6833583a07bb74e3eb26de79ecb4e49d0b))
+* **web:** the typecheck drops --builders 1, which tsrs 0.25 no longer needs here ([2ae50a5](https://github.com/Esposter/Esposter/commit/2ae50a5e78d07698508afac3d26ef8a21024c48b))
+
+### Performance Improvements
+
+* **ci:** the pnpm store is no longer cached, and every job installs what it selects from the registry ([f25528f](https://github.com/Esposter/Esposter/commit/f25528fc4d062e78817909025a0d3a26bbb11709))
+* **scripts:** the duplicate-prose finder keys a window by a hash of its word ids, about five times faster on the tree ([c88f71f](https://github.com/Esposter/Esposter/commit/c88f71f6ae1740cc0e3047aaf01ddbf364d02f89))
+* **scripts:** the line-endings check reads the index with git grep, and the dist-walking tests take the tree-read timeout ([d720d32](https://github.com/Esposter/Esposter/commit/d720d32996d35e116371ceb859e5114186412124))
+* **scripts:** the todos test lists and reads the tree once, and the constant-scope scan parses without linking parents ([f5075a0](https://github.com/Esposter/Esposter/commit/f5075a08726755f6d06fd3b0a035ca6747295350))
+
 # [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@esposter/infra",
-  "version": "4.10.0",
+  "version": "4.10.1",
   "private": true,
   "description": "Pulumi infrastructure code for Esposter Azure resources.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/infra#readme",

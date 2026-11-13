@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.10.1](https://github.com/Esposter/Esposter/compare/v4.10.0...v4.10.1) (2026-11-13)
+
+### Bug Fixes
+
+* **functions:** the entry-point test types its manifest read through jsonDateParse's type argument ([389a428](https://github.com/Esposter/Esposter/commit/389a42822b40666a6f718501774a35e3ba982bb2))
+
 # [4.10.0](https://github.com/Esposter/Esposter/compare/v4.9.0...v4.10.0) (2026-11-12)
 
 **Note:** Version bump only for package @esposter/functions
