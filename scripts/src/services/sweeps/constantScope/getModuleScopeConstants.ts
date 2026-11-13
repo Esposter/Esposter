@@ -1,7 +1,7 @@
 import type { ModuleScopeConstant } from "#src/models/sweeps/constantScope/ModuleScopeConstant";
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { parseSource } from "#src/services/shared/parseSource";
+import { parseSourceUnlinked } from "#src/services/shared/parseSourceUnlinked";
 import { checkIsCallTo } from "#src/services/sweeps/constantScope/checkIsCallTo";
 import { checkIsMovable } from "#src/services/sweeps/constantScope/checkIsMovable";
 import { DESCRIBE_TODO_CALLEE, MOCK_CALLEE } from "#src/services/sweeps/constantScope/constants";
@@ -14,7 +14,7 @@ import { getDescendants } from "#src/services/sweeps/getDescendants";
 // Binding a hoisted `vi.mock` factory reads, and whatever a destructuring's initializer reads. Each kept-out name keeps
 // Out what its initializer reads, a function's body included, transitively, since the module scope pins those too.
 export const getModuleScopeConstants = (text: string): ModuleScopeConstant[] => {
-  const { body: statements } = parseSource(text);
+  const { body: statements } = parseSourceUnlinked(text);
   // A helper file holds module state by design: it exports one helper and parks a `describe.todo` beside it
   if (statements.some((statement) => checkIsCallTo(statement, DESCRIBE_TODO_CALLEE, text))) return [];
 

@@ -1,10 +1,11 @@
+import type { TodoFile } from "#src/models/sweeps/todos/TodoFile";
+
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readUnfiledTodoPaths } from "#src/services/sweeps/todos/readUnfiledTodoPaths";
-import { readUnlinkedTodoFindings } from "#src/services/sweeps/todos/readUnlinkedTodoFindings";
+import { readTodoFiles } from "#src/services/sweeps/todos/readTodoFiles";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 
 /**
  * The `todos` skill's rule — a TODO marker is a workaround for something outside the repository, followed by the
@@ -13,15 +14,24 @@ import { describe, expect, test } from "vitest";
  * often is work of our own, which is either done now or an issue.
  */
 describe("todos", () => {
-  test("every marker in a tracked file is followed by a link", { timeout: TREE_READ_TIMEOUT_MS }, () => {
+  // One listing and one read of the tree answer both tests
+  let todoFiles: TodoFile[] = [];
+
+  beforeAll(() => {
+    todoFiles = readTodoFiles();
+  }, TREE_READ_TIMEOUT_MS);
+
+  test("every marker in a tracked file is followed by a link", () => {
     expect.hasAssertions();
 
-    expect(readUnlinkedTodoFindings()).toStrictEqual([]);
+    expect(
+      todoFiles.flatMap(({ path, unlinkedLines }) => unlinkedLines.map((line) => `${path}:${line}`)),
+    ).toStrictEqual([]);
   });
 
   // The list is where the reminder to file each issue lives, so a marker missing from it is never filed and a row
   // Whose marker went is a reminder for nothing
-  test("lists every marker with no upstream issue, and nothing else", { timeout: TREE_READ_TIMEOUT_MS }, () => {
+  test("lists every marker with no upstream issue, and nothing else", () => {
     expect.hasAssertions();
 
     const skill = readFileSync(resolve(REPOSITORY_ROOT, ".agents/skills/todos/SKILL.md"), "utf8");
@@ -31,7 +41,10 @@ describe("todos", () => {
     );
 
     expect(listedPaths.toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath))).toStrictEqual(
-      readUnfiledTodoPaths().toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath)),
+      todoFiles
+        .filter(({ isUnfiled }) => isUnfiled)
+        .map(({ path }) => path)
+        .toSorted((firstPath, secondPath) => firstPath.localeCompare(secondPath)),
     );
   });
 });
