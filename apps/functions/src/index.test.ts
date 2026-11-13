@@ -23,7 +23,7 @@ describe("@esposter/functions", () => {
   // Because the suite runs from the repo root as well as from here
   test("declares the entry point the Functions host loads", () => {
     expect.hasAssertions();
-    const { main } = jsonDateParse(readFileSync(resolve(packageDirectory, "package.json"), "utf8")) as PackageManifest;
+    const { main } = jsonDateParse<PackageManifest>(readFileSync(resolve(packageDirectory, "package.json"), "utf8"));
 
     expect(main).toBe("./dist/index.js");
     expect(existsSync(resolve(packageDirectory, main ?? ""))).toBe(true);
