@@ -85,19 +85,19 @@ catalog:
   "@pulumi/pulumi": ^3.276.0
   "@standard-schema/spec": ^1.1.0
   "@takumi-rs/core": ^2.20.0
-  "@tiptap/core": ^3.33.1
-  "@tiptap/extension-code-block-lowlight": ^3.33.1
-  "@tiptap/extension-file-handler": ^3.33.1
-  "@tiptap/extension-image": ^3.33.1
-  "@tiptap/extension-list": ^3.33.1
-  "@tiptap/extension-mention": ^3.33.1
-  "@tiptap/extension-table": ^3.33.1
-  "@tiptap/extensions": ^3.33.1
-  "@tiptap/html": ^3.33.1
-  "@tiptap/pm": ^3.33.1
-  "@tiptap/starter-kit": ^3.33.1
-  "@tiptap/suggestion": ^3.33.1
-  "@tiptap/vue-3": ^3.33.1
+  "@tiptap/core": ^3.34.0
+  "@tiptap/extension-code-block-lowlight": ^3.34.0
+  "@tiptap/extension-file-handler": ^3.34.0
+  "@tiptap/extension-image": ^3.34.0
+  "@tiptap/extension-list": ^3.34.0
+  "@tiptap/extension-mention": ^3.34.0
+  "@tiptap/extension-table": ^3.34.0
+  "@tiptap/extensions": ^3.34.0
+  "@tiptap/html": ^3.34.0
+  "@tiptap/pm": ^3.34.0
+  "@tiptap/starter-kit": ^3.34.0
+  "@tiptap/suggestion": ^3.34.0
+  "@tiptap/vue-3": ^3.34.0
   "@tresjs/cientos": ^5.10.1
   "@tresjs/core": ^5.10.1
   "@trpc/client": ^11.28.0
