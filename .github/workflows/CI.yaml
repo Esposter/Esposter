@@ -153,27 +153,6 @@ jobs:
         with:
           task: format:check
 
-  # The gate: the duplicate-code finder's workspace test holds the whole scan of its scopes to no finding, so a clone in
-  # any scope fails here. The finder runs jscpd itself with the scopes, globs and minimums its constants hold
-  duplicate-code:
-    name: Duplicate Code
-    needs: build-packages
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: 🔧 Setup Project Dependencies
-        uses: ./.github/actions/setup-project-dependencies
-
-      - name: 📦 Setup Packages
-        uses: ./.github/actions/setup-packages
-
-      - name: 🔍 Duplicate code
-        run: pnpm -C scripts test src/workspace/duplicateCode.test.ts --run
-
   # Each entry's `name` is the check context the branch ruleset requires
   # (`apps/infra/src/github/rulesets/queueStatusChecks.ts`)
   check:

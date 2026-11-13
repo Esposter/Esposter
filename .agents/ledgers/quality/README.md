@@ -24,8 +24,8 @@ Coverage lives in the area file, never here. A pass loads this file and the one 
 Every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes, with tests, generated
 output, declarations, import blocks, drawn assets and the Azure resource declarations left out (the finder's
 `constants.ts` says why for each, except import blocks, which `scripts/src/services/sweeps/duplicateCode/getDuplicateCodeFindings.ts` explains). The workspace suite's zero test (`scripts/src/workspace/duplicateCode.test.ts`)
-holds the whole scan to no finding, and CI's Duplicate Code job runs that file as the gate. Its config test holds
-`.jscpd.json` to the finder's constants.
+holds the whole scan to no finding, and the coverage shards that run the scripts suite are the gate. The finder passes
+jscpd every value it needs, so the repository holds no `.jscpd.json`.
 
 Where a finding's home looked missing, it is settled:
 
