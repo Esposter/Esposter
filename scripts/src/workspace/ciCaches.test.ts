@@ -27,12 +27,13 @@ describe("ciCaches", () => {
     expect(offenders).toStrictEqual([]);
   });
 
-  // The pnpm store is never cached, so no setup step may turn on its own cache, which saves on every run
+  // The pnpm store is never cached, so no setup step may turn on its own cache, which saves on every run.
+  // Any value but `false` turns it on: `true`, `pnpm`, `'pnpm'`, and any of them with a trailing comment
   test("the pnpm store's own cache is off, since it saves on every run", () => {
     expect.hasAssertions();
 
     const offenders = readWorkflowFiles()
-      .filter(({ content }) => /^\s*cache: true$/mu.test(content))
+      .filter(({ content }) => /^\s*cache:(?!\s*false\b)/mu.test(content))
       .map(({ path }) => path);
 
     expect(offenders).toStrictEqual([]);
