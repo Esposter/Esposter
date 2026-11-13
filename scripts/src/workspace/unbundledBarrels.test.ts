@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -55,7 +56,7 @@ describe("unbundledBarrels", () => {
 
   // CI uploads each package's `dist` as an artifact that skips a hidden folder by default, so a vendored file under
   // Pnpm's `.pnpm` was missing from the app build and its import of the file failed to resolve
-  test("a build writes no folder a tool skips as hidden", () => {
+  test("a build writes no folder a tool skips as hidden", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const hiddenPaths = PACKAGE_PATHS.flatMap((packagePath) => {
@@ -71,7 +72,7 @@ describe("unbundledBarrels", () => {
 
   // Pnpm keeps a package's folder name whole on Linux and shortens it to a hash on Windows, and a declaration imports
   // The vendored file by that name, so the size record differed between CI's build and a checkout on Windows
-  test("a vendored package's folder is named by its version alone", () => {
+  test("a vendored package's folder is named by its version alone", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const suffixedPaths = PACKAGE_PATHS.flatMap((packagePath) => {
@@ -87,7 +88,7 @@ describe("unbundledBarrels", () => {
 
   // The scripts and benchmarks read a Vue package's data through its `dist` under plain Node, which fails on a `.css`
   // File as if it were JavaScript, so a package's stylesheets are merged into its one `style.css` and no module imports one
-  test("no built module imports a stylesheet", () => {
+  test("no built module imports a stylesheet", { timeout: TREE_READ_TIMEOUT_MS }, () => {
     expect.hasAssertions();
 
     const stylesheetImporters = PACKAGE_PATHS.flatMap((packagePath) => {
