@@ -63,14 +63,16 @@ export default defineNuxtConfig({
 // service-worker/sw.ts
 /// <reference types="unplugin-pwa-nuxt/navigation-denylist" />
 import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylist";
-import { createHandlerBoundToURL, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
+import { precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
+import { NetworkFirst } from "@vite-pwa/workbox-swkit/strategies";
 
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: { revision: null | string; url: string }[] };
 
-precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
-// An API route or a file the server serves is the server's to answer, not the shell's
-registerRoute(new NavigationRoute(createHandlerBoundToURL("/"), { denylist: navigationDenylist }));
+precacheAndRoute(self.__WB_MANIFEST);
+// A page comes from the network first. One precached with no revision points at the files of the build it was cached
+// From, which the next deploy removes. An API route or a file the server serves is the server's to answer
+registerRoute(new NavigationRoute(new NetworkFirst({ cacheName: "pages" }), { denylist: navigationDenylist }));
 // `$pwa.updateServiceWorker()` sends this message, and a worker built from source is the one that must act on it
 self.addEventListener("message", (event) => {
   if (event.data?.type === "SKIP_WAITING") event.waitUntil(self.skipWaiting());

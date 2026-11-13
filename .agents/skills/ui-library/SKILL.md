@@ -14,6 +14,7 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the style map in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively; the palette map sits in the same folder.
 - **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`openspec/specs/architecture/ui-library/design.md`, "Rejected").
+- **Retiring the accent button variant over a contrast complaint.** Its label is the page background on the accent fill, which is above 5:1 in every palette: near-white on the deep green in light, near-black on the bright one in dark. A button that reads wrong is first checked for an ancestor that inverts or filters its colours, as the Desmos calculator's dark mode does to anything drawn inside its container, and is moved out of it; the variant stays.
 - **Voxel as the app's only look.** Standard is the default and voxel is the games' look; why one look was rejected is in `openspec/specs/architecture/design-language/design.md`, "Design styles".
 
 ## A look is a style, not the library

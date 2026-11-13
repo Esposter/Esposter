@@ -3,19 +3,35 @@
 import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "@vite-pwa/workbox-swkit/precaching";
 
-import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
+import { ExpirationPlugin } from "@vite-pwa/workbox-swkit/expiration";
+import { cleanupOutdatedCaches, precacheAndRoute } from "@vite-pwa/workbox-swkit/precaching";
 import { NavigationRoute, registerRoute } from "@vite-pwa/workbox-swkit/routing";
+import { NetworkFirst } from "@vite-pwa/workbox-swkit/strategies";
 import { navigationDenylist } from "virtual:unplugin-pwa-nuxt/navigation-denylist";
 
-// The build replaces `__WB_MANIFEST` with the precache list, and the home page joins it, so an offline
-// Navigation to any route is answered by the app shell, except one the server answers itself: an API route or a
-// File it serves is the server's to answer, so the module hands over its routes as the denylist
+// The build replaces `__WB_MANIFEST` with the precache list of the build's own files, each named by its content or
+// Carrying its revision. A page is server-rendered, so it comes from the network first and is kept for the moments
+// There is none: a page precached once, with no revision, would point at the files of the build it was cached from for as
+// Long as the worker lives. A route the server answers itself, such as an API route or a file it serves, is not a
+// Page, so the module hands over its routes as the denylist
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
+
+const MAX_CACHED_PAGES = 32;
+const NETWORK_TIMEOUT_SECONDS = 3;
 
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
-precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
-registerRoute(new NavigationRoute(createHandlerBoundToURL("/"), { denylist: navigationDenylist }));
+precacheAndRoute(self.__WB_MANIFEST);
+registerRoute(
+  new NavigationRoute(
+    new NetworkFirst({
+      cacheName: "pages",
+      networkTimeoutSeconds: NETWORK_TIMEOUT_SECONDS,
+      plugins: [new ExpirationPlugin({ maxEntries: MAX_CACHED_PAGES })],
+    }),
+    { denylist: navigationDenylist },
+  ),
+);
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
 self.addEventListener("message", (event) => {
