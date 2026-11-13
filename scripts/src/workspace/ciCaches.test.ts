@@ -27,6 +27,17 @@ describe("ciCaches", () => {
     expect(offenders).toStrictEqual([]);
   });
 
+  // The pnpm store is never cached, so no setup step may turn on its own cache, which saves on every run
+  test("the pnpm store's own cache is off, since it saves on every run", () => {
+    expect.hasAssertions();
+
+    const offenders = readWorkflowFiles()
+      .filter(({ content }) => /^\s*cache: true$/mu.test(content))
+      .map(({ path }) => path);
+
+    expect(offenders).toStrictEqual([]);
+  });
+
   test("every cache save runs only on the default branch and ai/queue", () => {
     expect.hasAssertions();
 
