@@ -135,7 +135,7 @@ catalog:
   "@vueuse/nuxt": ^15.0.0
   "@vueuse/router": ^15.0.0
   "@webgpu/types": ^0.1.74
-  apexcharts: ^8.8.1
+  apexcharts: ^8.8.2
   azurite: ^3.37.0
   better-auth: ^1.7.22
   bowser: ^2.15.0
