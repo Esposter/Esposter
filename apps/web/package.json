@@ -171,6 +171,7 @@
     "nuxt-security-module": "workspace:*",
     "rollup-plugin-visualizer": "catalog:",
     "sirv": "catalog:",
+    "tresjs-nuxt": "workspace:*",
     "trpc-msw": "workspace:*",
     "type-fest": "catalog:",
     "unocss": "catalog:",

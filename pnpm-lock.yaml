@@ -1317,6 +1317,9 @@ importers:
       sirv:
         specifier: 'catalog:'
         version: 3.0.2
+      tresjs-nuxt:
+        specifier: workspace:*
+        version: link:../../packages/tresjs-nuxt
       trpc-msw:
         specifier: workspace:*
         version: link:../../packages/trpc-msw
