@@ -224,7 +224,7 @@ catalog:
   unocss: ^66.12.0
   unplugin-auto-import: ^21.1.0
   vite: ^8.3.8
-  vite-plugin-glsl: ^1.6.2
+  vite-plugin-glsl: ^1.6.3
   vite-plus: ^1.6.0
   vitest: ^5.1.0
   vitest-browser-vue: ^3.1.0
