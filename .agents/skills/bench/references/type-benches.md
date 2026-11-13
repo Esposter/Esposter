@@ -14,7 +14,7 @@ A type bench measures the compiler, not the runtime. `pnpm bench:types` (root or
 ## The run
 
 - Each case is one program: the header plus that alias. The header alone is the baseline, and a row is the case's counts minus the baseline's, so the imports and the lib they pull in cancel.
-- The program is measured under the package's own options, read from `tsc -p <tsconfig> --showConfig` and passed as command-line flags. A project run (`-p`) prints zero Types and Instantiations under the tsgo-backed compiler, whatever the program, so only a file run counts. `composite`, `declaration`, `incremental`, `isolatedDeclarations` and `types` are not passed: `composite` demands every imported file be listed, and a package's `types: []` becomes an empty `--typeRoots`, which loads no ambient declarations.
+- The program is measured under the package's own options, read from the `typescript` bridge's `tsc -p <tsconfig> --showConfig`, which `tsrs` does not support, and passed to `tsrs` as command-line flags. A project run (`-p`) printed zero Types and Instantiations under the tsgo-backed compiler, whatever the program, so a program is run as a file; `tsrs` was not tried on a project. `composite`, `declaration`, `incremental`, `isolatedDeclarations` and `types` are not passed: `composite` demands every imported file be listed, and a package's `types: []` becomes an empty `--typeRoots`, which loads no ambient declarations.
 - A program with a diagnostic throws rather than being measured.
 - The result is `Foo.typebench.md` beside the source: the compiler version, then a table of case, types and instantiations. Its columns are padded the way the formatter lays a table out, so a format pass never rewrites it. Check time is left out as noise.
 

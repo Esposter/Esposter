@@ -8,6 +8,7 @@ import { mkdirSync } from "node:fs";
 
 // The package's resolved options, read from `--showConfig` so an extends chain is followed rather than re-read here
 export const readCompilerFlags = (packageTsconfigPath: string): string[] => {
+  // @TODO: https://github.com/oxc-project/tsrs/issues/938 — read the options through tsrs and drop the typescript bridge's tsc once tsrs supports --showConfig
   const { stdout } = spawnSync(process.execPath, [TSC_PATH, "-p", packageTsconfigPath, "--showConfig"], {
     encoding: "utf8",
   });

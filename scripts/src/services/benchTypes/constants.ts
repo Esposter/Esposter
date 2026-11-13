@@ -13,7 +13,8 @@ export const TSRS_VERSION: string = parseMachineJson<{ version: string }>(
   readFileSync(TSRS_PACKAGE_JSON_PATH, "utf8"),
 ).version;
 export const TSRS_PATH: string = join(dirname(TSRS_PACKAGE_JSON_PATH), "bin", "tsrs");
-// Only a package's resolved options are read through `tsc`, since `tsrs` does not support `--showConfig` on Windows
+// Only a package's resolved options are read through `tsc`, since `tsrs` does not support `--showConfig`
+// @TODO: https://github.com/oxc-project/tsrs/issues/938 — drop this path with its only reader, readCompilerFlags
 export const TSC_PATH: string = join(dirname(requireFromScripts.resolve("typescript/package.json")), "bin", "tsc");
 export const TYPE_BENCH_GLOB = "*.typebench.ts";
 export const TYPE_BENCH_SUFFIX = ".typebench.ts";
