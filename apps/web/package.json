@@ -36,7 +36,7 @@
     "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "vpx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
-    "typecheck": "nuxt prepare && tsrs -b --fast --runExternalCode --builders 1",
+    "typecheck": "nuxt prepare && tsrs -b --fast --runExternalCode",
     "zstd:gen": "vpx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
@@ -178,8 +178,5 @@
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-router": "catalog:"
-  },
-  "scriptsComments": {
-    "typecheck": "@TODO: no upstream issue — drop `--builders 1` once tsrs starts the content mappers of concurrently built projects without missing their five-second initialize window"
   }
 }
