@@ -46,7 +46,7 @@ const checkIsSameWords = (
 export const getPairedShingles = (pageWords: Map<string, string[]>): PairedShingle[] => {
   const paths = [...pageWords.keys()];
   const wordIdMap = new Map<string, number>();
-  const pageIds = [...pageWords.values()].map((words) =>
+  const pageIds = Array.from(pageWords.values(), (words) =>
     Uint32Array.from(words, (word) => getOrCreate(wordIdMap, word, () => wordIdMap.size) + 1),
   );
   const windowCount = pageIds.reduce((count, ids) => count + ids.length, 0);
