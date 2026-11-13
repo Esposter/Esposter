@@ -2,13 +2,13 @@
 
 ## Purpose
 
-Which CI runs save a cache and which only read one: the default branch and ai/queue save, every other branch restores the newest cache it can see, and each save is made under a content key so it happens only once per key.
+Which CI runs save a cache and which only read one: the default branch and ai/queue save, every other branch restores the newest cache it can see, and each save is made under a content key so it happens only once per key. The pnpm store is not cached.
 
 ## Requirements
 
 ### Requirement: A cache is saved only from the default branch and ai/queue
 
-Every CI cache save SHALL run only on a workflow run of the default branch or of ai/queue. A run on any other branch SHALL restore the newest cache it can see and SHALL save no pnpm store, task cache or game data mirror.
+Every CI cache save SHALL run only on a workflow run of the default branch or of ai/queue. A run on any other branch SHALL restore the newest cache it can see and SHALL save no task cache or game data mirror.
 
 #### Scenario: a run on ai/queue saves its caches
 
@@ -20,34 +20,19 @@ Every CI cache save SHALL run only on a workflow run of the default branch or of
 
 - **GIVEN** a run whose branch is a Renovate or pull request branch
 - **WHEN** the run reaches a cache save step
-- **THEN** no store, task cache or mirror is saved
+- **THEN** no task cache or mirror is saved
 - **AND** the run's restore reads the newest cache from its own branch or the default branch
 
-### Requirement: The pnpm store is saved only when its lockfile key is missing
+### Requirement: The pnpm store is not cached
 
-The pnpm store SHALL be keyed on the contents of the lockfile, and SHALL be saved after a full install only when no store exists under that exact key.
+No workflow or action SHALL restore or save the pnpm store, by the setup action's own cache or by a step of its own. Every job SHALL install what it selects from the registry.
 
-#### Scenario: an unchanged lockfile saves nothing
+#### Scenario: a job installs without a restored store
 
-- **GIVEN** a store already saved under the current lockfile's key
-- **WHEN** a run restores that key and installs
-- **THEN** no store is saved
-
-#### Scenario: a narrower install saves no store
-
-- **GIVEN** a run whose install covers only part of the workspace
-- **WHEN** the install ends
-- **THEN** no store is saved, so a partial store never sits under the lockfile's key
-
-#### Scenario: a changed lockfile saves a store under its new key
-
-- **GIVEN** a lockfile whose key has no saved store
-- **WHEN** a run on `ai/queue` installs
-- **THEN** the store is saved under that key
-
-### Requirement: The pnpm store's own per-run cache is off
-
-No workflow or action SHALL enable the pnpm store's own cache, since that cache saves a store under a key unique to each run.
+- **GIVEN** a job that runs pnpm
+- **WHEN** its install step runs
+- **THEN** it fetches the selected projects' packages from the registry
+- **AND** no store is restored before it or saved after it
 
 #### Scenario: the setup step does not cache for itself
 
@@ -74,7 +59,7 @@ Every branch SHALL restore the newest game data mirror it can see. Only the defa
 
 ### Requirement: The cache rule is held by a test
 
-The workflows and composite actions SHALL be checked by a test that fails when a cache save runs outside the saving branches, or when the combined cache action is used.
+The workflows and composite actions SHALL be checked by a test that fails when a cache save runs outside the saving branches or when the combined cache action is used.
 
 #### Scenario: a cache save outside the saving branches fails the test
 
