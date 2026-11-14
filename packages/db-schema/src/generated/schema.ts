@@ -38,6 +38,7 @@ import { resourceAccessesInResource } from "#src/schema/resource/resourceAccesse
 import { resourceActivitiesInResource } from "#src/schema/resource/resourceActivitiesInResource";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
 import { resourceLinksInResource } from "#src/schema/resource/resourceLinksInResource";
+import { resourceObjectLocksInResource } from "#src/schema/resource/resourceObjectLocksInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { resourceVersionAssetsInResource } from "#src/schema/resource/resourceVersionAssetsInResource";
@@ -78,6 +79,7 @@ export const schema = {
   resourceActivitiesInResource,
   resourceFavoritesInResource,
   resourceLinksInResource,
+  resourceObjectLocksInResource,
   resourcePublicationsInResource,
   resourcesInResource,
   resourceVersionAssetsInResource,
