@@ -3,13 +3,13 @@ import type { UiStatus } from "@/models/ui/UiStatus";
 
 import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
-import { ConnectionQualityMetadataMap } from "@/services/message/room/liveKit/ConnectionQualityMetadataMap";
-import { ConnectionStateMetadataMap } from "@/services/message/room/liveKit/ConnectionStateMetadataMap";
-import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { ConnectionQualityMetadataMap } from "@/services/message/room/realtime/ConnectionQualityMetadataMap";
+import { ConnectionStateMetadataMap } from "@/services/message/room/realtime/ConnectionStateMetadataMap";
+import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
-const liveKitStore = useLiveKitStore();
-const { connectionQuality, connectionState } = storeToRefs(liveKitStore);
+const realtimeStore = useRealtimeStore();
+const { connectionQuality, connectionState } = storeToRefs(realtimeStore);
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId, inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const connectionQualityMetadata = computed(() => ConnectionQualityMetadataMap[connectionQuality.value]);

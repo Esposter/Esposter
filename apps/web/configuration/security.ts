@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
-import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
+import { NUXT_IMAGE_ERROR_HANDLER, REALTIME_ASSETS_URL } from "./constants.ts";
 
 export const security: NuxtConfig["security"] = {
   headers: {
@@ -48,6 +48,8 @@ export const security: NuxtConfig["security"] = {
         "'self'",
         // Desmos
         BASE_URL,
+        // RealtimeKit's virtual background loads its wasm glue from its assets host
+        REALTIME_ASSETS_URL,
       ],
       "style-src-elem": [
         // The component styles Nuxt inlines into the page

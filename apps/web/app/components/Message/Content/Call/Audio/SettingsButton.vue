@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
-const liveKitStore = useLiveKitStore();
-const { setActiveDevice } = liveKitStore;
+const realtimeStore = useRealtimeStore();
+const { setActiveDevice } = realtimeStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { inputDeviceId, outputDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const { deviceSections, isMenuOpen } = useCallDeviceSettings([

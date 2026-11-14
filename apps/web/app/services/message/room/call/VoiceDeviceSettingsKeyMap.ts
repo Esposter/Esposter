@@ -1,7 +1,7 @@
 import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 
-// Which persisted selection each LiveKit device kind writes to, so writing a pick, restarting the live track on
-// A change, and syncing back what the room reports all read one declaration instead of three parallel ones
+// Which persisted selection each device kind writes to, so writing a pick, switching the live device on a
+// Change, and reading the picks back all share one declaration instead of three parallel ones
 export const VoiceDeviceSettingsKeyMap = {
   [MediaDeviceKind.Audioinput]: "inputDeviceId",
   [MediaDeviceKind.Audiooutput]: "outputDeviceId",

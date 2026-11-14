@@ -1,54 +1,42 @@
-import type { AudioProcessorOptions, Track, TrackProcessor } from "livekit-client";
-
 import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// Native Web Audio mic processor: applies the user's mic volume as gain and gates transmission below
-// The voice-activity threshold (Voice Activity) or while the push-to-talk key is released (Push To
-// Talk). LiveKit owns the lifecycle — init on publish, restart on device switch, destroy on
-// Unpublish — so there is no manual track-republish to manage.
-export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, AudioProcessorOptions> {
+// The mic's Web Audio stage, handed to RealtimeKit as an audio middleware. It applies the user's mic volume as gain
+// And gates transmission below the voice-activity threshold (Voice Activity) or while the push-to-talk key is up
+// (Push To Talk). RealtimeKit calls the middleware with each new audio context and sends the node it returns in place
+// Of the raw microphone, so the gate reads each block before the gain applies. The node is a ScriptProcessorNode, the
+// One node RealtimeKit's middleware type names, because it runs the gate on the block it is handed
+export class MicrophoneProcessor {
   inputSensitivityDecibels = MIN_INPUT_SENSITIVITY_DECIBELS;
-  // Driven by the push-to-talk keybind listener (usePushToTalk) via the liveKit store.
+  // Driven by the push-to-talk keybind listener (usePushToTalk) via the realtime store.
   isPushToTalkKeyHeld = false;
   microphoneVolumePercentage = 100;
-  name = "microphone-processor";
-  processedTrack?: MediaStreamTrack;
   voiceInputMode = VoiceInputMode.VoiceActivity;
-  #analyser?: AnalyserNode;
-  #animationFrameId?: number;
   #audioContext?: AudioContext;
-  #gainNode?: GainNode;
-  #source?: MediaStreamAudioSourceNode;
-  #timeDomainData?: Float32Array<ArrayBuffer>;
+  #processor?: ScriptProcessorNode;
+
+  // Held by reference, so RealtimeKit's add and remove both name the same middleware
+  readonly audioMiddleware = async (audioContext: AudioContext) => {
+    // Each run builds a graph in a new context, so the previous run's graph and its context close here
+    await this.destroy();
+    const processor = audioContext.createScriptProcessor(1024, 1, 1);
+    processor.onaudioprocess = (event) => {
+      const input = event.inputBuffer.getChannelData(0);
+      const output = event.outputBuffer.getChannelData(0);
+      const gain = this.#checkIsOpen(computeInputLevelDecibels(input)) ? this.microphoneVolumePercentage / 100 : 0;
+      for (const [index, sample] of input.entries()) output[index] = sample * gain;
+    };
+    this.#audioContext = audioContext;
+    this.#processor = processor;
+    return processor;
+  };
 
   async destroy() {
-    if (this.#animationFrameId !== undefined) window.cancelAnimationFrame(this.#animationFrameId);
-    this.#source?.disconnect();
-    this.#gainNode?.disconnect();
-    this.#analyser?.disconnect();
+    this.#processor?.disconnect();
+    this.#processor = undefined;
     await this.#audioContext?.close();
-  }
-
-  init(options: AudioProcessorOptions) {
-    this.#audioContext = options.audioContext;
-    this.#gainNode = this.#audioContext.createGain();
-    this.#analyser = this.#audioContext.createAnalyser();
-    this.#analyser.fftSize = 1024;
-    this.#timeDomainData = new Float32Array(this.#analyser.fftSize);
-    const destination = this.#audioContext.createMediaStreamDestination();
-    this.#gainNode.connect(destination);
-    this.#connectSource(options.track);
-    this.processedTrack = destination.stream.getAudioTracks()[0];
-    this.#tick();
-    return Promise.resolve();
-  }
-
-  restart(options: AudioProcessorOptions) {
-    this.#audioContext = options.audioContext;
-    this.#connectSource(options.track);
-    return Promise.resolve();
+    this.#audioContext = undefined;
   }
 
   #checkIsOpen(decibels: number) {
@@ -61,21 +49,4 @@ export class MicrophoneProcessor implements TrackProcessor<Track.Kind.Audio, Aud
         return exhaustiveGuard(this.voiceInputMode);
     }
   }
-  // The analyser taps the source pre-gain so a gated (gain 0) mic can still detect speech and reopen.
-  #connectSource(track: MediaStreamTrack) {
-    if (!this.#audioContext || !this.#gainNode || !this.#analyser) return;
-    this.#source?.disconnect();
-    this.#source = this.#audioContext.createMediaStreamSource(new MediaStream([track]));
-    this.#source.connect(this.#analyser);
-    this.#source.connect(this.#gainNode);
-  }
-
-  readonly #tick = () => {
-    if (this.#gainNode && this.#analyser && this.#timeDomainData) {
-      this.#analyser.getFloatTimeDomainData(this.#timeDomainData);
-      const decibels = computeInputLevelDecibels(this.#timeDomainData);
-      this.#gainNode.gain.value = this.#checkIsOpen(decibels) ? this.microphoneVolumePercentage / 100 : 0;
-    }
-    this.#animationFrameId = window.requestAnimationFrame(this.#tick);
-  };
 }

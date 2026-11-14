@@ -11,7 +11,7 @@ import { useAlertStore } from "@/store/alert";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useRealtimeStore } from "@/store/message/room/realtime";
 import { AdminActionType, CALL_ID_LENGTH, getReverseTickedTimestamp } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -174,8 +174,8 @@ describe(useCallStore, () => {
     registerJoin();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const liveKitStore = useLiveKitStore();
-    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
+    const realtimeStore = useRealtimeStore();
+    vi.spyOn(realtimeStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
     const { isConnecting } = storeToRefs(callStore);
     await join(callStore);
@@ -196,10 +196,9 @@ describe(useCallStore, () => {
       join: (callStore) => callStore.joinCall(callSessionId),
       registerJoin: (participantMap) => {
         trpcMsw.callSession.joinCall.mutation(() => ({
+          authToken: "",
           callSessionId,
           isDoorkeeper: false,
-          liveKitToken: "",
-          liveKitUrl: "",
           participantMap,
         }));
       },
@@ -209,10 +208,9 @@ describe(useCallStore, () => {
       join: (callStore) => callStore.joinCallByRoomId(roomId),
       registerJoin: (participantMap) => {
         trpcMsw.callSession.joinCallByRoomId.mutation(() => ({
+          authToken: "",
           callSessionId,
           isDoorkeeper: false,
-          liveKitToken: "",
-          liveKitUrl: "",
           participantMap,
         }));
       },
@@ -233,10 +231,10 @@ describe(useCallStore, () => {
     const participantStore = useParticipantStore();
     const { callSessionParticipantsMap } = storeToRefs(participantStore);
     participantStore.setParticipantMap(callSessionId, new Map([[leavingId, createParticipant(leavingId)]]));
-    const liveKitStore = useLiveKitStore();
+    const realtimeStore = useRealtimeStore();
     const connectStarted = Promise.withResolvers<void>();
     const connectEnded = Promise.withResolvers<void>();
-    vi.spyOn(liveKitStore, "connect").mockImplementation(async () => {
+    vi.spyOn(realtimeStore, "connect").mockImplementation(async () => {
       connectStarted.resolve();
       await connectEnded.promise;
     });
@@ -289,8 +287,8 @@ describe(useCallStore, () => {
     expect.hasAssertions();
 
     trpcMsw.callSession.leaveCall.mutation(() => undefined);
-    const liveKitStore = useLiveKitStore();
-    vi.spyOn(liveKitStore, "disconnect").mockRejectedValue(new Error(" "));
+    const realtimeStore = useRealtimeStore();
+    vi.spyOn(realtimeStore, "disconnect").mockRejectedValue(new Error(" "));
     const callStore = useCallStore();
     const { activeCallSessionId, isLeaving } = storeToRefs(callStore);
     activeCallSessionId.value = callSessionId;

@@ -1,6 +1,6 @@
 # Virtual Backgrounds
 
-The camera background the local media pipeline composites behind you, applied through `@livekit/track-processors`. Two kinds of background share one selection: the presets the repo bundles as SVGs, and up to `MAX_CALL_BACKGROUNDS` images you upload yourself.
+The camera background the local media pipeline composites behind you, applied through `@cloudflare/realtimekit-virtual-background` as a RealtimeKit video middleware. Two kinds of background share one selection: the presets the repo bundles as SVGs, and up to `MAX_CALL_BACKGROUNDS` images you upload yourself.
 
 This is not profile imagery — the profile image is user-editable separately ([users](../../../user/README.md)). A background is composited **locally**, before the track is published, so nobody but the uploader ever fetches it.
 
@@ -24,7 +24,7 @@ The list is the container listing under that prefix. Nothing has to be kept in s
 
 A preset's id can never collide with a slot number, since ids are names and slots are numbers, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: a background picked once carries into every later call and session, rather than being re-picked for each tab.
 
-Applying a background and remembering it are separate calls. Selecting a background turns the camera on, and turning the camera off resets the processor. A camera that starts mid-call applies the persisted pick without writing it back — restoring a selection is not the user making it again.
+Applying a background and remembering it are separate calls. Selecting a background turns the camera on. The middleware stays attached to the meeting while the camera is off, so the background returns with the camera; a camera that starts mid-call with no middleware attached applies the persisted pick without writing it back — restoring a selection is not the user making it again.
 
 Picks supersede rather than queue, so only the one still in force is remembered. A slow selection can resolve after a later one has already applied; persisting it then would leave the settings row naming a background the call is not showing, and restore it on the next camera start.
 
@@ -41,8 +41,8 @@ flowchart TD
   settings --> resolve{"preset path or slot?"}
   resolve -->|preset| static["Bundled url from the preset's id"]
   resolve -->|slot| read["Short-lived read SAS"]
-  resolve -->|"neither — a deleted slot"| none["Processor disabled — no background"]
-  static --> processor["BackgroundProcessor on the local camera track"]
+  resolve -->|"neither — a deleted slot"| none["Middleware removed — no background"]
+  static --> processor["RealtimeKit video middleware on the local camera track"]
   read --> processor
   processor --> published["Published video track — composited locally"]
 ```
@@ -53,9 +53,9 @@ A slot whose blob is gone resolves to nothing and falls back to no background, w
 
 Because a slot's blob name is fixed, a replace and a delete name the same blob, and a deletion event still in flight would take the replacement with it. **The delete is therefore published as a bounded prefix rather than as the name itself**: `publishBlobPrefixDeletion` stamps `createdBefore` with the instant the delete was decided, and the handler's listing drops anything created after it. A slot that has since been re-uploaded keeps its new image, and the worst case is a blob nothing points at rather than a background that vanishes after being replaced. This is the same bound every other orphan sweep states, so the delete needs no new field on the deletion event ([file & media](../../file-media/design.md)).
 
-A browser without background-processor support still stores uploads, and applying one warns rather than failing.
+A browser without RealtimeKit's background support still stores uploads, and applying one warns rather than failing.
 
-A call left, or a camera turned off, while a background is still being read ends that apply quietly. The processor it was writing to has been released by then, so there is nothing left to show, and the pick it made still stands, so it is remembered as any pick that finished applying is.
+A call left while a background is still being read ends that apply quietly. The transformer it was writing to has been released by then, so there is nothing left to show. A camera turned off during the read still takes the background, which waits on the meeting for the camera's return, and the pick it made still stands, so it is remembered as any pick that finished applying is.
 
 ## Key files
 
@@ -69,7 +69,7 @@ A call left, or a camera turned off, while a background is still being read ends
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |
 | `apps/web/app/store/message/user/settings/callBackground.ts`                  | the listing, the upload/delete writes, and the resolver |
 | `apps/web/app/components/Message/Content/Call/VirtualBackground/Grid.vue`     | upload tile, per-slot delete, resolved image urls       |
-| `apps/web/app/store/message/room/liveKit.ts`                                  | processor applied from a resolved url                   |
+| `apps/web/app/store/message/room/realtime.ts`                                 | middleware applied from a resolved url                  |
 
 ## Notes
 

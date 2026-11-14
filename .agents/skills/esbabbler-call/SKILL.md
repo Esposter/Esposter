@@ -1,6 +1,6 @@
 ---
 name: esbabbler-call
-description: Apply when working on calls (store/message/room/call/, liveKit.ts, callSession routers, /calls pages). Esposter's messaging calls.
+description: Apply when working on calls (store/message/room/call/, realtime.ts, callSession routers, /calls pages). Esposter's messaging calls.
 ---
 
 # Esbabbler Calls — Implementation
@@ -29,7 +29,7 @@ Only user intent, moderation, session loss and leaving `/calls/[id]` remove the 
 
 ## Client-side call stores
 
-`useCallStore` holds `activeCallSessionId` (the call the user is in) and `currentRoomCallSessionId` (the viewed room's) — never swapped; participants are `useParticipantStore`, media `useMediaStore`, and every track and device `useLiveKitStore` (`references/client-stores.md`).
+`useCallStore` holds `activeCallSessionId` (the call the user is in) and `currentRoomCallSessionId` (the viewed room's) — never swapped; participants are `useParticipantStore`, media `useMediaStore`, and every track and device `useRealtimeStore` (`references/client-stores.md`).
 
 ## Deep Dives
 

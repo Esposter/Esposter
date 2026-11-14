@@ -3,15 +3,15 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
-import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
 
 const callStore = useCallStore();
 const { selectVirtualBackground } = callStore;
 const mediaStore = useMediaStore();
 const { selectedVirtualBackground } = storeToRefs(mediaStore);
-const liveKitStore = useLiveKitStore();
-const { setActiveDevice } = liveKitStore;
+const realtimeStore = useRealtimeStore();
+const { setActiveDevice } = realtimeStore;
 const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
 const { cameraDeviceId } = storeToRefs(voiceDeviceSettingsStore);
 const { deviceSections, isMenuOpen } = useCallDeviceSettings([{ kind: "videoinput", selectedId: cameraDeviceId }]);

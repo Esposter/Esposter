@@ -31,7 +31,7 @@ const updateAspectRatio = () => {
     >
       <!-- Muted so the freshly opened PiP window (no user activation) can autoplay it — getDisplayMedia
       May bundle a system-audio track, and an unmuted <video> won't autoplay there, leaving it blank.
-      Screen-share audio is played via LiveKit's audio pipeline, not this element, so nothing is lost. -->
+      Screen-share audio is played from its own element by the realtime store, not this one, so nothing is lost. -->
       <video
         ref="video"
         autoplay

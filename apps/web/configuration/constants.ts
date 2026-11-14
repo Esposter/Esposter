@@ -8,6 +8,9 @@ export const TEMPORAL_POLYFILL_BASE_URL = "polyfills/temporal";
 export const STANDARD_TONAL_MIX_PERCENTAGE = 12;
 // The style a reader with no cookie gets
 export const DEFAULT_UI_STYLE = UiStyle.Standard;
+// RealtimeKit's assets host: the virtual background's segmentation model and the wasm its glue loads, which the
+// Security config allows under both script and connect sources
+export const REALTIME_ASSETS_URL = "https://rtk-assets.realtime.cloudflare.com";
 // The inline handler that @nuxt/image's NuxtImg and NuxtPicture render on every image on the server, which records an
 // Image that failed before hydration. The security config allows this exact string by its hash, and its test reads the
 // Module's components for the string, so an upgrade that rewords it fails the test rather than the page

@@ -1,4 +1,4 @@
-import { useLiveKitStore } from "@/store/message/room/liveKit";
+import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useUserSettingsStore } from "@/store/message/user/settings";
 import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 import { VoiceInputMode } from "@esposter/db-schema";
@@ -8,8 +8,8 @@ import { defaultWindow } from "@vueuse/core";
 // From the call store) so the call store itself can host this composable without a circular import.
 // Key events don't cross documents, so the PiP host mounts a second instance on its own window.
 export const usePushToTalk = (isInCall: MaybeRefOrGetter<boolean>, target?: MaybeRefOrGetter<undefined | Window>) => {
-  const liveKitStore = useLiveKitStore();
-  const { setPushToTalkKeyHeld } = liveKitStore;
+  const realtimeStore = useRealtimeStore();
+  const { setPushToTalkKeyHeld } = realtimeStore;
   const userSettingsStore = useUserSettingsStore();
   const listenerTarget = computed(() => (target ? toValue(target) : defaultWindow));
   const pushToTalkKeybind = computed(() => userSettingsStore.userSettings?.pushToTalkKeybind ?? "");

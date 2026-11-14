@@ -1,17 +1,13 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
-import { getAudioCaptureDefaults } from "@/services/message/room/call/getAudioCaptureDefaults";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
-import { useLiveKitStore } from "@/store/message/room/liveKit";
-import { useUserSettingsStore } from "@/store/message/user/settings";
-import { useVoiceDeviceSettingsStore } from "@/store/message/user/settings/voiceDevice";
-import { AdminActionType, NoiseSuppressionMode } from "@esposter/db-schema";
+import { useRealtimeStore } from "@/store/message/room/realtime";
+import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
-import { Room } from "livekit-client";
 
 export const useCallStore = defineStore("message/room/call", () => {
   const { $trpc } = useNuxtApp();
@@ -34,11 +30,9 @@ export const useCallStore = defineStore("message/room/call", () => {
     setParticipantMap,
     setParticipantMuted,
   } = participantStore;
-  const liveKitStore = useLiveKitStore();
+  const realtimeStore = useRealtimeStore();
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
-    liveKitStore;
-  const userSettingsStore = useUserSettingsStore();
-  const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
+    realtimeStore;
   const callRoomId = ref("");
   // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
   // The call it can start is the one the user is already in
@@ -137,16 +131,6 @@ export const useCallStore = defineStore("message/room/call", () => {
   const setCurrentRoomCallSessionId = (callSessionId: string) => {
     currentRoomCallSessionId.value = callSessionId;
   };
-  const createLiveKitRoom = () =>
-    new Room({
-      adaptiveStream: true,
-      audioCaptureDefaults: {
-        ...getAudioCaptureDefaults(userSettingsStore.userSettings?.noiseSuppressionMode ?? NoiseSuppressionMode.Custom),
-        deviceId: voiceDeviceSettingsStore.inputDeviceId || undefined,
-      },
-      dynacast: true,
-      videoCaptureDefaults: { deviceId: voiceDeviceSettingsStore.cameraDeviceId || undefined },
-    });
   // Nothing that starts or ends a call rejects: each terminates its own chain and, where the user acted, alerts
   // Through createErrorAlert — which defers to the error link, so a coded rejection is still shown exactly once.
   // Rejecting instead would put the alert in the caller, and the callers are inline click handlers and a
@@ -176,17 +160,16 @@ export const useCallStore = defineStore("message/room/call", () => {
     let joinedCallSessionId: string | undefined;
     await getResultAsync(async () => {
       const {
+        authToken,
         callSessionId,
         isDoorkeeper: newIsDoorkeeper,
-        liveKitToken,
-        liveKitUrl,
         participantMap,
       } = await $trpc.callSession.joinCall.mutate({ id });
       // Seeded before the connect rather than after it: the participant events delivered while the connect is open
       // Land in this map in place, and a snapshot written once the connect resolves would discard them
       setParticipantMap(callSessionId, participantMap);
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
-      await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, isMicrophoneEnabled);
+      await connect(authToken, leaveCall, isMicrophoneEnabled);
       isDoorkeeper.value = newIsDoorkeeper;
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
@@ -215,12 +198,14 @@ export const useCallStore = defineStore("message/room/call", () => {
     callThreadRootRowKey.value = threadRootRowKey;
     let isJoined = false;
     await getResultAsync(async () => {
-      const { callSessionId, liveKitToken, liveKitUrl, participantMap } =
-        await $trpc.callSession.joinCallByRoomId.mutate({ roomId, threadRootRowKey });
+      const { authToken, callSessionId, participantMap } = await $trpc.callSession.joinCallByRoomId.mutate({
+        roomId,
+        threadRootRowKey,
+      });
       // Seeded before the connect, as in `joinCall`: the room's participant events that arrive while it is open
       // Would otherwise be overwritten by this snapshot once it resolves
       setParticipantMap(callSessionId, participantMap);
-      await connect(createLiveKitRoom(), liveKitUrl, liveKitToken, leaveCall, true);
+      await connect(authToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
       if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;

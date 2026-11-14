@@ -5,7 +5,7 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 
 // Opens a local microphone and exposes the live input level (dB) so the Input Sensitivity panel
 // Can show a calibration meter. There is no shared analyser to reuse - in-call speaking detection
-// Comes from LiveKit's server-side ActiveSpeakersChanged, and this panel can be opened outside a call.
+// Comes from the call's active-speaker event, and this panel can be opened outside a call.
 export const useMicrophoneLevel = () => {
   const voiceDeviceSettingsStore = useVoiceDeviceSettingsStore();
   const { inputDeviceId } = storeToRefs(voiceDeviceSettingsStore);

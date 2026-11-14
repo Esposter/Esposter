@@ -9,11 +9,11 @@ export const CALL_BACKGROUND_UPLOAD_KEY = "callBackgroundUpload";
 export const FULL_HD_RESOLUTION = { height: 1080, width: 1920 } as const;
 // Presentation-quality capture: full HD, at a frame rate that keeps slides and code legible without saturating
 // The uplink, and never offering the tab doing the sharing as a surface to share
-export const SCREEN_SHARE_CAPTURE_OPTIONS = {
-  audio: true,
-  resolution: { ...FULL_HD_RESOLUTION, frameRate: 15 },
+export const SCREEN_SHARE_CONSTRAINTS = {
+  frameRate: { ideal: 15, max: 15 },
+  height: { max: FULL_HD_RESOLUTION.height },
   selfBrowserSurface: "exclude",
-  surfaceSwitching: "include",
+  width: { max: FULL_HD_RESOLUTION.width },
 } as const;
 // The popped-out call window's initial size — a compact tile that fits a video and the control bar, which the
 // User resizes from there

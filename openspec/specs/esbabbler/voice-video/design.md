@@ -1,6 +1,6 @@
 # Voice & Video Settings
 
-The Voice & Video panel of the [user settings dialog](../settings/design.md), aligned with Discord's Voice & Video page. Preferences are DB-backed and sync across devices; only the hardware device IDs stay device-local. The LiveKit store reads the settings and applies them on join and on live change (reactive watchers).
+The Voice & Video panel of the [user settings dialog](../settings/design.md), aligned with Discord's Voice & Video page. Preferences are DB-backed and sync across devices; only the hardware device IDs stay device-local. The realtime store reads the settings and applies them on join and on live change (reactive watchers).
 
 ## Panel structure (top → bottom)
 
@@ -13,24 +13,24 @@ The Voice & Video panel of the [user settings dialog](../settings/design.md), al
 
 ```mermaid
 flowchart LR
-  DB[("userSettingsInMessage<br/>(synced)")] --> LK["liveKit store watchers"]
-  LOCAL[("voice.ts localStorage<br/>device IDs")] --> LK
-  PTT["usePushToTalk"] -->|"setPushToTalkKeyHeld"| LK
-  LK -->|"GainNode gain + VA/PTT gate"| MP["MicrophoneProcessor<br/>(LiveKit audio TrackProcessor)"]
-  LK -->|"HTMLMediaElement.volume"| SPK["remote audio elements"]
-  LK -->|"audioCaptureDefaults + restartTrack"| GUM["getUserMedia constraints"]
-  LK -->|"room.switchActiveDevice"| DEV["live device switch"]
+  DB[("userSettingsInMessage<br/>(synced)")] --> RT["realtime store watchers"]
+  LOCAL[("voice.ts localStorage<br/>device IDs")] --> RT
+  PTT["usePushToTalk"] -->|"setPushToTalkKeyHeld"| RT
+  RT -->|"gain + VA/PTT gate"| MP["MicrophoneProcessor<br/>(RealtimeKit audio middleware)"]
+  RT -->|"HTMLMediaElement.volume"| SPK["remote audio elements"]
+  RT -->|"mediaConfiguration at join, applyConstraints mid-call"| GUM["getUserMedia constraints"]
+  RT -->|"self.setDevice"| DEV["live device switch"]
 ```
 
 | Setting                 | Field                             | Applied via                                                                                                                                                                                                                                                                                                   |
 | ----------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Microphone Volume**   | `microphoneVolumePercentage`      | `MicrophoneProcessor` Web Audio `GainNode` on the local mic — supports >100% boost                                                                                                                                                                                                                            |
+| **Microphone Volume**   | `microphoneVolumePercentage`      | `MicrophoneProcessor` gain in its Web Audio middleware on the local mic — supports >100% boost                                                                                                                                                                                                                |
 | **Speaker Volume**      | `speakerVolumePercentage`         | master output: `HTMLMediaElement.volume` on every remote audio element, multiplied per participant by the in-call [per-user volume](../calls/per-user-volume/design.md) (caps at 100% — boosting past it is deferred, see [speaker volume boost](../../../deferred/esbabbler/speaker-volume-boost/design.md)) |
-| **Input Profile**       | `noiseSuppressionMode`            | browser-native getUserMedia constraints via `getAudioCaptureDefaults` → Room `audioCaptureDefaults` + `restartTrack`                                                                                                                                                                                          |
+| **Input Profile**       | `noiseSuppressionMode`            | browser-native getUserMedia constraints via `getAudioCaptureDefaults` → the meeting's `mediaConfiguration.audio` at join, `applyConstraints` on the raw mic track mid-call                                                                                                                                    |
 | **Input Sensitivity**   | `inputSensitivityDecibels`        | voice-activity gate in `MicrophoneProcessor`: gain → 0 when live dB < threshold (Voice Activity mode only)                                                                                                                                                                                                    |
 | **Input mode**          | `voiceInputMode`                  | `VoiceActivity` enables the sensitivity gate; `PushToTalk` gates on the held keybind — [push-to-talk](../push-to-talk/design.md)                                                                                                                                                                              |
 | **Default mute/deafen** | `isMuteOnJoin` / `isDeafenOnJoin` | initial mic/deafen state in the join flow                                                                                                                                                                                                                                                                     |
-| **Devices**             | `inputDeviceId` etc. (local)      | join: Room `audio`/`videoCaptureDefaults.deviceId`; mid-call: `room.switchActiveDevice` via store watchers                                                                                                                                                                                                    |
+| **Devices**             | `inputDeviceId` etc. (local)      | join: `self.setDevice` before the microphone turns on; mid-call: `self.setDevice` via store watchers                                                                                                                                                                                                          |
 
 ## Device selection — single source of truth
 
@@ -38,19 +38,19 @@ The persisted `useVoiceDeviceSettingsStore` (`voiceDevice.ts`, `localStorage`) h
 
 - **Settings panel selects** bind `v-model` directly on the store refs.
 - **Mic test** (`useMicrophoneLevel`) and **pre-join preview** (`useCallPreJoinMedia`) build reactive `computed` `useUserMedia` constraints from the IDs — a device change re-requests the right stream immediately.
-- **The live call**: `createLiveKitRoom` seeds `audioCaptureDefaults.deviceId` + `videoCaptureDefaults.deviceId` from the store; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
+- **The live call**: `connect` applies the stored input, camera and output picks through `self.setDevice` before the microphone turns on; the in-call picker (`useCallDeviceSettings`) and the `HealthButton` readout bind the same refs.
 
-`liveKit.ts` keeps no device refs of its own. `setActiveDevice` writes the store; per-kind watchers call `room.switchActiveDevice` to restart the live track mid-call. A guard (`getActiveDevice(kind) === deviceId`) skips no-op switches — including the echo from LiveKit's own `ActiveDeviceChanged` event — so there is no feedback loop.
+`realtime.ts` keeps no device refs of its own. `setActiveDevice` writes the store; per-kind watchers hand the picked device to `self.setDevice`, which switches the live device mid-call. The SDK does not write a switch back into the store, so there is no echo to guard against. RealtimeKit also keeps its own copy of each pick under its `Realtimekit::…UserDeviceID` keys, which it reads only when no device has been chosen.
 
 ## Input profile (noise suppression)
 
-Browser-native only — **no Krisp** (paid). `getAudioCaptureDefaults` maps the mode to getUserMedia audio constraints: Voice Isolation = `echoCancellation`/`noiseSuppression`/`autoGainControl` all on; Studio = all off (raw mic); Custom = browser defaults. A true ML denoiser would need Krisp and is out of scope.
+Browser-native only — **no Krisp** (paid). `getAudioCaptureDefaults` maps the mode to getUserMedia audio constraints: Voice Isolation = `echoCancellation`/`noiseSuppression`/`autoGainControl` all on; Studio = all off (raw mic); Custom = browser defaults, which are on as well. A true ML denoiser would need Krisp and is out of scope.
 
 ## Microphone processing — `MicrophoneProcessor`
 
-`models/message/room/call/MicrophoneProcessor.ts` is a LiveKit audio `TrackProcessor`, so LiveKit owns its lifecycle (init on publish, restart on device switch, destroy on unpublish) — no manual track republish. It builds `source → gainNode → MediaStreamDestination`, taps the source pre-gain with an `AnalyserNode`, and per animation frame computes the live dB level to drive the gate and applies `microphoneVolumePercentage / 100` as gain. The gate source follows `voiceInputMode`: the dB threshold in Voice Activity, the held keybind (`isPushToTalkKeyHeld`) in Push To Talk — see [push-to-talk](../push-to-talk/design.md).
+`models/message/room/call/MicrophoneProcessor.ts` is a RealtimeKit audio middleware. RealtimeKit calls it with a new audio context on each run of its audio pipeline (on enable and on a device switch) and sends the node it returns in place of the raw microphone. That node is a `ScriptProcessorNode`, the one node RealtimeKit's middleware type names: it reads each block before the gain applies, computes the live dB level to drive the gate, and writes the block at `microphoneVolumePercentage / 100` or silence. The gate source follows `voiceInputMode`: the dB threshold in Voice Activity, the held keybind (`isPushToTalkKeyHeld`) in Push To Talk — see [push-to-talk](../push-to-talk/design.md).
 
-There is **no** shared "speaking indicator analyser" to reuse — in-call active-speaker state comes from LiveKit's server-side `RoomEvent.ActiveSpeakersChanged`. Local level analysis (panel meter + processor gate) is its own Web Audio graph; the panel meter uses the separate read-only `useMicrophoneLevel` composable.
+There is **no** shared "speaking indicator analyser" to reuse — in-call active-speaker state comes from RealtimeKit's `activeSpeaker` event, which names one remote speaker and fires when the speaker changes. The local microphone is not marked as speaking, and a speaker who falls silent stays marked until the next speaker starts. Local level analysis (panel meter + processor gate) is its own Web Audio graph; the panel meter uses the separate read-only `useMicrophoneLevel` composable.
 
 ## Key files
 
@@ -59,13 +59,13 @@ There is **no** shared "speaking indicator analyser" to reuse — in-call active
 | `packages/db-schema/src/schema/message/userSettingsInMessage.ts`       | fields + `NoiseSuppressionMode` enum + check constraints                                  |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/`      | the panel: `Devices/`, `Volume/`, `MicrophoneTest/`, `InputProfile/`, `InputSensitivity/` |
 | `apps/web/app/composables/message/user/settings/useMicrophoneLevel.ts` | read-only mic level for the panel meters                                                  |
-| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity/push-to-talk gate (LiveKit audio TrackProcessor)          |
+| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`         | Web Audio gain + voice-activity/push-to-talk gate (RealtimeKit audio middleware)          |
 | `apps/web/app/composables/message/room/call/usePushToTalk.ts`          | hold-to-talk key listeners (hosted by the call store + PiP host)                          |
 | `apps/web/app/services/message/room/call/getAudioCaptureDefaults.ts`   | noise-suppression mode → getUserMedia constraints                                         |
-| `apps/web/app/store/message/room/liveKit.ts`                           | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers            |
+| `apps/web/app/store/message/room/realtime.ts`                          | speaker volume, noise mode, mic processor; `setActiveDevice` + device watchers            |
 | `apps/web/app/composables/message/room/call/useCallPreJoinMedia.ts`    | pre-join preview — reactive constraints from device IDs                                   |
 | `apps/web/app/composables/message/room/call/useCallDeviceSettings.ts`  | in-call device picker                                                                     |
 
 ## Unverified
 
-The live audio path (mic gain, voice-activity/push-to-talk gating, noise-suppression modes) has only ever been exercised single-party — one browser, no remote peer. Nothing above is proven against a real two-party call, so treat the applied-behaviour column as intent rather than observed fact until someone runs one.
+The live audio path (mic gain, voice-activity/push-to-talk gating, noise-suppression modes) has only ever been exercised single-party — one browser, no remote peer. The RealtimeKit path (the middleware's gate, noise modes applied to a live track, device switching) has not yet been run in a browser at all. Nothing above is proven against a real two-party call, so treat the applied-behaviour column as intent rather than observed fact until someone runs one.
