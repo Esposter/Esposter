@@ -13,6 +13,7 @@ import { getPostRanking } from "#server/services/post/getPostRanking";
 import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
 import { readPostWithRelations } from "#server/services/post/readPostWithRelations";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -29,14 +30,34 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { inJsonArray } from "@esposter/db";
-import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  DerivedDatabaseEntityType,
+  PostInPostRelations,
+  postsInPost,
+  selectPostInPostSchema,
+  TopicKind,
+} from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
 
+// A feed card shows a post's counters and the feed is ranked by them, so every change to a post reaches the feed too
+const feedPostsTopic = getTopic(TopicKind.Feed, "posts");
+// The topics of the posts a write changed, each under its own name, together with the feed they are all shown in
+const getPostTopics = (...postIds: string[]) => [
+  ...postIds.map((postId) => getTopic(TopicKind.Post, postId)),
+  feedPostsTopic,
+];
+// The posts whose counters a comment's write moved, as the write's output names them
+const getAncestorIds = (output: unknown) =>
+  selectPostInPostSchema.pick({ ancestorIds: true }).parse(output).ancestorIds;
+
 export const postRouter = router({
-  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
-    async ({ ctx, input }) => {
+  createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"])
+    .meta({ topics: ({ output }) => getPostTopics(...getAncestorIds(output)) })
+    .mutation<CreatedComment>(async ({ ctx, input }) => {
       const parentPost = await requireEntity(
         ctx.db.query.postsInPost.findFirst({
           columns: { ancestorIds: true, depth: true, id: true },
@@ -84,28 +105,36 @@ export const postRouter = router({
           ctx.getSessionPayload.user.id,
         ),
       };
-    },
-  ),
-  createPost: getProfanityFilterProcedure(createPostInputSchema, [
-    "title",
-    "description",
-  ]).mutation<PostInPostWithRelations>(async ({ ctx, input }) => {
-    const createdAt = new Date();
-    const newPost = requireMutation(
-      (
-        await ctx.db
-          .insert(postsInPost)
-          .values({ ...input, createdAt, ranking: getPostRanking(0, createdAt), userId: ctx.getSessionPayload.user.id })
-          .returning({ id: postsInPost.id })
-      )[0],
-      Operation.Create,
-      DatabaseEntityType.Post,
-      JSON.stringify(input),
-    );
+    }),
+  createPost: getProfanityFilterProcedure(createPostInputSchema, ["title", "description"])
+    .meta({ topics: () => [feedPostsTopic] })
+    .mutation<PostInPostWithRelations>(async ({ ctx, input }) => {
+      const createdAt = new Date();
+      const newPost = requireMutation(
+        (
+          await ctx.db
+            .insert(postsInPost)
+            .values({
+              ...input,
+              createdAt,
+              ranking: getPostRanking(0, createdAt),
+              userId: ctx.getSessionPayload.user.id,
+            })
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Create,
+        DatabaseEntityType.Post,
+        JSON.stringify(input),
+      );
 
-    return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-  }),
+      return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    }),
   deleteComment: standardAuthedProcedure
+    .meta({
+      topics: getProcedureTopics(deleteCommentInputSchema, (commentId, { output }) =>
+        getPostTopics(commentId, ...getAncestorIds(output)),
+      ),
+    })
     .input(deleteCommentInputSchema)
     .mutation<DeletedComment>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -144,20 +173,24 @@ export const postRouter = router({
       const { removedCommentCount } = takeOne(countRows, 0);
       return { ancestorIds, removedCommentCount };
     }),
-  deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost>(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .delete(postsInPost)
-          .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.Post,
-      input,
+  deletePost: standardAuthedProcedure
+    .meta({ topics: getProcedureTopics(deletePostInputSchema, (postId) => getPostTopics(postId)) })
+    .input(deletePostInputSchema)
+    .mutation<PostInPost>(async ({ ctx, input }) =>
+      requireMutation(
+        (
+          await ctx.db
+            .delete(postsInPost)
+            .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+            .returning()
+        )[0],
+        Operation.Delete,
+        DatabaseEntityType.Post,
+        input,
+      ),
     ),
-  ),
   readPost: standardRateLimitedProcedure
+    .meta({ topics: getProcedureTopics(readPostInputSchema, (postId) => [getTopic(TopicKind.Post, postId)]) })
     .input(readPostInputSchema)
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
     .query<PostInPostWithRelations>(({ ctx, input }) =>
@@ -166,6 +199,11 @@ export const postRouter = router({
   // The counts the server keeps on each post, read in one statement for the posts a client has marked as changed. The
   // Server adjusts a count in the same batch as the write that changes it, so only this read says what it is now
   readPostCounts: standardRateLimitedProcedure
+    .meta({
+      topics: getProcedureTopics(readPostCountsInputSchema, (postIds) =>
+        postIds.map((postId) => getTopic(TopicKind.Post, postId)),
+      ),
+    })
     .input(readPostCountsInputSchema)
     .query<Pick<PostInPost, "commentCount" | "id" | "likeCount">[]>(({ ctx, input }) =>
       ctx.db
@@ -174,6 +212,7 @@ export const postRouter = router({
         .where(inJsonArray(postsInPost.id, input)),
     ),
   readPosts: standardRateLimitedProcedure
+    .meta({ topics: () => [feedPostsTopic] })
     .input(readPostsInputSchema)
     .query<CursorPaginationData<PostInPostWithRelations>>(
       async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
@@ -208,46 +247,45 @@ export const postRouter = router({
         );
       },
     ),
-  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, [
-    "description",
-  ]).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
-    const updatedComment = requireMutation(
-      (
-        await ctx.db
-          .update(postsInPost)
-          .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
-          .returning({ id: postsInPost.id })
-      )[0],
-      Operation.Update,
-      DerivedDatabaseEntityType.Comment,
-      id,
-    );
+  updateComment: getProfanityFilterProcedure(updateCommentInputSchema, ["description"])
+    .meta({ topics: getProcedureTopics(updateCommentInputSchema, ({ id }) => getPostTopics(id)) })
+    .mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+      const updatedComment = requireMutation(
+        (
+          await ctx.db
+            .update(postsInPost)
+            .set(rest)
+            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Update,
+        DerivedDatabaseEntityType.Comment,
+        id,
+      );
 
-    return readPostWithRelations(
-      ctx.db,
-      updatedComment.id,
-      DerivedDatabaseEntityType.Comment,
-      ctx.getSessionPayload.user.id,
-    );
-  }),
-  updatePost: getProfanityFilterProcedure(updatePostInputSchema, [
-    "title",
-    "description",
-  ]).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
-    const updatedPost = requireMutation(
-      (
-        await ctx.db
-          .update(postsInPost)
-          .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
-          .returning({ id: postsInPost.id })
-      )[0],
-      Operation.Update,
-      DatabaseEntityType.Post,
-      id,
-    );
+      return readPostWithRelations(
+        ctx.db,
+        updatedComment.id,
+        DerivedDatabaseEntityType.Comment,
+        ctx.getSessionPayload.user.id,
+      );
+    }),
+  updatePost: getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"])
+    .meta({ topics: getProcedureTopics(updatePostInputSchema, ({ id }) => getPostTopics(id)) })
+    .mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+      const updatedPost = requireMutation(
+        (
+          await ctx.db
+            .update(postsInPost)
+            .set(rest)
+            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+            .returning({ id: postsInPost.id })
+        )[0],
+        Operation.Update,
+        DatabaseEntityType.Post,
+        id,
+      );
 
-    return readPostWithRelations(ctx.db, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-  }),
+      return readPostWithRelations(ctx.db, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    }),
 });

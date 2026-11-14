@@ -1,4 +1,5 @@
 import type { SessionSummary } from "#server/models/session/SessionSummary";
+import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
 
 import { auth } from "#server/auth";
 import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
@@ -8,10 +9,15 @@ import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { deleteSessionInputSchema } from "#shared/models/db/session/DeleteSessionInput";
-import { DatabaseEntityType } from "@esposter/db-schema";
+import { getTopic } from "#shared/services/realtime/getTopic";
+import { DatabaseEntityType, TopicKind } from "@esposter/db-schema";
+
+// The signed-in sessions a user holds are one topic for the user
+const sessionTopics: ProcedureTopics = ({ userId }) =>
+  userId === undefined ? [] : [getTopic(TopicKind.Session, userId)];
 
 export const sessionRouter = router({
-  deleteOtherSessions: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
+  deleteOtherSessions: standardAuthedProcedure.meta({ topics: sessionTopics }).mutation<void>(async ({ ctx }) => {
     const { session, user } = ctx.getSessionPayload;
     // Read before the revoke, which leaves nothing to name the sessions it ended by
     const otherSessions = (await readActiveSessions(ctx.db, user.id)).filter(({ id }) => id !== session.id);
@@ -22,19 +28,22 @@ export const sessionRouter = router({
       otherSessions.map(({ id }) => id),
     );
   }),
-  deleteSession: standardAuthedProcedure.input(deleteSessionInputSchema).mutation<void>(async ({ ctx, input }) => {
-    const { user } = ctx.getSessionPayload;
-    // A session token is a credential, so it never reaches the client: a row is named by id and the token it is
-    // Revoked with is resolved here. The read is scoped to the caller, so an id that is not theirs is a
-    // NOT_FOUND rather than someone else's session being signed out
-    const sessions = await readActiveSessions(ctx.db, user.id);
-    const session = sessions.find(({ id }) => id === input);
-    if (!session) throw getNotFoundError(DatabaseEntityType.Session, input);
-    await auth.api.revokeSession({ body: { token: session.token }, headers: ctx.headers });
-    await closeSessionSockets(ctx.db, user.id, [session.id]);
-    // The session's push subscriptions went with the row better-auth just deleted — `pushSubscriptions.sessionId` cascades
-  }),
-  readSessions: standardAuthedProcedure.query<SessionSummary[]>(async ({ ctx }) => {
+  deleteSession: standardAuthedProcedure
+    .meta({ topics: sessionTopics })
+    .input(deleteSessionInputSchema)
+    .mutation<void>(async ({ ctx, input }) => {
+      const { user } = ctx.getSessionPayload;
+      // A session token is a credential, so it never reaches the client: a row is named by id and the token it is
+      // Revoked with is resolved here. The read is scoped to the caller, so an id that is not theirs is a
+      // NOT_FOUND rather than someone else's session being signed out
+      const sessions = await readActiveSessions(ctx.db, user.id);
+      const session = sessions.find(({ id }) => id === input);
+      if (!session) throw getNotFoundError(DatabaseEntityType.Session, input);
+      await auth.api.revokeSession({ body: { token: session.token }, headers: ctx.headers });
+      await closeSessionSockets(ctx.db, user.id, [session.id]);
+      // The session's push subscriptions went with the row better-auth just deleted — `pushSubscriptions.sessionId` cascades
+    }),
+  readSessions: standardAuthedProcedure.meta({ topics: sessionTopics }).query<SessionSummary[]>(async ({ ctx }) => {
     const { session: currentSession, user } = ctx.getSessionPayload;
     const sessions = await readActiveSessions(ctx.db, user.id);
     return sessions.map(({ id, updatedAt, userAgent }) => ({

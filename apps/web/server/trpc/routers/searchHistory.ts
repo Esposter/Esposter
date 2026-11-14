@@ -1,3 +1,4 @@
+import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { relations, SearchHistoryInMessage } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
@@ -14,12 +15,18 @@ import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { readSearchHistoriesInputSchema } from "#shared/models/db/searchHistory/ReadSearchHistoriesInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
-import { DatabaseEntityType, searchHistoriesInMessage } from "@esposter/db-schema";
+import { getTopic } from "#shared/services/realtime/getTopic";
+import { DatabaseEntityType, searchHistoriesInMessage, TopicKind } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
+// A user's searches, across every room, are one topic: the history a room shows is read from it
+const searchHistoryTopics: ProcedureTopics = ({ userId }) =>
+  userId === undefined ? [] : [getTopic(TopicKind.SearchHistory, userId)];
+
 export const searchHistoryRouter = router({
-  createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId").mutation<SearchHistoryInMessage>(
-    async ({ ctx, input }) => {
+  createSearchHistory: getMemberProcedure(createSearchHistoryInputSchema, "roomId")
+    .meta({ topics: searchHistoryTopics })
+    .mutation<SearchHistoryInMessage>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       // An identical search is recorded once, so running one again, from Enter or from the history, adds no second row
       const existingSearchHistory = await ctx.db.query.searchHistoriesInMessage.findFirst({
@@ -43,9 +50,9 @@ export const searchHistoryRouter = router({
         DatabaseEntityType.SearchHistory,
         JSON.stringify(input),
       );
-    },
-  ),
+    }),
   deleteSearchHistory: standardAuthedProcedure
+    .meta({ topics: searchHistoryTopics })
     .input(deleteSearchHistoryInputSchema)
     .mutation<SearchHistoryInMessage>(async ({ ctx, input }) =>
       requireMutation(
@@ -60,24 +67,25 @@ export const searchHistoryRouter = router({
         input,
       ),
     ),
-  readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId").query<
-    CursorPaginationData<SearchHistoryInMessage>
-  >(async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
-    // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only
-    // Says which room's searches may be read, never whose
-    const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
-      roomId: { eq: roomId },
-      userId: { eq: ctx.getSessionPayload.user.id },
-    };
-    if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
-    const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
-      limit: limit + 1,
-      orderBy: (searchHistory) => parseSortByToSql(searchHistory, sortBy),
-      where,
-    });
-    return getCursorPaginationData(resultSearchHistories, limit, sortBy);
-  }),
+  readSearchHistories: getMemberProcedure(readSearchHistoriesInputSchema, "roomId")
+    .meta({ topics: searchHistoryTopics })
+    .query<CursorPaginationData<SearchHistoryInMessage>>(async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
+      // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only
+      // Says which room's searches may be read, never whose
+      const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
+        roomId: { eq: roomId },
+        userId: { eq: ctx.getSessionPayload.user.id },
+      };
+      if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
+      const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
+        limit: limit + 1,
+        orderBy: (searchHistory) => parseSortByToSql(searchHistory, sortBy),
+        where,
+      });
+      return getCursorPaginationData(resultSearchHistories, limit, sortBy);
+    }),
   updateSearchHistory: standardAuthedProcedure
+    .meta({ topics: searchHistoryTopics })
     .input(updateSearchHistoryInputSchema)
     .mutation<SearchHistoryInMessage>(async ({ ctx, input: { id, query } }) =>
       requireMutation(

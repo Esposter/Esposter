@@ -1,11 +1,13 @@
 import type { PublicUser } from "@esposter/db-schema";
 
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   BlockInSocialRelations,
   blocksInSocial,
@@ -13,12 +15,28 @@ import {
   friendRequestsInSocial,
   friendsInSocial,
   PublicUserColumns,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getFriendshipId, Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const blockRouter = router({
   createBlock: standardAuthedProcedure
+    .meta({
+      // The pair's friendship and request go with the block, and the blocked user's posts leave the blocker's feed
+      topics: getProcedureTopics(friendUserIdInputSchema, (targetUserId, { userId }) =>
+        userId === undefined
+          ? []
+          : [
+              getTopic(TopicKind.Block, userId),
+              getTopic(TopicKind.Feed, "posts"),
+              getTopic(TopicKind.Friend, userId),
+              getTopic(TopicKind.Friend, targetUserId),
+              getTopic(TopicKind.FriendRequest, userId),
+              getTopic(TopicKind.FriendRequest, targetUserId),
+            ],
+      ),
+    })
     .input(friendUserIdInputSchema)
     .mutation<PublicUser>(async ({ ctx, input: targetUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -38,6 +56,10 @@ export const blockRouter = router({
       return blockedUser;
     }),
   deleteBlock: standardAuthedProcedure
+    .meta({
+      topics: ({ userId }) =>
+        userId === undefined ? [] : [getTopic(TopicKind.Block, userId), getTopic(TopicKind.Feed, "posts")],
+    })
     .input(friendUserIdInputSchema)
     .mutation<PublicUser["id"]>(async ({ ctx, input: blockedUserId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -57,12 +79,14 @@ export const blockRouter = router({
       );
       return blockedUserId;
     }),
-  readBlockedUsers: standardAuthedProcedure.query<PublicUser[]>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const blockedRows = await ctx.db.query.blocksInSocial.findMany({
-      where: { blockerId: { eq: userId } },
-      with: BlockInSocialRelations,
-    });
-    return blockedRows.map(({ blocked }) => blocked);
-  }),
+  readBlockedUsers: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.Block, userId)]) })
+    .query<PublicUser[]>(async ({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const blockedRows = await ctx.db.query.blocksInSocial.findMany({
+        where: { blockerId: { eq: userId } },
+        with: BlockInSocialRelations,
+      });
+      return blockedRows.map(({ blocked }) => blocked);
+    }),
 });

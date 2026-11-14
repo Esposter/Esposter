@@ -2,17 +2,20 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   blocksInSocial,
   DatabaseEntityType,
   friendsInSocial,
   getPublicUserColumns,
+  TopicKind,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
@@ -20,6 +23,11 @@ import { and, eq, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure
+    .meta({
+      topics: getProcedureTopics(friendUserIdInputSchema, (friendId, { userId }) =>
+        userId === undefined ? [] : [getTopic(TopicKind.Friend, userId), getTopic(TopicKind.Friend, friendId)],
+      ),
+    })
     .input(friendUserIdInputSchema)
     .mutation<void>(async ({ ctx, input: friendId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -37,37 +45,45 @@ export const friendRouter = router({
         userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
       );
     }),
-  readFriends: standardAuthedProcedure.query<PublicUser[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select(getPublicUserColumns(usersInAuth))
-      .from(friendsInSocial)
-      .innerJoin(
-        usersInAuth,
-        or(
-          and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
-          and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
-        ),
-      );
-  }),
-  searchUsers: standardAuthedProcedure.input(searchUsersInputSchema).query<PublicUser[]>(({ ctx, input: name }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const blockedSubquery = ctx.db
-      .select({ id: blocksInSocial.blockedId })
-      .from(blocksInSocial)
-      .where(eq(blocksInSocial.blockerId, userId))
-      .union(
-        ctx.db
-          .select({ id: blocksInSocial.blockerId })
-          .from(blocksInSocial)
-          .where(eq(blocksInSocial.blockedId, userId)),
-      )
-      .as("blocked_users");
-    return ctx.db
-      .select(getPublicUserColumns(usersInAuth))
-      .from(usersInAuth)
-      .leftJoin(blockedSubquery, eq(blockedSubquery.id, usersInAuth.id))
-      .where(and(containsLike(usersInAuth.name, name), ne(usersInAuth.id, userId), isNull(blockedSubquery.id)))
-      .limit(MAX_READ_LIMIT);
-  }),
+  readFriends: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.Friend, userId)]) })
+    .query<PublicUser[]>(({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      return ctx.db
+        .select(getPublicUserColumns(usersInAuth))
+        .from(friendsInSocial)
+        .innerJoin(
+          usersInAuth,
+          or(
+            and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
+            and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
+          ),
+        );
+    }),
+  searchUsers: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "A name search, answered on each call rather than watched: a mutation names one user, never the users a search matches",
+    })
+    .input(searchUsersInputSchema)
+    .query<PublicUser[]>(({ ctx, input: name }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const blockedSubquery = ctx.db
+        .select({ id: blocksInSocial.blockedId })
+        .from(blocksInSocial)
+        .where(eq(blocksInSocial.blockerId, userId))
+        .union(
+          ctx.db
+            .select({ id: blocksInSocial.blockerId })
+            .from(blocksInSocial)
+            .where(eq(blocksInSocial.blockedId, userId)),
+        )
+        .as("blocked_users");
+      return ctx.db
+        .select(getPublicUserColumns(usersInAuth))
+        .from(usersInAuth)
+        .leftJoin(blockedSubquery, eq(blockedSubquery.id, usersInAuth.id))
+        .where(and(containsLike(usersInAuth.name, name), ne(usersInAuth.id, userId), isNull(blockedSubquery.id)))
+        .limit(MAX_READ_LIMIT);
+    }),
 });

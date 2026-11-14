@@ -1,5 +1,6 @@
 import type { FollowUp } from "#server/models/resource/todoList/FollowUp";
 
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { appendNotesParagraph } from "#server/services/resource/todoList/appendNotesParagraph";
 import { checkIsOpenFollowUp } from "#server/services/resource/todoList/checkIsOpenFollowUp";
@@ -15,10 +16,11 @@ import { handBackFollowUpInputSchema } from "#shared/models/db/resource/todoList
 import { readFollowUpsInputSchema } from "#shared/models/db/resource/todoList/ReadFollowUpsInput";
 import { toggleTodoCompletedInputSchema } from "#shared/models/db/resource/todoList/ToggleTodoCompletedInput";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { checkRollsOnTick } from "#shared/services/resource/todoList/checkRollsOnTick";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
-import { McpScope, ResourceType } from "@esposter/db-schema";
+import { McpScope, ResourceType, TopicKind } from "@esposter/db-schema";
 
 // The follow-up procedures an agent reaches through the MCP endpoint with a follow-ups key
 // (openspec/specs/resource/todolist-agent-follow-ups/design.md). Each reads, changes and saves the list on the server, and acts only on a
@@ -33,6 +35,7 @@ export const todoListRouter = router({
           "Write down one follow-up this session found and is leaving undone: work outside the change in hand that a later session can finish in one change. Write it the moment it is recognised. Answers with its id.",
         scope: McpScope.FollowUps,
       },
+      topics: getProcedureTopics(addFollowUpInputSchema, ({ id }) => [getTopic(TopicKind.Resource, id)]),
     })
     .mutation<string>(({ ctx, input: { dueAt, name, notes, repository, sessionId } }) =>
       updateTodoListContent(ctx, ctx.resource, (todoList) => {
@@ -54,6 +57,7 @@ export const todoListRouter = router({
           "Tick a follow-up once its change is committed, with a line on what was done that names the commit. A repeating follow-up rolls to its next due date instead.",
         scope: McpScope.FollowUps,
       },
+      topics: getProcedureTopics(completeFollowUpInputSchema, ({ id }) => [getTopic(TopicKind.Resource, id)]),
     })
     .mutation<void>(async ({ ctx, input: { itemId, summary, timeZone } }) => {
       await updateTodoListContent(ctx, ctx.resource, (todoList) => {
@@ -71,6 +75,7 @@ export const todoListRouter = router({
           "Hand a follow-up to the owner when doing it needs a design decision, anything spent outside the repository's review queue, or more than one change. It leaves readFollowUps until the owner clears the handback.",
         scope: McpScope.FollowUps,
       },
+      topics: getProcedureTopics(handBackFollowUpInputSchema, ({ id }) => [getTopic(TopicKind.Resource, id)]),
     })
     .mutation<void>(async ({ ctx, input: { itemId, reason } }) => {
       await updateTodoListContent(ctx, ctx.resource, (todoList) => {
@@ -86,6 +91,7 @@ export const todoListRouter = router({
           "The open follow-ups of this repository, in the order the owner put them, first to be taken first. Read again after every follow-up, since the owner edits the list while a drain runs.",
         scope: McpScope.FollowUps,
       },
+      topics: getProcedureTopics(readFollowUpsInputSchema, ({ id }) => [getTopic(TopicKind.Resource, id)]),
     })
     .query<FollowUp[]>(async ({ ctx, input: { repository } }) => {
       const todoList = await readResourceContent(
@@ -110,6 +116,7 @@ export const todoListRouter = router({
           "Tick a todo as its checkbox does: a repeating todo with a due date rolls to its next due date in the time zone given rather than completing, and any other todo completes, or reopens if it already is completed. Answers nothing.",
         scope: McpScope.Resources,
       },
+      topics: getProcedureTopics(toggleTodoCompletedInputSchema, ({ id }) => [getTopic(TopicKind.Resource, id)]),
     })
     .mutation<void>(async ({ ctx, input: { itemId, timeZone } }) => {
       await updateTodoListContent(ctx, ctx.resource, (todoList) => {

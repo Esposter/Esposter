@@ -1,4 +1,5 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
+import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   ApiKeyPermissions,
@@ -19,6 +20,7 @@ import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -40,6 +42,7 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import {
   createApiKeyInputSchema,
@@ -58,6 +61,7 @@ import {
   NoiseSuppressionMode,
   QueueJob,
   StorageBucket,
+  TopicKind,
   userSettingsInMessage,
   usersInAuth,
   UserStatus,
@@ -67,11 +71,18 @@ import {
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
+// The session's own user, whose profile, settings and call backgrounds the procedures below read or change
+const userTopics: ProcedureTopics = ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.User, userId)]);
+
 export const userRouter = router({
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
   // Side that can, so the scopes a key holds are the ones its owner ticked. Answers with the whole key, which is stored
   // Only hashed, so the owner is shown it once
   createApiKey: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "The key list is read through the auth client rather than a tRPC query, and the new key is shown to its owner once",
+    })
     .input(createApiKeyInputSchema)
     .mutation<string>(async ({ ctx, input: { mcpScopes, name } }) => {
       const { key } = await auth.api.createApiKey({
@@ -86,18 +97,21 @@ export const userRouter = router({
   // Takes no input: the typed confirmation is the settings page's, and nothing here could be a way round it. The
   // Marker is set first, then the sweep is published, and the sessions end last, so a failed publish leaves the person
   // Signed in to ask again: that retry sets the same marker and publishes again, and each step is idempotent
-  deleteAccount: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
-    const data: DeleteAccountQueueMessage = { userId };
-    // Fatal, unlike the best-effort publishes after a write: this message is the only thing that starts the sweep, so a
-    // Send that only logged its failure would leave a marked account that nothing sweeps
-    await getResultAsync(() => getJobQueue(QueueJob.DeleteAccount).send(data)).match(noop, (error) => {
-      throw error;
-    });
-    await deleteAccountSessions(ctx);
-  }),
+  deleteAccount: standardAuthedProcedure
+    .meta({ staticReason: "Ends the owner's sessions, so no reader is left signed in to refetch the change" })
+    .mutation<void>(async ({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
+      const data: DeleteAccountQueueMessage = { userId };
+      // Fatal, unlike the best-effort publishes after a write: this message is the only thing that starts the sweep, so a
+      // Send that only logged its failure would leave a marked account that nothing sweeps
+      await getResultAsync(() => getJobQueue(QueueJob.DeleteAccount).send(data)).match(noop, (error) => {
+        throw error;
+      });
+      await deleteAccountSessions(ctx);
+    }),
   deleteCallBackground: standardAuthedProcedure
+    .meta({ topics: userTopics })
     .input(callBackgroundSlotSchema)
     .mutation<void>(async ({ ctx, input: { slot } }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -114,6 +128,10 @@ export const userRouter = router({
       ).match(noop, console.error);
     }),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "A presigned upload url: the blob changes when the client uploads to it, which no tRPC mutation sees",
+    })
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
       if (size > MAX_CALL_BACKGROUND_SIZE_BYTES || getMimeCategory(mimetype) !== MimeCategory.Image)
@@ -136,6 +154,7 @@ export const userRouter = router({
   // An export that is another person's is not found rather than refused, so its existence is not disclosed. The
   // Readiness and expiry checks are the service's, since they read the row the same way for every caller
   generateDataExportLink: standardAuthedProcedure
+    .meta({ staticReason: "A presigned download link to an export the owner holds, which changes no state" })
     .input(generateDataExportLinkInputSchema)
     .mutation<string>(async ({ ctx, input }) => {
       const dataExport = await requireEntity(
@@ -147,14 +166,17 @@ export const userRouter = router({
       );
       return getDataExportLink(dataExport);
     }),
-  generateProfileImageUploadUrl: standardAuthedProcedure.mutation<{ publicUrl: string; sasUrl: string }>(
-    async ({ ctx }) => {
+  generateProfileImageUploadUrl: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "A presigned upload url: the image changes when the client saves it through updateUser, which publishes the topic",
+    })
+    .mutation<{ publicUrl: string; sasUrl: string }>(async ({ ctx }) => {
       const blobName = getUserProfileImageBlobName(ctx.getSessionPayload.user.id);
       const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
       return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
-    },
-  ),
-  readCallBackgrounds: standardAuthedProcedure.query<CallBackground[]>(async ({ ctx }) => {
+    }),
+  readCallBackgrounds: standardAuthedProcedure.meta({ topics: userTopics }).query<CallBackground[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const bucket = getBucket(StorageBucket.UserAssets);
     const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
@@ -177,16 +199,19 @@ export const userRouter = router({
   }),
   // The export the settings page shows: the one being built, else the latest export of any status, so a failed build is
   // Shown rather than hidden behind an older ready one
-  readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(async ({ ctx }) => {
-    const activeDataExport = await readActiveDataExport(ctx);
-    if (activeDataExport) return activeDataExport;
-    else
-      return ctx.db.query.dataExportsInUser.findFirst({
-        orderBy: { requestedAt: "desc" },
-        where: { userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-  }),
+  readDataExport: standardAuthedProcedure
+    .meta({ topics: userTopics })
+    .query<DataExportInUser | undefined>(async ({ ctx }) => {
+      const activeDataExport = await readActiveDataExport(ctx);
+      if (activeDataExport) return activeDataExport;
+      else
+        return ctx.db.query.dataExportsInUser.findFirst({
+          orderBy: { requestedAt: "desc" },
+          where: { userId: { eq: ctx.getSessionPayload.user.id } },
+        });
+    }),
   readStatuses: standardAuthedProcedure
+    .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
     .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
       const foundUserStatuses = await ctx.db.query.userStatusesInMessage.findMany({ where: { userId: { in: input } } });
@@ -212,6 +237,7 @@ export const userRouter = router({
   // Public profile identity — projects only the allowlisted columns so private fields (email) never
   // Leave the database, and runs unauthenticated on the rate-limited procedure
   readUser: standardRateLimitedProcedure
+    .meta({ topics: getProcedureTopics(readUserInputSchema, (userId) => [getTopic(TopicKind.User, userId)]) })
     .input(readUserInputSchema)
     .query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
       requireEntity(
@@ -223,54 +249,60 @@ export const userRouter = router({
         input,
       ),
     ),
-  readUserSettings: standardAuthedProcedure.query<UserSettingsInMessage>(async ({ ctx }) => {
-    const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
-      where: { userId: { eq: ctx.getSessionPayload.user.id } },
-    });
-    if (foundUserSettings) return foundUserSettings;
-    // No row yet — return the defaults without persisting; the first update upserts the row
-    else
-      return {
-        autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
-        createdAt: new Date(),
-        deletedAt: null,
-        inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
-        isDeafenOnJoin: false,
-        isMuteOnJoin: false,
-        microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
-        noiseSuppressionMode: NoiseSuppressionMode.Custom,
-        pushToTalkKeybind: "",
-        pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
-        speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
-        updatedAt: new Date(),
-        userId: ctx.getSessionPayload.user.id,
-        virtualBackground: "",
-        voiceInputMode: VoiceInputMode.VoiceActivity,
-      } satisfies UserSettingsInMessage;
-  }),
+  readUserSettings: standardAuthedProcedure
+    .meta({ topics: userTopics })
+    .query<UserSettingsInMessage>(async ({ ctx }) => {
+      const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
+        where: { userId: { eq: ctx.getSessionPayload.user.id } },
+      });
+      if (foundUserSettings) return foundUserSettings;
+      // No row yet — return the defaults without persisting; the first update upserts the row
+      else
+        return {
+          autoIdleThresholdMs: DEFAULT_AUTO_IDLE_THRESHOLD_MS,
+          createdAt: new Date(),
+          deletedAt: null,
+          inputSensitivityDecibels: DEFAULT_INPUT_SENSITIVITY_DECIBELS,
+          isDeafenOnJoin: false,
+          isMuteOnJoin: false,
+          microphoneVolumePercentage: DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
+          noiseSuppressionMode: NoiseSuppressionMode.Custom,
+          pushToTalkKeybind: "",
+          pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
+          speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+          updatedAt: new Date(),
+          userId: ctx.getSessionPayload.user.id,
+          virtualBackground: "",
+          voiceInputMode: VoiceInputMode.VoiceActivity,
+        } satisfies UserSettingsInMessage;
+    }),
   // A request while one is queued or building conflicts with that export's row, so nothing is inserted and the
   // Active one comes back unpublished. The event goes out after the row lands; a refused publish deletes the row, so
   // The retry queues a new export rather than returning one that nothing will build
-  requestDataExport: standardAuthedProcedure.mutation<DataExportInUser>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const [insertedDataExport] = await ctx.db
-      .insert(dataExportsInUser)
-      .values({ status: DataExportStatus.Queued, userId })
-      .onConflictDoNothing()
-      .returning();
-    if (insertedDataExport) {
-      const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
-      await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(noop, async (error) => {
-        await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
-        throw error;
-      });
-      return insertedDataExport;
-    } else {
-      const activeDataExport = readActiveDataExport(ctx);
-      return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
-    }
-  }),
+  requestDataExport: standardAuthedProcedure
+    .meta({ topics: userTopics })
+    .mutation<DataExportInUser>(async ({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const [insertedDataExport] = await ctx.db
+        .insert(dataExportsInUser)
+        .values({ status: DataExportStatus.Queued, userId })
+        .onConflictDoNothing()
+        .returning();
+      if (insertedDataExport) {
+        const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
+        await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(noop, async (error) => {
+          await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
+          throw error;
+        });
+        return insertedDataExport;
+      } else {
+        const activeDataExport = readActiveDataExport(ctx);
+        return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
+      }
+    }),
   updateUser: standardAuthedProcedure
+    // A post card shows its author's name and image, so the feed reads the change as well
+    .meta({ topics: (options) => [...userTopics(options), getTopic(TopicKind.Feed, "posts")] })
     .input(updateUserInputSchema)
     .mutation<UserInAuth>(async ({ ctx, input }) =>
       requireMutation(
@@ -287,6 +319,7 @@ export const userRouter = router({
       ),
     ),
   updateUserSettings: standardAuthedProcedure
+    .meta({ topics: userTopics })
     .input(updateUserSettingsInputSchema)
     .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
       requireMutation(
@@ -303,6 +336,7 @@ export const userRouter = router({
       ),
     ),
   upsertStatus: standardAuthedProcedure
+    .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(upsertStatusInputSchema)
     .mutation<SetNonNullable<UserStatusInMessage, "status">>(async ({ ctx, input }) => {
       const upsertedStatus = requireMutation(

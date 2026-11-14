@@ -1,3 +1,4 @@
+import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { NotificationInNotification, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
@@ -11,16 +12,23 @@ import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   DatabaseEntityType,
   notificationsInNotification,
   selectNotificationInNotificationSchema,
+  TopicKind,
 } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { count, eq } from "drizzle-orm";
 
+// The notifications a user holds, and the unread count the bell shows of them, are one topic for the user
+const notificationTopics: ProcedureTopics = ({ userId }) =>
+  userId === undefined ? [] : [getTopic(TopicKind.Notification, userId)];
+
 export const notificationRouter = router({
   deleteNotification: standardAuthedProcedure
+    .meta({ topics: notificationTopics })
     .input(selectNotificationInNotificationSchema.shape.id)
     .mutation<NotificationInNotification>(async ({ ctx, input }) =>
       requireMutation(
@@ -35,12 +43,13 @@ export const notificationRouter = router({
         input,
       ),
     ),
-  deleteNotifications: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
+  deleteNotifications: standardAuthedProcedure.meta({ topics: notificationTopics }).mutation<void>(async ({ ctx }) => {
     await ctx.db
       .delete(notificationsInNotification)
       .where(eq(notificationsInNotification.userId, ctx.getSessionPayload.user.id));
   }),
   readNotifications: standardAuthedProcedure
+    .meta({ topics: notificationTopics })
     .input(readNotificationsInputSchema)
     .query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -63,10 +72,12 @@ export const notificationRouter = router({
         unreadCount: takeOne(unreadCounts).count,
       };
     }),
-  updateNotificationsReadStatus: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
-    await ctx.db
-      .update(notificationsInNotification)
-      .set({ isRead: true })
-      .where(getUnreadNotificationsWhere(ctx.getSessionPayload.user.id));
-  }),
+  updateNotificationsReadStatus: standardAuthedProcedure
+    .meta({ topics: notificationTopics })
+    .mutation<void>(async ({ ctx }) => {
+      await ctx.db
+        .update(notificationsInNotification)
+        .set({ isRead: true })
+        .where(getUnreadNotificationsWhere(ctx.getSessionPayload.user.id));
+    }),
 });

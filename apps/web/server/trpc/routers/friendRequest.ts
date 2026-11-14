@@ -1,15 +1,17 @@
-import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
+import type { FriendRequestInSocialWithRelations, PublicUser, Topic } from "@esposter/db-schema";
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   AppNotificationType,
   blocksInSocial,
@@ -19,13 +21,24 @@ import {
   friendsInSocial,
   publishNotification,
   QueueJob,
+  TopicKind,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, or, sql } from "drizzle-orm";
 
+// A request and a friendship each name two users, and each user's list of them holds it
+const getPairTopics = (kind: TopicKind, otherUserId: string, userId: string | undefined): Topic[] =>
+  userId === undefined ? [] : [getTopic(kind, otherUserId), getTopic(kind, userId)];
+
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
+    .meta({
+      topics: getProcedureTopics(friendUserIdInputSchema, (senderId, { userId }) => [
+        ...getPairTopics(TopicKind.Friend, senderId, userId),
+        ...getPairTopics(TopicKind.FriendRequest, senderId, userId),
+      ]),
+    })
     .input(friendUserIdInputSchema)
     .mutation<PublicUser>(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -59,6 +72,11 @@ export const friendRequestRouter = router({
       return senderUser;
     }),
   declineFriendRequest: standardAuthedProcedure
+    .meta({
+      topics: getProcedureTopics(friendUserIdInputSchema, (senderId, { userId }) =>
+        getPairTopics(TopicKind.FriendRequest, senderId, userId),
+      ),
+    })
     .input(friendUserIdInputSchema)
     .mutation<void>(async ({ ctx, input: senderId }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -82,14 +100,21 @@ export const friendRequestRouter = router({
         userObject.declineFriendRequest({ receiverId: userId, senderId }),
       );
     }),
-  readFriendRequests: standardAuthedProcedure.query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    return ctx.db.query.friendRequestsInSocial.findMany({
-      where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
-      with: FriendRequestInSocialRelations,
-    });
-  }),
+  readFriendRequests: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.FriendRequest, userId)]) })
+    .query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      return ctx.db.query.friendRequestsInSocial.findMany({
+        where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
+        with: FriendRequestInSocialRelations,
+      });
+    }),
   sendFriendRequest: standardAuthedProcedure
+    .meta({
+      topics: getProcedureTopics(friendUserIdInputSchema, (receiverId, { userId }) =>
+        getPairTopics(TopicKind.FriendRequest, receiverId, userId),
+      ),
+    })
     .input(friendUserIdInputSchema)
     .mutation<FriendRequestInSocialWithRelations>(async ({ ctx, input: receiverId }) => {
       const userId = ctx.getSessionPayload.user.id;

@@ -9,42 +9,50 @@ import { Operation } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
 export const pushSubscriptionRouter = router({
-  subscribe: standardAuthedProcedure.input(pushSubscriptionInputSchema).mutation<PushSubscriptionInNotification>(
-    async ({
-      ctx,
-      input: {
-        endpoint,
-        expirationTime,
-        keys: { auth, p256dh },
+  subscribe: standardAuthedProcedure
+    .meta({
+      staticReason: "No query reads a push subscription back: the browser holds it, and the server only pushes to it",
+    })
+    .input(pushSubscriptionInputSchema)
+    .mutation<PushSubscriptionInNotification>(
+      async ({
+        ctx,
+        input: {
+          endpoint,
+          expirationTime,
+          keys: { auth, p256dh },
+        },
+      }) => {
+        const { session, user } = ctx.getSessionPayload;
+        const expiresAt = expirationTime ? new Date(expirationTime) : null;
+        return requireMutation(
+          (
+            await ctx.db
+              .insert(pushSubscriptionsInNotification)
+              .values({ auth, endpoint, expirationTime: expiresAt, p256dh, sessionId: session.id, userId: user.id })
+              .onConflictDoUpdate({
+                set: {
+                  auth,
+                  expirationTime: expiresAt,
+                  p256dh,
+                  // The same browser resubscribing under a new session claims the row for it, so a revoke of the
+                  // Session that is actually using this endpoint is the one that takes its pushes away
+                  sessionId: session.id,
+                },
+                target: [pushSubscriptionsInNotification.endpoint, pushSubscriptionsInNotification.userId],
+              })
+              .returning()
+          )[0],
+          Operation.Create,
+          DatabaseEntityType.PushSubscription,
+          "subscribe",
+        );
       },
-    }) => {
-      const { session, user } = ctx.getSessionPayload;
-      const expiresAt = expirationTime ? new Date(expirationTime) : null;
-      return requireMutation(
-        (
-          await ctx.db
-            .insert(pushSubscriptionsInNotification)
-            .values({ auth, endpoint, expirationTime: expiresAt, p256dh, sessionId: session.id, userId: user.id })
-            .onConflictDoUpdate({
-              set: {
-                auth,
-                expirationTime: expiresAt,
-                p256dh,
-                // The same browser resubscribing under a new session claims the row for it, so a revoke of the
-                // Session that is actually using this endpoint is the one that takes its pushes away
-                sessionId: session.id,
-              },
-              target: [pushSubscriptionsInNotification.endpoint, pushSubscriptionsInNotification.userId],
-            })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.PushSubscription,
-        "subscribe",
-      );
-    },
-  ),
+    ),
   unsubscribe: standardAuthedProcedure
+    .meta({
+      staticReason: "No query reads a push subscription back: the browser holds it, and the server only pushes to it",
+    })
     .input(pushSubscriptionInputSchema.shape.endpoint)
     .mutation<PushSubscriptionInNotification>(async ({ ctx, input }) =>
       requireMutation(

@@ -22,77 +22,87 @@ import { TRPCError } from "@trpc/server";
 import { count, eq, isNotNull } from "drizzle-orm";
 
 export const achievementRouter = router({
-  readAchievementMap: standardAuthedProcedure.query<AchievementDefinitionViewMap>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({
-      where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
-      with: UserAchievementInAchievementRelations,
-    });
-    // The trigger's zod schema and the predicates are server-only, and the schema's cycles cannot be sent as JSON, so
-    // The map ships its client fields alone
-    return Object.fromEntries(
-      Object.entries(AchievementDefinitionMap).map(
-        ([
-          achievementName,
-          { check: _check, condition: _condition, inputSchema: _inputSchema, ...achievementDefinition },
-        ]) => [
-          achievementName,
-          {
-            ...achievementDefinition,
-            description:
-              achievementDefinition.isHidden &&
-              !unlockedUserAchievements.some(({ achievement }) => achievement.name === achievementName)
-                ? HIDDEN_ACHIEVEMENT_DESCRIPTION
-                : achievementDefinition.description,
-          },
-        ],
-      ),
-    );
-  }),
+  readAchievementMap: standardAuthedProcedure
+    .meta({ staticReason: "The user object pushes each unlock to its owner's sockets as a typed event" })
+    .query<AchievementDefinitionViewMap>(async ({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({
+        where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
+        with: UserAchievementInAchievementRelations,
+      });
+      // The trigger's zod schema and the predicates are server-only, and the schema's cycles cannot be sent as JSON, so
+      // The map ships its client fields alone
+      return Object.fromEntries(
+        Object.entries(AchievementDefinitionMap).map(
+          ([
+            achievementName,
+            { check: _check, condition: _condition, inputSchema: _inputSchema, ...achievementDefinition },
+          ]) => [
+            achievementName,
+            {
+              ...achievementDefinition,
+              description:
+                achievementDefinition.isHidden &&
+                !unlockedUserAchievements.some(({ achievement }) => achievement.name === achievementName)
+                  ? HIDDEN_ACHIEVEMENT_DESCRIPTION
+                  : achievementDefinition.description,
+            },
+          ],
+        ),
+      );
+    }),
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
   // One nobody has earned reads 0 rather than being absent
-  readAchievementRarities: standardRateLimitedProcedure.query<Record<AchievementName, number>>(async ({ ctx }) => {
-    const [totalUserRows, unlockCounts] = await Promise.all([
-      ctx.db.select({ totalUsers: count() }).from(usersInAuth),
-      ctx.db
-        .select({ achievementName: achievementsInAchievement.name, unlockCount: count() })
+  readAchievementRarities: standardRateLimitedProcedure
+    .meta({ staticReason: "Recomputed on read from every user's unlocks, which no tRPC mutation changes" })
+    .query<Record<AchievementName, number>>(async ({ ctx }) => {
+      const [totalUserRows, unlockCounts] = await Promise.all([
+        ctx.db.select({ totalUsers: count() }).from(usersInAuth),
+        ctx.db
+          .select({ achievementName: achievementsInAchievement.name, unlockCount: count() })
+          .from(userAchievementsInAchievement)
+          .innerJoin(
+            achievementsInAchievement,
+            eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
+          )
+          .where(isNotNull(userAchievementsInAchievement.unlockedAt))
+          .groupBy(achievementsInAchievement.name),
+      ]);
+      const { totalUsers } = takeOne(totalUserRows);
+      const unlockCountMap = new Map(
+        unlockCounts.map(({ achievementName, unlockCount }) => [achievementName, unlockCount]),
+      );
+      return Object.fromEntries(
+        achievementDefinitions.map(({ name }) => [
+          name,
+          ((unlockCountMap.get(name) ?? 0) / Math.max(totalUsers, 1)) * 100,
+        ]),
+      );
+    }),
+  readPointsLeaderboard: standardRateLimitedProcedure
+    .meta({ staticReason: "Recomputed on read from every user's unlocks, which no tRPC mutation changes" })
+    .query<PointsLeaderboard>(async ({ ctx }) => {
+      const userTotals = await ctx.db
+        .select({
+          points: achievementPointsSummation,
+          unlockCount: count(),
+          user: { id: usersInAuth.id, image: usersInAuth.image, name: usersInAuth.name },
+        })
         .from(userAchievementsInAchievement)
         .innerJoin(
           achievementsInAchievement,
           eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
         )
+        .innerJoin(usersInAuth, eq(usersInAuth.id, userAchievementsInAchievement.userId))
         .where(isNotNull(userAchievementsInAchievement.unlockedAt))
-        .groupBy(achievementsInAchievement.name),
-    ]);
-    const { totalUsers } = takeOne(totalUserRows);
-    const unlockCountMap = new Map(
-      unlockCounts.map(({ achievementName, unlockCount }) => [achievementName, unlockCount]),
-    );
-    return Object.fromEntries(
-      achievementDefinitions.map(({ name }) => [
-        name,
-        ((unlockCountMap.get(name) ?? 0) / Math.max(totalUsers, 1)) * 100,
-      ]),
-    );
-  }),
-  readPointsLeaderboard: standardRateLimitedProcedure.query<PointsLeaderboard>(async ({ ctx }) => {
-    const userTotals = await ctx.db
-      .select({
-        points: achievementPointsSummation,
-        unlockCount: count(),
-        user: { id: usersInAuth.id, image: usersInAuth.image, name: usersInAuth.name },
-      })
-      .from(userAchievementsInAchievement)
-      .innerJoin(
-        achievementsInAchievement,
-        eq(achievementsInAchievement.id, userAchievementsInAchievement.achievementId),
-      )
-      .innerJoin(usersInAuth, eq(usersInAuth.id, userAchievementsInAchievement.userId))
-      .where(isNotNull(userAchievementsInAchievement.unlockedAt))
-      .groupBy(usersInAuth.id);
-    return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
-  }),
+        .groupBy(usersInAuth.id);
+      return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
+    }),
   readUserAchievements: standardRateLimitedProcedure
+    .meta({
+      staticReason:
+        "Unlocks reach the owner's sockets as a typed event the user object pushes, so a public reader loads them once",
+    })
     .input(readUserAchievementsInputSchema)
     .query<UserAchievementInAchievementWithRelations[]>(({ ctx, input }) => {
       const userId = ctx.getSessionPayload?.user.id;
