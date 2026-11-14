@@ -3,8 +3,9 @@ import type { R2Bucket, R2MultipartUpload, R2UploadedPart } from "@cloudflare/wo
 import { DATA_EXPORT_CONTENT_TYPE } from "#src/services/user/constants";
 import { getResultAsync, KIBIBYTE, noop } from "@esposter/shared";
 
-// R2 takes a stream of unknown length only as a multipart upload, and the archive's length is not known until its last entry
-// is written. Every part but the last is at least this large, which is R2's minimum for a part
+// R2 takes a stream of unknown length only as a multipart upload.
+// The archive's length is not known until its last entry is written.
+// Every part but the last is at least this large, which is R2's minimum for a part.
 const MIN_UPLOAD_PART_BYTES = 5 * KIBIBYTE * KIBIBYTE;
 
 // The archive is read a part at a time: a part is sent once it reaches the minimum, so the upload holds one part at most
@@ -32,8 +33,8 @@ const uploadParts = async (
   return parts;
 };
 
-// Streams the archive into the object named for it. A failed part abandons the upload rather than leaving it for R2 to age out,
-// so a truncated archive is never completed
+// Streams the archive into the object named for it.
+// A failed part abandons the upload rather than leaving it for R2 to age out, so a truncated archive is never completed.
 export const uploadArchive = async (
   bucket: R2Bucket,
   blobName: string,

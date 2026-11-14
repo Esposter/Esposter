@@ -28,14 +28,20 @@ interface WranglerEnvironment {
 describe.each([{ environment: CloudflareEnvironment.Development }, { environment: CloudflareEnvironment.Production }])(
   "the $environment environment of the functions Worker",
   ({ environment }) => {
-    // The names this file shares with Pulumi and the app: a queue, bucket or database a wrangler config names that Pulumi does
-    // not create is a binding that resolves to nothing. Each expected name is built by the same function Pulumi calls, so the
-    // two cannot disagree. Read from this package's own file so the suite runs from the repo root too.
-    // The config is JSONC: the formatter keeps its trailing commas, which JSON.parse refuses, so they are removed first
+    // The names this file shares with Pulumi and the app.
+    // A wrangler config that names a queue, bucket or database Pulumi does not create binds to nothing.
+    // Each expected name is built by the same function Pulumi calls, so the two cannot disagree.
+    // Read from this package's own file so the suite runs from the repo root too.
+    // The config is JSONC: the formatter keeps its trailing commas, which JSON.parse refuses, so they are removed first.
     const configuration = jsonDateParse<{
       account_id: string;
       env: Record<CloudflareEnvironment, WranglerEnvironment>;
-    }>(readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8").replaceAll(/,(\s*[}\]])/g, "$1"));
+    }>(
+      readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8").replaceAll(
+        /,(?<closing>\s*[}\]])/gu,
+        "$<closing>",
+      ),
+    );
     const wrangler = configuration.env[environment];
 
     test("deploys into the committed account, which each environment inherits", () => {

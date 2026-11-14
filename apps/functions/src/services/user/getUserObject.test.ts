@@ -2,8 +2,9 @@ import type { UserObject } from "#src/durableObjects/UserObject";
 
 import { describe, vi } from "vitest";
 
-// Every RPC a person's object was sent, in order, with the person it was sent to. Stands in for the stub, which exists
-// only inside the Worker, so a test asserts what was called rather than what the object then did
+// Every RPC a person's object was sent, in order, with the person it was sent to.
+// It stands in for the stub, which exists only inside the Worker.
+// So a test asserts what was called rather than what the object then did.
 export interface UserObjectCall {
   args: unknown[];
   method: string;

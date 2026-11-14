@@ -1,10 +1,11 @@
+/* oxlint-disable no-await-in-loop -- Order is the contract: each message is sent after the one before it, so its id follows that one */
 import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
+import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
@@ -14,7 +15,6 @@ import {
   achievementsInAchievement,
   AdminActionType,
   AppNotificationType,
-  StorageBucket,
   blocksInSocial,
   bookmarksInApp,
   callSessionsInMessage,
@@ -46,6 +46,7 @@ import {
   roomsInMessage,
   RoomType,
   searchHistoriesInMessage,
+  StorageBucket,
   threadFollowsInMessage,
   userAchievementsInAchievement,
   userSettingsInMessage,
@@ -295,13 +296,13 @@ describe(buildUserDataArchive, () => {
       { message, type: MessageType.Message },
       { userId: otherUserId },
     );
-    roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
-    roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
+    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
+    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
     const otherReactedMessage = await roomObject.createMessage(
       { message: otherMessage, type: MessageType.Message },
       { userId: otherUserId },
     );
-    roomObject.addReaction({ emojiTag, messageId: otherReactedMessage.id }, { userId: otherUserId });
+    await roomObject.addReaction({ emojiTag, messageId: otherReactedMessage.id }, { userId: otherUserId });
 
     // A request the person sent, one they received, and a friendship with a fourth account
     const sentRequest = takeOne(
@@ -552,8 +553,8 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const recordTime = new Date(Temporal.Duration.from({ minutes: 5 }).total("milliseconds"));
-    // The log and note name the person as their target in a room they are not in, and a record about the other person is
-    // not theirs to read
+    // The log and note name the person as their target in a room they are not in.
+    // A record about the other person is not theirs to read.
     await mockDb.insert(moderationLogsInMessage).values([
       {
         actorUserId: otherUserId,
@@ -745,13 +746,11 @@ describe(buildUserDataArchive, () => {
     const roomObject = getRoomObject(room.id);
     const pagedMessages = Array.from(
       { length: DATA_EXPORT_MESSAGE_PAGE_LIMIT + 1 },
-      (_, index) => `${message}${index}`,
+      (_value, index) => `${message}${index}`,
     );
     // A message's id is its place in the room, so the messages are sent one after another, in the order they are listed
     for (const pagedMessage of pagedMessages) {
-      // oxlint-disable-next-line no-await-in-loop -- sent in turn, so each id follows the last
       await roomObject.createMessage({ message: pagedMessage, type: MessageType.Message }, { userId });
-      // oxlint-disable-next-line no-await-in-loop -- sent in turn, so each id follows the last
       await roomObject.createMessage({ message: otherMessage, type: MessageType.Message }, { userId: otherUserId });
     }
 

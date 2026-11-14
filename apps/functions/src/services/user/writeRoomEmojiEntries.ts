@@ -3,7 +3,7 @@ import type { RoomInMessage } from "@esposter/db-schema";
 
 import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
-import { StorageBucket, getRoomEmojiBlobName } from "@esposter/db-schema";
+import { getRoomEmojiBlobName, StorageBucket } from "@esposter/db-schema";
 
 // The emoji blobs of a room, one at a time, each under the room's emoji directory
 export const writeRoomEmojiEntries = async (

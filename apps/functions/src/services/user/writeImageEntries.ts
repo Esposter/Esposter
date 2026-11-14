@@ -4,7 +4,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { listBlobNames } from "@esposter/db";
-import { StorageBucket, getUserProfileImageBlobName } from "@esposter/db-schema";
+import { getUserProfileImageBlobName, StorageBucket } from "@esposter/db-schema";
 
 // The person's profile image, when they have one, and each call background they have set.
 // A profile image is optional, so its absence is no entry rather than a failed export

@@ -6,7 +6,7 @@ import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { StorageBucket, FILES_DIRECTORY_SEGMENT, getResourceFileBlobName } from "@esposter/db-schema";
+import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
 
 // Each resource the person owns is written as its record, its working copy and the assets that copy embeds.
 // Its publication, when it is published, and the links it holds are written too.

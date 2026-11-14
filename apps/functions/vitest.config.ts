@@ -1,11 +1,11 @@
 import type { Plugin, ViteUserConfig } from "vitest/config";
 
-import { readFileSync } from "node:fs";
 import { getVitestConfiguration } from "@esposter/configuration";
+import { readFileSync } from "node:fs";
 
 const vitestConfiguration: ViteUserConfig = getVitestConfiguration(import.meta.dirname);
 
-// wrangler bundles a migration's `.sql` file as text (`rules` in wrangler.jsonc), so a test loads it as the same string
+// Wrangler bundles a migration's `.sql` file as text (`rules` in wrangler.jsonc), so a test loads it as the same string
 const sqlTextPlugin: Plugin = {
   load: (id) => (id.endsWith(".sql") ? `export default ${JSON.stringify(readFileSync(id, "utf8"))};` : undefined),
   name: "sql-text",

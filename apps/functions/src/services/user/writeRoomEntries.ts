@@ -7,8 +7,8 @@ import { getRoomObject } from "#src/services/room/getRoomObject";
 import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";
 
-// The person's messages in a room, one page of the room's object at a time, oldest first. The page's cursor is the last
-// id it holds, so a page is never read twice and never skipped
+// The person's messages in a room, one page of the room's object at a time, oldest first.
+// The cursor is the last id a page holds, so a page is never read twice and never skipped.
 const readRoomMessagePages = async function* (roomId: string, userId: string): AsyncGenerator<RoomMessage[]> {
   let after: number | undefined;
   let page: RoomMessage[];

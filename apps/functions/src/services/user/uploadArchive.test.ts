@@ -1,10 +1,9 @@
 /* oxlint-disable typescript/require-await -- An AsyncIterable is what uploadArchive reads, and only an async generator yields one */
+import { uploadArchive } from "#src/services/user/uploadArchive";
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, KIBIBYTE, Operation } from "@esposter/shared";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
-
-import { uploadArchive } from "#src/services/user/uploadArchive";
 
 const toChunks = async function* (chunks: Uint8Array[]) {
   for (const chunk of chunks) yield chunk;
@@ -36,7 +35,8 @@ describe(uploadArchive, () => {
 
     const object = await bucket.get("archive.zip");
     assert.exists(object);
-    expect(new Uint8Array(await object.arrayBuffer())).toStrictEqual(Uint8Array.from(Buffer.concat(chunks)));
+    // Compared as bytes in one native pass, since an element-wise equality over 12 MiB runs near the test's timeout
+    expect(Buffer.from(await object.arrayBuffer()).equals(Buffer.concat(chunks))).toBe(true);
   });
 
   // A part already sent when the archive fails is never completed, so no object stands in its place
