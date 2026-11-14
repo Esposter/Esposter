@@ -1,31 +1,34 @@
 import { DataExportStatus } from "#src/models/user/DataExportStatus";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { userSchema } from "#src/schema/user/userSchema";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
-import { index, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { index, integer, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
-
-export const dataExportStatusEnum = userSchema.enum("dataExportStatus", DataExportStatus);
 
 // One row per request for a person's data archive. The archive is one blob named after the row's id, so a replayed
 // Build rewrites its own blob rather than adding one. A queued row has no archive yet, which is why its blob name is
 // Null until the build starts. The row's status is the only pointer a read follows
-export const dataExportsInUser = pgTable(
+export const dataExportsInUser = sqliteTable(
   "dataExports",
   {
     blobName: text(),
     // Seven days after readyAt. The container's lifecycle rule deletes the blob on the same period, but a link is
     // Refused once this has passed even while the blob still exists
-    expiresAt: timestamp(),
+    expiresAt: integer({ mode: "timestamp_ms" }),
     failureReason: text(),
-    id: uuid().primaryKey().defaultRandom(),
-    readyAt: timestamp(),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    readyAt: integer({ mode: "timestamp_ms" }),
     // When the person asked for the export. The settings page orders by it, so the latest export is the one it shows
     // Whatever its status, a failed one included
-    requestedAt: timestamp().notNull().defaultNow(),
-    status: dataExportStatusEnum().notNull(),
+    requestedAt: integer({ mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    status: createEnumColumn(DataExportStatus).notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

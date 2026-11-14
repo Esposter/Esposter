@@ -2,21 +2,20 @@ import type { ResourceTags } from "#src/models/resource/ResourceTags";
 
 import { resourceTagsSchema } from "#src/models/resource/ResourceTags";
 import { ResourceType } from "#src/models/resource/ResourceType";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { RESOURCE_NAME_MAX_LENGTH } from "#src/services/resource/constants";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { sql } from "drizzle-orm";
-import { check, index, integer, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const resourceTypeEnum = resourceSchema.enum("resourceType", ResourceType);
 // Pure identity + content lifecycle. Publish state is normalized into resourcePublications
 // Because publishing is an opt-in capability — not every resource type has it.
-export const resourcesInResource = pgTable(
+export const resourcesInResource = sqliteTable(
   "resources",
   {
     // The hex SHA-256 of the content's JSON — what the blob's zstd frame decodes to — written in the transaction
@@ -30,34 +29,31 @@ export const resourcesInResource = pgTable(
     // Design: openspec/specs/architecture/large-documents/design.md
     contentSize: integer().notNull().default(0),
     contentVersion: integer().notNull().default(0),
-    id: uuid().primaryKey().defaultRandom(),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     name: text().notNull(),
     // When the last revision was taken, which is what throttles the automatic ones. The save clock cannot
     // Answer it: `updatedAt` moves on every autosave, so a continuously edited resource never looks idle and
     // Leaves no recovery points at all. Null until the first revision lands.
     // Design: openspec/specs/resource/resource-snapshots/design.md
-    revisionTakenAt: timestamp(),
+    revisionTakenAt: integer({ mode: "timestamp_ms" }),
     // The revision channel's counter: what the next revision is numbered. Never derived from the version rows,
     // Which answer which revisions exist — a number is claimed before its write, so a failed write leaves a
     // Number with no row, and the ring-buffer eviction makes the two disagree by design.
     // See openspec/specs/resource/resource-snapshots/design.md
     revisionVersion: integer().notNull().default(0),
-    tags: jsonb().notNull().default({}).$type<ResourceTags>(),
-    type: resourceTypeEnum().notNull(),
+    tags: text({ mode: "json" }).notNull().default({}).$type<ResourceTags>(),
+    type: createEnumColumn(ResourceType).notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, tags, userId }) => [
+    extraConfig: ({ name, userId }) => [
       check("resources_name_length_check", createNameCheckSql(name, RESOURCE_NAME_MAX_LENGTH)),
       // Every owner's list, count and cascade from a user's deletion filter on the owner first
       index("resources_userId_index").on(userId),
-      // GIN backs the `tags @> input` containment filter behind the /all Tag pill
-      index("resources_tags_index").using("gin", tags),
-      // Trigram GIN backs similarity() ranking in global search, so a typo still finds the resource.
-      // The pg_trgm extension itself is created by the migration — drizzle has no schema-level concept of it.
-      index("resources_name_trgm_index").using("gin", sql`${name} gin_trgm_ops`),
     ],
     schema: resourceSchema,
   },

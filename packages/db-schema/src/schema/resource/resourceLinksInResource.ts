@@ -1,26 +1,26 @@
 import { ResourceLinkType } from "#src/models/resource/ResourceLinkType";
-import { pgTable } from "#src/pgTable";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
-import { index, primaryKey, uuid } from "drizzle-orm/pg-core";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { sqliteTable } from "#src/sqliteTable";
+import { index, primaryKey, text } from "drizzle-orm/sqlite-core";
 
-export const resourceLinkTypeEnum = resourceSchema.enum("resourceLinkType", ResourceLinkType);
 // Every cross-resource reference a resource's content holds, projected from that content on each save so "what
 // Points at this?" is one indexed lookup rather than a read of every blob. The content stays the source of
 // Truth: these rows are its index, rewritten whenever the set it projects changes.
 // Design: openspec/specs/architecture/resource-links/design.md
-export const resourceLinksInResource = pgTable(
+export const resourceLinksInResource = sqliteTable(
   "resourceLinks",
   {
     // The rows are the source's own projection, so they go with it — a soft delete keeps both
-    sourceId: uuid()
+    sourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
     // No reference: projected from user-authored content on every save, so a `set null` on the target's deletion
     // Would have that content's next save rewrite the dangling id and fail on the constraint. A link to a
     // Deleted target fails soft where it is read instead
-    targetId: uuid().notNull(),
-    type: resourceLinkTypeEnum().notNull(),
+    targetId: text().notNull(),
+    type: createEnumColumn(ResourceLinkType).notNull(),
   },
   {
     extraConfig: ({ sourceId, targetId, type }) => [

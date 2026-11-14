@@ -1,16 +1,16 @@
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { postSchema } from "#src/schema/post/postSchema";
 import { postsInPost } from "#src/schema/post/postsInPost";
+import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
-import { check, index, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const likesInPost = pgTable(
+export const likesInPost = sqliteTable(
   "likes",
   {
-    postId: uuid()
+    postId: text()
       .notNull()
       .references(() => postsInPost.id, { onDelete: "cascade" }),
     userId: text()

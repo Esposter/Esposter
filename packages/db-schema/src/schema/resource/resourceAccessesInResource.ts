@@ -1,7 +1,7 @@
-import { pgTable } from "#src/pgTable";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { createResourceUserColumns } from "#src/services/resource/createResourceUserColumns";
-import { index, primaryKey, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { index, integer, primaryKey } from "drizzle-orm/sqlite-core";
 
 // A row exists iff the user has opened the resource, and holds when they last did. Server-side rather than
 // Per-device, because Recent is a list surface of its own with a Last accessed column — a column that
@@ -9,9 +9,14 @@ import { index, primaryKey, timestamp } from "drizzle-orm/pg-core";
 // Deliberately not called a view: `ResourceViewEntity` counts anonymous hits on a *published* resource,
 // While this records the owner opening their own. One row per user per resource, rewritten on every open,
 // So the table stays bounded by what exists rather than growing with traffic.
-export const resourceAccessesInResource = pgTable(
+export const resourceAccessesInResource = sqliteTable(
   "resourceAccesses",
-  { accessedAt: timestamp().notNull().defaultNow(), ...createResourceUserColumns() },
+  {
+    accessedAt: integer({ mode: "timestamp_ms" })
+      .notNull()
+      .$defaultFn(() => new Date()),
+    ...createResourceUserColumns(),
+  },
   {
     extraConfig: ({ accessedAt, resourceId, userId }) => [
       primaryKey({ columns: [userId, resourceId] }),

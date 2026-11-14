@@ -1,20 +1,22 @@
-import { pgTable } from "#src/pgTable";
+import { SnapshotChannel } from "#src/models/resource/SnapshotChannel";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
-import { resourceVersionsInResource, snapshotChannelEnum } from "#src/schema/resource/resourceVersionsInResource";
-import { sql } from "drizzle-orm";
-import { check, foreignKey, integer, primaryKey, text, uuid } from "drizzle-orm/pg-core";
+import { resourceVersionsInResource } from "#src/schema/resource/resourceVersionsInResource";
+import { createAssetHashCheckSql } from "#src/services/resource/createAssetHashCheckSql";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, foreignKey, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
 
 // One row per asset a stored version's content embeds, keyed by the version and the asset's content hash. An asset
 // Lives under its hash for as long as a row names it, so collection asks this table rather than reading content: a
 // Version's rows are written from a scan of its plaintext when the version is stored, and cascade with the version
 // Design: openspec/specs/resource/content-addressed-assets/design.md
-export const resourceVersionAssetsInResource = pgTable(
+export const resourceVersionAssetsInResource = sqliteTable(
   "resourceVersionAssets",
   {
     // The lowercase hex SHA-256 of the asset's bytes, which is the name the asset is stored under
     assetHash: text().notNull(),
-    channel: snapshotChannelEnum().notNull(),
-    resourceId: uuid().notNull(),
+    channel: createEnumColumn(SnapshotChannel).notNull(),
+    resourceId: text().notNull(),
     version: integer().notNull(),
   },
   {
@@ -30,7 +32,7 @@ export const resourceVersionAssetsInResource = pgTable(
           resourceVersionsInResource.version,
         ],
       }).onDelete("cascade"),
-      check("resourceVersionAssets_assetHash_check", sql`${assetHash} ~ '^[0-9a-f]{64}$'`),
+      check("resourceVersionAssets_assetHash_check", createAssetHashCheckSql(assetHash)),
     ],
     schema: resourceSchema,
   },

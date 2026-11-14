@@ -1,11 +1,11 @@
 import { StorageBucket } from "#src/models/storage/StorageBucket";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { storageSchema } from "#src/schema/storage/storageSchema";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
-import { bigint, check, index, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
 
-export const storageBucketEnum = storageSchema.enum("storageBucket", StorageBucket);
 // The per-blob ledger behind `users.storageBytesUsed`: one row per write target this user was handed, holding
 // Exactly the bytes the counter is carrying on its behalf. Every increment of the counter writes a row in the
 // Same transaction, so a crash can never leave bytes held with nothing left to give them back, and every
@@ -13,25 +13,25 @@ export const storageBucketEnum = storageSchema.enum("storageBucket", StorageBuck
 // Attribute a blob to whoever was charged for it. A message attachment is keyed by its room in the blob name, and
 // Its row names the uploader, so a room's blobs are charged to the people who sent them.
 //
-// A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. Storage's
-// Own `BlobCreated` is what turns it into the truth, replacing the declaration with the stored object's real
-// Size. Nothing settles the rest: past `expiresAt` the write SAS is dead, so a hold that never landed simply
-// Stops counting. The row itself outlives that, because a `BlobCreated` for a blob that did land can still be
+// A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. The bucket's
+// Object-create notification is what turns it into the truth, replacing the declaration with the stored object's
+// Real size. Nothing settles the rest: past `expiresAt` the presigned URL is dead, so a hold that never landed simply
+// Stops counting. The row itself outlives that, because a notification for a blob that did land can still be
 // Inside the delivery window — a later reserve by that user drops it only once no such event can still arrive.
-export const storageLedgerInStorage = pgTable(
+export const storageLedgerInStorage = sqliteTable(
   "storageLedger",
   {
     blobName: text().notNull(),
-    containerName: storageBucketEnum().notNull(),
+    containerName: createEnumColumn(StorageBucket).notNull(),
     // What the counter is holding for this blob right now — zero until reconciliation reads the stored object's
     // Real size back, because nothing is charged before then and `declaredBytes` is what holds the space in the
     // Meantime. Kept separate so the adjustment is a difference, never a re-read.
-    countedBytes: bigint({ mode: "number" }).notNull(),
-    declaredBytes: bigint({ mode: "number" }).notNull(),
-    expiresAt: timestamp().notNull(),
-    reconciledAt: timestamp(),
-    // Storage's own per-blob ordering value, carried by every `BlobCreated`. Event Grid guarantees delivery but
-    // Not order, so two writes to one name can have their events arrive reversed and leave the older size
+    countedBytes: integer().notNull(),
+    declaredBytes: integer().notNull(),
+    expiresAt: integer({ mode: "timestamp_ms" }).notNull(),
+    reconciledAt: integer({ mode: "timestamp_ms" }),
+    // The bucket's per-object ordering value, carried by every object-create notification. Delivery is not ordered,
+    // So two writes to one name can have their notifications arrive reversed and leave the older size
     // Counted. Held here so a reconcile can reject an event older than the one already applied. Null until the
     // First event lands — a provisional charge writes bytes without one, having no ordering to claim.
     sequencer: text(),
