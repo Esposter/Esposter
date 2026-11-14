@@ -8,7 +8,6 @@ import { appUsersInMessageRelation } from "#src/relations/message/appUsersInMess
 import { bansInMessageRelation } from "#src/relations/message/bansInMessageRelation";
 import { callSessionsInMessageRelation } from "#src/relations/message/callSessionsInMessageRelation";
 import { invitesInMessageRelation } from "#src/relations/message/invitesInMessageRelation";
-import { messagesInMessageRelation } from "#src/relations/message/messagesInMessageRelation";
 import { moderationLogsInMessageRelation } from "#src/relations/message/moderationLogsInMessageRelation";
 import { moderationNotesInMessageRelation } from "#src/relations/message/moderationNotesInMessageRelation";
 import { roomCategoriesInMessageRelation } from "#src/relations/message/roomCategoriesInMessageRelation";
@@ -59,7 +58,6 @@ export const relations = {
   ...friendsInSocialRelation,
   ...invitesInMessageRelation,
   ...likesInPostRelation,
-  ...messagesInMessageRelation,
   ...moderationLogsInMessageRelation,
   ...moderationNotesInMessageRelation,
   ...notificationsInNotificationRelation,

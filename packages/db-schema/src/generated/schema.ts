@@ -11,8 +11,6 @@ import { appUsersInMessage } from "#src/schema/message/appUsersInMessage";
 import { bansInMessage } from "#src/schema/message/bansInMessage";
 import { callSessionsInMessage } from "#src/schema/message/callSessionsInMessage";
 import { invitesInMessage } from "#src/schema/message/invitesInMessage";
-import { messageEmojisInMessage } from "#src/schema/message/messageEmojisInMessage";
-import { messagesInMessage } from "#src/schema/message/messagesInMessage";
 import { moderationLogsInMessage } from "#src/schema/message/moderationLogsInMessage";
 import { moderationNotesInMessage } from "#src/schema/message/moderationNotesInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
@@ -65,8 +63,6 @@ export const schema = {
   friendsInSocial,
   invitesInMessage,
   likesInPost,
-  messageEmojisInMessage,
-  messagesInMessage,
   moderationLogsInMessage,
   moderationNotesInMessage,
   notificationsInNotification,
