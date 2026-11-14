@@ -1,72 +1,72 @@
 ## Purpose
 
-Azure service ownership, the storage split, event flows, and the real-time layer model.
+Cloudflare service ownership: where each kind of data is kept, how live updates reach open screens, how background work runs, and how delayed work is scheduled.
 
 ## Requirements
 
-### Requirement: Relational data and message-like streams use different stores
+### Requirement: Relational data and room-local message streams use different stores
 
-Relational and queryable data SHALL be kept in the relational database, and high-volume time-ordered message-like data SHALL be kept in the append-only table store.
+Relational and queryable data SHALL be kept in the relational database, and high-volume time-ordered message data SHALL be kept in the object of the one room it belongs to.
 
 #### Scenario: A relational feature is stored in the relational database
 
 - **WHEN** a new feature holds relational or queryable data
 - **THEN** its data is kept in the relational database
 
-#### Scenario: A message-like stream is stored in the table store
+#### Scenario: A room's messages are stored in the room's own object
 
-- **WHEN** a new feature holds high-volume time-ordered data with no joins
-- **THEN** its data is kept in the append-only table store keyed by its owning entity
+- **WHEN** a message is sent to a room
+- **THEN** the message, its reactions and its search entry are kept in that room's object
 
-### Requirement: Each kind of stored file is kept in the container that owns its kind
+### Requirement: Each kind of stored file is kept in the bucket that owns its kind
 
-Every kind of stored file SHALL be kept in the blob container that owns its kind, so that one container's lifecycle rules never apply to another's content.
+Every kind of stored file SHALL be kept in the bucket that owns its kind, so that one bucket's lifecycle rules never apply to another's content.
 
-#### Scenario: Older attachments move to cheaper tiers
+#### Scenario: Older attachments move to a cheaper storage class
 
-- **GIVEN** a message attachment stored in the blob store
-- **WHEN** it has not been read for thirty days
-- **THEN** it moves to a cooler tier, and after ninety days to the coldest tier
+- **GIVEN** a message attachment stored in its bucket
+- **WHEN** thirty days have passed since it was written
+- **THEN** it moves to the infrequent-access storage class
 
-#### Scenario: Dead-lettered events are kept for thirty days
+#### Scenario: A job that keeps failing is held for inspection
 
-- **GIVEN** an event that could not be delivered
-- **WHEN** thirty days have passed
-- **THEN** the event is removed by the container's lifecycle rule
+- **GIVEN** a queued job whose handler throws on every retry
+- **WHEN** its retry count is spent
+- **THEN** the message is kept in the job's dead-letter queue
 
-### Requirement: Sent messages become searchable within the indexer schedule
+### Requirement: Searchable at once
 
-A newly sent message SHALL become searchable within the search index's refresh interval rather than at once, and soft-deleted messages SHALL NOT appear in search.
+A newly sent message SHALL be searchable as soon as it is sent, and a deleted message SHALL NOT appear in search.
 
-#### Scenario: A new message is searchable after the refresh interval
+#### Scenario: A new message is searchable at once
 
 - **WHEN** a message is sent
-- **THEN** it appears in search within five minutes
+- **THEN** a search of the room finds it before the send returns
 
 #### Scenario: A deleted message is excluded from search
 
-- **GIVEN** a message that has been soft deleted
+- **GIVEN** a message that has been deleted
 - **WHEN** a person searches the room
 - **THEN** the deleted message does not appear
 
 ### Requirement: Background work runs after the request, never inside it
 
-Work that need not block a request SHALL run in background functions triggered by events, and a request SHALL NOT wait for that work to be delivered.
+Work that need not block a request SHALL run as a queued job, and a request SHALL NOT wait for that work to be delivered.
 
 #### Scenario: A posted message is answered before its notification is delivered
 
 - **WHEN** a person posts a message
 - **THEN** the response returns before any notification is delivered
 
-#### Scenario: A background delivery retries without the request
+#### Scenario: A failed delivery retries without the request
 
 - **GIVEN** a notification whose delivery failed
-- **WHEN** the background function retries it
+- **WHEN** the queue retries it
 - **THEN** the retry happens without the original request being open
 
 ### Requirement: Delayed work runs at its scheduled time
 
-Work that must run at a future time SHALL be scheduled to run at that time.
+Work that must run at a future time SHALL be run by an alarm on the object that owns it, at that time.
 
 #### Scenario: A scheduled message is delivered at its run time
 
@@ -74,9 +74,9 @@ Work that must run at a future time SHALL be scheduled to run at that time.
 - **WHEN** that time arrives
 - **THEN** the message is delivered
 
-#### Scenario: A todo reminder fires at its due time
+#### Scenario: A TodoList reminder fires at its due time
 
-- **GIVEN** a todo with a due time
+- **GIVEN** a TodoList item with a due time
 - **WHEN** the due time arrives
 - **THEN** the reminder is sent
 
@@ -87,25 +87,25 @@ The storage usage record SHALL reflect the real stored size of an upload once th
 #### Scenario: A declared size is corrected to the stored size
 
 - **GIVEN** a client declared a size for an upload
-- **WHEN** the upload lands in storage
+- **WHEN** the upload lands in its bucket
 - **THEN** the usage record is corrected to the stored object's real size
 
-### Requirement: Changes reach open screens through the layer that made them
+### Requirement: Changes reach open screens through the object that holds the state
 
-Changes made by a request SHALL reach open screens in-process, and changes made by background work SHALL reach them through the shared real-time hub.
+Changes made by a request SHALL reach open screens through the object that owns the state changed, and changes made by background work SHALL reach them by calling that same object.
 
-#### Scenario: A message created by a request reaches subscribers on the same server
+#### Scenario: A message created by a request reaches the room's viewers
 
 - **WHEN** a request creates a message
-- **THEN** the subscribers on that server receive it
+- **THEN** every socket viewing that room receives it
 
-#### Scenario: A message from an inbound webhook reaches every server through the hub
+#### Scenario: A message from an inbound webhook reaches the room's viewers
 
 - **GIVEN** a message delivered by an inbound webhook
-- **WHEN** the background function publishes it
-- **THEN** subscribers on every server receive it through the hub
+- **WHEN** the background job that processes it calls the room's object
+- **THEN** every socket viewing that room receives it
 
 #### Scenario: A participant's join keeps non-participants consistent
 
-- **WHEN** the media server reports a participant joining a call
-- **THEN** the non-participants and the subscriptions see the same call state
+- **WHEN** RealtimeKit reports a participant joining a call
+- **THEN** the call's sockets see the same call state
