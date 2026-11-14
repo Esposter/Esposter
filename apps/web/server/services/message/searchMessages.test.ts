@@ -1,123 +1,100 @@
-import type { Database } from "@esposter/db-schema";
-import type { MockDatabase } from "@esposter/db-mock";
+import type { RoomObjectRpc } from "@esposter/db-schema";
 
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { searchMessages } from "#server/services/message/searchMessages";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { createMockDb } from "@esposter/db-mock";
-import { MessageType, messagesInMessage, roomsInMessage, usersInAuth } from "@esposter/db-schema";
-import { MAX_READ_LIMIT } from "@esposter/shared";
-import { eq } from "drizzle-orm";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { FilterType, FilterTypeHas } from "@esposter/db-schema";
+import { describe, expect, test, vi } from "vitest";
 
-// The index is kept by the triggers on the messages table, so these rows are written straight through Drizzle, and a
-// search that finds them proves the trigger wrote the index in the same statement as the row
+// Each room's index is that room's object, so the object is faked and every room answers from the list a test sets
+const { roomObject } = vi.hoisted(() => ({ roomObject: { searchMessages: vi.fn<RoomObjectRpc["searchMessages"]>() } }));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({
+  useRoomObject: vi.fn<(roomId: string) => typeof roomObject>(() => roomObject),
+}));
+
 describe(searchMessages, () => {
-  const userId = "8f1c6a2e-4b7d-4e9a-8c31-2d5f7a9b0c11";
-  const roomId = "3a9e0d4c-6b2f-4a7e-9d15-7c8b1e2f3a22";
-  const otherRoomId = "c4d7b2a1-9e3f-4f60-8a2b-5e6d7c8b9a33";
-  const messageId = "1b2c3d4e-5f60-4718-9a0b-c1d2e3f4a501";
-  const otherMessageId = "2c3d4e5f-6071-4829-8b1c-d2e3f4a5b612";
-  const roomMessageId = "3d4e5f60-7182-4930-9c2d-e3f4a5b6c723";
-  const search = (query: string) =>
-    searchMessages(db, {
-      filters: [],
-      limit: MAX_READ_LIMIT,
+  const roomId = crypto.randomUUID();
+  const otherRoomId = crypto.randomUUID();
+  const hasFile = { type: FilterType.Has, value: FilterTypeHas.File };
+  const query = "gate";
+  const sortBy = [CREATED_AT_DESCENDING_SORT_ITEM];
+
+  test("asks each room an in: filter names for the first offset, limit and one more, with the filters that are not in:", async () => {
+    expect.hasAssertions();
+
+    roomObject.searchMessages.mockResolvedValue({ count: 0, messages: [] });
+
+    await searchMessages({
+      filters: [{ type: FilterType.In, value: otherRoomId }, hasFile],
+      limit: 2,
+      offset: 1,
+      query,
+      roomId,
+      sortBy,
+    });
+
+    expect(useRoomObject).toHaveBeenCalledExactlyOnceWith(otherRoomId);
+    expect(roomObject.searchMessages).toHaveBeenCalledExactlyOnceWith({
+      filters: [hasFile],
+      limit: 4,
+      offset: 0,
+      query,
+    });
+  });
+
+  // A score is not comparable across rooms, since each room's index counts its own terms, so the rooms take turns by
+  // rank position. The rooms are asked in the order the filters name them, which is the order their answers are read
+  test("interleaves the rooms' matches by rank position when there is text, and counts each room's own matches", async () => {
+    expect.hasAssertions();
+
+    const firstRoomMessages = [createRoomMessage({ id: 1 }), createRoomMessage({ id: 2 })];
+    const secondRoomMessages = [createRoomMessage({ id: 3 })];
+    roomObject.searchMessages
+      .mockResolvedValueOnce({ count: 5, messages: firstRoomMessages })
+      .mockResolvedValueOnce({ count: 1, messages: secondRoomMessages });
+
+    const { count, data } = await searchMessages({
+      filters: [
+        { type: FilterType.In, value: roomId },
+        { type: FilterType.In, value: otherRoomId },
+      ],
+      limit: 10,
       offset: 0,
       query,
       roomId,
-      sortBy: [CREATED_AT_DESCENDING_SORT_ITEM],
-    }).then(({ data: { items } }) => items.map(({ id }) => id));
+      sortBy,
+    });
 
-  let db: Database;
-  let mockDatabase: MockDatabase;
-
-  const insertMessage = async (id: string, message: string, messageRoomId = roomId) => {
-    await db
-      .insert(messagesInMessage)
-      .values({ id, message, roomId: messageRoomId, type: MessageType.Message, userId });
-  };
-
-  beforeAll(async () => {
-    mockDatabase = await createMockDb();
-    db = mockDatabase.db;
+    expect(count).toBe(6);
+    expect(data.items.map(({ id }) => id)).toStrictEqual([1, 3, 2]);
   });
 
-  afterAll(async () => {
-    await mockDatabase.dispose();
-  });
-
-  afterEach(async () => {
-    await mockDatabase.reset();
-  });
-
-  const insertRooms = async () => {
-    await db.insert(usersInAuth).values({ email: "ann@example.com", emailVerified: false, id: userId, name: "Ann" });
-    await db.insert(roomsInMessage).values([
-      { id: roomId, name: "room", userId },
-      { id: otherRoomId, name: "other", userId },
-    ]);
-  };
-
-  test("finds a message by its words, and by the prefix of the last word", async () => {
+  // Without text the rooms' lists merge by each message's own time, and by id where the times tie. The offset then
+  // pages the merged list, so an id that breaks a tie decides which message the second page starts on
+  test("merges the rooms' matches newest first, breaking a tie by id, and pages the merged list", async () => {
     expect.hasAssertions();
 
-    await insertRooms();
-    await insertMessage(messageId, "the gate is open");
+    const durationMs = 1;
+    const earlier = new Date(0);
+    const later = new Date(Temporal.Instant.fromEpochMilliseconds(durationMs).epochMilliseconds);
+    roomObject.searchMessages
+      .mockResolvedValueOnce({
+        count: 2,
+        messages: [createRoomMessage({ createdAt: later, id: 5 }), createRoomMessage({ createdAt: earlier, id: 1 })],
+      })
+      .mockResolvedValueOnce({ count: 1, messages: [createRoomMessage({ createdAt: later, id: 3 })] });
 
-    expect(await search("gate")).toStrictEqual([messageId]);
-    expect(await search("ope")).toStrictEqual([messageId]);
-  });
+    const { data } = await searchMessages({
+      filters: [{ type: FilterType.In, value: roomId }, { type: FilterType.In, value: otherRoomId }, hasFile],
+      limit: 1,
+      offset: 1,
+      query: "",
+      roomId,
+      sortBy,
+    });
 
-  test("an edit changes what matches, since the index follows the row", async () => {
-    expect.hasAssertions();
-
-    await insertRooms();
-    await insertMessage(messageId, "the gate is open");
-    await db.update(messagesInMessage).set({ message: "the door is shut" }).where(eq(messagesInMessage.id, messageId));
-
-    expect(await search("gate")).toStrictEqual([]);
-    expect(await search("door")).toStrictEqual([messageId]);
-  });
-
-  test("a soft-deleted message stops matching", async () => {
-    expect.hasAssertions();
-
-    await insertRooms();
-    await insertMessage(messageId, "the gate is open");
-    await db
-      .update(messagesInMessage)
-      .set({ deletedAt: new Date() })
-      .where(eq(messagesInMessage.id, messageId));
-
-    expect(await search("gate")).toStrictEqual([]);
-  });
-
-  test("a message in another room never matches", async () => {
-    expect.hasAssertions();
-
-    await insertRooms();
-    await insertMessage(messageId, "the gate is open");
-    await insertMessage(otherMessageId, "the gate is shut", otherRoomId);
-    await insertMessage(roomMessageId, "a gate in this room", roomId);
-
-    expect((await search("gate")).toSorted()).toStrictEqual([messageId, roomMessageId].toSorted());
-  });
-
-  // Each query is a search operator typed as text: a boolean word, a wildcard, a column filter, a quote that would close
-  // its term early. A word typed as one is found as one, and an operator is never a match-all, so none of these reads
-  // the room's whole history
-  test("reads user text as literal words, never as FTS5 syntax", async () => {
-    expect.hasAssertions();
-
-    await insertRooms();
-    await insertMessage(messageId, "logic OR gate, the NEAR field");
-    await insertMessage(otherMessageId, "a plain line");
-
-    expect(await search("OR")).toStrictEqual([messageId]);
-    expect(await search("NEAR")).toStrictEqual([messageId]);
-    expect(await search("*")).toStrictEqual([]);
-    expect(await search(`"`)).toStrictEqual([]);
-    expect(await search(`a"OR"b`)).toStrictEqual([]);
-    expect(await search("message:secret")).toStrictEqual([]);
+    expect(data.hasMore).toBe(true);
+    expect(data.items.map(({ id }) => id)).toStrictEqual([3]);
   });
 });

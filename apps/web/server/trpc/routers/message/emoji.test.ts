@@ -1,224 +1,99 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
-import { messageRouter } from "#server/trpc/routers/message";
+import { getMockSession } from "#server/trpc/context.test";
 import { emojiRouter } from "#server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
-import { getReverseTickedTimestamp, MessageMetadataType } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockTableClient } from "azure-mock";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { DatabaseEntityType } from "@esposter/db-schema";
+import { NotFoundError } from "@esposter/shared";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+// A reaction is held by its message's room, so the room's object is faked: each method answers what a test sets, and
+// the router's own work — who the reactor is, and what a missing reaction is — is what the tests read
+const { roomObject } = vi.hoisted(() => ({
+  roomObject: {
+    addReaction: vi.fn<RoomObjectRpc["addReaction"]>(),
+    readReactions: vi.fn<RoomObjectRpc["readReactions"]>(),
+    removeReaction: vi.fn<RoomObjectRpc["removeReaction"]>(),
+  },
+}));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
 
 describe("emojiRouter", () => {
-  const { createMember, getMockContext, getRoomId } = setupRoomSuite();
+  const { getMockContext, getRoomId } = setupRoomSuite();
   let mockContext: Context;
   let emojiCaller: DecorateRouterRecord<TRPCRouter["message"]["emoji"]>;
-  let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomId: string;
-  const message = "message";
   const emojiTag = "👍";
-  const timeZone = "UTC";
-
-  // Every emoji hangs off a message the test has to post first, and every write against one addresses it by the
-  // Same three keys
-  const setupEmoji = async () => {
-    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
-    const newEmoji = await emojiCaller.createEmoji({
-      emojiTag,
-      messageRowKey: newMessage.rowKey,
-      partitionKey: roomId,
-    });
-    const emojiKey = {
-      messageRowKey: newEmoji.messageRowKey,
-      partitionKey: newEmoji.partitionKey,
-      rowKey: newEmoji.rowKey,
-    };
-    return { emojiKey, newEmoji, newMessage };
-  };
+  const messageId = 1;
 
   beforeAll(() => {
     mockContext = getMockContext();
     emojiCaller = createCallerFactory(emojiRouter)(mockContext);
-    messageCaller = createCallerFactory(messageRouter)(mockContext);
   });
 
   beforeEach(() => {
     roomId = getRoomId();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  test("reads empty emojis", async () => {
+  test("adds the caller as a reactor and returns the reaction the room holds", async () => {
     expect.hasAssertions();
 
-    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis).toHaveLength(0);
-  });
-
-  test("reads emojis", async () => {
-    expect.hasAssertions();
-
-    const { newEmoji, newMessage } = await setupEmoji();
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis).toHaveLength(1);
-    expect(takeOne(emojis)).toStrictEqual(newEmoji);
-  });
-
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const { newEmoji, newMessage } = await setupEmoji();
     const userId = getMockSession().user.id;
+    const reaction = { emojiTag, messageId, userIds: [userId] };
+    roomObject.addReaction.mockResolvedValue(reaction);
 
-    expect(newEmoji.emojiTag).toBe(emojiTag);
-    expect(newEmoji.messageRowKey).toBe(newMessage.rowKey);
-    expect(newEmoji.partitionKey).toBe(roomId);
-    expect(newEmoji.type).toBe(MessageMetadataType.Emoji);
-    expect(newEmoji.userIds).toStrictEqual([userId]);
+    const newReaction = await emojiCaller.addReaction({ emojiTag, messageId, roomId });
+
+    expect(newReaction).toStrictEqual(reaction);
+    expect(roomObject.addReaction).toHaveBeenCalledExactlyOnceWith({ emojiTag, messageId }, { userId });
   });
 
-  test("fails create with duplicate emoji", async () => {
+  test("fails addReaction on a message the room does not hold", async () => {
     expect.hasAssertions();
 
-    const { newEmoji, newMessage } = await setupEmoji();
+    const input = { roomId, emojiTag, messageId };
+    roomObject.addReaction.mockResolvedValue(null);
 
-    await expect(
-      emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: roomId }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(newEmoji)).message}]`,
+    await expect(emojiCaller.addReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(input)).message}]`,
     );
   });
 
-  test("subscription emits the created emoji", async () => {
+  test("removes the caller from the reactors of a reaction", async () => {
     expect.hasAssertions();
 
-    const subscription = await emojiCaller.onCreateEmoji({ roomId });
-    const newMessage = await messageCaller.createMessage({ message, roomId, timeZone });
-    const data = await getFirstEmit(
-      () => subscription,
-      () => emojiCaller.createEmoji({ emojiTag, messageRowKey: newMessage.rowKey, partitionKey: roomId }),
-    );
-
-    expect(data.emojiTag).toBe(emojiTag);
-    expect(data.messageRowKey).toBe(newMessage.rowKey);
-    expect(data.partitionKey).toBe(roomId);
-  });
-
-  test("updates", async () => {
-    expect.hasAssertions();
-
-    const { emojiKey, newMessage } = await setupEmoji();
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji(emojiKey);
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
     const userId = getMockSession().user.id;
+    roomObject.removeReaction.mockResolvedValue(true);
 
-    expect(emojis).toHaveLength(1);
-    expect(takeOne(emojis).userIds).toStrictEqual([userId, member.id]);
+    await emojiCaller.removeReaction({ emojiTag, messageId, roomId });
+
+    expect(roomObject.removeReaction).toHaveBeenCalledExactlyOnceWith({ emojiTag, messageId }, { userId });
   });
 
-  test("updateEmoji twice removes the user id", async () => {
+  test("fails removeReaction by a caller who is not one of its reactors", async () => {
     expect.hasAssertions();
 
-    const { emojiKey, newMessage } = await setupEmoji();
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji(emojiKey);
-    await mockSessionOnce(mockContext.db, member);
-    await emojiCaller.updateEmoji(emojiKey);
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-    const userId = getMockSession().user.id;
+    const input = { roomId, emojiTag, messageId };
+    roomObject.removeReaction.mockResolvedValue(false);
 
-    expect(emojis).toHaveLength(1);
-    expect(takeOne(emojis).userIds).toStrictEqual([userId]);
-  });
-
-  test("fails update emoji with non-existent emoji", async () => {
-    expect.hasAssertions();
-
-    // Well-formed and absent rather than malformed: a key the schema rejects never reaches the lookup this
-    // Test is named for
-    const input = { partitionKey: roomId, rowKey: getReverseTickedTimestamp() };
-
-    await expect(emojiCaller.updateEmoji(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(MessageMetadataType.Emoji, JSON.stringify(input)).message}]`,
+    await expect(emojiCaller.removeReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(input)).message}]`,
     );
   });
 
-  test("fails update by a member who is the only reactor", async () => {
+  test("reads the reactions of the messages it names from the room", async () => {
     expect.hasAssertions();
 
-    const { emojiKey, newEmoji, newMessage } = await setupEmoji();
+    const reaction = { emojiTag, messageId, userIds: [getMockSession().user.id] };
+    roomObject.readReactions.mockResolvedValue([reaction]);
 
-    await expect(emojiCaller.updateEmoji(emojiKey)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(newEmoji)).message}]`,
-    );
+    const reactions = await emojiCaller.readReactions({ messageIds: [messageId], roomId });
 
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis).toStrictEqual([newEmoji]);
-  });
-
-  test("deletes", async () => {
-    expect.hasAssertions();
-
-    const { emojiKey, newMessage } = await setupEmoji();
-
-    await emojiCaller.deleteEmoji(emojiKey);
-
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis).toHaveLength(0);
-  });
-
-  test("fails delete by a member who is not its only reactor", async () => {
-    expect.hasAssertions();
-
-    const { emojiKey, newEmoji, newMessage } = await setupEmoji();
-    const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-
-    await expect(emojiCaller.deleteEmoji(emojiKey)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Delete, MessageMetadataType.Emoji, JSON.stringify(emojiKey)).message}]`,
-    );
-
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(emojis).toStrictEqual([newEmoji]);
-  });
-
-  test("two members reacting at once both keep their reaction", async () => {
-    expect.hasAssertions();
-
-    const { emojiKey, newMessage } = await setupEmoji();
-    const firstMember = await createMember();
-    const secondMember = await createMember();
-    const { getEntity } = MockTableClient.prototype;
-    // The second member reacts between the first member's read and its write, so the first member's write is
-    // Computed against a user list that no longer stands
-    vi.spyOn(MockTableClient.prototype, "getEntity").mockImplementationOnce(async function (
-      this: MockTableClient,
-      ...args
-    ) {
-      const staleEntity = await getEntity.apply(this, args);
-      await mockSessionOnce(mockContext.db, secondMember);
-      await emojiCaller.updateEmoji(emojiKey);
-      return staleEntity;
-    });
-    await mockSessionOnce(mockContext.db, firstMember);
-    await emojiCaller.updateEmoji(emojiKey);
-    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
-
-    expect(takeOne(emojis).userIds).toStrictEqual(expect.arrayContaining([firstMember.id, secondMember.id]));
+    expect(reactions).toStrictEqual([reaction]);
+    expect(roomObject.readReactions).toHaveBeenCalledExactlyOnceWith([messageId]);
   });
 });

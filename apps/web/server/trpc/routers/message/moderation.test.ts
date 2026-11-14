@@ -1,15 +1,13 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember); Each step reads the last: each note takes the clock set just before it */
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
@@ -17,9 +15,9 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,
-  StreamTable,
   bansInMessage,
   DatabaseEntityType,
+  MessageType,
   RoomPermission,
   usersInAuth,
 } from "@esposter/db-schema";
@@ -28,6 +26,16 @@ import { and, eq } from "drizzle-orm";
 vi.mock("#server/services/message/call/getCallObject", () => ({
   getCallObject: vi.fn<(callSessionId: string) => unknown>(),
 }));
+// The room's object writes the system lines and purges a soft-banned member's messages, so it is faked: each method
+// answers what a test sets, and what the router sent it is what the tests read
+const { roomObject } = vi.hoisted(() => ({
+  roomObject: {
+    broadcastEvent: vi.fn<RoomObjectRpc["broadcastEvent"]>(),
+    createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
+    deleteUserMessages: vi.fn<RoomObjectRpc["deleteUserMessages"]>(),
+  },
+}));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
 
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -61,6 +69,7 @@ describe("moderationRouter", () => {
       now: 0,
       toFake: ["Date", "setTimeout", "clearTimeout", "setInterval", "clearInterval", "setImmediate", "clearImmediate"],
     });
+    roomObject.deleteUserMessages.mockResolvedValue([]);
     roomId = getRoomId();
   });
 
@@ -146,23 +155,18 @@ describe("moderationRouter", () => {
     expect(timeoutUntil.getTime()).toBe(durationMs);
   });
 
-  // A moderation kick is still a departure, so it owes the room what a leave does — without the event every
-  // Other member's list keeps a member the room no longer has
-  test(`executeAdminAction ${AdminActionType.KickFromRoom} announces the removal`, async () => {
+  // A moderation kick is still a departure, so it owes the room the line saying who went, written as the moderator.
+  // The join that made the member is also a line the room was sent, so the kick's own line is the last one
+  test(`executeAdminAction ${AdminActionType.KickFromRoom} announces the removal in the room`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const subscription = await roomCaller.onLeaveRoom([roomId]);
-    const leaveRoom = await getFirstEmit(
-      () => subscription,
-      () =>
-        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom }),
-    );
-    const messagesClient = useStreamTableClient(StreamTable.Messages);
-    const messages = (await messagesClient.list()) as StandardMessageEntity[];
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom });
 
-    expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
-    expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
+    expect(roomObject.createMessage).toHaveBeenLastCalledWith(
+      { message: `${member.name} was kicked from the room.`, type: MessageType.System },
+      { userId: getMockSession().user.id },
+    );
   });
 
   // Moderating yourself is not a hierarchy question, and the comparison cannot answer it — an owner outranks
@@ -197,20 +201,14 @@ describe("moderationRouter", () => {
     );
   });
 
-  test(`executeAdminAction ${AdminActionType.SoftBan} soft-deletes the member messages`, async () => {
+  // The purge is one call to the member's room, which tombstones everything the member wrote in one turn
+  test(`executeAdminAction ${AdminActionType.SoftBan} purges the member's messages in their room`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
 
-    const messagesClient = useStreamTableClient(StreamTable.Messages);
-    // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
-    // Purge is asserted against what the member wrote
-    const memberMessages = ((await messagesClient.list()) as StandardMessageEntity[]).filter(
-      ({ userId }) => userId === member.id,
-    );
-
-    expect(memberMessages.map(({ deletedAt }) => deletedAt)).toStrictEqual([new Date(0)]);
+    expect(roomObject.deleteUserMessages).toHaveBeenCalledExactlyOnceWith(member.id);
   });
 
   test("readBans returns the banned user", async () => {
@@ -430,21 +428,17 @@ describe("moderationRouter", () => {
     expect(evictUser).toHaveBeenCalledExactlyOnceWith({ callSessionId, userId: member.id });
   });
 
-  test("subscription emits the action to the targeted user", async () => {
+  // The action reaches the targeted member's own sockets, tagged to them, and no other socket in the room
+  test("broadcasts the action to the targeted user's sockets", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    const subscription = await moderationCaller.onAdminAction({ roomId });
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromCall });
 
-    const data = await getFirstEmit(
-      () => subscription,
-      () =>
-        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromCall }),
+    expect(roomObject.broadcastEvent).toHaveBeenLastCalledWith(
+      { data: { roomId, targetUserId: member.id, type: AdminActionType.KickFromCall }, type: "adminAction" },
+      { tag: `user:${member.id}` },
     );
-
-    expect(data.type).toBe(AdminActionType.KickFromCall);
-    expect(data.durationMs).toBeUndefined();
   });
 
   // Every procedure here is permission-gated and a plain member holds none of them

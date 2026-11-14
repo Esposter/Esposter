@@ -1,28 +1,53 @@
+import type { RoomObjectRpc } from "@esposter/db-schema";
+
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { StreamTable } from "@esposter/db-schema";
-import { noop, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
-import { afterEach, assert, describe, expect, test } from "vitest";
+import { MessageType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
+import { describe, expect, test, vi } from "vitest";
+
+// The room's object is faked, so each test reads what the line asked the room to write
+const { roomObject } = vi.hoisted(() => ({ roomObject: { createMessage: vi.fn<RoomObjectRpc["createMessage"]>() } }));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
 
 describe(createSystemRoomMessage, () => {
-  afterEach(() => {
-    MockTableDatabase.clear();
-  });
+  const message = "message";
+  const roomId = crypto.randomUUID();
+  const userId = crypto.randomUUID();
 
-  // The entity's own `""` default is what a line written without a reply target must keep, never an `undefined`
-  // Handed through on top of it
-  test("stores the empty replyRowKey when none is given", async () => {
+  // No device is named, so the room echoes the line to every tab of the member, including the one that caused it
+  test("posts the line to the room as the member, with no device to leave out", async () => {
     expect.hasAssertions();
 
-    await expect(
-      createSystemRoomMessage(crypto.randomUUID(), crypto.randomUUID(), "", crypto.randomUUID()).match(
-        noop,
-        (error) => error,
-      ),
-    ).resolves.toBeUndefined();
-    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
-    assert.exists(messagesTable);
+    await createSystemRoomMessage(roomId, userId, message).match(noop, (error) => error);
 
-    expect(takeOne([...messagesTable.values()]).replyRowKey).toBe("");
+    expect(roomObject.createMessage).toHaveBeenCalledExactlyOnceWith({ message, type: MessageType.System }, { userId });
+  });
+
+  test("passes the reply target and the type through for a line that points at another message", async () => {
+    expect.hasAssertions();
+
+    const replyToId = 1;
+    await createSystemRoomMessage(roomId, userId, message, { replyToId, type: MessageType.PinMessage }).match(
+      noop,
+      (error) => error,
+    );
+
+    expect(roomObject.createMessage).toHaveBeenCalledExactlyOnceWith(
+      { message, replyToId, type: MessageType.PinMessage },
+      { userId },
+    );
+  });
+
+  // The line is handed back as a failure rather than logged here, so the caller that knows what it announced owns the
+  // handling
+  test("returns a failed write as the result rather than throwing", async () => {
+    expect.hasAssertions();
+
+    const error = new Error(" ");
+    roomObject.createMessage.mockRejectedValueOnce(error);
+
+    const result = await createSystemRoomMessage(roomId, userId, message).match(noop, (caught) => caught);
+
+    expect(result).toBe(error);
   });
 });

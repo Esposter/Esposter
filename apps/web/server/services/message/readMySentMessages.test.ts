@@ -1,18 +1,26 @@
-import type { Database } from "@esposter/db-schema";
 import type { MockDatabase } from "@esposter/db-mock";
+import type { Database, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 
+import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
 import { createMockDb } from "@esposter/db-mock";
-import { MessageType, messagesInMessage, roomsInMessage, usersInAuth } from "@esposter/db-schema";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { roomsInMessage, usersInAuth } from "@esposter/db-schema";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+// The sender's index is the user's object and each room's messages are that room's object, so both are faked. The rooms
+// the page names are real rows, read for the room each message came from
+const { roomObject, userObject } = vi.hoisted(() => ({
+  roomObject: { readMessagesByIds: vi.fn<RoomObjectRpc["readMessagesByIds"]>() },
+  userObject: { readSentMessages: vi.fn<UserObjectRpc["readSentMessages"]>() },
+}));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
+vi.mock("#server/composables/realtime/useUserObject", () => ({ useUserObject: () => userObject }));
 
 describe(readMySentMessages, () => {
   const userId = "8f1c6a2e-4b7d-4e9a-8c31-2d5f7a9b0c11";
-  const otherUserId = "d5e6f7a8-b9c0-4d1e-8f2a-3b4c5d6e7f44";
   const roomId = "3a9e0d4c-6b2f-4a7e-9d15-7c8b1e2f3a22";
-  const messageId = "1b2c3d4e-5f60-4718-9a0b-c1d2e3f4a501";
-  const otherMessageId = "2c3d4e5f-6071-4829-8b1c-d2e3f4a5b612";
-  const deletedMessageId = "3d4e5f60-7182-4930-9c2d-e3f4a5b6c723";
+  const otherRoomId = "c4d7b2a1-9e3f-4f60-8a2b-5e6d7c8b9a33";
+  const createdAt = new Date(0);
 
   let db: Database;
   let mockDatabase: MockDatabase;
@@ -30,24 +38,52 @@ describe(readMySentMessages, () => {
     await mockDatabase.reset();
   });
 
-  test("lists my live messages with their room, leaving out others' and deleted ones", async () => {
+  const insertUserAndRooms = async () => {
+    await db.insert(usersInAuth).values({ email: "ann@example.com", emailVerified: false, id: userId, name: "Ann" });
+    await db.insert(roomsInMessage).values([
+      { id: roomId, name: "room", userId },
+      { id: otherRoomId, name: "other", userId },
+    ]);
+  };
+
+  test("pages the sender's index newest first, asking one past the limit from the cursor", async () => {
     expect.hasAssertions();
 
-    await db.insert(usersInAuth).values([
-      { email: "ann@example.com", emailVerified: false, id: userId, name: "Ann" },
-      { email: "ben@example.com", emailVerified: false, id: otherUserId, name: "Ben" },
+    await insertUserAndRooms();
+    const cursor = { createdAt, messageId: 4, roomId };
+    const messages = [createRoomMessage({ id: 1, userId }), createRoomMessage({ id: 2, userId })];
+    userObject.readSentMessages.mockResolvedValue([
+      { createdAt, messageId: 1, roomId },
+      { createdAt, messageId: 2, roomId: otherRoomId },
+      { createdAt, messageId: 3, roomId },
     ]);
-    await db.insert(roomsInMessage).values({ id: roomId, name: "room", userId });
-    await db.insert(messagesInMessage).values([
-      { id: messageId, message: "mine", roomId, type: MessageType.Message, userId },
-      { id: otherMessageId, message: "theirs", roomId, type: MessageType.Message, userId: otherUserId },
-      { deletedAt: new Date(), id: deletedMessageId, message: "gone", roomId, type: MessageType.Message, userId },
+    roomObject.readMessagesByIds.mockImplementation((ids) => messages.filter(({ id }) => ids.includes(id)));
+
+    const { hasMore, items } = await readMySentMessages({ before: cursor, limit: 2 }, db, userId);
+
+    expect(userObject.readSentMessages).toHaveBeenCalledExactlyOnceWith({ before: cursor, limit: 3 });
+    expect(hasMore).toBe(true);
+    // The index's order is the page's, even where the rooms alternate
+    expect(items.map(({ message, room }) => [message.id, room.id])).toStrictEqual([
+      [1, roomId],
+      [2, otherRoomId],
     ]);
+  });
 
-    const { count, data } = await readMySentMessages({ limit: 10, offset: 0 }, db, userId);
+  // A message its room no longer holds is deleted, so the page is shorter by that one and no later entry takes its place
+  test("leaves out a sent message its room no longer holds, with nothing taken in its place", async () => {
+    expect.hasAssertions();
 
-    expect(count).toBe(1);
-    expect(data.hasMore).toBe(false);
-    expect(data.items.map(({ message, room }) => [message.id, room.id])).toStrictEqual([[messageId, roomId]]);
+    await insertUserAndRooms();
+    userObject.readSentMessages.mockResolvedValue([
+      { createdAt, messageId: 1, roomId },
+      { createdAt, messageId: 2, roomId },
+    ]);
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ id: 1, userId })]);
+
+    const { hasMore, items } = await readMySentMessages({ limit: 2 }, db, userId);
+
+    expect(hasMore).toBe(false);
+    expect(items.map(({ message }) => message.id)).toStrictEqual([1]);
   });
 });

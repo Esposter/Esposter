@@ -1,15 +1,15 @@
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { RoomObjectRpc } from "@esposter/db-schema";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { createUserMessage } from "#server/services/message/createUserMessage";
-import { readFollowedThreadRootRowKeys } from "#server/services/message/thread/readFollowedThreadRootRowKeys";
+import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
-import { createMessage, createThreadFollow } from "@esposter/db";
+import { createThreadFollow } from "@esposter/db";
 import {
-  StreamTable,
   MessageType,
   RoomPermission,
   roomRolesInMessage,
@@ -18,10 +18,18 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+
+// The room's object writes the message and answers for the root a reply names, so both are faked here: the thread
+// follows are real rows, made from whichever author the object reports
+const { roomObject } = vi.hoisted(() => ({
+  roomObject: {
+    createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
+    readMessagesByIds: vi.fn<RoomObjectRpc["readMessagesByIds"]>(),
+  },
+}));
+vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
 
 describe(createUserMessage, () => {
   let mockContext: Context;
@@ -29,6 +37,8 @@ describe(createUserMessage, () => {
   let replier: GetSessionPayload;
   const name = "name";
   const message = "message";
+  const rootId = 1;
+  const replyId = 2;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -39,7 +49,6 @@ describe(createUserMessage, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     MockJobQueueDatabase.clear();
-    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
 
@@ -61,8 +70,25 @@ describe(createUserMessage, () => {
       .values({ isEveryone: true, name, permissions: RoomPermission.SendMessages, roomId: room.id });
     return room;
   };
-  const createReply = (roomId: string, replyRowKey: MessageEntity["rowKey"]) =>
-    createUserMessage(mockContext.db, replier, { files: [], message, replyRowKey, roomId, type: MessageType.Message });
+  // The room answers the write with the message it stored, which is the root the replies below name
+  const postRoot = (roomId: string) => {
+    roomObject.createMessage.mockResolvedValueOnce(createRoomMessage({ id: rootId, userId: rootAuthor.user.id }));
+    return createUserMessage(
+      mockContext.db,
+      { userId: rootAuthor.user.id },
+      { files: [], message, roomId, type: MessageType.Message },
+    );
+  };
+  const createReply = (roomId: string, replyToId: number) => {
+    roomObject.createMessage.mockResolvedValueOnce(
+      createRoomMessage({ id: replyId, replyToId, userId: replier.user.id }),
+    );
+    return createUserMessage(
+      mockContext.db,
+      { userId: replier.user.id },
+      { files: [], message, replyToId, roomId, type: MessageType.Message },
+    );
+  };
 
   // Discord notifies you when someone replies to your message, so the root's author follows their own thread
   // The moment it becomes one — otherwise the thread pipeline reaches everyone who replied and never the one
@@ -71,18 +97,14 @@ describe(createUserMessage, () => {
     expect.hasAssertions();
 
     const room = await createRoom();
-    const root = await createUserMessage(mockContext.db, rootAuthor, {
-      files: [],
-      message,
-      roomId: room.id,
-      type: MessageType.Message,
-    });
-    await createReply(room.id, root.rowKey);
-    const rootAuthorFollows = await readFollowedThreadRootRowKeys(mockContext.db, room.id, rootAuthor.user.id);
-    const replierFollows = await readFollowedThreadRootRowKeys(mockContext.db, room.id, replier.user.id);
+    const root = await postRoot(room.id);
+    roomObject.readMessagesByIds.mockResolvedValue([root]);
+    await createReply(room.id, root.id);
+    const rootAuthorFollows = await readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id);
+    const replierFollows = await readFollowedThreadRootIds(mockContext.db, room.id, replier.user.id);
 
-    expect(rootAuthorFollows).toStrictEqual([root.rowKey]);
-    expect(replierFollows).toStrictEqual([root.rowKey]);
+    expect(rootAuthorFollows).toStrictEqual([root.id]);
+    expect(replierFollows).toStrictEqual([root.id]);
   });
 
   // The root author's follow is the one nobody performs themselves, so it is the one that can undo a decision
@@ -92,31 +114,23 @@ describe(createUserMessage, () => {
     expect.hasAssertions();
 
     const room = await createRoom();
-    const root = await createUserMessage(mockContext.db, rootAuthor, {
-      files: [],
-      message,
-      roomId: room.id,
-      type: MessageType.Message,
-    });
-    await createReply(room.id, root.rowKey);
-    await upsertThreadUnfollow(mockContext.db, {
-      roomId: room.id,
-      threadRootRowKey: root.rowKey,
-      userId: rootAuthor.user.id,
-    });
-    await createReply(room.id, root.rowKey);
-    const rootAuthorFollows = await readFollowedThreadRootRowKeys(mockContext.db, room.id, rootAuthor.user.id);
+    const root = await postRoot(room.id);
+    roomObject.readMessagesByIds.mockResolvedValue([root]);
+    await createReply(room.id, root.id);
+    await upsertThreadUnfollow(mockContext.db, { roomId: room.id, threadRootId: root.id, userId: rootAuthor.user.id });
+    await createReply(room.id, root.id);
+    const rootAuthorFollows = await readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id);
 
     expect(rootAuthorFollows).toStrictEqual([]);
     // The bell still turns it back on: that IS the author's own decision, so it clears what they recorded
     await createThreadFollow(
       mockContext.db,
-      { roomId: room.id, threadRootRowKey: root.rowKey, userId: rootAuthor.user.id },
+      { roomId: room.id, threadRootId: root.id, userId: rootAuthor.user.id },
       true,
     );
 
-    await expect(readFollowedThreadRootRowKeys(mockContext.db, room.id, rootAuthor.user.id)).resolves.toStrictEqual([
-      root.rowKey,
+    await expect(readFollowedThreadRootIds(mockContext.db, room.id, rootAuthor.user.id)).resolves.toStrictEqual([
+      root.id,
     ]);
   });
 
@@ -127,17 +141,12 @@ describe(createUserMessage, () => {
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     const room = await createRoom();
-    const messageClient = useStreamTableClient(StreamTable.Messages);
-    const root = await createMessage(messageClient, {
-      appUser: { id: crypto.randomUUID() },
-      message,
-      roomId: room.id,
-      type: MessageType.Webhook,
-    });
-    await createReply(room.id, root.rowKey);
-    const replierFollows = await readFollowedThreadRootRowKeys(mockContext.db, room.id, replier.user.id);
+    const webhookRoot = createRoomMessage({ appUserId: crypto.randomUUID(), type: MessageType.Webhook });
+    roomObject.readMessagesByIds.mockResolvedValue([webhookRoot]);
+    await createReply(room.id, webhookRoot.id);
+    const replierFollows = await readFollowedThreadRootIds(mockContext.db, room.id, replier.user.id);
 
-    expect(replierFollows).toStrictEqual([root.rowKey]);
+    expect(replierFollows).toStrictEqual([webhookRoot.id]);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
   });
 });

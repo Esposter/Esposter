@@ -1,3 +1,4 @@
+import type { MockDatabase } from "@esposter/db-mock";
 import type { Database } from "@esposter/db-schema";
 
 import { createMention } from "#src/services/message/createMention.test";
@@ -25,6 +26,7 @@ const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
 
 describe(incrementMentionCounts, () => {
   let db: Database;
+  let mockDatabase: MockDatabase;
   const name = "name";
   const roomId = crypto.randomUUID();
   const roleId = crypto.randomUUID();
@@ -34,10 +36,11 @@ describe(incrementMentionCounts, () => {
   const neverUserId = crypto.randomUUID();
   const roleMemberUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
-  const sender = { partitionKey: roomId, userId: senderUserId };
+  const sender = { roomId, userId: senderUserId };
 
   beforeAll(async () => {
-    db = await createMockDb();
+    mockDatabase = await createMockDb();
+    db = mockDatabase.db;
     const createdAt = new Date(0);
     await db
       .insert(usersInAuth)
@@ -151,7 +154,7 @@ describe(incrementMentionCounts, () => {
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       message: createMention(MENTION_EVERYONE_ID),
-      partitionKey: roomId,
+      roomId,
       userId: neverUserId,
     });
 
@@ -180,12 +183,13 @@ describe(incrementMentionCounts, () => {
     expect(mentionedOnlineUser?.mentionCount).toBe(1);
   });
 
-  test("no userId increments every mentioned member without excluding a sender (webhook message)", async () => {
+  test("a null userId increments every mentioned member without excluding a sender (webhook message)", async () => {
     expect.hasAssertions();
 
     const updatedUsersToRooms = await incrementMentionCounts(db, {
       message: createMention(senderUserId, MentionType.User),
-      partitionKey: roomId,
+      roomId,
+      userId: null,
     });
 
     expect(updatedUsersToRooms).toHaveLength(1);

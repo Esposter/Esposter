@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
+import type { MessageCreationRejection } from "@esposter/db";
 import type { RoomActor, RoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -17,12 +18,14 @@ import {
 } from "@esposter/db";
 import {
   AppNotificationType,
+  MessageCreationRejectionType,
   MessageType,
   publishNotification,
   QueueJob,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
+import { and, eq, isNull } from "drizzle-orm";
 
 type RoomObject = ReturnType<typeof useRoomObject>;
 
@@ -35,6 +38,40 @@ const readThreadRootUserId = async (roomObject: RoomObject, replyToId: number | 
   return threadRoot?.userId ?? undefined;
 };
 
+// Two tries: a claim lost to a send of the same member's racing this one decides again on the clock that won, and a
+// second loss is the member racing themselves, which is what slowmode refuses
+const claimSendSlot = async (
+  db: Context["db"],
+  userId: string,
+  roomId: string,
+  message: string | undefined,
+  now: Date,
+): Promise<MessageCreationRejection | undefined> => {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const member = await db.query.usersToRoomsInMessage.findFirst({
+      columns: { lastMessageAt: true },
+      where: { roomId: { eq: roomId }, userId: { eq: userId } },
+    });
+    const rejection = await getMessageCreationRejection(db, userId, roomId, message);
+    if (rejection) return rejection;
+
+    const claimed = await db
+      .update(usersToRoomsInMessage)
+      .set({ lastMessageAt: now, lastReadAt: now })
+      .where(
+        and(
+          getRoomMembershipWhere(roomId, userId),
+          member?.lastMessageAt
+            ? eq(usersToRoomsInMessage.lastMessageAt, member.lastMessageAt)
+            : isNull(usersToRoomsInMessage.lastMessageAt),
+        ),
+      )
+      .returning({ userId: usersToRoomsInMessage.userId });
+    if (claimed.length > 0) return undefined;
+  }
+  return { type: MessageCreationRejectionType.Slowmode };
+};
+
 export const createUserMessage = async (
   db: Context["db"],
   actor: RoomActor,
@@ -43,20 +80,11 @@ export const createUserMessage = async (
   const { files, replyToId, roomId, type } = input;
   const message = input.message || "";
   const now = new Date();
-  // The gate reads the slowmode clock and the send advances it, so the member's row is held across both: two sends
-  // Racing one window then run one after the other, and the second reads the first's stamp rather than both passing
-  const rejection = await db.transaction(async (tx) => {
-    await tx
-      .select({ userId: usersToRoomsInMessage.userId })
-      .from(usersToRoomsInMessage)
-      .where(getRoomMembershipWhere(roomId, actor.userId))
-      .for("update");
-    const messageCreationRejection = await getMessageCreationRejection(tx, actor.userId, roomId, input.message);
-    if (!messageCreationRejection)
-      await updateUserToRoom(tx, actor.userId, { lastMessageAt: now, lastReadAt: now, roomId });
-    return messageCreationRejection;
-  });
+  // The gate decides and the send claims the slowmode clock, as one guarded write: D1 has no interactive transaction, so
+  // the claim is an UPDATE that lands only if the clock still reads what the decision was made against
+  const rejection = await claimSendSlot(db, actor.userId, roomId, input.message, now);
   await rejectMessageCreation(db, actor.userId, roomId, rejection);
+  if (!rejection) await updateUserToRoom(db, actor.userId, { lastMessageAt: now, lastReadAt: now, roomId });
 
   // The room's object writes the message, indexes it for the sender and broadcasts it to the room's viewers. The room's
   // updatedAt is not written here: the object's own alarm moves the room to the top of its members' lists
