@@ -17,8 +17,6 @@ export const QueueJobMaxRetriesMap = {
   // Delivers an already-persisted occurrence. Its bell write is the last step that may fail the delivery; everything after
   // it is best-effort, so a retry cannot repeat a side effect that already landed beyond the one bell row a crash can repeat.
   [QueueJob.ProcessNotification]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
-  // Claims its job on `processingStartedAt IS NULL` first, so a rerun finds the job already claimed and does nothing.
-  [QueueJob.ProcessScheduledMessageJob]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
   // Creates a message whose rowKey is a fresh reverse-ticked timestamp, so a rerun writes a second, indistinguishable
   // message into the room rather than repairing the first. A failed webhook goes straight to its dead-letter queue.
   [QueueJob.ProcessWebhook]: 0,

@@ -36,7 +36,7 @@ const scheduleJob = async () => {
             runAt: scheduledAt.value,
             text: text.value,
           })
-        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+        : $trpc.message.scheduledMessage.createScheduledMessage.mutate({
             message: marked.parse(text.value, { async: false }),
             replyToId: null,
             roomId,

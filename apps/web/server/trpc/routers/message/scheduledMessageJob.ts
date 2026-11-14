@@ -1,80 +1,57 @@
-import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { ScheduledMessageJobInMessage } from "@esposter/db-schema";
+import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
+import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
+import type { ScheduledReminder } from "@esposter/db-schema";
 
-import { ownedBy } from "#server/services/db/ownedBy";
-import { activeScheduledMessageJobWhere } from "#server/services/message/scheduledMessageJob/activeScheduledMessageJobWhere";
-import { cancelScheduledMessageJob } from "#server/services/message/scheduledMessageJob/cancelScheduledMessageJob";
-import { getActiveScheduledMessageJobsWhere } from "#server/services/message/scheduledMessageJob/getActiveScheduledMessageJobsWhere";
-import { insertScheduledMessageJob } from "#server/services/message/scheduledMessageJob/insertScheduledMessageJob";
-import { scheduleScheduledMessageJob } from "#server/services/message/scheduledMessageJob/scheduleScheduledMessageJob";
-import { unscheduleScheduledMessageJob } from "#server/services/message/scheduledMessageJob/unscheduleScheduledMessageJob";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { useUserObject } from "#server/composables/realtime/useUserObject";
+import { readMyScheduledMessageJobs } from "#server/services/message/scheduledMessageJob/readMyScheduledMessageJobs";
+import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { cancelScheduledMessageJobInputSchema } from "#shared/models/db/message/scheduledMessageJob/CancelScheduledMessageJobInput";
-import { readMyScheduledMessageJobsInputSchema } from "#shared/models/db/message/scheduledMessageJob/ReadMyScheduledMessageJobsInput";
+import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
+import { scheduledMessageIdentityInputSchema } from "#shared/models/db/message/scheduledMessage/ScheduledMessageIdentityInput";
 import { scheduleReminderInputSchema } from "#shared/models/db/message/scheduledMessageJob/ScheduleReminderInput";
-import { roomsInMessage, scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
-import { and, asc, count, eq } from "drizzle-orm";
+import { DatabaseEntityType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
-// Reminders are held on the Scheduler's queue in the same table. Chat messages scheduled
-// for later are the scheduledMessage router's, held by their room's object
+// The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
+// Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
 export const scheduledMessageJobRouter = router({
+  // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message, which
+  // its room's object deletes for the sender who scheduled it and for nobody else
   cancelScheduledMessageJob: standardAuthedProcedure
-    .input(cancelScheduledMessageJobInputSchema)
-    .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) => {
-      const scheduledMessageJob = await cancelScheduledMessageJob(
-        ctx.db,
-        and(
-          ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id),
-          activeScheduledMessageJobWhere,
-        ),
-        input.id,
+    .input(scheduledMessageIdentityInputSchema)
+    .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
+      if (await useUserObject(ctx.getSessionPayload.user.id).removeReminder(id)) return;
+
+      const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(
+        id,
+        getRoomActor(ctx.getSessionPayload, ctx.headers),
       );
-      await unscheduleScheduledMessageJob(input.id);
-      return scheduledMessageJob;
+      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
     }),
   readMyScheduledMessageJobs: standardAuthedProcedure
-    .input(readMyScheduledMessageJobsInputSchema)
-    .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
-      const rows = await ctx.db
-        .select({ room: roomsInMessage, scheduledMessageJob: scheduledMessageJobsInMessage })
-        .from(scheduledMessageJobsInMessage)
-        .innerJoin(roomsInMessage, eq(scheduledMessageJobsInMessage.roomId, roomsInMessage.id))
-        .where(getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id))
-        .orderBy(asc(scheduledMessageJobsInMessage.runAt))
-        .limit(limit + 1)
-        .offset(offset);
-      return getBasePaginationData(
-        rows.map(({ room, scheduledMessageJob }) => Object.assign(scheduledMessageJob, { room })),
-        limit,
-      );
-    }),
-  readMyScheduledMessageJobsCount: standardAuthedProcedure.query<number>(
-    async ({ ctx }) =>
-      (
-        await ctx.db
-          .select({ count: count() })
-          .from(scheduledMessageJobsInMessage)
-          .where(getActiveScheduledMessageJobsWhere(ctx.getSessionPayload.user.id))
-      )[0]?.count ?? 0,
-  ),
-  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledMessageJobInMessage>(
+    .input(readMyScheduledMessagesInputSchema)
+    .query<BasePaginationData<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
+      readMyScheduledMessageJobs(ctx.db, ctx.getSessionPayload.user.id, input),
+    ),
+  readMyScheduledMessageJobsCount: standardAuthedProcedure.query<number>(async ({ ctx }) => {
+    const userObject = useUserObject(ctx.getSessionPayload.user.id);
+    const [scheduledMessages, reminders] = await Promise.all([
+      userObject.readScheduledMessages(),
+      userObject.readReminders(),
+    ]);
+    return scheduledMessages.length + reminders.length;
+  }),
+  // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
+  // to, so only a member of that room can set one
+  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledReminder>(
     async ({ ctx, input }) => {
-      const scheduledMessageJob = await insertScheduledMessageJob(
-        ctx.db,
-        {
-          payload: { text: input.text, type: ScheduledMessageJobType.Reminder },
-          roomId: input.roomId,
-          runAt: input.runAt,
-          userId: ctx.getSessionPayload.user.id,
-        },
-        JSON.stringify(input),
-      );
-      await scheduleScheduledMessageJob(scheduledMessageJob);
-      return scheduledMessageJob;
+      const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
+      await useUserObject(ctx.getSessionPayload.user.id).addReminder(reminder);
+      return reminder;
     },
   ),
 });

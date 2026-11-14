@@ -1,21 +1,15 @@
 import type { RoomMessage, ScheduledRoomMessage } from "@esposter/db-schema";
-import type { ScheduledMessageWithRoom } from "#shared/models/db/message/scheduledMessage/ScheduledMessageWithRoom";
-import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
-import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
-import { readMyScheduledMessages } from "#server/services/message/scheduledMessage/readMyScheduledMessages";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
-import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/CreateScheduledMessageInput";
 import { deleteScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/DeleteScheduledMessageInput";
-import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
 import { readScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadScheduledMessagesInput";
 import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
@@ -45,14 +39,6 @@ export const scheduledMessageRouter = router({
       );
       if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
     },
-  ),
-  readMyScheduledMessages: standardAuthedProcedure
-    .input(readMyScheduledMessagesInputSchema)
-    .query<BasePaginationData<ScheduledMessageWithRoom>>(({ ctx, input }) =>
-      readMyScheduledMessages(ctx.db, ctx.getSessionPayload.user.id, input),
-    ),
-  readMyScheduledMessagesCount: standardAuthedProcedure.query<number>(
-    async ({ ctx }) => (await useUserObject(ctx.getSessionPayload.user.id).readScheduledMessages()).length,
   ),
   readScheduledMessages: getMemberProcedure(readScheduledMessagesInputSchema, "roomId").query<ScheduledRoomMessage[]>(
     ({ ctx, input }) => useRoomObject(input.roomId).readScheduledMessages(ctx.getSessionPayload.user.id),

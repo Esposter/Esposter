@@ -2,7 +2,13 @@ import type { RoomObjectRpc, TodoReminder } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { createMockDb } from "@esposter/db-mock";
-import { roomsInMessage, SOCKET_IDENTITY_HEADER, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import {
+  AppNotificationType,
+  roomsInMessage,
+  SOCKET_IDENTITY_HEADER,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -55,7 +61,7 @@ describe(UserObject, () => {
   const otherSessionId = v7();
   const deviceId = v7();
   const otherDeviceId = v7();
-  const environment = {} as unknown as Cloudflare.Env;
+  let environment = {} as unknown as Cloudflare.Env;
 
   const createUserObject = () => {
     const state = createMockObjectState(userId);
@@ -215,6 +221,59 @@ describe(UserObject, () => {
     expect(sendTodoReminder).toHaveBeenLastCalledWith({ dueAt: laterDueAt, itemId: laterItemId, resourceId });
     expect(sendTodoReminder).toHaveBeenCalledTimes(2);
     expect(await state.ctx.storage.getAlarm()).toBeNull();
+  });
+
+  test("the reminder alarm notifies the person of each due reminder once, and re-arms for the one after", async () => {
+    expect.hasAssertions();
+
+    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
+    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
+    const { object, state } = createUserObject();
+    const roomId = v7();
+    const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    const laterRunAt = new Date(dueAt.getTime() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    await object.addReminder({ id: v7(), roomId, runAt: dueAt, text: "due" });
+    await object.addReminder({ id: v7(), roomId, runAt: laterRunAt, text: "later" });
+    expect(await state.ctx.storage.getAlarm()).toBe(dueAt.getTime());
+
+    vi.setSystemTime(dueAt);
+    await object.alarm();
+    await object.alarm();
+
+    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
+      roomId,
+      text: "due",
+      type: AppNotificationType.Reminder,
+      userId,
+    });
+    expect(await object.readReminders()).toHaveLength(1);
+    expect(await state.ctx.storage.getAlarm()).toBe(laterRunAt.getTime());
+
+    vi.setSystemTime(laterRunAt);
+    await object.alarm();
+
+    expect(queue.send).toHaveBeenLastCalledWith({ roomId, text: "later", type: AppNotificationType.Reminder, userId });
+    expect(queue.send).toHaveBeenCalledTimes(2);
+    expect(await state.ctx.storage.getAlarm()).toBeNull();
+  });
+
+  test("cancelling the reminder that was next due re-arms the alarm for the one after it", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const cancelledId = v7();
+    const laterRunAt = new Date(Temporal.Duration.from({ minutes: 2 }).total("milliseconds"));
+    await object.addReminder({
+      id: cancelledId,
+      roomId: v7(),
+      runAt: new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds")),
+      text: "cancelled",
+    });
+    await object.addReminder({ id: v7(), roomId: v7(), runAt: laterRunAt, text: "later" });
+
+    expect(await object.removeReminder(cancelledId)).toBe(true);
+    expect(await object.removeReminder(cancelledId)).toBe(false);
+    expect(await state.ctx.storage.getAlarm()).toBe(laterRunAt.getTime());
   });
 
   test("closing a session closes the sockets of that session and no other", async () => {

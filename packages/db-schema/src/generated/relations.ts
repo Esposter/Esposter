@@ -17,7 +17,6 @@ import { roomFiltersInMessageRelation } from "#src/relations/message/roomFilters
 import { roomMemberPermissionsInMessageRelation } from "#src/relations/message/roomMemberPermissionsInMessageRelation";
 import { roomRolesInMessageRelation } from "#src/relations/message/roomRolesInMessageRelation";
 import { roomsInMessageRelation } from "#src/relations/message/roomsInMessageRelation";
-import { scheduledMessageJobsInMessageRelation } from "#src/relations/message/scheduledMessageJobsInMessageRelation";
 import { searchHistoriesInMessageRelation } from "#src/relations/message/searchHistoriesInMessageRelation";
 import { threadFollowsInMessageRelation } from "#src/relations/message/threadFollowsInMessageRelation";
 import { userSettingsInMessageRelation } from "#src/relations/message/userSettingsInMessageRelation";
@@ -83,7 +82,6 @@ export const relations = {
   ...roomMemberPermissionsInMessageRelation,
   ...roomRolesInMessageRelation,
   ...roomsInMessageRelation,
-  ...scheduledMessageJobsInMessageRelation,
   ...searchHistoriesInMessageRelation,
   ...sessionsInAuthRelation,
   ...storageLedgerInStorageRelation,

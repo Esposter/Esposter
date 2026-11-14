@@ -20,10 +20,6 @@
           { "binding": "EXPORT_USER_DATA_QUEUE", "queue": "prod-q-esposter-export-user-data" },
           { "binding": "PROCESS_BLOB_DELETION_QUEUE", "queue": "prod-q-esposter-process-blob-deletion" },
           { "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "prod-q-esposter-process-notification" },
-          {
-            "binding": "PROCESS_SCHEDULED_MESSAGE_JOB_QUEUE",
-            "queue": "prod-q-esposter-process-scheduled-message-job",
-          },
           { "binding": "PROCESS_WEBHOOK_QUEUE", "queue": "prod-q-esposter-process-webhook" },
           {
             "binding": "RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE",
@@ -51,7 +47,6 @@
       ],
       "durable_objects": {
         "bindings": [
-          { "name": "SCHEDULER", "class_name": "Scheduler" },
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
           { "name": "USER", "class_name": "UserObject" },
@@ -60,6 +55,7 @@
       "migrations": [
         { "tag": "v1", "new_sqlite_classes": ["Scheduler"] },
         { "tag": "v2", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] },
+        { "tag": "v3", "deleted_classes": ["Scheduler"] },
       ],
     },
     "dev": {
@@ -73,7 +69,6 @@
           { "binding": "EXPORT_USER_DATA_QUEUE", "queue": "dev-q-esposter-export-user-data" },
           { "binding": "PROCESS_BLOB_DELETION_QUEUE", "queue": "dev-q-esposter-process-blob-deletion" },
           { "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "dev-q-esposter-process-notification" },
-          { "binding": "PROCESS_SCHEDULED_MESSAGE_JOB_QUEUE", "queue": "dev-q-esposter-process-scheduled-message-job" },
           { "binding": "PROCESS_WEBHOOK_QUEUE", "queue": "dev-q-esposter-process-webhook" },
           {
             "binding": "RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE",
@@ -101,7 +96,6 @@
       ],
       "durable_objects": {
         "bindings": [
-          { "name": "SCHEDULER", "class_name": "Scheduler" },
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
           { "name": "USER", "class_name": "UserObject" },
@@ -110,6 +104,7 @@
       "migrations": [
         { "tag": "v1", "new_sqlite_classes": ["Scheduler"] },
         { "tag": "v2", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] },
+        { "tag": "v3", "deleted_classes": ["Scheduler"] },
       ],
     },
   },

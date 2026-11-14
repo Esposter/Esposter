@@ -21,7 +21,6 @@ import { roomFiltersInMessage } from "#src/schema/message/roomFiltersInMessage";
 import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPermissionsInMessage";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
-import { scheduledMessageJobsInMessage } from "#src/schema/message/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "#src/schema/message/searchHistoriesInMessage";
 import { threadFollowsInMessage } from "#src/schema/message/threadFollowsInMessage";
 import { userSettingsInMessage } from "#src/schema/message/userSettingsInMessage";
@@ -92,7 +91,6 @@ export const schema = {
   roomMemberPermissionsInMessage,
   roomRolesInMessage,
   roomsInMessage,
-  scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessionsInAuth,
   storageLedgerInStorage,

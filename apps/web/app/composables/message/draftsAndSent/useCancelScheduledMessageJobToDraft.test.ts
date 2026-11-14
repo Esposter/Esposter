@@ -13,7 +13,7 @@ describe(useCancelScheduledMessageJobToDraft, () => {
     expect.hasAssertions();
 
     const scheduledMessageJob = createScheduledMessageJob();
-    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => scheduledMessageJob);
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => undefined);
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
     const isCancelled = await useCancelScheduledMessageJobToDraft()(scheduledMessageJob);

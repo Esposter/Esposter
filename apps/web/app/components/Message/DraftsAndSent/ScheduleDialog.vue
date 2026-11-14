@@ -21,14 +21,14 @@ const scheduleMessage = async () => {
   const outcome = await executeMutation(
     () =>
       targetValue.scheduledMessageJobId
-        ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
+        ? $trpc.message.scheduledMessage.updateScheduledMessage.mutate({
             id: targetValue.scheduledMessageJobId,
             message: targetValue.content,
             replyToId: targetValue.threadRootId || null,
             roomId: targetValue.roomId,
             runAt: scheduledAt.value,
           })
-        : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
+        : $trpc.message.scheduledMessage.createScheduledMessage.mutate({
             message: targetValue.content,
             replyToId: targetValue.threadRootId || null,
             roomId: targetValue.roomId,

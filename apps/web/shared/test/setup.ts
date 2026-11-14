@@ -42,17 +42,12 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
-// The Scheduler client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
-// Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
-// File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
-// Registering once here covers both. The factory is lazy, so a test that touches no scheduler pays nothing.
 vi.mock(import("#server/services/queue/getJobQueue"), () => import("#server/services/queue/getJobQueue.test"));
 
-vi.mock(
-  import("#server/composables/scheduler/useScheduler"),
-  () => import("#server/composables/scheduler/useScheduler.test"),
-);
-
+// The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
+// Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
+// File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
+// Registering once here covers both. The factory is lazy, so a test that touches no user object pays nothing.
 vi.mock(
   import("#server/composables/realtime/useUserObject"),
   () => import("#server/composables/realtime/useUserObject.test"),

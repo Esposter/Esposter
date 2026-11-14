@@ -58,14 +58,17 @@ const { roomObject, useRoomObjectMock, userObject, useUserObjectMock } = vi.hois
   } satisfies RoomObjectRpc;
   const userObject = {
     acceptFriendRequest: vi.fn<UserObjectRpc["acceptFriendRequest"]>(),
+    addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
     addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
     addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
     closeSession: vi.fn<UserObjectRpc["closeSession"]>(),
     declineFriendRequest: vi.fn<UserObjectRpc["declineFriendRequest"]>(),
     deleteFriend: vi.fn<UserObjectRpc["deleteFriend"]>(),
+    readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
     readSentMessages: vi.fn<UserObjectRpc["readSentMessages"]>(),
     reconcileTodoReminders: vi.fn<UserObjectRpc["reconcileTodoReminders"]>(),
+    removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
     removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
     removeSentMessage: vi.fn<UserObjectRpc["removeSentMessage"]>(),
     replaceSession: vi.fn<UserObjectRpc["replaceSession"]>(),

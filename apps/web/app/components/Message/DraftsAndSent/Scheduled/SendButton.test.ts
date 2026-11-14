@@ -19,7 +19,6 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     createScheduledMessageJob({
       payload: { message, replyToId: null, type: ScheduledMessageJobType.ScheduledMessage },
       room,
-      userId,
     });
 
   // What the send owes the page — the optimistic removal and the rollback that races the cancel of the same job
@@ -29,7 +28,7 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     expect.hasAssertions();
 
     const { promise: isSent, resolve: onSent } = Promise.withResolvers<void>();
-    trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() => {
+    trpcMsw.message.scheduledMessage.sendScheduledMessageNow.mutation(() => {
       onSent();
       return createOptimisticMessage({ roomId: room.id, type: MessageType.Message }, userId);
     });

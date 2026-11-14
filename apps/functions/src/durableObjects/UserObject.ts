@@ -4,6 +4,7 @@ import type {
   FriendRequestInSocialWithRelations,
   PublicUser,
   ReconcileTodoRemindersInput,
+  ScheduledReminder,
   SentMessageCursor,
   StorageUsage,
   UserAchievementInAchievementWithRelations,
@@ -14,23 +15,37 @@ import type {
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import userMigrations from "#src/durableObjects/user/migrations/migrations.js";
-import { scheduledMessagesInUser, sentMessagesInUser, todoRemindersInUser } from "#src/durableObjects/user/schema";
+import {
+  remindersInUser,
+  scheduledMessagesInUser,
+  sentMessagesInUser,
+  todoRemindersInUser,
+} from "#src/durableObjects/user/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
-import { TODO_REMINDER_RETRY_DELAY_MS } from "#src/services/todoReminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
 import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
-import { getResultAsync, noop } from "@esposter/shared";
+import { AppNotificationType, publishNotification } from "@esposter/db-schema";
+import { getResultAsync, noop, NotInitializedError } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
 // A revoked session's sockets close with code 1008, the policy close a server gives for a credential it no longer accepts
 const SESSION_REVOKED_CLOSE_CODE = 1008;
 
-// One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages and
-// their TodoList reminders, and its one alarm is set to the earliest reminder still ahead, or a retry for one that failed
+// A person's object is named for the person, so the name is the person the object holds
+const getUserId = ({ id }: DurableObjectState): string => {
+  if (id.name === undefined) throw new NotInitializedError("UserObject");
+  return id.name;
+};
+
+// One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages, their
+// reminders and their TodoList reminders, and its one alarm is set to the earliest of them still ahead, or a retry for one
+// that failed
 export class UserObject extends RealtimeObject<UserEvent> implements UserObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
+  private readonly userId = getUserId(this.ctx);
 
   // The first socket brings the person online and the last one to close takes them offline. The count is taken before
   // the base accepts the socket, and that accept runs synchronously inside its fetch, so a concurrent upgrade sees it
@@ -52,30 +67,8 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   // itself, so a row that stays overdue is never left without one
   override async alarm(): Promise<void> {
     const now = new Date();
-    const dueReminders = await this.db
-      .select()
-      .from(todoRemindersInUser)
-      .where(lte(todoRemindersInUser.dueAt, now))
-      .orderBy(asc(todoRemindersInUser.dueAt));
-    // Each reminder is removed only once its notification is queued, so a failed send is retried rather than dropped
-    for (const reminder of dueReminders) {
-      const isSent = await getResultAsync(() => sendTodoReminder(reminder)).match(
-        () => true,
-        (error) => {
-          console.error("TodoReminder failed to send", { error, itemId: reminder.itemId });
-          return false;
-        },
-      );
-      if (isSent)
-        await this.db
-          .delete(todoRemindersInUser)
-          .where(
-            and(
-              eq(todoRemindersInUser.resourceId, reminder.resourceId),
-              eq(todoRemindersInUser.itemId, reminder.itemId),
-            ),
-          );
-    }
+    await this.sendDueTodoReminders(now);
+    await this.sendDueReminders(now);
     await this.armAlarm();
   }
 
@@ -96,6 +89,11 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
       .insert(scheduledMessagesInUser)
       .values(scheduledMessage)
       .onConflictDoUpdate({ set: { runAt: scheduledMessage.runAt }, target: scheduledMessagesInUser.scheduledId });
+  }
+
+  async addReminder(reminder: ScheduledReminder): Promise<void> {
+    await this.db.insert(remindersInUser).values(reminder);
+    await this.armAlarm();
   }
 
   async addSentMessage(sentMessage: { createdAt: Date; messageId: number; roomId: string }): Promise<void> {
@@ -131,6 +129,10 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
       .limit(limit);
   }
 
+  async readReminders(): Promise<ScheduledReminder[]> {
+    return this.db.select().from(remindersInUser).orderBy(asc(remindersInUser.runAt));
+  }
+
   async readScheduledMessages() {
     return this.db.select().from(scheduledMessagesInUser).orderBy(asc(scheduledMessagesInUser.runAt));
   }
@@ -156,6 +158,18 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
 
   roomActivity(roomId: string, updatedAt: Date): void {
     this.broadcast({ data: { id: roomId, updatedAt }, type: "roomActivity" });
+  }
+
+  // A cancel removes the row and re-arms the alarm for what is left, so a reminder that was next due no longer wakes it
+  async removeReminder(id: string): Promise<boolean> {
+    const deletedRows = await this.db
+      .delete(remindersInUser)
+      .where(eq(remindersInUser.id, id))
+      .returning({ id: remindersInUser.id });
+    if (deletedRows.length === 0) return false;
+
+    await this.armAlarm();
+    return true;
   }
 
   async removeScheduledMessage(scheduledId: string): Promise<void> {
@@ -225,24 +239,89 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
-  // The alarm is the earliest reminder still ahead, or a retry for one that is overdue: the rows the alarm could not
-  // send are still here, so the next run sends them, and the earlier of the two wins
+  // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather than dropped
+  private async sendDueTodoReminders(now: Date): Promise<void> {
+    const dueReminders = await this.db
+      .select()
+      .from(todoRemindersInUser)
+      .where(lte(todoRemindersInUser.dueAt, now))
+      .orderBy(asc(todoRemindersInUser.dueAt));
+    for (const reminder of dueReminders) {
+      const isSent = await getResultAsync(() => sendTodoReminder(reminder)).match(
+        () => true,
+        (error) => {
+          console.error("TodoReminder failed to send", { error, itemId: reminder.itemId });
+          return false;
+        },
+      );
+      if (isSent)
+        await this.db
+          .delete(todoRemindersInUser)
+          .where(
+            and(
+              eq(todoRemindersInUser.resourceId, reminder.resourceId),
+              eq(todoRemindersInUser.itemId, reminder.itemId),
+            ),
+          );
+    }
+  }
+
+  // The reminder is published to the notification queue as the person's own, and removed only once it is queued, so a
+  // failed publish is retried rather than dropped
+  private async sendDueReminders(now: Date): Promise<void> {
+    const dueReminders = await this.db
+      .select()
+      .from(remindersInUser)
+      .where(lte(remindersInUser.runAt, now))
+      .orderBy(asc(remindersInUser.runAt));
+    for (const reminder of dueReminders) {
+      const isSent = await getResultAsync(() =>
+        publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
+          roomId: reminder.roomId,
+          text: reminder.text,
+          type: AppNotificationType.Reminder,
+          userId: this.userId,
+        }),
+      ).match(
+        () => true,
+        (error) => {
+          console.error("Reminder failed to send", { error, id: reminder.id });
+          return false;
+        },
+      );
+      if (isSent) await this.db.delete(remindersInUser).where(eq(remindersInUser.id, reminder.id));
+    }
+  }
+
+  // The alarm is the earliest row still ahead across the reminders and the TodoList reminders, or a retry for one that is
+  // overdue: the rows the alarm could not send are still here, so the next run sends them, and the earliest wins
   private async armAlarm(): Promise<void> {
     const now = new Date();
-    const [overdue] = await this.db
-      .select({ dueAt: todoRemindersInUser.dueAt })
+    const [overdueReminder] = await this.db
+      .select({ runAt: remindersInUser.runAt })
+      .from(remindersInUser)
+      .where(lte(remindersInUser.runAt, now))
+      .limit(1);
+    const [overdueTodoReminder] = await this.db
+      .select({ runAt: todoRemindersInUser.dueAt })
       .from(todoRemindersInUser)
       .where(lte(todoRemindersInUser.dueAt, now))
       .limit(1);
-    const [upcoming] = await this.db
-      .select({ dueAt: todoRemindersInUser.dueAt })
+    const [upcomingReminder] = await this.db
+      .select({ runAt: remindersInUser.runAt })
+      .from(remindersInUser)
+      .where(gt(remindersInUser.runAt, now))
+      .orderBy(asc(remindersInUser.runAt))
+      .limit(1);
+    const [upcomingTodoReminder] = await this.db
+      .select({ runAt: todoRemindersInUser.dueAt })
       .from(todoRemindersInUser)
       .where(gt(todoRemindersInUser.dueAt, now))
       .orderBy(asc(todoRemindersInUser.dueAt))
       .limit(1);
     const runAts = [
-      ...(overdue ? [now.getTime() + TODO_REMINDER_RETRY_DELAY_MS] : []),
-      ...(upcoming ? [upcoming.dueAt.getTime()] : []),
+      ...(overdueReminder || overdueTodoReminder ? [now.getTime() + REMINDER_RETRY_DELAY_MS] : []),
+      ...[upcomingReminder, upcomingTodoReminder].flatMap((upcoming) => (upcoming ? [upcoming.runAt.getTime()] : [])),
     ];
     if (runAts.length > 0) await this.ctx.storage.setAlarm(Math.min(...runAts));
     else await this.ctx.storage.deleteAlarm();

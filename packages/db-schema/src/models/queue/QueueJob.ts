@@ -9,7 +9,6 @@ export const QueueJob = {
   ExportUserData: "export-user-data",
   ProcessBlobDeletion: "process-blob-deletion",
   ProcessNotification: "process-notification",
-  ProcessScheduledMessageJob: "process-scheduled-message-job",
   ProcessWebhook: "process-webhook",
   ReconcileStorageLedgerEntry: "reconcile-storage-ledger-entry",
 } as const;

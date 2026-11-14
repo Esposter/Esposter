@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -12,7 +12,7 @@ const { readMoreScheduledMessageJobs } = useReadScheduledMessageJobs();
 const scheduledMessageJobStore = useScheduledMessageJobStore();
 const { hasMore, isLoaded, items } = storeToRefs(scheduledMessageJobStore);
 // A job leads with what it will do, post a message or remind, and opens the room it runs in
-const getRow = (scheduledMessageJob: ScheduledMessageJobInMessageWithRoom): UiListItem<string> => ({
+const getRow = (scheduledMessageJob: ScheduledMessageJobWithRoom): UiListItem<string> => ({
   description: getScheduledMessageJobText(scheduledMessageJob),
   icon: ScheduledMessageJobIconMap[scheduledMessageJob.payload.type],
   title: scheduledMessageJob.room.name,

@@ -5,7 +5,6 @@ import {
   notificationQueueMessageSchema,
   QueueJob,
   r2ObjectCreatedQueueMessageSchema,
-  scheduledMessageJobQueueMessageSchema,
   webhookQueueMessageSchema,
 } from "@esposter/db-schema";
 import type { QueueMessageEnvelope } from "@esposter/db-schema";
@@ -19,7 +18,6 @@ export const QueueJobMessageSchemaMap = {
   [QueueJob.ExportUserData]: exportUserDataQueueMessageSchema,
   [QueueJob.ProcessBlobDeletion]: blobDeletionQueueMessageSchema,
   [QueueJob.ProcessNotification]: notificationQueueMessageSchema,
-  [QueueJob.ProcessScheduledMessageJob]: scheduledMessageJobQueueMessageSchema,
   [QueueJob.ProcessWebhook]: webhookQueueMessageSchema,
   [QueueJob.ReconcileStorageLedgerEntry]: r2ObjectCreatedQueueMessageSchema,
 } satisfies Record<QueueJob, z.ZodType<QueueMessageEnvelope>>;

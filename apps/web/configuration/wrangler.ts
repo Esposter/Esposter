@@ -31,7 +31,7 @@ export const getBuildCloudflareEnvironment = (): CloudflareEnvironment => {
 // variables the environment's name fixes; the rest of the web Worker's variables are secrets a deploy uploads
 export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
   const isDevelopment = environment === CloudflareEnvironment.Development;
-  // The functions Worker exports the Scheduler and the realtime objects, and runs them: the web Worker calls each across by its name
+  // The functions Worker exports the realtime objects and runs them: the web Worker calls each across by its name
   const functionsWorkerName = getCloudflareResourceName(
     environment,
     CloudflareAssetType.Worker,
@@ -53,7 +53,6 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     ],
     durable_objects: {
       bindings: [
-        { class_name: "Scheduler", name: "SCHEDULER", script_name: functionsWorkerName },
         { class_name: "CallObject", name: "CALL", script_name: functionsWorkerName },
         { class_name: "RoomObject", name: "ROOM", script_name: functionsWorkerName },
         { class_name: "UserObject", name: "USER", script_name: functionsWorkerName },

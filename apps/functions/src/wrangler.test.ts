@@ -85,11 +85,10 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
       expect(wrangler.triggers.crons).toStrictEqual(["0 3 * * *"]);
     });
 
-    test("holds its own scheduler and realtime objects, each migrated as a SQLite class", () => {
+    test("holds its realtime objects, each migrated as a SQLite class, and deletes the scheduler they replaced", () => {
       expect.hasAssertions();
 
       expect(wrangler.durable_objects.bindings).toStrictEqual([
-        { class_name: "Scheduler", name: "SCHEDULER" },
         { class_name: "CallObject", name: "CALL" },
         { class_name: "RoomObject", name: "ROOM" },
         { class_name: "UserObject", name: "USER" },
@@ -97,6 +96,7 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
       expect(wrangler.migrations).toStrictEqual([
         { new_sqlite_classes: ["Scheduler"], tag: "v1" },
         { new_sqlite_classes: ["CallObject", "RoomObject", "UserObject"], tag: "v2" },
+        { deleted_classes: ["Scheduler"], tag: "v3" },
       ]);
     });
   },

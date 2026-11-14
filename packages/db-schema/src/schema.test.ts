@@ -78,10 +78,6 @@ describe("schema", () => {
       rooms_maxFileSizeBytes_check: "message_rooms"."maxFileSizeBytes" >= 0
       rooms_slowmodeMs_check: "message_rooms"."slowmodeMs" >= 0
       rooms_topic_length_check: LENGTH("message_rooms"."topic") <= 500
-      scheduledMessageJobs_payload_type_check: 
-                (json_extract("message_scheduledMessageJobs"."payload", '$.type') = 'Reminder' AND json_type("message_scheduledMessageJobs"."payload", '$.text') IS NOT NULL)
-                OR (json_extract("message_scheduledMessageJobs"."payload", '$.type') = 'ScheduledMessage' AND json_type("message_scheduledMessageJobs"."payload", '$.message') IS NOT NULL)
-              
       searchHistories_query_length_check: LENGTH("message_searchHistories"."query") <= 10000
       storageLedger_declaredBytes_check: "storage_storageLedger"."declaredBytes" >= 0
       storageLedger_countedBytes_check: "storage_storageLedger"."countedBytes" >= 0

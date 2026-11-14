@@ -67,7 +67,7 @@ Hostnames are not resource names and keep their own shape: `esposter.com` and `a
 
 ## Bindings
 
-A binding is the name code reads a resource by, and it is the same in both environments, so no code branches on the environment to reach a resource: the SCREAMING_SNAKE of the purpose — `MESSAGE_ASSETS`, `CORE`, `DELETE_ACCOUNT_QUEUE` — plus `SCHEDULER` and `SERVER` for the two Durable Object namespaces. Only a Wrangler environment block maps a binding to its environment's resource name.
+A binding is the name code reads a resource by, and it is the same in both environments, so no code branches on the environment to reach a resource: the SCREAMING_SNAKE of the purpose — `MESSAGE_ASSETS`, `CORE`, `DELETE_ACCOUNT_QUEUE` — plus `ROOM`, `CALL` and `USER` for the Durable Object namespaces. Only a Wrangler environment block maps a binding to its environment's resource name.
 
 ## Pulumi
 

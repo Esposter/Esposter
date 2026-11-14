@@ -20,7 +20,6 @@ interface Bindings extends BucketBindings {
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   CORE: D1Database;
   ROOM: DurableObjectNamespace<Rpc.DurableObjectBranded & RoomObjectRpc>;
-  SCHEDULER: DurableObjectNamespace;
   STREAMS: D1Database;
   USER: DurableObjectNamespace<Rpc.DurableObjectBranded & UserObjectRpc>;
 }

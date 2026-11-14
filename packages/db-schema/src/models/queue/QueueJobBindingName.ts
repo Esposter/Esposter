@@ -8,7 +8,6 @@ export const QueueJobBindingNameMap = {
   [QueueJob.ExportUserData]: "EXPORT_USER_DATA_QUEUE",
   [QueueJob.ProcessBlobDeletion]: "PROCESS_BLOB_DELETION_QUEUE",
   [QueueJob.ProcessNotification]: "PROCESS_NOTIFICATION_QUEUE",
-  [QueueJob.ProcessScheduledMessageJob]: "PROCESS_SCHEDULED_MESSAGE_JOB_QUEUE",
   [QueueJob.ProcessWebhook]: "PROCESS_WEBHOOK_QUEUE",
   [QueueJob.ReconcileStorageLedgerEntry]: "RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE",
 } as const satisfies Record<QueueJob, string>;

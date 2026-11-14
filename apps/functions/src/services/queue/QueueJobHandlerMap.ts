@@ -5,7 +5,6 @@ import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedP
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
 import { processNotificationHandler } from "#src/handlers/processNotificationHandler";
-import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 
@@ -16,7 +15,6 @@ export const QueueJobHandlerMap = {
   [QueueJob.ExportUserData]: exportUserDataHandler,
   [QueueJob.ProcessBlobDeletion]: processBlobDeletionHandler,
   [QueueJob.ProcessNotification]: processNotificationHandler,
-  [QueueJob.ProcessScheduledMessageJob]: processScheduledMessageJobHandler,
   [QueueJob.ProcessWebhook]: processWebhookHandler,
   [QueueJob.ReconcileStorageLedgerEntry]: reconcileStorageLedgerEntryHandler,
 } satisfies Record<QueueJob, (body: unknown) => Promise<void>>;

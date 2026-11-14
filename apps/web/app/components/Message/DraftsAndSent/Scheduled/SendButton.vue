@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobInMessageWithRoom";
+import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -7,7 +7,7 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 import { ScheduledMessageJobType } from "@esposter/db-schema";
 
 interface Props {
-  scheduledMessageJob: ScheduledMessageJobInMessageWithRoom;
+  scheduledMessageJob: ScheduledMessageJobWithRoom;
 }
 
 defineProps<Props>();
@@ -22,6 +22,6 @@ const { sendScheduledMessageNow } = scheduledMessageJobStore;
     label="Send message"
     :meaning="UiIconMeaning.Send"
     :variant="UiButtonVariant.Quiet"
-    @click="sendScheduledMessageNow(scheduledMessageJob.id)"
+    @click="sendScheduledMessageNow(scheduledMessageJob)"
   />
 </template>
