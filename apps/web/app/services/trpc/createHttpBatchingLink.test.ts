@@ -1,6 +1,8 @@
 // @vitest-environment nuxt
 import type { TRPCRouter } from "#server/trpc/routers";
 
+import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
+import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { createTRPCClient } from "@trpc/client";
@@ -50,5 +52,21 @@ describe(createHttpBatchingLink, () => {
     expect(secondRead).toStrictEqual(serveCounts([secondPostId]));
     heldRead.resolve();
     await firstRead;
+  });
+
+  // The server names the tab a write came from by this header, so the tab's own echo can be left out of its socket alone
+  test("names the tab that sent the request in the device header", async () => {
+    expect.hasAssertions();
+
+    const deviceIds: (string | null)[] = [];
+    server.events.on("request:start", ({ request }) => {
+      deviceIds.push(request.headers.get(DEVICE_ID_HEADER));
+    });
+    trpcMsw.post.readPostCounts.query(({ input }) => serveCounts(input));
+    const client = createTRPCClient<TRPCRouter>({ links: [createHttpBatchingLink(false)] });
+
+    await client.post.readPostCounts.query([firstPostId]);
+
+    expect(deviceIds).toStrictEqual([getDeviceId()]);
   });
 });

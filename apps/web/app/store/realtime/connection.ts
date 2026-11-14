@@ -2,6 +2,7 @@ import type { z } from "zod";
 import type { RoomEvent } from "@esposter/db-schema";
 
 import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
+import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
 import { jsonDateParse } from "@esposter/shared";
 
@@ -43,8 +44,6 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
 // The one place the app's live sockets are opened and closed: the person's own socket, the socket of the room a page
 // shows and the socket of the call a person is in. Each frame is dispatched to the handlers registered for its type
 export const useConnectionStore = defineStore("realtime/connection", () => {
-  // A page's device is the browser tab that holds its sockets, so the server can name the tab an event came from
-  const deviceId = crypto.randomUUID();
   const roomHub = createEventHub<RoomEvent, string>(roomEventSchema);
   const callHub = createEventHub(callEventSchema);
   const userHub = createEventHub(userEventSchema);
@@ -57,7 +56,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const createSocketUrl = (path: string, after?: number) => {
     const url = new URL(path, window.location.href);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    url.searchParams.set("deviceId", deviceId);
+    url.searchParams.set("deviceId", getDeviceId());
     if (after !== undefined) url.searchParams.set("after", String(after));
     return url.href;
   };

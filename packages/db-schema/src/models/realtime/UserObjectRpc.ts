@@ -33,7 +33,7 @@ export interface UserObjectRpc {
   replaceSession(sessionId: string): Promise<void>;
   saveResourceContent(
     content: { apiKeyName: string; contentVersion: number; id: string },
-    sessionId: string,
+    deviceId: string,
   ): Promise<void>;
   sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void>;
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void>;

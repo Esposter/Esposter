@@ -12,6 +12,7 @@ import {
 import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
 import { createOfflineLink } from "@/services/trpc/createOfflineLink";
 import { errorLink } from "@/services/trpc/errorLink";
+import { getTrpcHeaders } from "@/services/trpc/getTrpcHeaders";
 import { checkIsServer } from "@esposter/shared";
 import { createWSClient, isNonJsonSerializable, loggerLink, splitLink, wsLink } from "@trpc/client";
 
@@ -28,7 +29,7 @@ export default defineNuxtPlugin(() => {
   const httpSplitLink = splitLink({
     condition: ({ input }) => isNonJsonSerializable(input),
     false: createHttpBatchingLink(IS_TEST),
-    true: httpLink<TRPCRouter>({ transformer, url: TRPC_CLIENT_PATH }),
+    true: httpLink<TRPCRouter>({ headers: getTrpcHeaders, transformer, url: TRPC_CLIENT_PATH }),
   });
 
   if (checkIsServer()) links.push(httpSplitLink);

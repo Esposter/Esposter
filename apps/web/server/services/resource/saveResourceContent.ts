@@ -3,8 +3,8 @@ import type { SaveResourceContentInput } from "#server/models/resource/SaveResou
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
-import { getDevice } from "#server/services/auth/getDevice";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { readDeviceId } from "#server/services/realtime/readDeviceId";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
 import { ResourceTypeGetLinkTargetsMap } from "#server/services/resource/link/ResourceTypeGetLinkTargetsMap";
 import { pruneWorkingAssets } from "#server/services/resource/pruneWorkingAssets";
@@ -234,11 +234,12 @@ export const saveResourceContent = async (
   // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
   // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save. The owner's
-  // tabs hear it, all but the session that saved it
+  // tabs hear it, all but the tab that saved it, which names itself in the device header
+  const deviceId = readDeviceId(ctx.headers);
   await callUserObjects([savedResource.userId], (userObject) =>
     userObject.saveResourceContent(
       { apiKeyName: ctx.apiKey?.name ?? "", contentVersion: savedResource.contentVersion, id },
-      ctx.getSessionPayload.session.id,
+      deviceId,
     ),
   );
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on

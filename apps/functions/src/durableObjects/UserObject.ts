@@ -163,8 +163,8 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
       .where(and(eq(sentMessagesInUser.roomId, input.roomId), eq(sentMessagesInUser.messageId, input.messageId)));
   }
 
-  // The person's own events, each to every tab they have open. A save leaves out the tabs of the session that made it,
-  // since that session already shows the change
+  // The person's own events, each to every tab they have open. A save leaves out only the tab that made it, since that
+  // tab already shows the change, and the other tabs of the same session still need to hear it
   async acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void> {
     this.broadcast({ data: input, type: "acceptFriendRequest" });
   }
@@ -183,9 +183,12 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
 
   async saveResourceContent(
     content: { apiKeyName: string; contentVersion: number; id: string },
-    sessionId: string,
+    deviceId: string,
   ): Promise<void> {
-    this.broadcast({ data: content, type: "saveResourceContent" }, { excludeTag: `session:${sessionId}` });
+    this.broadcast(
+      { data: content, type: "saveResourceContent" },
+      deviceId ? { excludeTag: `device:${deviceId}` } : {},
+    );
   }
 
   async sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void> {

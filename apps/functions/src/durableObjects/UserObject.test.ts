@@ -165,18 +165,20 @@ describe(UserObject, () => {
     );
   });
 
-  test("a save reaches every tab of the person except those of the session that made it", async () => {
+  test("a save reaches the person's other tabs, the same session's included, and not the tab that made it", async () => {
     expect.hasAssertions();
 
     const { object } = createUserObject();
     const savingSocket = await connect(object, { deviceId, sessionId });
-    const otherSocket = await connect(object, { deviceId: otherDeviceId, sessionId: otherSessionId });
+    const sameSessionSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
+    const otherSessionSocket = await connect(object, { deviceId: crypto.randomUUID(), sessionId: otherSessionId });
     const save = { apiKeyName: "", contentVersion: 0, id: crypto.randomUUID() };
 
-    await object.saveResourceContent(save, sessionId);
+    await object.saveResourceContent(save, deviceId);
 
     expect(readFrames(savingSocket)).toStrictEqual([]);
-    expect(readFrames(otherSocket)).toStrictEqual([{ data: save, type: "saveResourceContent" }]);
+    expect(readFrames(sameSessionSocket)).toStrictEqual([{ data: save, type: "saveResourceContent" }]);
+    expect(readFrames(otherSessionSocket)).toStrictEqual([{ data: save, type: "saveResourceContent" }]);
   });
 
   test("the reminder alarm sends each due reminder once, and re-arms for the one after", async () => {

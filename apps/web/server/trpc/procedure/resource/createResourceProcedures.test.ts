@@ -18,6 +18,7 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
+import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import {
@@ -222,18 +223,23 @@ describe(createResourceProcedures, () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
 
-  test("sends the saved version and the saving session to the owner's object, not the content", async () => {
+  test("sends the saved version and the saving tab's device to the owner's object, not the content", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     const savingPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
+    const deviceId = crypto.randomUUID();
     replayMockSession(savingPayload);
-    await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+    const tabCaller = createCallerFactory(dashboardRouter)({
+      ...mockContext,
+      headers: new Headers({ [DEVICE_ID_HEADER]: deviceId }),
+    });
+    await tabCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
 
     expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
       {
-        args: [{ apiKeyName: "", contentVersion: 1, id: newResource.id }, savingPayload.session.id],
+        args: [{ apiKeyName: "", contentVersion: 1, id: newResource.id }, deviceId],
         method: "saveResourceContent",
         userId: authMocks.user.id,
       },
@@ -254,7 +260,7 @@ describe(createResourceProcedures, () => {
 
     expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
       {
-        args: [{ apiKeyName, contentVersion: 1, id: newResource.id }, expect.any(String)],
+        args: [{ apiKeyName, contentVersion: 1, id: newResource.id }, ""],
         method: "saveResourceContent",
         userId: authMocks.user.id,
       },
