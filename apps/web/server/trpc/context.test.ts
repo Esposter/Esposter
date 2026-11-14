@@ -80,7 +80,7 @@ export const createMockContext = async (): Promise<Context> => ({
 });
 
 const createMockDb = async () => {
-  const db = await baseCreateMockDb();
+  const { db } = await baseCreateMockDb();
   authMocks.state.insert = db.insert.bind(db);
   await db.insert(usersInAuth).values({ ...authMocks.user, image: authMocks.user.image ?? "" });
   await insertMockSession(getMockSession());
