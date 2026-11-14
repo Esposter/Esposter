@@ -13,8 +13,10 @@ const sqlTextPlugin: Plugin = {
 
 // `cloudflare:workers` exists only in the Workers runtime, so the Worker's imports of it resolve to the package whose
 // `env` `createMockDb` fills with the file's Miniflare bindings
-export default {
+const vitestConfig: ViteUserConfig = {
   ...vitestConfiguration,
   plugins: [...(vitestConfiguration.plugins ?? []), sqlTextPlugin],
   resolve: { ...vitestConfiguration.resolve, alias: { "cloudflare:workers": "@esposter/db-mock" } },
-} satisfies ViteUserConfig;
+};
+
+export default vitestConfig;
