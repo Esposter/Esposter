@@ -7,7 +7,7 @@ A Discord-style settings dialog for **message/communication** preferences, drawn
 | Surface                       | Panels                                                | Persistence                                                                      |
 | ----------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Message-scoped dialog         | Appearance · Voice & Video · Notifications · Keybinds | `userSettingsInMessage` (synced); device IDs + UI collapsibles in `localStorage` |
-| Global route `/user/settings` | Account · Profile                                     | `users` (`UserIntroductionCard` + `UserProfileCard` + SAS avatar upload)         |
+| Global route `/user/settings` | Account · Profile                                     | `users` (`UserIntroductionCard` + `UserProfileCard` + presigned avatar upload)   |
 | Theme                         | top-right toggle, not a panel                         | cookie (`THEME_COOKIE_NAME`) — hard SSR constraint (flash-free first paint)      |
 
 The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](../room-settings/design.md) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
@@ -24,7 +24,7 @@ They also share the responsive shell — the sidebar that sits beside the panel 
 
 | Column                                                   | Type                                                      | Default         |
 | -------------------------------------------------------- | --------------------------------------------------------- | --------------- |
-| `voiceInputMode`                                         | `voice_input_mode` enum (`VoiceActivity` \| `PushToTalk`) | `VoiceActivity` |
+| `voiceInputMode`                                         | text enum (`VoiceActivity` \| `PushToTalk`)               | `VoiceActivity` |
 | `pushToTalkKeybind`                                      | text                                                      | `""`            |
 | `pushToTalkReleaseDelayMs`                               | integer (CHECK 0..2000)                                   | 20              |
 | `inputSensitivityDecibels`                               | integer (CHECK −100..0)                                   | −50             |
@@ -80,4 +80,4 @@ The dialog uses a Discord-style two-level nav: a `UiList` of the `UserSettingsLi
 
 ## Notes
 
-The Voice & Video panel's content and how each setting applies to live LiveKit calls is its own page: [voice & video settings](../voice-video/design.md). The Appearance panel's Message Display density is covered by [room UI](../room-ui/design.md), and per-participant call volume — which is not a column here — by [per-user volume](../calls/per-user-volume/design.md).
+The Voice & Video panel's content and how each setting applies to live RealtimeKit calls is its own page: [voice & video settings](../voice-video/design.md). The Appearance panel's Message Display density is covered by [room UI](../room-ui/design.md), and per-participant call volume — which is not a column here — by [per-user volume](../calls/per-user-volume/design.md).

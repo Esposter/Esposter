@@ -44,7 +44,7 @@ flowchart TD
   WRITE -->|"returns the ids it counted against"| CARD
 ```
 
-**Indexes** — `(parentId, ranking DESC, id DESC)` serves the question every read asks: one parent's children, best first. The tree asks it once per open branch and the feed asks it with a null parent, and a foreign key gets no index of its own in Postgres. A GIN index over `ancestorIds` serves the only question that is about a whole subtree rather than one level — how many rows a delete is about to take.
+**Indexes** — `(parentId, ranking DESC, id DESC)` serves the question every read asks: one parent's children, best first. The tree asks it once per open branch and the feed asks it with a null parent, and a foreign key gets no index of its own in SQLite. The one question about a whole subtree rather than one level — how many rows a delete is about to take — is a containment test over `ancestorIds`, a JSON array, which has no index of its own.
 
 ## Procedures
 

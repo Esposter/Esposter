@@ -7,7 +7,7 @@
 The `usePushToTalk` composable registers `keydown`/`keyup`/`blur` listeners that drive the [`MicrophoneProcessor`](../voice-video/design.md) gate from key state instead of the voice-activity dB level. The **call store** hosts it on the main window (isInCall is injected so the store avoids a circular import) — living with the store so the listener survives navigation, like the call itself — and `PictureInPicture/Host` registers it again on the PiP window, since key events don't cross documents.
 
 - **Key match** — the stored `pushToTalkKeybind` is a single `event.code` captured by the Keybinds field in the Voice & Video panel; a keydown matching it (outside editable targets — composer, inputs, contenteditable) opens the gate and `preventDefault`s.
-- **Gate** — `MicrophoneProcessor.voiceInputMode` selects the gate source per animation frame: `VoiceActivity` compares the live dB level against the sensitivity threshold; `PushToTalk` reads `isPushToTalkKeyHeld`, set by the liveKit store's `setPushToTalkKeyHeld`.
+- **Gate** — `MicrophoneProcessor.voiceInputMode` selects the gate source per animation frame: `VoiceActivity` compares the live dB level against the sensitivity threshold; `PushToTalk` reads `isPushToTalkKeyHeld`, set by the realtime store's `setPushToTalkKeyHeld`.
 - **Release delay** — releasing the key schedules the gate close after `pushToTalkReleaseDelayMs` (slider under Input Mode, 0–2000 ms, default 20 ms); pressing again within the delay cancels the pending close. A window `blur` releases too, so the gate can't stick open when keyup is lost with focus.
 - **Reset rules** — switching input mode away from Push To Talk closes the gate immediately, and rebinding mid-hold closes it too (the old key's keyup would no longer match).
 
