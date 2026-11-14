@@ -2,7 +2,7 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { IdMap } from "#src/models/cutover/IdMap";
 import type { D1Value } from "#src/services/cutover/core/toD1Value";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { KEYSET_PAGE_SIZE } from "#src/services/cutover/constants";
@@ -13,8 +13,6 @@ import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
 import { writeStatements } from "#src/services/cutover/core/writeStatements";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { toRowArray } from "#src/services/cutover/tables/toRowArray";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Copies one Postgres table into its D1 table. Every row is read in key order and transformed by its column types.
 // Its old ids are given their new ones, and the rows are upserted in batches. It returns how many rows the source held

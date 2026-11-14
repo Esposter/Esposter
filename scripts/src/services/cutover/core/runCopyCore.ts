@@ -4,7 +4,7 @@ import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment"
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { copyCoreTable } from "#src/services/cutover/core/copyCoreTable";
-import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
+import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCoreTables";
 import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { syncCoreTableKeys } from "#src/services/cutover/core/syncCoreTableKeys";
 import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
@@ -21,7 +21,7 @@ export const runCopyCore = async (cutoverEnvironment: CutoverEnvironment): Promi
   const cloudflareEnvironment = getCloudflareEnvironment(cutoverEnvironment);
   const executor = createCoreExecutor(cloudflareEnvironment, variables);
   const idMap = await loadIdMap(createR2Client(), getCutoverArchiveBucketName(cutoverEnvironment));
-  const tables = orderCoreTables(getCoreTables());
+  const tables = orderCoreTables(getPostgresCoreTables());
   for (const table of tables)
     console.info(`${table.name}: ${await copyCoreTable(source, executor, table, idMap)} rows`);
   for (const table of tables.toReversed()) {

@@ -1,7 +1,7 @@
 import type { CoreColumn } from "#src/models/cutover/CoreColumn";
 import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { IdMap } from "#src/models/cutover/IdMap";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
@@ -9,8 +9,6 @@ import { toD1Value } from "#src/services/cutover/core/toD1Value";
 import { inviteTableName, tableNameTokenColumnsMap } from "#src/services/cutover/ids/credentialColumns";
 import { checkIsOldId } from "#src/services/cutover/ids/rewriteOldIds";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Gives every row of one Postgres table its new key. A UUID-keyed row gets a UUIDv7 built from its own createdAt.
 // A row with no createdAt gets the time it is first seen, which the id map keeps. A bearer token gets the hash it is re-issued as.

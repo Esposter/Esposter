@@ -5,6 +5,8 @@ export const ARCHIVE_CHECKPOINT_PREFIX = "checkpoints";
 export const ARCHIVE_SNAPSHOT_PREFIX = "snapshots";
 // Live copies run this many objects or entities at a time. Sixteen opened new connections to R2's S3 endpoint faster
 // Than it accepted them from one machine, and timed out connecting; four copied the develop estate without one
+// The status both sources answer for a key or a table they do not hold
+export const HTTP_NOT_FOUND = 404;
 export const COPY_CONCURRENCY = 4;
 // A request to R2 that never connected is sent again up to this many times in all. The codes are undici's and the
 // System's for a connection that was never made, so no body was read and a resend repeats nothing

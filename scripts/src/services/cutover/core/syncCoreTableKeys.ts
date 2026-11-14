@@ -4,7 +4,7 @@ import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { D1Statement } from "#src/models/cutover/D1Statement";
 import type { IdMap } from "#src/models/cutover/IdMap";
 import type { D1Value } from "#src/services/cutover/core/toD1Value";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
@@ -12,8 +12,6 @@ import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
 import { writeStatements } from "#src/services/cutover/core/writeStatements";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Reads one key value as D1 returns it: text or a number, with null for a key it does not hold
 const readKeyValue = (column: CoreColumn, value: unknown): D1Value => {

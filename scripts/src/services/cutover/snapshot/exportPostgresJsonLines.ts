@@ -1,14 +1,12 @@
 import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { R2Client } from "#src/models/cutover/R2Client";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { encodeJsonLines } from "#src/services/cutover/snapshot/encodeJsonLines";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // The snapshot's Postgres half when no `pg_dump` is on PATH: each table as JSON lines of its transformed rows, in key order
 export const exportPostgresJsonLines = async (

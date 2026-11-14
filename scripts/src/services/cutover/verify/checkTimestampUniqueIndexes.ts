@@ -1,10 +1,8 @@
 import type { CoreTable } from "#src/models/cutover/CoreTable";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Postgres keeps microseconds and D1 milliseconds, so two rows that differ only below a millisecond collide once copied.
 // The source is checked at the precision D1 will hold, before a copy whose unique index would reject the second row

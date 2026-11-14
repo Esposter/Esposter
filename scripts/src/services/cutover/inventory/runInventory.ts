@@ -2,7 +2,7 @@ import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { countEntitiesByPartition } from "#src/services/cutover/azure/countEntitiesByPartition";
 import { listContainerBlobs } from "#src/services/cutover/azure/listContainerBlobs";
 import { ESTIMATE_BYTES_PER_SECOND, ESTIMATE_ROWS_PER_SECOND } from "#src/services/cutover/constants";
-import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
+import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCoreTables";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
 import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
@@ -16,7 +16,7 @@ export const runInventory = async (): Promise<void> => {
   const variables = readCutoverEnvironment();
   const source = createSourceClient(variables.SOURCE_DATABASE_URL);
   const coreCounts = await Promise.all(
-    getCoreTables().map(async (table) => {
+    getPostgresCoreTables().map(async (table) => {
       const [result] = await source.unsafe<{ count: string }[]>(
         `SELECT count(*) AS count FROM ${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
       );

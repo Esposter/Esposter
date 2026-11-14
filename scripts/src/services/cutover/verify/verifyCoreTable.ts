@@ -1,7 +1,7 @@
 import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { IdMap } from "#src/models/cutover/IdMap";
-import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { getSourceColumns } from "#src/services/cutover/core/getSourceColumns";
@@ -9,8 +9,6 @@ import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
 import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Compares one table row by row, each row by its new key: the source's values through the copy's transform, the target's as stored.
 // So a row that copied wrong names its key.

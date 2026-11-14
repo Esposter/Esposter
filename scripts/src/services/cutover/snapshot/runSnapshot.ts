@@ -5,7 +5,7 @@ import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { listTableEntities } from "#src/services/cutover/azure/listTableEntities";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { ARCHIVE_SNAPSHOT_PREFIX } from "#src/services/cutover/constants";
-import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
+import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCoreTables";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
@@ -27,7 +27,8 @@ export const runSnapshot = async (environment: CutoverEnvironment): Promise<void
     console.info("postgres dumped with pg_dump");
   } else {
     const source = createSourceClient(variables.SOURCE_DATABASE_URL);
-    for (const table of getCoreTables()) await exportPostgresJsonLines(source, client, archiveBucket, keyPrefix, table);
+    for (const table of getPostgresCoreTables())
+      await exportPostgresJsonLines(source, client, archiveBucket, keyPrefix, table);
     await source.end();
     console.info("postgres exported as JSON lines: pg_dump is not on PATH");
   }

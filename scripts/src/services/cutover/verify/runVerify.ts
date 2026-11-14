@@ -4,7 +4,7 @@ import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment"
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { COPY_CONCURRENCY } from "#src/services/cutover/constants";
-import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
+import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCoreTables";
 import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
@@ -34,7 +34,7 @@ export const runVerify = async (environment: CutoverEnvironment): Promise<void> 
   const executor = createCoreExecutor(cloudflareEnvironment, variables);
   const client = createR2Client();
   const idMap = await loadIdMap(client, getCutoverArchiveBucketName(environment));
-  await forEachConcurrently(orderCoreTables(getCoreTables()), COPY_CONCURRENCY, async (table) => {
+  await forEachConcurrently(orderCoreTables(getPostgresCoreTables()), COPY_CONCURRENCY, async (table) => {
     await checkTimestampUniqueIndexes(source, table);
     console.info(`${table.name}: ${await verifyCoreTable(source, executor, table, idMap)} rows match`);
   });
