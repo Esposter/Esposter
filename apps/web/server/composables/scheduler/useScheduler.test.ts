@@ -3,9 +3,10 @@ import type { ScheduledJob } from "@esposter/db-schema";
 import { describe, vi } from "vitest";
 
 // Each Scheduler object's job and alarm time, by object id, as the Durable Object holds them
-export const { scheduledJobMap } = vi.hoisted(() => ({
+const scheduledJobMapHolder = vi.hoisted(() => ({
   scheduledJobMap: new Map<string, { job: ScheduledJob; runAt: number }>(),
 }));
+export const scheduledJobMap = scheduledJobMapHolder.scheduledJobMap;
 
 export const useScheduler = (id: string) => ({
   cancel: () => {
