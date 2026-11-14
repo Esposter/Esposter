@@ -41,10 +41,10 @@ export const reserveWorkingAssets = async (
       .select(
         db
           .select({
-            assetHash: sql<string>`asset.value`,
-            createdAt: sql<Date>`${now}`,
-            resourceId: sql<string>`${resourceId}`,
-            updatedAt: sql<Date>`${now}`,
+            assetHash: sql<string>`asset.value`.as("assetHash"),
+            createdAt: sql<Date>`${now}`.as("createdAt"),
+            resourceId: sql<string>`${resourceId}`.as("resourceId"),
+            updatedAt: sql<Date>`${now}`.as("updatedAt"),
           })
           .from(sql`json_each(${JSON.stringify([...addedHashes])}) AS asset`)
           .where(sql`true`),

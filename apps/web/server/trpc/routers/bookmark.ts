@@ -41,10 +41,10 @@ export const bookmarkRouter = router({
           ctx.db
             .select({
               ...getInsertSelectMetadata(bookmarksInApp),
-              path: sql`${input.path}`,
-              resourceType: sql`${input.mark?.resourceType ?? null}`,
-              title: sql`${input.title}`,
-              userId: sql`${userId}`,
+              path: sql`${input.path}`.as("path"),
+              resourceType: sql`${input.mark?.resourceType ?? null}`.as("resourceType"),
+              title: sql`${input.title}`.as("title"),
+              userId: sql`${userId}`.as("userId"),
             })
             .from(usersInAuth)
             .where(

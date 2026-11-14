@@ -82,19 +82,19 @@ export const reserveStorageBytes = async (
       .select(
         db
           .select({
-            blobName: sql<string>`json_extract(reservation.value, '$.blobName')`,
-            containerName: sql<StorageBucket>`${containerName}`,
+            blobName: sql<string>`json_extract(reservation.value, '$.blobName')`.as("blobName"),
+            containerName: sql<StorageBucket>`${containerName}`.as("containerName"),
             // Nothing is counted against the user until storage reports what actually landed. Until then the
             // Row's own `declaredBytes` is what holds the space, through the pending sum above
-            countedBytes: sql<number>`0`,
+            countedBytes: sql<number>`0`.as("countedBytes"),
             // Epoch milliseconds, the encoding the timestamp columns store, since an insert from a select is not encoded
-            createdAt: sql<Date>`${now.getTime()}`,
-            declaredBytes: sql<number>`json_extract(reservation.value, '$.declaredBytes')`,
-            expiresAt: sql<Date>`${expiresAt.getTime()}`,
-            reconciledAt: sql<Date | null>`NULL`,
-            sequencer: sql<string | null>`NULL`,
-            updatedAt: sql<Date>`${now.getTime()}`,
-            userId: sql<string>`${userId}`,
+            createdAt: sql<Date>`${now.getTime()}`.as("createdAt"),
+            declaredBytes: sql<number>`json_extract(reservation.value, '$.declaredBytes')`.as("declaredBytes"),
+            expiresAt: sql<Date>`${expiresAt.getTime()}`.as("expiresAt"),
+            reconciledAt: sql<Date | null>`NULL`.as("reconciledAt"),
+            sequencer: sql<string | null>`NULL`.as("sequencer"),
+            updatedAt: sql<Date>`${now.getTime()}`.as("updatedAt"),
+            userId: sql<string>`${userId}`.as("userId"),
           })
           .from(sql`json_each(${reservationsJson}) AS reservation, ${usersInAuth}`)
           .where(isWithinQuota),

@@ -104,9 +104,9 @@ export const friendRequestRouter = router({
           ctx.db
             .select({
               ...getInsertSelectMetadata(friendRequestsInSocial),
-              id: sql`${friendshipId}`,
-              receiverId: sql`${receiverId}`,
-              senderId: sql`${userId}`,
+              id: sql`${friendshipId}`.as("id"),
+              receiverId: sql`${receiverId}`.as("receiverId"),
+              senderId: sql`${userId}`.as("senderId"),
             })
             .from(usersInAuth)
             .where(

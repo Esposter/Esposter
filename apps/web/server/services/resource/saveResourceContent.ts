@@ -144,11 +144,11 @@ export const saveResourceContent = async (
       ctx.db.insert(resourceLinksInResource).select(
         ctx.db
           .select({
-            createdAt: sql<Date>`${now}`,
-            sourceId: sql<ResourceInResource["id"]>`${id}`,
-            targetId: sql<string>`json_extract(link.value, '$.targetId')`,
-            type: sql<ResourceLinkInResource["type"]>`json_extract(link.value, '$.type')`,
-            updatedAt: sql<Date>`${now}`,
+            createdAt: sql<Date>`${now}`.as("createdAt"),
+            sourceId: sql<ResourceInResource["id"]>`${id}`.as("sourceId"),
+            targetId: sql<string>`json_extract(link.value, '$.targetId')`.as("targetId"),
+            type: sql<ResourceLinkInResource["type"]>`json_extract(link.value, '$.type')`.as("type"),
+            updatedAt: sql<Date>`${now}`.as("updatedAt"),
           })
           .from(sql`json_each(${JSON.stringify(resourceLinkTargets)}) AS link`)
           .where(isCurrentContentVersion(expectedContentVersion)),

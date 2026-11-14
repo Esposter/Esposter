@@ -52,12 +52,12 @@ export const getSnapshotVersionWrites = (
             .select(
               db
                 .select({
-                  assetHash: sql<string>`asset.value`,
-                  channel: sql<SnapshotChannel>`${channel}`,
-                  createdAt: sql<Date>`${now}`,
-                  resourceId: sql<ResourceInResource["id"]>`${resourceId}`,
-                  updatedAt: sql<Date>`${now}`,
-                  version: sql<number>`${version}`,
+                  assetHash: sql<string>`asset.value`.as("assetHash"),
+                  channel: sql<SnapshotChannel>`${channel}`.as("channel"),
+                  createdAt: sql<Date>`${now}`.as("createdAt"),
+                  resourceId: sql<ResourceInResource["id"]>`${resourceId}`.as("resourceId"),
+                  updatedAt: sql<Date>`${now}`.as("updatedAt"),
+                  version: sql<number>`${version}`.as("version"),
                 })
                 .from(sql`json_each(${JSON.stringify([...assetHashes])}) AS asset`),
             ),
