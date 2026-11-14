@@ -29,7 +29,7 @@
 - [ ] 3.4 A batch update or delete that matches no row throws `NotFoundError` from `meta.changes`, as the Azure 404 did. Verified by a not-found test per writer.
 - [ ] 3.5 Move `apps/web/scripts/phaser/filePack/createFilePack.ts` and `getGenshinGameDataBaseUrl.ts` to R2, delete `packages/db/src/services/azure/container/getContainerClient.ts`, the generic streams layer, `packages/azure`, the `STREAMS` binding and every `@azure/*` dependency outside the cutover tool. Verified by no `@azure/` import outside `scripts/src/services/cutover`.
 - [ ] 3.6 Regenerate one fresh `core` migration with `db:gen`, then `registry:gen` and the schema snapshot. Verified by the migration applying on Miniflare.
-- [ ] 3.7 Give every dead-letter queue a consumer on the jobs Worker that republishes under the attempt cap and quarantines to R2 past it or on an invalid body, counted per message ([jobs](../infra-cloudflare-jobs/design.md)). Verified by the dead-letter consumer test.
+- [x] 3.7 Give every dead-letter queue a consumer on the jobs Worker that republishes under the attempt cap and quarantines to R2 past it or on an invalid body, counted per message ([jobs](../infra-cloudflare-jobs/design.md)). Verified by the dead-letter consumer test.
 
 ## 4. Tests
 

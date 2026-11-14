@@ -80,11 +80,16 @@ The message, its reactions and its search row are one SQLite transaction inside 
 
 Work that need not block a request is a job on a queue. Each job has its own queue and dead-letter queue, named from its value in `QueueJob`, so one job's retries and failures never touch another's. The functions Worker's queue handler dispatches each batch to the handler for its queue. A message is acknowledged when its handler resolves; a handler that throws is retried up to the job's retry count, then its message goes to the job's dead-letter queue.
 
+A dead letter recovers by itself, and the functions Worker's dead-letter consumer is the same dispatch: each message is handled alone. Its body is parsed by its job's schema, and a body that fails it, or whose `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`, is written once as its raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket and logged. Any other dead letter is republished to its job's queue with `attempt` raised. Every queue message carries `attempt` in its own body, through one shared envelope that defaults it to 0, so the count survives each round trip. The cap is counted per message, so a poison message never holds back the transient failures beside it. The dead-letter consumer has no dead-letter queue of its own, so a replay that still fails after its own retries is dropped; a quarantined message is read by hand, and nothing alerts on it.
+
 ```mermaid
 flowchart TD
   P["producer: web Worker, object alarm, or R2 object-create notification"] --> Q["the job's queue"]
   Q --> H["consumer in the functions Worker"]
   H -->|"throws past its retry count"| DL["the job's dead-letter queue"]
+  DL --> R["dead-letter replay, one message at a time"]
+  R -->|"under the attempt cap: republished with attempt raised"| Q
+  R -->|"invalid body, or cap reached"| QR[("R2 quarantine, read by hand")]
   H -->|"changes live state"| O["the owning object's RPC method"]
   H --> D[("D1")]
   H --> B[("R2")]

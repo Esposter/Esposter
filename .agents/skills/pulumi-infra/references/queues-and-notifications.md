@@ -10,17 +10,21 @@ Its retries are two settings. `maxRetries` is the job's entry in `QueueJobMaxRet
 
 The consumer waits for the functions Worker's first deploy, and so do the Workers custom domains for the web Worker (`apps/infra/docs/stacks.md`, "First deploy").
 
-## A batch's queue must name a job
+## A batch's queue must name a job or its dead-letter queue
 
-`handleQueueBatch` (`apps/functions/src/services/queue/handleQueueBatch.ts`) finds a batch's job by building each job's queue name in this environment's spelling and comparing it with the batch's `queue`. A batch that names no job throws, so its messages retry and then dead-letter. A consumer delivering to a queue no job names reads as deployed while nothing runs.
+`getQueueMessageHandler` (`apps/functions/src/services/queue/getQueueMessageHandler.ts`) finds a batch's job by building each job's queue name, and each job's dead-letter queue name, in this environment's spelling and comparing them with the batch's `queue`. A queue name is handled by its job's handler; a dead-letter queue name by the dead-letter replay for its job. A batch that names neither throws, so its messages retry and then dead-letter. A consumer delivering to a queue no job names reads as deployed while nothing runs.
 
 ## Each message is acknowledged or retried alone
 
-A message is acknowledged when its job's handler resolves and retried when it throws. The failure is logged once with `console.error` in the same batch handler (`.agents/skills/error-handling/references/logging-sinks.md`), and a message that exhausts its retries is the dead-letter queue's.
+A message is acknowledged when its job's handler resolves and retried when it throws. The failure is logged once with `console.error` in the same batch handler (`.agents/skills/error-handling/references/logging-sinks.md`), and a message that exhausts its retries is the dead-letter queue's. A dead letter is settled the same way by its replay: acknowledged once it is republished or quarantined, retried when the republish throws.
 
-## The dead-letter queue is where a repeating failure shows
+## Dead letters are replayed, then quarantined
 
-No Worker consumes a dead-letter queue and nothing alerts off one (observability is off, `openspec/specs/infra/observability/design.md`), so a dead-lettered message waits for a person to read it. When a job fails repeatedly, read its dead-letter queue's message count before the code.
+Each job's dead-letter queue has its own consumer, `cloudflare.QueueConsumer` with logical name `<dead-letter-queue>-consumer` under `queueConsumers/`, `queueId` the dead-letter queue, `scriptName` the functions Worker and no `deadLetterQueue`. Its `maxRetries` is `DeadLetterConsumerMaxRetries` and its `retryDelay` is `QueueConsumerRetryDelay`. A dead-letter queue has no dead-letter queue of its own, so a replay that still throws after its retries is dropped.
+
+The functions Worker's replay (`apps/functions/src/services/queue/handleDeadLetterMessage.ts`) handles each message alone. It parses the body with its job's schema, and a body that fails it, or whose `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`, is quarantined: written create-only as its raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket, and logged once with `console.error`. Any other dead letter is republished to its job's queue with `attempt` raised. Nothing alerts off the quarantine (observability is off, `openspec/specs/infra/observability/design.md`), so read its prefix by hand when a job fails repeatedly.
+
+`apps/functions/wrangler.jsonc` declares the same consumers in both environments, and a producer for every job's queue, since the replay republishes through the functions Worker's bindings. The retry settings are written there with the values the Pulumi consumers carry, so whichever applies last leaves the same settings. `apps/functions/src/wrangler.test.ts` checks the queue names in both.
 
 ## R2 notifications send bucket events to a queue
 

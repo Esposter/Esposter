@@ -29,9 +29,9 @@ Canonical: `createAndBroadcastMessage` (the broadcast) and `processWebhookHandle
 
 When retries are exhausted, the message goes to its job's dead-letter queue, after the count `QueueJobMaxRetriesMap` gives for the job. A dead-lettered message is a failure landed in durable storage, and a recovery path for it is push-triggered, capped and quarantining, never a script someone remembers to run (`openspec/specs/architecture/no-manual-recovery/design.md`). A replay handler:
 
-- **Validates before sending again.** A payload that fails its schema can never succeed — leave it in the dead-letter queue instead of spending the retry budget on it.
-- **Carries the attempt count in the body.** A re-sent message is a new message whose attempts restart at zero, so a counter kept only on the message restarts at zero every cycle and loops forever.
-- **Quarantines past the cap** — a payload that has exhausted its attempts stays in a queue no consumer reads, and `console.error` names it. Never re-send a poison payload to a queue a consumer reads.
+- **Validates before sending again.** A payload that fails its schema can never succeed — quarantine it at once instead of spending the attempt budget on it.
+- **Carries the attempt count in the body.** A re-sent message is a new message whose attempts restart at zero, so a counter kept only on the message restarts at zero every cycle and loops forever. The count is the `attempt` field of the shared queue envelope (`queueMessageEnvelopeSchema`, `packages/db-schema/src/models/queue/QueueMessageEnvelope.ts`), which every job's message schema spreads and which defaults to 0.
+- **Quarantines past the cap** — a payload that has exhausted its attempts is written once as its raw body to R2's quarantine prefix, and `console.error` names it on the delivery that wrote it. Never re-send a poison payload to a queue a consumer reads. The replay is `apps/functions/src/services/queue/handleDeadLetterMessage.ts`.
 
 ## A handler that enumerates its own work bounds it in time and in width
 
