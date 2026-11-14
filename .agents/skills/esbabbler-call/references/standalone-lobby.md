@@ -12,7 +12,7 @@ Read when working on `/calls` or `/calls/[id]`: the shareable link, the pre-join
 
 Scope: standalone calls only. Room calls stay gated by room membership/RBAC.
 
-- `knockCall({ id })` — adds the caller to `callKnockerMap`, and the knock opens the call's socket once it is recorded, which the admission reuses. The doorkeeper's socket receives a `knockCall` frame.
+- `knockCall({ id })` — adds the caller to the call object's `knockers` table, and the knock opens the call's socket once it is recorded, which the admission reuses. The doorkeeper's socket receives a `knockCall` frame.
 - `admitKnocker`, `dismissKnocker` and the `knockCall` frame answer only the doorkeeper — who that is, and the one guard all three pass through, is `requireCallDoorkeeper` (`openspec/specs/esbabbler/calls/README.md`, "Standalone knock lobby"). `admitKnocker` adds a one-time session admission in `callAdmittedParticipantMap`, then the knocker receives a `knockerAdmitted` frame on its call socket.
 - `/calls/[id]` states: `idle` (pre-join) → `knocking` (waiting overlay) → `joined` (full CallView).
 - The creator (`callSessionsInMessage.userId`) skips straight to `joined`; everyone else must be admitted.

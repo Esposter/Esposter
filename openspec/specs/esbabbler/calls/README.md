@@ -50,7 +50,7 @@ The RealtimeKit webhook (`server/api/webhooks/realtimekit.post.ts`, validated by
 
 ### Standalone knock lobby
 
-Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in the `knockers` table, the creator admits (`admitKnocker` → one-time entry in the `admittedSessions` table) or dismisses, and only then does `joinCall({ id })` succeed. Admitting, dismissing and the `onKnockCall` feed all pass one guard, `requireCallDoorkeeper`: the caller must be the creator, and must be in the call themselves — a creator who has left admits nobody.
+Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator (persisted `callSessionsInMessage.userId`) gets **Join now**; non-creators get **Request to join** → `knockCall` puts them in the `knockers` table, the creator admits (`admitKnocker` → one-time entry in the `admittedSessions` table) or dismisses, and only then does `joinCall({ id })` succeed. Admitting, dismissing and the `knockCall` frame to the doorkeeper all pass one guard, `requireCallDoorkeeper`: the caller must be the creator, and must be in the call themselves — a creator who has left admits nobody.
 
 ```mermaid
 flowchart TD
@@ -65,7 +65,7 @@ flowchart TD
   DISMISSED --> WAIT["stays on prejoin"]
 ```
 
-The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever `onKnockCall` delivered meanwhile.
+The creator's lobby list is optimistic: admitting or dismissing removes that knocker at once, and each knocker is its own write target so a host can work down the queue without the writes queueing. A rejected one therefore puts back **only** its own knocker — reinstating the list as it stood would resurrect one already admitted beside it and drop whoever the `knockCall` frame delivered meanwhile.
 
 ## Ephemeral server state
 
