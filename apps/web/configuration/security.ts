@@ -5,7 +5,12 @@ import { createHash } from "node:crypto";
 import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
 import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
-import { NUXT_IMAGE_ERROR_HANDLER, REALTIME_ASSETS_URL } from "./constants.ts";
+import {
+  CLOUDFLARE_INSIGHTS_BEACON_URL,
+  CLOUDFLARE_INSIGHTS_URL,
+  NUXT_IMAGE_ERROR_HANDLER,
+  REALTIME_ASSETS_URL,
+} from "./constants.ts";
 
 // R2's S3 endpoint for the account: a private object's presigned URL names it, so the browser's PUTs and GETs go there
 const R2_ENDPOINT = `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`;
@@ -28,6 +33,8 @@ export const security: NuxtConfig["security"] = {
         // RealtimeKit: its REST and signalling API, and the virtual background's models at its asset host
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
+        // Cloudflare Web Analytics: the beacon the edge injects reports to it
+        CLOUDFLARE_INSIGHTS_URL,
         // An unset env var, as in CI, leaves its host out: the security module refuses an undefined source
       ].filter((source) => source !== undefined),
       // No page frames the app: its own frames are `srcdoc` documents, which no response header governs
@@ -58,6 +65,8 @@ export const security: NuxtConfig["security"] = {
         BASE_URL,
         // RealtimeKit's virtual background loads its wasm glue from its assets host
         REALTIME_ASSETS_URL,
+        // Cloudflare Web Analytics: the edge injects its beacon into every page the zone serves
+        CLOUDFLARE_INSIGHTS_BEACON_URL,
       ],
       "style-src-elem": [
         // The component styles Nuxt inlines into the page

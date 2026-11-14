@@ -11,6 +11,9 @@ export const DEFAULT_UI_STYLE = UiStyle.Standard;
 // RealtimeKit's assets host: the virtual background's segmentation model and the wasm its glue loads, which the
 // Security config allows under both script and connect sources
 export const REALTIME_ASSETS_URL = "https://rtk-assets.realtime.cloudflare.com";
+// Cloudflare Web Analytics: the beacon script the edge injects, and the endpoint it reports to
+export const CLOUDFLARE_INSIGHTS_BEACON_URL = "https://static.cloudflareinsights.com";
+export const CLOUDFLARE_INSIGHTS_URL = "https://cloudflareinsights.com";
 // The inline handler that @nuxt/image's NuxtImg and NuxtPicture render on every image on the server, which records an
 // Image that failed before hydration. The security config allows this exact string by its hash, and its test reads the
 // Module's components for the string, so an upgrade that rewords it fails the test rather than the page
