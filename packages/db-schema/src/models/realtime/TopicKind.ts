@@ -22,6 +22,7 @@ export const TopicKind = {
   ScheduledMessage: "scheduledMessage",
   SearchHistory: "searchHistory",
   Session: "session",
+  ThreadFollow: "threadFollow",
   TodoList: "todoList",
   User: "user",
   Webhook: "webhook",
