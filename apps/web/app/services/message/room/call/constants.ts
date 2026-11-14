@@ -18,3 +18,5 @@ export const SCREEN_SHARE_CONSTRAINTS = {
 // The popped-out call window's initial size — a compact tile that fits a video and the control bar, which the
 // User resizes from there
 export const PICTURE_IN_PICTURE_WINDOW_OPTIONS = { height: 320, width: 420 } as const;
+// The name the microphone gate is registered under in its AudioWorklet, which the page and the worklet both name
+export const MICROPHONE_GATE_PROCESSOR_NAME = "microphone-gate";
