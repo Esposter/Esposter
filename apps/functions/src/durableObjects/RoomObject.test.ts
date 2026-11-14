@@ -159,6 +159,26 @@ describe(RoomObject, () => {
     expect(object.readMessages({ limit: 10 })).toStrictEqual([message]);
   });
 
+  test("a webhook message is notified once, however many times its delivery is made", async () => {
+    expect.hasAssertions();
+
+    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
+    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
+    const appUserId = v7();
+    await mockDatabase.db.insert(appUsersInMessage).values({ id: appUserId, image: "", name: "hook" });
+    const { object } = createRoomObject();
+    const input = { appUserId, deliveryId: v7(), message: "from a hook", senderName: "hook" };
+    const message = await object.createWebhookMessage(input);
+    await object.createWebhookMessage(input);
+
+    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
+      appUserId,
+      message: { id: message.id, message: "from a hook", roomId, userId: null },
+      threadRootId: null,
+      type: AppNotificationType.Message,
+    });
+  });
+
   test("a viewer of the room is sent the tombstone of each message an erase removes, and keeps it as deleted", async () => {
     expect.hasAssertions();
 

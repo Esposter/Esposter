@@ -309,6 +309,8 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
     this.announceMessage(insertedMessage, now, {});
     await this.armAlarm();
+    // Published only for the insert: a redelivery returned the message above and owes no second notification
+    await this.publishMessageNotification(insertedMessage);
     return insertedMessage;
   }
 
@@ -713,18 +715,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
           threadRootUserId: this.readThreadRootUserId(sentMessage.replyToId),
         }),
       ).match(noop, console.error);
-      await getResultAsync(() =>
-        publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
-          message: {
-            id: sentMessage.id,
-            message: sentMessage.message,
-            roomId: this.roomId,
-            userId: sentMessage.userId,
-          },
-          threadRootId: sentMessage.replyToId,
-          type: AppNotificationType.Message,
-        }),
-      ).match(noop, console.error);
+      await this.publishMessageNotification(sentMessage);
       // A scheduled send advances the sender's slowmode clock as a live one does, so it cannot slip past the room's gate
       await getResultAsync(async () =>
         this.core
@@ -773,5 +764,18 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   private async notifyUser(userId: string, notify: NotifyUser): Promise<void> {
     await getResultAsync(async () => notify(this.getUser(userId))).match(noop, console.error);
+  }
+
+  // The notification a written message owes its recipients, published best-effort after the write: a failed publish
+  // costs one notification, never the message that landed
+  private async publishMessageNotification(message: RoomMessage): Promise<void> {
+    await getResultAsync(() =>
+      publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
+        appUserId: message.appUserId ?? undefined,
+        message: { id: message.id, message: message.message, roomId: this.roomId, userId: message.userId },
+        threadRootId: message.replyToId,
+        type: AppNotificationType.Message,
+      }),
+    ).match(noop, console.error);
   }
 }

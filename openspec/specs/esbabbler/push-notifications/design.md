@@ -18,7 +18,7 @@ flowchart TD
 
 Recipients are resolved as **user ids**, not as device rows, and the devices are looked up once from the union. That ordering is what lets a recipient with no push subscription still receive the surfaces that do not need one, and it is why a follower the room already notifies is de-duplicated by a set rather than subtracted by a query.
 
-`getMessageRecipientUserIds(db, { message, partitionKey, threadRootRowKey, userId })`:
+`getMessageRecipientUserIds(db, { message, roomId, threadRootId, userId })`:
 
 1. Parse mention `data-id` attributes from the message HTML → split into `regularUserIds | @here | @everyone`, with the two broadcasts dropped unless the sender holds `MentionEveryone`.
 2. One SQL query over the room's members:
@@ -26,7 +26,7 @@ Recipients are resolved as **user ids**, not as device rows, and the devices are
 ```text
 usersToRooms
   LEFT JOIN userStatuses ON userId   ← always joined (needed for @here)
-  WHERE roomId = partitionKey
+  WHERE roomId = the message's room
     AND userId != sender
     AND (
       notificationType = All
@@ -40,7 +40,7 @@ usersToRooms
 
 3. When the send is a reply, union in the thread's followers — everyone following the root, minus the replier and minus anyone muted at room level. The follow model and its rules are [thread follows](../thread-follows/design.md).
 
-A webhook message has no sender to exclude, so every `All` member is reached including the app user's own account. It has no sender permission to read either, so its `@everyone` and `@here` reach as they always have.
+A webhook message has no sender to exclude, so every `All` member is reached including the app user's own account. It has no sender permission to read either, so its `@everyone` and `@here` reach as they always have. Its room's object publishes the notification once, for the insert: a push is delivered at least once, and a redelivery that finds its message already written publishes nothing.
 
 ### `NotificationType` (on `usersToRooms`)
 
