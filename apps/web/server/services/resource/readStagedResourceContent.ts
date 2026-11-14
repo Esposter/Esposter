@@ -10,8 +10,8 @@ import { createHash } from "node:crypto";
 
 // The inflation is counted as it streams, so an archive that expands past the content limit stops at the chunk it
 // Crosses rather than filling the heap; leaving the loop cancels the stream, so nothing past it is inflated
-const gunzipWithinLimit = async (compressedContent: Uint8Array) => {
-  const chunks: Uint8Array[] = [];
+const gunzipWithinLimit = async (compressedContent: Uint8Array<ArrayBuffer>) => {
+  const chunks: Uint8Array<ArrayBuffer>[] = [];
   let length = 0;
   for await (const chunk of new Blob([compressedContent]).stream().pipeThrough(new DecompressionStream("gzip"))) {
     length += chunk.byteLength;
@@ -52,7 +52,7 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
   const compressedObject = await bucket.get(blobName);
   if (compressedObject?.etag !== etag) throw hashMismatchError;
 
-  const compressedContent = Buffer.from(await compressedObject.arrayBuffer());
+  const compressedContent = new Uint8Array(await compressedObject.arrayBuffer());
   if (createHash("sha256").update(compressedContent).digest("hex") !== hash) throw hashMismatchError;
 
   const serializedContent = await getResultAsync(() => gunzipWithinLimit(compressedContent)).match(
