@@ -1,20 +1,20 @@
-import { z } from "zod";
+import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
+import { roomEmojiWithSasUrlSchema } from "#src/models/message/emoji/RoomEmojiWithSasUrl";
 import { revokeRoleInputSchema } from "#src/models/message/RevokeRoleInput";
 import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
-import { roomEmojiWithSasUrlSchema } from "#src/models/message/emoji/RoomEmojiWithSasUrl";
 import { typingSchema } from "#src/models/message/Typing";
-import { MEMBER_PERMISSION_BIGINT_REGEX, MESSAGE_BATCH_MAX_LENGTH } from "#src/services/message/constants";
-import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
-import { selectRoomEmojiInMessageSchema } from "#src/schema/message/roomEmojisInMessage";
-import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
-import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
-import { selectUserStatusInMessageSchema } from "#src/schema/message/userStatusesInMessage";
 import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { roomReactionSchema } from "#src/models/realtime/RoomReaction";
 import { userIdSchema } from "#src/models/shared/UserId";
+import { selectRoomEmojiInMessageSchema } from "#src/schema/message/roomEmojisInMessage";
+import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
+import { selectUserStatusInMessageSchema } from "#src/schema/message/userStatusesInMessage";
+import { MEMBER_PERMISSION_BIGINT_REGEX, MESSAGE_BATCH_MAX_LENGTH } from "#src/services/message/constants";
+import { z } from "zod";
 
 // The events a room's socket carries, one frame each. A payload is what the object sent, without the device that caused
-// it: the object skips that socket itself, and the wire never names a session. A message is named by its integer id
+// It: the object skips that socket itself, and the wire never names a session. A message is named by its integer id
 const createMessageEventSchema = z.object({
   data: z.array(roomMessageSchema).max(MESSAGE_BATCH_MAX_LENGTH),
   type: z.literal("createMessage"),
@@ -74,11 +74,8 @@ const adminActionEventSchema = z.object({
   type: z.literal("adminAction"),
 });
 // A member's status row, which a member coming online or going offline also sends: the status it now has is the one
-// a client detects its presence from
-const upsertStatusEventSchema = z.object({
-  data: z.object({ ...selectUserStatusInMessageSchema.shape, expiresAt: z.coerce.date().nullable() }),
-  type: z.literal("upsertStatus"),
-});
+// A client detects its presence from
+const upsertStatusEventSchema = z.object({ data: selectUserStatusInMessageSchema, type: z.literal("upsertStatus") });
 
 const roomEventSchemas = [
   createMessageEventSchema,

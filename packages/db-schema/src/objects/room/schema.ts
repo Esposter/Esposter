@@ -1,4 +1,6 @@
-import type { FileEntity, LinkPreviewResponse, MessageType } from "@esposter/db-schema";
+import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPreviewResponse";
+import type { MessageType } from "#src/models/message/MessageType";
+import type { FileEntity } from "#src/models/streams/FileEntity";
 
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 

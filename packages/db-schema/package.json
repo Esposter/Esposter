@@ -20,6 +20,9 @@
   "sideEffects": false,
   "types": "dist/index.d.ts",
   "imports": {
+    "#src/objects/call/migrations/*": "./src/objects/call/migrations/*",
+    "#src/objects/room/migrations/*": "./src/objects/room/migrations/*",
+    "#src/objects/user/migrations/*": "./src/objects/user/migrations/*",
     "#src/*": "./src/*.ts"
   },
   "exports": {
@@ -27,17 +30,32 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./objects/call/migrations/migrations": {
+      "source": "./src/objects/call/migrations/migrations.js",
+      "default": "./dist/objects/call/migrations/migrations.js"
+    },
+    "./objects/room/migrations/migrations": {
+      "source": "./src/objects/room/migrations/migrations.js",
+      "default": "./dist/objects/room/migrations/migrations.js"
+    },
+    "./objects/user/migrations/migrations": {
+      "source": "./src/objects/user/migrations/migrations.js",
+      "default": "./dist/objects/user/migrations/migrations.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./objects/call/migrations/migrations": "./dist/objects/call/migrations/migrations.js",
+      "./objects/room/migrations/migrations": "./dist/objects/room/migrations/migrations.js",
+      "./objects/user/migrations/migrations": "./dist/objects/user/migrations/migrations.js",
       "./package.json": "./package.json"
     }
   },
   "scripts": {
     "build": "pnpm registry:gen && tsdown",
-    "db:gen": "pnpm registry:gen && drizzle-kit generate",
+    "db:gen": "pnpm registry:gen && drizzle-kit generate && drizzle-kit generate --config drizzle.room.config.ts && drizzle-kit generate --config drizzle.call.config.ts && drizzle-kit generate --config drizzle.user.config.ts && node scripts/rewriteObjectMigrations.ts && pnpm -w exec vp fmt packages/db-schema/src/objects/call/migrations/migrations.js packages/db-schema/src/objects/room/migrations/migrations.js packages/db-schema/src/objects/user/migrations/migrations.js",
     "db:migrate": "node --env-file-if-exists=../../apps/web/.env node_modules/drizzle-kit/bin.cjs migrate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",

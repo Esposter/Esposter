@@ -1,4 +1,4 @@
-import type { PublishSource } from "@esposter/db-schema";
+import type { PublishSource } from "#src/models/message/call/PublishSource";
 
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 

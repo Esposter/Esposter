@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It provides Drizzle ORM SQLite schemas, relations and migrations for Esposter's D1 database. It is the source of truth for all relational data, and it works in browser and server environments.
+It provides Drizzle ORM SQLite schemas, relations and migrations for Esposter's D1 database and its room, call and user objects. It is the source of truth for all relational data, and it works in browser and server environments.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -46,7 +46,7 @@ After you edit a schema file, generate the migration:
 1. Run `pnpm db:gen` in `packages/db-schema/`.
 2. Check the result: the new migration folder appears in `apps/web/server/db/migrations/core/`.
 
-`pnpm db:gen` generates the `core` migrations only. The room, call and user objects have their own SQLite schemas in `apps/functions/src/durableObjects/`. Generate an object's migrations in `packages/db-schema/` with `drizzle-kit generate --config`, naming `drizzle.room.config.ts`, `drizzle.call.config.ts` or `drizzle.user.config.ts`.
+`pnpm db:gen` generates the `core` migrations and then each object's, from `drizzle.room.config.ts`, `drizzle.call.config.ts` and `drizzle.user.config.ts`. The room, call and user objects have their own SQLite schemas in `packages/db-schema/src/objects/<object>/schema.ts`, and their migrations in `packages/db-schema/src/objects/<object>/migrations/`.
 
 `pnpm dev` in `apps/web/` applies the `core` migrations to the local D1 with wrangler. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
 

@@ -1,10 +1,10 @@
 import { defineConfig } from "drizzle-kit";
 
-// The user object's SQLite storage. Its schema is written in its own folder under the functions Worker, and its migrations
-// Are generated into the folder the object migrates from, one object at a time (openspec/changes/infra-cloudflare-realtime)
+// The user object's SQLite storage. Its schema and its migrations live here beside each other.
+// The realtime Worker migrates from the folder, which `db:gen` writes one object at a time (openspec/changes/infra-cloudflare-realtime)
 export default defineConfig({
   dialect: "sqlite",
   driver: "durable-sqlite",
-  out: "../../apps/functions/src/durableObjects/user/migrations",
-  schema: "../../apps/functions/src/durableObjects/user/schema.ts",
+  out: "./src/objects/user/migrations",
+  schema: "./src/objects/user/schema.ts",
 });

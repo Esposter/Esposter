@@ -1,8 +1,8 @@
+import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
 import { callSessionIdSchema } from "#src/models/shared/CallSessionId";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
-import { z } from "zod";
-import { callParticipantSchema } from "#src/models/message/call/CallParticipant";
 import { CALL_AUTH_TOKEN_MAX_LENGTH } from "#src/services/message/constants";
+import { z } from "zod";
 
 // The events a call's socket carries, one frame each. The participant's id is the session it joined under
 const callSessionId = callSessionIdSchema.shape.callSessionId;

@@ -1,18 +1,18 @@
-import { AchievementName } from "#src/services/achievement/AchievementName";
-import { friendRequestInSocialWithRelationsSchema } from "#src/models/social/FriendRequestInSocialWithRelations";
-import { publicUserSchema } from "#src/models/user/PublicUser";
-import { selectFriendInSocialSchema } from "#src/schema/social/friendsInSocial";
-import { selectFriendRequestInSocialSchema } from "#src/schema/social/friendRequestsInSocial";
-import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
-import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
-import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { userAchievementInAchievementWithRelationsSchema } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
+import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
+import { sessionIdSchema } from "#src/models/shared/SessionId";
+import { friendRequestInSocialWithRelationsSchema } from "#src/models/social/FriendRequestInSocialWithRelations";
+import { storageUsageSchema } from "#src/models/storage/StorageUsage";
+import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
+import { publicUserSchema } from "#src/models/user/PublicUser";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
+import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
+import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
+import { selectFriendRequestInSocialSchema } from "#src/schema/social/friendRequestsInSocial";
+import { selectFriendInSocialSchema } from "#src/schema/social/friendsInSocial";
+import { AchievementName } from "#src/services/achievement/AchievementName";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
-import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
-import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
-import { storageUsageSchema } from "#src/models/storage/StorageUsage";
 
 // The events a person's own socket carries, one frame each, for every tab the person has open. A payload is what the
 // Emitter named, without the device that caused it, and a room-list event names the room it concerns by its id
@@ -56,7 +56,7 @@ const saveResourceContentEventSchema = z.object({
 });
 const updateRoomEventSchema = z.object({ data: updateRoomInputSchema, type: z.literal("updateRoom") });
 // A room's last message moved it to the top of the list, which is what the room list sorts by. Its own event, since a
-// room update names only the fields a room edit changes
+// Room update names only the fields a room edit changes
 const roomActivityEventSchema = z.object({
   data: z.object({ id: selectRoomInMessageSchema.shape.id, updatedAt: z.coerce.date() }),
   type: z.literal("roomActivity"),
