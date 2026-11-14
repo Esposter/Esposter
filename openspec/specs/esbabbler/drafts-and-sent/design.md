@@ -10,7 +10,7 @@ Route `/messages/draftsandsent`: a cross-room view of unsent drafts, scheduled j
 | Scheduled | `scheduledMessageJobsInMessage`   | `runAt ASC`, grouped by Today/Yesterday/date          |
 | Sent      | `messages` table, newest first    | Sent time descending, grouped by Today/Yesterday/date |
 
-Sent messages read the `messages` table across rooms, with `userId` and non-deleted conditions ordered `createdAt DESC`. `message.readMySentMessages({ offset, limit })` returns total count, offset pagination metadata, the message rows, and room metadata per row; the client groups rows by day and links each row back to its source room/message.
+Sent messages come from the sender's sent index in the user object, read per room and ordered `createdAt DESC`. `message.readMySentMessages({ before, limit })` returns a cursor page `{ hasMore, items }` of the message rows with their room metadata; the client groups rows by day and links each row back to its source room/message.
 
 Scheduled rows come from `message.scheduledMessageJob.readMyScheduledMessageJobs` (see [scheduled messages](../scheduled-messages/design.md)).
 

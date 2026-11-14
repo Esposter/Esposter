@@ -12,16 +12,13 @@ Sending a message flows through one server service, `createUserMessage`, which w
 sequenceDiagram
     participant C as Composer (RichTextEditor)
     participant T as message.createMessage (tRPC)
-    participant AT as Azure Table Storage
-    participant E as messageEventEmitter
+    participant O as Room object (Durable Object)
     participant EG as Azure Event Grid
     participant F as ProcessNotification (Azure Function)
 
     C->>T: createMessage({ roomId, message, timeZone })
     T->>T: assertCanCreateMessage, then advance the slowmode clock
-    T->>AT: insert Messages + MessagesAscending rows
-    T->>E: emit("createMessage", entity)
-    E-->>C: onCreateMessage subscription delivers to connected members
+    T->>O: write the message; the object's socket delivers it to connected members
     T->>EG: publishNotification — one typed event, unconditionally
     EG->>F: event delivered
     F->>F: resolve recipients, then web-push to each subscription
@@ -42,17 +39,14 @@ A message is stored as one blob, so a procedure that changes part of it writes t
 sequenceDiagram
     participant A as Voter A
     participant B as Voter B
-    participant AT as Azure Table Storage
+    participant AT as Room object
 
-    A->>AT: getEntityWithEtag — version 1
-    B->>AT: getEntityWithEtag — version 1
-    B->>AT: updateEntity with version 1 — accepted, stored as version 2
-    A->>AT: updateEntity with version 1 — rejected 412
-    A->>AT: getEntityWithEtag — version 2, carrying B's vote
-    A->>AT: updateEntity with version 2 — accepted, both votes stored
+    A->>AT: votePoll — one call
+    B->>AT: votePoll — one call
+    AT-->>A: both votes applied in the object's serialized write
 ```
 
-A rejected write means the vote is still valid and only the version it was computed against is stale, so it is re-read and re-applied rather than surfaced. `votePoll` does not own that loop: it hands `getUpdateEntity` and `writeEntity` to the shared `updateEntityConditionally` helper ([conditional writes](../../architecture/conditional-writes/design.md)), which owns the re-read, the retry and the bound. The bound is private to the helper and shared by every conditional write in the repo, so there is no poll-specific retry budget to raise — changing it changes `deleteFile`, `deleteLinkPreviewResponse` and `unpinMessage` with it. A vote that still cannot land is refused with `CONFLICT` so the voter sends it again instead of being shown a vote that never counted, and a failed write whose re-read finds the version unchanged was never a lost race, so that error propagates as itself rather than being retried into a `CONFLICT`.
+A vote is one call to the room object, which applies it to the stored poll inside its single-threaded write, so two votes on one poll never race and no version check or retry runs.
 
 The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `MessageModelMessageTypePoll` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
 
@@ -78,24 +72,24 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 | `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                            |
 | `forwardMessage`                  | member | Forward into another room                                                                                                                                      |
 | `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                               |
-| `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                              |
+| `votePoll`                        | member | Cast/withdraw a poll vote in the room object's serialized write                                                                                                |
 | `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                |
-| `searchMessages`                  | member | Filtered search via the `messages_search` FTS5 index                                                                                                           |
-| `readMySentMessages`              | authed | Cross-room sent list from the `messages` table                                                                                                                 |
-| `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                             |
+| `searchMessages`                  | member | Filtered search, fanned out to each named room's object and merged                                                                                             |
+| `readMySentMessages`              | authed | Cross-room sent list from the user object's sent index, read per room                                                                                          |
+| Socket events, not subscriptions  | member | The room object's `RoomEvent` frames                                                                                                                           |
 | `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
 | `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                            |
 
 ## Key files
 
-| File                                                                    | Role                                                |
-| ----------------------------------------------------------------------- | --------------------------------------------------- |
-| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                   |
-| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: table write, emit, EventGrid publish |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`               | Table name enum (Messages, MessagesAscending, …)    |
-| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                          |
-| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom   |
-| `apps/web/server/services/message/events/`                              | `messageEventEmitter` and friends                   |
+| File                                                                    | Role                                              |
+| ----------------------------------------------------------------------- | ------------------------------------------------- |
+| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                 |
+| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: object write, EventGrid publish    |
+| `packages/db-schema/src/models/azure/table/AzureTable.ts`               | Table name enum (Messages, MessagesAscending, …)  |
+| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                        |
+| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom |
+| `apps/web/server/services/message/events/`                              | `messageEventEmitter` and friends                 |
 
 ## Notes
 

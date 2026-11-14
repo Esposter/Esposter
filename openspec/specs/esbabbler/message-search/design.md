@@ -61,7 +61,7 @@ Only the last chip is ever pending, because a chip is created by typing its keyw
 
 Everything that searches goes through `getSearchableFilters`, on both sides of the wire. It drops pending chips, because they have no value to narrow on, and it drops exact repeats, because a second identical filter narrows nothing the first did not. `checkIsSearchQueryEmpty` asks the same question, so a pending chip on its own is not a search.
 
-**Filters are not unique by type.** Each filter is one condition on the message row, so two `from:` chips or two `has:` chips narrow together — `getSearchFilterConditions` emits a condition per value (`mentions:` being the one that collects its values into a single any-of condition). The wire and row schemas therefore constrain the array's length, not its uniqueness by type.
+**Filters are not unique by type.** Each filter is one condition on the message row, so two `from:` chips or two `has:` chips narrow together — the room object's search emits a condition per value (`mentions:` being the one that collects its values into a single any-of condition). The wire and row schemas therefore constrain the array's length, not its uniqueness by type.
 
 ```mermaid
 sequenceDiagram
@@ -76,7 +76,7 @@ sequenceDiagram
   Read->>Store: bind the tab's result slice, totals and page
   Note over Read: filters and query are read before the first await,<br/>so the response is filed under the search that ran
   Read->>Trpc: getSearchableFilters(filters) plus the query
-  Trpc->>Search: getSearchFilterConditions plus the room and not-deleted conditions, and MATCH over getSearchExpression
+  Trpc->>Search: each named room's object applies the filter conditions, the room and not-deleted conditions, and MATCH over getSearchExpression
   Search-->>Trpc: page of documents and a total
   Trpc-->>Read: results and count
   Read->>Store: write results, count and page 1
@@ -118,7 +118,6 @@ A deleted account's messages keep their place in their rooms, but not their text
 | `app/composables/message/message/useReadMessageCreators.ts`              | The authors a page of messages names, read before the page lands                                                |
 | `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
 | `server/services/message/searchMessages.ts`                              | Condition assembly and the paged FTS5 read                                                                      |
-| `server/services/message/search/getSearchFilterConditions.ts`            | Each filter type's SQL condition                                                                                |
 | `server/services/search/getSearchExpression.ts`                          | The user text as literal FTS5 words                                                                             |
 
 ## Sources

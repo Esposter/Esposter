@@ -2,7 +2,7 @@
 
 A thread is a root message plus every message whose `replyRowKey` points at it. Opening one puts it in the right drawer as a live pane with its own composer, so a conversation about a message is read and replied to in one place instead of being scrolled back to in the room.
 
-**A thread has no table of its own.** Its identity is the pair `(roomId, threadRootRowKey)` — the room it lives in and the rowKey of the message it hangs off — and that pair is what everything thread-scoped keys by: a [follow](../thread-follows/design.md), a composer's draft, a call session. Nothing needs creating before a thread exists; the first reply makes one.
+**A thread has no table of its own.** Its identity is the pair `(roomId, threadRootId)` — the room it lives in and the id of the message it hangs off — and that pair is what everything thread-scoped keys by: a [follow](../thread-follows/design.md), a composer's draft, a call session. Nothing needs creating before a thread exists; the first reply makes one.
 
 ## How it works
 
@@ -63,15 +63,15 @@ Opening a thread replaces whatever the right drawer was showing. Split view keep
 
 ## Key files
 
-| File                                                              | Role                                                      |
-| :---------------------------------------------------------------- | :-------------------------------------------------------- |
-| `apps/web/app/store/message/thread.ts`                            | active thread, the read's state, and the live hooks       |
-| `apps/web/app/composables/message/thread/useOpenThread.ts`        | the read: the replies, then their metadata                |
-| `apps/web/app/components/Message/RightSideBar/Thread/`            | the pane, its composer and its header                     |
-| `apps/web/app/composables/message/thread/useThreadActionItems.ts` | the overflow menu                                         |
-| `apps/web/app/models/message/ComposerTarget.ts`                   | which composer a piece of composer state belongs to       |
-| `apps/web/app/services/message/composer/getComposerKey.ts`        | the partition key every per-composer map uses             |
-| `apps/web/app/store/message/input/index.ts`                       | per-composer text and drafts                              |
-| `apps/web/app/store/message/input/uploadFile.ts`                  | per-composer attachments                                  |
-| `apps/web/app/pages/messages/[id]/thread/[messageId].vue`         | the thread route                                          |
-| `packages/db-schema/src/schema/message/callSessionsInMessage.ts`  | `threadRootRowKey` and the one-call-per-thread constraint |
+| File                                                              | Role                                                  |
+| :---------------------------------------------------------------- | :---------------------------------------------------- |
+| `apps/web/app/store/message/thread.ts`                            | active thread, the read's state, and the live hooks   |
+| `apps/web/app/composables/message/thread/useOpenThread.ts`        | the read: the replies, then their metadata            |
+| `apps/web/app/components/Message/RightSideBar/Thread/`            | the pane, its composer and its header                 |
+| `apps/web/app/composables/message/thread/useThreadActionItems.ts` | the overflow menu                                     |
+| `apps/web/app/models/message/ComposerTarget.ts`                   | which composer a piece of composer state belongs to   |
+| `apps/web/app/services/message/composer/getComposerKey.ts`        | the partition key every per-composer map uses         |
+| `apps/web/app/store/message/input/index.ts`                       | per-composer text and drafts                          |
+| `apps/web/app/store/message/input/uploadFile.ts`                  | per-composer attachments                              |
+| `apps/web/app/pages/messages/[id]/thread/[messageId].vue`         | the thread route                                      |
+| `packages/db-schema/src/schema/message/callSessionsInMessage.ts`  | `threadRootId` and the one-call-per-thread constraint |

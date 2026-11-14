@@ -30,7 +30,7 @@ Which follows may clear that tombstone is decided by whose action the follow is,
 | the replier's own reply          | yes            | cleared — Discord parity      |
 | the root author, someone replies | no             | left alone                    |
 
-Both reads — `readFollowedThreadRootRowKeys` (follow state) and `getThreadFollowerUserIds` (the notification recipients) — skip unfollowed rows, so a tombstone is neither a follow nor a notification.
+Both reads — `readFollowedThreadRootIds` (follow state) and `getThreadFollowerUserIds` (the notification recipients) — skip unfollowed rows, so a tombstone is neither a follow nor a notification.
 
 A root message with no author at all (a webhook message carries none) contributes no root-author follow: `userId` is `NOT NULL`, so the reply would otherwise fail its insert on every reply to a webhook message.
 
@@ -38,17 +38,17 @@ Auto-follow and the notification both sit in the reply's best-effort tail ([pers
 
 ## Data model
 
-Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootRowKey` (the root message's Azure Table rowKey), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves the followed roots back to their messages in one batched Azure Table read (`readMessagesByRowKeys`, shared with the procedure of the same name) whose filter drops any root that was deleted, so it never lists a dangling follow. That read is a partition scan, so the drawer lists the roots newest-message-first rather than in the order the follows were recorded, and it returns whichever entity each root actually is — a webhook message can be a thread root like any other.
+Postgres table `threadFollowsInMessage`: `userId`, `roomId`, and `threadRootId` (the root message's integer id in its room), with a composite primary key over all three so a follow is idempotent, plus `isUnfollowed` — the member's recorded decision to stop, which is why a row outlives an unfollow. Room deletion cascades the follows away. The drawer resolves the followed roots back to their messages in one batched read of the room's object (`readMessagesByIds`), which drops any root that was deleted, so it never lists a dangling follow. The drawer lists the roots newest-first by id (a message id only grows within its room) rather than in the order the follows were recorded, and it returns whichever entity each root actually is — a webhook message can be a thread root like any other.
 
 ## Procedures
 
 All under `message.` in `server/trpc/routers/message/index.ts`, member-gated:
 
-| Procedure                                      | Purpose                                                                                                                                                                  |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `followThread({ roomId, threadRootRowKey })`   | explicit follow (idempotent)                                                                                                                                             |
-| `unfollowThread({ roomId, threadRootRowKey })` | record the unfollow (idempotent; written even where no follow row exists)                                                                                                |
-| `readFollowedThreads({ roomId })`              | `{ threadRootRowKeys, threads }` — every followed root rowKey (including deleted roots, the follow-state source of truth) beside the newest-first roots the drawer lists |
+| Procedure                                  | Purpose                                                                                                                                                          |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `followThread({ roomId, threadRootId })`   | explicit follow (idempotent)                                                                                                                                     |
+| `unfollowThread({ roomId, threadRootId })` | record the unfollow (idempotent; written even where no follow row exists)                                                                                        |
+| `readFollowedThreads({ roomId })`          | `{ threadRootIds, threads }` — every followed root id (including deleted roots, the follow-state source of truth) beside the newest-first roots the drawer lists |
 
 ## Key files
 
