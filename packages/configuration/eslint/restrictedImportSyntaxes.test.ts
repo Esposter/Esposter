@@ -43,18 +43,6 @@ describe("restrictedImportSyntaxes", () => {
         violations: 0,
       },
       {
-        filePath: "storageRestError.ts",
-        name: "storageRestError",
-        source: `import { RestError } from "@azure/storage-blob";\nexport const a = RestError.name;`,
-        violations: 1,
-      },
-      {
-        filePath: "pipelineRestError.ts",
-        name: "pipelineRestError",
-        source: `import { RestError } from "@azure/core-rest-pipeline";\nexport const a = RestError.name;`,
-        violations: 0,
-      },
-      {
         filePath: "drizzleZod.ts",
         name: "drizzleZod",
         source: `import { createSelectSchema } from "drizzle-zod";\nexport const a = createSelectSchema(b);`,

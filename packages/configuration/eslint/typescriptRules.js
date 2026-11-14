@@ -44,7 +44,7 @@ export default {
         "ObjectExpression[properties.length=2][properties.0.key.name='sessionId'][properties.0.value.property.name='id'][properties.0.value.object.property.name='session'][properties.0.value.object.object.property.name='getSessionPayload'][properties.1.key.name='userId'][properties.1.value.property.name='id'][properties.1.value.object.property.name='user'][properties.1.value.object.object.property.name='getSessionPayload']",
     },
     {
-      // The `InMessage` suffix names the Postgres schema a message table sits in, and the table's own name is
+      // The `InMessage` suffix names the schema a message table sits in, and the table's own name is
       // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the
       // Table's name (`r.many.bansInMessage`); nothing spells it plural. Unanchored, because a through-relation
@@ -67,8 +67,7 @@ export default {
       // (`EmojiGroupIconMap` is group -> icon), so a local reading `iconsByEmojiGroup` or `idToAlias` says the
       // Same thing a second way. Every branch reads what the name is attached to rather than the name alone,
       // Because the shape is what makes it a lookup: a map is data, so a function keeps its `By<Selector>`
-      // (`getDataSourceTypeByFileName`), `byPage` on the Azure SDK's `PagedAsyncIterableIterator` is the SDK's own
-      // paging contract, and `isGroupedByType` is a boolean. So a lookup is recognised by a
+      // (`getDataSourceTypeByFileName`), and `isGroupedByType` is a boolean. So a lookup is recognised by a
       // `Map`/`Record` annotation, a `new Map`/`Object.groupBy` initialiser, or an object literal — and the
       // Object-literal branches take the `By` infix only, since `To` collides with the `usersToRooms` join
       // Table's own name, which reads as `<key>To<value>` and is no more ours to rename than `byPage`. A lookup
@@ -83,7 +82,7 @@ export default {
       // A boolean says what is true, not what is permitted: `can`/`should` name a policy the value does not
       // Carry, and the repo already spells a permission check `hasManageRoles` and a capability check
       // `isScreenShareSupported`. Only a **named** declarator is matched, so a dependency's own key stays its own —
-      // LiveKit's `canPublish`/`canSubscribe` grants and `URL.canParse` are read and written under their names.
+      // `URL.canParse` is read and written under its name.
       // A destructuring pattern is therefore out of scope on purpose rather than by omission: the name in
       // `const { canPublish } = grant` is the foreign object's, so the only way to satisfy the rule there is to
       // Rename on the spot and desync our vocabulary from the sdk's at every call site. A boolean we author has
@@ -238,12 +237,12 @@ export default {
         "CallExpression[callee.property.name=/^(refine|superRefine)$/] > :matches(Literal, TemplateLiteral):nth-child(2)",
     },
     {
-      // The Pulumi logical name is the Azure resource name here, so an alias can never serve the rename it is
+      // The Pulumi logical name is the resource name here, so an alias can never serve the rename it is
       // Suggested for — a rename replaces through the name property whatever the URN says. A resource's options are
       // The third argument of its constructor, which is the construct this reads rather than a path: nothing else
       // In the repo passes a third options object carrying `aliases`
       message:
-        "Never add `aliases` to a Pulumi resource — the logical name is the Azure name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
+        "Never add `aliases` to a Pulumi resource — the logical name is the resource name, so an alias cannot spare the replacement a rename causes. See the pulumi-infra skill.",
       selector: "NewExpression > ObjectExpression.arguments:nth-child(3) > Property[key.name='aliases']",
     },
     {
@@ -355,13 +354,6 @@ export default {
       message:
         "Model an absent value with `.optional()`, never `.nullable()` — null belongs to an external boundary. See the absent-values skill.",
       selector: "CallExpression[callee.property.name='nullable']",
-    },
-    {
-      // The clause's entity comes from the array it joins, `Clause<FooEntity>[]`, so a type argument restates it — and
-      // Can disagree with it. A key with no entity to infer from, read off an arbitrary clause, disables this
-      message:
-        "Let `getTableNullClause` infer its entity from the clause array it joins — `getTableNullClause(ItemMetadataPropertyNames.deletedAt)`, never `getTableNullClause<FooEntity>(…)`. See the azure-table skill.",
-      selector: "CallExpression[callee.name='getTableNullClause'][typeArguments]",
     },
     {
       // A spread replaces each key outright, so every nested option the factory set on `deps`, `dts` or `exports` is

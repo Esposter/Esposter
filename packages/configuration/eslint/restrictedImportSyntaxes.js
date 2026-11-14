@@ -20,15 +20,6 @@ export default [
     selector: "ImportDeclaration[source.value=/^prosemirror-/]",
   },
   {
-    // Both storage SDKs re-export the one `RestError` class, so an `instanceof` against a re-export holds only while
-    // The two resolve one shared copy — the day a bump splits them, the check silently stops recognising the other
-    // SDK's errors. The class's own package is the one both depend on
-    message:
-      "Import `RestError` from `@azure/core-rest-pipeline`, never a storage SDK's re-export — an `instanceof` against one stops matching the other SDK's errors the day their copies split. See the azure-table skill.",
-    selector:
-      "ImportDeclaration[source.value=/^@azure.(storage-blob|storage-queue)$/] > ImportSpecifier[imported.name='RestError']",
-  },
-  {
     // `drizzle-zod` is the v1 package; the v2 relations API the repo is on ships its own schema builders, and the two
     // Generate from different table metadata
     message:

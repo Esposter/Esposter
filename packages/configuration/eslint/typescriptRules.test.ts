@@ -381,18 +381,6 @@ describe("typescriptRules", () => {
         violations: 0,
       },
       {
-        filePath: "nullClauseTypeArgument.ts",
-        name: "nullClauseTypeArgument",
-        source: "export const a = getTableNullClause<B>(C.d);",
-        violations: 1,
-      },
-      {
-        filePath: "nullClause.ts",
-        name: "nullClause",
-        source: "export const a = getTableNullClause(C.d);",
-        violations: 0,
-      },
-      {
         filePath: "spreadFactory.ts",
         name: "spreadFactory",
         source: "export const a = { ...getTsdownConfigurationNode(), deps: {} };",

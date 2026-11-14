@@ -33,7 +33,7 @@ export const getVitestConfiguration = (
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
       fsModuleCache: true,
-      // A `beforeAll` booting PGlite takes well under a second on an idle machine and several on a loaded one,
+      // A `beforeAll` booting Miniflare's D1 takes well under a second on an idle machine and several on a loaded one,
       // Because a run spawns a worker per file and they compete for cores — the 10s default is a starvation
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green
       hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
