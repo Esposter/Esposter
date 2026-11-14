@@ -93,7 +93,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `packages/db/src/services/storage/createPresignedPutUrl.ts`                      | The presigned PUT the targets are signed with                     |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits                  |
 | `apps/web/server/services/queue/publishBlobDeletion.ts`                          | chunked, best-effort blob deletion shared by every delete         |
-| `apps/functions/src/handlers/processBlobDeletionHandler.ts`                      | Durable object deletion — idempotent queue consumer               |
+| `apps/functions/src/handlers/processBlobDeletionHandler.ts`                      | Object deletion — idempotent queue consumer                       |
 | `packages/db-schema/src/models/queue/BlobDeletionQueueMessage.ts`                | The deletion job payload and its schema                           |
 
 ## Notes
