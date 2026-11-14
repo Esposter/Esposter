@@ -1,10 +1,10 @@
 import type { MockDatabase } from "@esposter/db-mock";
 
+import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { createMockDb } from "@esposter/db-mock";
 import { ResourceType, resourcesInResource, surveyResponsesInResource, usersInAuth } from "@esposter/db-schema";
-import { chunk } from "@esposter/shared";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can afford to create, so the
@@ -16,20 +16,17 @@ describe(readSurveyResponsesCount, () => {
   const userId = crypto.randomUUID();
   let mockDatabase: MockDatabase;
 
-  // Rows go in batches of ten, since a D1 statement binds at most a hundred parameters and each row binds nine
   const createSurveyResponses = (count: number) =>
-    Promise.all(
-      chunk(
-        Array.from({ length: count }, () => ({
-          isDraft: false,
-          model: {},
-          modelVersion: 0,
-          pageNo: 0,
-          participantToken: "",
-          resourceId: surveyId,
-        })),
-        10,
-      ).map((batch) => mockDatabase.db.insert(surveyResponsesInResource).values(batch)),
+    insertSurveyResponses(
+      mockDatabase.db,
+      Array.from({ length: count }, () => ({
+        isDraft: false,
+        model: {},
+        modelVersion: 0,
+        pageNo: 0,
+        participantToken: "",
+        resourceId: surveyId,
+      })),
     );
 
   beforeAll(async () => {

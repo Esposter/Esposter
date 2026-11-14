@@ -4,6 +4,7 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
+import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import {
@@ -102,25 +103,20 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    await Promise.all(
-      Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
-        surveyCaller.createSurveyResponse({
-          id: crypto.randomUUID(),
-          isDraft: false,
-          model: { a: 1 },
-          pageNo: 0,
-          participantToken: "",
-          resourceId: newSurvey.id,
-        }),
-      ),
-    );
+    const rows = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => ({
+      id: crypto.randomUUID(),
+      isDraft: false,
+      model: { a: 1 },
+      pageNo: 0,
+      participantToken: "",
+      resourceId: newSurvey.id,
+    }));
+    await insertSurveyResponses(mockContext.db, rows);
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
     expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
     // The capped read reports the uncapped total so consumers can say what they are not showing
     expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
-    // One write per row past the page size, each checked against the published survey: 1.4s alone, but a full-suite
-    // Run loads the machine enough to pass the global 30s
   }, 60_000);
 
   test("reads survey responses dataset with no responses", async () => {
