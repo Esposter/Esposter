@@ -105,7 +105,7 @@ The [cutover](../infra-cloudflare-cutover/design.md) re-keys existing rows: each
 | `apps/web/server/routes/_internal/publish.post.ts`    | deleted                                                            |
 | `apps/web/server/routes/ws/`                          | authenticate and forward the three socket kinds                    |
 | `apps/web/server/services/**/events/*EventEmitter.ts` | deleted; their events become `RoomEvent`, `CallEvent`, `UserEvent` |
-| `apps/web/shared/models/realtime/`                    | the three event unions and their schemas                           |
+| `packages/db-schema/src/models/realtime/`             | the three event unions and their schemas                           |
 | `apps/web/app/composables/realtime/`                  | the connection manager and the event dispatch                      |
 | `packages/trpc-nuxt-module`                           | its WebSocket handler is no longer used by the app                 |
 
