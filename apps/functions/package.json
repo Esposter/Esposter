@@ -28,8 +28,6 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@azure/identity": "catalog:",
-    "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",

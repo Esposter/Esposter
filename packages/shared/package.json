@@ -59,7 +59,6 @@
     "parse5": "catalog:"
   },
   "devDependencies": {
-    "@azure/data-tables": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "fake-indexeddb": "catalog:",

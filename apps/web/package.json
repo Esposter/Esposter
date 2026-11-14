@@ -42,8 +42,6 @@
     "zstd:gen": "vpx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
-    "@azure/eventgrid": "catalog:",
-    "@azure/storage-blob": "catalog:",
     "@better-auth/api-key": "catalog:",
     "@better-auth/drizzle-adapter": "catalog:",
     "@cloudflare/realtimekit": "catalog:",
@@ -52,7 +50,6 @@
     "@codemirror/language": "catalog:",
     "@codemirror/language-data": "catalog:",
     "@codemirror/state": "catalog:",
-    "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
@@ -125,7 +122,6 @@
     "vue-pdfjs-headless": "workspace:*",
     "vue-phaserjs": "workspace:*",
     "vue-survey-engine-headless": "workspace:*",
-    "web-push": "catalog:",
     "write-excel-file": "catalog:",
     "zod": "catalog:"
   },
@@ -174,6 +170,7 @@
     "vite": "catalog:",
     "vitest": "catalog:",
     "vue-router": "catalog:",
+    "web-push": "catalog:",
     "wrangler": "catalog:"
   }
 }

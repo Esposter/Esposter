@@ -58,10 +58,6 @@
     "type-fest": "catalog:"
   },
   "peerDependencies": {
-    "@azure/core-client": "catalog:",
-    "@azure/core-rest-pipeline": "catalog:",
-    "@azure/storage-queue": "catalog:",
-    "@esposter/azure": "workspace:*",
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"
   },
