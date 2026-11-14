@@ -11,14 +11,14 @@ sequenceDiagram
     actor Mod as Moderator
     participant R as moderation.executeAdminAction
     participant PG as Postgres
-    participant AT as AzureTable.ModerationLog
+    participant ML as moderationLogs (core)
     participant E as moderationEventEmitter
     actor T as Targeted client
 
     Mod->>R: executeAdminAction({ roomId, targetUserId, type, durationMs? })
     R->>R: permission gate (AdminActionPermissionMap) + assertIsManageable
     R->>PG: action side effects (bans row, usersToRooms delete, timeoutUntil…)
-    R->>AT: append log row (type, actorId, targetId, durationMs?)
+    R->>ML: append log row (type, actorId, targetId, durationMs?)
     R->>E: emit admin action
     E-->>T: onAdminAction subscription
     T->>T: useAdminActionMap handler (mute mic, leaveCall(), navigate away, snackbar…)
@@ -53,7 +53,7 @@ Rooms can define filtered words (`room.filter` router, `roomFiltersInMessage`). 
 
 ## Data model
 
-The moderation log is an append-only Azure Table (`AzureTable.ModerationLog`): `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `type`, `actorUserId`, `targetUserId`, `durationMs?`. It is surfaced in the room settings **Audit Log** tab (behind `ManageRoom`), with a filter bar over action type, actor, and target — the filters become extra `$filter` clauses on the partition query (a partition scan, fine at room-log scale), so filtered pagination stays stateless through the same cursor. The empty state distinguishes "no entries" from "no matches". Bans are relational (`bans` table in Postgres: `roomId`, `userId`, `bannedByUserId`).
+The moderation log is an append-only SQLite table in core (`moderationLogs`): one row per action, belonging to its room through a `roomId` foreign key that cascades with the room, and read newest first by a cursor over `createdAt` and `id`. Its fields are `type`, `actorUserId`, `targetUserId` and `durationMs?`. `targetUserId` cascades with the account, while `actorUserId` is nullable with no foreign key, since an AutoMod action names the reserved AutoMod id rather than an account. When a moderator's account is deleted, the sweep sets its `actorUserId` to null, so the room keeps the record without naming the person. It is surfaced in the room settings **Audit Log** tab (behind `ManageRoom`), with a filter bar over action type, actor, and target — the filters become extra `WHERE` clauses on the room's index (fine at room-log scale), so filtered pagination stays stateless through the same cursor. The empty state distinguishes "no entries" from "no matches". Bans are relational (`bans` table in Postgres: `roomId`, `userId`, `bannedByUserId`).
 
 The **Bans** tab searches by the banned user's name, over the join that already renders the row, so the predicate costs nothing beyond the `ilike`. The ban reason is deliberately not matched: it is free text a moderator wrote, searching it makes the panel feel like a log search, and the want the tab serves is whether a person is banned — which is a name. An emptied field lists the room's bans again rather than leaving the last term's rows on screen, because the empty query is issued as a query rather than treated as a reset, and paging carries the term with the cursor so a ban placed mid-scroll cannot appear in a page of a search it does not match.
 

@@ -19,7 +19,7 @@ one wrote and nothing depends on the order they land in:
   element must stop every write.
 - **A read per candidate, answered by any hit** — the scans run together and the answer is whether one matched
   (`resolveIdentifiedToken`).
-- **Batches that do not read each other** — `generateProgramParticipants` sends its transactions together; each
+- **Batches that do not read each other** — `generateProgramParticipants` sends its insert batches together; each
   batch's own fallback stays inside it.
 - **One call when the API takes the set** — a call that accepts many inputs answers them in one pass, and a
   `Promise.all` of thousands of heavy calls holds every one in memory at once (a suite's UnoCSS checks are one

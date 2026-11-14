@@ -40,19 +40,21 @@ flowchart TD
   Reactions --> Charged["Charged blobs<br/>from the storage ledger"]
   Charged --> Prefixes["User blob prefixes"]
   Prefixes --> Exports["Export archives<br/>named by dataExports rows"]
-  Exports --> User["User row<br/>deleted last"]
+  Exports --> Actors["Moderation actors<br/>blanked"]
+  Actors --> User["User row<br/>deleted last"]
 ```
 
 The order is the mechanism. The user row goes last because its cascade removes the `dataExports` rows that name the export archives, so the archives must be removed first.
 
-1. **Owned rooms.** Each room the account owns is deleted one at a time, as an owner's departure deletes it: `leaveRoom` deletes the room for everyone when its owner leaves. The step clears the room's partitions in five tables, `Messages`, `MessagesAscending`, `MessagesMetadata`, `ModerationLog` and `ModerationNotes`, and then deletes the room's documents from the `messages-index` search index, which the indexer filled from the `Messages` partition. It removes the `{roomId}/` prefix in `MessageAssets` and the `rooms/{roomId}/` prefix in `PublicUserAssets`, which holds the room's profile images, and it deletes the room row last, since a replay finds the room by that row. `deleteRoom` publishes the attachment prefix and the profile images as Event Grid work, but it does not clear the partitions or the index documents, so the sweep runs its own deletes.
-2. **Owned resources.** Each resource the account owns goes through `purgeResourceAndBroadcast`, the purge the recycle bin's timer runs: its directory, the partitions its type owns, then its ledger rows, in the order that makes a replay safe.
+1. **Owned rooms.** Each room the account owns is deleted one at a time, as an owner's departure deletes it: `leaveRoom` deletes the room for everyone when its owner leaves. The step clears the room's partitions in three tables, `Messages`, `MessagesAscending` and `MessagesMetadata`, and then deletes the room's documents from the `messages-index` search index, which the indexer filled from the `Messages` partition. It removes the `{roomId}/` prefix in `MessageAssets` and the `rooms/{roomId}/` prefix in `PublicUserAssets`, which holds the room's profile images, and it deletes the room row last, since a replay finds the room by that row. The room's moderation log and notes go with that row by cascade. `deleteRoom` publishes the attachment prefix and the profile images as Event Grid work, but it does not clear the partitions or the index documents, so the sweep runs its own deletes.
+2. **Owned resources.** Each resource the account owns goes through `purgeResourceAndBroadcast`, the purge the recycle bin's timer runs: its directory, then its ledger rows, then the row, whose cascade removes what the resource owns in the database, in the order that makes a replay safe.
 3. **Messages in member rooms.** The sweep reads the memberships that remain once the owned rooms are gone. In each of those rooms it erases the account's messages through `eraseRoomMessagesByUser`: the text, the files and the link preview are cleared, and the row is soft-deleted. A moderation ban only soft-deletes, which hides a message without clearing its text, so the sweep does more than the ban does. The write is a Replace conditional on the etag the message was listed with, so a message another write changed meanwhile fails the step, and the replay lists it again. It passes a no-op for the announcement, so an open room keeps showing the messages until it reloads.
 4. **Reactions in member rooms.** In each of those rooms, an emoji row the account reacted to is deleted when the account is its only reactor. Otherwise the account is taken out of its reactor list. Each write is conditional on the row's etag, so a row another member changed meanwhile fails the step, and the replay reads it again. The rule is `checkIsOnlyReactor` and `getUpdatedUserIds` in `packages/shared`, which the emoji router and the client store also use. No announcement goes out, so an open room shows a removed reaction on its next load.
 5. **Charged blobs.** `listChargedBlobsByUser` reads the account's rows in the storage ledger, grouped by container. `deleteStorageBlobs` removes each container's blobs through the release a blob deletion runs, which drops their ledger rows and broadcasts the storage usage change. The sweep never lists a directory to find these files.
 6. **Blob prefixes.** `deleteUserDirectories` removes everything under `{userId}/` in `GenshinAssets`, `PublicUserAssets`, `UserAssets` and `ClickerAssets`. It is a prefix delete that lists no names, and an empty prefix counts as done. The clicker and user-assets containers each hold the person's `save.json` under the prefix, the clicker's and the dungeon save respectively.
 7. **Export archives.** `deleteAccountDataExportArchives` reads the `blobName` of each `dataExports` row the account owns. It skips a row that names no blob, which is a queued export with no archive yet, and deletes the named blobs in `UserAssets` through `deleteBlobs`. The archive is named by its export id under `exports/` and sits under no user prefix, so its row is the only way to find it. An archive an earlier attempt already removed counts as done.
-8. **User row.** The `usersInAuth` row is deleted last. Its cascade removes the `accounts` rows, the `dataExports` rows and the other rows that reference the user with a cascade. No step deletes those by hand.
+8. **Moderation actors.** `clearAccountModerationActor` sets the account's `actorUserId` to null on every moderation log row it took as a moderator, in every room, so each room keeps the record without the person's name. It is one update, served by the actor index, and a replay finds no rows left to blank.
+9. **User row.** The `usersInAuth` row is deleted last. Its cascade removes the `accounts` rows, the `dataExports` rows and the other rows that reference the user with a cascade. No step deletes those by hand.
 
 A profile image's write SAS outlives the request that minted it, so an image can land in `PublicUserAssets` after the sweep has passed. `DeleteOrphanedProfileImage` (`apps/functions/src/handlers/deleteOrphanedProfileImageHandler.ts`) deletes that landing when the account row is gone or carries `deletionRequestedAt`, and keeps it for an account in use. It is the one reader of the marker outside the mutation.
 
@@ -74,7 +76,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 **Blob directories are swept by prefix, and the archive by its row.** A user's `{userId}/` prefix holds what they wrote in the containers above, so the sweep lists no names. The export archive sits under no prefix, so the sweep reads its row instead.
 
-**Resources go through the purge that exists.** `purgeResource` already deletes a resource's directory, partitions and ledger rows in a safe order, so each owned resource is passed to it.
+**Resources go through the purge that exists.** `purgeResource` already deletes a resource's directory and ledger rows, then the row, in a safe order, so each owned resource is passed to it.
 
 **The `accounts` foreign key cascades.** It cascades in the schema, because a non-cascading key would block the user row's deletion. The deletion then declares what it removes, and no step deletes accounts by hand.
 
@@ -87,7 +89,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 ## Limits the spec states
 
 - Messages a person wrote in a room they have since left stay attributed to them. Membership is the only index from a user to a room.
-- Moderation records in other people's rooms that name the user, and resource activity on resources the user does not own, are kept as the platform's audit trail. Whether that retention is lawful is an owner decision.
+- Moderation records in other people's rooms where the user is the moderator, and resource activity on resources the user does not own, are kept as the platform's audit trail, with the moderator's id set to null by the sweep. Moderation records that name the user as target go with the account. Whether that retention is lawful is an owner decision.
 - The Azure AI Search index holds an erased member-room message's old text until the indexer's next pull, at most one schedule interval after the sweep. Owned-room documents do not outlive the sweep, which deletes them by partition key ([message search](../../esbabbler/message-search/design.md)).
 
 ## Key files
@@ -104,6 +106,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 | `packages/db-schema/src/services/azure/function/AzureFunctionIsIdempotentMap.ts`                 | Marks `DeleteAccount` idempotent                             |
 | `apps/functions/src/functions/deleteAccount.ts`                                                  | The event registration                                       |
 | `apps/functions/src/handlers/deleteAccountHandler.ts`                                            | The sweep, in order                                          |
+| apps/functions/src/services/account/clearAccountModerationActor.ts                               | Blanks the moderator id on the account's moderation log rows |
 | `apps/functions/src/services/account/`                                                           | One service per step                                         |
 | `apps/functions/src/handlers/deleteOrphanedProfileImageHandler.ts`                               | Removes a profile image that lands after the sweep           |
 | `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts`                               | The message soft delete, shared with moderation              |

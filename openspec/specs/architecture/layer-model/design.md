@@ -37,7 +37,7 @@ sequenceDiagram
   actor Creator
   actor Respondent
   participant SV as Survey resource<br/>(Editor blade)
-  participant AT as Azure Table<br/>(SurveyResponses)
+  participant DB as SQLite, core<br/>(surveyResponses)
   participant SH as Sheet resource<br/>(Data blade)
   participant DB as Dashboard resource
   participant PUB as Public /view/[type]/[id]
@@ -45,8 +45,8 @@ sequenceDiagram
   Creator->>SV: 1. Author survey (Creator autosave → saveDocument)
   Creator->>SV: 2. Publish — snapshot document + assets as a published version
   PUB-->>Respondent: 3. Share /view/Survey/{id} (esbabbler, email block, anywhere)
-  Respondent->>AT: 4. Respond → rows (partitionKey = survey resource id)
-  Note over SV,AT: Respondents are served the published snapshot — unpublished 404s
+  Respondent->>DB: 4. Respond → rows (resourceId = survey resource id)
+  Note over SV,DB: Respondents are served the published snapshot — unpublished 404s
   Creator->>SH: 5. Import responses (dataset.readDataset → one-time copy into a Sheet resource)
   SH->>SH: 6. Computed columns (Aggregation, Math, RegexMatch, …)
   Creator->>DB: 7. Bind visual to a DatasetReference (live re-resolve on load)

@@ -7,7 +7,7 @@ Which Azure services are used, what each one owns, and which package accesses it
 | Service                 | What it stores / does                                                                                                                                                                                                                            | Primary access point                                                                                             |
 | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
 | **Azure Blob Storage**  | Profile images, message file attachments, resource content + publish snapshots, game save state                                                                                                                                                  | `server/composables/azure/container/useContainerClient.ts`                                                       |
-| **Azure Table Storage** | Append-heavy, time-ordered streams keyed by their owning entity — messages and their mirrors, moderation, survey, resource and program records (`AzureTable` is the full set)                                                                    | `server/composables/azure/table/useTableClient.ts`                                                               |
+| **Azure Table Storage** | Append-heavy, time-ordered streams keyed by their owning entity — messages and their mirrors (`AzureTable` is the full set). Moderation, resource, survey and program records are SQLite tables in the `core` D1 database                        | `server/composables/azure/table/useTableClient.ts`                                                               |
 | **Azure AI Search**     | Message full-text search index (`searchMessages`, `readMySentMessages`)                                                                                                                                                                          | `server/composables/azure/search/useSearchClient.ts`                                                             |
 | **Azure Functions**     | Async workers — push notifications (message, friend request, thread reply), inbound webhook messages, scheduled message jobs, TodoList due reminders, durable blob deletion, dead-letter replay, resource purging, storage-ledger reconciliation | `apps/functions/src/functions/`                                                                                  |
 | **Azure Event Grid**    | Decouples mutations from fire-and-forget async work; app publishes events, Functions consume them                                                                                                                                                | `server/composables/azure/eventGrid/useEventGridPublisherClient.ts`                                              |
@@ -40,14 +40,12 @@ Character packs are published to `public-genshin-assets` under `characterPacks/<
 
 ## Table Storage tables
 
-Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/table/AzureTable.ts`) — that enum is the full set, and the default shape is `partitionKey = <owning entity id>` (a room, a resource, a survey resource) with `rowKey = reverseTickedTimestamp` for newest-first reads. Moderation logs and notes, resource activity and program participants are all that shape and need nothing said about them. The ones that are not:
+Table names live in the `AzureTable` enum (`packages/db-schema/src/models/azure/table/AzureTable.ts`) — that enum is the full set, and the shape is `partitionKey = <owning entity id>` (a room) with `rowKey = reverseTickedTimestamp` for newest-first reads. The moderation log and notes, resource activity, view counters, survey responses and program participants are no longer Table entities: each is a SQLite table in `core` keyed by a foreign key to its owning resource or room, read newest-first through a composite index on `(parent, createdAt, id)`, and cleared by cascade. The ones that remain:
 
 | Table (`AzureTable`) | Departure                                                                                                |
 | -------------------- | -------------------------------------------------------------------------------------------------------- |
 | `MessagesAscending`  | Key-only mirror of `Messages` keyed by the original timestamp, so the same rows can be read oldest-first |
 | `MessagesMetadata`   | Sidecar entities keyed to a message rather than to a point in time                                       |
-| `ResourceViews`      | Best-effort view counters bucketed per resource per UTC day, not one row per event                       |
-| `SurveyResponses`    | `partitionKey = survey resource id`, and served as a dataset → [datasets](../dataset/design.md)          |
 
 ## Search index (`messages-index`)
 
@@ -83,11 +81,11 @@ Relevance uses BM25 similarity with the `messageBoost` scoring profile as defaul
 
 ## Azure Table vs Postgres
 
-Use **Azure Table** for high-volume, append-heavy, time-ordered data with no complex joins (messages, moderation logs, survey responses). `partitionKey = <owning entity id>`, `rowKey = reverseTickedTimestamp` gives newest-first ordering for free.
+Use **Azure Table** for high-volume, append-heavy, time-ordered data with no complex joins (messages). `partitionKey = <owning entity id>`, `rowKey = reverseTickedTimestamp` gives newest-first ordering for free. Records that need a foreign key to their owner, cascade on purge, or a unique constraint (moderation, resource activity, view counters, survey responses, program participants) are SQLite tables in `core`, not Table entities.
 
 Use **Postgres (Drizzle)** for relational, queryable data — users, rooms, roles, bans, invites, push subscriptions, posts, achievements, resources, call sessions.
 
-When adding a new feature: pick Postgres for anything relational or queryable; pick Azure Table for anything message-like (high write volume, time-ordered, no complex joins).
+When adding a new feature: pick SQLite in `core` for anything relational, queryable or cascading; pick Azure Table only for something message-like (high write volume, time-ordered, no complex joins) that no foreign key needs.
 
 ## Event flow: createMessage → notification
 

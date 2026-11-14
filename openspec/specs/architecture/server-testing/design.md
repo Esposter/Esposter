@@ -8,7 +8,7 @@ How tRPC router tests wire up an in-memory database, mocked Azure services, and 
 flowchart LR
   MOCK["vi.mock, hoisted above every import<br/>auth.api.getSession"] --> BA
   MF["Miniflare — D1, R2 and Queues"] --> BA
-  BA["beforeAll<br/>createMockContext()"] --> DB["Miniflare D1, both<br/>databases migrated"]
+  BA["beforeAll<br/>createMockContext()"] --> DB["Miniflare D1, core<br/>database migrated"]
   DB --> CTX[("mockContext")]
   CTX --> CALLER["createCallerFactory(router)(mockContext)<br/>procedures called directly, no HTTP"]
   CALLER --> AE["afterEach<br/>reset, restoreAllMocks"]
@@ -21,10 +21,10 @@ flowchart LR
 
 `createMockDb()` in `packages/db-mock/src/createMockDb.ts` returns one `MockDatabase` per test file, backed by one Miniflare instance:
 
-1. Starts Miniflare with a `CORE` and a `STREAMS` D1 database, one R2 bucket per container and one Queue per job.
-2. Applies each database's migration folder through drizzle's D1 migrator, the same SQL production runs.
+1. Starts Miniflare with a `CORE` D1 database, one R2 bucket per container and one Queue per job.
+2. Applies the core migration folder through drizzle's D1 migrator, the same SQL production runs.
 3. Copies the instance's bindings into `env`, the `cloudflare:workers` stand-in that app code reads.
-4. Returns `db` (the core database as `Database`), `streamsDb` (the streams D1 binding), `getBucket`, `getQueue`, `reset` and `dispose`.
+4. Returns `db` (the core database as `Database`), `getBucket`, `getQueue`, `reset` and `dispose`.
 
 **Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs, and nothing outlives the test file that started it.
 
@@ -32,7 +32,7 @@ flowchart LR
 
 ### 2. Bindings in place of Azure mocks
 
-The Azure mock classes are deleted. A service takes the binding it uses as a parameter, so a test passes `getBucket(...)`, `getQueue(...)` or `streamsDb` from `createMockDb` and no in-memory store stands in for a client. `reset()` empties the databases and buckets after every test.
+The Azure mock classes are deleted. A service takes the binding it uses as a parameter, so a test passes `getBucket(...)` or `getQueue(...)` from `createMockDb` and no in-memory store stands in for a client. `reset()` empties the database and buckets after every test.
 
 ### 3. `context.test.ts` — wiring hub
 

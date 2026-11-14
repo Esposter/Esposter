@@ -24,31 +24,32 @@ Tests hold to the same rule with one distinction. A test's real id is `crypto.ra
 
 ## Id sources
 
-| Source                                                                                              | Reaches                                        | Answer                                                                                                                                        |
-| :-------------------------------------------------------------------------------------------------- | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
-| Database default on uuid primary keys                                                               | The select schema override, `z.uuidv4()`       | A v4, since the database default mints a version-4 UUID.                                                                                      |
-| Foreign-key uuid columns                                                                            | The same override                              | A v4 by copy: the value is the referenced row's id.                                                                                           |
-| Client `crypto.randomUUID()`, such as placeholder rows, todo steps, canvas elements and session ids | The field's validator                          | A v4. The `checkIsUuidV4` test holds the runtime's random UUID to that pattern.                                                               |
-| Server `crypto.randomUUID()`, such as file ids, custom emoji tags and survey participant tokens     | The entity's or the row's validator            | A v4 from the same runtime.                                                                                                                   |
-| Claude Code session id carried by a todo's origin                                                   | The origin's `sessionId`                       | A v4. Claude Code mints the id outside the repo and names each session file by it, in the same v4 layout.                                     |
-| Azure Table partition keys holding a room or resource id                                            | The message and survey response partition keys | A v4, through the room or resource row the key names.                                                                                         |
-| Azure Table row key holding a survey response id                                                    | The survey response row key                    | A v4: the respondent's client random seed, kept in the browser for that respondent.                                                           |
-| Fixed ids, such as `ZERO_UUID` and its steps, the sentinels, the driven user and the seeded rows    | The seeded rows and the sentinels' validators  | v4-shaped by construction. No id in the repo is the nil UUID.                                                                                 |
-| better-auth ids, provider account ids, call session, invite and friendship ids                      | Nothing: text columns                          | Not uuids. better-auth's default is a string id, since the auth configuration sets no id generator, and no uuid validator reads any of these. |
+| Source                                                                                              | Reaches                                       | Answer                                                                                                                                        |
+| :-------------------------------------------------------------------------------------------------- | :-------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| Database default on uuid primary keys                                                               | The select schema override, `z.uuidv4()`      | A v4, since the database default mints a version-4 UUID.                                                                                      |
+| Foreign-key uuid columns                                                                            | The same override                             | A v4 by copy: the value is the referenced row's id.                                                                                           |
+| Client `crypto.randomUUID()`, such as placeholder rows, todo steps, canvas elements and session ids | The field's validator                         | A v4. The `checkIsUuidV4` test holds the runtime's random UUID to that pattern.                                                               |
+| Server `crypto.randomUUID()`, such as file ids, custom emoji tags and survey participant tokens     | The entity's or the row's validator           | A v4 from the same runtime.                                                                                                                   |
+| Claude Code session id carried by a todo's origin                                                   | The origin's `sessionId`                      | A v4. Claude Code mints the id outside the repo and names each session file by it, in the same v4 layout.                                     |
+| Azure Table partition keys holding a room id                                                        | The message partition keys                    | A v4, through the room row the key names.                                                                                                     |
+| Survey response id, minted by the respondent's browser                                              | The survey response id on create and update   | A v4: the respondent's client random seed, kept in the browser for that respondent.                                                           |
+| Fixed ids, such as `ZERO_UUID` and its steps, the sentinels, the driven user and the seeded rows    | The seeded rows and the sentinels' validators | v4-shaped by construction. No id in the repo is the nil UUID.                                                                                 |
+| better-auth ids, provider account ids, call session, invite and friendship ids                      | Nothing: text columns                         | Not uuids. better-auth's default is a string id, since the auth configuration sets no id generator, and no uuid validator reads any of these. |
 
 ## Key files
 
-| File                                                                 | Role                                                                                                  |
-| :------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `packages/shared/src/util/id/uuid/constants.ts`                      | `UUIDV4_REGEX`, the v4 pattern, and `ZERO_UUID`, the all-zero v4 every fixed id builds on             |
-| `apps/web/shared/util/id/uuid/checkIsUuidV4.ts`                      | The client's check of an id against the v4 pattern                                                    |
-| `apps/web/shared/util/id/uuid/checkIsUuidV4.test.ts`                 | Holds the runtime's random UUID to that check                                                         |
-| `apps/web/shared/services/resource/link/createResourceLinkSchema.ts` | The validator of a field holding another resource's id: `z.uuidv4()`, registered in the link registry |
-| `packages/db-schema/src/schema/message/roomsInMessage.ts`            | A select schema overriding its uuid column with `z.uuidv4()`, the pattern every uuid column copies    |
-| `packages/db-schema/src/services/message/constants.ts`               | `AUTOMOD_USER_ID`, the reserved moderation actor, built on `ZERO_UUID`                                |
-| `apps/web/shared/services/pageBuilder/constants.ts`                  | `NO_SURVEY_ID`, the "no survey" sentinel, built on `ZERO_UUID`                                        |
-| `packages/shared/src/services/devSeed/constants.ts`                  | `DRIVEN_USER_ID`, a v4-shaped id that is not the zero UUID                                            |
-| `packages/db-schema/src/models/survey/SurveyResponseEntity.ts`       | The survey response's row key and participant token, both validated as v4                             |
+| File                                                                  | Role                                                                                                  |
+| :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+| `packages/shared/src/util/id/uuid/constants.ts`                       | `UUIDV4_REGEX`, the v4 pattern, and `ZERO_UUID`, the all-zero v4 every fixed id builds on             |
+| `apps/web/shared/util/id/uuid/checkIsUuidV4.ts`                       | The client's check of an id against the v4 pattern                                                    |
+| `apps/web/shared/util/id/uuid/checkIsUuidV4.test.ts`                  | Holds the runtime's random UUID to that check                                                         |
+| `apps/web/shared/services/resource/link/createResourceLinkSchema.ts`  | The validator of a field holding another resource's id: `z.uuidv4()`, registered in the link registry |
+| `packages/db-schema/src/schema/message/roomsInMessage.ts`             | A select schema overriding its uuid column with `z.uuidv4()`, the pattern every uuid column copies    |
+| `packages/db-schema/src/services/message/constants.ts`                | `AUTOMOD_USER_ID`, the reserved moderation actor, built on `ZERO_UUID`                                |
+| `apps/web/shared/services/pageBuilder/constants.ts`                   | `NO_SURVEY_ID`, the "no survey" sentinel, built on `ZERO_UUID`                                        |
+| `packages/shared/src/services/devSeed/constants.ts`                   | `DRIVEN_USER_ID`, a v4-shaped id that is not the zero UUID                                            |
+| `packages/db-schema/src/schema/resource/surveyResponsesInResource.ts` | The survey response's id, validated as v4 by its select schema                                        |
+| `apps/web/shared/models/db/survey/ParticipantTokenInput.ts`           | The participant token a response names: empty, or a v4                                                |
 
 ## Notes
 

@@ -12,7 +12,7 @@ flowchart LR
   RESP["/view/Survey/[id]"] -->|readPublishedResourceContent| MERGED["published model snapshot<br/>+ live settings merged by reapplySurveyLiveContent"]
   MERGED -->|closed| MSG["closed state<br/>(closedMessage or the default)"]
   MERGED -->|open| FORM["the survey runner"]
-  SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]
+  SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| SR[("surveyResponses")]
 ```
 
 - **Public read** — `readPublishedResourceContent` merges the live settings into its response through `reapplyLiveResourceContent` ([resource snapshots](../resource-snapshots/design.md)). The published model snapshot itself stays immutable; only the settings beside it are live.

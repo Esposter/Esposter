@@ -55,14 +55,14 @@ flowchart TD
 
 ## Reading it in reverse
 
-The one reader today is participant-token validation. An identified survey accepts a token only when a Program bound to it issued that token, so `resolveIdentifiedToken` asks for the survey owner's Programs holding a `Survey` link to the survey, then scans each one's participants for the token.
+The one reader today is participant-token validation. An identified survey accepts a token only when a Program bound to it issued that token, so `resolveIdentifiedToken` asks for the survey owner's Programs holding a `Survey` link to the survey, then looks the token up among those Programs' participants in one indexed read.
 
 ```mermaid
 flowchart LR
   SUBMIT["createSurveyResponse with a token"] --> RESOLVE["resolveIdentifiedToken"]
   RESOLVE -->|"targetId = survey, type = Survey"| LINKS[("resourceLinks")]
   LINKS -->|"sourceId"| PROGRAMS["the owner's Programs"]
-  PROGRAMS -->|"partition = program, token"| PARTICIPANTS[("ProgramParticipants")]
+  PROGRAMS -->|"resourceId = program, token"| PARTICIPANTS[("programParticipants")]
   PARTICIPANTS -->|"a match"| ACCEPT["token accepted"]
   PARTICIPANTS -->|"no match"| REFUSE["token refused"]
 ```

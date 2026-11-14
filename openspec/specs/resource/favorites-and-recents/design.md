@@ -32,7 +32,7 @@ flowchart LR
 
 `resourceAccesses` adds one column to that shape — `accessedAt`, rewritten on every open by an upsert, so the table stays bounded by what exists rather than growing with traffic. Its own index on `(userId, accessedAt)` is what keeps "this user's rows, newest first" from re-sorting every resource they have ever opened; the primary key orders by `resourceId` and cannot serve that.
 
-It is deliberately not called a view. `ResourceViewEntity` counts anonymous hits on a _published_ resource ([published view analytics](../published-view-analytics/design.md)); this records the owner opening their own.
+It is deliberately not called a view. The `resourceViews` table counts anonymous hits on a _published_ resource ([published view analytics](../published-view-analytics/design.md)); this records the owner opening their own.
 
 A star is a toggle, and `toggleFavorite` implements it as a delete-then-insert rather than a read-then-branch: the delete's own `returning()` reports whether the star was set, so the toggle cannot race with itself and report the wrong new state. The client takes that answer as authoritative rather than keeping its optimistic flip — a list that went stale (another tab starred the same row first) flips the wrong way, and nothing else would ever reconcile it.
 

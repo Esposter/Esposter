@@ -7,7 +7,7 @@ Survey is a resource type: its content is a typed survey document and its settin
 - Content blob: `surveyResourceSchema = z.strictObject({ document, settings })`. `document` is a `SurveyDocument` from the `vue-survey-engine-headless` package, and `settings` is the [settings section](../survey-response-controls/design.md). The object is strict, so a save in the `{ model }` shape is refused rather than read as an empty survey. A save that omits its document or its settings is refused: neither key has a default. A document the survey check reports issues on is refused, and every issue is reported at the field it names.
 - The `settings` section is live collection state read outside the publish snapshot: the accepting-responses toggle and closed message ([response controls](../survey-response-controls/design.md)) and the response mode ([response modes](../survey-response-modes/design.md)) share that one object.
 - `contentVersion` is server-incremented by the resource factory, never by the client.
-- `SurveyResponseEntity` (Azure Table, partitionKey = survey resource id) holds respondent answers plus the opaque `participantToken` that joins a response back to a program participant.
+- The `surveyResponses` table in core holds one row per respondent response, cascading with its survey, with the opaque `participantToken` that joins a response back to a program participant.
 - A survey belongs to no group; grouping resources at all is the deferred [resource groups](../../../deferred/resource/resource-groups/design.md) idea.
 
 ## Capabilities
@@ -29,10 +29,10 @@ flowchart LR
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [resources](../../architecture/resource/design.md)):
 
-| Procedure                                                                         | Auth                                             | Purpose                          |
-| --------------------------------------------------------------------------------- | ------------------------------------------------ | -------------------------------- |
-| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited — create on the slow budget | respondent answers → Azure Table |
-| `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                                            | response management tooling      |
+| Procedure                                                                         | Auth                                             | Purpose                     |
+| --------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------- |
+| `createSurveyResponse` / `updateSurveyResponse` / `readSurveyResponse`            | public, rate-limited — create on the slow budget | respondent answers → SQLite |
+| `readSurveyResponsesCount` / `deleteSurveyResponse` / `readSurveyResponseRecords` | owner                                            | response management tooling |
 
 Every response write is checked against the published document, which the [survey respondent](../survey-respondent/design.md) capability states. An update checks the response's model version and, in Identified mode, its participant token inside a conditional write, so of two saves computed from the same version the later fails the check rather than erasing the earlier's answers ([conditional writes](../../architecture/conditional-writes/design.md)).
 
@@ -43,7 +43,7 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 - **Editor blade**: `Editor.vue` mounts the survey's Creator. The Creator edits its own copy of the document, loaded from the content store. The copy autosaves through the store's `saveDocument` once the survey check finds no issue in it. An issue is shown as an alert, and the save is not written. The Editor tracks the document's image files and sweeps the ones a removal left unreferenced before it unmounts. A restore reloads the copy through the adopt path ([third-party document adapters](../../architecture/third-party-document-adapters/design.md)).
 - **Overview blade**: wraps the generic Overview to add the response count beside the Views row, plus the Collection card owning the `settings` section.
 - **Responses blade**: a table over `survey.readSurveyResponseRecords`, the first-look surface for results, with per-row detail and delete ([response management](../survey-response-management/design.md)). A Summary of every question is the tab beside it ([survey response summary](../survey-response-summary/design.md)).
-- **Respondent page**: `/view/Survey/[id]` via `ViewComponentMap` renders the published document through the runner and writes responses ([survey respondent](../survey-respondent/design.md)). In-progress resume stores only a per-survey response id in localStorage, and the answers live solely in Azure Table. The id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Until that submit, the row is a draft ([response management](../survey-response-management/design.md)). Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
+- **Respondent page**: `/view/Survey/[id]` via `ViewComponentMap` renders the published document through the runner and writes responses ([survey respondent](../survey-respondent/design.md)). In-progress resume stores only a per-survey response id in localStorage, and the answers live solely in the `surveyResponses` table. The id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Until that submit, the row is a draft ([response management](../survey-response-management/design.md)). Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
 
 ## Key files
 
@@ -60,5 +60,5 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 
 ## Notes
 
-- Respondent procedures are public and rate-limited — they are the only unauthenticated write of a respondent's answers. (A published view's read also increments a rate-limited view count, which holds no answer.) Every response write passes `resolveSurveyResponseWrite` ([response controls](../survey-response-controls/design.md)). Being anonymous, it is also bounded: a creation adds a row, so it spends the slow budget per address (`slowRateLimitedProcedure`), and the answers are stored as one JSON property, so their serialized length is capped at what that property holds (`surveyResponseModelSchema`), refused before the write rather than by the Table after it.
-- Responses whose survey row is absent are orphans, and orphans can be truncated.
+- Respondent procedures are public and rate-limited — they are the only unauthenticated write of a respondent's answers. (A published view's read also increments a rate-limited view count, which holds no answer.) Every response write passes `resolveSurveyResponseWrite` ([response controls](../survey-response-controls/design.md)). Being anonymous, it is also bounded: a creation adds a row, so it spends the slow budget per address (`slowRateLimitedProcedure`), and the answers are stored as one JSON property, so their serialized length is capped at what that property holds (`surveyResponseModelSchema`), refused before the write rather than by the database after it.
+- A response cannot outlive its survey row: the foreign key cascades when the survey is purged.

@@ -4,20 +4,20 @@ Free-text notes a moderator can attach to a room member, visible only to holders
 
 ## How it works
 
-Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in Azure Table alongside the audit log rather than in Postgres. Each note is partitioned by `roomId` with a reverse-ticked `rowKey` so the newest note sorts first, and carries the target member, the authoring moderator, and the note text. A member's actions — their profile's overflow menu and their row's context menu, one list built by `useMemberActionItems` — carry a **Notes** item, titled with how many notes exist once the profile has read the count, and the dialog lists them newest-first with an input to append another.
+Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in the core database beside the audit log, as a SQLite table. Each note belongs to its room by `roomId` and is read newest first by a cursor over `createdAt` and `id`, and carries the target member, the authoring moderator, and the note text. A member's actions — their profile's overflow menu and their row's context menu, one list built by `useMemberActionItems` — carry a **Notes** item, titled with how many notes exist once the profile has read the count, and the dialog lists them newest-first with an input to append another.
 
 ```mermaid
 flowchart LR
-  N["a member's Notes dialog"] -->|createModerationNote| W["AzureTable.ModerationNotes append"]
+  N["a member's Notes dialog"] -->|createModerationNote| W["moderationNotes insert"]
   N -->|readModerationNotes| R["cursor-paginated per-member read"]
   W --> R
 ```
 
-Room deletion cleans the partition the same way messages are cleaned.
+Room deletion removes a room's notes by cascade from the room row.
 
 ## Data model
 
-Azure Table `AzureTable.ModerationNotes`: `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `targetUserId`, `actorUserId`, and `note` (bounded by `MODERATION_NOTE_MAX_LENGTH`, declared in `packages/db-schema/src/services/message/constants.ts`). There is no edit or delete.
+SQLite table `moderationNotes` in core: `roomId` and `targetUserId` are foreign keys that cascade from the room and the member's account, `actorUserId` is set to null when the moderator's account is deleted, and `note` is bounded by `MODERATION_NOTE_MAX_LENGTH`, declared in `packages/db-schema/src/services/message/constants.ts`. One index over room, target and creation time serves both the newest-first page and the count. There is no edit or delete.
 
 ## Procedures
 
@@ -33,7 +33,7 @@ All under `message.moderation.` (`server/trpc/routers/message/moderation.ts`), g
 
 | File                                                                  | Role                                    |
 | :-------------------------------------------------------------------- | :-------------------------------------- |
-| `packages/db-schema/src/models/message/ModerationNoteEntity.ts`       | note entity                             |
+| `packages/db-schema/src/schema/message/moderationNotesInMessage.ts`   | note table and its select schema        |
 | `apps/web/server/trpc/routers/message/moderation.ts`                  | the three procedures                    |
 | `apps/web/app/store/message/moderation/note.ts`                       | client note list store                  |
 | `apps/web/app/components/Message/Model/Member/ActionDialog/Notes.vue` | the notes dialog                        |

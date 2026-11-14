@@ -1,6 +1,6 @@
 # Survey Response Management
 
-Real collection runs accumulate test submissions before launch and junk after. The Responses blade's Individual view — beside its [Summary](../survey-response-summary/design.md) — carries the minimum owner-side operations over that data: a detail view of one respondent's full answers, a per-response delete, and a response count on the Overview so the number is visible without opening the blade. All of it sits on the existing Azure Table data — no new services.
+Real collection runs accumulate test submissions before launch and junk after. The Responses blade's Individual view — beside its [Summary](../survey-response-summary/design.md) — carries the minimum owner-side operations over that data: a detail view of one respondent's full answers, a per-response delete, and a response count on the Overview so the number is visible without opening the blade. All of it sits on the existing survey responses table — no new services.
 
 ## How it works
 
@@ -8,39 +8,39 @@ Real collection runs accumulate test submissions before launch and junk after. T
 flowchart LR
   BLADE["Responses blade<br/>response table + row actions"] -->|row action| DETAIL["Response detail dialog<br/>question → answer list"]
   BLADE -->|"delete action → confirm"| DEL["deleteSurveyResponse<br/>owner-gated"]
-  DEL --> AT[("SurveyResponseEntity")]
-  BLADE -->|readSurveyResponseRecords| RECORDS["columns + rows, each row<br/>carrying its own rowKey"]
+  DEL --> ST[("surveyResponses")]
+  BLADE -->|readSurveyResponseRecords| RECORDS["columns + rows, each row<br/>carrying its own responseId"]
   OV["Survey Overview Essentials"] -->|readSurveyResponsesCount| COUNT["N responses → Responses blade"]
 ```
 
-- **Submitted responses only** — the respondent page autosaves as it is answered, so a row exists from the first answer. Until the respondent submits, that row carries `isDraft: true`; the submit writes the whole row back without it (a Merge cannot drop a key), and a later save can never make it a draft again. Every read that counts, lists or joins responses — the count, the Responses blade, the dataset and the [program](../program-resource/design.md) funnel — filters through `getSurveyResponsesFilter`, which asks for the key to be absent, so a respondent who answered one question and left is a response on no surface. A row with no key reads as submitted, so no backfill is needed. Every write states `isDraft` (`true` while the respondent is still answering, `false` for the submit), and an input without it is refused. The entity's field stays optional because the writer sets the key only while it is `true`, so a submitted row carries none.
-- **Detail dialog** — a per-row action opening the response as a question → answer list, the dataset row rendered vertically. Answers already arrive flattened through the dataset, so there is no new read path. One singleton dialog serves the whole table, driven by the target row key.
-- **Delete** — `deleteSurveyResponse({ id, rowKey })`. The partition key is the survey id **derived server-side from the owner-checked `id`**, never accepted from the caller, so one owner's survey id can never reach another survey's rows. Existence is proven before deleting, so a second delete of the same key errors rather than silently passing. The confirm follows the [resource page parity](../resource-page-parity/design.md) guard patterns.
-- **Count** — `readSurveyResponsesCount({ id })`, owner-gated, surfaced on the Survey Overview Essentials grid as an "N responses" link to the Responses blade. Azure Table has no cheap server-side count, so this counts keys-only rows up to one past `DATASET_MAX_COUNTED_ROWS` (a multiple of `AZURE_MAX_PAGE_SIZE`, the dataset's own cap) and returns the count plus an `isCapped` flag — that extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders the trailing `+`.
+- **Submitted responses only** — the respondent page autosaves as it is answered, so a row exists from the first answer. Until the respondent submits, that row carries `isDraft: true`; the submit writes the whole row back with `isDraft` false, and a later save can never make it a draft again. Every read that counts, lists or joins responses — the count, the Responses blade, the dataset and the [program](../program-resource/design.md) funnel — filters through `getSurveyResponsesWhere`, which asks for `isDraft` to be false, so a respondent who answered one question and left is a response on no surface. A row whose flag is false reads as submitted, so no backfill is needed. Every write states `isDraft` (`true` while the respondent is still answering, `false` for the submit), and an input without it is refused. The column defaults to `false`, so a row created as submitted needs no draft flag.
+- **Detail dialog** — a per-row action opening the response as a question → answer list, the dataset row rendered vertically. Answers already arrive flattened through the dataset, so there is no new read path. One singleton dialog serves the whole table, driven by the target response id.
+- **Delete** — `deleteSurveyResponse({ id, responseId })`. The survey is the **owner-checked `id`**, never a caller-chosen value, and `responseId` is matched only among that survey's rows, so one owner's survey id can never reach another survey's responses. Existence is proven before deleting, so a second delete of the same response errors rather than silently passing. The confirm follows the [resource page parity](../resource-page-parity/design.md) guard patterns.
+- **Count** — `readSurveyResponsesCount({ id })`, owner-gated, surfaced on the Survey Overview Essentials grid as an "N responses" link to the Responses blade. The count is a bounded SQL count of the submitted rows, up to one row past `DATASET_MAX_COUNTED_ROWS` (a multiple of `AZURE_MAX_PAGE_SIZE`, the dataset's own cap) and returns the count plus an `isCapped` flag — that extra key is what distinguishes exactly-cap from beyond-cap, and only `isCapped` renders the trailing `+`.
 
 ## Procedures
 
-| Procedure                   | Auth  | Input            | Purpose                             |
-| --------------------------- | ----- | ---------------- | ----------------------------------- |
-| `readSurveyResponsesCount`  | owner | `{ id }`         | capped response count + `isCapped`  |
-| `deleteSurveyResponse`      | owner | `{ id, rowKey }` | remove one response entity          |
-| `readSurveyResponseRecords` | owner | `{ id }`         | the blade's rows, each with its key |
+| Procedure                   | Auth  | Input                | Purpose                            |
+| --------------------------- | ----- | -------------------- | ---------------------------------- |
+| `readSurveyResponsesCount`  | owner | `{ id }`             | capped response count + `isCapped` |
+| `deleteSurveyResponse`      | owner | `{ id, responseId }` | remove one response                |
+| `readSurveyResponseRecords` | owner | `{ id }`             | the blade's rows, each with its id |
 
 ## Key files
 
-| File                                                               | Role                            |
-| ------------------------------------------------------------------ | ------------------------------- |
-| `apps/web/server/services/survey/getSurveyResponsesFilter.ts`      | submitted rows only             |
-| `apps/web/server/services/survey/readSurveyResponsesCount.ts`      | the capped count                |
-| `apps/web/server/services/survey/readSurveyResponseRecords.ts`     | rows + their keys from one read |
-| `apps/web/app/components/Resource/Survey/Responses.vue`            | row actions                     |
-| `apps/web/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog               |
-| `apps/web/app/components/Resource/Survey/ResponseDeleteDialog.vue` | the destructive confirm         |
-| `apps/web/app/components/Resource/Survey/Overview.vue`             | count + blade link              |
+| File                                                               | Role                           |
+| ------------------------------------------------------------------ | ------------------------------ |
+| `apps/web/server/services/survey/getSurveyResponsesWhere.ts`       | submitted rows only            |
+| `apps/web/server/services/survey/readSurveyResponsesCount.ts`      | the capped count               |
+| `apps/web/server/services/survey/readSurveyResponseRecords.ts`     | rows + their ids from one read |
+| `apps/web/app/components/Resource/Survey/Responses.vue`            | row actions                    |
+| `apps/web/app/components/Resource/Survey/ResponseDetailDialog.vue` | the detail dialog              |
+| `apps/web/app/components/Resource/Survey/ResponseDeleteDialog.vue` | the destructive confirm        |
+| `apps/web/app/components/Resource/Survey/Overview.vue`             | count + blade link             |
 
 ## Notes
 
 - The dataset contract stays untouched — delete and count are survey-specific owner tooling, not dataset capabilities.
-- Deleting a response needs its `rowKey`, which a dataset row doesn't carry. Rather than reading keys and rows as two lists and matching them by index — which a response submitted or deleted between the reads shifts out of alignment, pointing a delete at the wrong response — `readSurveyResponseRecords` returns each row already carrying its own key, from the one `readSurveyResponseDatasetSource` read the dataset provider also uses.
+- Deleting a response needs its `responseId`, which a dataset row doesn't carry. Rather than reading ids and rows as two lists and matching them by index — which a response submitted or deleted between the reads shifts out of alignment, pointing a delete at the wrong response — `readSurveyResponseRecords` returns each row already carrying its own `responseId`, from the one `readSurveyResponseDatasetSource` read the dataset provider also uses.
 - Bulk delete-all ("reset before launch") is not built: it would be one confirmation away from the same procedure in a loop, so deletion stays one response at a time.
 - Editing a respondent's answers is deliberately out — owners moderate, they don't rewrite answers.

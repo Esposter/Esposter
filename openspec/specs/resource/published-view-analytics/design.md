@@ -9,15 +9,15 @@ This is explicitly **not** an analytics product: no unique-visitor identificatio
 ```mermaid
 flowchart LR
   VIEWER["public /view/[type]/[id]"] -->|readPublishedResourceContent| SERVE["serve the publish snapshot"]
-  SERVE -->|"fire-and-forget increment<br/>(failure never blocks the read)"| AT[("ResourceViews table<br/>pk = resourceId, rk = UTC date<br/>count")]
+  SERVE -->|"fire-and-forget increment<br/>(failure never blocks the read)"| RV[("resourceViews table<br/>one row per UTC day<br/>count")]
   OV["Overview Essentials<br/>(publishable + published)"] -->|readResourceViewCount owner| SUM["total views"]
 ```
 
-- **Storage** — `AzureTable.ResourceViews`, partitionKey = resource id, rowKey = the UTC date, with a single `count` property. Daily buckets keep entities small and make "views this week" a partition range scan when it is needed.
-- **Increment** — one statement per view: an upsert that adds one to the day's `count` (`json_set` over `json_extract`), so two concurrent views both count and nothing retries. A failed statement is logged and that view is dropped: the read path must never fail or slow because of telemetry. Counting happens only after the read is guaranteed to succeed, so a 404 never lands in the buckets. Rate limiting on the public read already bounds write volume.
-- **Read** — `readResourceViewCount({ id })`, owner-gated, sums the partition over a capped scan. Magnitudes matter more than precision.
+- **Storage** — `resourceViews`, a SQLite table in core: one row per resource per UTC day, unique on the resource and the date, with a single `count` column. Daily buckets keep rows small and make "views this week" a date-range read over the resource's rows when it is needed.
+- **Increment** — one statement per view: an insert of the day's row that, on conflict, adds one to its `count` (`INSERT ... ON CONFLICT DO UPDATE`), so two concurrent views both count and nothing retries. A failed statement is logged and that view is dropped: the read path must never fail or slow because of telemetry. Counting happens only after the read is guaranteed to succeed, so a 404 never lands in the buckets. Rate limiting on the public read already bounds write volume.
+- **Read** — `readResourceViewCount({ id })`, owner-gated, sums the resource's day rows in one statement. Magnitudes matter more than precision.
 - **Surface** — Overview Essentials gains a **Views** row for published resources. On a survey the Views row sits in Essentials beside the response count ([response management](../survey-response-management/design.md)) — the funnel in two numbers.
-- **Delete and unpublish** — the partition is cleared by `purgeResource`, not by delete: a soft-deleted resource keeps its counts for the whole [recycle bin](../recycle-bin/design.md) window, so a restore restores the history too. Unpublishing leaves history intact as well, so re-publishing continues the same counter. The count is the resource's audience, not the version's.
+- **Delete and unpublish** — the rows are cleared by the cascade from the resource row, which `purgeResource` deletes, not by delete: a soft-deleted resource keeps its counts for the whole [recycle bin](../recycle-bin/design.md) window, so a restore restores the history too. Unpublishing leaves history intact as well, so re-publishing continues the same counter. The count is the resource's audience, not the version's.
 
 ## Procedures
 
@@ -31,7 +31,7 @@ The increment is internal to the public read, not a procedure.
 
 | File                                                                  | Role                                               |
 | --------------------------------------------------------------------- | -------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceViewEntity.ts`        | the day-bucket entity                              |
+| `packages/db-schema/src/schema/resource/resourceViewsInResource.ts`   | the day-row table and its select schema            |
 | `apps/web/server/services/resource/incrementResourceViewCount.ts`     | the fire-and-forget increment                      |
 | `apps/web/server/services/resource/readResourceViewCount.ts`          | the summed read                                    |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | increment on the public read + the count procedure |
