@@ -11,7 +11,7 @@
 ## 3.
 
 - [x] 3.1 Replace every D1 `db.transaction` with a batch, a conditional statement or a constraint; an object's own SQLite keeps its synchronous transactions. Verified by no `transaction(` call on D1 remaining and the touched services' tests.
-- [ ] 3.2 Rewrite the Postgres-only queries and the rate limiter's store. Verified by the touched services' tests.
+- [x] 3.2 Rewrite the Postgres-only queries and the rate limiter's store. Verified by no Postgres-only operator or type remaining outside the cutover and the D1 suites of the touched services.
 
 ## 4.
 
