@@ -21,7 +21,7 @@ export const releaseStorageLedgerEntriesByWhere = async (
 ): Promise<UserInAuth["id"][]> => {
   if (!where) return [];
 
-  const [, releasedStorageLedgerEntries] = await db.batch([
+  const [, releasedStorageLedgerEntries]: [unknown, { userId: UserInAuth["id"] }[]] = await db.batch([
     db
       .update(usersInAuth)
       .set({
