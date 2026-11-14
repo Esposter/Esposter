@@ -100,7 +100,6 @@
     "grid-engine": "catalog:",
     "keyframe-store": "workspace:*",
     "livekit-client": "catalog:",
-    "livekit-server-sdk": "catalog:",
     "lowlight": "catalog:",
     "lru-cache": "catalog:",
     "marked": "catalog:",

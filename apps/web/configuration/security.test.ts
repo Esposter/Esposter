@@ -29,7 +29,6 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.stubEnv("AZURE_CONTAINER_BASE_URL", "https://container.blob.core.windows.net");
-    vi.stubEnv("LIVEKIT_URL", "wss://livekit.example.cloud");
     vi.resetModules();
     const { security } = await import("./security.ts");
 
@@ -41,10 +40,9 @@ describe("security", () => {
         "data:",
         "blob:",
         "https://container.blob.core.windows.net",
-        "wss://livekit.example.cloud",
-        "https://livekit.example.cloud",
+        "https://*.realtime.cloudflare.com",
+        "wss://*.realtime.cloudflare.com",
         "wss://*.webpubsub.azure.com",
-        "https://cdn.jsdelivr.net",
       ]),
     );
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
@@ -56,7 +54,6 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.stubEnv("AZURE_CONTAINER_BASE_URL", undefined);
-    vi.stubEnv("LIVEKIT_URL", undefined);
     vi.resetModules();
     const { security } = await import("./security.ts");
 
@@ -66,9 +63,9 @@ describe("security", () => {
       "'self'",
       "data:",
       "blob:",
+      "https://*.realtime.cloudflare.com",
+      "wss://*.realtime.cloudflare.com",
       "wss://*.webpubsub.azure.com",
-      "https://cdn.jsdelivr.net",
-      "https://storage.googleapis.com",
     ]);
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
   });
