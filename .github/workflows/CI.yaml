@@ -42,6 +42,9 @@ jobs:
       # (`openspec/specs/architecture/vite-plus/design.md` → Rejected)
       - name: 🏗️ Build app
         run: pnpm -C apps/web build
+      # The Worker's code is capped at 64 MiB uncompressed, so the server bundle is summed against that cap after each build
+      - name: 📏 Check the server bundle size
+        run: pnpm -C scripts server-bundle:check
 
   coverage:
     name: Coverage
