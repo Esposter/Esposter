@@ -71,7 +71,7 @@ Few reads span rooms, and each has an owner:
 - **Search across rooms** (`searchMessages` with several rooms): the Worker asks each listed room's object in parallel and merges by rank; the list is the caller's own filter, so the fan-out is bounded by what they asked for.
 - **Scheduled messages list**: the sender's `UserObject` indexes their pending scheduled messages the same way.
 - **Forward to many rooms**: one `createMessage` per target room's object, settled independently, as today.
-- **Account deletion and data export**: the queue consumer walks the person's rooms and calls each room's `eraseUser`, `deleteUserReactions` or `exportUserMessages`; an owned room's object is deleted with `deleteAll`.
+- **Account deletion and data export**: the queue consumer walks the person's rooms and calls each room's `deleteUserMessages`, `deleteUserReactions` or `exportUserMessages`; an owned room's object is deleted with `deleteAll`. The removals reach open views through the room's ordinary delete events, because the object that erases is the one that broadcasts. Rejected: leaving them for a reload to correct, which is the stale view live updates exist to remove.
 
 ## Ids
 

@@ -72,7 +72,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 
 **Search needs no sweep.** A room's search rows live in the room's object, so `deleteAll` removes them with the room, and an erased message's row is rewritten in the same transaction as the message.
 
-**Nothing is announced to open rooms.** A moderation ban announces each change it commits, so members watch messages leave. The sweep sends no announcement for its erasures or its reaction removals, so open rooms show both changes on reload. A live announcement was decided against ([rejected](../../../rejected/esbabbler/deleted-account-live-removal/proposal.md)).
+**Open rooms see the erasures live.** Each room's object erases the account's messages and reactions and broadcasts each removal to the room's viewers, the same events a moderation ban sends, because the object that erases is the one that broadcasts.
 
 **Blob prefixes are swept by prefix, and the archive by its row.** A user's `{userId}/` prefix holds what they wrote in the buckets above, so the sweep lists no keys beyond the prefix. The export archive sits under no prefix, so the sweep reads its row instead.
 
