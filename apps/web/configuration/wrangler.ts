@@ -13,6 +13,18 @@ import { Environment } from "../shared/models/environment/Environment.ts";
 // A binding's name is its resource's name in SCREAMING_SNAKE, so each bucket is bound by it
 const toBindingName = (name: string) => name.replaceAll("-", "_").toUpperCase();
 
+// The environment a build is for: CI sets CLOUDFLARE_ENV by its branch, and a build without it is prod. Any other value is
+// a typo that would deploy one environment's bindings under another's name, so it fails the build
+export const getBuildCloudflareEnvironment = (): CloudflareEnvironment => {
+  const value = process.env.CLOUDFLARE_ENV ?? CloudflareEnvironment.Production;
+  const environment = Object.values(CloudflareEnvironment).find(
+    (cloudflareEnvironment) => cloudflareEnvironment === value,
+  );
+  if (!environment)
+    throw new Error(`CLOUDFLARE_ENV must be one of ${Object.values(CloudflareEnvironment).join(", ")}, got ${value}`);
+  return environment;
+};
+
 // One environment's wrangler block. Wrangler does not inherit a binding, or a var, into an `env` block, so each carries
 // its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A binding's
 // name is the same in both environments, so no code branches on the environment to reach a resource. The vars are the

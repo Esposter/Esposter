@@ -5,7 +5,6 @@ import { readdir, stat } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
-import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import {
   PDF_CMAP_BASE_URL,
   PDF_STANDARD_FONT_DATA_BASE_URL,
@@ -17,7 +16,7 @@ import {
   GENSHIN_REGION_DATA_BASE_URL,
 } from "../shared/services/genshin/constants.ts";
 import { TEMPORAL_POLYFILL_BASE_URL } from "./constants.ts";
-import { getEnvironmentWrangler } from "./wrangler.ts";
+import { getBuildCloudflareEnvironment, getEnvironmentWrangler } from "./wrangler.ts";
 
 // The world package's own folder, found through its manifest, which is there before any build
 const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("genshin-world/package.json"));
@@ -25,20 +24,14 @@ const genshinWorldDirectory = dirname(createRequire(import.meta.url).resolve("ge
 const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs-dist/package.json"));
 
 export const nitro: NuxtConfig["nitro"] = {
-  // The Worker's own wrangler configuration, written beside the build. The top level is prod, which a local run and an
-  // Unset CLOUDFLARE_ENV use; the env blocks are what CI deploys, `dev` or `prod` by its branch. The app's stateful half is
-  // the functions Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
+  // The Worker's own wrangler configuration, written beside the build. A build is made for one environment — CI sets
+  // CLOUDFLARE_ENV by its branch before building, and a local build is prod — so the file holds that environment alone:
+  // wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the functions Worker's
+  // Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,
     nodeCompat: true,
-    wrangler: {
-      compatibility_date: "2026-11-01",
-      env: {
-        dev: getEnvironmentWrangler(CloudflareEnvironment.Development),
-        prod: getEnvironmentWrangler(CloudflareEnvironment.Production),
-      },
-      ...getEnvironmentWrangler(CloudflareEnvironment.Production),
-    },
+    wrangler: { compatibility_date: "2026-11-01", ...getEnvironmentWrangler(getBuildCloudflareEnvironment()) },
   },
   hooks: {
     // Nitro's Vite builder, the one Nuxt 5 builds through, dropped the size summary its Rollup builder prints, so each
