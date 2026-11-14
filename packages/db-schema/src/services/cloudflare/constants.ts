@@ -1,6 +1,5 @@
-import { SITE_NAME } from "@esposter/shared";
-
-export const CLOUDFLARE_WORKLOAD = SITE_NAME.toLowerCase();
+// oxlint-disable-next-line naming/no-site-name-literal -- the web's `nuxt.config` reads this file through `configuration/wrangler.ts` while `nuxt prepare` runs from `postinstall`, before `@esposter/shared` is built
+export const CLOUDFLARE_WORKLOAD = "esposter";
 // The one Cloudflare account both stacks, both Workers and the cutover deploy into. An account id is not a secret (the
 // Dashboard URLs carry it), so it is committed rather than read from an environment or Pulumi config
 export const CLOUDFLARE_ACCOUNT_ID = "33d16cc4281c2845398ddb2fbd29829b";
