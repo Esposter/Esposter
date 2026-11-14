@@ -816,9 +816,6 @@ importers:
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.7
-      postgres:
-        specifier: 'catalog:'
-        version: 4.1.1
       temporal-polyfill:
         specifier: 'catalog:'
         version: 1.0.8
