@@ -41,7 +41,7 @@ The index is keyed by `id`, not by `rowid`, so a rename, a tag edit or a hard de
 
 | File                                                                         | Role                                                  |
 | ---------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `server/services/search/getSearchExpression.ts`                              | The query's words as one quoted, OR-joined expression |
+| `packages/shared/src/services/search/getSearchExpression.ts`                 | The query's words as one quoted, OR-joined expression |
 | `server/services/resource/getResourceSearchMatch.ts`                         | The index arm of the owner's filter                   |
 | `server/services/resource/getResourceNameSearchMatch.ts`                     | The name-only arm that orders name matches first      |
 | `server/services/resource/getResourceSearchHits.ts`                          | The index rows and their `bm25` rank                  |
