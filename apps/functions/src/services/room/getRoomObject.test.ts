@@ -39,9 +39,11 @@ const openMockRoom = (roomId: string) => {
   return room;
 };
 
-// A room's object as the functions Worker reaches it: the same instance for the same room, so a read names what an
-// earlier write left. Each person's user object is the shared stand-in, so what a room asks of it is recorded there
-export const getRoomObject = (roomId: string): RoomObject => openMockRoom(roomId).object;
+// A room's object as the functions Worker reaches it: the same instance for each room, so a read sees earlier writes.
+// The object is typed as the stub it stands in for, since a caller awaits each RPC.
+// Each person's user object is the shared stand-in, so what a room asks of it is recorded there.
+export const getRoomObject = (roomId: string): DurableObjectStub<RoomObject> =>
+  openMockRoom(roomId).object as unknown as DurableObjectStub<RoomObject>;
 
 // A socket the room accepts as the runtime accepts one, tagged by who opened it, so the room's broadcasts reach it
 export const acceptRoomSocket = (roomId: string, socket: MockSocket, tags: string[]): void => {

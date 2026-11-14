@@ -37,7 +37,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { generateSecretToken, hashSecretToken, takeOne } from "@esposter/shared";
+import { generateSecretToken, hashSecretToken, NotFoundError, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -80,6 +80,13 @@ const readSurveyResponseRows = (resourceId: string) =>
     .where(eq(surveyResponsesInResource.resourceId, resourceId));
 describe(deleteAccountHandler, () => {
   const content = JSON.stringify({});
+  // The blob is written with no condition, so the store returns the object it wrote, and its size is what is charged
+  const writeResourceAssetJsonBlob = async (blobName: string): Promise<number> => {
+    const object = await writeJsonBlob(getBucket(StorageBucket.ResourceAssets), blobName, content);
+    if (!object) throw new NotFoundError("ResourceAssetBlob", blobName);
+
+    return object.size;
+  };
   const countedBytes = 1;
   const emojiTag = "emojiTag";
   const message = "message";
@@ -144,7 +151,7 @@ describe(deleteAccountHandler, () => {
       { message, type: MessageType.Message },
       { userId },
     );
-    const memberRoomMessage = await memberRoomObject.createMessage(
+    await memberRoomObject.createMessage(
       {
         files: [{ filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 }],
         message,
@@ -192,13 +199,12 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    const resourceAssetsBucket = getBucket(StorageBucket.ResourceAssets);
     const contentBlobName = getContentBlobName(ownedResource.id);
-    const { size: contentSize } = await writeJsonBlob(resourceAssetsBucket, contentBlobName, content);
+    const contentSize = await writeResourceAssetJsonBlob(contentBlobName);
     await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, contentBlobName, contentSize);
     // A version's object is stored under its resource's directory at its hash, as the snapshot store writes it
     const versionBlobName = `${ownedResource.id}/objects/${hash}`;
-    const { size: versionSize } = await writeJsonBlob(resourceAssetsBucket, versionBlobName, content);
+    const versionSize = await writeResourceAssetJsonBlob(versionBlobName);
     await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, versionBlobName, versionSize);
     await mockDb
       .insert(resourceVersionsInResource)

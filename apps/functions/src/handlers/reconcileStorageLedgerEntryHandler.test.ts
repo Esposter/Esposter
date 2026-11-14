@@ -82,7 +82,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await bucket.put(name, resourceAssetContent);
   };
 
-  const createStorageLedgerEntry = (entry = { blobName, containerName }) =>
+  const createStorageLedgerEntry = (
+    entry: { blobName: string; containerName: StorageBucket } = { blobName, containerName },
+  ) =>
     mockDb
       .insert(storageLedgerInStorage)
       .values({ ...entry, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId });

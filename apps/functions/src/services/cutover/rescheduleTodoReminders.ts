@@ -1,4 +1,3 @@
-import type { UserObjectRpc } from "@esposter/db-schema";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 import { todoReminderContentSchema } from "#src/models/todoReminder/TodoReminderContent";
@@ -12,7 +11,7 @@ import { and, eq, isNull } from "drizzle-orm";
 export const rescheduleTodoReminders = async (
   database: DrizzleD1Database,
   bucket: R2Bucket,
-  userNamespace: DurableObjectNamespace<UserObjectRpc>,
+  userNamespace: Cloudflare.Env["USER"],
   now: number,
 ): Promise<number> => {
   const resources = await database
