@@ -35,7 +35,3 @@ The check runs on the server before substitution, with the same list the dialog 
 | `apps/web/shared/models/resource/blueprint/BlueprintParameter.ts`            | the optional list and the default-in-list rule  |
 | `apps/web/app/components/Resource/Blueprint/DeployDialog.vue`                | draws a choice for a parameter that has a list  |
 | `apps/web/shared/services/resource/blueprint/buildBlueprintDeployReviews.ts` | the review a deploy shows, from the same values |
-
-## Sources
-
-- [Microsoft Learn — Parameters in ARM templates](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/parameters) — a parameter's allowed values, and a deployment failing when a value is not among them.

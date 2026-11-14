@@ -1,6 +1,6 @@
 ## Context
 
-The FileAssets capability already hosts uploads for an email image, the note's inline images and the webpage's share image. Each upload is the same two-step round-trip: the client hashes the bytes, the server answers with the address when it already holds them or a create-only write target otherwise, and the stable asset address is what the content embeds. The webpage's image node stores a typed address validated by the webpage URL schema, and its video node stores the same. Nothing lists a resource's files: the files live under the resource's own directory in the blob container, and the only way to find one today is to know its address. The upload's input schema bounds each file's declared size by the request size limit, and its declared type is the one the client gives.
+The FileAssets capability already hosts uploads for an email image, the note's inline images and the webpage's share image. Each upload is the same two-step round-trip: the client hashes the bytes, the server answers with the address when it already holds them or a write target named for their hash otherwise, and the stable asset address is what the content embeds. The webpage's image node stores a typed address validated by the webpage URL schema, and its video node stores the same. Nothing lists a resource's files: the files live under the resource's own directory in the resource-assets R2 bucket, and the only way to find one today is to know its address. The upload's input schema bounds each file's declared size by the request size limit, and its declared type is the one the client gives.
 
 ## Gap analysis
 
@@ -40,22 +40,22 @@ The FileAssets capability already hosts uploads for an email image, the note's i
 
 ## Key files
 
-| File                                                                               | Role                                                                      |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/imageNodeType.ts`                            | the image node, whose source gains an upload beside its address           |
-| `apps/web/shared/services/pageBuilder/videoNodeType.ts`                            | the video node, whose source gains an upload beside its address           |
-| `apps/web/shared/services/pageBuilder/webpageUrlSchema.ts`                         | the address check the typed source keeps                                  |
-| `apps/web/app/components/PageBuilder/ContentPanel.vue`                             | the Content panel that draws the webpage's media fields and their pickers |
-| `apps/web/app/composables/resource/useUploadResourceFile.ts`                       | the upload round-trip every media field calls                             |
-| `apps/web/app/components/Resource/Webpage/Settings.vue`                            | the share image's upload, the model for a webpage field that uploads      |
-| `apps/web/app/components/PageBuilder/Email/ImageUploadField.vue`                   | the email's upload, beside which its picker is drawn                      |
-| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`                         | the email's style panel, which draws the image upload and its picker      |
-| `apps/web/shared/models/file/MimeType.ts`                                          | the content types, which gain the two video types                         |
-| `apps/web/shared/services/resource/note/constants.ts`                              | the four image types the webpage image takes, the note's constant         |
-| `apps/web/shared/models/db/resource/GenerateUploadFileSasEntitiesInput.ts`         | the upload's input, whose declared size is bounded by the request limit   |
-| `apps/web/shared/services/app/constants.ts`                                        | the file request size limit a video is bounded by                         |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`              | the file procedures, which gain the owner's listing of a resource's files |
-| `packages/db-schema/src/services/azure/container/getResourceFilesDirectoryName.ts` | the files directory the listing reads                                     |
+| File                                                                       | Role                                                                      |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/imageNodeType.ts`                    | the image node, whose source gains an upload beside its address           |
+| `apps/web/shared/services/pageBuilder/videoNodeType.ts`                    | the video node, whose source gains an upload beside its address           |
+| `apps/web/shared/services/pageBuilder/webpageUrlSchema.ts`                 | the address check the typed source keeps                                  |
+| `apps/web/app/components/PageBuilder/ContentPanel.vue`                     | the Content panel that draws the webpage's media fields and their pickers |
+| `apps/web/app/composables/resource/useUploadResourceFile.ts`               | the upload round-trip every media field calls                             |
+| `apps/web/app/components/Resource/Webpage/Settings.vue`                    | the share image's upload, the model for a webpage field that uploads      |
+| `apps/web/app/components/PageBuilder/Email/ImageUploadField.vue`           | the email's upload, beside which its picker is drawn                      |
+| `apps/web/app/components/PageBuilder/Email/StylePanel.vue`                 | the email's style panel, which draws the image upload and its picker      |
+| `apps/web/shared/models/file/MimeType.ts`                                  | the content types, which gain the two video types                         |
+| `apps/web/shared/services/resource/note/constants.ts`                      | the four image types the webpage image takes, the note's constant         |
+| `apps/web/shared/models/db/resource/GenerateUploadFileSasEntitiesInput.ts` | the upload's input, whose declared size is bounded by the request limit   |
+| `apps/web/shared/services/app/constants.ts`                                | the file request size limit a video is bounded by                         |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the file procedures, which gain the owner's listing of a resource's files |
+| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the files directory the listing reads                                     |
 
 ## New code lands here
 

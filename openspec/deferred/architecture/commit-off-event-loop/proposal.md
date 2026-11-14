@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — running a large save's parse and validation in a worker thread or an Azure Function, so the web server's event loop never waits on it.
+Deferred — running a large save's parse and validation in a queue consumer, so the web Worker's isolate never waits on it.
 
 ## What Changes
 
