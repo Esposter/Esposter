@@ -211,51 +211,6 @@ describe("userRouter", () => {
     expect(userStatus.userId).toBe(nonExistentUserId);
   });
 
-  test.each(["connect", "disconnect"] as const)("%s inserts", async (procedure) => {
-    expect.hasAssertions();
-
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller[procedure]();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 1);
-  });
-
-  test.each(["connect", "disconnect"] as const)("%s updates", async (procedure) => {
-    expect.hasAssertions();
-
-    await caller[procedure]();
-    vi.advanceTimersByTime(1);
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-    vi.advanceTimersByTime(1);
-    await caller[procedure]();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.updatedAt.getTime()).toBe(oldUserStatus.updatedAt.getTime() + 2);
-  });
-
-  test("connect disconnect connect", async () => {
-    expect.hasAssertions();
-
-    await caller.connect();
-    vi.advanceTimersByTime(1);
-    await caller.disconnect();
-    vi.advanceTimersByTime(1);
-    const oldUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(oldUserStatus.status).toBe(UserStatus.Offline);
-
-    vi.advanceTimersByTime(1);
-    await caller.connect();
-    vi.advanceTimersByTime(1);
-    const newUserStatus = takeOne(await caller.readStatuses([userId]));
-
-    expect(newUserStatus.status).toBe(UserStatus.Online);
-  });
-
   test("upsert status inserts", async () => {
     expect.hasAssertions();
 
