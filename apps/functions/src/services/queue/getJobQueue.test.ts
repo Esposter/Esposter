@@ -3,12 +3,13 @@ import type { QueueJob } from "@esposter/db-schema";
 import { getOrCreate } from "@esposter/shared";
 import { describe } from "vitest";
 
-// Every message sent to each job's queue, in send order. Stands in for the producer binding, which only exists
-// inside the Worker, so a test reads what a publisher sent without a Workers runtime
+// Every message sent to each job's queue, in send order.
+// It stands in for the producer binding, which only exists inside the Worker, so a test reads what a publisher sent.
+// A test needs no Workers runtime to read it.
 export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
 
-// The producer binding's own `Queue` interface, so the double is what `getJobQueue` returns. Nothing is ever backed up
-// here, so every backlog it reports is empty
+// The producer binding's own `Queue` interface, so the double is what `getJobQueue` returns.
+// Nothing is ever backed up here, so every backlog it reports is empty.
 export class MockJobQueue implements Queue {
   readonly job: QueueJob;
   readonly #backlog = { backlogBytes: 0, backlogCount: 0 };

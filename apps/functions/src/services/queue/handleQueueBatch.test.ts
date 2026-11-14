@@ -1,6 +1,6 @@
 import { createQueueMessage } from "#src/services/queue/createQueueMessage.test";
-import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { MockJobQueue, MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
+import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { QueueJobHandlerMap } from "#src/services/queue/QueueJobHandlerMap";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
@@ -17,7 +17,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vite
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 
-const createBatch = (messages: ReturnType<typeof createQueueMessage>[], queue: string): MessageBatch<unknown> => ({
+const createBatch = (messages: ReturnType<typeof createQueueMessage>[], queue: string): MessageBatch => ({
   ackAll: vi.fn<() => void>(),
   messages,
   metadata: { metrics: { backlogBytes: 0, backlogCount: 0 } },
@@ -86,11 +86,12 @@ describe(handleQueueBatch, () => {
     expect(failedMessage.retry).toHaveBeenCalledExactlyOnceWith();
     expect(failedMessage.ack).not.toHaveBeenCalled();
     expect(resolvedMessage.ack).toHaveBeenCalledExactlyOnceWith();
-    expect(console.error).toHaveBeenCalledExactlyOnceWith(`${queueName} failed: `, expect.any(Error));
+    expect(console.error).toHaveBeenCalledExactlyOnceWith(`${queueName} failed:`, new Error("handler failed"));
   });
 
-  // A dead-letter batch is replayed, never run through its job's handler: the poison message is quarantined and the transient one
-  // republished, and both are acknowledged, so one poison message does not hold back the transient failure beside it
+  // A dead-letter batch is replayed, never run through its job's handler.
+  // The poison message is quarantined and the transient one is republished.
+  // Both are acknowledged, so one poison message does not hold back the transient failure beside it.
   test("quarantines a poison dead letter and republishes a transient one from the same batch", async () => {
     expect.hasAssertions();
 
@@ -110,12 +111,13 @@ describe(handleQueueBatch, () => {
     const quarantined = await getBucket(StorageBucket.UserAssets).get(
       `quarantine/${deleteAccountQueueName}/${poisonMessage.id}.json`,
     );
-    expect(await quarantined?.text()).toBe(JSON.stringify(poisonBody));
+    await expect(quarantined?.text()).resolves.toBe(JSON.stringify(poisonBody));
     expect(poisonMessage.ack).toHaveBeenCalledExactlyOnceWith();
     expect(transientMessage.ack).toHaveBeenCalledExactlyOnceWith();
   });
 
-  // A republish that fails must retry its dead letter, not acknowledge it: an acknowledged message that was never republished is lost
+  // A republish that fails must retry its dead letter, not acknowledge it.
+  // An acknowledged message that was never republished is lost.
   test("retries the dead letter whose republish fails, and acknowledges the rest", async () => {
     expect.hasAssertions();
 
@@ -144,7 +146,11 @@ describe(handleQueueBatch, () => {
 
     const message = createQueueMessage("", {});
 
-    await expect(handleQueueBatch(createBatch([message], "some-other-queue"), environment)).rejects.toThrowError();
+    await expect(
+      handleQueueBatch(createBatch([message], "some-other-queue"), environment),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: some-other-queue, is not a queue this Worker consumes]`,
+    );
     expect(message.ack).not.toHaveBeenCalled();
     expect(message.retry).not.toHaveBeenCalled();
   });

@@ -1,5 +1,3 @@
-import { QueueJob } from "@esposter/db-schema";
-
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedProfileImageHandler";
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
@@ -7,6 +5,7 @@ import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHan
 import { processNotificationHandler } from "#src/handlers/processNotificationHandler";
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
+import { QueueJob } from "@esposter/db-schema";
 
 // Each job's handler, keyed by the job the queue delivers. Exhaustive over QueueJob, so a new job has to name its handler
 export const QueueJobHandlerMap = {

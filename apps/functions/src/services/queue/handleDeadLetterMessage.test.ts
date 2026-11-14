@@ -1,7 +1,7 @@
 import { MAX_DEAD_LETTER_ATTEMPTS } from "#src/services/queue/constants";
 import { createQueueMessage } from "#src/services/queue/createQueueMessage.test";
-import { handleDeadLetterMessage } from "#src/services/queue/handleDeadLetterMessage";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
+import { handleDeadLetterMessage } from "#src/services/queue/handleDeadLetterMessage";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import {
@@ -60,7 +60,7 @@ describe(handleDeadLetterMessage, () => {
     expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toStrictEqual([
       { attempt: MAX_DEAD_LETTER_ATTEMPTS, userId },
     ]);
-    expect(await readQuarantine()).toBeUndefined();
+    await expect(readQuarantine()).resolves.toBeUndefined();
   });
 
   test("quarantines a dead letter at the attempt cap, and does not republish it", async () => {
@@ -70,7 +70,7 @@ describe(handleDeadLetterMessage, () => {
     await handleDeadLetterMessage(createQueueMessage(messageId, body), QueueJob.DeleteAccount, sourceQueueName);
 
     expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toBeUndefined();
-    expect(await readQuarantine()).toBe(JSON.stringify(body));
+    await expect(readQuarantine()).resolves.toBe(JSON.stringify(body));
   });
 
   // The body is under the attempt cap, so only the delivery count can quarantine it: the last delivery is never republished
@@ -82,7 +82,7 @@ describe(handleDeadLetterMessage, () => {
     await handleDeadLetterMessage(finalDelivery, QueueJob.DeleteAccount, sourceQueueName);
 
     expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toBeUndefined();
-    expect(await readQuarantine()).toBe(JSON.stringify(body));
+    await expect(readQuarantine()).resolves.toBe(JSON.stringify(body));
   });
 
   test("quarantines a body its job's schema rejects, however few attempts it has, and does not republish it", async () => {
@@ -92,7 +92,7 @@ describe(handleDeadLetterMessage, () => {
     await handleDeadLetterMessage(createQueueMessage(messageId, body), QueueJob.DeleteAccount, sourceQueueName);
 
     expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toBeUndefined();
-    expect(await readQuarantine()).toBe(JSON.stringify(body));
+    await expect(readQuarantine()).resolves.toBe(JSON.stringify(body));
   });
 
   test("logs a quarantine once, when a redelivery of the same message finds it already written", async () => {
@@ -103,6 +103,9 @@ describe(handleDeadLetterMessage, () => {
     await handleDeadLetterMessage(message, QueueJob.DeleteAccount, sourceQueueName);
     await handleDeadLetterMessage(message, QueueJob.DeleteAccount, sourceQueueName);
 
-    expect(console.error).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(quarantineKey), expect.any(String));
+    expect(console.error).toHaveBeenCalledExactlyOnceWith(
+      `${sourceQueueName} dead letter quarantined at ${quarantineKey}:`,
+      `its attempts reached ${MAX_DEAD_LETTER_ATTEMPTS}`,
+    );
   });
 });
