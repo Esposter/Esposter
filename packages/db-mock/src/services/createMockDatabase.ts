@@ -1,6 +1,6 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
-import { AzureContainer, relations } from "@esposter/db-schema";
+import { StorageBucket, relations } from "@esposter/db-schema";
 import { env } from "#src/cloudflareWorkers";
 import { COMPATIBILITY_DATE, CORE_BINDING, STREAMS_BINDING } from "#src/services/constants";
 import { emptyD1Database } from "#src/services/emptyD1Database";
@@ -46,9 +46,7 @@ export const createMockDatabase = async (
       await Promise.all([
         emptyD1Database(coreDatabase),
         emptyD1Database(streamsDb),
-        ...Object.values(AzureContainer).map(async (container) =>
-          emptyR2Bucket(await miniflare.getR2Bucket(container)),
-        ),
+        ...Object.values(StorageBucket).map(async (bucket) => emptyR2Bucket(await miniflare.getR2Bucket(bucket))),
       ]);
     },
     streamsDb,

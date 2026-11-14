@@ -1,7 +1,7 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMockDb } from "#src/createMockDb";
-import { AzureContainer, accountsInAuth, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, accountsInAuth, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -60,7 +60,7 @@ describe(createMockDb, () => {
     await insertUser(crypto.randomUUID());
     await mockDatabase.streamsDb.exec("CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)");
     await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('before')").run();
-    const bucket = await mockDatabase.getBucket(AzureContainer.ClickerAssets);
+    const bucket = await mockDatabase.getBucket(StorageBucket.ClickerAssets);
     await bucket.put("object", "value");
 
     await mockDatabase.reset();
