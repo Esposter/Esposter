@@ -1,2 +1,0 @@
-ALTER TABLE "resources" ADD COLUMN "boundResourceId" uuid;--> statement-breakpoint
-CREATE INDEX "resources_bound_resource_index" ON "resources" ("userId","type","boundResourceId") WHERE "boundResourceId" is not null;

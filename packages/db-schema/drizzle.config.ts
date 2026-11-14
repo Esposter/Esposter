@@ -10,6 +10,6 @@ export default defineConfig({
   },
   dialect: "sqlite",
   driver: "d1-http",
-  out: "../../apps/web/server/db/migrations",
+  out: "../../apps/web/server/db/migrations/core",
   schema: "src/schema/**/*.ts",
 });

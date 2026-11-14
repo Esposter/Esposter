@@ -1,1 +1,0 @@
-ALTER TABLE "message"."webhooks" ADD CONSTRAINT "webhooks_user_id_unique" UNIQUE("user_id");

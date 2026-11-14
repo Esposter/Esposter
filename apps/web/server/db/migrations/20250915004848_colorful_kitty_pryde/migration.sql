@@ -1,1 +1,0 @@
-ALTER TABLE "search_history" ALTER COLUMN "query" SET DEFAULT '';

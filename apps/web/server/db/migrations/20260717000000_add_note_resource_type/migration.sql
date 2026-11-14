@@ -1,1 +1,0 @@
-ALTER TYPE "public"."resource_type" ADD VALUE 'Note';

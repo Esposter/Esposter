@@ -1,2 +1,0 @@
-CREATE INDEX "users_to_room_roles_roleId_idx" ON "message"."users_to_room_roles" USING btree ("roleId");--> statement-breakpoint
-CREATE INDEX "users_to_room_roles_roomId_idx" ON "message"."users_to_room_roles" USING btree ("roomId");

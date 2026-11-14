@@ -1,1 +1,0 @@
-ALTER TABLE "message"."scheduledMessageJobs" ADD COLUMN "processingStartedAt" timestamp;

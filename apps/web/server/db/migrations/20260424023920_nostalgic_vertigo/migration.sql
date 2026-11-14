@@ -1,1 +1,0 @@
-ALTER TABLE "message"."users_to_room_roles" ADD CONSTRAINT "users_to_room_roles_userId_roomId_users_to_rooms_userId_roomId_fk" FOREIGN KEY ("userId","roomId") REFERENCES "message"."users_to_rooms"("userId","roomId") ON DELETE cascade ON UPDATE no action;

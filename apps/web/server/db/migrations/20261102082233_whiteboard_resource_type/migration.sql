@@ -1,1 +1,0 @@
-ALTER TYPE "resource"."resourceType" ADD VALUE 'Whiteboard';

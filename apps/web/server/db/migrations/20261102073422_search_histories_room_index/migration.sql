@@ -1,1 +1,0 @@
-CREATE INDEX "searchHistories_roomId_index" ON "message"."searchHistories" ("roomId");

@@ -1,1 +1,0 @@
-ALTER TYPE "public"."resource_type" RENAME VALUE 'File' TO 'Sheet';

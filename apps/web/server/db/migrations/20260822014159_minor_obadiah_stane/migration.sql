@@ -1,1 +1,0 @@
-ALTER TABLE "message"."rooms" ADD COLUMN "isInvitePaused" boolean DEFAULT false NOT NULL;

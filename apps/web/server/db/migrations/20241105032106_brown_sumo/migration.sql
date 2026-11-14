@@ -1,1 +1,0 @@
-ALTER TABLE "Like" ADD CONSTRAINT "value" CHECK ("Like"."value" = 1 OR "Like"."value" = -1);

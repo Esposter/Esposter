@@ -1,1 +1,0 @@
-ALTER TABLE "resources" ADD COLUMN "contentHash" text DEFAULT '' NOT NULL;
