@@ -1,3 +1,4 @@
+import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { RoomObjectRpc } from "@esposter/db-schema";
@@ -23,14 +24,16 @@ import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The room's object writes the message and answers for the root a reply names, so both are faked here: the thread
-// follows are real rows, made from whichever author the object reports
+// Follows are real rows, made from whichever author the object reports
 const { roomObject } = vi.hoisted(() => ({
   roomObject: {
     createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
     readMessagesByIds: vi.fn<RoomObjectRpc["readMessagesByIds"]>(),
   },
 }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
+}));
 
 describe(createUserMessage, () => {
   let mockContext: Context;

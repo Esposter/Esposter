@@ -1,5 +1,6 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
+
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { publicProcedure, router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";

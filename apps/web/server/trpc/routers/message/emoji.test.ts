@@ -1,3 +1,4 @@
+import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { RoomObjectRpc } from "@esposter/db-schema";
@@ -7,12 +8,14 @@ import { createCallerFactory } from "#server/trpc";
 import { getMockSession } from "#server/trpc/context.test";
 import { emojiRouter } from "#server/trpc/routers/message/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { addReactionInputSchema } from "#shared/models/db/message/reaction/AddReactionInput";
+import { removeReactionInputSchema } from "#shared/models/db/message/reaction/RemoveReactionInput";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A reaction is held by its message's room, so the room's object is faked: each method answers what a test sets, and
-// the router's own work — who the reactor is, and what a missing reaction is — is what the tests read
+// The router's own work — who the reactor is, and what a missing reaction is — is what the tests read
 const { roomObject } = vi.hoisted(() => ({
   roomObject: {
     addReaction: vi.fn<RoomObjectRpc["addReaction"]>(),
@@ -20,7 +23,9 @@ const { roomObject } = vi.hoisted(() => ({
     removeReaction: vi.fn<RoomObjectRpc["removeReaction"]>(),
   },
 }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
+}));
 
 describe("emojiRouter", () => {
   const { getMockContext, getRoomId } = setupRoomSuite();
@@ -55,11 +60,11 @@ describe("emojiRouter", () => {
   test("fails addReaction on a message the room does not hold", async () => {
     expect.hasAssertions();
 
-    const input = { roomId, emojiTag, messageId };
+    const input = { emojiTag, messageId, roomId };
     roomObject.addReaction.mockResolvedValue(null);
 
     await expect(emojiCaller.addReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(input)).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(addReactionInputSchema.parse(input))).message}]`,
     );
   });
 
@@ -77,11 +82,11 @@ describe("emojiRouter", () => {
   test("fails removeReaction by a caller who is not one of its reactors", async () => {
     expect.hasAssertions();
 
-    const input = { roomId, emojiTag, messageId };
+    const input = { emojiTag, messageId, roomId };
     roomObject.removeReaction.mockResolvedValue(false);
 
     await expect(emojiCaller.removeReaction(input)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(input)).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Reaction, JSON.stringify(removeReactionInputSchema.parse(input))).message}]`,
     );
   });
 

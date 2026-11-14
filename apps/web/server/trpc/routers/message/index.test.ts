@@ -13,22 +13,28 @@ import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import { pinMessageInputSchema } from "#shared/models/db/message/PinMessageInput";
+import { unpinMessageInputSchema } from "#shared/models/db/message/UnpinMessageInput";
+import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
+import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, MessageType, QueueJob, StorageBucket } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, noop, Operation } from "@esposter/shared";
+import { InvalidOperationError, noop, NotFoundError, Operation } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The room and user objects are programmable: every RPC is a typed fake whose return value a test sets. Each contract
-// is listed in full with `satisfies`, so a method added to either interface fails here until it has a fake
-const { roomObject, useRoomObjectMock, userObject, useUserObjectMock } = vi.hoisted(() => {
-  const roomObject = {
+// Is listed in full with `satisfies`, so a method added to either interface fails here until it has a fake
+const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hoisted(() => {
+  const roomObjectFake = {
     addReaction: vi.fn<RoomObjectRpc["addReaction"]>(),
     attachMember: vi.fn<RoomObjectRpc["attachMember"]>(),
     broadcastEvent: vi.fn<RoomObjectRpc["broadcastEvent"]>(),
+    closeSession: vi.fn<RoomObjectRpc["closeSession"]>(),
     createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
     createScheduledMessage: vi.fn<RoomObjectRpc["createScheduledMessage"]>(),
     createWebhookMessage: vi.fn<RoomObjectRpc["createWebhookMessage"]>(),
@@ -60,7 +66,7 @@ const { roomObject, useRoomObjectMock, userObject, useUserObjectMock } = vi.hois
     updateScheduledMessage: vi.fn<RoomObjectRpc["updateScheduledMessage"]>(),
     votePoll: vi.fn<RoomObjectRpc["votePoll"]>(),
   } satisfies RoomObjectRpc;
-  const userObject = {
+  const userObjectFake = {
     acceptFriendRequest: vi.fn<UserObjectRpc["acceptFriendRequest"]>(),
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
     addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
@@ -87,15 +93,15 @@ const { roomObject, useRoomObjectMock, userObject, useUserObjectMock } = vi.hois
   } satisfies UserObjectRpc;
 
   return {
-    roomObject,
-    useRoomObjectMock: vi.fn<(roomId: string) => RoomObjectRpc>(() => roomObject),
-    userObject,
-    useUserObjectMock: vi.fn<(userId: string) => UserObjectRpc>(() => userObject),
+    roomObject: roomObjectFake,
+    userObject: userObjectFake,
+    useRoomObjectMock: vi.fn<(roomId: string) => RoomObjectRpc>(() => roomObjectFake),
+    useUserObjectMock: vi.fn<(userId: string) => UserObjectRpc>(() => userObjectFake),
   };
 });
 
 // The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the stub
-// it stands in for. Only the calls a test makes are checked, through the typed fake above
+// It stands in for. Only the calls a test makes are checked, through the typed fake above
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -117,7 +123,7 @@ describe("messageRouter", () => {
   const timeZone = "UTC";
   const updatedText = "b";
   // A word the message wrapper cannot contain on its own, so a room's filter only ever matches the text a test
-  // deliberately put in front of it
+  // Deliberately put in front of it
   const filteredWord = "spam";
   const filteredMessage = `<p>${filteredWord}</p>`;
   const pollOptionId = v7();
@@ -154,10 +160,6 @@ describe("messageRouter", () => {
     disposeMessageAssets = messageAssets.dispose;
   });
 
-  afterAll(async () => {
-    await disposeMessageAssets();
-  });
-
   beforeEach(() => {
     roomId = getRoomId();
   });
@@ -166,6 +168,10 @@ describe("messageRouter", () => {
     for (const method of [...Object.values(roomObject), ...Object.values(userObject)]) method.mockReset();
     MockJobQueueDatabase.clear();
     vi.restoreAllMocks();
+  });
+
+  afterAll(async () => {
+    await disposeMessageAssets();
   });
 
   test("creates a message as the sender, reading its mentions from the text and naming the tab that sent it", async () => {
@@ -234,7 +240,7 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.updateMessage({ id: messageId, message: updatedText, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify({ roomId, id: messageId, message: updatedText })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(updateMessageInputSchema.parse({ id: messageId, message: updatedText, roomId }))).message}]`,
     );
   });
 
@@ -278,7 +284,7 @@ describe("messageRouter", () => {
     roomObject.deleteMessage.mockResolvedValue(null);
 
     await expect(messageCaller.deleteMessage({ id: messageId, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify({ roomId, id: messageId })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(deleteMessageInputSchema.parse({ id: messageId, roomId }))).message}]`,
     );
     expect(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)).toBeUndefined();
   });
@@ -331,7 +337,7 @@ describe("messageRouter", () => {
     roomObject.pinMessage.mockReturnValue(null);
 
     await expect(messageCaller.pinMessage({ id: messageId, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify({ roomId, id: messageId })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(pinMessageInputSchema.parse({ id: messageId, roomId }))).message}]`,
     );
   });
 
@@ -342,7 +348,7 @@ describe("messageRouter", () => {
     roomObject.unpinMessage.mockReturnValue(null);
 
     await expect(messageCaller.unpinMessage({ id: messageId, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify({ roomId, id: messageId })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Message, JSON.stringify(unpinMessageInputSchema.parse({ id: messageId, roomId }))).message}]`,
     );
   });
 
@@ -369,7 +375,7 @@ describe("messageRouter", () => {
     await expect(
       messageCaller.votePoll({ id: messageId, optionId: pollOptionId, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify({ optionId: pollOptionId, roomId, id: messageId })).message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify(votePollInputSchema.parse({ id: messageId, optionId: pollOptionId, roomId }))).message}]`,
     );
   });
 
@@ -403,7 +409,7 @@ describe("messageRouter", () => {
     const newerRoot = createRoomMessage({ id: messageId + 1 });
     roomObject.readMessagesByIds.mockReturnValue([newerRoot]);
     // Followed newer first, so a read that returns the follows latest-first hands the room the older root ahead of the newer
-    // one, and only the router's own sort puts the newer root first
+    // One, and only the router's own sort puts the newer root first
     await messageCaller.followThread({ roomId, threadRootId: newerRoot.id });
     await messageCaller.followThread({ roomId, threadRootId: messageId });
 

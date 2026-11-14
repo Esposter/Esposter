@@ -5,7 +5,6 @@ import { getCursorWhereStreamTable } from "#server/services/pagination/cursor/ge
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
-
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhereStreamTable, () => {

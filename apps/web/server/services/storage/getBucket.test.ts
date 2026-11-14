@@ -3,8 +3,8 @@ import type { StorageBucket } from "@esposter/db-schema";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The buckets a test has made, by storage bucket. A suite that touches one makes it in its own beforeAll with
-// createMockBucket and records it here, because the binding it stands in for is read synchronously
+// The buckets a test has made, by storage bucket. A suite that touches one makes it in its own beforeAll
+// With createMockBucket and records it here, because the binding it stands in for is read synchronously
 export const mockBuckets: Partial<Record<StorageBucket, R2Bucket>> = {};
 
 // Registered for every suite in the setup file, so a suite that never makes its bucket fails at the read rather than

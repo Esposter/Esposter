@@ -6,6 +6,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { authMocks, createMockSession } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
@@ -32,13 +33,13 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { deleteDirectory, getContentBlobName, readJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  StorageBucket,
-  QueueJob,
   DatabaseEntityType,
   getResourceFilesDirectoryName,
+  QueueJob,
   resourcesInResource,
-  resourceViewsInResource,
   ResourceType,
+  resourceViewsInResource,
+  StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
@@ -47,7 +48,6 @@ import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
@@ -75,7 +75,7 @@ describe(createResourceProcedures, () => {
 
   // Routes the bucket's `head` through `head` and every other call to the store, for the one call a race has to land between.
   // A spy on the bucket's own method does not reach the call, so the bucket the procedure reads is replaced for the test
-  const interceptHead = (head: (blobName: string) => Promise<R2Object | null>) => {
+  const interceptHead = (head: (blobName: string) => Promise<null | R2Object>) => {
     mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
       get: (target, property: keyof R2Bucket) => {
         if (property === "head") return head;
@@ -97,10 +97,6 @@ describe(createResourceProcedures, () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  afterAll(async () => {
-    await dispose();
-  });
-
   // Off the epoch, which a channel with no age limit cuts off at: a version written at the epoch is not newer than it
   beforeEach(() => {
     vi.useFakeTimers({ now: Temporal.Instant.fromEpochMilliseconds(1), toFake: ["Date"] });
@@ -116,6 +112,10 @@ describe(createResourceProcedures, () => {
     await mockContext.db.delete(storageLedgerInStorage);
     mockBuckets[StorageBucket.ResourceAssets] = bucket;
     vi.restoreAllMocks();
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("creates resource", async () => {
@@ -759,7 +759,7 @@ describe(createResourceProcedures, () => {
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     await bucket.put(blobName, Buffer.alloc(1));
     // The store stamps the upload with its own clock, not the pinned one, so the clock moves to the end of the grace
-    // window that stamp opens, which is when the release may delete the blob
+    // Window that stamp opens, which is when the release may delete the blob
     const upload = await bucket.head(blobName);
     assert.exists(upload);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(upload.uploaded.getTime() + ASSET_GRACE_MS));

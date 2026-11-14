@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
@@ -165,20 +166,16 @@ describe("achievementRouter", () => {
       id: newResource.id,
     });
 
-    expect(userObjectCalls.filter(({ method }) => method === "updateAchievement")).toStrictEqual([
-      {
-        args: [
-          [
-            expect.objectContaining({
-              achievement: expect.objectContaining({ name: WebpageAchievementName.WebDeveloper }),
-              amount: 1,
-              unlockedAt: new Date(0),
-            }),
-          ],
-        ],
-        method: "updateAchievement",
-        userId: getMockSession().user.id,
-      },
-    ]);
+    const updateAchievementCalls = userObjectCalls.filter(({ method }) => method === "updateAchievement");
+    expect(updateAchievementCalls).toHaveLength(1);
+    const updateAchievementCall = takeOne(updateAchievementCalls);
+    const updatedAchievements = takeOne(updateAchievementCall.args) as UserAchievementInAchievementWithRelations[];
+    expect(updatedAchievements).toHaveLength(1);
+    const updatedAchievement = takeOne(updatedAchievements);
+
+    expect(updateAchievementCall.userId).toBe(getMockSession().user.id);
+    expect(updatedAchievement.achievement.name).toBe(WebpageAchievementName.WebDeveloper);
+    expect(updatedAchievement.amount).toBe(1);
+    expect(updatedAchievement.unlockedAt).toStrictEqual(new Date(0));
   });
 });

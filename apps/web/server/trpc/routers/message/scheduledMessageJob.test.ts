@@ -10,29 +10,30 @@ import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The person's object and the room's are programmable: each RPC the router reaches is a typed fake a test sets, so the
-// router's reads and writes are checked through them rather than through a Durable Object that does not run here
-const { roomObject, useRoomObjectMock, userObject, useUserObjectMock } = vi.hoisted(() => {
-  const roomObject = { deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>() };
-  const userObject = {
+// Router's reads and writes are checked through them rather than through a Durable Object that does not run here
+const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hoisted(() => {
+  const roomFake = { deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>() };
+  const userFake = {
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
   };
   return {
-    roomObject,
-    useRoomObjectMock: vi.fn(() => roomObject),
-    userObject,
-    useUserObjectMock: vi.fn(() => userObject),
+    roomObject: roomFake,
+    userObject: userFake,
+    useRoomObjectMock: vi.fn<(roomId: string) => typeof roomFake>(() => roomFake),
+    useUserObjectMock: vi.fn<(userId: string) => typeof userFake>(() => userFake),
   };
 });
 
 // The stub a Worker hands out is typed by the binding, which the web app types by no RPC, so the fake answers as the stub
-// it stands in for
+// It stands in for
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: (roomId: string) => useRoomObjectMock(roomId) as unknown as ReturnType<typeof useRoomObject>,
 }));
@@ -70,7 +71,8 @@ describe("scheduledMessageJobRouter", () => {
 
     expect(useUserObjectMock).toHaveBeenCalledExactlyOnceWith(getMockSession().user.id);
     expect(userObject.addReminder).toHaveBeenCalledExactlyOnceWith(reminder);
-    expect(reminder).toStrictEqual({ id: expect.any(String), roomId, runAt, text });
+    expect(reminder).toStrictEqual({ id: reminder.id, roomId, runAt, text });
+    expect(reminder.id).toBeTypeOf("string");
   });
 
   test("reads my scheduled jobs as reminders, joined to the room they were set in", async () => {
@@ -80,15 +82,15 @@ describe("scheduledMessageJobRouter", () => {
     userObject.readReminders.mockResolvedValue([reminder]);
     const scheduledMessageJobs = await scheduledMessageJobCaller.readMyScheduledMessageJobs();
 
-    expect(scheduledMessageJobs.items).toStrictEqual([
-      {
-        id: reminder.id,
-        payload: { text, type: ScheduledMessageJobType.Reminder },
-        room: expect.objectContaining({ id: roomId }),
-        roomId,
-        runAt,
-      },
-    ]);
+    const scheduledMessageJob = takeOne(scheduledMessageJobs.items);
+    expect(scheduledMessageJob.room.id).toBe(roomId);
+    expect(scheduledMessageJob).toStrictEqual({
+      id: reminder.id,
+      payload: { text, type: ScheduledMessageJobType.Reminder },
+      room: scheduledMessageJob.room,
+      roomId,
+      runAt,
+    });
   });
 
   test("counts my reminders and scheduled messages together", async () => {
@@ -105,10 +107,11 @@ describe("scheduledMessageJobRouter", () => {
   test("cancels a reminder in the person's own object without asking its room", async () => {
     expect.hasAssertions();
 
+    const id = v7();
     userObject.removeReminder.mockResolvedValue(true);
-    await scheduledMessageJobCaller.cancelScheduledMessageJob({ id: v7(), roomId });
+    await scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId });
 
-    expect(userObject.removeReminder).toHaveBeenCalledExactlyOnceWith(expect.any(String));
+    expect(userObject.removeReminder).toHaveBeenCalledExactlyOnceWith(id);
     expect(roomObject.deleteScheduledMessage).not.toHaveBeenCalled();
   });
 
@@ -120,10 +123,7 @@ describe("scheduledMessageJobRouter", () => {
     roomObject.deleteScheduledMessage.mockResolvedValue(true);
     await scheduledMessageJobCaller.cancelScheduledMessageJob({ id, roomId });
 
-    expect(roomObject.deleteScheduledMessage).toHaveBeenCalledExactlyOnceWith(
-      id,
-      expect.objectContaining({ userId: getMockSession().user.id }),
-    );
+    expect(roomObject.deleteScheduledMessage).toHaveBeenCalledExactlyOnceWith(id, { userId: getMockSession().user.id });
   });
 
   test("fails to cancel what neither object holds", async () => {

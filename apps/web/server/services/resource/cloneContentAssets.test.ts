@@ -6,7 +6,6 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { deleteDirectory, listBlobNames } from "@esposter/db";
 import { createMockBucket, createMockDb } from "@esposter/db-mock";
 import {
-  StorageBucket,
   FILES_DIRECTORY_SEGMENT,
   resourcePublicationsInResource,
   resourcesInResource,
@@ -14,6 +13,7 @@ import {
   resourceVersionAssetsInResource,
   resourceVersionsInResource,
   SnapshotChannel,
+  StorageBucket,
   usersInAuth,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";

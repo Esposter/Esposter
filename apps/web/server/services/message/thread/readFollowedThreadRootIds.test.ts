@@ -18,12 +18,12 @@ describe(readFollowedThreadRootIds, () => {
     db = mockDatabase.db;
   });
 
-  afterAll(async () => {
-    await mockDatabase.dispose();
-  });
-
   afterEach(async () => {
     await mockDatabase.reset();
+  });
+
+  afterAll(async () => {
+    await mockDatabase.dispose();
   });
 
   test("lists the followed roots newest first, by their integer ids, whatever order the follows were recorded in", async () => {
@@ -37,6 +37,6 @@ describe(readFollowedThreadRootIds, () => {
       { roomId, threadRootId: 7, userId },
     ]);
 
-    expect(await readFollowedThreadRootIds(db, roomId, userId)).toStrictEqual([12, 7, 4]);
+    await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual([12, 7, 4]);
   });
 });

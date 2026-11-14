@@ -10,8 +10,8 @@ import { describe, expect, test, vi } from "vitest";
 
 // Each room's index is that room's object, so the object is faked and every room answers from the list a test sets
 const { roomObject } = vi.hoisted(() => ({ roomObject: { searchMessages: vi.fn<RoomObjectRpc["searchMessages"]>() } }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({
-  useRoomObject: vi.fn<(roomId: string) => typeof roomObject>(() => roomObject),
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: vi.fn<typeof useRoomObject>(() => roomObject as unknown as ReturnType<typeof useRoomObject>),
 }));
 
 describe(searchMessages, () => {
@@ -45,7 +45,7 @@ describe(searchMessages, () => {
   });
 
   // A score is not comparable across rooms, since each room's index counts its own terms, so the rooms take turns by
-  // rank position. The rooms are asked in the order the filters name them, which is the order their answers are read
+  // Rank position. The rooms are asked in the order the filters name them, which is the order their answers are read
   test("interleaves the rooms' matches by rank position when there is text, and counts each room's own matches", async () => {
     expect.hasAssertions();
 
@@ -72,7 +72,7 @@ describe(searchMessages, () => {
   });
 
   // Without text the rooms' lists merge by each message's own time, and by id where the times tie. The offset then
-  // pages the merged list, so an id that breaks a tie decides which message the second page starts on
+  // Pages the merged list, so an id that breaks a tie decides which message the second page starts on
   test("merges the rooms' matches newest first, breaking a tie by id, and pages the merged list", async () => {
     expect.hasAssertions();
 

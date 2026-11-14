@@ -21,8 +21,8 @@ import {
   DatabaseEntityType,
   ResourceType,
   SnapshotChannel,
-  surveyResponsesInResource,
   SurveyResponseMode,
+  surveyResponsesInResource,
 } from "@esposter/db-schema";
 import {
   generateSecretToken,
@@ -205,12 +205,12 @@ describe("surveyRouter", () => {
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
     await caller.deleteResource({ id: newResource.id });
 
-    expect(await mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).toBe(1);
+    await expect(mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).resolves.toBe(1);
 
     // Respondents' answers are the survey's own data, so purge destroys them instead of orphaning forever
     await resourceCaller.purgeResource({ id: newResource.id });
 
-    expect(await mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).toBe(0);
+    await expect(mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).resolves.toBe(0);
   });
 
   test("hides unpublished surveys from respondents", async () => {
@@ -381,7 +381,7 @@ describe("surveyRouter", () => {
   });
 
   // Two saves computed from the same version race for it. The one that writes second matches no row and is refused
-  // rather than written over the other, so exactly one lands, and the stored response is the one that landed
+  // Rather than written over the other, so exactly one lands, and the stored response is the one that landed
   test("refuses a save computed from the version a concurrent save overtook", async () => {
     expect.hasAssertions();
 

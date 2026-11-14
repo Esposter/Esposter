@@ -4,7 +4,7 @@ import { getOrCreate } from "@esposter/shared";
 import { describe } from "vitest";
 
 // Every message sent to each job's queue, in send order. Stands in for the producer bindings, which only exist inside
-// the Worker, so a test reads what a publisher sent without a Workers runtime
+// The Worker, so a test reads what a publisher sent without a Workers runtime
 export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
 
 export class MockJobQueue implements QueueProducer<unknown> {

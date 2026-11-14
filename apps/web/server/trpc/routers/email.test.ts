@@ -16,10 +16,10 @@ import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { listBlobNames } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  StorageBucket,
-  ResourceType,
   resourceActivitiesInResource,
+  ResourceType,
   resourceViewsInResource,
+  StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";

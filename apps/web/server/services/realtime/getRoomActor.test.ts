@@ -1,9 +1,8 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
+import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { describe, expect, test } from "vitest";
-
-import { getRoomActor } from "#server/services/realtime/getRoomActor";
 
 describe(getRoomActor, () => {
   const payload = { session: {}, user: { id: "22222222-2222-7222-8222-222222222222" } } as GetSessionPayload;

@@ -4,7 +4,6 @@ import type { CompositeKey } from "@esposter/db-schema";
 import { getNextCursor } from "#server/services/pagination/cursor/getNextCursor";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CompositeKeyPropertyNames } from "@esposter/db-schema";
-
 import { describe, expect, test } from "vitest";
 
 describe(getNextCursor, () => {

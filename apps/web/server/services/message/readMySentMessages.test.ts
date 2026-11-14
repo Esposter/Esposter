@@ -1,3 +1,5 @@
+import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import type { useUserObject } from "#server/composables/realtime/useUserObject";
 import type { MockDatabase } from "@esposter/db-mock";
 import type { Database, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 
@@ -8,13 +10,17 @@ import { roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The sender's index is the user's object and each room's messages are that room's object, so both are faked. The rooms
-// the page names are real rows, read for the room each message came from
+// The page names are real rows, read for the room each message came from
 const { roomObject, userObject } = vi.hoisted(() => ({
   roomObject: { readMessagesByIds: vi.fn<RoomObjectRpc["readMessagesByIds"]>() },
   userObject: { readSentMessages: vi.fn<UserObjectRpc["readSentMessages"]>() },
 }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
-vi.mock("#server/composables/realtime/useUserObject", () => ({ useUserObject: () => userObject }));
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
+}));
+vi.mock(import("#server/composables/realtime/useUserObject"), () => ({
+  useUserObject: () => userObject as unknown as ReturnType<typeof useUserObject>,
+}));
 
 describe(readMySentMessages, () => {
   const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
@@ -30,12 +36,12 @@ describe(readMySentMessages, () => {
     db = mockDatabase.db;
   });
 
-  afterAll(async () => {
-    await mockDatabase.dispose();
-  });
-
   afterEach(async () => {
     await mockDatabase.reset();
+  });
+
+  afterAll(async () => {
+    await mockDatabase.dispose();
   });
 
   const insertUserAndRooms = async () => {

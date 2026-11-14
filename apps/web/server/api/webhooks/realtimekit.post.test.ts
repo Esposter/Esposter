@@ -1,3 +1,5 @@
+import type { db } from "#server/db";
+import type { getCallObject } from "#server/services/message/call/getCallObject";
 import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/realtimekit.post";
@@ -15,13 +17,21 @@ const { callObject, findCallSession, findSession } = vi.hoisted(() => ({
   findSession: vi.fn<(query: unknown) => Promise<unknown>>(),
 }));
 
-vi.mock("#server/db", () => ({
-  db: { query: { callSessionsInMessage: { findFirst: findCallSession }, sessionsInAuth: { findFirst: findSession } } },
-}));
-vi.mock("#server/services/message/call/checkIsCallConnectionAdmitted", () => ({
+vi.mock(
+  import("#server/db"),
+  () =>
+    ({
+      db: {
+        query: { callSessionsInMessage: { findFirst: findCallSession }, sessionsInAuth: { findFirst: findSession } },
+      },
+    }) as unknown as Partial<{ db: typeof db }>,
+);
+vi.mock(import("#server/services/message/call/checkIsCallConnectionAdmitted"), () => ({
   checkIsCallConnectionAdmitted: vi.fn<(...args: unknown[]) => Promise<boolean>>(),
 }));
-vi.mock("#server/services/message/call/getCallObject", () => ({ getCallObject: () => callObject }));
+vi.mock(import("#server/services/message/call/getCallObject"), () => ({
+  getCallObject: () => callObject as unknown as ReturnType<typeof getCallObject>,
+}));
 
 const createEvent = (body: ArrayBuffer, signature: string) =>
   ({
@@ -53,7 +63,7 @@ describe("api/webhooks/realtimekit", () => {
 
     vi.stubGlobal(
       "fetch",
-      vi.fn(() => Promise.resolve(new Response(JSON.stringify({ data: { publicKey: signer.publicKeyPem } })))),
+      vi.fn(() => Promise.resolve(Response.json({ data: { publicKey: signer.publicKeyPem } }))),
     );
     findCallSession.mockResolvedValueOnce({ id: callSessionId });
     findSession.mockResolvedValueOnce({

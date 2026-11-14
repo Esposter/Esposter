@@ -2,6 +2,7 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
@@ -9,19 +10,18 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { deleteDirectory, listBlobNames } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  StorageBucket,
   getResourceFileBlobName,
   resourcesInResource,
   ResourceType,
   resourceVersionAssetsInResource,
   SnapshotChannel,
+  StorageBucket,
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 describe(writeSnapshotVersion, () => {
   let mockContext: Context;
@@ -88,8 +88,8 @@ describe(writeSnapshotVersion, () => {
   });
 
   // A touch restarts the grace window of an asset nothing references, which rewrites the stored object with the time it
-  // was touched. The digests are what a document of pasted hashes holds: each stored one is touched the first time a row
-  // names it, and none a row already names is touched again, so the clock moved between the writes shows which happened
+  // Was touched. The digests are what a document of pasted hashes holds: each stored one is touched the first time a row
+  // Names it, and none a row already names is touched again, so the clock moved between the writes shows which happened
   test("touches an asset no row names once, and none a row already names", async () => {
     expect.hasAssertions();
 
@@ -107,7 +107,7 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(await readTouchedAts()).toStrictEqual(digests.map(() => new Date(0).toISOString()));
+    await expect(readTouchedAts()).resolves.toStrictEqual(digests.map(() => new Date(0).toISOString()));
 
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 1 }));
     await writeSnapshotVersion(
@@ -117,7 +117,7 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(await readTouchedAts()).toStrictEqual(digests.map(() => new Date(0).toISOString()));
+    await expect(readTouchedAts()).resolves.toStrictEqual(digests.map(() => new Date(0).toISOString()));
   });
 
   // The refusal needs to know whether the file is stored, which no row can say. A row named it when the revision was

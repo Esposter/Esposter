@@ -5,6 +5,7 @@ import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
@@ -24,7 +25,6 @@ import {
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;

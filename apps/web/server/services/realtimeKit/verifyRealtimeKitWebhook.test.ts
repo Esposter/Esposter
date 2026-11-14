@@ -19,7 +19,7 @@ describe(verifyRealtimeKitWebhook, () => {
   const stubPublishedKey = () =>
     vi.stubGlobal(
       "fetch",
-      vi.fn(() => Promise.resolve(new Response(JSON.stringify({ data: { publicKey: signer.publicKeyPem } })))),
+      vi.fn(() => Promise.resolve(Response.json({ data: { publicKey: signer.publicKeyPem } }))),
     );
 
   test("accepts a delivery signed with the published key", async () => {

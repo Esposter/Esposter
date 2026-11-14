@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { User } from "better-auth";
 
 import { createCallerFactory } from "#server/trpc";
-import { clearStreamTables, createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
@@ -62,7 +62,6 @@ describe("userToRoomRouter", () => {
   });
 
   afterEach(async () => {
-    await clearStreamTables();
     await mockContext.db.delete(usersToRoomsInMessage);
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(roomCategoriesInMessage);

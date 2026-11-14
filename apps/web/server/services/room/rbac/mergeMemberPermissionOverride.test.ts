@@ -21,8 +21,8 @@ describe(mergeMemberPermissionOverride, () => {
     expect.hasAssertions();
 
     const override = mergeMemberPermissionOverride(
-      { allow: highestBit | RoomPermission.ReadMessages, deny: RoomPermission.SendMessages },
-      { allow: 0n, deny: 0n, inherit: highestBit | RoomPermission.SendMessages },
+      { allow: RoomPermission.ReadMessages | highestBit, deny: RoomPermission.SendMessages },
+      { allow: 0n, deny: 0n, inherit: RoomPermission.SendMessages | highestBit },
     );
 
     expect(override).toStrictEqual({ allow: RoomPermission.ReadMessages, deny: 0n });

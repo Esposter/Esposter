@@ -1,18 +1,16 @@
+import type { db } from "#server/db";
 import type { RequestEvent } from "nuxt/server";
-
-import { TRPCError } from "@trpc/server";
-import { env } from "@esposter/db-mock";
-import { describe, expect, test, vi } from "vitest";
 
 import roomSocket from "#server/routes/ws/room/[roomId].get";
 import { readSession } from "#server/services/auth/readSession";
 import { assertIsMember } from "#server/services/room/assertIsMember";
+import { env } from "@esposter/db-mock";
+import { TRPCError } from "@trpc/server";
+import { describe, expect, test, vi } from "vitest";
 
-vi.mock("#server/db", () => ({ db: {} }));
-vi.mock("#server/services/auth/readSession", () => ({ readSession: vi.fn<(headers: Headers) => Promise<unknown>>() }));
-vi.mock("#server/services/room/assertIsMember", () => ({
-  assertIsMember: vi.fn<(...args: unknown[]) => Promise<void>>(),
-}));
+vi.mock(import("#server/db"), () => ({ db: {} as unknown as typeof db }));
+vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
+vi.mock(import("#server/services/room/assertIsMember"), () => ({ assertIsMember: vi.fn<typeof assertIsMember>() }));
 
 describe("ws/room/[roomId]", () => {
   test("refuses a socket with no session", async () => {

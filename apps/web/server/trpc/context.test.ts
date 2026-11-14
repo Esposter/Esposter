@@ -3,7 +3,7 @@ import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Session, User } from "better-auth";
 
 import { authMocks, createMockSession, insertMockSession } from "#server/auth.test";
-import { createMockDb as baseCreateMockDb, emptyD1Database } from "@esposter/db-mock";
+import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
@@ -72,10 +72,6 @@ export const getMockRevokeSession = () => authMocks.revokeSession;
 export const getMockRevokeOtherSessions = () => authMocks.revokeOtherSessions;
 
 export const getMockCreateApiKey = () => authMocks.createApiKey;
-
-// Empties the streams database, where the tables a message or a room write lands, and leaves the core rows the context was
-// seeded with in place
-export const clearStreamTables = async () => emptyD1Database((await baseCreateMockDb()).streamsDb);
 
 export const createMockContext = async (): Promise<Context> => ({
   db: await createMockDb(),

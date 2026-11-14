@@ -1,12 +1,11 @@
 import type { RequestEvent } from "nuxt/server";
 
+import userSocket from "#server/routes/ws/user.get";
+import { readSession } from "#server/services/auth/readSession";
 import { env } from "@esposter/db-mock";
 import { describe, expect, test, vi } from "vitest";
 
-import userSocket from "#server/routes/ws/user.get";
-import { readSession } from "#server/services/auth/readSession";
-
-vi.mock("#server/services/auth/readSession", () => ({ readSession: vi.fn<(headers: Headers) => Promise<unknown>>() }));
+vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
 
 describe("ws/user", () => {
   test("refuses a socket with no session", async () => {

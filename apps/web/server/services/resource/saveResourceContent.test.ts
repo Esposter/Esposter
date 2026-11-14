@@ -4,6 +4,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
@@ -27,8 +28,8 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { deleteDirectory, getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  QueueJob,
   getResourceFileBlobName,
+  QueueJob,
   resourceActivitiesInResource,
   ResourceActivityType,
   resourceLinksInResource,
@@ -47,7 +48,6 @@ import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
@@ -196,10 +196,6 @@ describe(saveResourceContent, () => {
     );
   });
 
-  afterAll(async () => {
-    await dispose();
-  });
-
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
@@ -211,6 +207,10 @@ describe(saveResourceContent, () => {
     // Content, which now charges the counter
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // A resource's first save has nothing behind it to keep — the blob it would snapshot is the one this save
@@ -531,7 +531,7 @@ describe(saveResourceContent, () => {
     // With its own clock, so the window is measured from the moment that object was written
     const droppedAsset = await bucket.head(getResourceFileBlobName(webpage.id, otherAssetHash));
     assert.exists(droppedAsset);
-    vi.setSystemTime(droppedAsset.uploaded.getTime() + ASSET_GRACE_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(droppedAsset.uploaded.getTime() + ASSET_GRACE_MS));
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);

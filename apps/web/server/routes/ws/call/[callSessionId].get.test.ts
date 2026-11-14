@@ -1,15 +1,15 @@
+import type { db } from "#server/db";
 import type { RequestEvent } from "nuxt/server";
-
-import { env } from "@esposter/db-mock";
-import { describe, expect, test, vi } from "vitest";
 
 import callSocket from "#server/routes/ws/call/[callSessionId].get";
 import { readSession } from "#server/services/auth/readSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
+import { env } from "@esposter/db-mock";
+import { describe, expect, test, vi } from "vitest";
 
-vi.mock("#server/db", () => ({ db: {} }));
-vi.mock("#server/services/auth/readSession", () => ({ readSession: vi.fn<(headers: Headers) => Promise<unknown>>() }));
-vi.mock("#server/services/message/call/checkIsCallConnectionAdmitted", () => ({
+vi.mock(import("#server/db"), () => ({ db: {} }) as unknown as Partial<{ db: typeof db }>);
+vi.mock(import("#server/services/auth/readSession"), () => ({ readSession: vi.fn<typeof readSession>() }));
+vi.mock(import("#server/services/message/call/checkIsCallConnectionAdmitted"), () => ({
   checkIsCallConnectionAdmitted: vi.fn<(...args: unknown[]) => Promise<boolean>>(),
 }));
 

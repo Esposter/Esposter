@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createParticipant } from "#server/services/message/call/createParticipant";
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
@@ -11,8 +12,8 @@ import { NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
-vi.mock("#server/services/message/call/getCallObject", () => ({
-  getCallObject: vi.fn<(callSessionId: string) => unknown>(),
+vi.mock(import("#server/services/message/call/getCallObject"), () => ({
+  getCallObject: vi.fn<typeof getCallObject>(),
 }));
 
 describe("callRouter", () => {
@@ -61,9 +62,11 @@ describe("callRouter", () => {
 
     const result = await callCaller.joinCall({ id: callSessionId });
 
-    expect(joinCall).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ callSessionId, isAdmissionRequired: false }),
-    );
+    expect(joinCall).toHaveBeenCalledExactlyOnceWith({
+      callSessionId,
+      isAdmissionRequired: false,
+      participant: createParticipant(creatorPayload.session, creatorPayload.user),
+    });
     expect(result).toStrictEqual({
       authToken: "auth-token",
       callSessionId,

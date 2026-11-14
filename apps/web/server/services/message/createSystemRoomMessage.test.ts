@@ -1,3 +1,4 @@
+import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -8,7 +9,9 @@ import { describe, expect, test, vi } from "vitest";
 
 // The room's object is faked, so each test reads what the line asked the room to write
 const { roomObject } = vi.hoisted(() => ({ roomObject: { createMessage: vi.fn<RoomObjectRpc["createMessage"]>() } }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
+}));
 
 describe(createSystemRoomMessage, () => {
   const message = "message";
@@ -40,7 +43,7 @@ describe(createSystemRoomMessage, () => {
   });
 
   // The line is handed back as a failure rather than logged here, so the caller that knows what it announced owns the
-  // handling
+  // Handling
   test("returns a failed write as the result rather than throwing", async () => {
     expect.hasAssertions();
 

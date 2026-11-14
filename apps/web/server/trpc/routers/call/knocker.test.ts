@@ -11,8 +11,8 @@ import { callSessionsInMessage } from "@esposter/db-schema";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The call object answers for the call's state, so the router's guards are tested against what it reports
-vi.mock("#server/services/message/call/getCallObject", () => ({
-  getCallObject: vi.fn<(callSessionId: string) => unknown>(),
+vi.mock(import("#server/services/message/call/getCallObject"), () => ({
+  getCallObject: vi.fn<typeof getCallObject>(),
 }));
 
 describe("knockerRouter", () => {

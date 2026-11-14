@@ -78,7 +78,7 @@ describe(executeAutomodAction, () => {
   });
 
   // The member the automod acted on hears what was done to them in the room, sent to their own sockets alone. Every
-  // call the room object is sent is recorded, so the room's own calls are picked out by the room this test made
+  // Call the room object is sent is recorded, so the room's own calls are picked out by the room this test made
   test("tells the target's sockets what the action was", async () => {
     expect.hasAssertions();
 

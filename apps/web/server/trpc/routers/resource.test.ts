@@ -153,10 +153,6 @@ describe("resourceRouter", () => {
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  afterAll(async () => {
-    await dispose();
-  });
-
   // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable.
   // Off the epoch, which a channel with no age limit cuts off at: a version written at the epoch is not newer than it
   beforeEach(() => {
@@ -167,6 +163,10 @@ describe("resourceRouter", () => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     userObjectCalls.length = 0;
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("reads a single resource by id", async () => {
@@ -1119,7 +1119,11 @@ describe("resourceRouter", () => {
     const saveEvent = userObjectCalls.findLast(({ method }) => method === "saveResourceContent")?.args[0];
     assert.exists(saveEvent);
 
-    expect(saveEvent).toMatchObject({ contentVersion: restoredResource.contentVersion, id: webpageResource.id });
+    expect(saveEvent).toStrictEqual({
+      apiKeyName: "",
+      contentVersion: restoredResource.contentVersion,
+      id: webpageResource.id,
+    });
     expect(
       items
         .map(({ activityType }) => activityType)

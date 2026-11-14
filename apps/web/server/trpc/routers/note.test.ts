@@ -38,9 +38,12 @@ describe("noteRouter", () => {
     });
 
     const blobName = getResourceFileBlobName(newResource.id, hash);
-    const sasUrl = new URL(takeOne(sasEntities).sasUrl);
+    const sasEntity = takeOne(sasEntities);
+    const sasUrl = new URL(sasEntity.sasUrl);
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: expect.any(String) }]);
+    expect(sasEntities).toHaveLength(1);
+    expect(sasEntity.id).toBe(hash);
+    expect(sasEntity.isHeld).toBe(false);
     expect(sasUrl.pathname.endsWith(`/${blobName}`)).toBe(true);
     expect(sasUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
   });

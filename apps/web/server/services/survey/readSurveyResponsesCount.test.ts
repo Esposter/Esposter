@@ -4,7 +4,7 @@ import { insertSurveyResponses } from "#server/services/survey/insertSurveyRespo
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { createMockDb } from "@esposter/db-mock";
-import { ResourceType, resourcesInResource, surveyResponsesInResource, usersInAuth } from "@esposter/db-schema";
+import { resourcesInResource, ResourceType, surveyResponsesInResource, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 

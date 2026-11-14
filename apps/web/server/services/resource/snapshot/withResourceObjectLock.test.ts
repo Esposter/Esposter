@@ -35,27 +35,27 @@ describe(tryAcquireResourceObjectLock, () => {
   test("refuses a second holder while the first holds the lease, and a release by anyone but the holder changes nothing", async () => {
     expect.hasAssertions();
 
-    expect(await tryAcquireResourceObjectLock(db, resource.id, firstHolder)).toBe(true);
-    expect(await tryAcquireResourceObjectLock(db, resource.id, secondHolder)).toBe(false);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, firstHolder)).resolves.toBe(true);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, secondHolder)).resolves.toBe(false);
 
     await releaseResourceObjectLock(db, resource.id, secondHolder);
-    expect(await tryAcquireResourceObjectLock(db, resource.id, secondHolder)).toBe(false);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, secondHolder)).resolves.toBe(false);
 
     await releaseResourceObjectLock(db, resource.id, firstHolder);
-    expect(await tryAcquireResourceObjectLock(db, resource.id, secondHolder)).toBe(true);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, secondHolder)).resolves.toBe(true);
   });
 
   test("takes over a lease whose holder never released it once it has expired, and refuses the expired holder's release", async () => {
     expect.hasAssertions();
 
-    expect(await tryAcquireResourceObjectLock(db, resource.id, firstHolder)).toBe(true);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, firstHolder)).resolves.toBe(true);
     await db
       .update(resourceObjectLocksInResource)
       .set({ expiresAt: new Date(0) })
       .where(eq(resourceObjectLocksInResource.resourceId, resource.id));
 
-    expect(await tryAcquireResourceObjectLock(db, resource.id, secondHolder)).toBe(true);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, secondHolder)).resolves.toBe(true);
     await releaseResourceObjectLock(db, resource.id, firstHolder);
-    expect(await tryAcquireResourceObjectLock(db, resource.id, firstHolder)).toBe(false);
+    await expect(tryAcquireResourceObjectLock(db, resource.id, firstHolder)).resolves.toBe(false);
   });
 });

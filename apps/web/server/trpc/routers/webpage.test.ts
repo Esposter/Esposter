@@ -14,7 +14,7 @@ import { createTestImageNode } from "#shared/services/pageBuilder/constants.test
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createMockBucket } from "@esposter/db-mock";
-import { StorageBucket, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType, StorageBucket } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";

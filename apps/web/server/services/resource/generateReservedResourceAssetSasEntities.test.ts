@@ -5,7 +5,7 @@ import type { StorageCredentials } from "@esposter/db";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
 import { createMockBucket } from "@esposter/db-mock";
-import { StorageBucket, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
+import { FILES_DIRECTORY_SEGMENT, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { v7 } from "uuid";
@@ -118,6 +118,6 @@ describe(generateReservedResourceAssetSasEntities, () => {
     const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
-    expect(await bucket.head(blobName)).toBeNull();
+    await expect(bucket.head(blobName)).resolves.toBeNull();
   });
 });

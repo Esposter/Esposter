@@ -1,9 +1,8 @@
 import type { SocketIdentity } from "@esposter/db-schema";
 
+import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
-
-import { forwardSocket } from "#server/services/realtime/forwardSocket";
 
 describe(forwardSocket, () => {
   const identity: SocketIdentity = {

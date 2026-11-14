@@ -4,12 +4,12 @@ import { generateReservedMessageFileSasEntities } from "#server/services/message
 import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import {
-  StorageBucket,
   MAX_THUMBNAIL_BYTES,
+  StorageBucket,
   storageLedgerInStorage,
   StorageTier,
-  usersInAuth,
   StorageTierQuotaMap,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
@@ -20,6 +20,7 @@ vi.mock(import("#server/services/storage/getStorageCredentials"), () => ({
   getStorageCredentials: () => ({
     accessKeyId: "accessKeyId",
     accountId: "accountId",
+    environment: "dev",
     secretAccessKey: "secretAccessKey",
   }),
 }));

@@ -1,12 +1,13 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { todoListRouter } from "#server/trpc/routers/todoList";
-import { McpScope, ResourceType } from "@esposter/db-schema";
 import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, NotFoundError } from "@esposter/shared";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";

@@ -4,7 +4,7 @@ import { surveyResponsesInResource } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 
 // Rows go in statements of ten, since a D1 statement binds at most a hundred parameters and each row binds nine. The
-// statements go in batches of a hundred, one request each, since a statement per request overruns a test's timeout
+// Statements go in batches of a hundred, one request each, since a statement per request overruns a test's timeout
 export const insertSurveyResponses = async (
   db: Database,
   rows: (typeof surveyResponsesInResource)["$inferInsert"][],

@@ -1,11 +1,12 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember); Each step reads the last: each note takes the clock set just before it */
+import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
+import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
@@ -23,11 +24,13 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-vi.mock("#server/services/message/call/getCallObject", () => ({
-  getCallObject: vi.fn<(callSessionId: string) => unknown>(),
+import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("#server/services/message/call/getCallObject"), () => ({
+  getCallObject: vi.fn<typeof getCallObject>(),
 }));
 // The room's object writes the system lines and purges a soft-banned member's messages, so it is faked: each method
-// answers what a test sets, and what the router sent it is what the tests read
+// Answers what a test sets, and what the router sent it is what the tests read
 const { roomObject } = vi.hoisted(() => ({
   roomObject: {
     broadcastEvent: vi.fn<RoomObjectRpc["broadcastEvent"]>(),
@@ -35,9 +38,9 @@ const { roomObject } = vi.hoisted(() => ({
     deleteUserMessages: vi.fn<RoomObjectRpc["deleteUserMessages"]>(),
   },
 }));
-vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: () => roomObject }));
-
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
+  useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
+}));
 
 describe("moderationRouter", () => {
   const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();

@@ -28,7 +28,7 @@ describe("roleRouter", () => {
 
   beforeEach(() => {
     roomId = getRoomId();
-    roomObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
   });
 
   afterEach(() => {

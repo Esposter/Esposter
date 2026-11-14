@@ -12,6 +12,7 @@ import {
   DatabaseEntityType,
   friendRequestsInSocial,
   friendsInSocial,
+  PublicUserColumns,
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
@@ -253,10 +254,11 @@ describe("friendRequestRouter", () => {
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
     const acceptedSenderUser = await friendRequestCaller.acceptFriendRequest(senderUser.id);
-    const acceptance = {
-      receiverUser: expect.objectContaining({ id: receiverUser.id }),
-      senderUser: acceptedSenderUser,
-    };
+    const acceptedReceiverUser = await mockContext.db.query.usersInAuth.findFirst({
+      columns: PublicUserColumns,
+      where: { id: { eq: receiverUser.id } },
+    });
+    const acceptance = { receiverUser: acceptedReceiverUser, senderUser: acceptedSenderUser };
 
     expect(userObjectCalls.filter(({ method }) => method === "acceptFriendRequest")).toStrictEqual([
       { args: [acceptance], method: "acceptFriendRequest", userId: senderUser.id },

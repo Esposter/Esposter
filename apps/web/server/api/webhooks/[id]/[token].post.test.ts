@@ -1,3 +1,5 @@
+import type { db } from "#server/db";
+import type { getJobQueue } from "#server/services/queue/getJobQueue";
 import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/[id]/[token].post";
@@ -22,8 +24,14 @@ const { findFirst, send } = vi.hoisted(() => ({
   send: vi.fn<(job: { webhook: unknown }) => Promise<void>>(),
 }));
 
-vi.mock(import("#server/db"), () => ({ db: { query: { webhooksInMessage: { findFirst } } } }));
-vi.mock(import("#server/services/queue/getJobQueue"), () => ({ getJobQueue: () => ({ send }) }));
+// The lookup is the only query the route makes, so the fake holds only that table
+vi.mock(
+  import("#server/db"),
+  () => ({ db: { query: { webhooksInMessage: { findFirst } } } }) as unknown as Partial<{ db: typeof db }>,
+);
+vi.mock(import("#server/services/queue/getJobQueue"), () => ({
+  getJobQueue: () => ({ send }) as unknown as ReturnType<typeof getJobQueue>,
+}));
 vi.mock(import("#server/services/rateLimiter/consumeAddressRateLimit"), () => ({
   consumeAddressRateLimit: () => Promise.resolve(true),
 }));

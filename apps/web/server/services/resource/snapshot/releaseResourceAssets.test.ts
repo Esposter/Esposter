@@ -2,6 +2,7 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
@@ -12,9 +13,8 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  QueueJob,
-  StorageBucket,
   getResourceFileBlobName,
+  QueueJob,
   resourcesInResource,
   ResourceType,
   resourceVersionAssetsInResource,
@@ -22,20 +22,20 @@ import {
   resourceWorkingAssetsInResource,
   SnapshotChannel,
   SnapshotReason,
+  StorageBucket,
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
 
 // R2 stamps an upload with its own clock, not the one a test fakes, so the grace window is passed by moving the
 // Clock on from the real time the asset was uploaded at
 const setGraceElapsed = () => {
-  vi.setSystemTime(Date.now() + ASSET_GRACE_MS);
+  vi.setSystemTime(Temporal.Now.instant().add({ milliseconds: ASSET_GRACE_MS }));
 };
 
 describe(releaseResourceAssets, () => {

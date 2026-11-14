@@ -5,9 +5,9 @@ import { getPermissions } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   roomMemberPermissionsInMessage,
+  RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
-  RoomPermission,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -63,7 +63,9 @@ describe(setMemberPermissionOverride, () => {
     });
 
     expect(override).toStrictEqual({ allow: highestBit, deny: 0n });
-    expect(await getPermissions(mockDatabase.db, userId, roomId)).toBe(highestBit | RoomPermission.ReadMessages);
+    await expect(getPermissions(mockDatabase.db, userId, roomId)).resolves.toBe(
+      RoomPermission.ReadMessages | highestBit,
+    );
   });
 
   test("moving a bit from allow to deny takes it away from the effective permissions", async () => {
@@ -81,7 +83,7 @@ describe(setMemberPermissionOverride, () => {
     });
 
     expect(override).toStrictEqual({ allow: 0n, deny: highestBit });
-    expect(await getPermissions(mockDatabase.db, userId, roomId)).toBe(RoomPermission.ReadMessages);
+    await expect(getPermissions(mockDatabase.db, userId, roomId)).resolves.toBe(RoomPermission.ReadMessages);
   });
 
   test("a row with every bit returned to the roles is removed", async () => {
@@ -99,6 +101,6 @@ describe(setMemberPermissionOverride, () => {
     });
 
     expect(override).toStrictEqual({ allow: 0n, deny: 0n });
-    expect(await mockDatabase.db.$count(roomMemberPermissionsInMessage)).toBe(0);
+    await expect(mockDatabase.db.$count(roomMemberPermissionsInMessage)).resolves.toBe(0);
   });
 });
