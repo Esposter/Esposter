@@ -14,11 +14,11 @@ interface Props {
 const { action } = defineProps<Props>();
 const webhookStore = useWebhookStore();
 const { items } = storeToRefs(webhookStore);
-const { deleteWebhook, rotateToken } = webhookStore;
+const { deleteWebhook, regenerateToken } = webhookStore;
 const webhookDialogStore = useWebhookDialogStore();
 const { getSelectedId } = webhookDialogStore;
 const selectedId = getSelectedId(action);
-const write = action === WebhookDialogAction.Delete ? deleteWebhook : rotateToken;
+const write = action === WebhookDialogAction.Delete ? deleteWebhook : regenerateToken;
 const { isOpen, item: webhook } = useSingletonDialog(selectedId, () =>
   items.value.find(({ id }) => id === selectedId.value),
 );
@@ -36,8 +36,8 @@ const { confirmLabel, title } = WebhookDialogActionMetaMap[action];
   >
     <p v-if="action === WebhookDialogAction.Delete">Are you sure you want to delete {{ webhook.name }}?</p>
     <p v-else>
-      Rotate the token for {{ webhook.name }}? Its current URL stops working, so every service posting through it needs
-      the new one.
+      Regenerate the URL for {{ webhook.name }}? Its current URL stops working, so every service posting through it
+      needs the new one.
     </p>
   </UiConfirmDialog>
 </template>

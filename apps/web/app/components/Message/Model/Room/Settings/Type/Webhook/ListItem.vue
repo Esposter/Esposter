@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import type { RoomInMessage, WebhookInMessage } from "@esposter/db-schema";
+import type { PublicWebhookInMessage, RoomInMessage } from "@esposter/db-schema";
 
 import { WebhookDialogAction } from "@/models/message/room/WebhookDialogAction";
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { selectWebhookInMessageSchema, WEBHOOK_NAME_MAX_LENGTH } from "@esposter/db-schema";
 
 interface Props {
   roomId: RoomInMessage["id"];
-  webhook: WebhookInMessage;
+  webhook: PublicWebhookInMessage;
 }
 
 const { webhook } = defineProps<Props>();
-const runtimeConfig = useRuntimeConfig();
 const webhookStore = useWebhookStore();
 const { updateWebhook } = webhookStore;
 const { draft: editedName, isDirty, settle } = useStoredDraft(() => webhook.name);
@@ -26,7 +24,8 @@ const nameRules = [
 </script>
 
 <!-- Discord's arrangement: every field of a webhook is edited on its own row, its name as the field that renames it,
-     then what is done to it, and whether it posts at all at the end -->
+     then what is done to it, and whether it posts at all at the end. Its URL is not kept here: it is shown once, when
+     it is issued, and regenerating is the way to get a new one -->
 <template>
   <div role="listitem" flex gap-2 items-center>
     <UiIcon :meaning="UiIconMeaning.Webhook" text-muted />
@@ -46,11 +45,7 @@ const nameRules = [
         }
       "
     />
-    <UiCopyButton
-      :source="`${runtimeConfig.public.baseUrl}/api/webhooks/${webhook.id}/${webhook.token}`"
-      :variant="UiButtonVariant.Quiet"
-    />
-    <MessageModelRoomSettingsTypeWebhookActionButton :id="webhook.id" :action="WebhookDialogAction.RotateToken" />
+    <MessageModelRoomSettingsTypeWebhookActionButton :id="webhook.id" :action="WebhookDialogAction.Regenerate" />
     <MessageModelRoomSettingsTypeWebhookActionButton :id="webhook.id" :action="WebhookDialogAction.Delete" />
     <MessageModelRoomSettingsTypeWebhookActiveSwitch :room-id :webhook />
   </div>

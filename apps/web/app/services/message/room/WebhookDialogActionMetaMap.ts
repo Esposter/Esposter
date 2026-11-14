@@ -8,11 +8,11 @@ export const WebhookDialogActionMetaMap = {
     meaning: UiIconMeaning.Delete,
     title: "Delete webhook",
   },
-  [WebhookDialogAction.RotateToken]: {
-    confirmLabel: "Rotate",
-    label: "Rotate token",
+  [WebhookDialogAction.Regenerate]: {
+    confirmLabel: "Regenerate",
+    label: "Regenerate URL",
     meaning: UiIconMeaning.Refresh,
-    title: "Rotate token",
+    title: "Regenerate URL",
   },
 } as const satisfies Record<
   WebhookDialogAction,

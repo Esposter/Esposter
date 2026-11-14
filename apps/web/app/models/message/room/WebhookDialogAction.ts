@@ -1,4 +1,4 @@
 export enum WebhookDialogAction {
   Delete = "Delete",
-  RotateToken = "RotateToken",
+  Regenerate = "Regenerate",
 }

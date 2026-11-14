@@ -9,6 +9,7 @@ import { getDanglingProgramBindingError } from "#server/services/program/getDang
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
+import { regenerateProgramParticipantTokens } from "#server/services/program/regenerateProgramParticipantTokens";
 import { readOwnedResource } from "#server/services/resource/readOwnedResource";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -18,9 +19,10 @@ import { programResourceSchema } from "#shared/models/resource/program/ProgramRe
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { Operation, RoutePath } from "@esposter/shared";
 
-// The invite export's read: the bound email as compiled, and one tokened invite per participant the scope selects.
-// Owner-only, and the one read that carries tokens outside the mutation that issues them — both reach the owner alone
-export const readProgramInvites = async (
+// The invite export: the bound email as compiled, and one invite per participant the scope selects, each issued a new
+// link. A link cannot be read back once issued, so the export issues the links it carries, and the links already sent
+// to those participants stop working. Owner-only, and the one answer that carries links, which reaches the owner alone
+export const issueProgramInvites = async (
   ctx: AuthedContext,
   program: ResourceInResource,
   scope: ProgramInviteScope,
@@ -61,13 +63,22 @@ export const readProgramInvites = async (
     const keyValue = row[keyColumn];
     if (typeof keyValue === "string" && keyValue && !rowKeyValueMap.has(keyValue)) rowKeyValueMap.set(keyValue, row);
   }
+  const scopedParticipants = participants.filter(
+    ({ keyValue }) => scope !== ProgramInviteScope.Awaiting || !respondedKeyValues.has(keyValue),
+  );
+  const issuedTokenMap = new Map(
+    (
+      await regenerateProgramParticipantTokens(
+        ctx.db,
+        scopedParticipants.filter(({ keyValue }) => rowKeyValueMap.has(keyValue)),
+      )
+    ).map(({ id, token }) => [id, token]),
+  );
   const invites: ProgramInvite[] = [];
-  let unmatchedCount = 0;
-  for (const { keyValue, token } of participants) {
-    if (scope === ProgramInviteScope.Awaiting && respondedKeyValues.has(keyValue)) continue;
+  for (const { id, keyValue } of scopedParticipants) {
     const row = rowKeyValueMap.get(keyValue);
-    if (row) invites.push({ keyValue, row, token });
-    else unmatchedCount++;
+    const token = issuedTokenMap.get(id);
+    if (row && token) invites.push({ keyValue, row, token });
   }
-  return { emailHtml, invites, unmatchedCount };
+  return { emailHtml, invites, unmatchedCount: scopedParticipants.length - invites.length };
 };

@@ -6,8 +6,8 @@ import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
-import { secretTokenSchema } from "@esposter/shared";
-import { check, index, integer, text } from "drizzle-orm/sqlite-core";
+import { SECRET_TOKEN_HASH_LENGTH } from "@esposter/shared";
+import { check, index, integer, text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
 import { z } from "zod";
@@ -26,8 +26,8 @@ export const webhooksInMessage = sqliteTable(
     roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    // The credential in the delivery url, a 256-bit secret from `generateSecretToken`
-    token: text().notNull(),
+    // The SHA-256 of the credential in the delivery url, never the credential: it is shown once, when it is issued
+    tokenHash: text().notNull(),
     userId: text()
       .notNull()
       // 1:1 with appUsers
@@ -35,10 +35,12 @@ export const webhooksInMessage = sqliteTable(
       .references(() => appUsersInMessage.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ name, roomId }) => [
+    extraConfig: ({ name, roomId, tokenHash }) => [
       check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH)),
       // A room's webhook list and its create-time count read by room, and its deletion cascades through it
       index("webhooks_roomId_index").on(roomId),
+      // A delivery is matched to its webhook by the hash of the credential it presents, so one lookup answers it
+      unique("webhooks_tokenHash_unique").on(tokenHash),
     ],
     schema: messageSchema,
   },
@@ -50,6 +52,6 @@ export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage
   id: () => z.uuidv7(),
   name: (schema) => createNameSchema(WEBHOOK_NAME_MAX_LENGTH, schema),
   roomId: () => z.uuidv7(),
-  token: () => secretTokenSchema,
+  tokenHash: () => z.hex().length(SECRET_TOKEN_HASH_LENGTH),
   userId: () => z.uuidv7(),
 });

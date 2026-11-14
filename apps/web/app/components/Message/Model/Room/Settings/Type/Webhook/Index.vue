@@ -37,5 +37,6 @@ await readWebhooks(room.id);
       You can only create up to {{ WEBHOOK_MAX_LENGTH }} {{ pluralize("webhook", WEBHOOK_MAX_LENGTH) }}.
     </UiAlert>
     <MessageModelRoomSettingsTypeWebhookList :room-id="room.id" />
+    <MessageModelRoomSettingsTypeWebhookIssuedDialog />
   </div>
 </template>

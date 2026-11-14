@@ -25,5 +25,5 @@ const { items } = storeToRefs(webhookStore);
     <MessageModelRoomSettingsTypeWebhookListItem v-for="webhook of items" :key="webhook.id" :room-id :webhook />
   </div>
   <MessageModelRoomSettingsTypeWebhookConfirmDialog :action="WebhookDialogAction.Delete" :room-id />
-  <MessageModelRoomSettingsTypeWebhookConfirmDialog :action="WebhookDialogAction.RotateToken" :room-id />
+  <MessageModelRoomSettingsTypeWebhookConfirmDialog :action="WebhookDialogAction.Regenerate" :room-id />
 </template>

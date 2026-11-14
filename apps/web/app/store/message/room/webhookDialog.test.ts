@@ -11,6 +11,6 @@ describe(useWebhookDialogStore, () => {
     webhookDialogStore.getSelectedId(WebhookDialogAction.Delete).value = "deleting";
 
     expect(webhookDialogStore.getSelectedId(WebhookDialogAction.Delete).value).toBe("deleting");
-    expect(webhookDialogStore.getSelectedId(WebhookDialogAction.RotateToken).value).toBe("");
+    expect(webhookDialogStore.getSelectedId(WebhookDialogAction.Regenerate).value).toBe("");
   });
 });

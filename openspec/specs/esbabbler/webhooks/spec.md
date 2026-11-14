@@ -1,6 +1,6 @@
 ## Purpose
 
-Inbound webhooks — an external system posts to a room's secret url and the message arrives under its own bot identity. Covers creating and rotating a webhook, how its url is accepted or refused, what a posted message looks like, and the limits on posting and creating.
+Inbound webhooks — an external system posts to a room's secret url and the message arrives under its own bot identity. Covers creating and regenerating a webhook, how its url is accepted or refused, what a posted message looks like, and the limits on posting and creating.
 
 ## Requirements
 
@@ -13,7 +13,7 @@ A member holding the manage webhooks permission SHALL be able to create a webhoo
 - **GIVEN** a member holding the manage webhooks permission
 - **WHEN** the member chooses New Webhook in the room's settings
 - **THEN** a webhook named by default is created
-- **AND** the member can copy its full url
+- **AND** the full url is shown once, in a dialog that says it will not be shown again, with a copy button
 
 #### Scenario: a member renames a webhook
 
@@ -37,14 +37,14 @@ A room SHALL hold no more than one webhook at a time.
 - **WHEN** a manager tries to create another
 - **THEN** the creation is refused
 
-### Requirement: Rotating a webhook's token invalidates the old url
+### Requirement: Regenerating a webhook's url invalidates the old url
 
-Rotating a webhook's token SHALL give it a new url, and the old url SHALL stop accepting posts.
+Regenerating a webhook's url SHALL give it a new token, shown once, and the old url SHALL stop accepting posts.
 
-#### Scenario: a manager rotates a leaked url
+#### Scenario: a manager regenerates a leaked url
 
 - **GIVEN** a webhook whose url has leaked
-- **WHEN** the manager rotates its token
+- **WHEN** the manager regenerates its url
 - **THEN** a post to the old url is refused
 - **AND** a post to the new url is accepted
 

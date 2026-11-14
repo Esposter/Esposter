@@ -1,9 +1,9 @@
-import type { WebhookInMessage } from "@esposter/db-schema";
+import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
 import { v7 } from "uuid";
 import { describe } from "vitest";
 
-export const createWebhook = (overrides: Partial<WebhookInMessage> = {}): WebhookInMessage => ({
+export const createWebhook = (overrides: Partial<PublicWebhookInMessage> = {}): PublicWebhookInMessage => ({
   createdAt: new Date(0),
   creatorId: v7(),
   deletedAt: null,
@@ -11,7 +11,6 @@ export const createWebhook = (overrides: Partial<WebhookInMessage> = {}): Webhoo
   isActive: true,
   name: "name",
   roomId: v7(),
-  token: "token",
   updatedAt: new Date(0),
   userId: v7(),
   ...overrides,

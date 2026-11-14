@@ -5,14 +5,14 @@ import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAdd
 import { webhookRateLimiter } from "#server/services/rateLimiter/webhookRateLimiter";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
-import { checkIsSecretEqual, getResult, getResultAsync } from "@esposter/shared";
+import { getResult, getResultAsync, hashSecretToken, secretTokenSchema } from "@esposter/shared";
 import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
 import { v7 } from "uuid";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
   const { data: id, success: isIdValid } = selectWebhookInMessageSchema.shape.id.safeParse(rawId);
-  const { data: token, success: isTokenValid } = selectWebhookInMessageSchema.shape.token.safeParse(rawToken);
+  const { data: token, success: isTokenValid } = secretTokenSchema.safeParse(rawToken);
 
   if (!(isIdValid && isTokenValid)) {
     event.res.status = 400;
@@ -25,13 +25,14 @@ export default defineEventHandler(async (event) => {
     // Would cap the route across ids
     await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""));
     await webhookRateLimiter.consume(id);
-    // The id is public and the token is the credential, so the row is read by id and the token compared in constant time.
-    // An unknown id, a deactivated webhook and a wrong token are the same 404, and a sender cannot tell them apart
+    // The row is found by its id and the hash of the credential presented, so one lookup answers both. An unknown id,
+    // A deactivated webhook and a wrong credential are the same 404, and a sender cannot tell them apart
+    const tokenHash = await hashSecretToken(token);
     const webhook = await db.query.webhooksInMessage.findFirst({
-      columns: { roomId: true, token: true, userId: true },
-      where: { id: { eq: id }, isActive: { eq: true } },
+      columns: { roomId: true, userId: true },
+      where: { id: { eq: id }, isActive: { eq: true }, tokenHash: { eq: tokenHash } },
     });
-    if (!webhook || !checkIsSecretEqual(token, webhook.token)) {
+    if (!webhook) {
       event.res.status = 404;
       return { message: "Webhook not found." };
     }

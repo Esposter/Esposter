@@ -9,7 +9,7 @@ import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { appUsersInMessage, DatabaseEntityType, RoomPermission, webhooksInMessage } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { hashSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -41,18 +41,22 @@ describe("webhookRouter", () => {
     await mockContext.db.delete(appUsersInMessage);
   });
 
-  test("creates", async () => {
+  test("creates, answering the credential once and storing only its hash", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { token, webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
+    const storedWebhook = await mockContext.db.query.webhooksInMessage.findFirst();
 
     assert.exists(appUser);
+    assert.exists(storedWebhook);
 
+    expect(token).toHaveLength(SECRET_TOKEN_LENGTH);
     expect(newWebhook.name).toBe(name);
     expect(newWebhook.isActive).toBe(true);
-    expect(newWebhook.token).toBeTypeOf("string");
     expect(newWebhook.userId).toBe(appUser.id);
+    expect(storedWebhook.tokenHash).toBe(await hashSecretToken(token));
+    expect(JSON.stringify(newWebhook)).not.toContain(token);
   });
 
   test("fails create with max webhooks", async () => {
@@ -88,7 +92,7 @@ describe("webhookRouter", () => {
   test("reads", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { token, webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const webhooks = await webhookCaller.readWebhooks({ roomId });
     const webhook = takeOne(webhooks);
 
@@ -96,6 +100,9 @@ describe("webhookRouter", () => {
     expect(webhook.id).toBe(newWebhook.id);
     expect(webhook.roomId).toBe(roomId);
     expect(webhook.userId).toBe(newWebhook.userId);
+    // The credential is shown once, so no read carries it or its hash, however often the list is read
+    expect(webhook).not.toHaveProperty("tokenHash");
+    expect(JSON.stringify(webhooks)).not.toContain(token);
   });
 
   test("reads empty webhooks", async () => {
@@ -109,7 +116,7 @@ describe("webhookRouter", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const updatedWebhook = await webhookCaller.updateWebhook({
       id: newWebhook.id,
       isActive: updatedIsActive,
@@ -124,7 +131,7 @@ describe("webhookRouter", () => {
   test(`fails update for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     await mockMemberSessionOnce();
 
     await expect(
@@ -132,30 +139,34 @@ describe("webhookRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
-  test("rotates token", async () => {
+  test("regenerates the credential, answering the new one and storing only its hash", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
-    const rotatedWebhook = await webhookCaller.rotateToken({ id: newWebhook.id, roomId });
+    const { token: issuedToken, webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
+    const { token: regeneratedToken } = await webhookCaller.regenerateToken({ id: newWebhook.id, roomId });
+    const storedWebhook = await mockContext.db.query.webhooksInMessage.findFirst();
 
-    expect(rotatedWebhook.token).not.toBe(newWebhook.token);
+    assert.exists(storedWebhook);
+
+    expect(regeneratedToken).not.toBe(issuedToken);
+    expect(storedWebhook.tokenHash).toBe(await hashSecretToken(regeneratedToken));
   });
 
-  test(`fails rotate token for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
+  test(`fails regenerate for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     await mockMemberSessionOnce();
 
-    await expect(webhookCaller.rotateToken({ id: newWebhook.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      webhookCaller.regenerateToken({ id: newWebhook.id, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("deletes", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const deletedWebhook = await webhookCaller.deleteWebhook({ id: newWebhook.id, roomId });
     const webhooks = await webhookCaller.readWebhooks({ roomId });
     const appUser = await mockContext.db.query.appUsersInMessage.findFirst();
@@ -168,7 +179,7 @@ describe("webhookRouter", () => {
   test(`fails delete for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     await mockMemberSessionOnce();
 
     await expect(webhookCaller.deleteWebhook({ id: newWebhook.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -179,7 +190,7 @@ describe("webhookRouter", () => {
   test("reads app users by ids", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     const users = await webhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId });
 
     expect(takeOne(users).id).toBe(newWebhook.userId);
@@ -188,7 +199,7 @@ describe("webhookRouter", () => {
   test("fails read app users by ids for a non-member", async () => {
     expect.hasAssertions();
 
-    const newWebhook = await webhookCaller.createWebhook({ name, roomId });
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
     await mockSessionOnce(mockContext.db);
 
     await expect(

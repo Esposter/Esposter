@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { WebhookInMessage } from "@esposter/db-schema";
+import type { PublicWebhookInMessage } from "@esposter/db-schema";
 
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { createWebhook } from "@/services/message/room/createWebhook.test";
@@ -8,6 +8,7 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
+import { useWebhookDialogStore } from "@/store/message/room/webhookDialog";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -21,7 +22,7 @@ describe(useWebhookStore, () => {
   // The read hands back each row with the room and the webhook's creator attached, the way the panel renders it
   const room = createRoom("name");
   const creator = createUser();
-  const toWebhookInMessageWithRelations = (webhook: WebhookInMessage) => ({ ...webhook, creator, room });
+  const toWebhookInMessageWithRelations = (webhook: PublicWebhookInMessage) => ({ ...webhook, creator, room });
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
@@ -115,24 +116,28 @@ describe(useWebhookStore, () => {
     expect(items.value).toStrictEqual([first]);
   });
 
-  // A rename and a token rotation are separate writes to one webhook, so a rotation that lands while the rename is in
-  // Flight is not the rename's to undo: the rejected rename puts back only the name it changed, and the new token stays
-  test("keeps the token a rotation replaced while the rejected rename was in flight", async () => {
+  // A rename and a regeneration are separate writes to one webhook, so a regeneration that lands while the rename is in
+  // Flight is not the rename's to undo: the rejected rename puts back only the name it changed, and the URL it issued stays
+  test("keeps the URL a regeneration issued while the rejected rename was in flight", async () => {
     expect.hasAssertions();
 
     const rejectedName = "rejectedName";
-    const rotatedToken = "token1";
+    const regeneratedToken = "token1";
     const webhookStore = useWebhookStore();
-    const { getSlice, rotateToken, updateWebhook } = webhookStore;
+    const webhookDialogStore = useWebhookDialogStore();
+    const { getSlice, regenerateToken, updateWebhook } = webhookStore;
     const { items } = storeToRefs(webhookStore);
-    trpcMsw.webhook.rotateToken.mutation(() => ({ ...first, token: rotatedToken }));
+    trpcMsw.webhook.regenerateToken.mutation(() => ({ token: regeneratedToken, webhook: first }));
     trpcMsw.webhook.updateWebhook.mutation(async () => {
-      await rotateToken(roomId, { id: first.id });
+      await regenerateToken(roomId, { id: first.id });
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     getSlice(roomId).items.value = [{ ...first }];
     await updateWebhook(roomId, { id: first.id, name: rejectedName });
 
-    expect(items.value).toStrictEqual([{ ...first, token: rotatedToken }]);
+    expect(items.value).toStrictEqual([first]);
+    expect(webhookDialogStore.issuedUrl).toBe(
+      `${useRuntimeConfig().public.baseUrl}/api/webhooks/${first.id}/${regeneratedToken}`,
+    );
   });
 });

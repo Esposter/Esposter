@@ -6,7 +6,7 @@ This page is about **inbound** webhooks only. Posting room events out to a user-
 
 ## Data model
 
-Two tables, one-to-one. `webhooksInMessage` holds the room membership and the secret: `roomId`, `creatorId` (the member who made it), `token`, an `isActive` switch, a display `name`, and a `userId` that is `unique` and references the second table. `appUsersInMessage` is the bot identity — nothing but `id`, `name` and `image`. Separating them is what lets a webhook message carry an author at all: the identity is a row a message can point at, so rendering does not have to special-case "no user".
+Two tables, one-to-one. `webhooksInMessage` holds the room membership and the secret: `roomId`, `creatorId` (the member who made it), `tokenHash` (the SHA-256 of the token, unique — the token itself is never stored), an `isActive` switch, a display `name`, and a `userId` that is `unique` and references the second table. `appUsersInMessage` is the bot identity — nothing but `id`, `name` and `image`. Separating them is what lets a webhook message carry an author at all: the identity is a row a message can point at, so rendering does not have to special-case "no user".
 
 The pairing is enforced by construction. `createWebhook` inserts both rows in one batch, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same batch.
 
@@ -37,7 +37,7 @@ sequenceDiagram
 
 The url a member copies points at the **app**, at the web Worker's own route `POST /api/webhooks/:id/:token` in `server/api/webhooks/[id]/[token].post.ts`, with no forwarder in between. The route validates the two route parameters against the schema shapes, spends a point from the address budget and then from the per-webhook budget, both described in [rate limiting](../../architecture/rate-limiting/design.md), and answers each refusal with its own status. Keying the budget on the webhook id rather than on a caller is the point — a webhook is a machine identity, and one misconfigured integration should exhaust only its own allowance. The id is still the caller's to choose, though, so the address is spent first: without it, every id matching no webhook would arrive with a fresh allowance and nothing would cap the route across ids.
 
-**The token in the url is the credential**: the route reads the webhook row by its id, and answers 404 when no active webhook has that id or the token in the url is not its stored one, compared in constant time (`checkIsSecretEqual`) — an inactive webhook and a wrong token are indistinguishable from outside. It then parses the body against `webhookPayloadSchema` (a Discord-shaped `content` / `username` / `avatar_url` payload with `content` required — and sanitized by `sanitizeTextHtml` before its length bound applies, since it renders as message markup like every other body — and strict: a key it does not declare fails the request with 400 — Discord's `embeds` among them, beside `content` or alone, since a message has nowhere to store one and a field accepted but never stored would be dropped silently). The payload is checked before anything is queued, so a malformed one is answered with its status rather than failing its job. The route then sends one `ProcessWebhook` job and answers 202 without waiting for the message to exist. Every string in the payload carries a length, `avatar_url` included, which a test over the schema's JSON Schema holds (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). That split is deliberate: the sender gets a fast, cheap acknowledgement, and the work that can fail happens behind the queue.
+**The token in the url is the credential**: the route hashes the token in the url and reads the active webhook whose id and `tokenHash` both match in one lookup, answering 404 when there is none — an inactive webhook and a wrong token are indistinguishable from outside. A token is a bearer credential stored only as its hash: it is issued once, in the answer to the mutation that creates or regenerates the webhook, and no read carries it again. It then parses the body against `webhookPayloadSchema` (a Discord-shaped `content` / `username` / `avatar_url` payload with `content` required — and sanitized by `sanitizeTextHtml` before its length bound applies, since it renders as message markup like every other body — and strict: a key it does not declare fails the request with 400 — Discord's `embeds` among them, beside `content` or alone, since a message has nowhere to store one and a field accepted but never stored would be dropped silently). The payload is checked before anything is queued, so a malformed one is answered with its status rather than failing its job. The route then sends one `ProcessWebhook` job and answers 202 without waiting for the message to exist. Every string in the payload carries a length, `avatar_url` included, which a test over the schema's JSON Schema holds (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). That split is deliberate: the sender gets a fast, cheap acknowledgement, and the work that can fail happens behind the queue.
 
 The job is not idempotent, so its queue does not retry it: each accepted push is delivered once. `ProcessWebhook` turns the payload into a `MessageType.Webhook` message — the payload's `username` and `avatar_url` override the stored bot name and image for that message — and calls the room's object to persist it, which broadcasts the message to the room's viewers as part of the same call. It then sends a [push notification](../push-notifications/design.md) job titled with the bot's name. The notification is best-effort, as [persist then notify](../../architecture/persist-then-notify/design.md) requires of every step after the write.
 
@@ -49,20 +49,20 @@ The job is not idempotent, so its queue does not retry it: each accepted push is
 
 All webhook procedures live in the `webhook` router.
 
-| Procedure       | Auth             | Purpose                                                           |
-| --------------- | ---------------- | ----------------------------------------------------------------- |
-| `createWebhook` | `ManageWebhooks` | creates the app user and the webhook together, on the slow budget |
-| `readWebhooks`  | `ManageWebhooks` | lists a room's webhooks with their tokens                         |
-| `updateWebhook` | `ManageWebhooks` | renames a webhook or toggles `isActive`                           |
-| `rotateToken`   | `ManageWebhooks` | mints a new token, invalidating the old url                       |
-| `deleteWebhook` | `ManageWebhooks` | deletes the app user, cascading the webhook                       |
-| `readAppUsers`  | room member      | resolves bot identities for rendering the message list            |
+| Procedure         | Auth             | Purpose                                                           |
+| ----------------- | ---------------- | ----------------------------------------------------------------- |
+| `createWebhook`   | `ManageWebhooks` | creates the app user and the webhook together, on the slow budget |
+| `readWebhooks`    | `ManageWebhooks` | lists a room's webhooks, never their tokens                       |
+| `updateWebhook`   | `ManageWebhooks` | renames a webhook or toggles `isActive`                           |
+| `regenerateToken` | `ManageWebhooks` | mints a new token, shown once, invalidating the old url           |
+| `deleteWebhook`   | `ManageWebhooks` | deletes the app user, cascading the webhook                       |
+| `readAppUsers`    | room member      | resolves bot identities for rendering the message list            |
 
 `createWebhook` is the one procedure on the slow rate-limit budget, because it is the only one that mints a credential. `readAppUsers` is deliberately open to any member: rendering a room's history requires the identities of everything that has spoken in it, while the tokens stay behind the permission gate.
 
 ## UI
 
-The webhook surface is the **Integrations → Webhooks** tab of the [room settings](../room-settings/design.md) dialog, permission-gated like every other tab there. **New Webhook** creates the row outright, named `DEFAULT_WEBHOOK_NAME` — Discord's arrangement, and the reason the panel holds no create form: the name is the only thing a create could ask for, and the row it lands on already renames it. Each row is an inline-editable name, a copy button for the full url, rotate and delete buttons, and an active switch. Rotating is the revocation story — the url is a bearer credential, so the answer to a leak is a new token rather than an access list.
+The webhook surface is the **Integrations → Webhooks** tab of the [room settings](../room-settings/design.md) dialog, permission-gated like every other tab there. **New Webhook** creates the row outright, named `DEFAULT_WEBHOOK_NAME` — Discord's arrangement, and the reason the panel holds no create form: the name is the only thing a create could ask for, and the row it lands on already renames it. The created url is shown once, in a dialog that says it will not be shown again. Each row is an inline-editable name, a Regenerate button, a delete button, and an active switch. Regenerating is the revocation story — the url is a bearer credential, so the answer to a leak is a new token, shown once, rather than an access list.
 
 ## Key files
 
@@ -70,11 +70,11 @@ Paths are relative to `apps/web`, except those under `apps/functions/` and `pack
 
 | File                                                                | Role                                                                                |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/webhooksInMessage.ts`        | the webhook row — room, creator, token, active flag                                 |
+| `packages/db-schema/src/schema/message/webhooksInMessage.ts`        | the webhook row — room, creator, token hash, active flag                            |
 | `packages/db-schema/src/schema/message/appUsersInMessage.ts`        | the bot identity a webhook message is authored by                                   |
 | `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`   | the accepted request body                                                           |
 | `packages/db-schema/src/models/message/WebhookMessageEntity.ts`     | message entity carrying `appUser` in place of `userId`                              |
-| `server/trpc/routers/webhook.ts`                                    | create, read, update, rotate, delete, and identity lookup                           |
+| `server/trpc/routers/webhook.ts`                                    | create, read, update, regenerate, delete, and identity lookup                       |
 | `server/api/webhooks/[id]/[token].post.ts`                          | the public url — rate limits, token and payload checks, then the ProcessWebhook job |
 | `apps/functions/src/handlers/processWebhookHandler.ts`              | the ProcessWebhook job — message creation on the room, push notification job        |
 | `apps/functions/src/durableObjects/RoomObject.ts`                   | the webhook payload as a `MessageType.Webhook` message                              |
