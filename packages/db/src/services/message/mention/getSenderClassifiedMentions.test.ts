@@ -28,7 +28,7 @@ describe(getSenderClassifiedMentions, () => {
   const mentionedUserId = v7();
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db
       .insert(usersInAuth)
       .values(

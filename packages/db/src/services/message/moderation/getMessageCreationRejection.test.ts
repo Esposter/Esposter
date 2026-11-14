@@ -29,7 +29,7 @@ describe(getMessageCreationRejection, () => {
   const administratorUserId = v7();
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db
       .insert(usersInAuth)
       .values([ownerUserId, memberUserId, administratorUserId].map((id) => createUser(id, new Date(0), name)));

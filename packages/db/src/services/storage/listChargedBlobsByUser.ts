@@ -1,4 +1,4 @@
-import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
+import type { Database, StorageBucket, UserInAuth } from "@esposter/db-schema";
 
 // The exact list of blobs a user is charged for, read from the storage ledger rather than from a listing of names:
 // The ledger holds one row per charged blob with its container and owner, so a sweep removes what it was charged for

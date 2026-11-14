@@ -1,5 +1,5 @@
 import type { ReconcileStorageLedgerEntryResult } from "#src/models/storage/ReconcileStorageLedgerEntryResult";
-import type { StorageBucket, Database, StorageLedgerEntryInStorage } from "@esposter/db-schema";
+import type { Database, StorageBucket, StorageLedgerEntryInStorage } from "@esposter/db-schema";
 
 import { checkIsNewerSequencer } from "#src/services/storage/checkIsNewerSequencer";
 import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
@@ -20,8 +20,8 @@ import { and, eq, exists, isNull, sql } from "drizzle-orm";
 // The owner whose counter this actually moved — the only thing a meter watching the number needs telling about.
 //
 // The row is read first, and the write is conditional on that read still holding: the counter and the row move in one
-// batch only while the row is in the state the delta was computed from. A reconcile that lost that race throws, so the
-// event is redelivered and computes its delta from the row as it now stands.
+// Batch only while the row is in the state the delta was computed from. A reconcile that lost that race throws, so the
+// Event is redelivered and computes its delta from the row as it now stands.
 export const reconcileStorageLedgerEntry = async (
   db: Database,
   containerName: StorageBucket,

@@ -4,7 +4,8 @@ import { createUser } from "#src/services/message/createUser.test";
 import { cloneFiles } from "#src/services/storage/cloneFiles";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 import { createMockBucket, createMockDb } from "@esposter/db-mock";
-import { FileEntity, storageLedgerInStorage, StorageBucket, usersInAuth } from "@esposter/db-schema";
+import { FileEntity, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
@@ -53,8 +54,8 @@ describe(cloneFiles, () => {
     const clonedBlobNames = getFileBlobNames(destinationPrefix, clonedFile?.id ?? "", filename);
 
     expect(clonedFile?.hasThumbnail).toBe(true);
-    expect(await (await bucket.get(clonedBlobNames.blobName))?.text()).toBe("original");
-    expect(await (await bucket.get(clonedBlobNames.thumbnailBlobName))?.text()).toBe("thumbnail");
+    await expect((await bucket.get(clonedBlobNames.blobName))?.text()).resolves.toBe("original");
+    await expect((await bucket.get(clonedBlobNames.thumbnailBlobName))?.text()).resolves.toBe("thumbnail");
   });
 
   // A clone is all-or-nothing to its caller, so what landed before the failure is deleted and its charge given back
@@ -77,7 +78,9 @@ describe(cloneFiles, () => {
         sourcePrefix,
         destinationPrefix,
       ),
-    ).rejects.toThrow();
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getFileBlobNames(sourcePrefix, id, filename).thumbnailBlobName, "is not in the bucket to copy").message}]`,
+    );
 
     const { objects } = await bucket.list({ prefix: destinationPrefix });
     expect(objects).toStrictEqual([]);

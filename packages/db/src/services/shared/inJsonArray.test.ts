@@ -14,7 +14,7 @@ describe(inJsonArray, () => {
   let mockDatabase: MockDatabase;
 
   const insertUsers = async (ids: string[]) => {
-    const chunks = Array.from({ length: Math.ceil(ids.length / insertChunkLength) }, (_, index) =>
+    const chunks = Array.from({ length: Math.ceil(ids.length / insertChunkLength) }, (_value, index) =>
       ids.slice(index * insertChunkLength, (index + 1) * insertChunkLength),
     );
     await Promise.all(

@@ -1,6 +1,7 @@
 import type { StorageCredentials } from "#src/models/storage/StorageCredentials";
 import type { StorageBucket } from "@esposter/db-schema";
 
+import { PresignedUrlMethod } from "#src/models/storage/PresignedUrlMethod";
 import { presignStorageUrl } from "#src/services/storage/presignStorageUrl";
 import { READ_SAS_DURATION_MS } from "@esposter/db-schema";
 
@@ -15,7 +16,7 @@ export const createPresignedGetUrl = (
     expiresInMs = READ_SAS_DURATION_MS,
   }: { contentDisposition?: string; contentType?: string; expiresInMs?: number } = {},
 ) =>
-  presignStorageUrl(credentials, "GET", bucket, objectKey, {
+  presignStorageUrl(credentials, PresignedUrlMethod.Get, bucket, objectKey, {
     expiresInMs,
     searchParams: {
       ...(contentDisposition && { "response-content-disposition": contentDisposition }),

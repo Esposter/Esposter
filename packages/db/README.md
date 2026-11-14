@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It provides server-side helpers over D1 and R2, for the server environment only: a table client for D1 tables, and the R2 blob reads, writes and copies. The message, moderation, notification, resource and RBAC services built on them are shared by the app and the functions Worker.
+It provides server-side helpers over D1 and R2, for the server environment only: the R2 blob reads, writes and copies, and the message, moderation and RBAC services over D1. The message, moderation, notification, resource and RBAC services built on them are shared by the app and the functions Worker.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -16,14 +16,13 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Returns                                                                         |
-| ------------------- | ------------------------------------------------------------------------------- |
-| `StreamTableClient` | A client over one D1 table, built from a Drizzle D1 handle and the table's name |
-| `getFilesBlobNames` | One flat list of every blob that each file owns                                 |
-| `readJsonBlob`      | The JSON document in an R2 bucket, or `undefined` when nothing is saved yet     |
+| Export              | Returns                                                                     |
+| ------------------- | --------------------------------------------------------------------------- |
+| `getFilesBlobNames` | One flat list of every blob that each file owns                             |
+| `readJsonBlob`      | The JSON document in an R2 bucket, or `undefined` when nothing is saved yet |
 
 - **Server-only**: Do not import this package in browser code.
-- The table client takes a Drizzle D1 handle, and `readJsonBlob` takes an `R2Bucket`. Pass each one from its Worker binding.
+- `readJsonBlob` takes an `R2Bucket`. Pass it from its Worker binding.
 
 ## <a name="usage">📝 Usage</a>
 

@@ -2,7 +2,7 @@ import type { ListedBlobItem } from "#src/models/storage/ListedBlobItem";
 import type { R2Bucket } from "@cloudflare/workers-types";
 
 // Every object under a prefix, paged through R2's cursor. No delimiter is passed, so the listing is flat: a prefix names a
-// directory without its trailing slash, and a delimited listing would report everything below it as a prefix and no object
+// Directory without its trailing slash, and a delimited listing would report everything below it as a prefix and no object
 export const listBlobItems = async (bucket: R2Bucket, prefix: string): Promise<ListedBlobItem[]> => {
   const blobItems: ListedBlobItem[] = [];
   let cursor: string | undefined;

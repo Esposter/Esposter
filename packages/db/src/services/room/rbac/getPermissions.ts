@@ -1,6 +1,7 @@
 import type { GetPermissions } from "#src/models/room/rbac/GetPermissions";
 import type { Database } from "@esposter/db-schema";
 
+import { inJsonArray } from "#src/services/shared/inJsonArray";
 import {
   roomMemberPermissionsInMessage,
   RoomPermission,
@@ -8,7 +9,6 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 // Administrator is answered from the roles alone, so an override can neither grant it nor strip it

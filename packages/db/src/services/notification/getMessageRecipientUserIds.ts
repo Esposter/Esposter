@@ -17,7 +17,7 @@ export const getMessageRecipientUserIds = async (
     roomId,
     threadRootId,
     userId,
-  }: { message: string; roomId: string; threadRootId?: ThreadFollowInMessage["threadRootId"] | null; userId?: string },
+  }: { message: string; roomId: string; threadRootId?: null | ThreadFollowInMessage["threadRootId"]; userId?: string },
 ): Promise<string[]> => {
   const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
   if (userId) andWheres.push(ne(usersToRoomsInMessage.userId, userId));

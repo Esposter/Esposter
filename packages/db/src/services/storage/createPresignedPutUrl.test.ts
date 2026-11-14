@@ -1,7 +1,11 @@
-import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-
 import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutUrl";
+import {
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  StorageBucket,
+} from "@esposter/db-schema";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createPresignedPutUrl, () => {
   // Frozen so two urls signed in one test share a date, leaving the content type as the only input that can differ
@@ -29,7 +33,9 @@ describe(createPresignedPutUrl, () => {
     );
 
     expect(url.origin).toBe("https://accountid.r2.cloudflarestorage.com");
-    expect(url.pathname).toBe("/prod-r2-esposter-message-assets/room/id%7Ca%23b%3Fc");
+    expect(url.pathname).toBe(
+      `/${getCloudflareResourceName(CloudflareEnvironment.Production, CloudflareAssetType.R2Bucket, StorageBucket.MessageAssets)}/room/id%7Ca%23b%3Fc`,
+    );
     expect(url.searchParams.get("X-Amz-Expires")).toBe("3600");
     expect(url.searchParams.get("X-Amz-SignedHeaders")).toContain("content-type");
   });
@@ -47,7 +53,9 @@ describe(createPresignedPutUrl, () => {
       ),
     );
 
-    expect(url.pathname).toBe("/dev-r2-esposter-message-assets/key");
+    expect(url.pathname).toBe(
+      `/${getCloudflareResourceName(CloudflareEnvironment.Development, CloudflareAssetType.R2Bucket, StorageBucket.MessageAssets)}/key`,
+    );
   });
 
   // The content type is in the signature, so a PUT of any other type is one the url's signature does not cover

@@ -1,10 +1,9 @@
+import { deleteUserDirectories } from "#src/services/storage/deleteUserDirectories";
+import { listBlobNames } from "#src/services/storage/listBlobNames";
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-
-import { deleteUserDirectories } from "#src/services/storage/deleteUserDirectories";
-import { listBlobNames } from "#src/services/storage/listBlobNames";
 
 describe(deleteUserDirectories, () => {
   const userId = v7();

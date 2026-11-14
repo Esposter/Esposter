@@ -1,8 +1,7 @@
-import { createMockBucket } from "@esposter/db-mock";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
-
 import { deleteDirectory } from "#src/services/storage/deleteDirectory";
 import { listBlobNames } from "#src/services/storage/listBlobNames";
+import { createMockBucket } from "@esposter/db-mock";
+import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(deleteDirectory, () => {
   const prefix = "prefix";

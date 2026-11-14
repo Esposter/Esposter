@@ -29,7 +29,7 @@ export const executeAutomodAction = async (
   if (durationMs) {
     const timeoutUntil = new Date(Date.now() + durationMs);
     // Extend-only: MAX never shortens a longer moderator-applied timeout with a shorter automod one. SQLite's MAX of
-    // several values is NULL if any is NULL, so a null existing timeout is read as the epoch and the new date wins
+    // Several values is NULL if any is NULL, so a null existing timeout is read as the epoch and the new date wins
     await db
       .update(usersToRoomsInMessage)
       .set({ timeoutUntil: sql`MAX(COALESCE(${usersToRoomsInMessage.timeoutUntil}, 0), ${timeoutUntil.getTime()})` })

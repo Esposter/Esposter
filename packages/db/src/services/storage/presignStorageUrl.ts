@@ -1,3 +1,4 @@
+import type { PresignedUrlMethod } from "#src/models/storage/PresignedUrlMethod";
 import type { StorageCredentials } from "#src/models/storage/StorageCredentials";
 import type { StorageBucket } from "@esposter/db-schema";
 
@@ -8,7 +9,7 @@ import { AwsClient } from "aws4fetch";
 // Segment at a time, so a `#` or `?` in a filename stays part of the key rather than ending the url early
 export const presignStorageUrl = async (
   { accessKeyId, accountId, environment, secretAccessKey }: StorageCredentials,
-  method: "GET" | "PUT",
+  method: PresignedUrlMethod,
   bucket: StorageBucket,
   objectKey: string,
   {
@@ -17,14 +18,17 @@ export const presignStorageUrl = async (
     searchParams,
   }: { expiresInMs: number; headers?: Record<string, string>; searchParams?: Record<string, string> },
 ): Promise<string> => {
-  const encodedKey = objectKey.split("/").map(encodeURIComponent).join("/");
+  const encodedKey = objectKey
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
   const url = new URL(
     `https://${accountId}.r2.cloudflarestorage.com/${getR2BucketName(environment, bucket)}/${encodedKey}`,
   );
   url.searchParams.set("X-Amz-Expires", String(expiresInMs / 1000));
   for (const [name, value] of Object.entries(searchParams ?? {})) url.searchParams.set(name, value);
   const client = new AwsClient({ accessKeyId, region: "auto", secretAccessKey, service: "s3" });
-  // aws4fetch leaves Content-Type out of a query signature unless told to sign every header, and a PUT's type is signed
+  // Aws4fetch leaves Content-Type out of a query signature unless told to sign every header, and a PUT's type is signed
   const { url: presignedUrl } = await client.sign(url, { aws: { allHeaders: true, signQuery: true }, headers, method });
   return presignedUrl;
 };

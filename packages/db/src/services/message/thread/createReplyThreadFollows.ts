@@ -6,7 +6,7 @@ import { createThreadFollow } from "#src/services/message/thread/createThreadFol
 // Every path that creates a reply owes this, and owes it strictly BEFORE it publishes: the follow rows are what
 // ProcessNotification reads to decide who the reply reaches, so a publish that overtakes them notifies a
 // Follower set one reply out of date. The root lives in its room's object rather than in this database, so the
-// caller reads the root's author from there and passes it in
+// Caller reads the root's author from there and passes it in
 export const createReplyThreadFollows = async (
   db: Database,
   {
