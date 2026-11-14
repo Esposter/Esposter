@@ -8,7 +8,10 @@ describe(getReverseTickedMilliseconds, () => {
 
   test("reads the time a reverse-ticked key was made at", () => {
     expect.hasAssertions();
-    const reverseTickedTimestamp = (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(epochMilliseconds) * 1000000n).toString();
+    const reverseTickedTimestamp = (
+      BigInt(AZURE_SELF_DESTRUCT_TIMER) -
+      BigInt(epochMilliseconds) * 1000000n
+    ).toString();
 
     expect(getReverseTickedMilliseconds(reverseTickedTimestamp)).toBe(epochMilliseconds);
   });

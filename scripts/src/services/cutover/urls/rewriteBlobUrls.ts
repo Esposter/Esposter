@@ -13,9 +13,7 @@ const BLOB_HOST_PATTERN = "%.blob.core.windows.net/%";
 // Rewrites every stored absolute Azure blob URL in an `image` column (a user's, a room's, a webhook app user's) to its
 // public asset URL. Idempotent: a row already rewritten no longer matches the pattern
 export const rewriteBlobUrls = async (executor: D1Executor, publicAssetsBaseUrl: string): Promise<number> => {
-  const tables = orderCoreTables(getCoreTables()).filter((table) =>
-    table.columns.some(({ name }) => name === "image"),
-  );
+  const tables = orderCoreTables(getCoreTables()).filter((table) => table.columns.some(({ name }) => name === "image"));
   let rewritten = 0;
   for (const table of tables) {
     const updates = await getUpdates(executor, table, publicAssetsBaseUrl);

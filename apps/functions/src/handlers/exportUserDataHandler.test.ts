@@ -89,9 +89,7 @@ describe(exportUserDataHandler, () => {
     // The message attaches a file whose blob was never written, so reading that entry fails
     await getRoomObject(room.id).createMessage(
       {
-        files: [
-          { filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 },
-        ],
+        files: [{ filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 }],
         message: "message",
         type: MessageType.Message,
       },

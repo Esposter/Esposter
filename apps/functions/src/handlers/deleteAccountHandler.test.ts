@@ -90,9 +90,7 @@ describe(deleteAccountHandler, () => {
 
     const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
-    await mockDb
-      .insert(accountsInAuth)
-      .values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
+    await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
 
     await deleteAccountHandler({ userId });
 

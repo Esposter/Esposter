@@ -11,9 +11,7 @@ type SourceClient = ReturnType<typeof createSourceClient>;
 export const checkTimestampUniqueIndexes = async (source: SourceClient, table: CoreTable): Promise<void> => {
   for (const group of table.timestampUniqueColumnGroups) {
     const expressions = group.map(({ dataType, name }) =>
-      dataType === "object date"
-        ? `date_trunc('milliseconds', ${quoteIdentifier(name)})`
-        : quoteIdentifier(name),
+      dataType === "object date" ? `date_trunc('milliseconds', ${quoteIdentifier(name)})` : quoteIdentifier(name),
     );
     const [result] = await source.unsafe<{ duplicates: string }[]>(
       `SELECT count(*) AS duplicates FROM (SELECT 1 FROM ${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)} GROUP BY ${expressions.join(", ")} HAVING count(*) > 1) AS duplicated`,

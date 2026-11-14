@@ -1,4 +1,3 @@
-
 import { getResult, normalizeString, SPOILER_SELECTOR } from "@esposter/shared";
 import { parse } from "node-html-parser";
 

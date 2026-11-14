@@ -7,7 +7,8 @@ import { defineCommand } from "citty";
 export const inventoryCommand: SubCommandsDef[string] = defineCommand({
   args: { ...environmentArgs },
   meta: {
-    description: "Count the rows, entities, objects and bytes the copy moves, and estimate its duration; writes nothing",
+    description:
+      "Count the rows, entities, objects and bytes the copy moves, and estimate its duration; writes nothing",
     name: "inventory",
   },
   run: async () => {

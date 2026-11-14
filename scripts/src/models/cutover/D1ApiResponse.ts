@@ -4,12 +4,7 @@ import { z } from "zod";
 export const d1ApiResponseSchema = z.object({
   errors: z.array(z.object({ message: z.string() })),
   result: z
-    .array(
-      z.object({
-        results: z.array(z.record(z.string(), z.unknown())).optional(),
-        success: z.boolean(),
-      }),
-    )
+    .array(z.object({ results: z.array(z.record(z.string(), z.unknown())).optional(), success: z.boolean() }))
     .nullable(),
   success: z.boolean(),
 });

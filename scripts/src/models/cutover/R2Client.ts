@@ -9,7 +9,12 @@ export interface R2Client {
   headObject(bucket: string, key: string): Promise<R2Object | undefined>;
   listObjects(bucket: string): AsyncGenerator<R2Object>;
   // Resolves to the ETag R2 stored, without its quotes
-  putStream(bucket: string, key: string, body: ReadableStream<Uint8Array>, options: R2PutStreamOptions): Promise<string>;
+  putStream(
+    bucket: string,
+    key: string,
+    body: ReadableStream<Uint8Array>,
+    options: R2PutStreamOptions,
+  ): Promise<string>;
   putText(bucket: string, key: string, text: string): Promise<void>;
   uploadMultipart(bucket: string, key: string, chunks: AsyncIterable<Uint8Array>): Promise<void>;
 }

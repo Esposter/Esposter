@@ -26,8 +26,7 @@ export const runSnapshot = async (environment: CutoverEnvironment): Promise<void
     console.info("postgres dumped with pg_dump");
   } else {
     const source = createSourceClient(variables.SOURCE_DATABASE_URL);
-    for (const table of getCoreTables())
-      await exportPostgresJsonLines(source, client, archiveBucket, keyPrefix, table);
+    for (const table of getCoreTables()) await exportPostgresJsonLines(source, client, archiveBucket, keyPrefix, table);
     await source.end();
     console.info("postgres exported as JSON lines: pg_dump is not on PATH");
   }

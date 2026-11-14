@@ -15,6 +15,10 @@ export const callReschedule = async (functionsUrl: string, secret: string): Prom
     },
   );
   if (!response.ok)
-    throw new InvalidOperationError(Operation.Update, "reschedule", `the functions Worker answered HTTP ${response.status}`);
+    throw new InvalidOperationError(
+      Operation.Update,
+      "reschedule",
+      `the functions Worker answered HTTP ${response.status}`,
+    );
   return rescheduleResponseSchema.parse(await response.json());
 };

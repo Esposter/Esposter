@@ -153,10 +153,7 @@ describe("datasetRouter", () => {
     // A checkbox takes its choices' own values, which are text or a number, so the non-string item is a numeric choice
     const newSurvey = await createPublishedSurvey(surveyCaller, name, {
       document: createPageDocument([
-        {
-          props: { choices: [{ value: "red" }, { value: 2 }], id: v7(), name: "c" },
-          type: SurveyNodeType.Checkbox,
-        },
+        { props: { choices: [{ value: "red" }, { value: 2 }], id: v7(), name: "c" }, type: SurveyNodeType.Checkbox },
       ]),
       settings: {},
     });

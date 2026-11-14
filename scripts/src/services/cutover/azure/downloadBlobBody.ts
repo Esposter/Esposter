@@ -4,7 +4,10 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 
 // The streamed body of a blob. A failed download throws naming the blob, since copies run side by side and the error alone
 // would not say which one it was
-export const downloadBlobBody = async (containerClient: ContainerClient, name: string): Promise<NodeJS.ReadableStream> => {
+export const downloadBlobBody = async (
+  containerClient: ContainerClient,
+  name: string,
+): Promise<NodeJS.ReadableStream> => {
   const { readableStreamBody } = await getResultAsync(() => containerClient.getBlobClient(name).download()).match(
     (response) => response,
     (error) => {

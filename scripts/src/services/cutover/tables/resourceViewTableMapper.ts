@@ -5,11 +5,7 @@ import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
 // A resource's view count for one UTC day, the day being the row key
-const legacyResourceViewSchema = z.object({
-  count: z.number(),
-  partitionKey: z.string(),
-  rowKey: z.string(),
-});
+const legacyResourceViewSchema = z.object({ count: z.number(), partitionKey: z.string(), rowKey: z.string() });
 
 // The ResourceViews table: one row per resource per UTC day, so the unique key over (resource, day) holds one id per bucket
 export const resourceViewTableMapper: TableMapper = {

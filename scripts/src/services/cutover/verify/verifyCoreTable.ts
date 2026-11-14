@@ -13,7 +13,11 @@ type SourceClient = ReturnType<typeof createSourceClient>;
 
 // Compares one table row by row in key order, each side's value run through the one transform: the source's by the
 // copy's transform, the target's as stored, so a row that copied wrong names its key. Returns the rows the source held
-export const verifyCoreTable = async (source: SourceClient, executor: D1Executor, table: CoreTable): Promise<number> => {
+export const verifyCoreTable = async (
+  source: SourceClient,
+  executor: D1Executor,
+  table: CoreTable,
+): Promise<number> => {
   let sourceCount = 0;
   const sourceRows = (async function* (): AsyncGenerator<KeyedCanonicalRow, void> {
     for await (const row of readKeysetRows({

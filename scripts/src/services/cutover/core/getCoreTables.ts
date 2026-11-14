@@ -17,7 +17,8 @@ export const getCoreTables = (): CoreTable[] =>
       const tableConfiguration = getTableConfig(table);
       const { name } = tableConfiguration;
       const separatorIndex = name.indexOf("_");
-      if (separatorIndex <= 0) throw new InvalidOperationError(Operation.Read, name, "has no schema prefix to copy from");
+      if (separatorIndex <= 0)
+        throw new InvalidOperationError(Operation.Read, name, "has no schema prefix to copy from");
       const primaryKeyColumns = (
         tableConfiguration.primaryKeys[0]?.columns ?? tableConfiguration.columns.filter(({ primary }) => primary)
       ).map(toCoreColumn);
@@ -27,7 +28,9 @@ export const getCoreTables = (): CoreTable[] =>
       const timestampUniqueColumnGroups = [
         ...tableConfiguration.uniqueConstraints.map(({ columns }) => columns),
         ...tableConfiguration.indexes
-          .filter(({ config: indexConfiguration }) => indexConfiguration.unique && indexConfiguration.where === undefined)
+          .filter(
+            ({ config: indexConfiguration }) => indexConfiguration.unique && indexConfiguration.where === undefined,
+          )
           .map(({ config: indexConfiguration }) => indexConfiguration.columns),
       ]
         .map((group) => group.flatMap((column) => (is(column, Column) ? [toCoreColumn(column)] : [])))

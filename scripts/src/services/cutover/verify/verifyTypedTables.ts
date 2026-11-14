@@ -52,7 +52,10 @@ export const verifyTypedTables = async (options: VerifyTypedTablesOptions): Prom
     }
   }
 
-  const messageCount = await readCount(executor, `SELECT COUNT(*) AS "count" FROM "${getTableName(messagesInMessage)}"`);
+  const messageCount = await readCount(
+    executor,
+    `SELECT COUNT(*) AS "count" FROM "${getTableName(messagesInMessage)}"`,
+  );
   const searchCount = await readCount(executor, `SELECT COUNT(*) AS "count" FROM "${MESSAGES_SEARCH_TABLE_NAME}"`);
   if (searchCount !== messageCount)
     throw new InvalidOperationError(

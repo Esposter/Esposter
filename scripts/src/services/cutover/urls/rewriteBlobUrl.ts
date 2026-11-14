@@ -12,7 +12,11 @@ export const rewriteBlobUrl = (value: string, publicAssetsBaseUrl: string): stri
   if (!url.hostname.endsWith(BLOB_HOST_SUFFIX)) return undefined;
   const [container = "", ...keySegments] = url.pathname.split("/").slice(1);
   if (!getCopyBuckets().some((bucket) => bucket === container) || keySegments.length === 0)
-    throw new InvalidOperationError(Operation.Update, container, "is not a container with a bucket, so its URL has no target");
+    throw new InvalidOperationError(
+      Operation.Update,
+      container,
+      "is not a container with a bucket, so its URL has no target",
+    );
   // The query string is a SAS token, which the public route never needs and the copy must not keep
   const key = keySegments.map((segment) => encodeURIComponent(decodeURIComponent(segment))).join("/");
   return `${publicAssetsBaseUrl.replace(/\/$/u, "")}/${container}/${key}`;

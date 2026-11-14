@@ -13,10 +13,7 @@ export const messageEmojisInMessage = sqliteTable(
       .references(() => messagesInMessage.id, { onDelete: "cascade" }),
     userIds: text({ mode: "json" }).notNull().$type<string[]>().default([]),
   },
-  {
-    extraConfig: ({ emojiTag, messageId }) => [primaryKey({ columns: [messageId, emojiTag] })],
-    schema: messageSchema,
-  },
+  { extraConfig: ({ emojiTag, messageId }) => [primaryKey({ columns: [messageId, emojiTag] })], schema: messageSchema },
 );
 
 export type MessageEmojiInMessage = typeof messageEmojisInMessage.$inferSelect;

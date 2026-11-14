@@ -98,14 +98,7 @@ describe(exportUserDataHandler, () => {
     // The owned room, which the account is a member of, with its message and attachment, its emoji and its image
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
-    const file = {
-      filename,
-      hasThumbnail: false,
-      id: v7(),
-      isSpoiler: false,
-      mimetype: "mimetype",
-      size: 0,
-    };
+    const file = { filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 };
     await getRoomObject(room.id).createMessage(
       { files: [file], message: "message", type: MessageType.Message },
       { userId },

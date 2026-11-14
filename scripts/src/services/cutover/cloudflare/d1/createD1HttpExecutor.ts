@@ -47,7 +47,8 @@ export const createD1HttpExecutor = (target: CloudflareDatabaseTarget): D1Execut
       if (statements.length === 0) return;
       const results = await send({ batch: statements.map(({ params, sql }) => ({ params, sql })) });
       const failed = results.find((result) => !result.success);
-      if (failed) throw new InvalidOperationError(Operation.Update, target.databaseId, "a statement in the batch failed");
+      if (failed)
+        throw new InvalidOperationError(Operation.Update, target.databaseId, "a statement in the batch failed");
     },
     query: async ({ params, sql }: D1Statement) => {
       const [result] = await send({ params, sql });

@@ -8,6 +8,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 export const toRowArray = (table: CoreTable, values: Record<string, D1Value>): D1Value[] =>
   table.columns.map(({ name }) => {
     const value = values[name];
-    if (value === undefined) throw new InvalidOperationError(Operation.Create, table.name, `has no mapped value for ${name}`);
+    if (value === undefined)
+      throw new InvalidOperationError(Operation.Create, table.name, `has no mapped value for ${name}`);
     return value;
   });

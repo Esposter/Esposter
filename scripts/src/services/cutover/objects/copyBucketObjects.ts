@@ -36,9 +36,17 @@ export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Prom
   }
 
   if (!checkpoint.preCopyStartedAt)
-    throw new InvalidOperationError(Operation.Read, unit, "has no pre-copy to take changes from: copy-objects must run first");
+    throw new InvalidOperationError(
+      Operation.Read,
+      unit,
+      "has no pre-copy to take changes from: copy-objects must run first",
+    );
   if (!checkpoint.completedAt)
-    throw new InvalidOperationError(Operation.Read, unit, "has an unfinished full copy: copy-objects must finish first");
+    throw new InvalidOperationError(
+      Operation.Read,
+      unit,
+      "has an unfinished full copy: copy-objects must finish first",
+    );
   const changedSince = Date.parse(checkpoint.preCopyStartedAt) - DELTA_CLOCK_MARGIN_MS;
   // Every name Azure lists, changed or not, so the deletes below know which R2 objects are gone from Azure
   const azureNames = new Set<string>();

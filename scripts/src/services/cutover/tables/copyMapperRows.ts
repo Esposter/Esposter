@@ -10,9 +10,7 @@ import { toRowArray } from "#src/services/cutover/tables/toRowArray";
 // Upserts the row of every entity, a page at a time. Each page's new ids are flushed to the archive before its rows are written, so
 // a row is never written under an id a re-run could not find. Returns how many rows were written and how many entities were left
 // out because a parent is gone
-export const copyMapperRows = async (
-  options: MapperRowsOptions,
-): Promise<{ copied: number; skipped: number }> => {
+export const copyMapperRows = async (options: MapperRowsOptions): Promise<{ copied: number; skipped: number }> => {
   const { coreTable, entities, executor, idMap, mapper, parents } = options;
   let copied = 0;
   let skipped = 0;

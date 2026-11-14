@@ -87,7 +87,11 @@ export const createR2Client = (): R2Client => {
       if (options.contentDisposition) headers.set("content-disposition", options.contentDisposition);
       if (options.contentType) headers.set("content-type", options.contentType);
       const url = buildR2Url(endpoint, bucket, key, {});
-      const response = await sendR2Request(streamTransport, Operation.Create, key, url, { body, headers, method: "PUT" });
+      const response = await sendR2Request(streamTransport, Operation.Create, key, url, {
+        body,
+        headers,
+        method: "PUT",
+      });
       await checkR2Response(response, Operation.Create, key);
       return readR2Header(response, "etag", Operation.Create, key).replaceAll('"', "");
     },

@@ -15,7 +15,8 @@ export const copyObjectsCommand: SubCommandsDef[string] = defineCommand({
     ...environmentArgs,
     delta: {
       default: false,
-      description: "Copy what changed since the full copy began, and delete what Azure no longer lists, during the freeze",
+      description:
+        "Copy what changed since the full copy began, and delete what Azure no longer lists, during the freeze",
       type: "boolean",
     },
   },

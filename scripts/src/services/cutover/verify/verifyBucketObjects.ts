@@ -21,7 +21,11 @@ export const verifyBucketObjects = async (options: VerifyBucketObjectsOptions): 
 
   // The counts are compared before any key, so a bucket with missing objects is reported as such
   if (blobs.length !== objects.size)
-    throw new InvalidOperationError(Operation.Read, bucket, `holds ${blobs.length} blobs but ${objects.size} objects in R2`);
+    throw new InvalidOperationError(
+      Operation.Read,
+      bucket,
+      `holds ${blobs.length} blobs but ${objects.size} objects in R2`,
+    );
   const blobBytes = blobs.reduce((total, blob) => total + blob.size, 0);
   const objectBytes = [...objects.values()].reduce((total, object) => total + object.size, 0);
   if (blobBytes !== objectBytes)

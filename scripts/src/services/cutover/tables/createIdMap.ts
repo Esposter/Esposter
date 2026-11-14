@@ -15,7 +15,11 @@ const idMapSegmentSchema = z.array(idMapEntrySchema);
 // Loads every segment the archive holds for the tables, in order, into the map they make. An entity given no id yet gets a random
 // v4, the form the app validates, so a row is never given a derived one. A new entry waits in memory until `flush` writes the
 // table's next segment, which the copy does before it writes the rows that carry those ids
-export const createIdMap = async (client: R2Client, archiveBucket: string, azureTables: StreamTable[]): Promise<IdMap> => {
+export const createIdMap = async (
+  client: R2Client,
+  archiveBucket: string,
+  azureTables: StreamTable[],
+): Promise<IdMap> => {
   const entryByKey = new Map<string, IdMapEntry>();
   const entriesByTable = new Map<StreamTable, IdMapEntry[]>();
   const flushedCountByTable = new Map<StreamTable, number>();
@@ -59,7 +63,11 @@ export const createIdMap = async (client: R2Client, archiveBucket: string, azure
       const flushedCount = flushedCountByTable.get(azureTable) ?? 0;
       if (entries.length === flushedCount) return;
       const index = segmentCountByTable.get(azureTable) ?? 0;
-      await client.putText(archiveBucket, getIdMapSegmentKey(azureTable, index), JSON.stringify(entries.slice(flushedCount)));
+      await client.putText(
+        archiveBucket,
+        getIdMapSegmentKey(azureTable, index),
+        JSON.stringify(entries.slice(flushedCount)),
+      );
       flushedCountByTable.set(azureTable, entries.length);
       segmentCountByTable.set(azureTable, index + 1);
     },

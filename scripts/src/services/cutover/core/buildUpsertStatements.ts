@@ -2,10 +2,7 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { D1Statement } from "#src/models/cutover/D1Statement";
 import type { D1Value } from "#src/services/cutover/core/toD1Value";
 
-import {
-  D1_STATEMENT_BYTE_LIMIT,
-  D1_STATEMENT_PARAMETER_LIMIT,
-} from "#src/services/cutover/constants";
+import { D1_STATEMENT_BYTE_LIMIT, D1_STATEMENT_PARAMETER_LIMIT } from "#src/services/cutover/constants";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 
 // Inserts rows as upserts keyed by the primary key. An upsert, not a delete and insert, because D1 cascades a delete into

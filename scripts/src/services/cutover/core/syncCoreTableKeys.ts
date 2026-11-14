@@ -25,9 +25,7 @@ export const syncCoreTableKeys = async (
     qualifiedTableName: `${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
     readPage: async ({ params, sql }) => source.unsafe<Record<string, unknown>[]>(sql, params),
   }))
-    sourceKeys.add(
-      JSON.stringify(table.primaryKeyColumns.map((column) => toD1Value(column, row[column.name]))),
-    );
+    sourceKeys.add(JSON.stringify(table.primaryKeyColumns.map((column) => toD1Value(column, row[column.name]))));
   const staleStatements: D1Statement[] = [];
   for await (const row of readKeysetRows({
     columns: table.primaryKeyColumns,
@@ -37,8 +35,7 @@ export const syncCoreTableKeys = async (
     readPage: (statement) => executor.query(statement),
   })) {
     const key = table.primaryKeyColumns.map((column) => row[column.name] ?? null);
-    if (sourceKeys.has(JSON.stringify(key)))
-      continue;
+    if (sourceKeys.has(JSON.stringify(key))) continue;
     const condition = table.primaryKeyColumns.map(({ name }) => `${quoteIdentifier(name)} = ?`).join(" AND ");
     staleStatements.push({ params: key, sql: `DELETE FROM ${quoteIdentifier(table.name)} WHERE ${condition}` });
   }

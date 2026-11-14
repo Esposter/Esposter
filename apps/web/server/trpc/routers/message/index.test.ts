@@ -247,14 +247,7 @@ describe("messageRouter", () => {
   test("deletes the message and queues the blobs its files named", async () => {
     expect.hasAssertions();
 
-    const file = {
-      filename,
-      hasThumbnail: true,
-      id: v7(),
-      isSpoiler: false,
-      mimetype: MimeType.Png,
-      size: 1,
-    };
+    const file = { filename, hasThumbnail: true, id: v7(), isSpoiler: false, mimetype: MimeType.Png, size: 1 };
     const message = createRoomMessage({ files: [file] });
     roomObject.readMessagesByIds.mockReturnValue([message]);
     roomObject.deleteMessage.mockResolvedValue(message);

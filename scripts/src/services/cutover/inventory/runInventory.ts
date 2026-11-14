@@ -47,8 +47,6 @@ export const runInventory = async (): Promise<void> => {
     buckets[bucket] = summary;
     totalBytes += summary.bytes;
   }
-  const estimatedSeconds = Math.ceil(
-    totalBytes / ESTIMATE_BYTES_PER_SECOND + rowCount / ESTIMATE_ROWS_PER_SECOND,
-  );
+  const estimatedSeconds = Math.ceil(totalBytes / ESTIMATE_BYTES_PER_SECOND + rowCount / ESTIMATE_ROWS_PER_SECOND);
   console.info(JSON.stringify({ buckets, core, entities, estimatedSeconds }, null, 2));
 };

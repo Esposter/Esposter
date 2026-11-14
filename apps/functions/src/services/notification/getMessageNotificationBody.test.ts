@@ -2,7 +2,6 @@ import { getMessageNotificationBody } from "#src/services/notification/getMessag
 import { describe, expect, test } from "vitest";
 
 describe(getMessageNotificationBody, () => {
-
   test("returns undefined when message has no text content", () => {
     expect.hasAssertions();
 
