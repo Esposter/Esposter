@@ -193,7 +193,6 @@ catalog:
   playwright: ^1.65.1
   postgres: ^4.1.1
   publint: ^0.3.25
-  rate-limiter-flexible: ^11.4.1
   re2js: ^2.10.0
   read-excel-file: ^9.3.17
   # @TODO: no upstream issue — waits on a vite release that depends on the next rolldown minor; the reason is the `renovate.json` rule's description
