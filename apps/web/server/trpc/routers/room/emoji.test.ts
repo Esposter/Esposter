@@ -22,7 +22,7 @@ import {
   RoomPermission,
   StorageBucket,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { chunk, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
@@ -97,9 +97,12 @@ describe("emojiRouter", () => {
   test("fails generateUploadRoomEmojiSasEntity with a room that already holds its cap", async () => {
     expect.hasAssertions();
 
-    await mockContext.db
-      .insert(roomEmojisInMessage)
-      .values(Array.from({ length: MAX_ROOM_EMOJIS }, (_value, index) => ({ name: `emoji_${index}`, roomId })));
+    const roomEmojiRows = Array.from({ length: MAX_ROOM_EMOJIS }, (_value, index) => ({
+      name: `emoji_${index}`,
+      roomId,
+    }));
+    // Each row binds five parameters and a D1 statement binds at most a hundred, so the rows go in statements of ten
+    for (const batch of chunk(roomEmojiRows, 10)) await mockContext.db.insert(roomEmojisInMessage).values(batch);
 
     await expect(
       roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
