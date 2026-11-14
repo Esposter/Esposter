@@ -7,6 +7,10 @@ inputs:
   directory:
     description: The Worker's app directory, whose wrangler configuration names the Worker the secrets go to
     required: true
+  config:
+    description: A build-generated wrangler configuration, relative to `directory`, that names the Worker for one environment alone, e.g. the web build's `.output/server/wrangler.json`. `secret bulk` does not follow the deploy redirect to it, and with `CLOUDFLARE_ENV` set, wrangler names a configuration without `env` blocks `<name>-<env>`, so the variable is cleared for that call
+    required: false
+    default: ""
 runs:
   using: composite
   steps:
@@ -17,6 +21,7 @@ runs:
       env:
         WORKER: ${{ inputs.worker }}
         DIRECTORY: ${{ inputs.directory }}
+        CONFIG: ${{ inputs.config }}
       run: |
         set -euo pipefail
         umask 077
@@ -30,4 +35,8 @@ runs:
           jq --arg name "$name" --arg value "$value" '. + {($name): $value}' "$secrets_file" > "$secrets_file.next"
           mv "$secrets_file.next" "$secrets_file"
         done
-        pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file"
+        if [ -n "$CONFIG" ]; then
+          CLOUDFLARE_ENV= pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file" --config "$CONFIG"
+        else
+          pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file"
+        fi
