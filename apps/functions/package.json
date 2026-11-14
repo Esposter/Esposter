@@ -35,6 +35,7 @@
     "fflate": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",
+    "temporal-polyfill": "catalog:",
     "web-push": "catalog:",
     "zod": "catalog:"
   },

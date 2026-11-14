@@ -1,3 +1,5 @@
+// The Workers runtime has no Temporal yet, and modules read it as they load, so the polyfill installs it before any other import
+import "temporal-polyfill/global";
 import { handleCutoverRequest } from "#src/services/cutover/handleCutoverRequest";
 import { validateFunctionsEnvironment } from "#src/services/environment/validateFunctionsEnvironment";
 import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
