@@ -1,12 +1,13 @@
 import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
-import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import {
   chargeStorageLedgerEntry,
@@ -44,9 +45,9 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockSearchDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -55,15 +56,17 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
 );
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
-const readBlobNamesUnder = (containerName: StorageBucket, prefix: string) =>
-  readBlobNames(containerName).filter((blobName) => blobName.startsWith(prefix));
+const readBlobNamesUnder = async (containerName: StorageBucket, prefix: string) =>
+  (await readBlobNames(containerName)).filter((blobName) => blobName.startsWith(prefix));
 const readLedgerRows = (userId: string) =>
   mockDb
     .select({ blobName: storageLedgerInStorage.blobName, containerName: storageLedgerInStorage.containerName })
@@ -87,13 +90,26 @@ describe(deleteAccountHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
+    MockSearchDatabase.clear();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
@@ -130,12 +146,7 @@ describe(deleteAccountHandler, () => {
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
     const messageClient = getStreamTableClient(StreamTable.Messages);
-    await createMessage(messageClient, {
-      message,
-      roomId: ownedRoom.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await createMessage(messageClient, { message, roomId: ownedRoom.id, type: MessageType.Message, userId });
     const memberRoomMessage = await createMessage(messageClient, {
       files: [{ filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 }],
       message,
@@ -186,13 +197,13 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    const resourceAssetsClient = await getContainerClient(StorageBucket.ResourceAssets);
+    const resourceAssetsBucket = getBucket(StorageBucket.ResourceAssets);
     const contentBlobName = getContentBlobName(ownedResource.id);
-    const { size: contentSize } = await writeJsonBlob(resourceAssetsClient, contentBlobName, content);
+    const { size: contentSize } = await writeJsonBlob(resourceAssetsBucket, contentBlobName, content);
     await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, contentBlobName, contentSize);
     // A version's object is stored under its resource's directory at its hash, as the snapshot store writes it
     const versionBlobName = `${ownedResource.id}/objects/${hash}`;
-    const { size: versionSize } = await writeJsonBlob(resourceAssetsClient, versionBlobName, content);
+    const { size: versionSize } = await writeJsonBlob(resourceAssetsBucket, versionBlobName, content);
     await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, versionBlobName, versionSize);
     await mockDb
       .insert(resourceVersionsInResource)
@@ -255,7 +266,8 @@ describe(deleteAccountHandler, () => {
     // The account's own blob directories
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
-    await writeJsonBlob(await getContainerClient(StorageBucket.GenshinAssets), getSaveBlobName(userId), content);
+    const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
+    await writeJsonBlob(genshinAssetsBucket, getSaveBlobName(userId), content);
     await seedBlob(StorageBucket.ClickerAssets, getSaveBlobName(userId));
     await seedBlob(StorageBucket.UserAssets, getSaveBlobName(userId));
 
@@ -287,8 +299,10 @@ describe(deleteAccountHandler, () => {
         .where(eq(usersToRoomsInMessage.roomId, ownedRoom.id)),
     ).resolves.toStrictEqual([]);
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoom.id}/`)).toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).resolves.toStrictEqual(
+      [],
+    );
+    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoom.id}/`)).resolves.toStrictEqual([]);
 
     // The owned resource, its version, its working copy, its objects and its activity trail
     await expect(
@@ -303,7 +317,7 @@ describe(deleteAccountHandler, () => {
         .from(resourceVersionsInResource)
         .where(eq(resourceVersionsInResource.resourceId, ownedResource.id)),
     ).resolves.toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).resolves.toStrictEqual([]);
     expect(readPartitionEntities(StreamTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
 
     // The owned survey's responses and the owned program's participants go with their resources
@@ -319,7 +333,7 @@ describe(deleteAccountHandler, () => {
     await expect(
       messageClient.getEntity<StandardMessageEntity>(memberRoomMessage.partitionKey, memberRoomMessage.rowKey),
     ).resolves.toMatchObject({ files: "[]", message: "" });
-    expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoom.id}/`)).toStrictEqual([
+    await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoom.id}/`)).resolves.toStrictEqual([
       otherMemberRoomAttachmentBlobName,
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
@@ -331,10 +345,10 @@ describe(deleteAccountHandler, () => {
     ).toStrictEqual([[otherUserId], [otherUserId]]);
 
     // The account's blob prefixes in every container the inventory keys to it
-    expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.UserAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.GenshinAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(StorageBucket.ClickerAssets, `${userId}/`)).toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `${userId}/`)).resolves.toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.UserAssets, `${userId}/`)).resolves.toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.GenshinAssets, `${userId}/`)).resolves.toStrictEqual([]);
+    await expect(readBlobNamesUnder(StorageBucket.ClickerAssets, `${userId}/`)).resolves.toStrictEqual([]);
 
     // Kept: the moderation record that names the account, and the account's activity on a resource it does not own
     expect(

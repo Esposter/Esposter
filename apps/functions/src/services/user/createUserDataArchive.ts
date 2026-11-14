@@ -17,13 +17,12 @@ export const createUserDataArchive = (): UserDataArchive => {
   const waitForDrain = async () => {
     if (output.writableNeedDrain) await once(output, "drain");
   };
-  const addEntry = async (name: string, source: NodeJS.ReadableStream | Uint8Array) => {
+  const addEntry = async (name: string, source: AsyncIterable<Uint8Array> | Uint8Array) => {
     const entry = new ZipDeflate(name);
     zip.add(entry);
     const chunks = source instanceof Uint8Array ? [source] : source;
     for await (const chunk of chunks) {
-      // A blob is read without an encoding, so its chunks are bytes; a string only reaches here from a text stream
-      entry.push(typeof chunk === "string" ? new TextEncoder().encode(chunk) : chunk, false);
+      entry.push(chunk, false);
       await waitForDrain();
     }
     entry.push(new Uint8Array(), true);

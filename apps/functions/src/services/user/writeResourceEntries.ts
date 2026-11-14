@@ -1,8 +1,8 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
+import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { StorageBucket, FILES_DIRECTORY_SEGMENT, getResourceFileBlobName } from "@esposter/db-schema";
@@ -17,7 +17,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     columns: { contentVersion: true, createdAt: true, id: true, name: true, tags: true, type: true },
     where: { userId: { eq: userId } },
   });
-  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   for (const resource of resources) {
     const entryDirectory = `resources/${resource.id}`;
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
@@ -32,7 +32,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
         columns: { sourceId: true, targetId: true, type: true },
         where: { sourceId: { eq: resource.id } },
       }),
-      readJsonBlob(containerClient, getContentBlobName(resource.id)),
+      readJsonBlob(bucket, getContentBlobName(resource.id)),
       db.query.resourceWorkingAssetsInResource.findMany({
         columns: { assetHash: true },
         where: { resourceId: { eq: resource.id } },
@@ -49,7 +49,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
       await writeBlobEntry(
         archive,
         `${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`,
-        containerClient,
+        bucket,
         getResourceFileBlobName(resource.id, assetHash),
       );
   }

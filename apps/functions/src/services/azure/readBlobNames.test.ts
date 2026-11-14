@@ -1,10 +1,10 @@
 import type { StorageBucket } from "@esposter/db-schema";
 
-import { MockContainerDatabase } from "azure-mock";
+import { getBucket } from "#src/services/storage/getBucket";
+import { listBlobNames } from "@esposter/db";
 import { describe } from "vitest";
 
-export const readBlobNames = (containerName: StorageBucket): string[] => [
-  ...(MockContainerDatabase.get(containerName)?.keys() ?? []),
-];
+export const readBlobNames = async (containerName: StorageBucket): Promise<string[]> =>
+  listBlobNames(getBucket(containerName), "");
 
 describe.todo("readBlobNames");

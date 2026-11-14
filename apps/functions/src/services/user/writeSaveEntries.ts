@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { getBucket } from "#src/services/storage/getBucket";
 import { SAVE_GAME_CONTAINERS } from "#src/services/user/constants";
 import { readJsonBlob } from "@esposter/db";
 import { getSaveBlobName } from "@esposter/db-schema";
@@ -9,10 +9,10 @@ import { getSaveBlobName } from "@esposter/db-schema";
 // Each game's save for the person, as the JSON its blob holds. A game the person never saved in has no entry
 export const writeSaveEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const saves = await Promise.all(
-    Object.entries(SAVE_GAME_CONTAINERS).map(async ([game, containerName]) => ({
-      game,
-      save: await readJsonBlob(await getContainerClient(containerName), getSaveBlobName(userId)),
-    })),
+    Object.entries(SAVE_GAME_CONTAINERS).map(async ([game, containerName]) => {
+      const bucket = getBucket(containerName);
+      return { game, save: await readJsonBlob(bucket, getSaveBlobName(userId)) };
+    }),
   );
   for (const { game, save } of saves)
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order

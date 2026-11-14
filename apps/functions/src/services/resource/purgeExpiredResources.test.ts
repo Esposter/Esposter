@@ -3,10 +3,11 @@ import type { Database } from "@esposter/db-schema";
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { createUser } from "#src/services/shared/createUser.test";
+import { disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
 import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -15,7 +16,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/resource/purgeResourceAndBroadcast"), () => ({
   purgeResourceAndBroadcast: vi.fn<typeof purgeResourceAndBroadcast>(),
 }));
@@ -28,12 +29,17 @@ describe(purgeExpiredResources, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.ResourceAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });
 
   afterEach(async () => {
     vi.mocked(purgeResourceAndBroadcast).mockReset();
     await mockDb.delete(resourcesInResource);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   const insertResource = async (deletedAt: Date | null) =>
@@ -62,7 +68,7 @@ describe(purgeExpiredResources, () => {
 
     const failingResource = await insertResource(expiredDeletedAt);
     const laterResource = await insertResource(expiredDeletedAt);
-    vi.mocked(purgeResourceAndBroadcast).mockImplementation((_context, _containerClient, resource) =>
+    vi.mocked(purgeResourceAndBroadcast).mockImplementation((_context, _bucket, resource) =>
       resource.id === failingResource.id ? Promise.reject(new Error(" ")) : Promise.resolve(),
     );
 

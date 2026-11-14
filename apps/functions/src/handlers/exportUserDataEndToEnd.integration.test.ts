@@ -1,10 +1,11 @@
 import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import {
   createMessage,
@@ -37,10 +38,10 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { unzipSync } from "fflate";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -49,8 +50,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});
@@ -61,13 +65,25 @@ describe(exportUserDataHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("builds a requested export into an archive holding each entry the design lists, and marks it ready", async () => {
@@ -114,11 +130,8 @@ describe(exportUserDataHandler, () => {
     const resource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
     );
-    await writeJsonBlob(
-      await getContainerClient(StorageBucket.ResourceAssets),
-      getContentBlobName(resource.id),
-      content,
-    );
+    const resourceAssetsBucket = getBucket(StorageBucket.ResourceAssets);
+    await writeJsonBlob(resourceAssetsBucket, getContentBlobName(resource.id), content);
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
     await seedBlob(StorageBucket.ResourceAssets, getResourceFileBlobName(resource.id, assetHash));
@@ -126,7 +139,8 @@ describe(exportUserDataHandler, () => {
     // The account's profile image, a call background, its save, and a moderation record naming it as the target
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
-    await writeJsonBlob(await getContainerClient(StorageBucket.GenshinAssets), getSaveBlobName(userId), content);
+    const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
+    await writeJsonBlob(genshinAssetsBucket, getSaveBlobName(userId), content);
     await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: room.id,
@@ -146,9 +160,10 @@ describe(exportUserDataHandler, () => {
         .from(dataExportsInUser)
         .where(eq(dataExportsInUser.id, dataExportId)),
     );
-    const archiveBytes = MockContainerDatabase.get(StorageBucket.UserAssets)?.get(getDataExportBlobName(dataExportId));
-    assert.exists(archiveBytes);
-    const entries = unzipSync(archiveBytes);
+    const archiveBucket = getBucket(StorageBucket.UserAssets);
+    const archiveObject = await archiveBucket.get(getDataExportBlobName(dataExportId));
+    assert.exists(archiveObject);
+    const entries = unzipSync(new Uint8Array(await archiveObject.arrayBuffer()));
 
     expect(exportRow).toStrictEqual({ blobName: getDataExportBlobName(dataExportId), status: DataExportStatus.Ready });
     expect(Object.keys(entries).toSorted()).toStrictEqual(

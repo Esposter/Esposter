@@ -1,5 +1,5 @@
-import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
+import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
 import { StorageBucket, getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema } from "@esposter/db-schema";
 
@@ -21,6 +21,6 @@ export const deleteOrphanedProfileImageHandler = async (body: unknown): Promise<
   });
   if (user && !user.deletionRequestedAt) return;
 
-  const containerClient = await getContainerClient(StorageBucket.PublicUserAssets);
-  await deleteBlobs(containerClient, [blobName]);
+  const bucket = getBucket(StorageBucket.PublicUserAssets);
+  await deleteBlobs(bucket, [blobName]);
 };

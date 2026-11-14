@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomInMessage, StandardMessageEntity } from "@esposter/db-schema";
 
-import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getFileBlobNames } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
@@ -13,14 +13,14 @@ export const writeRoomFileEntries = async (
   roomId: RoomInMessage["id"],
   messages: StandardMessageEntity[],
 ): Promise<void> => {
-  const containerClient = await getContainerClient(StorageBucket.MessageAssets);
+  const bucket = getBucket(StorageBucket.MessageAssets);
   const attachments = messages.flatMap(({ files }) => files);
   for (const { filename, id } of attachments)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one attachment at a time, streamed as it is read
     await writeBlobEntry(
       archive,
       `rooms/${roomId}/files/${id}/${filename}`,
-      containerClient,
+      bucket,
       getFileBlobNames(roomId, id, filename).blobName,
     );
 };

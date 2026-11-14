@@ -4,12 +4,13 @@ import { deleteAccountOwnedResources } from "#src/services/account/deleteAccount
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { MockTableDatabase } from "azure-mock";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -18,28 +19,30 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(
   import("#src/services/streams/getStreamTableClient"),
   () => import("#src/services/streams/getStreamTableClient.test"),
 );
-vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
-);
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 describe(deleteAccountOwnedResources, () => {
   const name = "name";
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.ResourceAssets]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("purges an owned resource's directory and row, and no other owner's resource", async () => {
@@ -62,7 +65,9 @@ describe(deleteAccountOwnedResources, () => {
 
     await deleteAccountOwnedResources(userId);
 
-    expect(readBlobNames(StorageBucket.ResourceAssets)).toStrictEqual([getContentBlobName(otherResource.id)]);
+    await expect(readBlobNames(StorageBucket.ResourceAssets)).resolves.toStrictEqual([
+      getContentBlobName(otherResource.id),
+    ]);
     await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([
       { id: otherResource.id },
     ]);

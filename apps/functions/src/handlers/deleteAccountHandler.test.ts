@@ -5,6 +5,8 @@ import { getStreamTableClient } from "#src/services/streams/getStreamTableClient
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createEntity, getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -22,9 +24,9 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerClient, MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
+import { MockTableClient, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -33,12 +35,12 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
 );
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 const readUserRows = (userId: string) =>
   mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
@@ -49,13 +51,25 @@ describe(deleteAccountHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("deletes the user row, and the sign-in accounts it holds cascade with it", async () => {
@@ -81,9 +95,7 @@ describe(deleteAccountHandler, () => {
     const userId = crypto.randomUUID();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     // Nothing is seeded for the earlier steps, so the first listing the handler makes is the blob sweep's
-    vi.spyOn(MockContainerClient.prototype, "listBlobsFlat").mockImplementation(() => {
-      throw new Error(" ");
-    });
+    vi.spyOn(getBucket(StorageBucket.UserAssets), "list").mockRejectedValue(new Error(" "));
 
     await expect(deleteAccountHandler({ userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
@@ -133,8 +145,8 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
-    expect(readBlobNames(StorageBucket.ResourceAssets)).toStrictEqual([]);
-    expect(readBlobNames(StorageBucket.PublicUserAssets)).toStrictEqual([]);
-    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.ResourceAssets)).resolves.toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([]);
   });
 });

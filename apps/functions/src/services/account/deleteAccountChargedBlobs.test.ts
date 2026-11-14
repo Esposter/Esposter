@@ -4,11 +4,12 @@ import { deleteAccountChargedBlobs } from "#src/services/account/deleteAccountCh
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -17,24 +18,26 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
-);
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 describe(deleteAccountChargedBlobs, () => {
   const countedBytes = 1;
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.MessageAssets, StorageBucket.UserAssets]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
@@ -65,8 +68,8 @@ describe(deleteAccountChargedBlobs, () => {
 
     await deleteAccountChargedBlobs(userId);
 
-    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([otherMessageBlobName]);
-    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([otherMessageBlobName]);
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([]);
     await expect(
       mockDb
         .select({ blobName: storageLedgerInStorage.blobName, userId: storageLedgerInStorage.userId })

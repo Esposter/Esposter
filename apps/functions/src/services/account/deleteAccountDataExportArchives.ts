@@ -1,7 +1,7 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
+import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
 import { StorageBucket, dataExportsInUser } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
@@ -15,6 +15,6 @@ export const deleteAccountDataExportArchives = async (userId: UserInAuth["id"]):
     .from(dataExportsInUser)
     .where(eq(dataExportsInUser.userId, userId));
   const blobNames = dataExportRows.map(({ blobName }) => blobName).filter((blobName) => blobName !== null);
-  const containerClient = await getContainerClient(StorageBucket.UserAssets);
-  await deleteBlobs(containerClient, blobNames);
+  const bucket = getBucket(StorageBucket.UserAssets);
+  await deleteBlobs(bucket, blobNames);
 };

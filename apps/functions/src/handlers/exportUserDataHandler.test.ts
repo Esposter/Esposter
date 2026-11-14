@@ -1,9 +1,10 @@
 import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMessage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -18,9 +19,9 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -29,8 +30,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 
 const readExportRow = async (dataExportId: string) =>
   takeOne(
@@ -58,13 +62,25 @@ describe(exportUserDataHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("marks an export with a failing entry failed, with its reason, and never sets a ready or expiry time", async () => {
@@ -91,7 +107,7 @@ describe(exportUserDataHandler, () => {
     await expect(readExportRow(dataExportId)).resolves.toStrictEqual({
       blobName: getDataExportBlobName(dataExportId),
       expiresAt: null,
-      failureReason: "The specified blob does not exist.",
+      failureReason: expect.stringContaining("is not in the bucket to stream into the archive"),
       readyAt: null,
       status: DataExportStatus.Failed,
     });
@@ -125,7 +141,7 @@ describe(exportUserDataHandler, () => {
     await exportUserDataHandler({ dataExportId });
     await exportUserDataHandler({ dataExportId });
 
-    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([getDataExportBlobName(dataExportId)]);
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([getDataExportBlobName(dataExportId)]);
     expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);
   });
 });

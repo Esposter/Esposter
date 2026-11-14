@@ -1,7 +1,7 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { StorageBucket, getRoomEmojiBlobName } from "@esposter/db-schema";
 
@@ -11,8 +11,8 @@ export const writeRoomEmojiEntries = async (
   roomId: RoomInMessage["id"],
   emoji: { id: string }[],
 ): Promise<void> => {
-  const containerClient = await getContainerClient(StorageBucket.MessageAssets);
+  const bucket = getBucket(StorageBucket.MessageAssets);
   for (const { id } of emoji)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one emoji at a time, streamed as it is read
-    await writeBlobEntry(archive, `rooms/${roomId}/emoji/${id}`, containerClient, getRoomEmojiBlobName(roomId, id));
+    await writeBlobEntry(archive, `rooms/${roomId}/emoji/${id}`, bucket, getRoomEmojiBlobName(roomId, id));
 };

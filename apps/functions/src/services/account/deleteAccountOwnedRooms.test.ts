@@ -5,11 +5,12 @@ import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, StreamTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { MockTableClient, MockTableDatabase } from "azure-mock";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -18,12 +19,14 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
 );
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 // A partition's rows are only ever read by their partition key, so one row keyed by the room is the whole fixture
 const seedPartitionRow = (tableName: StreamTable, partitionKey: string) =>
@@ -40,13 +43,18 @@ describe(deleteAccountOwnedRooms, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.MessageAssets, StorageBucket.PublicUserAssets]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("deletes an owned room's partitions, attachments and row, and no other owner's room", async () => {
@@ -75,8 +83,10 @@ describe(deleteAccountOwnedRooms, () => {
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, otherRoom.id))).toHaveLength(
       roomTableNames.length,
     );
-    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([`${otherRoom.id}/${fileId}`]);
-    expect(readBlobNames(StorageBucket.PublicUserAssets)).toStrictEqual([`rooms/${otherRoom.id}/ProfileImage`]);
+    await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([`${otherRoom.id}/${fileId}`]);
+    await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([
+      `rooms/${otherRoom.id}/ProfileImage`,
+    ]);
     await expect(mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage)).resolves.toStrictEqual([
       { id: otherRoom.id },
     ]);

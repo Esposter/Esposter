@@ -4,11 +4,11 @@ import { deleteAccountDataExportArchives } from "#src/services/account/deleteAcc
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -17,17 +17,22 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 
 describe(deleteAccountDataExportArchives, () => {
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.UserAssets]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     await mockDb.delete(usersInAuth);
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("deletes the archive each of the person's export rows names, and no other person's archive", async () => {
@@ -62,7 +67,9 @@ describe(deleteAccountDataExportArchives, () => {
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([getDataExportBlobName(otherDataExportId)]);
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([
+      getDataExportBlobName(otherDataExportId),
+    ]);
   });
 
   test("a row whose archive is already gone does not fail the sweep, and the archive it still holds is removed", async () => {
@@ -85,6 +92,6 @@ describe(deleteAccountDataExportArchives, () => {
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([]);
   });
 });

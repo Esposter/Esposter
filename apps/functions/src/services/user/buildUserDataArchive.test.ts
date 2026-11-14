@@ -1,9 +1,10 @@
 import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
-import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import {
   createMessage,
@@ -61,9 +62,9 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockBlobClient, MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { strFromU8, unzipSync } from "fflate";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -72,13 +73,17 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 
-const readArchiveEntries = (blobName: string) => {
-  const archiveBytes = MockContainerDatabase.get(StorageBucket.UserAssets)?.get(blobName);
-  assert.exists(archiveBytes);
-  return unzipSync(archiveBytes);
+const readArchiveEntries = async (blobName: string) => {
+  const archiveBucket = getBucket(StorageBucket.UserAssets);
+  const archiveObject = await archiveBucket.get(blobName);
+  assert.exists(archiveObject);
+  return unzipSync(new Uint8Array(await archiveObject.arrayBuffer()));
 };
 const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
   const entry = entries[entryName];
@@ -87,8 +92,6 @@ const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string)
 };
 const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
   jsonDateParse(readEntryText(entries, entryName));
-const getContextNames = (contexts: unknown[]): string[] =>
-  contexts.flatMap((context) => (context instanceof MockBlobClient ? [context.name] : []));
 
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
@@ -112,17 +115,29 @@ describe(buildUserDataArchive, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockTableDatabase.clear();
   });
 
+  afterAll(async () => {
+    await disposeMockBuckets();
+  });
+
   const seedAttachment = async (blobName: string) => {
-    const containerClient = await getContainerClient(StorageBucket.MessageAssets);
-    await containerClient.getBlockBlobClient(blobName).upload(attachmentBytes, attachmentBytes.length);
+    const bucket = getBucket(StorageBucket.MessageAssets);
+    await bucket.put(blobName, attachmentBytes);
   };
 
   test("unzips to the entries the design lists, and holds none of another person's messages", async () => {
@@ -143,13 +158,7 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     const messageClient = getStreamTableClient(StreamTable.Messages);
-    await createMessage(messageClient, {
-      files: [file],
-      message,
-      roomId: room.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await createMessage(messageClient, { files: [file], message, roomId: room.id, type: MessageType.Message, userId });
     await createMessage(messageClient, {
       message: otherMessage,
       roomId: room.id,
@@ -160,31 +169,22 @@ describe(buildUserDataArchive, () => {
 
     // A room the person has left, whose message is not in the archive
     const leftRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await createMessage(messageClient, {
-      message,
-      roomId: leftRoom.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await createMessage(messageClient, { message, roomId: leftRoom.id, type: MessageType.Message, userId });
 
     // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
     // Moderation record naming the person as its target
-    const savesContainerClient = await getContainerClient(StorageBucket.GenshinAssets);
-    await writeJsonBlob(savesContainerClient, getSaveBlobName(userId), content);
-    const publicContainerClient = await getContainerClient(StorageBucket.PublicUserAssets);
-    await publicContainerClient
-      .getBlockBlobClient(getUserProfileImageBlobName(userId))
-      .upload(attachmentBytes, attachmentBytes.length);
+    const savesBucket = getBucket(StorageBucket.GenshinAssets);
+    await writeJsonBlob(savesBucket, getSaveBlobName(userId), content);
+    const publicBucket = getBucket(StorageBucket.PublicUserAssets);
+    await publicBucket.put(getUserProfileImageBlobName(userId), attachmentBytes);
     const resource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
     );
-    const resourceContainerClient = await getContainerClient(StorageBucket.ResourceAssets);
-    await writeJsonBlob(resourceContainerClient, getContentBlobName(resource.id), content);
+    const resourceBucket = getBucket(StorageBucket.ResourceAssets);
+    await writeJsonBlob(resourceBucket, getContentBlobName(resource.id), content);
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    await resourceContainerClient
-      .getBlockBlobClient(getResourceFileBlobName(resource.id, assetHash))
-      .upload(attachmentBytes, attachmentBytes.length);
+    await resourceBucket.put(getResourceFileBlobName(resource.id, assetHash), attachmentBytes);
     await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: room.id,
@@ -193,7 +193,7 @@ describe(buildUserDataArchive, () => {
     });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     expect(Object.keys(entries).toSorted()).toStrictEqual(
       [
@@ -246,7 +246,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(userStatusesInMessage).values({ userId });
 
     await buildUserDataArchive(userId, blobName);
-    const account = readEntryJson(readArchiveEntries(blobName), "account.json");
+    const account = readEntryJson(await readArchiveEntries(blobName), "account.json");
 
     expect(account.user).toStrictEqual({
       biography: user.biography,
@@ -335,7 +335,7 @@ describe(buildUserDataArchive, () => {
       .values({ id: crypto.randomUUID(), receiverId: userId, senderId: friendUserId });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     expect(
       Object.keys(entries)
@@ -378,17 +378,13 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
-    const messageAssetsContainerClient = await getContainerClient(StorageBucket.MessageAssets);
-    await messageAssetsContainerClient
-      .getBlockBlobClient(getRoomEmojiBlobName(room.id, emoji.id))
-      .upload(attachmentBytes, attachmentBytes.length);
-    const publicContainerClient = await getContainerClient(StorageBucket.PublicUserAssets);
-    await publicContainerClient
-      .getBlockBlobClient(`rooms/${room.id}/ProfileImage`)
-      .upload(attachmentBytes, attachmentBytes.length);
+    const messageAssetsBucket = getBucket(StorageBucket.MessageAssets);
+    await messageAssetsBucket.put(getRoomEmojiBlobName(room.id, emoji.id), attachmentBytes);
+    const publicBucket = getBucket(StorageBucket.PublicUserAssets);
+    await publicBucket.put(`rooms/${room.id}/ProfileImage`, attachmentBytes);
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     expect(
       Object.keys(entries)
@@ -437,7 +433,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(searchHistoriesInMessage).values({ query: otherMessage, roomId: room.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A search carries the time it ran
     expect(readEntryJson(entries, "searches.json")).toStrictEqual([
@@ -465,7 +461,7 @@ describe(buildUserDataArchive, () => {
     );
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
     // It was last published, all as the row stores them
@@ -489,7 +485,7 @@ describe(buildUserDataArchive, () => {
     );
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
     // Person's, so the record holds what the person wrote and when it was created
@@ -523,7 +519,7 @@ describe(buildUserDataArchive, () => {
       .values({ sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A link holds no token, so nothing is withheld from it, and the record is written as the row stores it
     expect(readEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
@@ -574,7 +570,7 @@ describe(buildUserDataArchive, () => {
     await Promise.all(actions.map((action) => moderationLogClient.createEntity(serializeEntity(action))));
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // The action is written with its type, time and the id it was taken against, and no content of the target's
     expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
@@ -601,7 +597,7 @@ describe(buildUserDataArchive, () => {
       .values({ id: "callSession2", roomId: otherRoom.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
     expect(readEntryJson(entries, "calls.json")).toStrictEqual([
@@ -635,7 +631,7 @@ describe(buildUserDataArchive, () => {
       .values({ isUnfollowed: false, roomId: room.id, threadRootRowKey, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A follow carries the time of the person's first decision about the thread
     expect(readEntryJson(entries, "follows.json")).toStrictEqual([
@@ -671,7 +667,7 @@ describe(buildUserDataArchive, () => {
     ]);
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // The membership keeps the person's own settings, the category they filed it under, the time they joined and the
     // Time they last read the room, and the roles they hold there
@@ -712,7 +708,7 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
     // Beside the time it was last opened
@@ -724,7 +720,7 @@ describe(buildUserDataArchive, () => {
     ]);
   });
 
-  test("reads an attachment as a stream, never into a buffer", async () => {
+  test("reads an attachment through its object, which streams into the archive", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
@@ -741,12 +737,10 @@ describe(buildUserDataArchive, () => {
       userId,
     });
     await seedAttachment(attachmentBlobName);
-    const download = vi.spyOn(MockBlobClient.prototype, "download");
-    const downloadToBuffer = vi.spyOn(MockBlobClient.prototype, "downloadToBuffer");
+    const getSpy = vi.spyOn(getBucket(StorageBucket.MessageAssets), "get");
 
     await buildUserDataArchive(userId, blobName);
 
-    expect(getContextNames(download.mock.contexts)).toContain(attachmentBlobName);
-    expect(getContextNames(downloadToBuffer.mock.contexts)).not.toContain(attachmentBlobName);
+    expect(getSpy).toHaveBeenCalledWith(attachmentBlobName);
   });
 });

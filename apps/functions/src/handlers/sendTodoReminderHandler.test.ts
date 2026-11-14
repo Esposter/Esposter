@@ -1,20 +1,21 @@
 import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
-import { getContainerClient } from "#src/services/azure/getContainerClient";
+import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
+  QueueJob,
   StorageBucket,
   resourcesInResource,
   ResourceType,
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -26,14 +27,14 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 
 const seedContent = async (
   resourceId: string,
   items: { completedAt?: string; dueAt: string; id: string; name: string }[],
 ) => {
-  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
-  return writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify({ items }));
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  return writeJsonBlob(bucket, getContentBlobName(resourceId), JSON.stringify({ items }));
 };
 
 describe(sendTodoReminderHandler, () => {
@@ -46,16 +47,18 @@ describe(sendTodoReminderHandler, () => {
 
   beforeAll(async () => {
     mockDb = await createMockDb();
+    await openMockBuckets([StorageBucket.ResourceAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });
 
   afterEach(async () => {
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
     MockJobQueueDatabase.clear();
     await mockDb.delete(resourcesInResource);
   });
 
   afterAll(async () => {
+    await disposeMockBuckets();
     await mockDb.delete(usersInAuth);
   });
 

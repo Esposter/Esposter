@@ -28,7 +28,7 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@azure/storage-blob": "catalog:",
+    "@azure/identity": "catalog:",
     "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
     "@esposter/db-schema": "workspace:*",

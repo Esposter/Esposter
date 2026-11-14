@@ -1,6 +1,5 @@
-
-import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { RESOURCE_ASSET_BLOB_NAME_REGEX } from "#src/services/storage/constants";
+import { getBucket } from "#src/services/storage/getBucket";
 import { findMismatchedResourceAssetHash } from "@esposter/db";
 import { StorageBucket, QueueJob } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -12,8 +11,8 @@ export const verifyResourceAssetBlob = async (blobName: string): Promise<void> =
   const nameMatch = RESOURCE_ASSET_BLOB_NAME_REGEX.exec(blobName);
   if (!nameMatch) return;
 
-  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
-  const actualHash = await findMismatchedResourceAssetHash(containerClient, blobName, takeOne(nameMatch, 1));
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const actualHash = await findMismatchedResourceAssetHash(bucket, blobName, takeOne(nameMatch, 1));
   if (actualHash === undefined) return;
 
   const mismatch = JSON.stringify({ actualHash, blobName });

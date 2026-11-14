@@ -1,16 +1,29 @@
 import { deleteAccountBlobDirectories } from "#src/services/account/deleteAccountBlobDirectories";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { StorageBucket, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
-vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 
 describe(deleteAccountBlobDirectories, () => {
-  afterEach(() => {
+  beforeAll(async () => {
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.UserAssets,
+    ]);
+  });
+
+  afterEach(async () => {
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await clearMockBuckets();
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
   });
 
   test("removes the account's blobs under its prefix and no other account's blobs", async () => {
@@ -27,9 +40,11 @@ describe(deleteAccountBlobDirectories, () => {
 
     await deleteAccountBlobDirectories(userId);
 
-    expect(readBlobNames(StorageBucket.PublicUserAssets)).toStrictEqual([getUserProfileImageBlobName(otherUserId)]);
-    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);
-    expect(readBlobNames(StorageBucket.GenshinAssets)).toStrictEqual([]);
-    expect(readBlobNames(StorageBucket.ClickerAssets)).toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([
+      getUserProfileImageBlobName(otherUserId),
+    ]);
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.GenshinAssets)).resolves.toStrictEqual([]);
+    await expect(readBlobNames(StorageBucket.ClickerAssets)).resolves.toStrictEqual([]);
   });
 });
