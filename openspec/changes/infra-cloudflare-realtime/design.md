@@ -81,6 +81,10 @@ Every D1 row's id is a UUIDv7 (RFC 9562): unique without coordination, generated
 
 The [cutover](../infra-cloudflare-cutover/design.md) re-keys existing rows: each gets a UUIDv7 built from its own `createdAt` and a random tail, kept in the id map, and one pass rewrites every occurrence of an old UUID — in key and foreign-key columns, JSON columns, R2 object keys and object contents — through the map. A UUID is a collision-free token, so a replace through the map cannot touch anything else. Messages are numbered per room in `createdAt` order, which is deterministic, so they need no map.
 
+## Two Workers by job, named for it
+
+`apps/functions` is an Azure name for what becomes two jobs, so it splits and renames once the objects land: `apps/realtime` (`@esposter/realtime`, Worker purpose `realtime`) exports `RoomObject`, `CallObject` and `UserObject` and nothing else, and `apps/jobs` (`@esposter/jobs`, Worker purpose `jobs`) consumes the queues and runs the nightly purge, reaching live state through the realtime Worker's bindings. Each deploys on its own, and a job's failure or redeploy never evicts a room. Rejected: one Worker for both, which ties every socket's lifetime to every queue consumer's deploy.
+
 ## Rejected
 
 - **One global object running the whole app** — the first design. One thread and one location for every socket, no hibernation, and every event filtered by every subscription in memory.

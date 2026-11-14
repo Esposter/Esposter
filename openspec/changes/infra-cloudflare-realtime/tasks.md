@@ -20,3 +20,7 @@
 ## 4.
 
 - [ ] 4.1 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and to import each room's messages into its object in `createdAt` order. Verified by the cutover's mapper tests.
+
+## 5.
+
+- [ ] 5.1 Split `apps/functions` into `apps/realtime` (the three objects) and `apps/jobs` (queue consumers and the cron), rename the packages, the Worker purposes, the wrangler configs, the Pulumi consumers and every path that names them. Verified by each Worker's wrangler test.
