@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 
 interface Props {
   isSpeaking: boolean;

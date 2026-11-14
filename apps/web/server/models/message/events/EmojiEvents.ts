@@ -1,7 +1,5 @@
 import type { Device } from "#shared/models/auth/Device";
-import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+import type { DeleteEmojiInput, MessageEmojiMetadataEntity, UpdateEmojiInput } from "@esposter/db-schema";
 
 export interface EmojiEvents {
   createEmoji: [[MessageEmojiMetadataEntity, Device]];

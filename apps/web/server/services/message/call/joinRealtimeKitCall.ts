@@ -1,9 +1,7 @@
 import type { Context } from "#server/trpc/context";
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
-import type { CallSessionInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
-
 import { getOrCreateRealtimeKitMeetingId } from "#server/services/message/call/getOrCreateRealtimeKitMeetingId";
 import { joinCallAsParticipant } from "#server/services/message/call/joinCallAsParticipant";
 import { addRealtimeKitParticipant } from "#server/services/realtimeKit/addRealtimeKitParticipant";

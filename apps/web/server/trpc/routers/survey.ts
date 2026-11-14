@@ -1,6 +1,5 @@
 import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
-
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
@@ -14,13 +13,12 @@ import { createResourceProcedures } from "#server/trpc/procedure/resource/create
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { slowRateLimitedProcedure } from "#server/trpc/procedure/slowRateLimitedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
-import { McpScope } from "#shared/models/auth/McpScope";
+import { DatabaseEntityType, McpScope, ResourceType, surveyResponsesInResource } from "@esposter/db-schema";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
 import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
-import { DatabaseEntityType, ResourceType, surveyResponsesInResource } from "@esposter/db-schema";
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";

@@ -1,6 +1,5 @@
-import { EN_US_DISJUNCTION_FORMATTER } from "#shared/services/intl/constants";
+import { EN_US_DISJUNCTION_FORMATTER, uncapitalize } from "@esposter/shared";
 import { FilterType, FilterTypeAuthorTypes, FilterTypeHases } from "@esposter/db-schema";
-import { uncapitalize } from "@esposter/shared";
 
 export const FilterTypePlaceholderMap = {
   [FilterType.After]: "specific date",

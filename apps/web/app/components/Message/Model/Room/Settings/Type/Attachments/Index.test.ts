@@ -1,9 +1,7 @@
 // @vitest-environment nuxt
-import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
-import type { RoomInMessage } from "@esposter/db-schema";
-
-import { MEGABYTE } from "#shared/services/app/constants";
 import MessageModelRoomSettingsTypeAttachmentsIndex from "@/components/Message/Model/Room/Settings/Type/Attachments/Index.vue";
+import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
+import { MEGABYTE } from "#shared/services/app/constants";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";

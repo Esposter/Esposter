@@ -1,4 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 import type { Session, User } from "better-auth";
 
 export const createParticipant = (

@@ -1,4 +1,4 @@
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope } from "@esposter/db-schema";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 import { describe, expect, test } from "vitest";
 

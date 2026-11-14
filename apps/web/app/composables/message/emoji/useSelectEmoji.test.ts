@@ -1,6 +1,5 @@
 import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-
+import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";

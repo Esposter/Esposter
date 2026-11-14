@@ -1,9 +1,14 @@
 import type { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
 import type { saveDungeonsInputSchema } from "#shared/models/db/dungeons/SaveDungeonsInput";
-import type { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import type {
+  deleteMessageInputSchema,
+  messageCompositeKeySchema,
+  ResourceInResource,
+  ResourceType,
+  updateMessageInputSchema,
+  updateRoomInputSchema,
+} from "@esposter/db-schema";
 import type { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
-import type { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
-import type { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import type { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import type { createCommentInputSchema } from "#shared/models/db/post/CreateCommentInput";
 import type { createLikeInputSchema } from "#shared/models/db/post/CreateLikeInput";
@@ -21,11 +26,9 @@ import type { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInp
 import type { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import type { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import type { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
-import type { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import type { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import type { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
 import type { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 import type { z } from "zod";
 
 export type TRPCPath = keyof TRPCProcedureInputs;

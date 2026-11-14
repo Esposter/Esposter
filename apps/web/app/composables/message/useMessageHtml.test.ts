@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-
+import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import { useMessageHtml } from "@/composables/message/useMessageHtml";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";

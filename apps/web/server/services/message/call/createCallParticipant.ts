@@ -1,5 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { getOrCreate } from "@esposter/shared";
 

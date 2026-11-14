@@ -1,6 +1,5 @@
 import type { z } from "zod";
-
-import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
+import { messageCompositeKeySchema } from "#src/models/message/MessageCompositeKey";
 
 // Deleting a message needs nothing but its key today, so this is an alias rather than a second copy — but it
 // Keeps its own name because the name is the seam: the emitter, the hook registry and the client store all

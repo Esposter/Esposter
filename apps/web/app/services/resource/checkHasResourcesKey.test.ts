@@ -1,4 +1,4 @@
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope } from "@esposter/db-schema";
 import { checkHasResourcesKey } from "@/services/resource/checkHasResourcesKey";
 import { describe, expect, test } from "vitest";
 

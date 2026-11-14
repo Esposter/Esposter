@@ -1,6 +1,5 @@
 import type { BlueprintDeployment } from "#shared/models/resource/blueprint/BlueprintDeployment";
 import type { ResourceInResource } from "@esposter/db-schema";
-
 import { captureBlueprint } from "#server/services/blueprint/captureBlueprint";
 import { deployBlueprint } from "#server/services/blueprint/deployBlueprint";
 import { getInvalidBlueprintError } from "#server/services/blueprint/getInvalidBlueprintError";
@@ -9,11 +8,10 @@ import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 import { captureBlueprintInputSchema } from "#shared/models/db/blueprint/CaptureBlueprintInput";
 import { deployBlueprintInputSchema } from "#shared/models/db/blueprint/DeployBlueprintInput";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
-import { ResourceType } from "@esposter/db-schema";
 
 export const blueprintRouter = router({
   ...createResourceProcedures(ResourceType.Blueprint),

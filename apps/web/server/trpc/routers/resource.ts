@@ -15,7 +15,6 @@ import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
-
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
@@ -57,7 +56,19 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { McpScope } from "#shared/models/auth/McpScope";
+import {
+  DatabaseEntityType,
+  McpScope,
+  RESOURCE_NAME_MAX_LENGTH,
+  resourceAccessesInResource,
+  resourceActivitiesInResource,
+  ResourceActivityType,
+  resourceFavoritesInResource,
+  resourcesInResource,
+  SnapshotChannel,
+  SnapshotReason,
+  StorageBucket,
+} from "@esposter/db-schema";
 import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/CreateResourceOfTypeInput";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
@@ -77,18 +88,6 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { inJsonArray, purgeResource } from "@esposter/db";
-import {
-  StorageBucket,
-  DatabaseEntityType,
-  RESOURCE_NAME_MAX_LENGTH,
-  resourceAccessesInResource,
-  resourceActivitiesInResource,
-  ResourceActivityType,
-  resourceFavoritesInResource,
-  resourcesInResource,
-  SnapshotChannel,
-  SnapshotReason,
-} from "@esposter/db-schema";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
 

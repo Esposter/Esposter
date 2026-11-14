@@ -1,4 +1,4 @@
-import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
+import { messageCompositeKeySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const votePollInputSchema = z.object({

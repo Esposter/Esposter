@@ -1,9 +1,8 @@
 import type { auth as realAuth } from "#server/auth";
 import type { Context } from "#server/trpc/context";
-import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
+import type { ApiKeyPermissions } from "@esposter/db-schema";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Session, User } from "better-auth";
-
 import { sessionsInAuth } from "@esposter/db-schema";
 import { describe, vi } from "vitest";
 

@@ -1,4 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 
 export interface CallEvents {
   handRaisedChanged: [{ callSessionId: string; id: string; isHandRaised: boolean }];

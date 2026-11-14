@@ -1,5 +1,4 @@
-import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
-import { roomIdsSchema, standardMessageEntitySchema } from "@esposter/db-schema";
+import { messageCompositeKeySchema, roomIdsSchema, standardMessageEntitySchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const forwardMessageInputSchema = z.object({

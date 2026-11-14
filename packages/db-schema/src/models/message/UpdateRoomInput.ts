@@ -1,5 +1,6 @@
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { refineRoomSchema, selectRoomInMessageSchema } from "@esposter/db-schema";
+import { refineAtLeastOne } from "#src/services/zod/refineAtLeastOne";
+import { refineRoomSchema } from "#src/services/room/refineRoomSchema";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { z } from "zod";
 
 const updatableRoomSchema = selectRoomInMessageSchema.pick({

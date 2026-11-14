@@ -1,5 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { addRealtimeKitParticipant } from "#server/services/realtimeKit/addRealtimeKitParticipant";
 import { PublishSource } from "#server/services/realtimeKit/constants";

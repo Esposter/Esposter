@@ -1,12 +1,10 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
-
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { publicProcedure, router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { trpcRouter } from "#server/trpc/routers";
-import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
-import { ResourceType } from "@esposter/db-schema";
+import { McpScope, McpScopes, ResourceType } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

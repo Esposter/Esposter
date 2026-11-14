@@ -1,4 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 
 export interface JoinCallResult {
   // The participant's RealtimeKit auth token, which the client hands to its meeting; empty when RealtimeKit is not configured

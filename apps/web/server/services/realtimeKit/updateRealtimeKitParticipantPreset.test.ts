@@ -1,6 +1,5 @@
 import type { CallEvents } from "#server/models/message/events/CallEvents";
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { PublishSource, REALTIMEKIT_PRESET_NAME } from "#server/services/realtimeKit/constants";

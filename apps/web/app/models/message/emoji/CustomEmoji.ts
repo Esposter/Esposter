@@ -1,4 +1,4 @@
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
+import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import type { EmojiType } from "@/models/message/emoji/EmojiType";
 
 // A room's uploaded emoji as every picking surface sees it. It carries the same `name`/`slug` pair a dataset

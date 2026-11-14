@@ -1,5 +1,4 @@
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { roomIdSchema, selectWebhookInMessageSchema } from "@esposter/db-schema";
+import { refineAtLeastOne, roomIdSchema, selectWebhookInMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 const updatableWebhookSchema = selectWebhookInMessageSchema.pick({ isActive: true, name: true });

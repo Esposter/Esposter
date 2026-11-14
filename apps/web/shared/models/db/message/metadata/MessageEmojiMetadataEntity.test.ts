@@ -1,4 +1,4 @@
-import { messageEmojiMetadataEntitySchema } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { messageEmojiMetadataEntitySchema } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe("messageEmojiMetadataEntitySchema", () => {

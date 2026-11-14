@@ -1,4 +1,4 @@
-import type { McpScope } from "#shared/models/auth/McpScope";
+import type { McpScope } from "@esposter/db-schema";
 
 // What a procedure declares about itself beyond its input and output
 export interface Meta {

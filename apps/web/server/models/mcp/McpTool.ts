@@ -1,4 +1,4 @@
-import type { McpScope } from "#shared/models/auth/McpScope";
+import type { McpScope } from "@esposter/db-schema";
 import type { Tool } from "@modelcontextprotocol/sdk/types.js";
 import type { ProcedureType } from "@trpc/server";
 

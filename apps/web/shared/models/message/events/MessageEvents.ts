@@ -1,8 +1,11 @@
 import type { Device } from "#shared/models/auth/Device";
-import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
-import type { Typing } from "#shared/models/message/Typing";
-import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
+import type {
+  DeleteMessageInput,
+  MessageEntity,
+  StandardMessageEntity,
+  Typing,
+  UpdateMessageInput,
+} from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
 // Every event is a `[data, device?]` envelope, so the room subscriptions share one shape. An event no single

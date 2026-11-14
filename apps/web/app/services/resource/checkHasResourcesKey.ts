@@ -1,4 +1,4 @@
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope } from "@esposter/db-schema";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
 
 // Whether any of the person's keys holds the Resources scope, which the session's key needs for Ask Claude to edit

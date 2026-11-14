@@ -1,8 +1,5 @@
 import type { z } from "zod";
-
-import { callEventSchema } from "#shared/models/realtime/CallEvent";
-import { roomEventSchema } from "#shared/models/realtime/RoomEvent";
-import { userEventSchema } from "#shared/models/realtime/UserEvent";
+import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
 import { jsonDateParse } from "@esposter/shared";
 

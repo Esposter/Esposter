@@ -1,5 +1,4 @@
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-
+import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { StreamTable } from "@esposter/db-schema";
 import type { StreamTableClient } from "@esposter/db";

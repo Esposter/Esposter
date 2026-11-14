@@ -1,6 +1,5 @@
 import type { z } from "zod";
-
-import { messageEmojiMetadataEntitySchema } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { messageEmojiMetadataEntitySchema } from "#src/models/message/metadata/MessageEmojiMetadataEntity";
 
 export const deleteEmojiInputSchema = messageEmojiMetadataEntitySchema.pick({
   messageRowKey: true,

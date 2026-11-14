@@ -1,4 +1,6 @@
-import { roomIdSchema, selectRoomRoleInMessageSchema, userIdSchema } from "@esposter/db-schema";
+import { roomIdSchema } from "#src/models/shared/RoomId";
+import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
+import { userIdSchema } from "#src/models/shared/UserId";
 import { z } from "zod";
 
 export const revokeRoleInputSchema = z.object({

@@ -1,6 +1,4 @@
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-import type { RoomEmojiInMessage, StorageBucket } from "@esposter/db-schema";
-
+import type { RoomEmojiInMessage, RoomEmojiWithSasUrl, StorageBucket } from "@esposter/db-schema";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { createPresignedGetUrl } from "@esposter/db";
 import { getRoomEmojiBlobName } from "@esposter/db-schema";

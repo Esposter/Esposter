@@ -1,6 +1,4 @@
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-import type { RoomEmojiInMessage } from "@esposter/db-schema";
-
+import type { RoomEmojiInMessage, RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getDevice } from "#server/services/auth/getDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
@@ -26,7 +24,6 @@ import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRo
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { createPresignedPutUrl } from "@esposter/db";
 import {
-  StorageBucket,
   DatabaseEntityType,
   getMimeCategory,
   getRoomEmojiBlobName,
@@ -35,6 +32,7 @@ import {
   roomIdSchema,
   RoomPermission,
   roomsInMessage,
+  StorageBucket,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, sql } from "drizzle-orm";

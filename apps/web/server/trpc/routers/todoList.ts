@@ -1,5 +1,4 @@
 import type { FollowUp } from "#server/models/resource/todoList/FollowUp";
-
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { appendNotesParagraph } from "#server/services/resource/todoList/appendNotesParagraph";
 import { checkIsOpenFollowUp } from "#server/services/resource/todoList/checkIsOpenFollowUp";
@@ -9,7 +8,7 @@ import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 import { addFollowUpInputSchema } from "#shared/models/db/resource/todoList/AddFollowUpInput";
 import { completeFollowUpInputSchema } from "#shared/models/db/resource/todoList/CompleteFollowUpInput";
 import { handBackFollowUpInputSchema } from "#shared/models/db/resource/todoList/HandBackFollowUpInput";
@@ -19,7 +18,6 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { checkRollsOnTick } from "#shared/services/resource/todoList/checkRollsOnTick";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
-import { ResourceType } from "@esposter/db-schema";
 
 // The follow-up procedures an agent reaches through the MCP endpoint with a follow-ups key
 // (openspec/specs/resource/todolist-agent-follow-ups/design.md). Each reads, changes and saves the list on the server, and acts only on a

@@ -1,13 +1,15 @@
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
-import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
-import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
+import type {
+  DeleteMessageInput,
+  MessageInMessage,
+  StandardCreateMessageInput,
+  Typing,
+  UpdateMessageInput,
+} from "@esposter/db-schema";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
-import type { Typing } from "#shared/models/message/Typing";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { MessageInMessage, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
-
 import { MessageHook } from "@/models/message/MessageHook";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";

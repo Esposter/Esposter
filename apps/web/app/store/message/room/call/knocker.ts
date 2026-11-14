@@ -1,6 +1,5 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
-
 import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 

@@ -1,4 +1,4 @@
-import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
+import { EN_US_GRAPHEME_SEGMENTER } from "@esposter/shared";
 import { ID_CHARACTERS } from "#shared/util/math/random/constants";
 import { createId } from "#shared/util/math/random/createId";
 import { describe, expect, test } from "vitest";

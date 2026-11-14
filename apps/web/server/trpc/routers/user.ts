@@ -1,7 +1,6 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
-import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
-import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
+  ApiKeyPermissions,
   DataExportInUser,
   DeleteAccountQueueMessage,
   ExportUserDataQueueMessage,
@@ -9,8 +8,8 @@ import type {
   UserSettingsInMessage,
   UserStatusInMessage,
 } from "@esposter/db-schema";
+import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type { SetNonNullable } from "type-fest";
-
 import { auth } from "#server/auth";
 import { on } from "#server/services/events/on";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
@@ -34,19 +33,8 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
-import { createApiKeyInputSchema } from "#shared/models/db/user/CreateApiKeyInput";
-import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
-import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
-import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
-import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
-import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
-import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
-import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
-import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
-import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import {
-  StorageBucket,
+  createApiKeyInputSchema,
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
@@ -60,12 +48,23 @@ import {
   MimeCategory,
   NoiseSuppressionMode,
   QueueJob,
+  StorageBucket,
   userSettingsInMessage,
   usersInAuth,
   UserStatus,
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
+import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
+import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
+import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
+import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
+import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
+import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
+import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
+import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
+import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
+import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
@@ -277,13 +276,10 @@ export const userRouter = router({
       .returning();
     if (insertedDataExport) {
       const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
-      await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(
-        noop,
-        async (error) => {
-          await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
-          throw error;
-        },
-      );
+      await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(noop, async (error) => {
+        await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
+        throw error;
+      });
       return insertedDataExport;
     } else {
       const activeDataExport = readActiveDataExport(ctx);

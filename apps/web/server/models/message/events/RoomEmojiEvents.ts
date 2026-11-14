@@ -1,6 +1,5 @@
 import type { Device } from "#shared/models/auth/Device";
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-import type { RoomEmojiInMessage } from "@esposter/db-schema";
+import type { RoomEmojiInMessage, RoomEmojiWithSasUrl } from "@esposter/db-schema";
 
 export interface RoomEmojiEvents {
   createRoomEmoji: [[RoomEmojiWithSasUrl, Device]];

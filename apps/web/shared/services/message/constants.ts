@@ -19,9 +19,3 @@ export const MAX_ROOM_EMOJI_SIZE_BYTES = 256 * KIBIBYTE;
 // See openspec/specs/esbabbler/calls/virtual-backgrounds/design.md
 export const MAX_CALL_BACKGROUNDS = 5;
 export const MAX_CALL_BACKGROUND_SIZE_BYTES = 2 * MEGABYTE;
-// A room event that carries messages carries one send's worth: a message, or a forward and the note sent with it
-export const MESSAGE_BATCH_MAX_LENGTH = 2;
-// A bigint on the wire is its decimal digits, and a permission bitfield fits in a 64-bit integer, which has 20 of them
-export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
-// A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
-export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;

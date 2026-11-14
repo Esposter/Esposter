@@ -1,7 +1,5 @@
-import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage, UpdateRoomInput } from "@esposter/db-schema";
 import type { Except } from "type-fest";
-
 import { useRoomStore } from "@/store/message/room";
 
 // Every room settings panel saves a different slice of the same row through the same mutation target, so the

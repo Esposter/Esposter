@@ -1,6 +1,5 @@
 import type { RealtimeKitCredentials } from "#server/models/realtimeKit/RealtimeKitCredentials";
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { requestRealtimeKit } from "#server/services/realtimeKit/requestRealtimeKit";
 import { z } from "zod";
 

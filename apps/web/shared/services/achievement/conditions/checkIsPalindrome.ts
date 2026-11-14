@@ -1,4 +1,4 @@
-import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
+import { EN_US_GRAPHEME_SEGMENTER } from "@esposter/shared";
 
 // A palindrome needs a letter or digit to mirror against another, so a message of fewer has none
 const MIN_PALINDROME_GRAPHEMES = 2;

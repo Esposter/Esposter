@@ -1,6 +1,5 @@
 import type { z } from "zod";
-
-import { messageEmojiMetadataEntitySchema } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import { messageEmojiMetadataEntitySchema } from "@esposter/db-schema";
 
 export const createEmojiInputSchema = messageEmojiMetadataEntitySchema.pick({
   emojiTag: true,

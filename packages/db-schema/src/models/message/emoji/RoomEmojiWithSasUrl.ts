@@ -1,6 +1,6 @@
-import type { RoomEmojiInMessage } from "@esposter/db-schema";
-
-import { selectRoomEmojiInMessageSchema, URL_MAX_LENGTH } from "@esposter/db-schema";
+import type { RoomEmojiInMessage } from "#src/schema/message/roomEmojisInMessage";
+import { selectRoomEmojiInMessageSchema } from "#src/schema/message/roomEmojisInMessage";
+import { URL_MAX_LENGTH } from "#src/services/shared/constants";
 import { z } from "zod";
 
 // A room emoji as every surface renders it: the row plus a read SAS for the blob its id names. The url is

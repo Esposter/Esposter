@@ -1,15 +1,11 @@
-import type { CompositeKeyEntity } from "@esposter/db-schema";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
-
-import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
-import { CUSTOM_EMOJI_TAG_PREFIX, UNICODE_EMOJI_TAG_MAX_LENGTH } from "#shared/services/message/emoji/constants";
-import {
-  createMessageMetadataEntitySchema,
-  MessageMetadataEntity,
-  MessageMetadataType,
-  userIdsSchema,
-} from "@esposter/db-schema";
-import { getPropertyNames } from "@esposter/shared";
+import { EN_US_GRAPHEME_SEGMENTER, getPropertyNames } from "@esposter/shared";
+import { CUSTOM_EMOJI_TAG_PREFIX, UNICODE_EMOJI_TAG_MAX_LENGTH } from "#src/services/message/emoji/constants";
+import { createMessageMetadataEntitySchema } from "#src/services/message/metadata/createMessageMetadataEntitySchema";
+import { MessageMetadataEntity } from "#src/models/message/metadata/MessageMetadataEntity";
+import { MessageMetadataType } from "#src/models/message/metadata/MessageMetadataType";
+import { userIdsSchema } from "#src/models/shared/UserIds";
 import { z } from "zod";
 
 export class MessageEmojiMetadataEntity extends MessageMetadataEntity<MessageMetadataType.Emoji> {

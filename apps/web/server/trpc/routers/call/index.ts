@@ -1,7 +1,5 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
-import type { CallSessionInMessage } from "@esposter/db-schema";
-
 import { callAdmittedParticipantMap } from "#server/services/message/call/callAdmittedParticipantMap";
 import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";

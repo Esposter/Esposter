@@ -16,3 +16,10 @@ export const MAX_SLOWMODE_MS = 2_147_483_647;
 // Matches the longest client-selectable timeout and keeps stored durations within Postgres integer range.
 export const MAX_TIMEOUT_DURATION_MS = Temporal.Duration.from({ days: 7 }).total("milliseconds");
 export const PUSH_NOTIFICATION_MESSAGE_MAX_LENGTH = 100;
+
+// A room event that carries messages carries one send's worth: a message, or a forward and the note sent with it
+export const MESSAGE_BATCH_MAX_LENGTH = 2;
+// A bigint on the wire is its decimal digits, and a permission bitfield fits in a 64-bit integer, which has 20 of them
+export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
+// A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
+export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;

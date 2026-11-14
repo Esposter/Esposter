@@ -1,4 +1,4 @@
-import { EN_US_GRAPHEME_SEGMENTER } from "#shared/services/intl/constants";
+import { EN_US_GRAPHEME_SEGMENTER } from "@esposter/shared";
 
 export const countEmojis = (value: string) =>
   [...EN_US_GRAPHEME_SEGMENTER.segment(value)].filter(({ segment }) =>

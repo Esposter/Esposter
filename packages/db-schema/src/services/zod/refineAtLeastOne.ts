@@ -1,6 +1,5 @@
 import type { z } from "zod";
-
-import { EN_US_DISJUNCTION_FORMATTER } from "#shared/services/intl/constants";
+import { EN_US_DISJUNCTION_FORMATTER } from "@esposter/shared";
 
 export const refineAtLeastOne = <TSchema extends z.ZodObject>(
   schema: TSchema,

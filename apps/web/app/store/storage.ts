@@ -1,4 +1,4 @@
-import type { StorageUsage } from "#shared/models/storage/StorageUsage";
+import type { StorageUsage } from "@esposter/db-schema";
 
 // The usage meter mounts on every resource page, and the layout it sits in is declared per page — so it is
 // Remounted on every navigation within the explorer. The number lives here rather than in the component so

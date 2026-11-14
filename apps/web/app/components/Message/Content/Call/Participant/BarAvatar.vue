@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useCallStore } from "@/store/message/room/call";
 

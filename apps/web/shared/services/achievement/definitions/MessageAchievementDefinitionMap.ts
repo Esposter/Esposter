@@ -1,9 +1,12 @@
 // @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
+import {
+  deleteMessageInputSchema,
+  MessageAchievementName,
+  messageCompositeKeySchema,
+  updateMessageInputSchema,
+} from "@esposter/db-schema";
 import { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
-import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
-import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { contains } from "#shared/services/achievement/conditions/contains";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
@@ -15,7 +18,6 @@ import { property } from "#shared/services/achievement/conditions/property";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { countEmojis } from "#shared/util/text/countEmojis";
-import { MessageAchievementName } from "@esposter/db-schema";
 
 export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Message, {
   [MessageAchievementName.CenturyClub]: defineAchievementDefinition({

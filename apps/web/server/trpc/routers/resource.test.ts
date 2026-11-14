@@ -27,7 +27,6 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
-import { McpScope } from "#shared/models/auth/McpScope";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { CritiqueFindingKind } from "#shared/models/pageBuilder/CritiqueFindingKind";
@@ -47,19 +46,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import {
-  apiKeysInAuth,
-  getResourceFileBlobName,
-  getResourceFilesDirectoryName,
-  ResourceActivityType,
-  resourceActivitiesInResource,
-  resourceLinksInResource,
-  ResourceLinkType,
-  ResourceType,
-  SnapshotChannel,
-  SnapshotReason,
-  StorageBucket,
-} from "@esposter/db-schema";
+import { apiKeysInAuth, getResourceFileBlobName, getResourceFilesDirectoryName, McpScope, resourceActivitiesInResource, ResourceActivityType, resourceLinksInResource, ResourceLinkType, ResourceType, SnapshotChannel, SnapshotReason, StorageBucket } from "@esposter/db-schema";
 import {
   InvalidOperationError,
   jsonDateParse,

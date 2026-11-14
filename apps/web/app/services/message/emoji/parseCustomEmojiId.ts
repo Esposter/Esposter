@@ -1,4 +1,4 @@
-import { CUSTOM_EMOJI_TAG_PREFIX } from "#shared/services/message/emoji/constants";
+import { CUSTOM_EMOJI_TAG_PREFIX } from "@esposter/db-schema";
 
 // Which emoji a stored reaction names, or nothing at all for the unicode tags that are the majority — the
 // Prefix is the only thing that distinguishes the two, because a character sequence can never contain a colon

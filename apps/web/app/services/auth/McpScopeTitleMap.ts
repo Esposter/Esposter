@@ -1,4 +1,4 @@
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope } from "@esposter/db-schema";
 
 export const McpScopeTitleMap = {
   [McpScope.FollowUps]: "Follow-ups",

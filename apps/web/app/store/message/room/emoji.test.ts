@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-
+import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { describe, expect, test } from "vitest";

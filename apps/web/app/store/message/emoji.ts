@@ -1,8 +1,5 @@
 import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import type { DeleteEmojiInput } from "#shared/models/db/message/metadata/DeleteEmojiInput";
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
-
+import type { DeleteEmojiInput, MessageEmojiMetadataEntity, UpdateEmojiInput } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { checkIsOnlyReactor, getOrCreate, getUpdatedUserIds, ID_SEPARATOR, takeOne } from "@esposter/shared";

@@ -1,5 +1,4 @@
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { roomIdSchema, selectUserToRoomInMessageSchema, userIdSchema } from "@esposter/db-schema";
+import { refineAtLeastOne, roomIdSchema, selectUserToRoomInMessageSchema, userIdSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 const updatableUserToRoomSchema = z.object({

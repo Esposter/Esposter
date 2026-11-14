@@ -1,7 +1,6 @@
-import type { TimeoutUserAdminActionInput } from "#shared/models/db/moderation/TimeoutUserAdminActionInput";
+import type { TimeoutUserAdminActionInput } from "@esposter/db-schema";
 import type { UnparameterizedAdminActionInput } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
-
-import { timeoutUserAdminActionInputSchema } from "#shared/models/db/moderation/TimeoutUserAdminActionInput";
+import { timeoutUserAdminActionInputSchema } from "@esposter/db-schema";
 import { unparameterizedAdminActionInputSchema } from "#shared/models/db/moderation/UnparameterizedAdminActionInput";
 import { z } from "zod";
 

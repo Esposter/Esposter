@@ -1,6 +1,5 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { selectResourceInResourceSchema } from "@esposter/db-schema";
+import { refineAtLeastOne, selectResourceInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 // Tags replace the whole record rather than merging, which is Azure's own tag update semantics.

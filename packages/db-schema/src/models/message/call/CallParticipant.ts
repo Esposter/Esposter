@@ -1,14 +1,17 @@
-import type { Session, User } from "better-auth";
+import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 
-import { selectUserInAuthSchema, sessionIdSchema, userIdSchema } from "@esposter/db-schema";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
+import { sessionIdSchema } from "#src/models/shared/SessionId";
+import { userIdSchema } from "#src/models/shared/UserId";
 import { z } from "zod";
 
-export interface CallParticipant extends Pick<User, "image" | "name"> {
-  id: Session["id"];
+export interface CallParticipant extends Pick<UserInAuth, "name"> {
+  id: string;
+  image: UserInAuth["image"] | null;
   isCameraEnabled: boolean;
   isHandRaised: boolean;
   isMuted: boolean;
-  userId: User["id"];
+  userId: UserInAuth["id"];
 }
 
 export const callParticipantSchema = z.object({

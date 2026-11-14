@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
-import { McpScope } from "#shared/models/auth/McpScope";
-import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceAskClaudeDialog from "@/components/Resource/AskClaudeDialog.vue";
+import { McpScope } from "@esposter/db-schema";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { apiKeyList } from "@/services/auth/authClient.test";
 import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

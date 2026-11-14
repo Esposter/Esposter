@@ -5,10 +5,9 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
-import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
+import { RoomAchievementName, updateRoomInputSchema } from "@esposter/db-schema";
 import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
-import { RoomAchievementName } from "@esposter/db-schema";
 
 export const RoomAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Room, {
   [RoomAchievementName.Inviter]: defineAchievementDefinition({

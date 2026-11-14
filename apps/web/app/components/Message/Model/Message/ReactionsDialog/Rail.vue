@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
+import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 interface Props {

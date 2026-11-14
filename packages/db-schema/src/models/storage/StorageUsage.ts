@@ -1,4 +1,4 @@
-import { StorageTier } from "@esposter/db-schema";
+import { StorageTier } from "#src/models/user/StorageTier";
 import { z } from "zod";
 
 // The quota rides along with the usage rather than being resolved on the client: it is derived from the tier,

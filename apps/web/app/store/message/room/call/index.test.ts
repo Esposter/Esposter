@@ -1,7 +1,5 @@
 // @vitest-environment nuxt
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { MessageInMessage } from "@esposter/db-schema";
-
+import type { CallParticipant, MessageInMessage } from "@esposter/db-schema";
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
 import { useSession } from "@/services/auth/authClient.test";

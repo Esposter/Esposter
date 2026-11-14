@@ -1,6 +1,5 @@
 import type { Device } from "#shared/models/auth/Device";
-import type { UpdateRoomInput } from "#shared/models/db/room/UpdateRoomInput";
-import type { UserToRoomInMessage, UserToRoomInMessageWithRelations } from "@esposter/db-schema";
+import type { UpdateRoomInput, UserToRoomInMessage, UserToRoomInMessageWithRelations } from "@esposter/db-schema";
 
 export interface RoomEvents {
   deleteRoom: [Pick<Device, "sessionId"> & Pick<UserToRoomInMessage, "roomId" | "userId">];

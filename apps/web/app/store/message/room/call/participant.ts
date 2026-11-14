@@ -1,5 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 
 export const useParticipantStore = defineStore("message/room/call/participant", () => {

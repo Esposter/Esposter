@@ -1,20 +1,17 @@
-import {
-  AchievementName,
-  friendRequestInSocialWithRelationsSchema,
-  publicUserSchema,
-  selectFriendInSocialSchema,
-  selectFriendRequestInSocialSchema,
-  selectResourceInResourceSchema,
-  selectUserToRoomInMessageSchema,
-  sessionIdSchema,
-  userAchievementInAchievementWithRelationsSchema,
-} from "@esposter/db-schema";
+import { AchievementName } from "#src/services/achievement/AchievementName";
+import { friendRequestInSocialWithRelationsSchema } from "#src/models/social/FriendRequestInSocialWithRelations";
+import { publicUserSchema } from "#src/models/user/PublicUser";
+import { selectFriendInSocialSchema } from "#src/schema/social/friendsInSocial";
+import { selectFriendRequestInSocialSchema } from "#src/schema/social/friendRequestsInSocial";
+import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
+import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
+import { sessionIdSchema } from "#src/models/shared/SessionId";
+import { userAchievementInAchievementWithRelationsSchema } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
-
-import { createApiKeyInputSchema } from "#shared/models/db/user/CreateApiKeyInput";
-import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { storageUsageSchema } from "#shared/models/storage/StorageUsage";
+import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
+import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
+import { storageUsageSchema } from "#src/models/storage/StorageUsage";
 
 // The events a person's own socket carries, one frame each, for every tab the person has open. A payload is what the
 // Emitter named, without the device that caused it, and a room-list event names the room it concerns by its id

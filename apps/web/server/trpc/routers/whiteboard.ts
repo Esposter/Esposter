@@ -1,12 +1,10 @@
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
-
 import { moveWhiteboardElement } from "#server/services/resource/whiteboard/moveWhiteboardElement";
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { McpScope } from "#shared/models/auth/McpScope";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 import { moveWhiteboardElementInputSchema } from "#shared/models/db/resource/whiteboard/MoveWhiteboardElementInput";
-import { ResourceType } from "@esposter/db-schema";
 
 export const whiteboardRouter = router({
   ...createResourceProcedures(ResourceType.Whiteboard),

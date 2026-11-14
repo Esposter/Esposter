@@ -1,25 +1,22 @@
 import { z } from "zod";
-
-import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
-import { messageEmojiMetadataEntitySchema } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
-import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
-import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
-import { revokeRoleInputSchema } from "#shared/models/db/role/RevokeRoleInput";
-import { timeoutUserAdminActionInputSchema } from "#shared/models/db/moderation/TimeoutUserAdminActionInput";
-import { roomEmojiWithSasUrlSchema } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
-import { typingSchema } from "#shared/models/message/Typing";
-import { MESSAGE_BATCH_MAX_LENGTH, MEMBER_PERMISSION_BIGINT_REGEX } from "#shared/services/message/constants";
-import {
-  adminActionTypeSchema,
-  messageEntitySchema,
-  selectRoomEmojiInMessageSchema,
-  selectRoomInMessageSchema,
-  selectRoomRoleInMessageSchema,
-  selectUserStatusInMessageSchema,
-  standardMessageEntitySchema,
-  userIdSchema,
-} from "@esposter/db-schema";
+import { deleteEmojiInputSchema } from "#src/models/message/metadata/DeleteEmojiInput";
+import { messageEmojiMetadataEntitySchema } from "#src/models/message/metadata/MessageEmojiMetadataEntity";
+import { updateEmojiInputSchema } from "#src/models/message/metadata/UpdateEmojiInput";
+import { deleteMessageInputSchema } from "#src/models/message/DeleteMessageInput";
+import { updateMessageInputSchema } from "#src/models/message/UpdateMessageInput";
+import { revokeRoleInputSchema } from "#src/models/message/RevokeRoleInput";
+import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
+import { roomEmojiWithSasUrlSchema } from "#src/models/message/emoji/RoomEmojiWithSasUrl";
+import { typingSchema } from "#src/models/message/Typing";
+import { MEMBER_PERMISSION_BIGINT_REGEX, MESSAGE_BATCH_MAX_LENGTH } from "#src/services/message/constants";
+import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
+import { messageEntitySchema } from "#src/models/message/MessageEntity";
+import { selectRoomEmojiInMessageSchema } from "#src/schema/message/roomEmojisInMessage";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
+import { selectRoomRoleInMessageSchema } from "#src/schema/message/roomRolesInMessage";
+import { selectUserStatusInMessageSchema } from "#src/schema/message/userStatusesInMessage";
+import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
+import { userIdSchema } from "#src/models/shared/UserId";
 
 // The events a room's socket carries, one frame each. A payload is what the emitter named, without the device that
 // Caused it: the object skips that socket itself, and the wire never names a session

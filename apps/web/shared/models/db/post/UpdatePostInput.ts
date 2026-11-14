@@ -1,5 +1,4 @@
-import { refineAtLeastOne } from "#shared/services/zod/refineAtLeastOne";
-import { selectPostInPostSchema } from "@esposter/db-schema";
+import { refineAtLeastOne, selectPostInPostSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 const updatablePostSchema = selectPostInPostSchema.pick({ description: true, title: true });

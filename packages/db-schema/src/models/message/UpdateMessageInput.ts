@@ -1,5 +1,5 @@
-import { messageCompositeKeySchema } from "#shared/models/db/message/MessageCompositeKey";
-import { standardMessageEntitySchema } from "@esposter/db-schema";
+import { messageCompositeKeySchema } from "#src/models/message/MessageCompositeKey";
+import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
 import { z } from "zod";
 
 export const updateMessageInputSchema = z.object({

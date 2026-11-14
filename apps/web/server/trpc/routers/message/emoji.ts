@@ -9,18 +9,20 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
 import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import { deleteEmojiInputSchema } from "#shared/models/db/message/metadata/DeleteEmojiInput";
 import {
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+  deleteEmojiInputSchema,
   MessageEmojiMetadataEntity,
   MessageEmojiMetadataEntityPropertyNames,
-} from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
-import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
+  MessageMetadataType,
+  updateEmojiInputSchema,
+} from "@esposter/db-schema";
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import type { Clause } from "@esposter/db-schema";
 import { createEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
-import { MessageMetadataType, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { checkIsOnlyReactor, getUpdatedUserIds, Operation } from "@esposter/shared";
 
 export const emojiRouter = router({

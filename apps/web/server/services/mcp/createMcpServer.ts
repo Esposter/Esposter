@@ -1,9 +1,9 @@
 import type { Context } from "#server/trpc/context";
-import type { McpScope } from "#shared/models/auth/McpScope";
 import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import type { AnyRouter } from "@trpc/server";
 
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
+import { McpScope } from "@esposter/db-schema";
 import { getResultAsync, SITE_NAME } from "@esposter/shared";
 import packageJson from "@esposter/web/package.json" with { type: "json" };
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";

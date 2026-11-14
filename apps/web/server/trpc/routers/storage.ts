@@ -1,5 +1,4 @@
-import type { StorageUsage } from "#shared/models/storage/StorageUsage";
-
+import type { StorageUsage } from "@esposter/db-schema";
 import { on } from "#server/services/events/on";
 import { storageEventEmitter } from "#server/services/storage/events/storageEventEmitter";
 import { router } from "#server/trpc";

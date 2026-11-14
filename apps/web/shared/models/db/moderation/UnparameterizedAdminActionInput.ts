@@ -1,8 +1,7 @@
-import type { BaseExecuteAdminActionInput } from "#shared/models/db/moderation/BaseExecuteAdminActionInput";
+import type { BaseExecuteAdminActionInput } from "@esposter/db-schema";
 import type { UnparameterizedAdminActionType } from "#shared/models/db/moderation/UnparameterizedAdminActionType";
 import type { ItemEntityType } from "@esposter/shared";
-
-import { baseExecuteAdminActionInputSchema } from "#shared/models/db/moderation/BaseExecuteAdminActionInput";
+import { baseExecuteAdminActionInputSchema } from "@esposter/db-schema";
 import { UnparameterizedAdminActionTypes } from "#shared/models/db/moderation/UnparameterizedAdminActionType";
 import { createItemEntityTypeSchema } from "@esposter/shared";
 import { z } from "zod";

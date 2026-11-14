@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-
+import type { CallParticipant } from "@esposter/db-schema";
 import { createId } from "#shared/util/math/random/createId";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";

@@ -1,4 +1,4 @@
-import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { CallParticipant } from "@esposter/db-schema";
 
 // A call's participants keyed by id, each named as the room knows them. A standalone call has no room, so its room id
 // Is empty and each participant keeps the name the account carries

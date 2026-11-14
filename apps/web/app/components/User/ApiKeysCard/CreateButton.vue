@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import type { McpScope } from "#shared/models/auth/McpScope";
-import type { CreateApiKeyInput } from "#shared/models/db/user/CreateApiKeyInput";
-
-import { McpScopes } from "#shared/models/auth/McpScope";
-import { API_KEY_NAME_MAX_LENGTH } from "#shared/services/auth/constants";
+import type { CreateApiKeyInput, McpScope } from "@esposter/db-schema";
+import { API_KEY_NAME_MAX_LENGTH, McpScopes } from "@esposter/db-schema";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "@/models/ui/UiDialogSize";

@@ -1,6 +1,6 @@
-import { apiKeyPermissionsSchema } from "#shared/models/auth/ApiKeyPermissions";
-import { API_KEY_NAME_MAX_LENGTH } from "#shared/services/auth/constants";
-import { createNameSchema } from "@esposter/db-schema";
+import { apiKeyPermissionsSchema } from "#src/models/user/ApiKeyPermissions";
+import { API_KEY_NAME_MAX_LENGTH } from "#src/services/auth/constants";
+import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { z } from "zod";
 
 export const createApiKeyInputSchema = z.object({
