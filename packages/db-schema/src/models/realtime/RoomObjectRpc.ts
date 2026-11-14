@@ -58,7 +58,8 @@ export interface RoomSearchResult {
 // Every method trusts the actor it names: the caller authorises against D1 first. Reads return live rows only, so a
 // deleted message is never read, and a write that names a message that is not there returns null rather than throwing
 export interface RoomObjectRpc {
-  readMessages(input: { before?: number; isPinned?: boolean; limit: number }): RoomMessage[];
+  // Newest first before a cursor, or oldest first after one, so a jump to an older message reads both ways from it
+  readMessages(input: { after?: number; before?: number; isPinned?: boolean; limit: number }): RoomMessage[];
   readMessagesByIds(ids: number[]): RoomMessage[];
   // The thread's root, when it is still live, followed by its live replies oldest first
   readThread(threadRootId: number): RoomMessage[];
@@ -114,6 +115,8 @@ export interface RoomObjectRpc {
   attachMember(userId: string, status: UserStatusInMessage): void;
   detachMember(userId: string, status: UserStatusInMessage): void;
   removeMember(userId: string): void;
+  // A revoked session's sockets in this room, closed
+  closeSession(sessionId: string): void;
   // A status the person set, which every room they are in shows
   setMemberStatus(status: UserStatusInMessage): void;
   // A room event the caller raised from D1's own changes, sent to the sockets a tag names, or to every socket

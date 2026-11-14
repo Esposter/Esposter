@@ -21,6 +21,8 @@ export interface CallObjectRpc {
   // Null while a revoke is replacing the connection, so its kick is not taken for the participant leaving
   participantLeft(input: { callSessionId: string; sessionId: string }): CallLeave | null;
   removeConnection(input: { sessionId: string }): Promise<void>;
+  // A revoked session's sockets on this call, closed, and its connections left as a leave would
+  closeSession(sessionId: string): Promise<void>;
   readAccess(input: { sessionId: string }): CallAccess;
   readParticipantMap(): Map<string, CallParticipant>;
   admitKnocker(input: { callSessionId: string; knockerSessionId: string }): boolean;

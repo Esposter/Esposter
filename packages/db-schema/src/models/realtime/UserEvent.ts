@@ -65,8 +65,13 @@ const deleteRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
   type: z.literal("deleteRoom"),
 });
+// A member as the room's list shows one: the person and the display name their membership row holds
 const joinRoomEventSchema = z.object({
-  data: z.object({ roomId: selectUserToRoomInMessageSchema.shape.roomId, user: publicUserSchema }),
+  data: z.object({
+    displayName: selectUserToRoomInMessageSchema.shape.displayName,
+    roomId: selectUserToRoomInMessageSchema.shape.roomId,
+    user: publicUserSchema,
+  }),
   type: z.literal("joinRoom"),
 });
 const leaveRoomEventSchema = z.object({
