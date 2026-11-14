@@ -55,7 +55,7 @@ Every write is frozen from the start of the delta copy until the switch, so no r
 
 ## The copy
 
-One committed command, `pnpm -C scripts cutover <step> --environment <develop|production>`, holds every step, each idempotent and resumable: re-running a step after a failure redoes only what is not yet verified, with a checkpoint per table and per bucket kept in the archive bucket. Credentials come from the environment (the old stores' connection strings, a Cloudflare API token, R2's S3 keys); none is written to disk.
+One committed command, `pnpm -C scripts cutover <step> --environment <develop|production>`, holds every step, each idempotent and resumable: re-running a step after a failure redoes only what is not yet verified, with a checkpoint per table and per bucket kept in the archive bucket. Credentials come from the environment (the old stores' connection strings, a Cloudflare API token, R2's S3 keys); none is written to disk. Live, before the freeze, the order is `snapshot`, `copy-objects`, `copy-core`, then `copy-tables`: the typed rows reference parents only `copy-core` writes, so it runs first, and each step re-runs freely while the app is live.
 
 - **`inventory`** — row counts per table, entity counts per stream table, object counts and bytes per container, and an estimated duration; nothing is written.
 - **`snapshot`** — the dump and exports above.
@@ -72,7 +72,7 @@ Postgres stores microseconds and D1 milliseconds. `verify` checks that no unique
 
 1. The Railway app is put into maintenance: every request answers 503 with a maintenance page, WebSockets are refused, and no request writes. Because `userRouter.connect` writes on every socket open, a read-only mode is not enough; the app is closed.
 2. The Functions keep running until Event Grid has delivered everything already published and the `deadletter` container is empty, then both Function Apps are stopped, so no Service Bus message or event writes after the read.
-3. The delta copy, `copy-core`, `rewrite-urls`, `reschedule` and `verify` run.
+3. The delta copy of the objects runs, then `copy-core` in full, then `copy-tables --delta`, then `rewrite-urls`, `reschedule` and `verify`, in that order. `copy-core` runs again in full because it is idempotent and core is small, so the typed rows never reference a parent the freeze has not written.
 4. With `verify` green, the smoke checks run on `next.esposter.com`: read a room's history, send a message and find it by search, upload and download a file, receive a push, post a webhook message, schedule a message a minute out and watch it arrive, start a call. They run as a session the command signs with the copied auth secret, so no OAuth provider has to know the staging hostname; OAuth sign-in itself is not exercised, since its callbacks, secrets and domain do not change.
 
 **Abort** at any point up to here is restarting the Railway app and the Function Apps: the old stores were never written after the freeze began and the new ones are not yet live.
