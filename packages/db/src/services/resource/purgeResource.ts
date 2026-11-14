@@ -1,9 +1,9 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 
 import type { Database, ResourceInResource, UserInAuth, CompositeKey } from "@esposter/db-schema";
 import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
-import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
+import { deleteDirectory } from "#src/services/storage/deleteDirectory";
 import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
 import { releaseStorageLedgerEntriesByPrefix } from "#src/services/storage/releaseStorageLedgerEntriesByPrefix";
 import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
@@ -19,11 +19,11 @@ import { eq } from "drizzle-orm";
 // Process their meter subscribes to — empty when the resource had no accounted blobs left to free
 export const purgeResource = async (
   db: Database,
-  containerClient: ContainerClient,
+  bucket: R2Bucket,
   tableClients: StreamTableClient<CompositeKey>[],
   resourceId: ResourceInResource["id"],
 ): Promise<UserInAuth["id"][]> => {
-  await deleteDirectory(containerClient, resourceId);
+  await deleteDirectory(bucket, resourceId);
   // The partitions are independent, so only the blob-before-tables and tables-before-row ordering matters
   await Promise.all(tableClients.map((tableClient) => deleteTablePartitionEntities(tableClient, resourceId)));
   // The directory takes every asset at once, so its owner's storage counter has to give the whole directory
