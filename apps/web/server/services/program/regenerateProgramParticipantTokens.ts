@@ -3,7 +3,7 @@ import type { ProgramParticipantInResource } from "@esposter/db-schema";
 
 import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
 import { programParticipantsInResource, surveyResponsesInResource } from "@esposter/db-schema";
-import { chunk, generateSecretToken, hashSecretToken } from "@esposter/shared";
+import { generateSecretToken, hashSecretToken, settleAll } from "@esposter/shared";
 import { and, eq, exists } from "drizzle-orm";
 
 // Replaces each participant's credential with a new one, and re-keys the responses it answered under to the new hash, so
@@ -14,39 +14,35 @@ export const regenerateProgramParticipantTokens = async (
   db: Context["db"],
   participants: Pick<ProgramParticipantInResource, "id" | "tokenHash">[],
 ): Promise<{ id: ProgramParticipantInResource["id"]; token: string }[]> => {
-  const regenerations: { id: ProgramParticipantInResource["id"]; token: string }[] = [];
-  for (const batch of chunk(participants, PROGRAM_PARTICIPANT_BATCH_SIZE)) {
-    const batchRegenerations = await Promise.all(
-      batch.map(async ({ id, tokenHash }) => {
-        const token = generateSecretToken();
-        const newTokenHash = await hashSecretToken(token);
-        const [participantRows] = await db.batch([
-          db
-            .update(programParticipantsInResource)
-            .set({ tokenHash: newTokenHash })
-            .where(
-              and(eq(programParticipantsInResource.id, id), eq(programParticipantsInResource.tokenHash, tokenHash)),
-            )
-            .returning({ id: programParticipantsInResource.id }),
-          db
-            .update(surveyResponsesInResource)
-            .set({ participantTokenHash: newTokenHash })
-            .where(
-              and(
-                eq(surveyResponsesInResource.participantTokenHash, tokenHash),
-                exists(
-                  db
-                    .select({ id: programParticipantsInResource.id })
-                    .from(programParticipantsInResource)
-                    .where(eq(programParticipantsInResource.tokenHash, newTokenHash)),
-                ),
+  // The participants are regenerated a batch at a time, which bounds the writes in flight at once
+  const regenerations = await settleAll(
+    participants.map(({ id, tokenHash }) => async () => {
+      const token = generateSecretToken();
+      const newTokenHash = await hashSecretToken(token);
+      const [participantRows] = await db.batch([
+        db
+          .update(programParticipantsInResource)
+          .set({ tokenHash: newTokenHash })
+          .where(and(eq(programParticipantsInResource.id, id), eq(programParticipantsInResource.tokenHash, tokenHash)))
+          .returning({ id: programParticipantsInResource.id }),
+        db
+          .update(surveyResponsesInResource)
+          .set({ participantTokenHash: newTokenHash })
+          .where(
+            and(
+              eq(surveyResponsesInResource.participantTokenHash, tokenHash),
+              exists(
+                db
+                  .select({ id: programParticipantsInResource.id })
+                  .from(programParticipantsInResource)
+                  .where(eq(programParticipantsInResource.tokenHash, newTokenHash)),
               ),
             ),
-        ]);
-        return participantRows.length > 0 ? { id, token } : undefined;
-      }),
-    );
-    regenerations.push(...batchRegenerations.filter((regeneration) => regeneration !== undefined));
-  }
-  return regenerations;
+          ),
+      ]);
+      return participantRows.length > 0 ? { id, token } : undefined;
+    }),
+    PROGRAM_PARTICIPANT_BATCH_SIZE,
+  );
+  return regenerations.filter((regeneration) => regeneration !== undefined);
 };
