@@ -4,7 +4,6 @@ import { describe, expect, test } from "vitest";
 
 describe(parseWorkflowReferences, () => {
   const sha = "0".repeat(40);
-  const digest = `sha256:${"0".repeat(64)}`;
 
   test("reads an action pinned to a commit under its repository, with the tag from the comment", () => {
     expect.hasAssertions();
@@ -15,18 +14,13 @@ describe(parseWorkflowReferences, () => {
     });
   });
 
-  test("reads a pinned docker image and a versioned runner", () => {
+  test("reads a versioned runner", () => {
     expect.hasAssertions();
 
-    expect(parseWorkflowReferences("", `    runs-on: a-0.0\n      - uses: docker://a:0.0.0@${digest}\n`)).toStrictEqual(
-      {
-        entries: [
-          { digest, group: DependencyGroup.Docker, packageName: "a", specifier: "0.0.0" },
-          { group: DependencyGroup.GitHubRunners, packageName: "a", specifier: "0.0" },
-        ],
-        unpinned: [],
-      },
-    );
+    expect(parseWorkflowReferences("", "    runs-on: a-0.0\n")).toStrictEqual({
+      entries: [{ group: DependencyGroup.GitHubRunners, packageName: "a", specifier: "0.0" }],
+      unpinned: [],
+    });
   });
 
   test("skips a local action and a latest runner", () => {

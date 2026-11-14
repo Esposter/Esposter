@@ -1387,7 +1387,6 @@
 | `scripts/src/services/machine`                                                            | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/openspec`                                                           | 2026-11-01 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/distTag`                                       | 2026-10-29 · Haiku 5.5  |       |
-| `scripts/src/services/outdatedDependencies/docker`                                        | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/getDependencyType.test.ts`                     | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/getDependencyType.ts`                          | 2026-10-29 · Haiku 5.5  |       |
 | `scripts/src/services/outdatedDependencies/getMismatches.test.ts`                         | 2026-10-29 · Haiku 5.5  |       |

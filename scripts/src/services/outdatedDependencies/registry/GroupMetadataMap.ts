@@ -1,7 +1,6 @@
 import type { GroupMetadata } from "#src/models/outdatedDependencies/registry/GroupMetadata";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
-import { readDockerRelease } from "#src/services/outdatedDependencies/docker/readDockerRelease";
 import { readGitHubActionRelease } from "#src/services/outdatedDependencies/githubActions/readGitHubActionRelease";
 import { readGitHubRunnerRelease } from "#src/services/outdatedDependencies/githubActions/readGitHubRunnerRelease";
 import { readNpmRelease } from "#src/services/outdatedDependencies/registry/readNpmRelease";
@@ -15,11 +14,6 @@ export const GroupMetadataMap: Record<DependencyGroup, GroupMetadata> = {
     dependencyType: "config",
     dependent: DependencyGroup.ConfigDependencies,
     readRelease: readNpmRelease,
-  },
-  [DependencyGroup.Docker]: {
-    dependencyType: "docker",
-    dependent: DependencyGroup.Docker,
-    readRelease: readDockerRelease,
   },
   [DependencyGroup.Engines]: {
     dependencyType: "engine",

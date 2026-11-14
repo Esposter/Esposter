@@ -1,7 +1,6 @@
 import type { ReferenceScan } from "#src/models/outdatedDependencies/shared/ReferenceScan";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
-import { parseImageReference } from "#src/services/outdatedDependencies/docker/parseImageReference";
 import { parseVersionTag } from "#src/services/outdatedDependencies/tag/parseVersionTag";
 
 const USES_REGEX =
@@ -11,10 +10,9 @@ const ACTION_REFERENCE_REGEX = /^(?<repository>[^/@\s]+\/[^/@\s]+)(?:\/[^@\s]*)?
 const COMMIT_SHA_REGEX = /^[\da-f]{40}$/u;
 const RUNS_ON_REGEX = /^[ \t]*runs-on:[ \t]*["']?(?<label>[^\s"'#]*)/gmu;
 const RUNNER_LABEL_REGEX = /^(?<os>[a-z]+)-(?<version>\d+(?:\.\d+)*)$/u;
-const DOCKER_SCHEME = "docker://";
 const LATEST_RUNNER_SUFFIX = "-latest";
 
-// Every action, image and runner a workflow or a composite action names. An action is pinned when its ref is a commit
+// Every action and runner a workflow or a composite action names. An action is pinned when its ref is a commit
 // With the version it was tagged as in the comment beside it — the shape `helpers:pinGitHubActionDigests` writes — and
 // A local one is the repository's own code. A runner's `-latest` label moves by itself, so only a versioned one is a
 // Pin; anything else it names (an expression, a list) is one the report cannot read
@@ -24,14 +22,6 @@ export const parseWorkflowReferences = (path: string, text: string): ReferenceSc
   for (const { groups } of text.matchAll(USES_REGEX)) {
     const reference = groups?.reference ?? "";
     if (reference.startsWith("./")) continue;
-
-    if (reference.startsWith(DOCKER_SCHEME)) {
-      const image = reference.slice(DOCKER_SCHEME.length);
-      const entry = parseImageReference(image);
-      if (entry) scan.entries.push(entry);
-      else scan.unpinned.push({ packageName: image, path, reference });
-      continue;
-    }
 
     const actionGroups = ACTION_REFERENCE_REGEX.exec(reference)?.groups;
     const repository = actionGroups?.repository ?? reference;

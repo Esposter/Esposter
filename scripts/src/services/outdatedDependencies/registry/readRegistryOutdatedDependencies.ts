@@ -13,7 +13,7 @@ import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { getResultAsync } from "@esposter/shared";
 
 // `concurrency` bounds how many requests one source sees at once: the npm registry's default, or every entry at once
-// For a caller whose entries are each a different repository or image
+// For a caller whose entries are each a different repository
 export const readRegistryOutdatedDependencies = async (
   entries: DependencyEntry[],
   concurrency: number = REGISTRY_CONCURRENCY,
@@ -42,7 +42,7 @@ export const readRegistryOutdatedDependencies = async (
             latest,
             packageName,
           });
-        // The version is current and the source has moved what it points at — a rebuilt image, a re-pointed tag
+        // The version is current and the source has moved what it points at — a re-pointed tag
         else if (digest && latestDigest && digest !== latestDigest)
           outdatedDependencyMap.set(entry, {
             current: `${current}@${getShortDigest(digest)}`,

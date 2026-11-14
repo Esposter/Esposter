@@ -1,7 +1,7 @@
 import type { DependencyEntry } from "#src/models/outdatedDependencies/shared/DependencyEntry";
 
 import { DependencyGroup } from "#src/models/outdatedDependencies/shared/DependencyGroup";
-import { readDockerRelease } from "#src/services/outdatedDependencies/docker/readDockerRelease";
+import { readGitHubActionRelease } from "#src/services/outdatedDependencies/githubActions/readGitHubActionRelease";
 import { readLatestVersion } from "#src/services/outdatedDependencies/registry/readLatestVersion";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { describe, expect, test, vi } from "vitest";
@@ -9,8 +9,8 @@ import { describe, expect, test, vi } from "vitest";
 vi.mock(import("#src/services/outdatedDependencies/registry/readLatestVersion"), () => ({
   readLatestVersion: vi.fn<typeof readLatestVersion>(),
 }));
-vi.mock(import("#src/services/outdatedDependencies/docker/readDockerRelease"), () => ({
-  readDockerRelease: vi.fn<typeof readDockerRelease>(),
+vi.mock(import("#src/services/outdatedDependencies/githubActions/readGitHubActionRelease"), () => ({
+  readGitHubActionRelease: vi.fn<typeof readGitHubActionRelease>(),
 }));
 
 describe(readRegistryOutdatedDependencies, () => {
@@ -82,9 +82,9 @@ describe(readRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { digest: `sha256:${"0".repeat(64)}`, group: DependencyGroup.Docker, packageName: "a", specifier: "0.0.0" },
+      { digest: "0".repeat(40), group: DependencyGroup.GitHubActions, packageName: "a", specifier: "0.0.0" },
     ];
-    vi.mocked(readDockerRelease).mockResolvedValue({ digest: `sha256:${"1".repeat(64)}`, version: "0.0.0" });
+    vi.mocked(readGitHubActionRelease).mockResolvedValue({ digest: "1".repeat(40), version: "0.0.0" });
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
@@ -92,7 +92,7 @@ describe(readRegistryOutdatedDependencies, () => {
       {
         current: "0.0.0@0000000",
         dependencyType: "digest",
-        dependents: ["docker"],
+        dependents: ["github-actions"],
         latest: "0.0.0@1111111",
         packageName: "a",
       },
@@ -103,14 +103,14 @@ describe(readRegistryOutdatedDependencies, () => {
     expect.hasAssertions();
 
     const entries: DependencyEntry[] = [
-      { digest: `sha256:${"0".repeat(64)}`, group: DependencyGroup.Docker, packageName: "a", specifier: "0.0.0" },
+      { digest: "0".repeat(40), group: DependencyGroup.GitHubActions, packageName: "a", specifier: "0.0.0" },
     ];
-    vi.mocked(readDockerRelease).mockResolvedValue({ digest: `sha256:${"0".repeat(64)}`, version: "0.0.1" });
+    vi.mocked(readGitHubActionRelease).mockResolvedValue({ digest: "0".repeat(40), version: "0.0.1" });
 
     const { outdatedDependencies } = await readRegistryOutdatedDependencies(entries);
 
     expect(outdatedDependencies).toStrictEqual([
-      { current: "0.0.0", dependencyType: "docker", dependents: ["docker"], latest: "0.0.1", packageName: "a" },
+      { current: "0.0.0", dependencyType: "action", dependents: ["github-actions"], latest: "0.0.1", packageName: "a" },
     ]);
   });
 });

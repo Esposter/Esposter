@@ -3,12 +3,7 @@
   "automergeType": "pr",
   "configMigration": true,
   "dependencyDashboard": false,
-  "extends": [
-    "config:recommended",
-    ":semanticCommitTypeAll(chore)",
-    "docker:pinDigests",
-    "helpers:pinGitHubActionDigests"
-  ],
+  "extends": ["config:recommended", ":semanticCommitTypeAll(chore)", "helpers:pinGitHubActionDigests"],
   "ignorePresets": [":prHourlyLimit2"],
   "lockFileMaintenance": { "automerge": true, "enabled": true },
   "osvVulnerabilityAlerts": true,
@@ -77,9 +72,9 @@
       "matchPackageNames": ["pnpm"]
     },
     {
-      "automerge": true,
-      "description": "A Docker digest moving under its tag is the publisher's routine rebuild — a patched base image republished under the same tag, versioned or not — so it lands on the same branch automerge the minor/patch rule above gives everything else. An action's digest is left out on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
-      "matchDatasources": ["docker"],
+      "automerge": false,
+      "description": "An action's digest is left out of automerge on purpose: an action ships a fix as a new tag, so a digest that moves under the same version is a re-pointed tag — the shape a SHA pin exists to catch — and it opens a PR for a person.",
+      "matchManagers": ["github-actions"],
       "matchUpdateTypes": ["digest", "pinDigest"]
     }
   ],

@@ -19,7 +19,7 @@ import { printOutdatedDependencies } from "#src/services/outdatedDependencies/pr
 import { printRegistryErrors } from "#src/services/outdatedDependencies/print/printRegistryErrors";
 import { printUncatalogedManifestDependencies } from "#src/services/outdatedDependencies/print/printUncatalogedManifestDependencies";
 import { printUnpinnedReferences } from "#src/services/outdatedDependencies/print/printUnpinnedReferences";
-import { DOCKERFILE, GITHUB_DIRECTORY } from "#src/services/outdatedDependencies/reference/constants";
+import { GITHUB_DIRECTORY } from "#src/services/outdatedDependencies/reference/constants";
 import { readReferenceScan } from "#src/services/outdatedDependencies/reference/readReferenceScan";
 import { readRegistryOutdatedDependencies } from "#src/services/outdatedDependencies/registry/readRegistryOutdatedDependencies";
 import { getDisablingRule } from "#src/services/outdatedDependencies/renovate/getDisablingRule";
@@ -73,12 +73,7 @@ const nodeVersionEntry = {
   specifier: readFileSync(resolve(REPOSITORY_ROOT, NODE_VERSION_FILENAME), "utf8").trim(),
 };
 // One listing for every file the report reads by path, since each `git ls-files` walks the whole tree
-const filePaths = readSweepFilePaths(
-  `*${NPM_LOCKFILE}`,
-  `*${DOCKERFILE}`,
-  `${GITHUB_DIRECTORY}*.yaml`,
-  `${GITHUB_DIRECTORY}*.yml`,
-);
+const filePaths = readSweepFilePaths(`*${NPM_LOCKFILE}`, `${GITHUB_DIRECTORY}*.yaml`, `${GITHUB_DIRECTORY}*.yml`);
 const referenceScan = readReferenceScan(filePaths);
 const manifests = readManifestFiles(REPOSITORY_ROOT);
 const npmProjects = readNpmProjects(
@@ -127,8 +122,8 @@ const [regularChecks, registryChecks, referenceChecks] = await Promise.all([
     ...followedTagEntries,
     ...npmProjects.flatMap(({ entries, resolvedVersions }) => applyDistTags(entries, resolvedVersions)),
   ]),
-  // Each is a different repository or image, and each costs a whole handshake (`git ls-remote`, a registry token),
-  // So all of them run at once rather than queueing behind the npm registry's bound
+  // Each is a different repository, and each costs a whole handshake (`git ls-remote`, a GitHub API request), so all
+  // Of them run at once rather than queueing behind the npm registry's bound
   readRegistryOutdatedDependencies(referenceScan.entries, referenceScan.entries.length),
 ]);
 // A version Renovate would not propose is not a bump to take by hand either: the two readers share one policy.
