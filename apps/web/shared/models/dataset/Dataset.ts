@@ -14,7 +14,7 @@ export interface Dataset {
   // Counts look complete — which makes an exact aggregation over such a column a floor rather than a total
   partialColumns?: string[];
   rows: Record<string, ColumnValue>[];
-  // The uncapped row count, so consumers can tell a complete read from one the AZURE_MAX_PAGE_SIZE cap
+  // The uncapped row count, so consumers can tell a complete read from one the MAX_READ_LIMIT cap
   // Truncated; a provider that cannot cheaply count omits it and its consumers simply never warn
   totalRows?: number;
 }

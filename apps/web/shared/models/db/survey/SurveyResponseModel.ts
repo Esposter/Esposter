@@ -1,6 +1,6 @@
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
-import { AZURE_MAX_STRING_PROPERTY_LENGTH } from "@esposter/azure";
+import { MAX_SURVEY_ANSWERS_LENGTH } from "#shared/services/survey/constants";
 import { createRecordSchema } from "@esposter/shared";
 import {
   MAX_SURVEY_QUESTION_COUNT,
@@ -16,6 +16,6 @@ export const surveyResponseModelSchema = createRecordSchema(
   z.string().min(1).max(MAX_SURVEY_QUESTION_NAME_LENGTH),
   surveyAnswerValueSchema,
   MAX_SURVEY_QUESTION_COUNT,
-).refine((model) => JSON.stringify(model).length <= AZURE_MAX_STRING_PROPERTY_LENGTH, {
-  error: `answers must serialize to at most ${AZURE_MAX_STRING_PROPERTY_LENGTH} characters`,
+).refine((model) => JSON.stringify(model).length <= MAX_SURVEY_ANSWERS_LENGTH, {
+  error: `answers must serialize to at most ${MAX_SURVEY_ANSWERS_LENGTH} characters`,
 }) satisfies z.ZodType<SurveyAnswers>;

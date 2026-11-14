@@ -25,7 +25,6 @@ import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import {
   DatabaseEntityType,
   programParticipantsInResource,
@@ -33,7 +32,7 @@ import {
   surveyResponsesInResource,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, MAX_READ_LIMIT, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
@@ -138,11 +137,11 @@ describe("programRouter", () => {
   test("reports the audience rows past the read cap", async () => {
     expect.hasAssertions();
 
-    const audienceKeyValues = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, (_value, index) => String(index));
+    const audienceKeyValues = Array.from({ length: MAX_READ_LIMIT + 1 }, (_value, index) => String(index));
     const { program } = await setupIdentifiedProgram(audienceKeyValues);
     const { audienceTruncation, participants } = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(participants).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    expect(participants).toHaveLength(MAX_READ_LIMIT);
     expect(audienceTruncation?.hiddenRows).toBe(1);
   });
 

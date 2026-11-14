@@ -4,9 +4,9 @@ import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 import type { UpdateMode } from "#src/models/streams/UpdateMode";
 import type { Promisable } from "type-fest";
 
+import { MAX_BATCH_SIZE } from "#src/services/shared/constants";
 import { deserializeEntity } from "#src/services/streams/deserializeEntity";
 import { serializeEntity } from "#src/services/streams/serializeEntity";
-import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 
@@ -25,7 +25,7 @@ export const updateRoomMessagesByUser = async (
 ): Promise<void> => {
   const now = new Date();
   const rows = await messageClient.list(clauses);
-  for (const batch of chunk(rows, AZURE_MAX_BATCH_SIZE)) {
+  for (const batch of chunk(rows, MAX_BATCH_SIZE)) {
     // Listed entities carry their properties in stored form, so `files` is only an array once deserialized. A Replace
     // writes the row as it is stored, so its update applies to the listed row rather than the deserialized one
     const listed = batch.map(({ etag, ...entity }) => ({

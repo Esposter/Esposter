@@ -2,8 +2,8 @@ import type { StreamTableAction } from "#src/models/streams/StreamTableAction";
 import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 import type { CompositeKey } from "@esposter/db-schema";
 
+import { MAX_BATCH_SIZE } from "#src/services/shared/constants";
 import { getPartitionClauses } from "#src/services/streams/getPartitionClauses";
-import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { chunk } from "@esposter/shared";
 
 // Clears a partition by listing its rows and deleting them one batch at a time. A row another write removed between
@@ -13,7 +13,7 @@ export const deleteTablePartitionEntities = async (
   partitionKey: string,
 ) => {
   const rows = await tableClient.list(getPartitionClauses<CompositeKey>(partitionKey));
-  for (const batch of chunk(rows, AZURE_MAX_BATCH_SIZE))
+  for (const batch of chunk(rows, MAX_BATCH_SIZE))
     await tableClient.submitTransaction(
       batch.map(({ partitionKey: entityPartitionKey, rowKey }): StreamTableAction => [
         "delete",

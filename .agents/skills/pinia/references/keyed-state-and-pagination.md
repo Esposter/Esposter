@@ -71,7 +71,7 @@ When a store map needs fields its endpoint does not return, the endpoint is wide
 
 Use it **wherever the item type satisfies `ToData<AEntity>`** — it generates typed CRUD (`createXxx`, `updateXxx`, `deleteXxx`, `pushXxxs`, `unshiftXxxs`) for an entity list ref. `Foo` satisfies this (`id`, `createdAt`, `updatedAt`, `deletedAt` from `sqliteTable`).
 
-`EntityIdKeys<T>` resolves to `["id"]` (SQL entities extending `AItemEntity`), `["partitionKey","rowKey"]` (Azure entities), or `(keyof T & string)[]` as a fallback. Always pass keys matching the DB primary key exactly — a composite PK passes both.
+`EntityIdKeys<T>` resolves to `["id"]` (entities extending `AItemEntity`) or `(keyof T & string)[]` as a fallback. Always pass keys matching the DB primary key exactly — a composite PK passes both.
 
 ```ts
 // cursor pagination + createOperationData for a typed, composite-key delete

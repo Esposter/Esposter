@@ -1,4 +1,4 @@
-import type { CompositeKey } from "@esposter/azure";
+import type { CompositeKey } from "@esposter/db-schema";
 import type { SerializedEntity } from "#src/models/streams/SerializedEntity";
 import type { UpdateMode } from "#src/models/streams/UpdateMode";
 

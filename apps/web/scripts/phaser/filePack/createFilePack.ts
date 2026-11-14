@@ -5,9 +5,8 @@ import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "@@/scripts/ph
 import { outputFile } from "@@/scripts/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { BlobServiceClient } from "@azure/storage-blob";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { StorageBucket } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
 
@@ -21,7 +20,7 @@ export const createFilePack = async () => {
   const fileKeys = new Set<string>();
   const enumName = "FileKey";
 
-  for await (const { segment } of containerClient.listBlobsFlat().byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
+  for await (const { segment } of containerClient.listBlobsFlat().byPage({ maxPageSize: MAX_READ_LIMIT }))
     for (const blob of segment.blobItems) {
       if (!blob.properties.contentType)
         throw new InvalidOperationError(Operation.Read, "Content Type", `Missing Content Type: ${blob.name}`);

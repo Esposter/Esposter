@@ -1,9 +1,11 @@
 import type { GetProperties } from "#src/util/types/GetProperties";
-import type { TableEntity } from "@azure/data-tables";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("getProperties type", () => {
+  // A table row: its two key properties, and an index signature its other properties sit under
+  type TableEntity<T extends object> = { [key: string]: unknown; partitionKey: string; rowKey: string } & T;
+
   test("array", () => {
     expect.hasAssertions();
 

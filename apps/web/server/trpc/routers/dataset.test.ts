@@ -23,8 +23,7 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import { NotFoundError } from "@esposter/shared";
+import { MAX_READ_LIMIT, NotFoundError } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -103,7 +102,7 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    const rows = Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => ({
+    const rows = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
       id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
@@ -114,9 +113,9 @@ describe("datasetRouter", () => {
     await insertSurveyResponses(mockContext.db, rows);
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
-    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    expect(dataset.rows).toHaveLength(MAX_READ_LIMIT);
     // The capped read reports the uncapped total so consumers can say what they are not showing
-    expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
+    expect(dataset.totalRows).toBe(MAX_READ_LIMIT + 1);
   }, 60_000);
 
   test("reads survey responses dataset with no responses", async () => {
@@ -240,13 +239,13 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newResource = await setupSheet(
-      Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () => new Row({ data: { [columnName]: value } })),
+      Array.from({ length: MAX_READ_LIMIT + 1 }, () => new Row({ data: { [columnName]: value } })),
     );
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
 
-    expect(dataset.rows).toHaveLength(AZURE_MAX_PAGE_SIZE);
+    expect(dataset.rows).toHaveLength(MAX_READ_LIMIT);
     // The whole blob is parsed either way, so the uncapped total is always known here
-    expect(dataset.totalRows).toBe(AZURE_MAX_PAGE_SIZE + 1);
+    expect(dataset.totalRows).toBe(MAX_READ_LIMIT + 1);
   });
 
   test("fails read file dataset without content", async () => {

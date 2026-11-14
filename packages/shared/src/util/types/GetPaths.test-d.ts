@@ -1,5 +1,4 @@
 import type { GetPaths } from "#src/util/types/GetPaths";
-import type { TableEntity } from "@azure/data-tables";
 
 import { describe, expect, expectTypeOf, test } from "vitest";
 
@@ -19,6 +18,7 @@ describe("getPaths type", () => {
   test("tableEntity should keep the literal keys even if type has an index signature", () => {
     expect.hasAssertions();
 
+    type TableEntity = { [key: string]: unknown; partitionKey: string; rowKey: string };
     expectTypeOf<GetPaths<TableEntity>>().toEqualTypeOf<
       "partitionKey" | "partitionKey.length" | "rowKey" | "rowKey.length"
     >();

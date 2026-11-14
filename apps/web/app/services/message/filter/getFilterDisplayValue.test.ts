@@ -1,16 +1,11 @@
 import { getFilterDisplayValue } from "@/services/message/filter/getFilterDisplayValue";
-import { serializeValue } from "@esposter/azure";
+import { getInvalidValueError } from "@/services/message/filter/getInvalidValueError";
 import { FilterType, FilterTypeAuthorTypes, FilterTypeHas } from "@esposter/db-schema";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getFilterDisplayValue, () => {
   const value = "a";
-  const invalidValueMessage = new InvalidOperationError(
-    Operation.Read,
-    getFilterDisplayValue.name,
-    serializeValue(value),
-  ).message;
+  const invalidValueMessage = getInvalidValueError(getFilterDisplayValue.name, value).message;
 
   // The chip a picker is still filling in shows its keyword alone
   test("a filter still waiting for its value renders as its keyword", () => {

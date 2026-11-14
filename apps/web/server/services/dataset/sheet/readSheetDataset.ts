@@ -4,8 +4,8 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { dataSourceToDataset } from "#shared/services/resource/sheet/dataSourceToDataset";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 export const readSheetDataset: DatasetProvider["read"] = async (_db, { id }) => {
   const content = await readResourceContent(sheetResourceSchema, id);
@@ -14,5 +14,5 @@ export const readSheetDataset: DatasetProvider["read"] = async (_db, { id }) => 
   const { data } = content;
   // Capped like readSurveyResponsesDataset so file-backed datasets cannot return unbounded payloads.
   // The whole blob is already in hand, so the uncapped total costs nothing to report
-  return { ...dataSourceToDataset(data, AZURE_MAX_PAGE_SIZE), totalRows: data.rows.length };
+  return { ...dataSourceToDataset(data, MAX_READ_LIMIT), totalRows: data.rows.length };
 };
