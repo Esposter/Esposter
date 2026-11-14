@@ -17,7 +17,7 @@ const legacyEmojiSchema = z.object({
 // The MessagesMetadata table: one row per emoji on a message. It attaches to its message, so every message is copied first
 export const messageEmojiTableMapper: TableMapper = {
   azureTable: StreamTable.MessagesMetadata,
-  countByRoomSql: `SELECT m."roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(messageEmojisInMessage)}" e JOIN "${getTableName(messagesInMessage)}" m ON m."id" = e."messageId" GROUP BY m."roomId"`,
+  countByPartitionSql: `SELECT m."roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(messageEmojisInMessage)}" e JOIN "${getTableName(messagesInMessage)}" m ON m."id" = e."messageId" GROUP BY m."roomId"`,
   coreTable: getTableName(messageEmojisInMessage),
   map: (entity, { idMap, timestamp }) => {
     const emoji = legacyEmojiSchema.parse(entity);

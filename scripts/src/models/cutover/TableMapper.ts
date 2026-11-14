@@ -9,8 +9,8 @@ import type { StreamTable } from "@esposter/db-schema";
 // parent would have removed it, so it is not copied
 export interface TableMapper {
   azureTable: StreamTable;
-  // A query returning one row per room, as `partitionKey` and `count`, that verify compares with the entities of each room
-  countByRoomSql: string;
+  // A query returning one row per partition, as `partitionKey` and `count`, that verify compares with the entities of each partition
+  countByPartitionSql: string;
   // The SQLite name of the typed table the entities become
   coreTable: string;
   // A reference to another row, set once every row it may name is written

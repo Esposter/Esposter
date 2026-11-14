@@ -21,7 +21,7 @@ const readCountByRoom = async (executor: D1Executor, sql: string): Promise<Map<s
   return new Map(rows.map((row) => [String(row.partitionKey), Number(row.count)]));
 };
 
-// Counts the typed rows against the entities their mappers keep, room by room, so a missing or extra row is found in its room. The
+// Counts the typed rows against the entities their mappers keep, partition by partition, so a missing or extra row is found in its partition. The
 // search table must then hold one row per message. Nothing is written: the mappers' ids are never flushed
 export const verifyTypedTables = async (options: VerifyTypedTablesOptions): Promise<void> => {
   const { archiveBucket, client, connectionString, executor } = options;
@@ -38,16 +38,16 @@ export const verifyTypedTables = async (options: VerifyTypedTablesOptions): Prom
       if (mapper.map(entity, { idMap, parents, timestamp }))
         expected.set(entity.partitionKey, (expected.get(entity.partitionKey) ?? 0) + 1);
     }
-    const actual = await readCountByRoom(executor, mapper.countByRoomSql);
-    const rooms = new Set([...expected.keys(), ...actual.keys()]);
-    for (const room of rooms) {
-      const expectedCount = expected.get(room) ?? 0;
-      const actualCount = actual.get(room) ?? 0;
+    const actual = await readCountByRoom(executor, mapper.countByPartitionSql);
+    const partitions = new Set([...expected.keys(), ...actual.keys()]);
+    for (const partition of partitions) {
+      const expectedCount = expected.get(partition) ?? 0;
+      const actualCount = actual.get(partition) ?? 0;
       if (expectedCount !== actualCount)
         throw new InvalidOperationError(
           Operation.Read,
           mapper.coreTable,
-          `room ${room} holds ${actualCount} rows but Azure gives ${expectedCount}`,
+          `partition ${partition} holds ${actualCount} rows but Azure gives ${expectedCount}`,
         );
     }
   }

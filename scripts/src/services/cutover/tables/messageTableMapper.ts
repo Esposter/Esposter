@@ -27,7 +27,7 @@ const legacyMessageSchema = z.object({
 // root by the root's row key, so the reference is linked once every message is written
 export const messageTableMapper: TableMapper = {
   azureTable: StreamTable.Messages,
-  countByRoomSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(messagesInMessage)}" GROUP BY "roomId"`,
+  countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(messagesInMessage)}" GROUP BY "roomId"`,
   coreTable: getTableName(messagesInMessage),
   link: (entity, { idMap }) => {
     const { partitionKey: roomId, replyRowKey, rowKey } = legacyMessageSchema.parse(entity);
