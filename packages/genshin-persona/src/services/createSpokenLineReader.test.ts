@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 
 describe(createSpokenLineReader, () => {
   const line = "a";
-  const messageId = crypto.randomUUID();
-  const otherMessageId = crypto.randomUUID();
+  const messageId = "00000000-0000-7000-8000-000000000001";
+  const otherMessageId = "00000000-0000-7000-8000-000000000002";
   const createPiece = (index: number, markdown: string, isFinal = false, pieceMessageId = messageId) => ({
     index,
     isFinal,

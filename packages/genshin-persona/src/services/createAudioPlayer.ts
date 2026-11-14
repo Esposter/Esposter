@@ -3,7 +3,7 @@ import type { SpawnOptions } from "node:child_process";
 
 import { PLAYER_FILE_PREFIX } from "#src/services/constants";
 import { spawn } from "node:child_process";
-import { rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -69,11 +69,12 @@ export const createAudioPlayer = (): AudioPlayer => {
     play: (audio) => {
       if (exitFailure) return Promise.resolve(exitFailure);
 
-      const audioPath = join(tmpdir(), `${PLAYER_FILE_PREFIX}${crypto.randomUUID()}.wav`);
+      const audioDirectory = mkdtempSync(join(tmpdir(), PLAYER_FILE_PREFIX));
+      const audioPath = join(audioDirectory, "audio.wav");
       writeFileSync(audioPath, audio);
       const { promise, resolve } = Promise.withResolvers<string>();
       answers.push((failure) => {
-        rmSync(audioPath, { force: true });
+        rmSync(audioDirectory, { force: true, recursive: true });
         resolve(failure);
       });
       player.stdin?.write(`${audioPath}\n`);

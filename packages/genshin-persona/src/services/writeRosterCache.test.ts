@@ -9,8 +9,9 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // Temp sibling, the rename, the sweep — is the real one, since the sweep is what this proves. The directory is
 // Named inside the factory, which is the one scope that runs before the module under test reads the constant
 vi.mock(import("#src/services/constants"), async (importOriginal) => {
+  const { mkdtempSync } = await import("node:fs");
   const { tmpdir } = await import("node:os");
-  return { ...(await importOriginal()), STATE_DIRECTORY: `${tmpdir()}/genshin-persona-${crypto.randomUUID()}` };
+  return { ...(await importOriginal()), STATE_DIRECTORY: mkdtempSync(`${tmpdir()}/genshin-persona-`) };
 });
 
 describe(writeRosterCache, () => {

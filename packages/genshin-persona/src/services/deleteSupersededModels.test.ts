@@ -1,12 +1,12 @@
 import { VOICE_MODEL_ID } from "#src/services/constants";
 import { deleteSupersededModels } from "#src/services/deleteSupersededModels";
-import { existsSync, mkdirSync, readdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(deleteSupersededModels, () => {
-  const modelsDirectory = join(tmpdir(), `genshin-persona-${crypto.randomUUID()}`);
+  const modelsDirectory = mkdtempSync(join(tmpdir(), "genshin-persona-"));
   const [currentOwner = "", currentRepository = ""] = VOICE_MODEL_ID.split("/");
   const supersededOwner = "supersededOwner";
   const supersededRepository = "supersededRepository";

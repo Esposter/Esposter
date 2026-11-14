@@ -14,12 +14,22 @@ describe(createReplyQueue, () => {
   const holdMs = 1;
   // One turn's message: its opening line and its closing line; the opening piece of the message after it in the
   // Same turn, and of the turn after that; and a warm, which has no turn
-  const turnId = crypto.randomUUID();
-  const messageId = crypto.randomUUID();
+  const turnId = "00000000-0000-7000-8000-000000000001";
+  const messageId = "00000000-0000-7000-8000-000000000002";
   const opening: ReplyPiece = { index: 0, isFinal: false, messageId, turnId };
   const closing: ReplyPiece = { index: 1, isFinal: true, messageId, turnId };
-  const nextMessage: ReplyPiece = { index: 0, isFinal: true, messageId: crypto.randomUUID(), turnId };
-  const later: ReplyPiece = { index: 0, isFinal: true, messageId: crypto.randomUUID(), turnId: crypto.randomUUID() };
+  const nextMessage: ReplyPiece = {
+    index: 0,
+    isFinal: true,
+    messageId: "00000000-0000-7000-8000-000000000003",
+    turnId,
+  };
+  const later: ReplyPiece = {
+    index: 0,
+    isFinal: true,
+    messageId: "00000000-0000-7000-8000-000000000004",
+    turnId: "00000000-0000-7000-8000-000000000005",
+  };
   const getRun = (openingRun: Promise<VoiceStatus> = Promise.resolve(VoiceStatus.Ok)) =>
     vi.fn<Run>((piece) => (piece === opening ? openingRun : Promise.resolve(VoiceStatus.Ok)));
 
@@ -129,8 +139,8 @@ describe(createReplyQueue, () => {
 
     // Long enough that most of the replaced turn's hold has passed by the time the newer turn lands
     const longHoldMs = 2;
-    const laterMessageId = crypto.randomUUID();
-    const laterTurnId = crypto.randomUUID();
+    const laterMessageId = "00000000-0000-7000-8000-000000000006";
+    const laterTurnId = "00000000-0000-7000-8000-000000000007";
     const laterOpening: ReplyPiece = { index: 0, isFinal: false, messageId: laterMessageId, turnId: laterTurnId };
     const laterClosing: ReplyPiece = { index: 1, isFinal: true, messageId: laterMessageId, turnId: laterTurnId };
     const run = getRun();
