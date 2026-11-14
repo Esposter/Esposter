@@ -46,7 +46,7 @@ describe.todo("getFoo");
 vi.mock(import("@/services/getFoo"), () => import("@/services/getFoo.test"));
 ```
 
-**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) intercepts a test file's own direct import of the same module only when the helper happens to evaluate first — reorder the imports, or move one out of the suite file, and the module is silently unmocked. That dependence on import order is the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers every path regardless of order. In this repo every Azure composable and the better-auth session (`#server/auth` → `server/auth.test.ts`, whose `authMocks` the `context.test.ts` helpers drive) are registered in `apps/web/shared/test/setup.ts`; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
+**A mock every suite wants is registered once in the package's vitest `setupFiles`, never per file.** A `vi.mock` is hoisted only within the file that writes it, so one written in a shared helper module (e.g. `context.test.ts`) intercepts a test file's own direct import of the same module only when the helper happens to evaluate first — reorder the imports, or move one out of the suite file, and the module is silently unmocked. That dependence on import order is the reason a registration tends to get copied verbatim into every suite that reads through it. A setup file runs before the test module is imported, so it covers every path regardless of order. In this repo the realtime object composables (`useRoomObject`, `useUserObject`, `useCallObject`), the bucket getter, the queue producer and the better-auth session (`#server/auth` → `server/auth.test.ts`, whose `authMocks` the `context.test.ts` helpers drive) are registered in `apps/web/shared/test/setup.ts`; a test file adds its own `vi.mock` only for a double that is specific to it (an inline factory over local state).
 
 When a test needs to call the mock directly (assert on calls / read mock state), import from the **real path** — Vitest intercepts it and returns the mock:
 
@@ -56,7 +56,7 @@ const bar = await getFoo(BarType.Baz);
 ```
 
 - Typed `vi.mock(import(...))` enforces type compatibility — casts stay in the mock file, never in individual tests.
-- If `MockXxx` from `azure-mock` doesn't satisfy the Azure SDK type (private members), fix `azure-mock` first. Use `as unknown as` in the mock `.test.ts` only when SDK private members make structural compatibility impossible.
+- If a double does not satisfy the type it stands in for (a Workers binding's private members, say), fix the double first. Use `as unknown as` in the mock `.test.ts` only when the type's private members make structural compatibility impossible.
 - **Never import a mocked export from the `.test` file in tests** — reach it through the real module path. Only a double the real module has no export for (a method of a Proxy, such as `useSession`) is imported from the mock file by name.
 
 ## `db` mock exception — getter pattern stays inline
@@ -78,4 +78,4 @@ vi.mock(import("#src/services/shared/db"), () => ({
 
 ## Where a helper module may not live
 
-**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `.nuxt/tsconfig.app.json`, which Nuxt generates and `apps/web/tsconfig.json` references, includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for the type check — and importing one from `shared/test/setup.ts` breaks auto-import resolution across the whole app project, as phantom `Cannot find name 'ref'` errors nowhere near the file. Keep helpers colocated with their test, or beside the source they fake (`server/composables/azure/table/useTableClient.test.ts` exports the fake for `useTableClient`).
+**Never add a non-`.d.ts` module under `apps/web/shared/` for test helpers.** `.nuxt/tsconfig.app.json`, which Nuxt generates and `apps/web/tsconfig.json` references, includes `../shared/**/*.d.ts` only, so a `.ts` helper there resolves for vitest but not for the type check — and importing one from `shared/test/setup.ts` breaks auto-import resolution across the whole app project, as phantom `Cannot find name 'ref'` errors nowhere near the file. Keep helpers colocated with their test, or beside the source they fake (`server/services/storage/getBucket.test.ts` exports the fake for `getBucket`, over the Miniflare buckets `createMockBucket` makes).

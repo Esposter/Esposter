@@ -43,8 +43,8 @@ await pendingRead;
 
 A test reading what a tRPC call caused awaits the effect itself — the mocked function it calls resolving a
 promise, the ref it writes changing under a `watch` — never `flushPromises()` or a tick count. The transport
-decides how many turns a call takes: a batch dispatches a macrotask after the call, and a flush that happened to
-outlast an unbatched request no longer outlasts a batched one. A flush count encodes today's scheduling; the
+decides how many turns a call takes: a batch dispatches a macrotask after the call, so a flush that outlasts an
+unbatched request can fall short of a batched one. A flush count encodes today's scheduling; the
 effect is what the test means. Where the effect is local to a component and nothing outside it can await it, the
 resolver resolves a promise as the call reaches it and the test awaits that, then flushes once — the flush then
 covers only the answer's way back, which is the same for every transport, rather than a dispatch it cannot

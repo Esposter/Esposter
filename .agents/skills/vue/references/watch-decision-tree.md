@@ -22,7 +22,7 @@ Local form state that starts from a prop/store value but is independently editab
 const selectedBarId = ref(foo.value?.barId ?? "");
 ```
 
-If the source can change **under** the form — another client editing the same row, a subscription delivering it — the local copy must **resync**. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
+If the source can change **under** the form — another client editing the same row, a typed event delivering it — the local copy must **resync**. Use VueUse's `useCloned` — never a hand-written `ref` + `watch` mirror:
 
 ```ts
 // useCloned owns the editable copy and resyncs automatically

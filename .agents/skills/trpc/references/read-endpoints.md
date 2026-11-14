@@ -27,22 +27,7 @@ const readFoosInputSchema = z
 const readBarsInputSchema = createOffsetPaginationParamsSchema(selectBarSchema.keyof()).prefault({});
 ```
 
-Server-side on **Azure Table**, the whole pipeline — cursor clause, `limit + 1` read, page split — is `readCursorPaginationDataAzureTable`. Build only the clauses that are yours and hand it the client and the entity class; never re-write the pipeline inline:
-
-```ts
-const clauses: Clause<FooEntity>[] = [
-  { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
-];
-const fooClient = await useTableClient(AzureTable.Foo);
-return readCursorPaginationDataAzureTable(fooClient, FooEntity, {
-  clauses,
-  cursor,
-  limit,
-  sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
-});
-```
-
-On **Postgres** there is no such composite: wire the cursor into `getCursorWhere`, `.limit(limit + 1)`, and return `getCursorPaginationData(rows, limit, sortBy)`.
+Server-side on **D1**, a paginated read is three helpers around the procedure's own query. `getCursorWhere` turns the cursor into a clause, which the query carries in `where.RAW`; the query orders by `parseSortByToSql` and reads `limit + 1` rows; and `getCursorPaginationData(rows, limit, sortBy)` splits off the extra row as the `hasMore` answer and names the cursor of the last row the page keeps. Never re-write the cursor clause or the page split inline. The live example is `apps/web/server/trpc/routers/notification.ts`.
 
 ## Read endpoints must accept arrays (no N+1)
 

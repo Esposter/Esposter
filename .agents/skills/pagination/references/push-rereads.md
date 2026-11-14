@@ -10,8 +10,8 @@ the push.
   alongside locally-created ones has two halves with different lifetimes; the newest row overall is routinely the
   local one, which has already been acted on. Snapshot the newest **server** row before the read, and act on the
   server rows past it.
-- **A timestamp watermark needs the ids alongside it.** Postgres stores microseconds and a `Date` keeps
-  milliseconds, so two rows written inside the same millisecond arrive with **equal** timestamps and a strict
+- **A timestamp watermark needs the ids alongside it.** Rows are stamped in `timestamp_ms`, the precision a `Date`
+  keeps, so two rows written inside the same millisecond arrive with **equal** timestamps and a strict
   `>` drops the second one for good — it is not newer, and no later read will ever call it new again. Compare
   `>=` and exclude the ids the tab already held: the ids settle the ties, and the watermark still stops a page
   that simply grew (a tab holding fewer rows than a page) from replaying a backlog nobody was pushed.

@@ -32,7 +32,7 @@ For **external sync** (a parent can reset the model), add a second watch on the 
 
 ## Dialog data loading
 
-**Do not re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD flows through tRPC subscriptions which keep the store current. Fetch once on mount; subsequent opens use cached store data.
+**Do not re-fetch on every dialog open.** Trust the Pinia store as source of truth — CRUD keeps the store current through the store's own writes and the typed events that reach it. Fetch once on mount; subsequent opens use cached store data.
 
 ```ts
 // fetch once on mount — never re-fetch on every dialog open
@@ -40,4 +40,4 @@ const { readFoos } = useReadFoos();
 await readFoos();
 ```
 
-The one-time `await readFoos()` in `<script setup>` handles opening the dialog without having visited the foo page first; the store then stays fresh via subscriptions.
+The one-time `await readFoos()` in `<script setup>` handles opening the dialog without having visited the foo page first; the store then stays fresh through its typed-event handlers.

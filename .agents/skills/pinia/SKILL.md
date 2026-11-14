@@ -45,9 +45,13 @@ The selected **id** is store state with `""` as nothing selected, owned by the s
 
 A store action that only wraps one `$trpc` mutate is not written — the caller runs it through its own `useMutation`; every mutation, in a store or not, takes a required `key` (`references/mutation-actions.md`).
 
+## Live Updates Reach a Store as Typed Events
+
+A store takes a server change another client made as a typed event, never a tRPC subscription: the feature's `use*Subscribables` composable registers a handler on `useConnectionStore` (`onRoomEvent`, `onCallEvent`, `onUserEvent`) that calls the store's `store*` method (`references/cross-surface-state.md`).
+
 ## CRUD Conventions
 
-CRUD verbs over domain verbs, `store*` for a subscription-driven counterpart, update in place after a `findIndex` guard, delete by reassigning (`references/crud.md`).
+CRUD verbs over domain verbs, `store*` for an event-driven counterpart, update in place after a `findIndex` guard, delete by reassigning (`references/crud.md`).
 
 ## Store Action Inputs
 

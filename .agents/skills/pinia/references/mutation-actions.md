@@ -21,13 +21,13 @@ No promise chained onto the previous one, no `Map<id, Promise>` of in-flight rea
 
 **`applyOptimistic` runs when the write is _sent_, so take the snapshot inside the callback.** A queued write must roll back to what the write ahead of it stored, not to the state the user saw when they clicked. For the same reason, anything else the payload reads from live state — a version token, a create-or-update branch — is read inside the `mutate` callback rather than before the call.
 
-**A rollback undoes its own write, never the list.** Snapshot the one entity the write touched and unwind that; `items.value = snapshot` is wrong even when taken at send time. Writes keyed per entity do not queue against each other, and the same lists also receive subscription pushes, so reinstating a whole-list copy resurrects rows a concurrent delete removed and drops rows that arrived mid-flight. Restore through the store's own `store*` CRUD helper rather than by index: a rejected delete that lands its row back at the end of an ordered list is a cosmetic loss, a dropped subscription row is a correctness one. Where the row's place is itself content — an order a user set, a lobby queue — the rollback restores it with `getRestoredItems` (`apps/web/app/services/shared/`), which clamps the index to the list as it stands and leaves a row a mid-flight re-read already brought back; a hand-written `toSpliced` is the version that forgets the second half and renders the row twice.
+**A rollback undoes its own write, never the list.** Snapshot the one entity the write touched and unwind that; `items.value = snapshot` is wrong even when taken at send time. Writes keyed per entity do not queue against each other, and the same lists also receive typed-event pushes, so reinstating a whole-list copy resurrects rows a concurrent delete removed and drops rows that arrived mid-flight. Restore through the store's own `store*` CRUD helper rather than by index: a rejected delete that lands its row back at the end of an ordered list is a cosmetic loss, a dropped event row is a correctness one. Where the row's place is itself content — an order a user set, a lobby queue — the rollback restores it with `getRestoredItems` (`apps/web/app/services/shared/`), which clamps the index to the list as it stands and leaves a row a mid-flight re-read already brought back; a hand-written `toSpliced` is the version that forgets the second half and renders the row twice.
 
 ## Shape
 
 ```ts
-// Subscription owns the state change — no store action; the caller runs the write through its own
-// Instance, which surfaces the rejection and owns the pending state
+// A write whose event reaches the caller's own socket needs no store action: the caller runs the write through its own
+// instance, which surfaces the rejection and owns the pending state
 const { executeMutation } = useMutation();
 await executeMutation(() => $trpc.foo.deleteFoo.mutate(id), { key: id });
 
@@ -36,7 +36,7 @@ const deleteFoo = async (input: DeleteFooInput) => {
   await executeMutation(() => $trpc.foo.deleteFoo.mutate(input), {
     applyOptimistic: () => {
       // The one row this write removes, not a copy of the list: a rejected delete must not undo the
-      // delete running beside it under another key, nor drop a row a subscription delivered meanwhile.
+      // delete running beside it under another key, nor drop a row an event delivered meanwhile.
       // Built once and then searched with. Constructing it inside the callback rebuilds the same predicate
       // for every row, and `unicorn/no-array-callback-reference` reports the inline call as a bare reference
       const checkIsDeletedFoo = getEntityIdEqualComparator<Foo>(["parentId", "childId"], input);
@@ -80,6 +80,6 @@ Full rationale: `openspec/specs/architecture/async-operations/design.md` (concur
 
 ## When a store action earns its place
 
-Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables run the write through their own `useMutation` when the result is handled by subscriptions or no shared state update is needed (`openspec/specs/architecture/client-data/design.md`). Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates subscriptions don't cover, or coordination of multiple stores/requests/validation steps.
+Do **not** create Pinia actions that only wrap a single `$trpc.xxx.mutate(...)` — components/composables run the write through their own `useMutation` when the result is handled by a typed event or no shared state update is needed (`openspec/specs/architecture/client-data/design.md`). Add a store action only when it adds meaningful client logic: genuine optimistic state, navigation or local side effects tied to the result, shared state updates no typed event covers, or coordination of multiple stores/requests/validation steps.
 
 Every mutation goes through `useMutation` (`apps/web/app/composables/shared/useMutation.ts`), a store action's and a component's alike, and **`key` is required on every call** — like a Pinia store id, identity is always explicit, and the same key queues those writes **within one `useMutation()` instance**: two instances do not serialize against each other however their keys are spelled.

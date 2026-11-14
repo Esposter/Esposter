@@ -1,6 +1,6 @@
 # Async composable bodies and subscribables
 
-Read when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions. Teardown is `references/resource-cleanup.md`, and watches in `setup()` with `watchImmediate` as the SSR concern are `references/browser-observation.md`.
+Read when a composable `await`s before registering hooks or watchers, or when wiring a feature's live-event handlers. Teardown is `references/resource-cleanup.md`, and watches in `setup()` with `watchImmediate` as the SSR concern are `references/browser-observation.md`.
 
 ## Capture the instance before `await`
 
@@ -35,14 +35,14 @@ export const useFoo = async () => {
 
 ## Subscribable composables (`use*Subscribables`) and event composables (`use*Events`)
 
-Composables managing tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/<domain>/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()`.
+Composables that register a feature's live-event handlers are named `use{Feature}Subscribables` and live in `composables/<domain>/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()`.
 
 A room's or a person's live events are not tRPC subscriptions: they arrive as frames on a socket the connection store holds, and a feature's handlers are registered with `onRoomEvent` or `onUserEvent` in a `use{Feature}Events` composable (`composables/<domain>/events/`). Each registration is disposed with its scope, `onScopeDispose(onRoomEvent(...))`, and the socket itself is opened by a source through `useOnlineSubscribable`.
 
 ```ts
 // composables/<domain>/subscribables/useFooSubscribables.ts
 export const useFooSubscribables = () => {
-  // calls useOnlineSubscribable, sets up tRPC subscriptions; no return value
+  // calls useOnlineSubscribable, registers its typed-event handlers on useConnectionStore; no return value
 };
 
 // composables/<domain>/subscribables/useSubscribables.ts
@@ -57,4 +57,4 @@ export const useSubscribables = async () => {
 
 - Name pattern: `use{Feature}Subscribables` — not `...Channel`, not `...Watcher`.
 - No return value — self-registering side effects.
-- Always call `useOnlineSubscribable` (not a raw `watch`) so subscriptions reconnect after going offline.
+- Always call `useOnlineSubscribable` (not a raw `watch`) so the socket reopens after going offline.

@@ -4,13 +4,13 @@ Read when writing or reviewing a test that drives a tRPC caller. General Vitest 
 
 ## `setupRoomSuite()` fixture
 
-Any room-scoped router suite where every test needs a room uses `setupRoomSuite()` (`server/trpc/routers/setupRoomSuite.test.ts`) at the top of `describe`. It owns `createMockContext`, the room/role callers, a fresh room per test (`beforeEach`) and cleanup (`MockTableDatabase.clear()` + `db.delete(roomsInMessage)` in `afterEach`), and returns `createMember`/`setupMemberWithRole` plus `getMockContext`/`getRoomCaller`/`getRoleCaller`/`getRoomId` getters.
+Any room-scoped router suite where every test needs a room uses `setupRoomSuite()` (`server/trpc/routers/setupRoomSuite.test.ts`) at the top of `describe`. It owns `createMockContext`, the room/role callers, a fresh room per test (`beforeEach`) and cleanup (`db.delete(roomsInMessage)` in `afterEach`), and returns `createMember`/`setupMemberWithRole` plus `getMockContext`/`getRoomCaller`/`getRoleCaller`/`getRoomId` getters.
 
 Suites alias the getters into local `let`s in their own `beforeAll`/`beforeEach` so test bodies stay unchanged; suite-specific hooks (fake timers, extra table deletes) compose alongside. Never copy-paste `createMember`/`setupMemberWithRole` or the room lifecycle hooks into a suite.
 
-## `setupResourceSuite(router)` and `setupCallSuite()` fixtures
+## `setupResourceSuite(router)` fixture
 
-The same shape for the other two suite families. A resource-typed router suite (`sheet`, `program`, `blueprint`, every `createResourceProcedures` consumer) opens with `setupResourceSuite(<router>)` (`server/trpc/routers/setupResourceSuite.test.ts`), which owns the mock context, the caller for that router, and the cleanup every resource suite owes (`MockContainerDatabase.clear()` + `db.delete(resources)`); a suite that also writes tables, queues or a module mock clears those in its own `afterEach`, and a suite that drives several routers at once passes `trpcRouter` itself and calls through the caller it gets back. A survey with content written is `createSurvey(surveyCaller, name, content)` beside it — the content is the schema's input, so the settings may be left to their prefault. The call suites open with `setupCallSuite()` (`server/trpc/routers/call/setupCallSuite.test.ts`), whose caller's `knocker` is the knocker router, so no suite builds a second caller for it.
+The same shape for the resource suite family. A resource-typed router suite (`sheet`, `program`, `blueprint`, every `createResourceProcedures` consumer) opens with `setupResourceSuite(<router>)` (`server/trpc/routers/setupResourceSuite.test.ts`), which owns the mock context, the caller for that router, and the cleanup every resource suite owes (the content bucket's `deleteDirectory` and `db.delete(resourcesInResource)`); a suite that also writes tables, queues or a module mock clears those in its own `afterEach`, and a suite that drives several routers at once passes `trpcRouter` itself and calls through the caller it gets back. A survey with content written is `createSurvey(surveyCaller, name, content)` beside it — the content is the schema's input, so the settings may be left to their prefault.
 
 ## Subscription tests: builder once, wiring smoke per router
 

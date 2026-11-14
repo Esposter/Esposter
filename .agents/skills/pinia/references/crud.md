@@ -1,9 +1,9 @@
 # CRUD Conventions
 
-Read when naming or writing a store's create, update, delete or subscription-update method.
+Read when naming or writing a store's create, update, delete or event-update method.
 
 - **Prefer CRUD verbs over domain-specific verbs** — `deleteBan` not `unban`, `deleteFoo` not `removeFoo`. Reserve domain terms only when there's no clean CRUD mapping.
-- **`store*` prefix for subscription-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
+- **`store*` prefix for event-driven state-update counterparts** — `storeCreateFoo`/`storeDeleteFoo`. If the user action is only a direct tRPC call, don't add a matching non-`store*` wrapper. State-update methods use CRUD prefixes (`createXxx` to insert, `deleteXxx` to remove) — never `addXxx`.
 - **update**: `findIndex` first, guard `if (index === -1) return`, then mutate in place with `Object.assign(takeOne(items.value, index), updatedItem)`.
 - **delete**: reassign the array — `items.value = items.value.filter(...)` — never `splice`.
 - Always guard a missing parent ref before any operation: `if (!parentRef.value) return`.

@@ -18,6 +18,6 @@ const { data: session } = await useAuthSession(); // session.value?.user.id
 const session = authClient.useSession(); // session.value.data?.user.id
 ```
 
-Not awaited, no `useFetch`; returns a reactive ref. Required wherever you can't `await`, and fine for client-only features (subscriptions, IndexedDB cache, WebRTC, action handlers) that never need the session at SSR time.
+Not awaited, no `useFetch`; returns a reactive ref. Required wherever you can't `await`, and fine for client-only features (live sockets, IndexedDB cache, WebRTC, action handlers) that never need the session at SSR time.
 
 `useAuthSession` returns a promise, so it can only be called where you can `await`. Don't make a synchronous composable `async` just to reach the first form unless it genuinely runs during SSR.

@@ -39,7 +39,7 @@ single operation resolves is a bug wearing rigour.
 - `references/async-sequencing.md` — when a composable issues a read or a write that can overlap another, or persists state that may be unchanged since the last save.
 - `references/browser-observation.md` — when a composable reads scroll position or online state, or must not run during SSR.
 - `references/form-dialogs.md` — when building a dialog that edits an entity: a reset on type change, a schema form's rule that needs live component state, or the dialog's initial data load.
-- `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's tRPC subscriptions.
+- `references/composable-lifecycle.md` — when a composable `await`s before registering hooks or watchers, or when wiring a feature's live-event handlers.
 - `references/resource-cleanup.md` — when setting up an interval, listener, observer or pan/zoom surface, or deciding when to tear one down.
 - `references/earning-a-composable.md` — when a composable is about to be written, or reviewed for whether it should exist and what it returns.
 - `references/composables-and-services.md` — when a function is about to go in `composables/` or `services/`, a composable is called from a service or a callback, or the same listener or state is kept in two places.
@@ -94,6 +94,6 @@ Every API call must be necessary. **Never fire a persistence call — tRPC mutat
 
 A composable never decides **how** concurrency is handled. It declares **what the operation targets** (`key`) and **whether it reads or writes** (which entry point it calls) — `useMutation` (`apps/web/app/composables/shared/useMutation.ts`) derives the rest. A composable that seems to need its own ordering needs the right `key`.
 
-**A store is a call site too.** A store that both reads a value and receives it pushed — a subscription, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake.
+**A store is a call site too.** A store that both reads a value and receives it pushed — a typed event, a broadcast, any handler writing the same ref the read writes — is ordering two async sources against each other, which is the primitive's job however few lines it takes to fake.
 
 The entry points, the `isExclusive` / `isSupersede` opt-ins, the pending flag, `getSynchronizedFunction` pairing and mid-flight `checkIsStale`: `references/async-sequencing.md`. Full model: `openspec/specs/architecture/async-operations/design.md`.

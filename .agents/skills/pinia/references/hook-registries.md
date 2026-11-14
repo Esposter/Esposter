@@ -6,8 +6,8 @@ Every registry is created with `createHookRegistry<THook>()` (`apps/web/app/serv
 
 - Stores call `.register(hook)` at setup; orchestrators fan out with `await registry.run(...args)`, or iterate `registry.hooks` directly from a sync context.
 - Keyed variants are plain objects/Records of registries (`FooHookMap[Operation.Create].register(...)`).
-- Route **every** mutation path through the one store function that fires the hooks — optimistic apply, rollback, `onSuccess`, and subscription handlers. Reads that hydrate from the server bypass it, since server-computed aggregates already include them.
+- Route **every** mutation path through the one store function that fires the hooks — optimistic apply, rollback, `onSuccess`, and typed-event handlers. Reads that hydrate from the server bypass it, since server-computed aggregates already include them.
 
 ## Hook ordering is a parameter, not a constant
 
-When the same store function is both the optimistic path and the subscription handler, **whether the entity is applied before or after the hooks run is a parameter** (`storeCreateFoo(entity, isOptimistic)`). An optimistic caller applies first — it has a placeholder to keep responsive and a rollback if the hooks reject. A remote entity waits for them, or it renders with whatever state the hooks were supposed to resolve (empty urls, missing author) until they land, and forever if they fail.
+When the same store function is both the optimistic path and the typed-event handler, **whether the entity is applied before or after the hooks run is a parameter** (`storeCreateFoo(entity, isOptimistic)`). An optimistic caller applies first — it has a placeholder to keep responsive and a rollback if the hooks reject. A remote entity waits for them, or it renders with whatever state the hooks were supposed to resolve (empty urls, missing author) until they land, and forever if they fail.
