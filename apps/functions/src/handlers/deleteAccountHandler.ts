@@ -6,6 +6,7 @@ import { deleteAccountOwnedResources } from "#src/services/account/deleteAccount
 import { clearAccountModerationActor } from "#src/services/account/clearAccountModerationActor";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
+import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
 import { db } from "#src/services/shared/db";
 import { deleteAccountQueueMessageSchema, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
@@ -20,6 +21,7 @@ export const deleteAccountHandler = async (body: unknown): Promise<void> => {
   await deleteAccountOwnedResources(userId);
   await eraseAccountMessages(userId);
   await deleteAccountMemberRoomReactions(userId);
+  await removeAccountFromMemberRooms(userId);
   await deleteAccountChargedBlobs(userId);
   await deleteAccountBlobDirectories(userId);
   await deleteAccountDataExportArchives(userId);

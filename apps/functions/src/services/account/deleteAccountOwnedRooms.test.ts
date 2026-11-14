@@ -4,6 +4,8 @@ import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwne
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
+import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
+import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import {
   clearMockRooms,
@@ -102,6 +104,27 @@ describe(deleteAccountOwnedRooms, () => {
     ]);
     await expect(mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage)).resolves.toStrictEqual([
       { id: otherRoom.id },
+    ]);
+  });
+
+  test("an owned room's members who are online are told it is deleted, before its object is emptied", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const memberUserId = v7();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    getRoomObject(ownedRoom.id).attachMember(memberUserId, createOnlineStatus(memberUserId));
+    userObjectCalls.length = 0;
+
+    await deleteAccountOwnedRooms(userId);
+
+    expect(userObjectCalls).toStrictEqual([
+      {
+        args: [{ data: { roomId: ownedRoom.id, userId }, type: "deleteRoom" }],
+        method: "broadcastEvent",
+        userId: memberUserId,
+      },
     ]);
   });
 });
