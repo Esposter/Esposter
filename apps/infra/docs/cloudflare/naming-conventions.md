@@ -52,7 +52,7 @@ Asset type (`CloudflareAssetType`):
 | Resource          | Production                              | Development                        |
 | :---------------- | :-------------------------------------- | :--------------------------------- |
 | R2 bucket         | `prod-r2-esposter-message-assets`       | `dev-r2-esposter-message-assets`   |
-| D1 database       | `prod-d1-esposter-core`                 | `dev-d1-esposter-streams`          |
+| D1 database       | `prod-d1-esposter-core`                 | `dev-d1-esposter-core`             |
 | Queue             | `prod-q-esposter-delete-account`        | `dev-q-esposter-process-webhook`   |
 | Dead-letter queue | `prod-dlq-esposter-delete-account`      | `dev-dlq-esposter-process-webhook` |
 | Worker            | `prod-wkr-esposter-web`                 | `dev-wkr-esposter-functions`       |
@@ -67,7 +67,7 @@ Hostnames are not resource names and keep their own shape: `esposter.com` and `a
 
 ## Bindings
 
-A binding is the name code reads a resource by, and it is the same in both environments, so no code branches on the environment to reach a resource: the SCREAMING_SNAKE of the purpose — `MESSAGE_ASSETS`, `CORE`, `STREAMS`, `DELETE_ACCOUNT_QUEUE` — plus `SCHEDULER` and `SERVER` for the two Durable Object namespaces. Only a Wrangler environment block maps a binding to its environment's resource name.
+A binding is the name code reads a resource by, and it is the same in both environments, so no code branches on the environment to reach a resource: the SCREAMING_SNAKE of the purpose — `MESSAGE_ASSETS`, `CORE`, `DELETE_ACCOUNT_QUEUE` — plus `SCHEDULER` and `SERVER` for the two Durable Object namespaces. Only a Wrangler environment block maps a binding to its environment's resource name.
 
 ## Pulumi
 
