@@ -4,15 +4,15 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md), run aft
 
 ## What moves
 
-| From                                                   | To                            | How                                                                                         |
-| :----------------------------------------------------- | :---------------------------- | :------------------------------------------------------------------------------------------ |
-| Railway Postgres (production and develop)              | D1 `core`                     | rows read in key order, transformed by column type, re-keyed to UUIDv7, bulk-written        |
-| Azure Table Storage, every table except messages       | its typed tables in D1 `core` | entities read page by page, mapped field by field to columns, re-keyed to UUIDv7            |
-| Azure Table messages, reactions and scheduled messages | each room's `RoomObject`      | read per room, numbered in createdAt order, imported through the cutover route              |
-| Azure AI Search `messages-index`                       | not copied                    | the room objects' own search rows are written by the import, so the Azure index is not read |
-| every Blob container                                   | its R2 bucket                 | streamed object by object, live pre-copy then a frozen delta                                |
-| pending scheduled message jobs and TodoList reminders  | Scheduler Durable Objects     | rescheduled from the copied rows, missed ones due at once (see the gaps below)              |
-| `esposter.com`'s DNS at Namecheap                      | a Cloudflare zone in Pulumi   | every record re-declared, then the nameservers changed                                      |
+| From                                                   | To                                | How                                                                                         |
+| :----------------------------------------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------ |
+| Railway Postgres (production and develop)              | D1 `core`                         | rows read in key order, transformed by column type, re-keyed to UUIDv7, bulk-written        |
+| Azure Table Storage, every table except messages       | its typed tables in D1 `core`     | entities read page by page, mapped field by field to columns, re-keyed to UUIDv7            |
+| Azure Table messages, reactions and scheduled messages | each room's `RoomObject`          | read per room, numbered in createdAt order, imported through the cutover route              |
+| Azure AI Search `messages-index`                       | not copied                        | the room objects' own search rows are written by the import, so the Azure index is not read |
+| every Blob container                                   | its R2 bucket                     | streamed object by object, live pre-copy then a frozen delta                                |
+| pending scheduled messages and reminders               | their room's and person's objects | armed from the copied rows, missed ones due at once (see the gaps below)                    |
+| `esposter.com`'s DNS at Namecheap                      | a Cloudflare zone in Pulumi       | every record re-declared, then the nameservers changed                                      |
 
 Nothing else holds state: call sessions' participants are in memory, Redis holds only LiveKit's room state, the Azure Search index is not copied, and Event Grid and Service Bus are drained before the freeze.
 
@@ -67,7 +67,7 @@ One committed command, `pnpm -C scripts cutover <step> --environment <develop|pr
 - **`copy-core`** — the whole of Postgres, run only inside the freeze: each table in foreign-key order, rows read in primary-key order and transformed by the column's type in the D1 schema (timestamps to epoch milliseconds, booleans to integers, JSON to text, uuids to text), every old UUID in a text value replaced through the id map, and written through D1's HTTP API in batched, parameter-bound inserts — no value is ever spliced into SQL text. Rows are upserted by primary key, and then the rows the source no longer holds are deleted, children first: clearing a table would cascade through the foreign keys into the typed Azure rows that reference it.
 - **`copy-tables [--delta]`** — the room import first, then each typed table. The room import is described under Messages below. Each Azure Table entity maps to its typed row: a reverse-ticked row key becomes its `createdAt`, the partition key its foreign key, and a table with no timestamp of its own takes the entity's own time, or the time it is first seen. Each typed row takes its new id from the id map keyed by `(Azure table, partition key, row key)`, which the map loads at the start and appends to as it assigns, so a re-run and the delta reuse the same ids, and a reference to another entity is remapped through the map. The delta copies entities whose Azure `Timestamp` is after the pre-copy started, then compares the key sets of both sides and deletes what Azure no longer has (see the gaps below for messages).
 - **`rewrite-urls`** — rewrites every stored absolute Azure blob URL (the columns the storage part lists) to its public asset URL.
-- **`reschedule`** — schedules a Scheduler object for every scheduled message job neither completed nor cancelled, through the same services the app schedules with, through the cutover route; one whose time passed during the freeze is scheduled for now. TodoList reminders and the reminder jobs are not armed yet (see the gaps).
+- **`reschedule`** — arms the alarm of each copied owner, the room's or the person's object, for every pending scheduled message and reminder neither completed nor cancelled, through the cutover route; one whose time passed during the freeze is armed for now. Neither has a copy source yet, so this step has nothing to arm until the gap below is built (see the gaps).
 - **`verify`** — the counts and the keys, with nothing written:
   - per core table, every row is read from both sides through the same transform and compared by its new key, so a row that copied wrong names its key;
   - every text value of every core table is tested for an old UUID the map names, which the copy's rewrite would have replaced;
@@ -133,6 +133,6 @@ The [realtime](../infra-cloudflare-realtime/design.md) design moves each room's 
 **Gaps.** Each is recorded here rather than left implicit:
 
 1. A delta does not remove a message Azure no longer lists, since no route deletes a message from an object yet, so such a message stays in its room object until a route exists.
-2. The Reminder jobs (scheduled message jobs of type `Reminder`) are not imported into their users' objects yet: that import waits on a UserObject method that has not landed on the branch, so `reschedule` cannot arm them.
+2. Pending scheduled messages and reminders have no copy source. The realtime change removed the D1 table that held the scheduled-job rows, and moved reminders into the person's object, so the copy reads neither yet. `copyRoomMessages` refuses each room until a reader of the Postgres job rows exists (`readScheduledRoomMessages` throws), so `copy-tables` cannot finish, and `reschedule` cannot arm the copied jobs. This must be built before any real run.
 3. `verify` compares a room's count and newest number, not its text. Checking that message text survives needs the room summary route to return a sample of messages, which it does not yet.
 4. The UUIDv4 assumption for the Postgres ids is unverified until the rehearsal reads real rows.

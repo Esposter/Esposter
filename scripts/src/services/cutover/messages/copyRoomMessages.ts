@@ -47,7 +47,7 @@ interface CopyRoomOptions {
 // rooms' changed rows, and every write is an upsert, so a re-run writes the same rows again rather than adding to them. A delta does not
 // remove a message Azure no longer lists: no route deletes a message from an object yet
 export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promise<void> => {
-  const { archiveBucket, client, connectionString, delta, executor, functionsUrl, idMap, parents, secret } = options;
+  const { archiveBucket, client, connectionString, delta, functionsUrl, idMap, parents, secret } = options;
   const unit = `${COPY_TABLES_UNIT_PREFIX}/${LegacyAzureTable.Messages}`;
   const checkpoint: CutoverCheckpoint = (await readCheckpoint(client, archiveBucket, unit)) ?? {};
   const roomOldIds = idMap.oldIds().filter((oldId) => {
@@ -84,12 +84,7 @@ export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promis
     );
     await idMap.flush(MESSAGE_NUMBER_SCOPE);
     const getNumber = (rowKey: string) => idMap.getMessageNumber(roomId, rowKey);
-    const scheduledMessages = await readScheduledRoomMessages(
-      executor,
-      roomId,
-      (text) => idMap.rewrite(text),
-      getNumber,
-    );
+    const scheduledMessages = readScheduledRoomMessages(roomId);
     if (messages.length === 0 && emojis.length === 0 && scheduledMessages.length === 0) return;
 
     const roomImport = roomImportSchema.parse(

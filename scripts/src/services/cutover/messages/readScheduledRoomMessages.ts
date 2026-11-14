@@ -1,32 +1,15 @@
-import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { RoomImport } from "@esposter/db-schema";
 
-import { scheduledMessageJobsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
-import { getTableName } from "drizzle-orm";
-import { z } from "zod";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
-const scheduledMessagePayloadSchema = z.object({ message: z.string(), replyRowKey: z.string() });
-
-// The pending scheduled messages of one room, read from the copied job rows: each neither sent nor cancelled. A reply names its root by
-// the root's row key, which is the number the root was given in the room
-export const readScheduledRoomMessages = async (
-  executor: D1Executor,
-  roomId: string,
-  rewrite: (text: string) => string,
-  getNumber: (rowKey: string) => number | undefined,
-): Promise<RoomImport["scheduledMessages"]> => {
-  const rows = await executor.query({
-    params: [roomId, ScheduledMessageJobType.ScheduledMessage],
-    sql: `SELECT "id", "payload", "runAt", "userId" FROM "${getTableName(scheduledMessageJobsInMessage)}" WHERE "roomId" = ? AND "completedAt" IS NULL AND "cancelledAt" IS NULL AND json_extract("payload", '$.type') = ?`,
-  });
-  return rows.map((row) => {
-    const { message, replyRowKey } = scheduledMessagePayloadSchema.parse(JSON.parse(String(row.payload)));
-    return {
-      id: String(row.id),
-      message: rewrite(message),
-      replyToId: replyRowKey === "" ? null : (getNumber(replyRowKey) ?? null),
-      runAt: new Date(Number(row.runAt)),
-      userId: String(row.userId),
-    };
-  });
+// The pending scheduled messages of a room have no source the copy can read. The realtime change removed the D1 table that held the
+// scheduled-job rows, and those rows live in Postgres, where no reader here copies them yet. The room is refused rather than imported
+// without them, so the copy stops before any room's import is written. Until a reader of the Postgres job rows exists, this is the one
+// place a room's scheduled messages would come from
+export const readScheduledRoomMessages = (roomId: string): RoomImport["scheduledMessages"] => {
+  throw new InvalidOperationError(
+    Operation.Read,
+    roomId,
+    "has pending scheduled messages the copy cannot read yet: their job rows are in Postgres, and nothing here copies them",
+  );
 };
