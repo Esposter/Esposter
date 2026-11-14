@@ -1,7 +1,7 @@
-import m0000 from "./20261114071913_room_messages_and_search/migration.sql";
-import m0001 from "./20261114074218_room_scheduled_messages_and_state/migration.sql";
-import m0002 from "./20261114084801_room_app_user_image/migration.sql";
-import m0003 from "./20261114090937_room_webhook_delivery_id/migration.sql";
+import m0000 from "#src/durableObjects/room/migrations/20261114071913_room_messages_and_search/migration.sql";
+import m0001 from "#src/durableObjects/room/migrations/20261114074218_room_scheduled_messages_and_state/migration.sql";
+import m0002 from "#src/durableObjects/room/migrations/20261114084801_room_app_user_image/migration.sql";
+import m0003 from "#src/durableObjects/room/migrations/20261114090937_room_webhook_delivery_id/migration.sql";
 
 export default {
   migrations: {

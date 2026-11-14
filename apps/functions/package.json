@@ -16,7 +16,10 @@
   "type": "module",
   "imports": {
     "#src/*": "./src/*.ts",
-    "#src/durableObjects/*/migrations/migrations.js": "./src/durableObjects/*/migrations/migrations.js"
+    "#src/durableObjects/*/migrations/migrations.js": "./src/durableObjects/*/migrations/migrations.js",
+    "#src/durableObjects/room/migrations/*": "./src/durableObjects/room/migrations/*",
+    "#src/durableObjects/call/migrations/*": "./src/durableObjects/call/migrations/*",
+    "#src/durableObjects/user/migrations/*": "./src/durableObjects/user/migrations/*"
   },
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist --env prod",
