@@ -87,8 +87,12 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     callSocketSettled = promise;
     closeCallSocket = openRealtimeSocket(
       () => createSocketUrl(`/ws/call/${callSessionId}`),
-      (text) => callHub.dispatch(text, undefined),
-      () => resolve(),
+      (text) => {
+        callHub.dispatch(text, undefined);
+      },
+      () => {
+        resolve();
+      },
     );
     return promise;
   };
@@ -100,8 +104,12 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     const { promise, resolve } = Promise.withResolvers<void>();
     closeRoomSocket = openRealtimeSocket(
       () => createSocketUrl(`/ws/room/${roomId}`, getLastMessageId()),
-      (text) => roomHub.dispatch(text, roomId),
-      () => resolve(),
+      (text) => {
+        roomHub.dispatch(text, roomId);
+      },
+      () => {
+        resolve();
+      },
       onReopen,
     );
     return promise;
@@ -110,7 +118,9 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     closeUser();
     closeUserSocket = openRealtimeSocket(
       () => createSocketUrl("/ws/user"),
-      (text) => userHub.dispatch(text, undefined),
+      (text) => {
+        userHub.dispatch(text, undefined);
+      },
     );
   };
 
