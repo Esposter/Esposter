@@ -17,7 +17,7 @@ export interface WebhookQueueMessage {
 
 export const webhookQueueMessageSchema = z.object({
   ...queueMessageEnvelopeSchema.shape,
-  deliveryId: z.uuid(),
+  deliveryId: z.uuidv7(),
   payload: webhookPayloadSchema,
   webhook: selectWebhookInMessageSchema.pick({ roomId: true, userId: true }),
 }) satisfies z.ZodType<WebhookQueueMessage>;

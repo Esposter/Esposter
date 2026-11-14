@@ -24,7 +24,7 @@ describe("ws/user", () => {
     vi.mocked(readSession).mockResolvedValueOnce(createSessionPayload());
     await userSocket(createEvent());
 
-    expect(namespace.idFromName).toHaveBeenCalledExactlyOnceWith("22222222-2222-4222-8222-222222222222");
+    expect(namespace.idFromName).toHaveBeenCalledExactlyOnceWith("22222222-2222-7222-8222-222222222222");
   });
 });
 
@@ -36,11 +36,11 @@ const createNamespace = () => ({
 });
 
 const createSessionPayload = () =>
-  ({ session: { id: "session-abcdefghijklmnop" }, user: { id: "22222222-2222-4222-8222-222222222222" } }) as Awaited<
+  ({ session: { id: "session-abcdefghijklmnop" }, user: { id: "22222222-2222-7222-8222-222222222222" } }) as Awaited<
     ReturnType<typeof readSession>
   >;
 
 const createEvent = () => {
-  const url = "https://esposter.com/ws/user?deviceId=33333333-3333-4333-8333-333333333333";
+  const url = "https://esposter.com/ws/user?deviceId=33333333-3333-7333-8333-333333333333";
   return { req: new Request(url, { headers: { Upgrade: "websocket" } }), url: new URL(url) } as unknown as H3Event;
 };

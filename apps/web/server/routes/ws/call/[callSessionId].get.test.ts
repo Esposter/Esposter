@@ -50,12 +50,12 @@ const createNamespace = () => ({
 });
 
 const createSessionPayload = () =>
-  ({ session: { id: "session-abcdefghijklmnop" }, user: { id: "22222222-2222-4222-8222-222222222222" } }) as Awaited<
+  ({ session: { id: "session-abcdefghijklmnop" }, user: { id: "22222222-2222-7222-8222-222222222222" } }) as Awaited<
     ReturnType<typeof readSession>
   >;
 
 const createEvent = () => {
-  const url = "https://esposter.com/ws/call/abcdefghijkl?deviceId=33333333-3333-4333-8333-333333333333";
+  const url = "https://esposter.com/ws/call/abcdefghijkl?deviceId=33333333-3333-7333-8333-333333333333";
   return {
     context: { params: { callSessionId: "abcdefghijkl" } },
     req: new Request(url, { headers: { Upgrade: "websocket" } }),

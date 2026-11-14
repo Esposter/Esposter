@@ -7,9 +7,9 @@ import { forwardSocket } from "#server/services/realtime/forwardSocket";
 
 describe(forwardSocket, () => {
   const identity: SocketIdentity = {
-    deviceId: "33333333-3333-4333-8333-333333333333",
+    deviceId: "33333333-3333-7333-8333-333333333333",
     sessionId: "session-abcdefghijklmnop",
-    userId: "22222222-2222-4222-8222-222222222222",
+    userId: "22222222-2222-7222-8222-222222222222",
   };
 
   test("replaces an identity header the client sent with the identity the Worker verified", async () => {
@@ -17,7 +17,7 @@ describe(forwardSocket, () => {
 
     const fetch = vi.fn<(request: Request) => Promise<Response>>(() => Promise.resolve(new Response(null)));
     const request = new Request("https://esposter.com/ws/user", {
-      headers: { [SOCKET_IDENTITY_HEADER.userId]: "44444444-4444-4444-8444-444444444444", Upgrade: "websocket" },
+      headers: { [SOCKET_IDENTITY_HEADER.userId]: "44444444-4444-7444-8444-444444444444", Upgrade: "websocket" },
     });
     await forwardSocket({ fetch } as unknown as DurableObjectStub, request, identity);
 

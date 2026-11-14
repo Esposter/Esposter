@@ -7,8 +7,8 @@ import { roomsInMessage, threadFollowsInMessage, usersInAuth } from "@esposter/d
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(readFollowedThreadRootIds, () => {
-  const userId = "8f1c6a2e-4b7d-4e9a-8c31-2d5f7a9b0c11";
-  const roomId = "3a9e0d4c-6b2f-4a7e-9d15-7c8b1e2f3a22";
+  const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
+  const roomId = "3a9e0d4c-6b2f-7a7e-9d15-7c8b1e2f3a22";
 
   let db: Database;
   let mockDatabase: MockDatabase;

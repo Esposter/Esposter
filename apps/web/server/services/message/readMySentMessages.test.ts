@@ -17,9 +17,9 @@ vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: ()
 vi.mock("#server/composables/realtime/useUserObject", () => ({ useUserObject: () => userObject }));
 
 describe(readMySentMessages, () => {
-  const userId = "8f1c6a2e-4b7d-4e9a-8c31-2d5f7a9b0c11";
-  const roomId = "3a9e0d4c-6b2f-4a7e-9d15-7c8b1e2f3a22";
-  const otherRoomId = "c4d7b2a1-9e3f-4f60-8a2b-5e6d7c8b9a33";
+  const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
+  const roomId = "3a9e0d4c-6b2f-7a7e-9d15-7c8b1e2f3a22";
+  const otherRoomId = "c4d7b2a1-9e3f-7f60-8a2b-5e6d7c8b9a33";
   const createdAt = new Date(0);
 
   let db: Database;
