@@ -8,7 +8,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
-import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
+import { serializeKey } from "@esposter/azure";
 import {
   chargeStorageLedgerEntry,
   createMessage,
@@ -42,6 +42,7 @@ import {
   surveyResponsesInResource,
   usersInAuth,
   usersToRoomsInMessage,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";

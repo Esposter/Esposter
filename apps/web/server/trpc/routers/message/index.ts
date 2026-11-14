@@ -60,6 +60,7 @@ import {
   StorageBucket,
   StreamTable,
   updateMessageInputSchema,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { deleteUploadFilesInputSchema } from "#shared/models/db/message/DeleteUploadFilesInput";
 import { followThreadInputSchema } from "#shared/models/db/message/FollowThreadInput";
@@ -81,7 +82,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MESSAGE_OLDEST_FIRST_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
+import { BinaryOperator } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
