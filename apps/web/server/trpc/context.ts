@@ -8,9 +8,8 @@ import { getIpAddress } from "#server/services/request/getIpAddress";
 import { getRequestHeaders } from "#server/services/request/getRequestHeaders";
 import { getRequestIP } from "nuxt/server";
 
-// Widened to the driver-agnostic handle here rather than at its export, because the migrator that runs before the app starts
-// Wants the postgres-js handle itself. Every procedure and service reads `Context["db"]`, so this is the one
-// Seam that lets the pglite handle the tests build stand in without a cast
+// Widened to `Database`, which leaves out the D1 binding `drizzle` keeps as `$client`. Every procedure and service reads
+// `Context["db"]`, so this is the one seam that lets the Miniflare handle the tests build stand in without a cast
 const database: Database = db;
 // A request reaches a procedure as web headers whichever transport carried it, so nothing past this seam reads a node
 // Request or response. Only an http request has a response whose headers a procedure can write; a socket's upgrade

@@ -3,7 +3,7 @@
 ## 1.
 
 - [x] 1.1 Declare `RoomEvent`, `CallEvent` and `UserEvent` with their schemas in `packages/db-schema/src/models/realtime/`, one member per event the EventEmitters carried. Verified by the objects' and the socket routes' tests, which send them.
-- [ ] 1.2 Switch every D1 id to UUIDv7 from the `uuid` package's `v7` — the column defaults, better-auth's generator, `z.uuidv7()` in every schema — ban `crypto.randomUUID` and `uuid`'s `v4` by lint, and page every D1 cursor on `id` alone. Verified by the cursor pagination tests and the lint rule's cases.
+- [x] 1.2 Switch every D1 id to UUIDv7 from the `uuid` package's `v7` — the column defaults, better-auth's generator, `z.uuidv7()` in every schema — ban `crypto.randomUUID` and `uuid`'s `v4` by lint (`oxlint/importRestrictions.ts`), and page every D1 cursor on `id` alone. An id another system mints keeps its own version, as a Claude Code session id does. Verified by the cursor pagination tests.
 
 ## 2.
 
