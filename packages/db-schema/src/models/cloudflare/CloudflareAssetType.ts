@@ -2,7 +2,6 @@
 export const CloudflareAssetType = {
   D1Database: "d1",
   DeadLetterQueue: "dlq",
-  NotificationPolicy: "np",
   Queue: "q",
   R2Bucket: "r2",
   Token: "tok",

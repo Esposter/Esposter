@@ -11,7 +11,6 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). `apps/i
 - `queues/` — one per `QueueJob` plus its dead-letter queue, prod and dev; the R2 event notifications that feed the reconcile and orphaned-image queues.
 - `workersCustomDomains/` — `esposter.com` to the prod web Worker, the develop hostname to the dev one.
 - `realtimeKitApps/` — the RealtimeKit app, if the provider declares one; otherwise the app is created once by its API and its id is a secret.
-- `notificationPolicies/` — billing usage alerts on the paid plan, replacing the Azure budget guard.
 
 The Workers themselves are not Pulumi resources: Nitro writes the web Worker's `wrangler.json` and the functions Worker has its own, both naming the binding ids Pulumi exports. The secrets (R2 API token, VAPID keys, auth secrets, RealtimeKit key) live in the `esposter-infra/prod` ESC environment, and CI writes them with `wrangler secret put` at deploy.
 
@@ -28,3 +27,7 @@ A `deploy` job in CI runs on `main` after the checks pass, builds the app and ru
 | `apps/infra/package.json`         | `@pulumi/cloudflare`             |
 | `apps/infra/src/github/secrets`   | the Cloudflare deploy token      |
 | `.github/workflows/CI.yaml`       | the deploy job                   |
+
+## Decisions
+
+**No budget alert is declared.** Cloudflare’s account-wide spend alert is the `billing_budget_alert` notification with a `total_spend_dollars` filter, and neither `@pulumi/cloudflare` nor the Terraform provider it bridges declares that filter, so the alert cannot live in the program; a per-product `billing_usage_alert` needs one policy per metered product and limit, which watches usage rather than spend. Rejected: creating the budget alert by hand in the dashboard, which leaves the account holding a resource the program does not declare. Revisit when the provider’s notification policy filters gain `total_spend_dollars`.

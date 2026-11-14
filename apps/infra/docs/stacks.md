@@ -27,7 +27,6 @@ The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one 
 ```sh
 pulumi env set esposter-infra/prod pulumiConfig.cloudflare:apiToken <token> --secret
 pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareAccountId <account-id>
-pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareBillingAlertEmail <email>
 ```
 
 Every Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.

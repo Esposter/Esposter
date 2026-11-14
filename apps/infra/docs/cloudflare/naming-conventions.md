@@ -37,15 +37,14 @@ Both environments share one account, so the token is always written: a name with
 
 Asset type (`CloudflareAssetType`):
 
-| Token | Resource            |
-| :---- | :------------------ |
-| `d1`  | D1 database         |
-| `dlq` | dead-letter queue   |
-| `np`  | notification policy |
-| `q`   | queue               |
-| `r2`  | R2 bucket           |
-| `tok` | API token           |
-| `wkr` | Worker script       |
+| Token | Resource          |
+| :---- | :---------------- |
+| `d1`  | D1 database       |
+| `dlq` | dead-letter queue |
+| `q`   | queue             |
+| `r2`  | R2 bucket         |
+| `tok` | API token         |
+| `wkr` | Worker script     |
 
 ## Examples
 
@@ -57,7 +56,6 @@ Asset type (`CloudflareAssetType`):
 | Dead-letter queue | `prod-dlq-esposter-delete-account`      | `dev-dlq-esposter-process-webhook` |
 | Worker            | `prod-wkr-esposter-web`                 | `dev-wkr-esposter-functions`       |
 | API token         | `tok-esposter-infra`, `tok-esposter-r2` | —                                  |
-| Notification      | `np-esposter-billing`                   | —                                  |
 
 The longest name, `prod-dlq-esposter-reconcile-storage-ledger-entry`, is well inside the 63-character limit buckets and queues share.
 
@@ -74,5 +72,5 @@ A binding is the name code reads a resource by, and it is the same in both envir
 - The Pulumi logical name is the Cloudflare name, as it is for Azure, so a preview names the real resource and an alias can never serve a rename.
 - One resource per file; the file and its single export are the camelCase of the name (`prod-r2-esposter-message-assets` is `prodR2EsposterMessageAssets.ts`).
 - A child resource takes its parent's name with the child's resource type as a suffix (`prodR2EsposterMessageAssetsLifecycle`, `prodQEsposterDeleteAccountConsumer`).
-- Each resource's folder is its provider type: `r2Buckets`, `r2BucketLifecycles`, `r2BucketEventNotifications`, `d1Databases`, `queues`, `queueConsumers`, `workersCustomDomains`, `notificationPolicies`, `zones`, `dnsRecords`, `rulesets`.
+- Each resource's folder is its provider type: `r2Buckets`, `r2BucketLifecycles`, `r2BucketEventNotifications`, `d1Databases`, `queues`, `queueConsumers`, `workersCustomDomains`, `zones`, `dnsRecords`, `rulesets`.
 - A zone is named by its domain and takes that name as its logical name; its DNS records and rulesets name what they answer and take the zone as parent. A Workers custom domain's logical name is its hostname, and its file takes the `CustomDomain` suffix so the zone of the same domain keeps the bare name.

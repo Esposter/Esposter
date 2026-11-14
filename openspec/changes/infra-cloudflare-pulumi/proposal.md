@@ -6,4 +6,4 @@ The estate is declared with `@pulumi/azure-native` and deployed by Railway. The 
 
 ## What changes
 
-A `cloudflare` provider folder declares buckets, databases, queues, notifications, custom domains and billing alerts; a CI job deploys both Workers with Wrangler and applies D1 migrations. Part of the [Cloudflare program](../infra-cloudflare-program/proposal.md); the mechanics are in [design](design.md).
+A `cloudflare` provider folder declares buckets, databases, queues, custom domains and the zone; a CI job deploys both Workers with Wrangler and applies D1 migrations. Part of the [Cloudflare program](../infra-cloudflare-program/proposal.md); the mechanics are in [design](design.md).
