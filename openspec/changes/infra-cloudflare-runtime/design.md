@@ -42,7 +42,7 @@ A Worker has no process start, so the Nitro plugins that ran once at boot run on
 
 ## Environment
 
-Each Worker declares every variable it reads in its schema, and [the environment spec](../../specs/architecture/environment/design.md) holds that model. Bindings are not variables: D1, R2, Queues and the Durable Objects come from `cloudflare:workers`'s `env`.
+Each Worker declares every variable it reads in its schema, and [the environment spec](../../specs/architecture/environment/design.md) holds that model. Bindings are not variables: D1, R2, Queues and the Durable Objects come from `cloudflare:workers`'s `env`. A D1 database's id is not set in the environment either: `CloudflareCoreDatabaseIdMap` commits each environment's id, and the wrangler configs and the migrations read it from there.
 
 - **Vars** are the values an environment's name fixes, written into wrangler: the web Worker's come from `configuration/wrangler.ts` (`APP_ENV`, `BASE_URL`, `BETTER_AUTH_URL`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ENVIRONMENT`, `PUBLIC_ASSETS_BASE_URL`), the functions Worker's are in its `wrangler.jsonc`.
 - **Secrets** are the schema keys marked `.meta({ secret: true })`. Each Worker's list is in `.github/worker-secrets.json`, and the deploy job puts them with `wrangler secret bulk` after the Worker deploys. Each value is read from Pulumi ESC `esposter-infra/prod` as `pulumiConfig.esposter-infra:<environment>_<NAME>`, so `dev_` and `prod_` values sit side by side in one environment.

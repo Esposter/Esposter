@@ -1,5 +1,7 @@
 import {
   CloudflareAssetType,
+  CloudflareCoreDatabaseIdMap,
+  CloudflareDatabaseRole,
   CloudflareEnvironment,
   getCloudflareResourceName,
   QueueJob,
@@ -12,7 +14,7 @@ import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
 interface WranglerEnvironment {
-  d1_databases: { database_name: string }[];
+  d1_databases: { binding: string; database_id: string; database_name: string }[];
   durable_objects: { bindings: { class_name: string; name: string; script_name?: string }[] };
   migrations: { new_sqlite_classes: string[]; tag: string }[];
   name: string;
@@ -49,7 +51,7 @@ describe.each(environments)("the $environment environment of the functions Worke
     ]);
   });
 
-  test("binds every storage bucket and the database under their environment's names", () => {
+  test("binds every storage bucket, and the core database by its environment's name and id", () => {
     expect.hasAssertions();
 
     expect(wrangler.r2_buckets.map(({ bucket_name }) => bucket_name).toSorted()).toStrictEqual(
@@ -57,8 +59,16 @@ describe.each(environments)("the $environment environment of the functions Worke
         .map((bucket) => getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket))
         .toSorted(),
     );
-    expect(wrangler.d1_databases.map(({ database_name }) => database_name)).toStrictEqual([
-      getCloudflareResourceName(environment, CloudflareAssetType.D1Database, "core"),
+    expect(wrangler.d1_databases).toStrictEqual([
+      {
+        binding: "CORE",
+        database_id: CloudflareCoreDatabaseIdMap[environment],
+        database_name: getCloudflareResourceName(
+          environment,
+          CloudflareAssetType.D1Database,
+          CloudflareDatabaseRole.Core,
+        ),
+      },
     ]);
   });
 

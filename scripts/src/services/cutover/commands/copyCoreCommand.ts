@@ -11,7 +11,7 @@ export const copyCoreCommand: SubCommandsDef[string] = defineCommand({
       "Copy every Postgres table into D1 core in foreign-key order, upserting, then remove the rows the source no longer holds, children first. Run live before copy-tables, and again in full inside the freeze before copy-tables --delta",
     name: "copy-core",
   },
-  run: async () => {
-    await runCopyCore();
+  run: async ({ args }) => {
+    await runCopyCore(args.environment);
   },
 });

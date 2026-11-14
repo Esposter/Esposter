@@ -6,11 +6,8 @@ import { defineCommand } from "citty";
 
 export const rewriteUrlsCommand: SubCommandsDef[string] = defineCommand({
   args: { ...environmentArgs },
-  meta: {
-    description: "Rewrite every stored absolute Azure blob URL to its public asset URL",
-    name: "rewrite-urls",
-  },
-  run: async () => {
-    await runRewriteUrls();
+  meta: { description: "Rewrite every stored absolute Azure blob URL to its public asset URL", name: "rewrite-urls" },
+  run: async ({ args }) => {
+    await runRewriteUrls(args.environment);
   },
 });

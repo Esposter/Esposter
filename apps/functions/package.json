@@ -19,7 +19,6 @@
   },
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist --env prod",
-    "db:migrate:d1": "wrangler d1 migrations apply CORE --remote",
     "dev": "wrangler dev --env dev --env-file .env",
     "deploy:worker": "wrangler deploy",
     "lint": "eslint .",

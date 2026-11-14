@@ -3,6 +3,7 @@ import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment"
 import { createBlobServiceClient } from "#src/services/cutover/azure/createBlobServiceClient";
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
+import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
@@ -21,7 +22,8 @@ import { verifyTypedTables } from "#src/services/cutover/verify/verifyTypedTable
 export const runVerify = async (environment: CutoverEnvironment): Promise<void> => {
   const variables = readCutoverEnvironment();
   const source = createSourceClient(variables.SOURCE_DATABASE_URL);
-  const executor = createCoreExecutor(variables);
+  const cloudflareEnvironment = getCloudflareEnvironment(environment);
+  const executor = createCoreExecutor(cloudflareEnvironment, variables);
   const client = createR2Client();
   for (const table of orderCoreTables(getCoreTables())) {
     await checkTimestampUniqueIndexes(source, table);

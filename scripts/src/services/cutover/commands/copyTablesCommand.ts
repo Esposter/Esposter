@@ -3,6 +3,7 @@ import type { SubCommandsDef } from "citty";
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { environmentArgs } from "#src/services/cutover/commands/environmentArgs";
+import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
 import { runCopyTables } from "#src/services/cutover/tables/runCopyTables";
@@ -13,7 +14,8 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
     ...environmentArgs,
     delta: {
       default: false,
-      description: "Copy the entities changed since the full copy began, link them, and remove the rows Azure no longer lists",
+      description:
+        "Copy the entities changed since the full copy began, link them, and remove the rows Azure no longer lists",
       type: "boolean",
     },
   },
@@ -24,12 +26,13 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const variables = readCutoverEnvironment();
+    const cloudflareEnvironment = getCloudflareEnvironment(args.environment);
     await runCopyTables({
       archiveBucket: getCutoverArchiveBucketName(args.environment),
       client: createR2Client(),
       connectionString: variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING,
       delta: args.delta,
-      executor: createCoreExecutor(variables),
+      executor: createCoreExecutor(cloudflareEnvironment, variables),
     });
   },
 });

@@ -1,6 +1,9 @@
+import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment";
+
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
 import { copyCoreTable } from "#src/services/cutover/core/copyCoreTable";
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
+import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
 import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
@@ -8,10 +11,11 @@ import { syncCoreTableKeys } from "#src/services/cutover/core/syncCoreTableKeys"
 
 // Copies every Postgres table into `core` in foreign-key order, then drops the rows the source no longer holds, children
 // first. Idempotent: a re-run upserts the same rows and removes the same extras, so it can run live as well as in the freeze
-export const runCopyCore = async (): Promise<void> => {
-  const environment = readCutoverEnvironment();
-  const source = createSourceClient(environment.SOURCE_DATABASE_URL);
-  const executor = createCoreExecutor(environment);
+export const runCopyCore = async (cutoverEnvironment: CutoverEnvironment): Promise<void> => {
+  const variables = readCutoverEnvironment();
+  const source = createSourceClient(variables.SOURCE_DATABASE_URL);
+  const cloudflareEnvironment = getCloudflareEnvironment(cutoverEnvironment);
+  const executor = createCoreExecutor(cloudflareEnvironment, variables);
   const tables = orderCoreTables(getCoreTables());
   for (const table of tables) console.info(`${table.name}: ${await copyCoreTable(source, executor, table)} rows`);
   for (const table of [...tables].reverse()) {

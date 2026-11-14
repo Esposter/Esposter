@@ -5,7 +5,6 @@ import { z } from "zod";
 export const cutoverEnvironmentVariablesSchema = z.object({
   CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
   CLOUDFLARE_API_TOKEN: z.string().min(1),
-  CLOUDFLARE_D1_CORE_DATABASE_ID: z.string().min(1),
   R2_ACCESS_KEY_ID: z.string().min(1),
   R2_SECRET_ACCESS_KEY: z.string().min(1),
   SOURCE_AZURE_STORAGE_CONNECTION_STRING: z.string().min(1),

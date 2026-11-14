@@ -1,4 +1,5 @@
 import { CloudflareAssetType } from "../../../packages/db-schema/src/models/cloudflare/CloudflareAssetType.ts";
+import { CloudflareCoreDatabaseIdMap } from "../../../packages/db-schema/src/models/cloudflare/CloudflareCoreDatabaseIdMap.ts";
 import { CloudflareDatabaseRole } from "../../../packages/db-schema/src/models/cloudflare/CloudflareDatabaseRole.ts";
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { CloudflareWorkerPurpose } from "../../../packages/db-schema/src/models/cloudflare/CloudflareWorkerPurpose.ts";
@@ -22,9 +23,7 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     d1_databases: [
       {
         binding: "CORE",
-        database_id: isDevelopment
-          ? process.env.CLOUDFLARE_D1_DEV_CORE_DATABASE_ID
-          : process.env.CLOUDFLARE_D1_CORE_DATABASE_ID,
+        database_id: CloudflareCoreDatabaseIdMap[environment],
         database_name: getCloudflareResourceName(
           environment,
           CloudflareAssetType.D1Database,
