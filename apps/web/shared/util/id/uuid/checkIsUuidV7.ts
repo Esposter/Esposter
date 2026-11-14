@@ -1,3 +1,3 @@
-import { UUIDV7_REGEX } from "@esposter/shared";
+import { validate, version } from "uuid";
 
-export const checkIsUuidV7 = (uuid: string): boolean => UUIDV7_REGEX.test(uuid);
+export const checkIsUuidV7 = (uuid: string): boolean => validate(uuid) && version(uuid) === 7;

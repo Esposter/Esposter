@@ -42,7 +42,7 @@ Tests hold to the same rule with one distinction. A test's real id is `v7()`. A 
 
 | File                                                                  | Role                                                                                                  |
 | :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `packages/shared/src/util/id/uuid/constants.ts`                       | `UUIDV7_REGEX`, the v7 pattern, and `ZERO_UUID`, the all-zero v7 every fixed id builds on             |
+| `packages/shared/src/util/id/uuid/constants.ts`                       | `ZERO_UUID`, the all-zero v7 every fixed id builds on                                                 |
 | `apps/web/shared/util/id/uuid/checkIsUuidV7.ts`                       | The client's check of an id against the v7 pattern                                                    |
 | `apps/web/shared/util/id/uuid/checkIsUuidV7.test.ts`                  | Holds the generator's id to that check, and refuses a v4                                              |
 | `apps/web/shared/services/resource/link/createResourceLinkSchema.ts`  | The validator of a field holding another resource's id: `z.uuidv7()`, registered in the link registry |
@@ -67,6 +67,6 @@ Tests hold to the same rule with one distinction. A test's real id is `v7()`. A 
 
 ## Sources
 
-- [RFC 9562, Universally Unique IDentifiers](https://www.rfc-editor.org/rfc/rfc9562.html) (IETF): the version-7 layout, with a version field of 7 and a variant field of `10` in binary, so the variant digit is 8, 9, A or B; the nil UUID is all zeros and falls outside the variant the document defines. Grounds the pattern in `UUIDV7_REGEX` and the refusal of the nil.
+- [RFC 9562, Universally Unique IDentifiers](https://www.rfc-editor.org/rfc/rfc9562.html) (IETF): the version-7 layout, with a version field of 7 and a variant field of `10` in binary, so the variant digit is 8, 9, A or B; the nil UUID is all zeros and falls outside the variant the document defines. Grounds the version check `checkIsUuidV7` makes through the `uuid` package's `validate` and `version`, and the refusal of the nil.
 - [uuid, `v7`](https://www.npmjs.com/package/uuid) (uuid package): the generator the repo mints every id with, which keeps a per-process sequence so ids minted in one process stay in creation order.
 - [Zod, UUIDs](https://zod.dev/api) (Zod): `z.uuid()` takes a version and accepts versions 1 to 8, and `z.guid()` does not check the variant bits. Grounds the choice of `z.uuidv7()` over the two.
