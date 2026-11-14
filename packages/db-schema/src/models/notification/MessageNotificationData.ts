@@ -1,13 +1,12 @@
-import type { MessageEntity } from "#src/models/message/MessageEntity";
+import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
-import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
-import { webhookMessageEntitySchema } from "#src/models/message/WebhookMessageEntity";
+import { roomIdSchema } from "#src/models/shared/RoomId";
+import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
 import { z } from "zod";
 
-// One event for every message, thread reply included: threadRootRowKey is what a reply adds, and it widens the
+// One event for every message, thread reply included: threadRootId is what a reply adds, and it widens the
 // Recipient set (the thread's followers on top of the room's) rather than raising a second event, which would
 // Notify anyone following both the thread and the room twice.
 //
@@ -17,21 +16,14 @@ import { z } from "zod";
 export interface MessageNotificationData extends ItemEntityType<AppNotificationType.Message> {
   // A webhook message has no `userId`; this is the app user that posted on the webhook's behalf.
   appUserId?: string;
-  message: Pick<MessageEntity, "message" | "partitionKey" | "rowKey" | "userId">;
-  // The rowKey of the thread's root when this message is a reply — the follow key and the deep-link target.
-  threadRootRowKey: "" | MessageEntity["rowKey"];
+  message: Pick<RoomMessage, "id" | "message" | "userId"> & { roomId: string };
+  // The integer id of the thread's root when this message is a reply — the follow key and the deep-link target.
+  threadRootId: RoomMessage["replyToId"];
 }
-
-const messageNotificationFields = { message: true, partitionKey: true, rowKey: true, userId: true } as const;
 
 export const messageNotificationDataSchema = z.object({
   appUserId: z.string().optional(),
-  // Mirrors Pick<MessageEntity, ...> which distributes to the standard | webhook union;
-  // Standard messages carry a userId, webhook messages never do
-  message: z.union([
-    standardMessageEntitySchema.pick(messageNotificationFields),
-    webhookMessageEntitySchema.pick(messageNotificationFields),
-  ]),
-  threadRootRowKey: reverseTickedTimestampSchema.or(z.literal("")).default(""),
+  message: roomMessageSchema.pick({ id: true, message: true, userId: true }).safeExtend(roomIdSchema.shape),
+  threadRootId: roomMessageSchema.shape.replyToId,
   type: z.literal(AppNotificationType.Message).readonly(),
 }) satisfies z.ZodType<MessageNotificationData>;

@@ -208,7 +208,7 @@ describe(RoomObject, () => {
 
     expect(object.searchMessages({ ...searchAll, query: "hello" })).toStrictEqual({ count: 1, messages: [message] });
 
-    object.updateMessage({ id: message.id, message: "goodbye" }, actor);
+    object.updateMessage({ id: message.id, mentions: [], message: "goodbye" }, actor);
 
     expect(object.searchMessages({ ...searchAll, query: "hello" }).count).toBe(0);
     expect(object.searchMessages({ ...searchAll, query: "goodbye" }).count).toBe(1);

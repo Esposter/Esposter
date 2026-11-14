@@ -151,11 +151,17 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       server.send(JSON.stringify({ data: batch, type: "createMessage" } satisfies RoomEvent));
   }
 
-  readMessages({ before, limit }: { before?: number; limit: number }): RoomMessage[] {
+  readMessages({ before, isPinned, limit }: { before?: number; isPinned?: boolean; limit: number }): RoomMessage[] {
     return this.db
       .select(messageColumns)
       .from(messagesInRoom)
-      .where(and(isNull(messagesInRoom.deletedAt), before === undefined ? undefined : lt(messagesInRoom.id, before)))
+      .where(
+        and(
+          isNull(messagesInRoom.deletedAt),
+          before === undefined ? undefined : lt(messagesInRoom.id, before),
+          isPinned ? eq(messagesInRoom.isPinned, true) : undefined,
+        ),
+      )
       .orderBy(desc(messagesInRoom.id))
       .limit(limit)
       .all();
@@ -299,10 +305,13 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     );
   }
 
-  updateMessage({ id, message }: { id: number; message: string }, actor: RoomActor): RoomMessage | null {
+  updateMessage(
+    { id, mentions, message }: { id: number; mentions: string[]; message: string },
+    actor: RoomActor,
+  ): RoomMessage | null {
     const updatedMessage = this.db
       .update(messagesInRoom)
-      .set({ isEdited: true, message, updatedAt: new Date() })
+      .set({ isEdited: true, mentions, message, updatedAt: new Date() })
       .where(and(eq(messagesInRoom.id, id), isNull(messagesInRoom.deletedAt)))
       .returning(messageColumns)
       .get();

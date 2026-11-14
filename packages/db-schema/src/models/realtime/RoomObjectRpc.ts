@@ -53,7 +53,7 @@ export interface RoomSearchResult {
 // Every method trusts the actor it names: the caller authorises against D1 first. Reads return live rows only, so a
 // deleted message is never read, and a write that names a message that is not there returns null rather than throwing
 export interface RoomObjectRpc {
-  readMessages(input: { before?: number; limit: number }): RoomMessage[];
+  readMessages(input: { before?: number; isPinned?: boolean; limit: number }): RoomMessage[];
   readMessagesByIds(ids: number[]): RoomMessage[];
   // The thread's root, when it is still live, followed by its live replies oldest first
   readThread(threadRootId: number): RoomMessage[];
@@ -65,7 +65,7 @@ export interface RoomObjectRpc {
 
   createMessage(input: CreateRoomMessageInput, actor: RoomActor): Promise<RoomMessage>;
   createWebhookMessage(input: CreateWebhookRoomMessageInput): Promise<RoomMessage>;
-  updateMessage(input: { id: number; message: string }, actor: RoomActor): RoomMessage | null;
+  updateMessage(input: { id: number; mentions: string[]; message: string }, actor: RoomActor): RoomMessage | null;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
   deleteMessage(id: number, actor: RoomActor): Promise<RoomMessage | null>;
   // Returns the file it removed, so the caller can remove its blob
