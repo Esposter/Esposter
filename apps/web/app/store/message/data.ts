@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Order is the contract: each row lands in the order the window holds it */
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput, StandardCreateMessageInput, Typing, UpdateMessageInput } from "@esposter/db-schema";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
@@ -204,9 +205,7 @@ export const useDataStore = defineStore("message/data", () => {
       const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
       for (const loadedMessage of loadedMessages) {
         const liveMessage = liveMessageMap.get(loadedMessage.id);
-        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each row lands in the order the window holds it
         if (!liveMessage) await storeDeleteMessage({ id: loadedMessage.id, roomId });
-        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each row lands in the order the window holds it
         else if (liveMessage.updatedAt.getTime() !== loadedMessage.updatedAt.getTime())
           await storeUpdateMessage({ ...liveMessage, roomId });
       }

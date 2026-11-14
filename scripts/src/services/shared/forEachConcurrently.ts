@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: each lane reads the shared async iterable one item at a time, and takes its next only once its call settles */
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Runs `callback` over `items` with at most `concurrency` calls in flight. Each lane takes the next item from one cursor only
@@ -16,7 +17,6 @@ export const forEachConcurrently = async <T>(
   const runLane = async (): Promise<void> => {
     for (let next = await cursor.next(); !next.done && failures.length === 0; next = await cursor.next()) {
       const { value } = next;
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: a lane takes its next item only once its call settles
       await getResultAsync(() => callback(value)).match(noop, (error) => {
         failures.push(error);
       });

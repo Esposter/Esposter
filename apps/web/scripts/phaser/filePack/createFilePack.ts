@@ -53,6 +53,7 @@ export const createFilePack = async () => {
 
   // A listing carries no content type, so each object's type is read from its own headers
   for (const name of await listObjectNames(client, bucketUrl)) {
+    // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a missing object throws, and the objects behind it are not read
     const response = await client.fetch(`${bucketUrl}/${name.split("/").map(encodeURIComponent).join("/")}`, {
       method: "HEAD",
     });

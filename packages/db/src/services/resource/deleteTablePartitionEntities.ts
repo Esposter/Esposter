@@ -14,6 +14,7 @@ export const deleteTablePartitionEntities = async (
 ) => {
   const rows = await tableClient.list(getPartitionClauses<CompositeKey>(partitionKey));
   for (const batch of chunk(rows, MAX_BATCH_SIZE))
+    // oxlint-disable-next-line no-await-in-loop -- Committed prefix: a failed batch stops the batches behind it, and the batches before it stay committed
     await tableClient.submitTransaction(
       batch.map(({ partitionKey: entityPartitionKey, rowKey }): StreamTableAction => [
         "delete",

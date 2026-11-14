@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: each attempt waits on the one before it, for the same lease */
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -54,7 +55,6 @@ export const withResourceObjectLock = async <T>(
 ): Promise<T> => {
   const holder = v7();
   const deadline = Date.now() + RESOURCE_OBJECT_LOCK_WAIT_MS;
-  // oxlint-disable-next-line no-await-in-loop -- each attempt waits on the one before it, for the same lease
   while (!(await tryAcquireResourceObjectLock(db, resourceId, holder))) {
     if (Date.now() >= deadline)
       throw new InvalidOperationError(
