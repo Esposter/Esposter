@@ -31,5 +31,5 @@ export const prodDlqEsposterProcessScheduledMessageJobConsumer: cloudflare.Queue
     settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
-  { parent: prodDlqEsposterProcessScheduledMessageJob, protect: true },
+  { parent: prodDlqEsposterProcessScheduledMessageJob, protect: false },
 );

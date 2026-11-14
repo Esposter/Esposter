@@ -16,5 +16,5 @@ const deadLetterQueueName = getCloudflareResourceName(
 export const prodDlqEsposterProcessScheduledMessageJob: cloudflare.Queue = new cloudflare.Queue(
   deadLetterQueueName,
   { accountId: CLOUDFLARE_ACCOUNT_ID, queueName: deadLetterQueueName },
-  { protect: true },
+  { protect: false },
 );

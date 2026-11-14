@@ -36,5 +36,5 @@ export const prodQEsposterProcessScheduledMessageJobConsumer: cloudflare.QueueCo
     },
     type: "worker",
   },
-  { parent: prodQEsposterProcessScheduledMessageJob, protect: true },
+  { parent: prodQEsposterProcessScheduledMessageJob, protect: false },
 );

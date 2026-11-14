@@ -16,5 +16,5 @@ const queueName = getCloudflareResourceName(
 export const prodQEsposterProcessScheduledMessageJob: cloudflare.Queue = new cloudflare.Queue(
   queueName,
   { accountId: CLOUDFLARE_ACCOUNT_ID, queueName },
-  { protect: true },
+  { protect: false },
 );
