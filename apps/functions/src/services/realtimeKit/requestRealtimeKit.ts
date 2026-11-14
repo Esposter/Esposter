@@ -20,6 +20,6 @@ export const requestRealtimeKit = async <Schema extends z.ZodType>(
   );
   if (!response.ok) throw new Error(`RealtimeKit ${method} ${path} failed with ${response.status}`);
 
-  const { data } = z.object({ data: schema }).parse(await response.json());
-  return data;
+  const { data } = z.object({ data: z.unknown() }).parse(await response.json());
+  return schema.parse(data);
 };

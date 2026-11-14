@@ -1,7 +1,7 @@
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
-import { StorageBucket, QueueJob, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
+import { StorageBucket, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -19,7 +19,7 @@ export const purgeExpiredResources = async (): Promise<void> => {
     );
   if (expiredResources.length === 0) return;
 
-  console.log(`${QueueJob.PurgeDeletedResources} purging`, { count: expiredResources.length });
+  console.log("purgeExpiredResources purging", { count: expiredResources.length });
   const bucket = getBucket(StorageBucket.ResourceAssets);
   // Per-resource so one poisoned resource cannot block the rest of the sweep; its row survives,
   // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
@@ -27,6 +27,6 @@ export const purgeExpiredResources = async (): Promise<void> => {
   for (const expiredResource of expiredResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across its own partitions and blob directory
     await getResultAsync(() => purgeResourceAndBroadcast(bucket, expiredResource)).match(noop, (error) => {
-      console.error(`${QueueJob.PurgeDeletedResources} failed to purge resource ${expiredResource.id}: `, error);
+      console.error(`purgeExpiredResources failed to purge resource ${expiredResource.id}: `, error);
     });
 };

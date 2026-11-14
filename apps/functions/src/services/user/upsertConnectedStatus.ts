@@ -1,4 +1,4 @@
-import type { SetNonNullable, UserStatusInMessage } from "@esposter/db-schema";
+import type { UserStatus, UserStatusInMessage } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 import { getDetectedUserStatus, userStatusesInMessage } from "@esposter/db-schema";
@@ -8,7 +8,7 @@ import { takeOne } from "@esposter/shared";
 export const upsertConnectedStatus = async (
   userId: string,
   isConnected: boolean,
-): Promise<SetNonNullable<UserStatusInMessage, "status">> => {
+): Promise<UserStatusInMessage & { status: UserStatus }> => {
   const upsertedStatus = takeOne(
     await db
       .insert(userStatusesInMessage)
