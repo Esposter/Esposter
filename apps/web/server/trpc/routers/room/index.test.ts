@@ -26,7 +26,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
-  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
   QueueJob,
@@ -447,7 +447,7 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobNames = Array.from(
-      { length: MAX_BLOB_DELETION_EVENT_BLOB_NAMES + 1 },
+      { length: MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES + 1 },
       (_value, index) => `${newRoom.id}/${index}`,
     );
     await Promise.all(blobNames.map((blobName) => messageAssets.put(blobName, Buffer.alloc(0))));

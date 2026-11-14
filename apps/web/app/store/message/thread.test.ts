@@ -24,7 +24,7 @@ describe(useThreadStore, () => {
   const roomId = v7();
   const userId = v7();
   const message = "message";
-  const threadRootId = v7();
+  const threadRootId = 1;
   const createReply = (replyToId: null | ClientMessage["id"] = null) =>
     createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
 
@@ -33,7 +33,7 @@ describe(useThreadStore, () => {
     // Test here is about
     trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.readMessagesByIds.query(() => []);
-    trpcMsw.message.emoji.readEmojis.query(() => []);
+    trpcMsw.message.emoji.readReactions.query(() => []);
   });
 
   test("opens the drawer on the thread it read", async () => {
@@ -179,7 +179,7 @@ describe(useThreadStore, () => {
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
     await openThread(roomId, threadRootId);
-    await MessageHookMap[Operation.Create].run(createReply(v7()));
+    await MessageHookMap[Operation.Create].run(createReply(2));
 
     expect(threadMessages.value).toStrictEqual([]);
   });

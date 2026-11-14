@@ -31,7 +31,7 @@ describe(useDataStore, () => {
   let router: Router;
   const roomId = v7();
   // Every send here is the room's own composer, which is the target `sendMessage` defaults to
-  const target: ComposerTarget = { roomId, threadRootId: "" };
+  const target: ComposerTarget = { roomId, threadRootId: 0 };
   const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
@@ -333,7 +333,7 @@ describe(useDataStore, () => {
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
-    const replyToId = v7();
+    const replyToId = 1;
     trpcMsw.message.createMessage.mutation(() =>
       createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );

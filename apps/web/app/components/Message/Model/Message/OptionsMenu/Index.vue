@@ -43,7 +43,7 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
   if (newContextMenuRequest?.messageId !== message.id) return;
   const { messageId, ...point } = newContextMenuRequest;
   contextMenuRequest.value = undefined;
-  openContextMenu({ ...point, items: menuItems.value, key: messageId });
+  openContextMenu({ ...point, items: menuItems.value, key: `${messageId}` });
 });
 </script>
 

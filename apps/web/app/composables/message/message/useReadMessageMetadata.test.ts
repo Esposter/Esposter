@@ -27,7 +27,7 @@ describe(useReadMessageMetadata, () => {
       return [reply];
     });
     trpcMsw.room.readUsersByIds.query(() => []);
-    trpcMsw.message.emoji.readEmojis.query(() => []);
+    trpcMsw.message.emoji.readReactions.query(() => []);
     await mountSuspended(
       defineComponent({
         render: () => h("div"),

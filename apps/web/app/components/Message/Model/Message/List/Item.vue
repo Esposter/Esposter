@@ -44,7 +44,7 @@ const isMenuTarget = computed(
   () =>
     optionsMenuMessageId.value === message.id ||
     contextMenuRequest.value?.messageId === message.id ||
-    checkIsContextMenuOpen(message.id),
+    checkIsContextMenuOpen(`${message.id}`),
 );
 const isDisabled = computed(
   () => Boolean(optionsMenuMessageId.value || contextMenuRequest.value || contextMenu.value) && !isMenuTarget.value,

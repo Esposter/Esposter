@@ -30,7 +30,7 @@ describe(useReadMessages, () => {
       return { hasMore: false, items: [message], nextCursor: "" };
     });
     trpcMsw.room.readUsersByIds.query(() => []);
-    trpcMsw.message.emoji.readEmojis.query(({ input }) => (input.roomId === roomId ? [emoji] : []));
+    trpcMsw.message.emoji.readReactions.query(({ input }) => (input.roomId === roomId ? [emoji] : []));
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
