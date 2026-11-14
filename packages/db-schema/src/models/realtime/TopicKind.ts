@@ -6,6 +6,7 @@ export const TopicKind = {
   Block: "block",
   Bookmark: "bookmark",
   Clicker: "clicker",
+  Dungeons: "dungeons",
   Feed: "feed",
   Friend: "friend",
   FriendRequest: "friendRequest",

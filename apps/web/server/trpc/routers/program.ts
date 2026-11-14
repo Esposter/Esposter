@@ -12,6 +12,7 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { regenerateProgramParticipantTokenInputSchema } from "#shared/models/db/program/RegenerateProgramParticipantTokenInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
@@ -30,6 +31,7 @@ export const programRouter = router({
           "Issue one participant token per member of a program's audience that has none yet. Answers the tokens issued by this run, and nothing on a repeat that finds no new member.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
   // The invite export issues each participant in scope a new link, the one answer besides generation that carries links
@@ -39,7 +41,10 @@ export const programRouter = router({
     z.object({ ...resourceIdInputSchema.shape, scope: z.enum(ProgramInviteScope) }),
     "id",
   )
-    .meta({ humanOnly: "Issues participants new links, so every link already sent to them stops working" })
+    .meta({
+      humanOnly: "Issues participants new links, so every link already sent to them stops working",
+      staticReason: "The invite export a person downloads once, whose links no reader shows",
+    })
     .mutation<ProgramInvites>(({ ctx, input }) => issueProgramInvites(ctx, ctx.resource, input.scope)),
   // Owner-only and deliberately never a dataset — keyValue answers "who hasn't answered yet",
   // Which is blade work, not chart work.
@@ -52,6 +57,7 @@ export const programRouter = router({
           "Read a program's status: which of its audience has answered and which has not, with no participant credentials. Answers the status.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<ProgramStatus>(async ({ ctx }) => {
       const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.db, ctx.resource);
@@ -65,7 +71,10 @@ export const programRouter = router({
     regenerateProgramParticipantTokenInputSchema,
     "id",
   )
-    .meta({ humanOnly: "Issues one participant a new link, so the link already sent to them stops working" })
+    .meta({
+      humanOnly: "Issues one participant a new link, so the link already sent to them stops working",
+      staticReason: "A participant's new link, which no reader shows since the status carries no credential",
+    })
     .mutation<ProgramParticipant>(async ({ ctx, input: { keyValue } }) => {
       const participant = await requireEntity(
         ctx.db.query.programParticipantsInResource.findFirst({

@@ -10,9 +10,14 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 
 export const genshinRouter = router({
   saveGenshin: standardAuthedProcedure
+    .meta({ staticReason: "Only the session holding the lease reads or writes the save, so no other reader shows it" })
     .input(saveGenshinInputSchema)
     .mutation<SaveGenshinResult>(({ ctx, input }) => saveGenshin(ctx.getSessionPayload.user.id, input)),
   startGenshin: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "The user object tells the session a start replaces that its lease is gone, so no query is refetched",
+    })
     .input(startGenshinInputSchema)
     .mutation<StartGenshinResult>(({ ctx, input }) => startGenshin(ctx.getSessionPayload.user.id, input.sessionId)),
 });

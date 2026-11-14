@@ -21,6 +21,7 @@ import { publishResourceOperation } from "#server/services/notification/publishR
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
@@ -55,7 +56,10 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceListTopics } from "#server/trpc/procedure/resource/getResourceListTopics";
+import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/CreateResourceOfTypeInput";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
@@ -74,6 +78,7 @@ import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateReso
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { inJsonArray, purgeResource } from "@esposter/db";
 import {
@@ -88,6 +93,7 @@ import {
   SnapshotChannel,
   SnapshotReason,
   StorageBucket,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
@@ -102,6 +108,7 @@ export const resourceRouter = router({
           "Create a resource of a named type with a name, as a new draft with no content. Answers the resource, its id included, which the other tools take.",
         scope: McpScope.Resources,
       },
+      topics: ({ userId }) => getResourceListTopics(userId),
     })
     .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
   deleteResources: standardAuthedProcedure
@@ -112,6 +119,10 @@ export const resourceRouter = router({
           "Move resources to the recycle bin by their ids, where each waits whole to be restored. Answers the resources moved.",
         scope: McpScope.Resources,
       },
+      topics: getProcedureTopics(deleteResourcesInputSchema, ({ ids }, { userId }) => [
+        ...ids.map((id) => getTopic(TopicKind.Resource, id)),
+        ...getResourceListTopics(userId),
+      ]),
     })
     // Owner-scoped where so callers can only ever soft-delete their own rows
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
@@ -140,6 +151,7 @@ export const resourceRouter = router({
           "Copy a resource into a new draft beside it, with its tags and its draft content, named as a copy. Answers the copy, whose id the other tools take.",
         scope: McpScope.Resources,
       },
+      topics: ({ userId }) => getResourceListTopics(userId),
     })
     .mutation<ResourceInResource>(async ({ ctx }) => {
       const { name, tags, type } = ctx.resource;
@@ -180,7 +192,10 @@ export const resourceRouter = router({
       return newResource;
     }),
   purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
-    .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
+    .meta({
+      humanOnly: "The one delete nothing restores, so the owner alone performs it",
+      topics: getChangedResourceTopics(resourceIdInputSchema),
+    })
     .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
       const bucket = getBucket(StorageBucket.ResourceAssets);
       // Purge is the only place a resource is destroyed, since delete is soft. Its trail and counters go with the row
@@ -201,6 +216,7 @@ export const resourceRouter = router({
           "Read a resource's activity trail a page at a time, newest first: each save, rename, restore and the rest, with the cursor for the next page. Answers the entries.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(readActivitiesInputSchema),
     })
     .query<CursorPaginationData<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
       const sortBy: SortItem<keyof ResourceActivityInResource>[] = [ID_DESCENDING_SORT_ITEM];
@@ -223,6 +239,7 @@ export const resourceRouter = router({
           "Read the critique of a resource's saved content: each finding of its checks with the node it names, and the contentVersion it was read at. A colour this read cannot see is listed as unchecked, never as passing. A type with no critique is refused by name.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<ReadCritiqueResult>(async ({ ctx }) => {
       const readFindings = ResourceCritiqueMap[ctx.resource.type];
@@ -233,6 +250,7 @@ export const resourceRouter = router({
       return { contentVersion: ctx.resource.contentVersion, findings };
     }),
   readDeletedResources: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
     .input(readDeletedResourcesInputSchema)
     .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy } }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -241,28 +259,32 @@ export const resourceRouter = router({
         sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resourcesInResource.deletedAt)];
       return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
     }),
-  readDeletedResourcesCount: standardAuthedProcedure.query<number>(
-    async ({ ctx }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
-      ).count,
-  ),
+  readDeletedResourcesCount: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
+    .query<number>(
+      async ({ ctx }) =>
+        takeOne(
+          await ctx.db
+            .select({ count: count() })
+            .from(resourcesInResource)
+            .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
+        ).count,
+    ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows
-  readFavorites: standardAuthedProcedure.query<ResourceListItem[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    return ctx.db
-      .select(resourceListSelection)
-      .from(resourcesInResource)
-      .innerJoin(resourceFavoritesInResource, getFavoriteJoin(userId))
-      .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
-      .where(getResourcesWhere(ctx.db, userId, {}))
-      .orderBy(desc(resourceFavoritesInResource.createdAt))
-      .limit(MAX_READ_LIMIT);
-  }),
+  readFavorites: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
+    .query<ResourceListItem[]>(({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      return ctx.db
+        .select(resourceListSelection)
+        .from(resourcesInResource)
+        .innerJoin(resourceFavoritesInResource, getFavoriteJoin(userId))
+        .leftJoin(resourceAccessesInResource, getLastAccessedJoin(userId))
+        .where(getResourcesWhere(ctx.db, userId, {}))
+        .orderBy(desc(resourceFavoritesInResource.createdAt))
+        .limit(MAX_READ_LIMIT);
+    }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be
   readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
@@ -272,6 +294,7 @@ export const resourceRouter = router({
           "Read one of the owner's resources by its id, with its name, type, tags and publication, and a deleted one not at all. Answers the resource.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<ResourceWithPublication>(async ({ ctx }) => ({
       ...ctx.resource,
@@ -282,6 +305,7 @@ export const resourceRouter = router({
     })),
   // What a delete leaves dangling, named in its confirmation
   readResourceConsumers: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
     .input(readResourceConsumersInputSchema)
     .query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
   readResourceContent: getOwnerProcedure(undefined, readResourceContentInputSchema, "id")
@@ -291,6 +315,7 @@ export const resourceRouter = router({
           "Read a resource's content as JSON at a JSON Pointer, the empty pointer for the whole document, with the contentVersion it was read at. An array is answered a page at a time beside its length. Past a size cap the content is left out and the size of each member answered instead; a leaf has no members, so its own size is answered, and a narrower pointer cannot be read. Content never saved reads as null.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(readResourceContentInputSchema),
     })
     // The row was read before the blob, so the version answered is never newer than the content: a patch pinned to it
     // Is at worst refused as stale, never applied over a save the agent did not read
@@ -306,6 +331,7 @@ export const resourceRouter = router({
           "A resource type's content as JSON Schema, and what the type can do. Read it before editing that type's content: a node marked readOnly or x-opaque cannot be written at or under, and a date is an ISO 8601 string.",
         scope: McpScope.Resources,
       },
+      staticReason: "The type's content schema comes from the code, so no stored state reaches its answer",
     })
     .query<ReadResourceContentSchemaResult>(({ input: { type } }) => ({
       capabilities: ResourceDefinitionMap[type].capabilities,
@@ -319,6 +345,10 @@ export const resourceRouter = router({
           "Read what a resource links to and what links to it, among the owner's own resources. A link written into a document is a reference once the document is saved. Answers the consumers, the dependencies and how many links point at a missing resource.",
         scope: McpScope.Resources,
       },
+      topics: getProcedureTopics(resourceIdInputSchema, ({ id }, { userId }) => [
+        getTopic(TopicKind.Resource, id),
+        ...getResourceListTopics(userId),
+      ]),
     })
     .query<ResourceReferences>(async ({ ctx }) => {
       const [consumers, dependencyReferences] = await Promise.all([
@@ -335,29 +365,34 @@ export const resourceRouter = router({
           "Find the owner's resources a page at a time, most recently updated first, by name, type, tag or when they were last updated. Answers each one's id, name and type, which the content tools take.",
         scope: McpScope.Resources,
       },
+      topics: ({ userId }) => getResourceListTopics(userId),
     })
     .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) =>
       readResourceList(ctx.db, ctx.getSessionPayload.user.id, filter, sortBy, limit, offset),
     ),
-  readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
-    async ({ ctx, input }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
-      ).count,
-  ),
+  readResourcesCount: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
+    .input(resourceFilterInputSchema.prefault({}))
+    .query<number>(
+      async ({ ctx, input }) =>
+        takeOne(
+          await ctx.db
+            .select({ count: count() })
+            .from(resourcesInResource)
+            .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
+        ).count,
+    ),
   // The Tags list. Tag names live inside one JSON column rather than their own table, so the breakdown is a
   // Grouped count over the expanded keys — the expansion is a subquery because a table-valued json_each cannot
   // Sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
   // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
-  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) =>
-    readResourceTagCounts(ctx.db, ctx.getSessionPayload.user.id),
-  ),
+  readResourceTagCounts: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
+    .query<ResourceTagCount[]>(({ ctx }) => readResourceTagCounts(ctx.db, ctx.getSessionPayload.user.id)),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
   // The affordance for setting it
   readResourceTypeCounts: standardAuthedProcedure
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
     .input(resourceFilterInputSchema.omit({ types: true }).prefault({}))
     .query<ResourceTypeCount[]>(({ ctx, input }) =>
       ctx.db
@@ -380,6 +415,7 @@ export const resourceRouter = router({
           "Read a resource's version history, its revisions and its published versions together, newest first. Answers each version's channel and number, which restoreSnapshotVersion takes.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<SnapshotVersion[]>(async ({ ctx }) => {
       const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
@@ -400,8 +436,9 @@ export const resourceRouter = router({
     }),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
-  recordAccess: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<void>(
-    async ({ ctx, input: { id } }) => {
+  recordAccess: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
+    .mutation<void>(async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;
       await ctx.db
         .insert(resourceAccessesInResource)
@@ -410,8 +447,7 @@ export const resourceRouter = router({
           set: { accessedAt: new Date() },
           target: [resourceAccessesInResource.userId, resourceAccessesInResource.resourceId],
         });
-    },
-  ),
+    }),
   // A batch, as the delete is, so the toast a bulk delete leaves undoes all of it in one write. Owner-scoped where,
   // Over the bin only; names are not unique, so a restore can never conflict
   restoreResources: standardAuthedProcedure
@@ -422,6 +458,10 @@ export const resourceRouter = router({
           "Restore resources out of the recycle bin by their ids, each back whole with the content and tags it had. Answers the resources restored.",
         scope: McpScope.Resources,
       },
+      topics: getProcedureTopics(restoreResourcesInputSchema, ({ ids }, { userId }) => [
+        ...ids.map((id) => getTopic(TopicKind.Resource, id)),
+        ...getResourceListTopics(userId),
+      ]),
     })
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const userId = ctx.getSessionPayload.user.id;
@@ -472,6 +512,7 @@ export const resourceRouter = router({
           "Restore a version of a resource into its working draft, which the restore replaces. The draft it replaced is kept as a revision, named in the answer, so restoring that revision undoes the restore. Answers the restored resource and that revision's version.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(restoreSnapshotVersionInputSchema),
     })
     .mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
       const snapshotContent = await requireEntity(
@@ -517,11 +558,12 @@ export const resourceRouter = router({
   // The safety net an import takes before it replaces a draft wholesale. Returns the version it wrote, or
   // Undefined when the resource has no content blob to take one from — a resource created and never saved has
   // No state worth keeping, which is an answer rather than a failure
-  saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<number | undefined>(
-    ({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport),
-  ),
-  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<boolean>(
-    async ({ ctx, input: { id } }) => {
+  saveResourceRevision: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({ topics: getResourceTopics(resourceIdInputSchema) })
+    .mutation<number | undefined>(({ ctx }) => takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeImport)),
+  toggleFavorite: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({ topics: getChangedResourceTopics(resourceIdInputSchema) })
+    .mutation<boolean>(async ({ ctx, input: { id } }) => {
       const userId = ctx.getSessionPayload.user.id;
       // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
       // Whether the star was set, so the toggle can never race with itself
@@ -533,8 +575,7 @@ export const resourceRouter = router({
 
       await ctx.db.insert(resourceFavoritesInResource).values({ resourceId: id, userId }).onConflictDoNothing();
       return true;
-    },
-  ),
+    }),
   // Typeless: the factory's rename-and-tag body, which names no type, so one tool serves every resource
   updateResource: getOwnerProcedure(undefined, updateResourceInputSchema, "id")
     .meta({
@@ -543,6 +584,7 @@ export const resourceRouter = router({
           "Rename a resource or replace its tags, leaving its content as it is. Tags replace the whole record, so send every tag the resource keeps. Answers the updated resource.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(updateResourceInputSchema),
     })
     .mutation<ResourceInResource>(({ ctx, input: { name, tags } }) =>
       updateResourceRow(ctx, ctx.resource, { name, tags }),
@@ -554,6 +596,7 @@ export const resourceRouter = router({
           "Edit a resource's content with RFC 6902 JSON Patch operations — add, remove, replace, move, copy and test — applied all or none and saved through the type's own schema. Append to an array with the - index. Pass the contentVersion you read and the edit is refused if the content changed since; left out, the edit applies to the latest content with its test operations the only guard. Answers the new contentVersion and the operations that undo the edit.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(updateResourceContentInputSchema),
     })
     .mutation<UpdateResourceContentResult>(async ({ ctx, input: { contentVersion, operations } }) => {
       requireAgentWritableOperations(ctx.resource.type, operations);

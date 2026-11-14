@@ -9,7 +9,9 @@ import type { ResourceInResource, ResourcePublicationInResource } from "@esposte
 
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
 import { noteRouter } from "#server/trpc/routers/note";
@@ -66,6 +68,7 @@ export const resourceDispatchRouter = router({
           "Remove a file from a resource by the hash it is stored under. The file leaves the resource and is released once no saved version names it. Answers nothing.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(deleteFileInputSchema),
     })
     .mutation<void>(({ ctx, input }) => {
       const { type } = ctx.resource;
@@ -80,6 +83,7 @@ export const resourceDispatchRouter = router({
           "Ask for an address to upload a file to, named by the hash of its bytes, which stays valid for a short time. Send the file's bytes to its address with a PUT, then the file is held by the resource. A file the resource already holds answers with no address. Answers each file's address.",
         scope: McpScope.Resources,
       },
+      staticReason: "The upload addresses of a file, which no reader shows until the file is saved",
     })
     .mutation<ResourceFileSasEntity[]>(({ ctx, input }) => {
       const { type } = ctx.resource;
@@ -94,6 +98,7 @@ export const resourceDispatchRouter = router({
           "Publish a resource as its type publishes it, so its published address serves the content. A type that does not publish is refused. Answers the publication.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(resourceIdInputSchema),
     })
     .mutation<ResourcePublicationInResource>(({ ctx, input }) => {
       const { type } = ctx.resource;
@@ -108,6 +113,7 @@ export const resourceDispatchRouter = router({
           "Take a published resource down, leaving its draft as it is. A type that does not publish is refused. Answers the resource.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(resourceIdInputSchema),
     })
     .mutation<ResourceInResource>(({ ctx, input }) => {
       const { type } = ctx.resource;

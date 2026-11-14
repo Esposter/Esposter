@@ -1,10 +1,11 @@
-import type { StorageBucket } from "@esposter/db-schema";
+import type { StorageBucket, TopicKind } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { getUnreadableSaveError } from "#server/services/blobState/getUnreadableSaveError";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { getSaveBlobName } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
@@ -15,16 +16,19 @@ export const createReadBlobStateProcedure = <TData, TInit>(
   container: StorageBucket,
   Model: new (init?: TInit) => TData,
   schema: z.ZodType<TInit>,
+  topicKind: TopicKind,
 ) =>
-  standardAuthedProcedure.query<{ data: TData; etag?: string }>(async ({ ctx }) => {
-    const bucket = getBucket(container);
-    const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
-    if (!json) return { data: new Model(), etag };
+  standardAuthedProcedure
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(topicKind, userId)]) })
+    .query<{ data: TData; etag?: string }>(async ({ ctx }) => {
+      const bucket = getBucket(container);
+      const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
+      if (!json) return { data: new Model(), etag };
 
-    const parsedSave = schema.safeParse(jsonDateParse(json.toString()));
-    if (!parsedSave.success) {
-      console.error(parsedSave.error);
-      throw getUnreadableSaveError(parsedSave.error);
-    }
-    return { data: new Model(parsedSave.data), etag };
-  });
+      const parsedSave = schema.safeParse(jsonDateParse(json.toString()));
+      if (!parsedSave.success) {
+        console.error(parsedSave.error);
+        throw getUnreadableSaveError(parsedSave.error);
+      }
+      return { data: new Model(parsedSave.data), etag };
+    });

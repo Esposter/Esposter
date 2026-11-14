@@ -2,6 +2,7 @@ import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/sur
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
@@ -13,6 +14,7 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { slowRateLimitedProcedure } from "#server/trpc/procedure/slowRateLimitedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
@@ -20,7 +22,8 @@ import { createSurveyResponseInputSchema } from "#shared/models/db/survey/Create
 import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
 import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
-import { DatabaseEntityType, McpScope, ResourceType, surveyResponsesInResource } from "@esposter/db-schema";
+import { getTopic } from "#shared/services/realtime/getTopic";
+import { DatabaseEntityType, McpScope, ResourceType, surveyResponsesInResource, TopicKind } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 
@@ -34,6 +37,11 @@ export const surveyRouter = router({
   // See ResourceDefinitionMap
   ...createResourceProcedures(ResourceType.Survey),
   createSurveyResponse: slowRespondentProcedure
+    .meta({
+      topics: getProcedureTopics(createSurveyResponseInputSchema, ({ resourceId }) => [
+        getTopic(TopicKind.Resource, resourceId),
+      ]),
+    })
     .input(createSurveyResponseInputSchema)
     .mutation<SurveyResponseInResource>(async ({ ctx, input: { isDraft, participantToken, ...input } }) => {
       const participantTokenHash = await resolveSurveyResponseWrite(ctx.db, input.resourceId, participantToken, {
@@ -48,7 +56,10 @@ export const surveyRouter = router({
       );
     }),
   deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id")
-    .meta({ humanOnly: "Deletes a respondent's answer outright, data the owner holds on someone else's behalf" })
+    .meta({
+      humanOnly: "Deletes a respondent's answer outright, data the owner holds on someone else's behalf",
+      topics: getResourceTopics(deleteSurveyResponseInputSchema),
+    })
     .mutation<void>(async ({ ctx, input: { responseId } }) => {
       // Existence is proven before deleting so a second delete of the same response errors rather than silently passing
       await requireEntity(
@@ -61,6 +72,11 @@ export const surveyRouter = router({
       await ctx.db.delete(surveyResponsesInResource).where(eq(surveyResponsesInResource.id, responseId));
     }),
   readSurveyResponse: standardRespondentProcedure
+    .meta({
+      topics: getProcedureTopics(readSurveyResponseInputSchema, ({ resourceId }) => [
+        getTopic(TopicKind.Resource, resourceId),
+      ]),
+    })
     .input(readSurveyResponseInputSchema)
     .query<SurveyResponseInResource | undefined>(async ({ ctx, input: { id, participantToken, resourceId } }) => {
       const resolvedParticipantTokenHash = await resolveSurveyResponseRead(ctx.db, resourceId, participantToken);
@@ -85,14 +101,21 @@ export const surveyRouter = router({
           "Read a survey's responses, one record per respondent, as its owner reads them. Answers the records.",
         scope: McpScope.Resources,
       },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.db, ctx.resource.id)),
   readSurveyResponsesCount: getOwnerProcedure(ResourceType.Survey, resourceIdInputSchema, "id")
     .meta({
       mcp: { description: "Count the responses a survey has received. Answers the count.", scope: McpScope.Resources },
+      topics: getResourceTopics(resourceIdInputSchema),
     })
     .query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.db, ctx.resource.id)),
   updateSurveyResponse: standardRespondentProcedure
+    .meta({
+      topics: getProcedureTopics(updateSurveyResponseInputSchema, ({ resourceId }) => [
+        getTopic(TopicKind.Resource, resourceId),
+      ]),
+    })
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseInResource>(async ({ ctx, input: { id, isDraft, resourceId, ...input } }) => {
       const participantTokenHash = await resolveSurveyResponseWrite(ctx.db, resourceId, input.participantToken, {

@@ -3,6 +3,7 @@ import type { UpdateResourceContentResult } from "#shared/models/resource/Update
 import { moveWhiteboardElement } from "#server/services/resource/whiteboard/moveWhiteboardElement";
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
+import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { moveWhiteboardElementInputSchema } from "#shared/models/db/resource/whiteboard/MoveWhiteboardElementInput";
 import { McpScope, ResourceType } from "@esposter/db-schema";
@@ -18,6 +19,7 @@ export const whiteboardRouter = router({
           "Move a whiteboard's element to a point, by its index in the element list, with each arrow bound to a moved shape rerouted in the same write. A shape, an image, a sticky note, a text or a stroke moves, and an arrow moves its free ends while a bound end follows its shape; an arrow bound at both ends holds no position of its own and is refused. Pass the contentVersion you read and the move is refused if the whiteboard changed since. Answers the new contentVersion and the operations that undo the move.",
         scope: McpScope.Resources,
       },
+      topics: getChangedResourceTopics(moveWhiteboardElementInputSchema),
     })
     .mutation<UpdateResourceContentResult>(({ ctx, input }) => moveWhiteboardElement(ctx, ctx.resource, input)),
 });

@@ -25,7 +25,10 @@ export const emailRouter = router({
   // A mutation, so the document rides the request body: as a query it rode the URL, which a long email outgrows
   compile: standardAuthedProcedure
     .input(emailDocumentSchema)
-    .meta({ humanOnly: "The editor's own preview of the document open in it, compiled as its owner edits" })
+    .meta({
+      humanOnly: "The editor's own preview of the document open in it, compiled as its owner edits",
+      staticReason: "The preview of the open document, which no other reader shows",
+    })
     .mutation<{ html: string } | { message: string; messages: EmailValidatorMessage[] }>(({ input }) =>
       compileEmailDocument(input, { origin: getBaseUrl() }).match(
         (html) => ({ html }),
@@ -35,7 +38,10 @@ export const emailRouter = router({
   // The personalised export's compile, over the stored working copy so it runs with the editor closed and includes the
   // Latest saved edit. The bound dataset comes back beside the html, since the export reads its rows from it
   generateEmailHtml: getOwnerProcedure(ResourceType.Email, resourceIdInputSchema, "id")
-    .meta({ humanOnly: "The personalised export a person sends, which nothing recalls once it is sent" })
+    .meta({
+      humanOnly: "The personalised export a person sends, which nothing recalls once it is sent",
+      staticReason: "A one-off personalised export, which no reader keeps on screen",
+    })
     .query<{ datasetReference?: DatasetReference; html: string }>(async ({ input: { id } }) => {
       const resourceContent = readResourceContent(emailEditorSchema, id);
       const content = await requireEntity(resourceContent, DatabaseEntityType.Resource, id);

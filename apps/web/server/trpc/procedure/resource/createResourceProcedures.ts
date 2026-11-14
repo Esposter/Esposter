@@ -14,6 +14,7 @@ import type { z } from "zod";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { RESOURCE_ASSET_SAS_DURATION_MS } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
@@ -44,7 +45,10 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceListTopics } from "#server/trpc/procedure/resource/getResourceListTopics";
+import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
@@ -60,6 +64,7 @@ import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
@@ -72,6 +77,7 @@ import {
   selectResourceInResourceSchema,
   SnapshotChannel,
   StorageBucket,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
 import { and, EmptyFilter, eq, exists, sql } from "drizzle-orm";
@@ -127,12 +133,14 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   const baseProcedures = {
     createResource: standardAuthedProcedure
+      .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
       .input(createResourceInputSchema)
       .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
-    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
-      async ({ ctx, input: { id } }) => {
+    deleteResource: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(resourceIdInputSchema) })
+      .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
         const deletedResource = requireMutation(
           (await softDeleteResources(ctx.db, eq(resourcesInResource.id, id)))[0],
           Operation.Delete,
@@ -144,21 +152,21 @@ export const createResourceProcedures = <TType extends ResourceType>(
           title: ResourceOperationTitleMap[ResourceOperationType.Deleted](deletedResource.name, 1),
         });
         return deletedResource;
-      },
-    ),
+      }),
     // A document larger than one request body is read straight from Blob Storage, so the server signs the read
     // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
-    generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id").query<string>(
-      ({ input: { id } }) => {
+    generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ staticReason: "The presigned address the content is read through, which names no state a reader shows" })
+      .query<string>(({ input: { id } }) => {
         const contentBlobName = getContentBlobName(id);
         return createPresignedGetUrl(getStorageCredentials(), StorageBucket.ResourceAssets, contentBlobName, {
           expiresInMs: RESOURCE_ASSET_SAS_DURATION_MS,
         });
-      },
-    ),
+      }),
     // The write target of a staged save, held against the owner's quota for the gzip's size like any upload
-    generateUploadContentSasUrl: getOwnerProcedure(type, generateUploadContentSasUrlInputSchema, "id").query<string>(
-      ({ ctx, input: { id, size } }) =>
+    generateUploadContentSasUrl: getOwnerProcedure(type, generateUploadContentSasUrlInputSchema, "id")
+      .meta({ staticReason: "The write target of a staged save, which no reader shows until the save lands" })
+      .query<string>(({ ctx, input: { id, size } }) =>
         generateReservedWriteSasUrl(
           ctx.db,
           ctx.getSessionPayload.user.id,
@@ -166,12 +174,13 @@ export const createResourceProcedures = <TType extends ResourceType>(
           getStagingContentBlobName(id),
           size,
         ),
-    ),
+      ),
     // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
-    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(
-      ({ input: { id } }) => readContent(id),
-    ),
+    readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getResourceTopics(resourceIdInputSchema) })
+      .query<ResourceContent<TType> | undefined>(({ input: { id } }) => readContent(id)),
     readResources: standardAuthedProcedure
+      .meta({ topics: ({ userId }) => getResourceListTopics(userId) })
       .input(readResourcesInputSchema)
       .query<OffsetPaginationData<ResourceWithPublication>>(
         async ({ ctx, input: { isPublished, limit, offset, sortBy } }) => {
@@ -196,70 +205,70 @@ export const createResourceProcedures = <TType extends ResourceType>(
           return getBasePaginationData(resultResources, limit);
         },
       ),
-    saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<ResourceInResource>(
-      ({ ctx, input: { content, contentVersion } }) =>
+    saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(saveResourceContentInputSchema) })
+      .mutation<ResourceInResource>(({ ctx, input: { content, contentVersion } }) =>
         saveResourceContent(ctx, {
           activityType: ResourceActivityType.ContentSaved,
           content,
           contentVersion,
           resource: ctx.resource,
         }),
-    ),
+      ),
     // A large document edited since its last save crosses as a zstd delta against the stored bytes, reaching the
     // Same door with the same version check (openspec/specs/resource/resource-version-store/design.md)
-    saveResourceContentDelta: getOwnerProcedure(
-      type,
-      saveResourceContentDeltaInputSchema,
-      "id",
-    ).mutation<ResourceInResource>(async ({ ctx, input: { baselineHash, contentVersion, delta } }) => {
-      const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
-      return saveResourceContent(ctx, {
-        activityType: ResourceActivityType.ContentSaved,
-        content,
-        contentVersion,
-        resource: ctx.resource,
-      });
-    }),
+    saveResourceContentDelta: getOwnerProcedure(type, saveResourceContentDeltaInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(saveResourceContentDeltaInputSchema) })
+      .mutation<ResourceInResource>(async ({ ctx, input: { baselineHash, contentVersion, delta } }) => {
+        const content = await readResourceContentDelta(ctx.resource, baselineHash, delta);
+        return saveResourceContent(ctx, {
+          activityType: ResourceActivityType.ContentSaved,
+          content,
+          contentVersion,
+          resource: ctx.resource,
+        });
+      }),
     // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
     // Reference, reaching the same door with the same version check (openspec/specs/architecture/file-uploads/design.md)
-    saveStagedResourceContent: getOwnerProcedure(
-      type,
-      saveStagedResourceContentInputSchema,
-      "id",
-    ).mutation<ResourceInResource>(async ({ ctx, input: { contentVersion, hash, id } }) => {
-      const content = await readStagedResourceContent(id, hash);
-      const savedResource = await saveResourceContent(ctx, {
-        activityType: ResourceActivityType.ContentSaved,
-        content,
-        contentVersion,
-        resource: ctx.resource,
-      });
-      await deleteStagingContentBlob(ctx.db, id);
-      return savedResource;
-    }),
-    updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<ResourceInResource>(
-      ({ ctx, input: { name, tags } }) => updateResourceRow(ctx, ctx.resource, { name, tags }),
-    ),
+    saveStagedResourceContent: getOwnerProcedure(type, saveStagedResourceContentInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(saveStagedResourceContentInputSchema) })
+      .mutation<ResourceInResource>(async ({ ctx, input: { contentVersion, hash, id } }) => {
+        const content = await readStagedResourceContent(id, hash);
+        const savedResource = await saveResourceContent(ctx, {
+          activityType: ResourceActivityType.ContentSaved,
+          content,
+          contentVersion,
+          resource: ctx.resource,
+        });
+        await deleteStagingContentBlob(ctx.db, id);
+        return savedResource;
+      }),
+    updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(updateResourceInputSchema) })
+      .mutation<ResourceInResource>(({ ctx, input: { name, tags } }) =>
+        updateResourceRow(ctx, ctx.resource, { name, tags }),
+      ),
   };
   // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived SAS urls and reads resolve
   // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). An asset is never
   // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
   const fileAssetsProcedures = {
-    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id").mutation<void>(
-      async ({ ctx, input: { blobPath, id } }) => {
+    deleteFile: getOwnerProcedure(type, deleteFileInputSchema, "id")
+      .meta({ topics: getResourceTopics(deleteFileInputSchema) })
+      .mutation<void>(async ({ ctx, input: { blobPath, id } }) => {
         // The path is the file's hash (ASSET_HASH_REGEX), so the release sees exactly the address that was removed
         await releaseResourceAssets(ctx.db, id, [blobPath]);
-      },
-    ),
-    generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id").query<
-      ResourceFileSasEntity[]
-    >(({ ctx, input: { files, id } }) =>
-      generateReservedResourceAssetSasEntities(ctx.db, ctx.getSessionPayload.user.id, id, files),
-    ),
+      }),
+    generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id")
+      .meta({ staticReason: "The upload addresses of a file, which no reader shows until the file is saved" })
+      .query<ResourceFileSasEntity[]>(({ ctx, input: { files, id } }) =>
+        generateReservedResourceAssetSasEntities(ctx.db, ctx.getSessionPayload.user.id, id, files),
+      ),
   };
   const publishProcedures = {
-    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourcePublicationInResource>(
-      async ({ ctx, input: { id } }) => {
+    publishResource: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(resourceIdInputSchema) })
+      .mutation<ResourcePublicationInResource>(async ({ ctx, input: { id } }) => {
         const content = await readContent(id);
         if (content === undefined)
           throw getInvalidOperationError(
@@ -337,9 +346,11 @@ export const createResourceProcedures = <TType extends ResourceType>(
           ),
         });
         return publication;
-      },
-    ),
+      }),
     readPublishedResourceContent: standardRateLimitedProcedure
+      .meta({
+        topics: getProcedureTopics(selectResourceInResourceSchema.shape.id, (id) => [getTopic(TopicKind.Resource, id)]),
+      })
       .input(selectResourceInResourceSchema.shape.id)
       .query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
         const resource = await requireEntity(
@@ -360,22 +371,23 @@ export const createResourceProcedures = <TType extends ResourceType>(
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
     // Visitors never reach this — the public read above always serves the latest publish
-    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id").query<
-      PublishedResourceContent<TType>
-    >(async ({ ctx, input: { version } }) => ({
-      content: await readPublishedContent(ctx.db, ctx.resource, version),
-      name: ctx.resource.name,
-    })),
-    readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id").query<
-      ResourcePublicationInResource | undefined
-    >(({ ctx }) =>
-      ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
-    ),
-    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
-      readResourceViewCount(ctx.db, ctx.resource.id),
-    ),
-    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
-      async ({ ctx }) => {
+    readPublishedVersionContent: getOwnerProcedure(type, readPublishedVersionContentInputSchema, "id")
+      .meta({ topics: getResourceTopics(readPublishedVersionContentInputSchema) })
+      .query<PublishedResourceContent<TType>>(async ({ ctx, input: { version } }) => ({
+        content: await readPublishedContent(ctx.db, ctx.resource, version),
+        name: ctx.resource.name,
+      })),
+    readResourcePublication: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getResourceTopics(resourceIdInputSchema) })
+      .query<ResourcePublicationInResource | undefined>(({ ctx }) =>
+        ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
+      ),
+    readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getResourceTopics(resourceIdInputSchema) })
+      .query<number>(({ ctx }) => readResourceViewCount(ctx.db, ctx.resource.id)),
+    unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id")
+      .meta({ topics: getChangedResourceTopics(resourceIdInputSchema) })
+      .mutation<ResourceInResource>(async ({ ctx }) => {
         const { id } = ctx.resource;
         // The publication row and the published channel's versions go in one batch, and the versions are selected only while
         // The publication exists, so a publish landing between them cannot have its new version deleted by this unpublish
@@ -418,8 +430,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
         });
         return ctx.resource;
-      },
-    ),
+      }),
   };
   return {
     ...baseProcedures,

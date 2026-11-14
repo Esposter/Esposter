@@ -3,5 +3,7 @@ import { router } from "#server/trpc";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 
 export const appRouter = router({
-  readBuildVersion: standardRateLimitedProcedure.query<number>(() => getCommitCount()),
+  readBuildVersion: standardRateLimitedProcedure
+    .meta({ staticReason: "The commit count is fixed when the Worker is built, so no write changes it" })
+    .query<number>(() => getCommitCount()),
 });

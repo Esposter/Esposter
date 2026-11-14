@@ -8,6 +8,7 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
+import { getResourceListTopics } from "#server/trpc/procedure/resource/getResourceListTopics";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { captureBlueprintInputSchema } from "#shared/models/db/blueprint/CaptureBlueprintInput";
 import { deployBlueprintInputSchema } from "#shared/models/db/blueprint/DeployBlueprintInput";
@@ -25,6 +26,7 @@ export const blueprintRouter = router({
           "Capture a new blueprint of the given name from the owner's resources, by their ids. Answers the blueprint.",
         scope: McpScope.Resources,
       },
+      topics: ({ userId }) => getResourceListTopics(userId),
     })
     .mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
   deployBlueprint: getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id")
@@ -34,6 +36,7 @@ export const blueprintRouter = router({
           "Deploy a blueprint with its parameter values, which creates the resources it describes. Answers what was deployed.",
         scope: McpScope.Resources,
       },
+      topics: ({ userId }) => getResourceListTopics(userId),
     })
     .mutation<BlueprintDeployment[]>(async ({ ctx, input: { parameterValues } }) => {
       const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
