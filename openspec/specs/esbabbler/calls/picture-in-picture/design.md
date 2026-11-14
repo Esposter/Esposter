@@ -40,7 +40,7 @@ The PiP window opens with an empty document, so `useDocumentPictureInPicture`:
 
 `documentPictureInPicture.requestWindow()` **requires and consumes** a transient user activation — exactly like `getDisplayMedia()`. The two cannot share one click: opening PiP first spends the activation, so the picker never opens and the window pops out over a share that never starts. So `toggleScreenShare` awaits `setScreenShare(true)` **first** (the picker consumes the click; the user choosing a screen grants a **fresh** activation) and only then sets `isPoppedOut = true`. A cancelled/failed share throws before that line, so nothing pops. `PictureInPicture/Host` also checks `pictureInPictureWindow` after `await open()` and reverts the intent if no window materialised (unsupported, denied, activation lost).
 
-**The screen-share `<video>` must be `muted`**: `getDisplayMedia` may bundle a system-audio track, and a freshly opened PiP window has no activation, so browsers block autoplay of unmuted video — the stage would sit paused/blank (metadata loads, so the aspect ratio updates — the tell). Muted video always autoplays, and no audio is lost: screen-share audio plays through LiveKit's audio pipeline, not this element.
+**The screen-share `<video>` must be `muted`**: `getDisplayMedia` may bundle a system-audio track, and a freshly opened PiP window has no activation, so browsers block autoplay of unmuted video — the stage would sit paused/blank (metadata loads, so the aspect ratio updates — the tell). Muted video always autoplays, and no audio is lost: screen-share audio plays through RealtimeKit's audio pipeline, not this element.
 
 ## Standalone-call interaction
 

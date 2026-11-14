@@ -7,8 +7,8 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 ## Key concepts
 
 - **Room** — the container for a conversation. Rooms and direct messages share one `rooms` table, distinguished by `RoomType` (`Room` | `DirectMessage`). Membership lives in `usersToRooms`.
-- **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in Postgres; high-volume, time-ordered data (messages, moderation log) lives in Azure Table Storage with `partitionKey = roomId` and a reverse-ticked timestamp `rowKey` so newest rows sort first. See [messaging](messaging/design.md).
-- **Real-time** — in-process Node `EventEmitter`s (`messageEventEmitter`, `roomEventEmitter`, …) drive tRPC subscriptions, and each call's events come from its `CallObject` over the call socket; Azure Web PubSub handles webhook delivery. Subscriptions are the source of truth for store mutations.
+- **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in D1; high-volume, time-ordered data (messages, reactions, message search) lives in each room's own object storage, so a message, its reactions and its search row are written in one transaction. See [messaging](messaging/design.md).
+- **Real-time** — each room, call and person has one Durable Object that holds its sockets and pushes typed events over them (`RoomEvent`, `CallEvent`, `UserEvent`); queries and mutations stay tRPC over HTTP, and RealtimeKit's webhooks reach the web Worker. The client's socket events are the source of truth for store mutations.
 - **RBAC** — permissions are a bitfield on room roles; every privileged procedure is gated through a permissions-aware procedure builder. See [RBAC](rbac/design.md).
 - **Call session** — a call is anchored to a `callSessionsInMessage` row (shareable id, its length set by `CALL_ID_LENGTH`), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [calls](calls/README.md).
 
@@ -49,7 +49,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [push-to-talk](push-to-talk/design.md)                               | Hold-to-talk keybind, mic gate, release delay                      |
 | [push notifications](push-notifications/design.md)                   | Web push delivery and recipient filtering                          |
 | [slash commands](slash-commands/design.md)                           | `/command` registry, picker, execution model                       |
-| [scheduled messages](scheduled-messages/design.md)                   | `/remind` + `/schedule` jobs and the Service Bus worker            |
+| [scheduled messages](scheduled-messages/design.md)                   | `/remind` + `/schedule` jobs and the room object alarm             |
 | [drafts & sent](drafts-and-sent/design.md)                           | Cross-room Drafts / Scheduled / Sent view                          |
 | [offline cache](offline-cache/design.md)                             | IndexedDB offline mirror of Pinia state                            |
 | [webhooks](webhooks/design.md)                                       | Inbound webhooks and their app-user bot identities                 |
@@ -66,13 +66,13 @@ Chronological, one line per feature group.
 - **Slash commands** — `/me` `/flip` `/shrug` `/tableflip` `/unflip` `/roll` `/topic` `/remind` `/schedule`.
 - **Friends & DMs** — friends system, blocked users, 1:1 + group DMs, group-DM participant management, DM calls.
 - **Mentions & notifications** — `@here`, `@everyone`, role mentions, mention highlighting, per-room notification preference, friend-request push notifications, mention badges (sidebar mention counts), thread follows with notify-on-reply and a Followed Threads drawer.
-- **Presence & profiles** — Online/Idle/DND/Offline status, custom status message, profile card, profile editing (biography + avatar SAS upload), room profile image.
+- **Presence & profiles** — Online/Idle/DND/Offline status, custom status message, profile card, profile editing (biography + avatar presigned upload), room profile image.
 - **Rooms** — categories with drag-reorder, read-only/announcement channels, slowmode, per-room display names, welcome screen, join/leave system messages, invite expiry & max uses.
 - **Moderation** — RBAC roles/permissions, force-mute, kick, ban/unban, timeout, warn, softban, word filter, automod word-filter actions (reject/warn/timeout), private moderator notes, audit log with action/actor/target filters.
-- **Calls** — persistent per-room drop-in audio, LiveKit migration, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message, Document PiP pop-out, per-user volume, push-to-talk.
-- **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (Service Bus worker + listing/cancel UI), Sent tab via Search index.
-- **Store hygiene** — subscription-vs-caller ownership audit: every remote-visible message-store transition is owned by its subscription handler, caller-side mutations kept only for optimistic-with-revert or actor-excluded emits, locked in with idempotence tests.
-- **File & media** — one shared SAS upload service, client-side image thumbnails rendered inline with the original in a lightbox, per-room attachment limits (max size + allowed MIME categories) in the Moderation settings, and a room's attachments browsable through the `has: file` search filter.
+- **Calls** — persistent per-room drop-in audio, video, screenshare, call lobby (knock & admit), deafen, raise-hand, call-health indicator, call-end duration system message, Document PiP pop-out, per-user volume, push-to-talk.
+- **Integrations & infra** — inbound webhooks, offline message cache, scheduled messages (alarm-driven delivery + listing/cancel UI), Sent tab via the sent-message index.
+- **Store hygiene** — socket-event-vs-caller ownership audit: every remote-visible message-store transition is owned by its socket event handler, caller-side mutations kept only for optimistic-with-revert or actor-excluded broadcasts, locked in with idempotence tests.
+- **File & media** — one shared presigned upload service, client-side image thumbnails rendered inline with the original in a lightbox, per-room attachment limits (max size + allowed MIME categories) in the Moderation settings, and a room's attachments browsable through the `has: file` search filter.
 - **Settings** — user settings and room settings both landed on Discord's own information architecture, so where a setting lives is a lookup rather than a decision.
 - **Custom emoji** — per-room uploads reused the emoji index rather than growing a second path, and are capped by count rather than metered, so the feature cost one table and no billing surface.
 - **Emoji** — both emoji libraries retired for one in-repo index, taking the Options API runtime, the CDN sprite sheet and the second dataset with them.

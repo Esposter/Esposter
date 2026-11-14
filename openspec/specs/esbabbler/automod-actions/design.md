@@ -4,7 +4,7 @@ The room word filter does more than block: each filter carries a configurable ac
 
 ## How it works
 
-`getMessageCreationRejection` (the shared gate in `@esposter/db`) runs on every message-producing path. It is free of side effects: on a match by a member who cannot manage messages it hands back the matched filter rather than applying it, and the caller that rejects the message is the one that spends the consequence — `assertCanCreateMessage` in the app, its namesake in the Function worker. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id; the app's wrapper additionally emits the same `onAdminAction` event a manual warn or timeout would, so the targeted client reacts identically. Timeout additionally **extends** `timeoutUntil` on the member: the write is `GREATEST(existing, new)`, so an automod timeout can never shorten a longer one a moderator already applied, and — because Postgres `GREATEST` ignores nulls — a null or expired existing value simply becomes the new date.
+`getMessageCreationRejection` (the shared gate in `@esposter/db`) runs on every message-producing path. It is free of side effects: on a match by a member who cannot manage messages it hands back the matched filter rather than applying it, and the caller that rejects the message is the one that spends the consequence — `assertCanCreateMessage` in the app, its namesake in the functions Worker. Warn and Timeout call `executeAutomodAction`, which records a moderation-log row attributed to a reserved **AutoMod** actor id; the app's wrapper additionally pushes the same admin action event a manual warn or timeout would, so the targeted client reacts identically. Timeout additionally **extends** `timeoutUntil` on the member: the write keeps the later of the existing and the new date, so an automod timeout can never shorten a longer one a moderator already applied, and a null existing value counts as no timeout, so it simply becomes the new date.
 
 ```mermaid
 flowchart TD
@@ -13,8 +13,8 @@ flowchart TD
   WF -->|match| A{"filter.action"}
   A -->|Reject| ERR["reject the message"]
   A -->|Warn| W["executeAutomodAction — log Warn"]
-  A -->|Timeout| T["executeAutomodAction — extend timeoutUntil via `max`, plus log TimeoutUser"]
-  W --> EM["emit onAdminAction"]
+  A -->|Timeout| T["executeAutomodAction — extend timeoutUntil to the later date, plus log TimeoutUser"]
+  W --> EM["push the admin action to the room's sockets"]
   T --> EM
   W --> ERR
   T --> ERR
@@ -25,7 +25,7 @@ The moderation-log write is best-effort — a logging failure never turns the bl
 
 ## Data model
 
-`roomFiltersInMessage` carries `action` (Postgres enum `word_filter_action`: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
+`roomFiltersInMessage` carries `action` (a text enum: `Reject` default, `Warn`, `Timeout`) and `timeoutDurationMs` (nullable integer). A database CHECK enforces that a `Timeout` action always carries a positive duration, and the router clears the duration whenever the action is not `Timeout` so a stale value can never re-arm a timeout.
 
 ## Procedures
 
@@ -38,7 +38,7 @@ Automod adds no procedure of its own — it is a caller of the moderation intern
 | `packages/db-schema/src/schema/message/roomFiltersInMessage.ts`                 | `action` + `timeoutDurationMs` + enum                         |
 | `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`    | the shared gate — returns the matched filter, applies nothing |
 | `packages/db/src/services/message/moderation/executeAutomodAction.ts`           | timeout + moderation-log core                                 |
-| `apps/web/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the `onAdminAction` emit                   |
+| `apps/web/server/services/message/moderation/executeAutomodAction.ts`           | app wrapper — adds the admin action push                      |
 | `packages/db/src/services/message/moderation/writeModerationLogEntry.ts`        | shared audit-log writer                                       |
 | `packages/db-schema/src/services/message/constants.ts`                          | reserved AutoMod actor id (`AUTOMOD_USER_ID`)                 |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/WordFilter/Index.vue` | action + duration settings                                    |

@@ -4,7 +4,7 @@ A screen share is a RealtimeKit screen-share track published from the local part
 
 ## How it works
 
-- **Start**: the Share Screen button calls `setScreenShare(true)`, which enables the meeting's screen share under `SCREEN_SHARE_CONSTRAINTS` (1920×1080 at 15 frames a second at most, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate `ScreenShareAudio` track if the user checked "Share audio").
+- **Start**: the Share Screen button calls `setScreenShare(true)`, which enables the meeting's screen share under `SCREEN_SHARE_CONSTRAINTS` (1920×1080 at 15 frames a second at most, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate screen-share audio track if the user checked "Share audio").
 - **Stop**: `setScreenShare(false)` unpublishes; the layout reverts to the video grid.
 - Remote clients receive the stream through each participant's `screenShareUpdate` event, which the store hands into `call/media.ts`'s `remoteScreenShareStreams`.
 - Starting a share **auto-pops the call into picture-in-picture** so the sharer keeps watching the call while presenting; the activation-ordering constraint behind this lives in [picture-in-picture](../picture-in-picture/design.md).
@@ -17,14 +17,14 @@ flowchart TD
   BUTTON["Share Screen"] --> PICKER["getDisplayMedia picker"]
   PICKER -->|"cancelled"| NOTHING["nothing published"]
   PICKER -->|"window, tab or monitor"| PUBLISH["setScreenShare(true)"]
-  PUBLISH --> TRACK["ScreenShare track, plus ScreenShareAudio when opted in"]
+  PUBLISH --> TRACK["screen-share track, plus its audio track when opted in"]
   TRACK --> PIP["auto-pop to picture-in-picture"]
   TRACK --> LOCAL["local layout switches to presenter"]
   TRACK --> REMOTE["screenShareUpdate on every other client"]
   REMOTE --> REMOTELAYOUT["remoteScreenShareStreams, same presenter layout"]
   TRACK --> STOP{"how it ends"}
   STOP -->|"sharer stops"| UNPUBLISH["setScreenShareEnabled false"]
-  STOP -->|"moderator acts"| ADMIN["StopScreenShare revokes the publish source"]
+  STOP -->|"moderator acts"| ADMIN["StopScreenShare kicks and re-adds the connection without screen share"]
   ADMIN --> UNPUBLISH
   UNPUBLISH --> REVERT["back to the grid"]
 ```
@@ -49,7 +49,7 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 ## Moderation
 
-`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side via the LiveKit Admin API (`updateLiveKitTrackSources`, which force-mute shares): revoke the target's screen-share publish sources and mute active screen tracks; the target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [moderation](../../moderation/design.md).
+`AdminActionType.StopScreenShare` (gate: `MuteMembers` — conceptually the same as force-mute) enforces server-side through the call's object: the target's connection is kicked and added back under a preset without screen share, so its live share comes off the air, and only the target is handed the new token to rejoin with. The target client also runs `setScreenShare(false)` + snackbar through the admin action hook. See [moderation](../../moderation/design.md).
 
 ## Key files
 
