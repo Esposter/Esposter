@@ -201,8 +201,8 @@ describe(UserObject, () => {
     await object.reconcileTodoReminders({
       cancelledItemIds: [],
       reminders: [
-        { dueAt, itemId: dueItemId },
-        { dueAt: laterDueAt, itemId: laterItemId },
+        { dueAt, itemId: dueItemId, resourceId },
+        { dueAt: laterDueAt, itemId: laterItemId, resourceId },
       ],
       resourceId,
     });

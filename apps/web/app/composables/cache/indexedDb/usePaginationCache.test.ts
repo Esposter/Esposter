@@ -114,7 +114,7 @@ describe.each<PaginationCacheVariant>([
   });
   const partitionKey = v7();
   const secondPartitionKey = v7();
-  const messageId = v7();
+  const messageId = 1;
   const message = "message";
   const secondMessage = "secondMessage";
   const createMessageRow = (roomId: string = partitionKey, messageText: string = message): MessageValue => ({
