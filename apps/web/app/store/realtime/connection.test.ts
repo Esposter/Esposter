@@ -1,8 +1,10 @@
 // @vitest-environment nuxt
+import type { RoomMessage } from "@esposter/db-schema";
+
 import { createId } from "#shared/util/math/random/createId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "@/store/realtime/connection";
-import { CALL_ID_LENGTH } from "@esposter/db-schema";
+import { CALL_ID_LENGTH, MessageType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
@@ -38,8 +40,28 @@ describe(useConnectionStore, () => {
     );
     const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
 
-    onFrame?.(JSON.stringify({ data: { id: 1 }, type: "deleteMessage" }));
+    const createdAt = new Date(0);
+    const message: RoomMessage = {
+      appUserId: null,
+      appUserImage: "",
+      createdAt,
+      deletedAt: createdAt,
+      files: [],
+      id: 1,
+      isEdited: false,
+      isForward: false,
+      isPinned: false,
+      linkPreviewResponse: null,
+      mentions: [],
+      message: "",
+      replyToId: null,
+      senderName: null,
+      type: MessageType.Message,
+      updatedAt: createdAt,
+      userId: null,
+    };
+    onFrame?.(JSON.stringify({ data: message, type: "deleteMessage" }));
 
-    expect(handler).toHaveBeenCalledExactlyOnceWith({ id: 1 }, roomId);
+    expect(handler).toHaveBeenCalledExactlyOnceWith(message, roomId);
   });
 });
