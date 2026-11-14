@@ -5,12 +5,12 @@ import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/streams/constants";
 import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { AzureEntityType, getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
-import { MockRestError } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 type WriteEntity = (entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>;
 
-const getTableClient = (getEntityImplementation: () => Promise<Record<string, unknown>>) =>
+// A row the stream table does not hold reads as null, and a read that fails rejects
+const getTableClient = (getEntityImplementation: () => Promise<Record<string, unknown> | null>) =>
   ({ getEntity: getEntityImplementation }) as unknown as StreamTableClient<StandardMessageEntity>;
 
 describe(updateEntityConditionally, () => {
@@ -92,8 +92,8 @@ describe(updateEntityConditionally, () => {
 
     await expect(
       updateEntityConditionally(
-        // The service's own 404, which is the only read failure that means the entity is actually gone
-        getTableClient(() => Promise.reject(new MockRestError("", 404))),
+        // The row the stream table holds no longer, which is the only read outcome that means the entity is gone
+        getTableClient(() => Promise.resolve(null)),
         StandardMessageEntity,
         {
           entityType: AzureEntityType.Message,
@@ -114,7 +114,7 @@ describe(updateEntityConditionally, () => {
     expect.hasAssertions();
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
-    const readError = new MockRestError("", 503);
+    const readError = new Error(" ");
     const writeEntity = vi.fn<WriteEntity>(() => Promise.reject(new Error(" ")));
 
     await expect(

@@ -22,6 +22,7 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import {
   ASSET_DECISION_CLOCK_MARGIN_MS,
+  ASSET_GRACE_MS,
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
   MAX_RESOURCE_CONTENT_SIZE,
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
@@ -70,6 +71,18 @@ describe(createResourceProcedures, () => {
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
+  // Routes the bucket's `head` through `head` and every other call to the store, for the one call a race has to land between.
+  // A spy on the bucket's own method does not reach the call, so the bucket the procedure reads is replaced for the test
+  const interceptHead = (head: (blobName: string) => Promise<R2Object | null>) => {
+    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
+      get: (target, property: keyof R2Bucket) => {
+        if (property === "head") return head;
+        const value: unknown = Reflect.get(target, property);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+  };
+
   const readResourceViews = (resourceId: string) =>
     mockContext.db.select().from(resourceViewsInResource).where(eq(resourceViewsInResource.resourceId, resourceId));
 
@@ -99,6 +112,7 @@ describe(createResourceProcedures, () => {
     // Cascade removes any resourcePublications, activity and view rows too
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     vi.restoreAllMocks();
   });
 
@@ -361,7 +375,7 @@ describe(createResourceProcedures, () => {
     const replacement = gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] })));
     // Another upload lands on the staged name between its measurement and its download
     const measure = bucket.head.bind(bucket);
-    vi.spyOn(bucket, "head").mockImplementationOnce(async (blobName) => {
+    interceptHead(async (blobName) => {
       const measured = await measure(blobName);
       await bucket.put(blobName, replacement);
       return measured;
@@ -384,10 +398,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
-    vi.spyOn(bucket, "head").mockResolvedValueOnce({
-      etag: '"measured"',
-      size: MAX_RESOURCE_CONTENT_SIZE + 1,
-    } as R2Object);
+    interceptHead(async () => ({ etag: '"measured"', size: MAX_RESOURCE_CONTENT_SIZE + 1 }) as R2Object);
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -740,6 +751,11 @@ describe(createResourceProcedures, () => {
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
     await bucket.put(blobName, Buffer.alloc(1));
+    // The store stamps the upload with its own clock, not the pinned one, so the clock moves to the end of the grace
+    // window that stamp opens, which is when the release may delete the blob
+    const upload = await bucket.head(blobName);
+    assert.exists(upload);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(upload.uploaded.getTime() + ASSET_GRACE_MS));
 
     await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [];

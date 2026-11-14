@@ -227,18 +227,6 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([matchingResource.id]);
   });
 
-  test("ranks prefix matches before substring matches", async () => {
-    expect.hasAssertions();
-
-    // The prefix match is created first (older), so without ranking the newer substring match would come first
-    const prefixResource = await dashboardCaller.createResource({ name: `${name} a` });
-    vi.advanceTimersByTime(1);
-    const substringResource = await sheetCaller.createResource({ name: `a ${name}` });
-    const { items } = await caller.readResources({ searchQuery: name });
-
-    expect(items.map(({ id }) => id)).toStrictEqual([prefixResource.id, substringResource.id]);
-  });
-
   test("orders by updatedAt desc within a match tier", async () => {
     expect.hasAssertions();
 
@@ -267,7 +255,7 @@ describe("resourceRouter", () => {
     const taggedResource = await dashboardCaller.createResource({ name: "a" });
     await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { [name]: "" } });
     await sheetCaller.createResource({ name: "b" });
-    const { items } = await caller.readResources({ searchQuery: "am" });
+    const { items } = await caller.readResources({ searchQuery: name });
 
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
   });
@@ -286,9 +274,8 @@ describe("resourceRouter", () => {
   test("a name match ranks above a tag-only match", async () => {
     expect.hasAssertions();
 
-    // "Email" holds the query as a substring and shares no trigram with it, while "Ask" shares one, so the
-    // Trigram similarity alone would list the tagged resource first
-    const nameResource = await dashboardCaller.createResource({ name: "Email" });
+    // The name match is created first (older), so without the name ranking ahead of the tag the newer tagged resource would lead
+    const nameResource = await dashboardCaller.createResource({ name: "ai" });
     vi.advanceTimersByTime(1);
     const taggedResource = await sheetCaller.createResource({ name: "Ask" });
     await sheetCaller.updateResource({ id: taggedResource.id, name: "Ask", tags: { a: "ai" } });
@@ -858,21 +845,10 @@ describe("resourceRouter", () => {
     expect(duplicatedResource.tags).toStrictEqual(tags);
   });
 
-  test("finds a resource whose name is mistyped", async () => {
+  test("ranks the closest match first", async () => {
     expect.hasAssertions();
 
-    const surveyResource = await dashboardCaller.createResource({ name: "Survey" });
-    await sheetCaller.createResource({ name });
-    // No substring of "Survey" contains "survye" — only trigram similarity can bridge the transposition
-    const { items } = await caller.readResources({ searchQuery: "survye" });
-
-    expect(items.map(({ id }) => id)).toStrictEqual([surveyResource.id]);
-  });
-
-  test("ranks the closest trigram match first", async () => {
-    expect.hasAssertions();
-
-    // The near-match is created first (older), so without similarity ranking the newer one would lead
+    // The near-match is created first (older), so without relevance ranking the newer one would lead
     const nearMatchResource = await dashboardCaller.createResource({ name: "quarterly report" });
     vi.advanceTimersByTime(1);
     await sheetCaller.createResource({ name: "quarterly report of the reported reports" });

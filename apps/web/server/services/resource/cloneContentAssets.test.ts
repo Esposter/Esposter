@@ -87,6 +87,8 @@ describe(cloneContentAssets, () => {
 
   afterEach(async () => {
     await deleteDirectory(bucket);
+    // Each test seeds the same resource and owner, so the rows the last one wrote are cleared before the next
+    await (await createMockDb()).reset();
     vi.restoreAllMocks();
   });
 
@@ -201,7 +203,7 @@ describe(cloneContentAssets, () => {
 
   // The rows the readability answer reads, in a real database, so the counts below are the queries production runs
   const createSeededDatabase = async ({ isPublished, ownerId }: { isPublished: boolean; ownerId: string }) => {
-    const db = await createMockDb();
+    const { db } = await createMockDb();
     const createdAt = new Date(0);
     await db
       .insert(usersInAuth)

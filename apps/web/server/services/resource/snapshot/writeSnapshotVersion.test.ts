@@ -86,15 +86,18 @@ describe(writeSnapshotVersion, () => {
     await expect(listBlobNames(bucket, "")).resolves.toStrictEqual([]);
   });
 
-  // A touch restarts the grace window of an asset nothing references. The digests are what a document of pasted hashes
-  // Holds: tokens no file backs, each costing one request the first time a row names it and none after
+  // A touch restarts the grace window of an asset nothing references, which rewrites the stored object with the time it
+  // was touched. The digests are what a document of pasted hashes holds: each stored one is touched the first time a row
+  // names it, and none a row already names is touched again, so the clock moved between the writes shows which happened
   test("touches an asset no row names once, and none a row already names", async () => {
     expect.hasAssertions();
 
     const digests = Array.from({ length: 5 }, (_value, index) => `${index}`.repeat(64));
+    const blobNames = digests.map((digest) => getResourceFileBlobName(resource.id, digest));
     const serializedContent = JSON.stringify({ text: digests.join(" ") });
-    // Each touch reads its object first, so the reads are the requests a touch costs
-    const get = vi.spyOn(bucket, "get");
+    await Promise.all(blobNames.map(async (blobName) => bucket.put(blobName, "value")));
+    const readTouchedAts = async () =>
+      Promise.all(blobNames.map(async (blobName) => (await bucket.head(blobName))?.customMetadata?.touchedAt));
 
     await writeSnapshotVersion(
       mockContext.db,
@@ -103,9 +106,9 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(get).toHaveBeenCalledTimes(digests.length);
+    expect(await readTouchedAts()).toStrictEqual(digests.map(() => new Date(0).toISOString()));
 
-    get.mockClear();
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 1 }));
     await writeSnapshotVersion(
       mockContext.db,
       resource,
@@ -113,7 +116,7 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(get).not.toHaveBeenCalled();
+    expect(await readTouchedAts()).toStrictEqual(digests.map(() => new Date(0).toISOString()));
   });
 
   // The refusal needs to know whether the file is stored, which no row can say. A row named it when the revision was

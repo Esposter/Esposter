@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { User } from "better-auth";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { clearStreamTables, createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
@@ -21,7 +21,6 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoomRouter", () => {
@@ -63,7 +62,7 @@ describe("userToRoomRouter", () => {
   });
 
   afterEach(async () => {
-    MockTableDatabase.clear();
+    await clearStreamTables();
     await mockContext.db.delete(usersToRoomsInMessage);
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(roomCategoriesInMessage);

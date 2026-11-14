@@ -1,3 +1,5 @@
+import type { MockDatabase } from "@esposter/db-mock";
+
 import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
@@ -5,7 +7,7 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { createMockDb } from "@esposter/db-mock";
 import { accountsInAuth, sessionsInAuth, usersInAuth } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The adapter derives the relation key each join reads from the model name: the model itself for a join to one row
 // (`usersInAuth`), and the model plus `s` for a join to many (`accountsInAuths`). Each relation better-auth joins on is
@@ -15,9 +17,10 @@ describe("drizzleAdapterConfiguration", () => {
   const email = "email";
   const providerId = "providerId";
   const token = crypto.randomUUID();
+  let mockDatabase: MockDatabase;
   // One user holding one account and one session, behind the options the app joins with
   const createInternalAdapter = async () => {
-    const db = await createMockDb();
+    const { db } = mockDatabase;
     const auth = betterAuth({
       ...authModelOptions,
       advanced: { database: { joins: true } },
@@ -38,12 +41,22 @@ describe("drizzleAdapterConfiguration", () => {
     return internalAdapter;
   };
 
+  // Made before the clock is pinned below, since Miniflare checks its compatibility date against the clock
+  beforeAll(async () => {
+    mockDatabase = await createMockDb();
+  });
+
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.useRealTimers();
+    await mockDatabase.reset();
+  });
+
+  afterAll(async () => {
+    await mockDatabase.dispose();
   });
 
   // The adapter registers better-auth's schema check, and the handler runs it inside every transaction — so a
@@ -52,10 +65,9 @@ describe("drizzleAdapterConfiguration", () => {
   test("passes better-auth's schema check", async () => {
     expect.hasAssertions();
 
-    const db = await createMockDb();
     const auth = betterAuth({
       ...authModelOptions,
-      database: drizzleAdapter(db, drizzleAdapterConfiguration),
+      database: drizzleAdapter(mockDatabase.db, drizzleAdapterConfiguration),
       plugins: [apiKeyPlugin],
     });
     const { checkSchema } = await auth.$context;
