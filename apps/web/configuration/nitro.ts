@@ -5,7 +5,10 @@ import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 
 import { AzureFunction } from "../../../packages/db-schema/src/models/azure/function/AzureFunction.ts";
+import { CloudflareAssetType } from "../../../packages/db-schema/src/models/cloudflare/CloudflareAssetType.ts";
+import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { StorageBucket } from "../../../packages/db-schema/src/models/storage/StorageBucket.ts";
+import { getCloudflareResourceName } from "../../../packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts";
 import { toKebabCase } from "../../../packages/shared/src/util/text/toKebabCase.ts";
 import {
   PDF_CMAP_BASE_URL,
@@ -37,38 +40,44 @@ const NON_BUCKETS: StorageBucket[] = [StorageBucket.DeadLetter];
 const QUEUE_JOBS = Object.values(AzureFunction).filter((job) => !NON_QUEUE_JOBS.includes(job));
 const BUCKETS = Object.values(StorageBucket).filter((bucket) => !NON_BUCKETS.includes(bucket));
 
-// One environment's bindings. Wrangler does not inherit a binding into an `env` block, so each carries its own, and a
-// Dev resource is the prod one under a `dev-` prefix, the names the Pulumi declarations give them
-const getBindings = (isDev: boolean) => {
-  const prefix = isDev ? "dev-" : "";
-  const databaseIds = isDev
-    ? {
-        core: process.env.CLOUDFLARE_D1_DEV_CORE_DATABASE_ID,
-        streams: process.env.CLOUDFLARE_D1_DEV_STREAMS_DATABASE_ID,
-      }
-    : { core: process.env.CLOUDFLARE_D1_CORE_DATABASE_ID, streams: process.env.CLOUDFLARE_D1_STREAMS_DATABASE_ID };
+// One environment's wrangler block. Wrangler does not inherit a binding, or a var, into an `env` block, so each carries
+// Its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A binding's
+// Name is the same in both environments, so no code branches on the environment to reach a resource
+const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
+  const databaseIds =
+    environment === CloudflareEnvironment.Development
+      ? {
+          core: process.env.CLOUDFLARE_D1_DEV_CORE_DATABASE_ID,
+          streams: process.env.CLOUDFLARE_D1_DEV_STREAMS_DATABASE_ID,
+        }
+      : { core: process.env.CLOUDFLARE_D1_CORE_DATABASE_ID, streams: process.env.CLOUDFLARE_D1_STREAMS_DATABASE_ID };
+  const coreDatabaseName = getCloudflareResourceName(environment, CloudflareAssetType.D1Database, "core");
+  const streamsDatabaseName = getCloudflareResourceName(environment, CloudflareAssetType.D1Database, "streams");
+  const functionsWorkerName = getCloudflareResourceName(environment, CloudflareAssetType.Worker, "functions");
   return {
+    name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, "web"),
     d1_databases: [
-      { binding: "CORE", database_id: databaseIds.core, database_name: `${prefix}core` },
-      { binding: "STREAMS", database_id: databaseIds.streams, database_name: `${prefix}streams` },
+      { binding: "CORE", database_id: databaseIds.core, database_name: coreDatabaseName },
+      { binding: "STREAMS", database_id: databaseIds.streams, database_name: streamsDatabaseName },
     ],
     durable_objects: {
       bindings: [
         { class_name: "$DurableObject", name: "$DurableObject" },
-        {
-          class_name: "Scheduler",
-          name: "SCHEDULER",
-          script_name: isDev ? "esposter-functions-dev" : "esposter-functions",
-        },
+        { class_name: "Scheduler", name: "SCHEDULER", script_name: functionsWorkerName },
       ],
     },
     queues: {
-      producers: QUEUE_JOBS.map((job) => ({
-        binding: `${toBindingName(toKebabCase(job))}_QUEUE`,
-        queue: `${prefix}${toKebabCase(job)}`,
-      })),
+      producers: QUEUE_JOBS.map((job) => {
+        const purpose = toKebabCase(job);
+        const queueName = getCloudflareResourceName(environment, CloudflareAssetType.Queue, purpose);
+        return { binding: `${toBindingName(purpose)}_QUEUE`, queue: queueName };
+      }),
     },
-    r2_buckets: BUCKETS.map((bucket) => ({ binding: toBindingName(bucket), bucket_name: `${prefix}${bucket}` })),
+    r2_buckets: BUCKETS.map((bucket) => {
+      const bucketName = getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket);
+      return { binding: toBindingName(bucket), bucket_name: bucketName };
+    }),
+    vars: { CLOUDFLARE_ENVIRONMENT: environment },
   };
 };
 
@@ -80,11 +89,13 @@ export const nitro: NuxtConfig["nitro"] = {
     deployConfig: true,
     nodeCompat: true,
     wrangler: {
-      name: "esposter",
       compatibility_date: "2026-11-01",
-      env: { dev: { name: "esposter-dev", ...getBindings(true) }, prod: { name: "esposter", ...getBindings(false) } },
+      env: {
+        dev: getEnvironmentWrangler(CloudflareEnvironment.Development),
+        prod: getEnvironmentWrangler(CloudflareEnvironment.Production),
+      },
       migrations: [{ new_sqlite_classes: ["$DurableObject"], tag: "v1" }],
-      ...getBindings(false),
+      ...getEnvironmentWrangler(CloudflareEnvironment.Production),
     },
   },
   hooks: {
