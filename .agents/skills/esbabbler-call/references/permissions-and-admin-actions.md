@@ -24,3 +24,9 @@ AdminActionHookMap[AdminActionType.ForceMute].register(async (roomId) => {
 ```
 
 `KickFromCall` checks `callRoomId` like the other leave hooks — the kick is from that room's call, never from a call the user is in elsewhere.
+
+## Narrowing a connection's publishing
+
+`ForceMute` and `StopScreenShare` narrow what a connection may publish, and a preset switch alone leaves a live track on the air. So `updateRealtimeKitParticipantPreset` (`server/services/realtimeKit/`) kicks the connection, adds it back under the narrower preset, and emits a `joinCall` event of `type: "rejoin"` carrying the new token. `onJoinCall` yields it to that user alone, and `useRealtimeStore.rejoin` joins the meeting again with it. `ForceUnmute` widens a connection and only switches its preset. A `KickFromCall` or a membership action is a plain departure with no token.
+
+The client's `roomLeft` with state `kicked` is the server's kick and does not end the call, so `registerSelf` does not run the disconnect handler for it. Only a moderator's admin action or the rejoin itself changes the call.
