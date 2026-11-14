@@ -29,6 +29,7 @@ export const deleteStorageBlobs = async (
   for (const blobNamesChunk of chunk(blobNames, MAX_CONCURRENT_BLOB_DELETIONS)) {
     const errors: Error[] = [];
     // A wave that fails removed nothing it can vouch for, so only a wave that landed is released
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     const deletedBlobNames = await getResultAsync(() => deleteBlobs(bucket, blobNamesChunk)).match(
       () => blobNamesChunk,
       (error) => {
