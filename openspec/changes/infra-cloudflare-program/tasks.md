@@ -31,7 +31,7 @@
 
 ## 4. Tests
 
-- [ ] 4.1 Move every suite still importing `azure-mock` onto `@esposter/db-mock`, fix the `createMockDb` "must be of scheme file" load error, the `createMockDb` call sites that expect a raw database, `trpc-msw`'s build, the hoisted `useScheduler` mock and the epoch-zero clock in `drizzleAdapterConfiguration.test.ts`. Verified by `apps/web`, `apps/functions` and `packages/db` suites loading.
+- [ ] 4.1 Move every suite still importing `azure-mock` onto `@esposter/db-mock`, fix the `createMockDb` "must be of scheme file" load error, the `createMockDb` call sites that expect a raw database, `trpc-msw`'s build, the hoisted `useScheduler` mock, the epoch-zero clock in `drizzleAdapterConfiguration.test.ts`, the account-id casing in `createPresignedPutUrl`'s test, and the count assertions that spy on a Miniflare bucket's `get` (`writeSnapshotVersion`, the reconcile tests), which assert on the bucket's contents instead. Verified by `apps/web`, `apps/functions` and `packages/db` suites loading.
 
 ## 5. Calls
 
