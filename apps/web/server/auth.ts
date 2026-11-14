@@ -1,9 +1,11 @@
 import { db } from "#server/db";
 import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
+import { PRODUCTION_BASE_URL } from "#server/services/auth/constants";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { betterAuth } from "better-auth";
+import { oAuthProxy } from "better-auth/plugins/oauth-proxy";
 import { v7 } from "uuid";
 
 export const auth = betterAuth({
@@ -44,7 +46,9 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
-  plugins: [apiKeyPlugin],
+  // The proxy sends a sign-in outside production through production's callback, which the shared secret lets it hand
+  // Back encrypted; production itself skips it
+  plugins: [apiKeyPlugin, oAuthProxy({ productionURL: PRODUCTION_BASE_URL })],
   // Off: better-auth's limiter keeps its counts in each isolate's memory. The auth route budgets these endpoints through a binding
   // Instead (`server/api/auth/[...].ts`)
   rateLimit: { enabled: false },
