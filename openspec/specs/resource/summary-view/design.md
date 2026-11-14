@@ -1,6 +1,6 @@
 # Summary View
 
-The `/resource-explorer/all` workbench ([list filters & views](../list-filters-and-views/design.md)) has two lenses on the same filtered query. **List** is the table. **Summary** replaces it with one card per resource type — icon, count, and title — and clicking a card drops you back into the list, filtered to that type. It is the Azure portal's List/Summary toggle, built as frontend plus a single procedure: no schema, no route, no new Azure services.
+The `/resource-explorer/all` workbench ([list filters & views](../list-filters-and-views/design.md)) has two lenses on the same filtered query. **List** is the table. **Summary** replaces it with one card per resource type — icon, count, and title — and clicking a card drops you back into the list, filtered to that type. It is the Azure portal's List/Summary toggle, built as frontend plus a single procedure: no schema, no route, no new services.
 
 The point is the question the table answers badly: _what do I actually have?_ A hundred rows sorted by date do not say "eleven surveys and two dashboards"; four cards do, and each card is the affordance for narrowing to what it counts.
 

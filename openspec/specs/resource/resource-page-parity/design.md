@@ -8,7 +8,7 @@ The commands on a resource's page, `/resource-explorer/[id]/[[blade]]`: one acti
 - **The rest in the page's overflow menu**, on every width, and on a right-click, long press or the menu key over the title, from one `Item` list: Refresh, Rename, Duplicate; Version history; Unpublish for a `PublishableResourceType`; an Import and an Export per format for a `PortableResourceType`, named by both, such as "Export CSV"; then Delete, alone and in the danger colour. A command already under way is disabled in the menu rather than hidden.
 - **Why not the portal's bar.** A labelled button per command put a dozen buttons of equal weight on the title row, which the design pass refuses: one thing first, as [Primer's page header](https://primer.style/product/components/page-header/guidelines/) and GitHub's repository header keep one or two actions visible and the rest behind an overflow button.
 - **Refresh**: re-runs `useResourceStore`'s `readResource` (row + publication), disabled in the menu while it runs.
-- **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content blob; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](../notifications/design.md). Capability-independent (every type supports it).
+- **Duplicate**: `resource.duplicateResource` — copies the row as `{name} (copy)` + the content object; never the publication (a copy starts as Draft). Routes to the new resource's Overview and raises a "Go to resource" [notification](../notifications/design.md). Capability-independent (every type supports it).
 
 ## Delete asks, then offers Restore
 
@@ -32,9 +32,9 @@ sequenceDiagram
 
 ## Procedures
 
-| Procedure                    | Auth                | Input    | Purpose                                                                  |
-| ---------------------------- | ------------------- | -------- | ------------------------------------------------------------------------ |
-| `resource.duplicateResource` | `getOwnerProcedure` | `{ id }` | copy row (`{name} (copy)`, fresh id, no publication) + copy content blob |
+| Procedure                    | Auth                | Input    | Purpose                                                                    |
+| ---------------------------- | ------------------- | -------- | -------------------------------------------------------------------------- |
+| `resource.duplicateResource` | `getOwnerProcedure` | `{ id }` | copy row (`{name} (copy)`, fresh id, no publication) + copy content object |
 
 ## Key files
 

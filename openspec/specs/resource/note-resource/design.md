@@ -6,8 +6,8 @@ A Note is the platform's plain **document**: meeting notes, a spec, a README-sty
 
 ```mermaid
 flowchart LR
-  ED["Editor blade<br/>Tiptap document editor"] -->|"onUpdate → saveResourceContent<br/>content = Tiptap JSON doc"| BLOB[("{id}/content")]
-  BLOB -->|publishResource| SNAP[("published version n")]
+  ED["Editor blade<br/>Tiptap document editor"] -->|"onUpdate → saveResourceContent<br/>content = Tiptap JSON doc"| OBJ[("R2 {id}/content")]
+  OBJ -->|publishResource| SNAP[("published version n")]
   VIEW["/view/Note/[id]<br/>ViewComponentMap[Note]"] -->|readPublishedResourceContent| HTML["generateHTML(doc) render<br/>sanitized at the boundary"]
 ```
 
@@ -21,27 +21,26 @@ flowchart LR
 
 ## Data model
 
-Note owns no tables. It is one `ResourceType` enum value (`Note`, added to the `resource_type` Postgres enum by migration `20260717000000_add_note_resource_type`) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content` in the shared `ResourceAssets` blob container and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
+Note owns no tables. It is one `ResourceType` enum value (`Note`, one value of the resource type enum) and one `ResourceDefinitionMap` entry (`icon`, `title`, `contentSchema`, `capabilities: { fileAssets: true, portable: true, publishable: true }`). Its working copy lives at `{id}/content` in the shared `resource-assets` bucket and its published versions in the [version store](../resource-version-store/design.md), exactly like every other resource — see [resources](../../architecture/resource/design.md).
 
 ## Key files
 
-| File                                                                   | Role                                                                  |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`               | `Note` enum value                                                     |
-| `apps/web/server/db/migrations/20260717000000_add_note_resource_type/` | pg enum `ADD VALUE 'Note'` migration                                  |
-| `apps/web/shared/models/resource/note/NoteResource.ts`                 | `{ doc }` content schema                                              |
-| `apps/web/shared/services/resource/constants.ts`                       | `EMPTY_NOTE_DOC`, the empty-document default                          |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`           | Note definition entry                                                 |
-| `apps/web/shared/services/resource/note/getNoteExtensions.ts`          | shared Tiptap extension set (editor + published render + validation)  |
-| `apps/web/app/components/Resource/Note/Editor.vue`                     | Tiptap editor blade                                                   |
-| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`              | writing-kit toolbar                                                   |
-| `apps/web/app/components/Resource/Note/TableMenuButton.vue`            | active-table row, column, header, and delete commands                 |
-| `apps/web/app/components/Resource/Note/View.vue`                       | published render, through `renderNoteHtml`                            |
-| `apps/web/shared/services/resource/note/renderNoteHtml.ts`             | the note's HTML render, with its one image allowance                  |
-| `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`        | keeps a task item's checkbox, disabled, and takes the image allowance |
-| `apps/web/app/assets/css/globals.css`                                  | task-list and table rules in the rich-text typography                 |
-| `apps/web/app/store/resource/note/index.ts`                            | blade-scoped load/save store                                          |
-| `apps/web/server/trpc/routers/note.ts`                                 | `createResourceProcedures(Note)` router                               |
+| File                                                            | Role                                                                  |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`        | `Note` enum value                                                     |
+| `apps/web/shared/models/resource/note/NoteResource.ts`          | `{ doc }` content schema                                              |
+| `apps/web/shared/services/resource/constants.ts`                | `EMPTY_NOTE_DOC`, the empty-document default                          |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note definition entry                                                 |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | shared Tiptap extension set (editor + published render + validation)  |
+| `apps/web/app/components/Resource/Note/Editor.vue`              | Tiptap editor blade                                                   |
+| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`       | writing-kit toolbar                                                   |
+| `apps/web/app/components/Resource/Note/TableMenuButton.vue`     | active-table row, column, header, and delete commands                 |
+| `apps/web/app/components/Resource/Note/View.vue`                | published render, through `renderNoteHtml`                            |
+| `apps/web/shared/services/resource/note/renderNoteHtml.ts`      | the note's HTML render, with its one image allowance                  |
+| `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts` | keeps a task item's checkbox, disabled, and takes the image allowance |
+| `apps/web/app/assets/css/globals.css`                           | task-list and table rules in the rich-text typography                 |
+| `apps/web/app/store/resource/note/index.ts`                     | blade-scoped load/save store                                          |
+| `apps/web/server/trpc/routers/note.ts`                          | `createResourceProcedures(Note)` router                               |
 
 ## Notes
 

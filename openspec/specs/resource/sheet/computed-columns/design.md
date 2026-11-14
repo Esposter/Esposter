@@ -113,7 +113,7 @@ Paths relative to `apps/web`.
 
 ## Datasets
 
-A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed columns like any other, so a Dashboard can bind and chart them. The compile lives in `shared/`, so the server runs the same `compileSheetColumns` the grid does: `dataSourceToDataset` types each computed column by `getEffectiveColumnType`, binds every row of the Sheet once, then reads and serves the first rows up to the dataset cap, `AZURE_MAX_PAGE_SIZE`. An aggregation therefore reads the whole Sheet, where the grid reads the rows its filters leave.
+A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed columns like any other, so a Dashboard can bind and chart them. The compile lives in `shared/`, so the server runs the same `compileSheetColumns` the grid does: `dataSourceToDataset` types each computed column by `getEffectiveColumnType`, binds every row of the Sheet once, then reads and serves the first rows up to the dataset cap, `MAX_READ_LIMIT`. An aggregation therefore reads the whole Sheet, where the grid reads the rows its filters leave.
 
 ## Notes
 

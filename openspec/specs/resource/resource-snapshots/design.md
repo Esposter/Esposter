@@ -18,17 +18,17 @@ A version is a `resourceVersions` row keyed by resource, channel and version num
 
 **A channel is an address space, not a workflow.** The two differ on five axes — counter, retention, visibility, whether an unpublish takes them, and whether taking one is an outward act with a public url, a view count, a notification and an activity entry. A `createSnapshot(id, channel)` driving all of that from a map would be a branch with indirection between it and its reader, which is the over-generalization the [capability admission rule](../../architecture/resource/design.md) forbids one level up. So the split is drawn where the operations are genuinely the same one:
 
-| Shared by both channels                                    | Owned by each caller                                     |
-| ---------------------------------------------------------- | -------------------------------------------------------- |
-| the version row, and the object it names                   | **taking** a snapshot                                    |
-| the counter in Postgres, and the history listing beside it | publish's transform and version claim                    |
-| **reconstitution** — read, re-apply live state, hand back  | the revision's age and count eviction                    |
-| restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting |
-| the ledger charge on write and release on evict            |                                                          |
+| Shared by both channels                                   | Owned by each caller                                     |
+| --------------------------------------------------------- | -------------------------------------------------------- |
+| the version row, and the object it names                  | **taking** a snapshot                                    |
+| the counter in D1, and the history listing beside it      | publish's transform and version claim                    |
+| **reconstitution** — read, re-apply live state, hand back | the revision's age and count eviction                    |
+| restore — reconstitute, then `saveResourceContent`        | publish's activity entry, notification and view counting |
+| the ledger charge on write and release on evict           |                                                          |
 
 Reconstitution is the row that matters, because sharing it prevents a defect rather than saving lines — see the boundary below.
 
-The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because a number is claimed before its write and a write that fails leaves the number with no row. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
+The counter lives in D1 and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because a number is claimed before its write and a write that fails leaves the number with no row. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
 
 ### Both channels hold their files by reference
 
@@ -55,7 +55,7 @@ flowchart LR
 
 ## The snapshot boundary
 
-Survey draws a line through its content blob that no other part of the system knows about: `document` is snapshot state, `settings` is live state, re-read on every public read so closing a survey takes effect without re-publishing every participant link already sent.
+Survey draws a line through its content object that no other part of the system knows about: `document` is snapshot state, `settings` is live state, re-read on every public read so closing a survey takes effect without re-publishing every participant link already sent.
 
 **That line has to be declared in both directions, or restore gets it wrong**: a restore that copies the snapshot's content wholesale into the working copy carries `settings` with it, silently reopening a closed survey or flipping the response mode between Anonymous and Identified — a setting the write boundary makes authorization decisions on ([survey response modes](../survey-response-modes/design.md)).
 
@@ -93,11 +93,11 @@ Two things sit outside the invariant: **retention** ends a revision at its age o
 | First save an interval after the last one | `revisions` | at most one per interval, so a working session leaves a handful of recovery points |
 | Every other autosave                      | —           | never                                                                              |
 
-**The interval is measured from the last revision, not from the last save.** `saveResourceContent` fires on every coalesced keystroke batch, and Sheet and Dashboard put real data in the content blob — so a per-save revision copies the whole artifact each time, charges the owner's quota while they type, and grows a listing that has no limit. Throttling is the whole of the cost control. But throttling on the _save_ clock inverts the feature: `updatedAt` moves with every autosave, so a resource being actively edited never looks idle, and the session that most deserves recovery points is the one that leaves none. `revisionTakenAt` is a clock only a revision moves, so a working session leaves one point per interval however continuously it is edited.
+**The interval is measured from the last revision, not from the last save.** `saveResourceContent` fires on every coalesced keystroke batch, and Sheet and Dashboard put real data in the content object — so a per-save revision copies the whole artifact each time, charges the owner's quota while they type, and grows a listing that has no limit. Throttling is the whole of the cost control. But throttling on the _save_ clock inverts the feature: `updatedAt` moves with every autosave, so a resource being actively edited never looks idle, and the session that most deserves recovery points is the one that leaves none. `revisionTakenAt` is a clock only a revision moves, so a working session leaves one point per interval however continuously it is edited.
 
 **The interval is claimed in the row, not checked before it.** A save reads its `Resource` before it writes, so two concurrent saves both hold a `revisionTakenAt` from before either took a revision and both pass a caller-side comparison — leaving two revisions inside one interval and two copies of the artifact charged to the owner. The automatic take's `UPDATE` therefore carries the interval in its own `WHERE`, and a claim that returns no row takes no revision: losing that race is not a failure, because the interval already has its point. The caller-side check stays as a filter, so the saves that obviously have nothing to take skip the content download. A deliberate take — before a restore, before an import — claims unconditionally, since there the revision is what makes the act undoable.
 
-A resource's first content write takes none — there is no prior state to keep, and the blob a revision would copy is the one that write is creating. The take is also the one trigger that swallows its own failure: a save must never fail because a revision could not be taken. A blueprint deploy takes none either — it creates resources rather than overwriting one, so there is no draft to hand back.
+A resource's first content write takes none — there is no prior state to keep, and the object a revision would copy is the one that write is creating. The take is also the one trigger that swallows its own failure: a save must never fail because a revision could not be taken. A blueprint deploy takes none either — it creates resources rather than overwriting one, so there is no draft to hand back.
 
 ## Retention
 
@@ -105,7 +105,7 @@ The published channel prunes nothing: publishes are deliberate and rare, and a r
 
 Revisions are kept for the channel's `maxAgeMs` (30 days), with at most `maxRetained` (100) standing at once, both declared in `SnapshotChannelDefinitionMap`. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
 
-Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the deletion event exactly the objects no surviving version needs ([resource version store](../resource-version-store/design.md)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](../storage-quotas/design.md)).
+Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the blob-deletion job exactly the objects no surviving version needs ([resource version store](../resource-version-store/design.md)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](../storage-quotas/design.md)).
 
 ```mermaid
 flowchart TD
@@ -152,11 +152,11 @@ A restore never re-points the publication — it produces a draft to review and 
 
 Because it replaces content underneath an already-open blade, the content stores re-read themselves through `ResourceContentHookMap.Reload` rather than the blade being keyed on a counter something bumps, and the editors that hold the live document themselves are then handed it through a second stage ([third-party document adapters](../../architecture/third-party-document-adapters/design.md)).
 
-## Why not Azure Blob versioning
+## Why not object versioning
 
-**A resource version is not a blob version.** It is `content.json` _plus the assets it references_, and Azure versions each blob on its own timeline with no cross-blob consistency point — so "restore this resource as of Tuesday" resolves to Tuesday's JSON pointing at asset blobs since replaced or deleted. Cloning the assets alongside the content is a thing the application does and the storage account cannot.
+**A resource version is not an object version.** It is `content.json` _plus the assets it references_, and a versioned object keeps its own timeline with no cross-object consistency point — so "restore this resource as of Tuesday" resolves to Tuesday's JSON pointing at asset objects since replaced or deleted. Cloning the assets alongside the content is a thing the application does and the storage layer cannot.
 
-Three lesser reasons, each independently sufficient: versioning is a **blob-service property**, so enabling it for `resource-assets` enables it for every container on the account; non-current versions are **billed but invisible to the ledger**, which charges the current blob and reconciles off `BlobCreated` ([storage quotas](../storage-quotas/design.md)); and a version is addressed by an opaque id nothing in the app stores, lists or hands to a restore.
+Two lesser reasons, each independently sufficient: a non-current object version would be **billed but invisible to the ledger**, which charges the current object and settles it from the object-create event ([storage quotas](../storage-quotas/design.md)); and a version is addressed by an opaque id nothing in the app stores, lists or hands to a restore.
 
 ## Procedures
 
