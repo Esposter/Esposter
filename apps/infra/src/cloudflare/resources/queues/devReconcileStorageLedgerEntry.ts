@@ -1,8 +1,0 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import * as cloudflare from "@pulumi/cloudflare";
-
-export const devReconcileStorageLedgerEntry: cloudflare.Queue = new cloudflare.Queue(
-  "queue-dev-reconcile-storage-ledger-entry",
-  { accountId: CloudflareAccountId, queueName: "dev-reconcile-storage-ledger-entry" },
-  { protect: true },
-);
