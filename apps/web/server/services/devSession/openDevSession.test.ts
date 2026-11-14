@@ -19,8 +19,8 @@ const seedDrivenUser = () => {
 };
 
 describe(openDevSession, () => {
-  // A database address on this machine, which the gate accepts
-  const LOCAL_DATABASE_URL = "postgres://localhost";
+  // An address on this machine, which the gate accepts
+  const LOCAL_BASE_URL = "http://localhost:3000";
 
   afterEach(async () => {
     await db.delete(usersInAuth);
@@ -29,7 +29,7 @@ describe(openDevSession, () => {
   test("a dev server mints a signed-in session", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("DATABASE_URL", LOCAL_DATABASE_URL);
+    vi.stubEnv("BASE_URL", LOCAL_BASE_URL);
     await seedDrivenUser();
 
     const cookie = await openDevSession(await auth.$context);
@@ -41,25 +41,10 @@ describe(openDevSession, () => {
     expect(readSessionPayload?.user.id).toBe(DRIVEN_USER_ID);
   });
 
-  // The mock environment's database address is the test origin, which is not this machine, so the gate refuses it as it stands
-  test("a non-local database is refused", async () => {
+  // The mock environment's address is the test origin, which is not this machine, so the gate refuses it as it stands
+  test("a server that is not on this machine is refused", async () => {
     expect.hasAssertions();
 
-    await seedDrivenUser();
-
-    const cookie = await openDevSession(await auth.$context);
-
-    expect(cookie).toBeUndefined();
-    const sessionRows = await db.select().from(sessionsInAuth);
-    expect(sessionRows).toStrictEqual([]);
-  });
-
-  // The driver connects to the host a query parameter names ahead of the loopback authority, so the gate
-  // Reads the address as remote
-  test("a loopback database address that names a remote host is refused", async () => {
-    expect.hasAssertions();
-
-    vi.stubEnv("DATABASE_URL", `${LOCAL_DATABASE_URL}?host=remote.example`);
     await seedDrivenUser();
 
     const cookie = await openDevSession(await auth.$context);
@@ -72,7 +57,7 @@ describe(openDevSession, () => {
   test("a production server refuses the session route", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("DATABASE_URL", LOCAL_DATABASE_URL);
+    vi.stubEnv("BASE_URL", LOCAL_BASE_URL);
     vi.stubEnv("APP_ENV", Environment.Production);
     await seedDrivenUser();
 
@@ -86,7 +71,7 @@ describe(openDevSession, () => {
   test("a session route with no seeded user is refused", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("DATABASE_URL", LOCAL_DATABASE_URL);
+    vi.stubEnv("BASE_URL", LOCAL_BASE_URL);
 
     const cookie = await openDevSession(await auth.$context);
 

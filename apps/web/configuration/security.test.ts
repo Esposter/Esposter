@@ -28,7 +28,8 @@ describe("security", () => {
   test("holds the hosts the app's fetches and media need", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("AZURE_CONTAINER_BASE_URL", "https://container.blob.core.windows.net");
+    vi.stubEnv("PUBLIC_ASSETS_BASE_URL", "https://assets.esposter.com");
+    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "account");
     vi.resetModules();
     const { security } = await import("./security.ts");
 
@@ -39,20 +40,27 @@ describe("security", () => {
         "'self'",
         "data:",
         "blob:",
-        "https://container.blob.core.windows.net",
+        "https://assets.esposter.com",
+        "https://account.r2.cloudflarestorage.com",
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
       ]),
     );
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
-      expect.arrayContaining(["'self'", "https://container.blob.core.windows.net", "blob:"]),
+      expect.arrayContaining([
+        "'self'",
+        "https://account.r2.cloudflarestorage.com",
+        "https://assets.esposter.com",
+        "blob:",
+      ]),
     );
   });
 
   test("writes no unset host into a source list", async () => {
     expect.hasAssertions();
 
-    vi.stubEnv("AZURE_CONTAINER_BASE_URL", undefined);
+    vi.stubEnv("PUBLIC_ASSETS_BASE_URL", undefined);
+    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", undefined);
     vi.resetModules();
     const { security } = await import("./security.ts");
 

@@ -31,6 +31,7 @@
     "lint": "TIMING=1 eslint .",
     "lint:fix": "TIMING=1 eslint --fix .",
     "phaser:gen": "vpx --tsconfig tsconfig.root.json scripts/phaser/index.ts",
+    "predev": "vpx --tsconfig tsconfig.root.json scripts/wrangler/index.ts && wrangler d1 migrations apply CORE --local --config .wrangler/local/wrangler.jsonc",
     "postinstall": "nuxt prepare",
     "preview": "nuxt preview",
     "pwsh": "pwsh -ExecutionPolicy Unrestricted",

@@ -6,6 +6,11 @@ import { BASE_URL } from "../app/services/desmos/constants.ts";
 import { MAX_REQUEST_SIZE } from "../shared/services/app/constants.ts";
 import { NUXT_IMAGE_ERROR_HANDLER, REALTIME_ASSETS_URL } from "./constants.ts";
 
+// R2's S3 endpoint for the account: a private object's presigned URL names it, so the browser's PUTs and GETs go there
+const R2_ENDPOINT = process.env.CLOUDFLARE_ACCOUNT_ID
+  ? `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`
+  : undefined;
+
 export const security: NuxtConfig["security"] = {
   headers: {
     contentSecurityPolicy: {
@@ -17,8 +22,10 @@ export const security: NuxtConfig["security"] = {
         "data:",
         // Three.js GLTFLoader: embedded texture sources become blob URLs before they are fetched
         "blob:",
-        // Azure Blob: the upload's SAS PUTs and the reads of the game data the world fetches
-        process.env.AZURE_CONTAINER_BASE_URL,
+        // R2: the presigned PUTs of an upload and the presigned GETs of a private object, on the account's S3 endpoint
+        R2_ENDPOINT,
+        // The public assets host, which serves a public bucket's objects and the game data the world fetches
+        process.env.PUBLIC_ASSETS_BASE_URL,
         // RealtimeKit: its REST and signalling API, and the virtual background's models at its asset host
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
@@ -30,8 +37,10 @@ export const security: NuxtConfig["security"] = {
       // Can enumerate it. One policy for every route: the app navigates on the client, so the document a session
       // Landed on carries its policy to every page it opens after
       "img-src": ["'self'", "data:", "blob:", "https:"],
-      // Audio and video messages play from Azure Blob, and an uploaded file's preview plays from its `blob:` URL
-      "media-src": ["'self'", process.env.AZURE_CONTAINER_BASE_URL, "blob:"].filter((source) => source !== undefined),
+      // Audio and video messages play from R2, and an uploaded file's preview plays from its `blob:` URL
+      "media-src": ["'self'", R2_ENDPOINT, process.env.PUBLIC_ASSETS_BASE_URL, "blob:"].filter(
+        (source) => source !== undefined,
+      ),
       // Desmos
       "script-src": ["'unsafe-eval'"],
       // An event handler attribute runs only when its hash is listed under 'unsafe-hashes', and the one handler allowed is
