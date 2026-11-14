@@ -14,8 +14,9 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
-// A Claude Code session id, which is a v4 UUID the CLI mints, never one this app does
-const sessionId = "11111111-1111-4111-8111-111111111111";
+// A Claude Code session id, which the CLI mints as a v4 UUID: `ZERO_UUID`'s form with the version digit 4, since the
+// Field refuses a v7
+const sessionId = "00000000-0000-4000-8000-000000000000";
 
 describe("todoListRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(todoListRouter);
