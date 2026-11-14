@@ -2,7 +2,7 @@
 
 `apps/infra` manages Esposter's cloud footprint as Pulumi TypeScript. A single `prod` stack owns both the development and production Azure resource groups plus the GitHub repository settings (labels, environments, secrets, branch rulesets). Everything runs on free or near-free SKUs, and the whole estate is cost-guarded: `$0.01` budgets trigger Logic App automation that stops Function Apps and deletes Event Grid subscriptions the moment anything exits the free tier.
 
-- [Azure Pulumi layout](azure-pulumi-layout/design.md) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
+- [Pulumi layout](pulumi-layout/design.md) — how resources are laid out in Pulumi: one resource per file, ARM-aligned paths, provider split, naming convention.
 - [Branch namespaces](branch-namespaces/design.md) — whose a branch is, read off its name alone, and the rulesets that make the name the rule.
 - [Claude interface](claude-interface/README.md) — Claude Code given a personality and a voice: a Genshin persona plugin picked by the calendar, replies spoken in each character's own cloned voice, and a set of mods in the persona's colours.
 - [Cost & Security Posture](cost-and-security-posture/design.md) — the budget guard cycle and why each hardening step is deliberately deferred.
@@ -35,7 +35,7 @@ Deeper operational reference lives beside the code in `apps/infra/docs/` (naming
 - **Review** — CodeRabbit and the review collector replaced by one workflow in which no step waits on a person, and whose every limit is an amount rather than a time. → [Review](review/design.md)
 - **Typed decisions** — issue triage runs on a typed-decision model rather than a session. → [Typed decisions](typed-decisions/design.md)
 - **Branch namespaces** — a branch's name is the whole convention for who may create and push it, enforced by rulesets. → [Branch namespaces](branch-namespaces/design.md)
-- **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Azure Pulumi layout](azure-pulumi-layout/design.md)
+- **Every GitHub default declared** — the repository's Actions surface lives in the provider beside its refs, and CodeQL scans `main`. → [Pulumi layout](pulumi-layout/design.md)
 - **Claude interface** — a persona plugin and spoken replies for one workspace package; the desktop stage stays two proposals behind a gate of use. → [Claude interface](claude-interface/README.md)
 - **Genshin mods** — the mods and the delegation guard run on the function hooks, so nothing is written into the person's settings. → [Genshin mods](claude-interface/genshin-mods/README.md)
 - **Agent console retirement** — the console's code, specs and ideas are removed and the host package is unpublished from npm; the executable stays on the releases that carried it. → [Agent console](../../rejected/infra/agent-console/design.md)
