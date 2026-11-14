@@ -1,43 +1,41 @@
+import type { Context } from "#server/trpc/context";
 import type { ReadMySentMessagesInput } from "#shared/models/db/message/ReadMySentMessagesInput";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
-import type { Database } from "@esposter/db-schema";
+import type { RoomMessage } from "@esposter/db-schema";
 
+import { useUserObject } from "#server/composables/realtime/useUserObject";
+import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { inJsonArray } from "@esposter/db";
-import { roomsInMessage, messagesInMessage } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
-import { and, count, desc, eq, isNull } from "drizzle-orm";
+import { roomsInMessage } from "@esposter/db-schema";
 
+// The sender's index names each sent message by its room and id, newest first. Each room's object is asked for the
+// messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
+// from the page, and no other message takes its place
 export const readMySentMessages = async (
-  { limit, offset }: ReadMySentMessagesInput,
-  db: Database,
+  { before, limit }: ReadMySentMessagesInput,
+  db: Context["db"],
   userId: string,
 ): Promise<ReadMySentMessagesResult> => {
-  const where = and(eq(messagesInMessage.userId, userId), isNull(messagesInMessage.deletedAt));
-  const [messages, totals] = await Promise.all([
-    db
-      .select()
-      .from(messagesInMessage)
-      .where(where)
-      .orderBy(desc(messagesInMessage.createdAt), desc(messagesInMessage.id))
-      .limit(limit + 1)
-      .offset(offset),
-    db.select({ count: count() }).from(messagesInMessage).where(where),
-  ]);
-  const { hasMore, items } = getBasePaginationData(messages, limit);
-  // Named off the page rather than the read, so the row that only answered `hasMore` never widens the join
-  const roomIds = [...new Set(items.map(({ roomId }) => roomId))];
+  const page = getBasePaginationData(await useUserObject(userId).readSentMessages({ before, limit: limit + 1 }), limit);
+  const messageIdsByRoomId = new Map<string, number[]>();
+  for (const { messageId, roomId } of page.items)
+    messageIdsByRoomId.set(roomId, [...(messageIdsByRoomId.get(roomId) ?? []), messageId]);
+
+  const roomIds = [...messageIdsByRoomId.keys()];
+  const messagesByRoomId = await fanOutRoomReads(roomIds, async (roomObject, roomId) => {
+    const messages: RoomMessage[] = await roomObject.readMessagesByIds(messageIdsByRoomId.get(roomId) ?? []);
+    return new Map(messages.map((message) => [message.id, message]));
+  });
   const rooms =
     roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [];
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
   return {
-    count: takeOne(totals, 0).count,
-    data: {
-      hasMore,
-      items: items.flatMap((message) => {
-        const room = roomMap.get(message.roomId);
-        return room ? [{ message, room }] : [];
-      }),
-    },
+    hasMore: page.hasMore,
+    items: page.items.flatMap(({ messageId, roomId }) => {
+      const message = messagesByRoomId.get(roomId)?.get(messageId);
+      const room = roomMap.get(roomId);
+      return message && room ? [{ message, room }] : [];
+    }),
   };
 };

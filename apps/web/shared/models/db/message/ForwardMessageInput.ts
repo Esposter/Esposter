@@ -1,9 +1,10 @@
-import { messageCompositeKeySchema, roomIdsSchema, standardMessageEntitySchema } from "@esposter/db-schema";
+import { messageIdentityInputSchema } from "#shared/models/db/message/MessageIdentityInput";
+import { roomIdsSchema, sanitizedMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const forwardMessageInputSchema = z.object({
-  ...messageCompositeKeySchema.shape,
-  message: standardMessageEntitySchema.shape.message,
+  ...messageIdentityInputSchema.shape,
+  message: sanitizedMessageSchema,
   roomIds: roomIdsSchema.shape.roomIds.min(1),
 });
 export type ForwardMessageInput = z.infer<typeof forwardMessageInputSchema>;

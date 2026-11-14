@@ -6,10 +6,10 @@ import type { CallSessionInMessage } from "@esposter/db-schema";
 export const readCallSessionId = async (
   db: Context["db"],
   roomId: string,
-  threadRootRowKey: CallSessionInMessage["threadRootRowKey"] = "",
+  threadRootId: CallSessionInMessage["threadRootId"] = 0,
 ): Promise<string> => {
   const callSession = await db.query.callSessionsInMessage.findFirst({
-    where: { roomId: { eq: roomId }, threadRootRowKey: { eq: threadRootRowKey } },
+    where: { roomId: { eq: roomId }, threadRootId: { eq: threadRootId } },
   });
   return callSession?.id ?? "";
 };

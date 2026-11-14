@@ -1,72 +1,56 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
-import type { Database, MessageInMessage } from "@esposter/db-schema";
+import type { Filter, RoomMessage } from "@esposter/db-schema";
 
-import { getSearchFilterConditions } from "#server/services/message/search/getSearchFilterConditions";
+import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
-import { FilterType, messagesInMessage } from "@esposter/db-schema";
-import { getSearchExpression, takeOne } from "@esposter/shared";
-import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
+import { FilterType } from "@esposter/db-schema";
+import { getSearchExpression } from "@esposter/shared";
 
-// With text, the rows are the index's matches narrowed by the room, the soft delete and the filters, ranked by bm25 with
-// the message weighted 3 and the sender 1.5. The ids of one page are read first, in that order, and the rows are then
-// read by a single bound JSON list, so a page never binds more parameters than D1 allows. A filter-only search reads
-// newest first, with no index involved
-export const searchMessages = async (
-  db: Database,
-  { filters, limit, offset, query, roomId }: SearchMessagesInput,
-): Promise<SearchMessagesResult> => {
-  const searchableFilters = getSearchableFilters(filters);
-  const hasRoomInFilter = searchableFilters.some(({ type }) => type === FilterType.In);
-  const expression = getSearchExpression(query);
-  const where = and(
-    ...(hasRoomInFilter ? [] : [eq(messagesInMessage.roomId, roomId)]),
-    isNull(messagesInMessage.deletedAt),
-    ...getSearchFilterConditions(searchableFilters),
+// The rooms a search asks: the rooms its `in:` filters name, or else the room it was made in. The `in:` list is the
+// caller's own, so the fan-out is bounded by what they asked for. A room's object answers the filters that are not `in:`
+const getSearchRoomIds = (filters: Filter[], roomId: string): string[] => {
+  const inRoomIds = filters.flatMap(({ type, value }) =>
+    type === FilterType.In && typeof value === "string" ? [value] : [],
   );
-  if (!expression) {
-    const [messages, totals] = await Promise.all([
-      db
-        .select()
-        .from(messagesInMessage)
-        .where(where)
-        .orderBy(desc(messagesInMessage.createdAt), desc(messagesInMessage.id))
-        .limit(limit + 1)
-        .offset(offset),
-      db.select({ count: count() }).from(messagesInMessage).where(where),
-    ]);
-    return { count: takeOne(totals, 0).count, data: getBasePaginationData(messages, limit) };
-  }
-
-  const [ranked, totals] = await Promise.all([
-    db.all<{ id: string }>(sql`
-      select ${messagesInMessage.id} as id
-      from ${messagesInMessage}
-      join messages_search on messages_search.messageId = ${messagesInMessage.id}
-      where messages_search match ${expression} and ${where}
-      order by bm25(messages_search, 3, 1, 1.5), ${messagesInMessage.createdAt} desc, ${messagesInMessage.id} desc
-      limit ${limit + 1} offset ${offset}`),
-    db.all<{ count: number }>(sql`
-      select count(*) as count
-      from ${messagesInMessage}
-      join messages_search on messages_search.messageId = ${messagesInMessage.id}
-      where messages_search match ${expression} and ${where}`),
-  ]);
-  const ids = ranked.map(({ id }) => id);
-  const rows = ids.length > 0 ? await readMessagesByIds(db, ids) : [];
-  return { count: takeOne(totals, 0).count, data: getBasePaginationData(rows, limit) };
+  return inRoomIds.length > 0 ? inRoomIds : [roomId];
 };
 
-// The rows of the given ids in the order given. The ids ride as one JSON parameter, since D1 caps a statement's parameters
-const readMessagesByIds = async (db: Database, ids: string[]): Promise<MessageInMessage[]> => {
-  const rows = await db
-    .select()
-    .from(messagesInMessage)
-    .where(sql`${messagesInMessage.id} in (select value from json_each(${JSON.stringify(ids)}))`);
-  const rowMap = new Map(rows.map((row) => [row.id, row]));
-  return ids.flatMap((id) => {
-    const row = rowMap.get(id);
-    return row ? [row] : [];
-  });
+// Turn about by rank position: every room's first match, then every room's second, in the order the rooms were named.
+// Each room ranks its own matches by bm25, and a score is not comparable across rooms, since each room's index counts its
+// own terms. With no text, each room lists its matches newest first, and those lists merge by the message's own time and
+// id, which is exact across rooms
+const interleaveByRank = (lists: RoomMessage[][]): RoomMessage[] => {
+  const depth = Math.max(0, ...lists.map(({ length }) => length));
+  return Array.from({ length: depth }, (_, rank) => lists.flatMap((list) => list.slice(rank, rank + 1))).flat();
+};
+
+const mergeNewestFirst = (lists: RoomMessage[][]): RoomMessage[] =>
+  lists
+    .flat()
+    .toSorted(
+      (firstMessage, secondMessage) =>
+        secondMessage.createdAt.getTime() - firstMessage.createdAt.getTime() || secondMessage.id - firstMessage.id,
+    );
+
+// Each room is asked for the first offset + limit + 1 of its own list, the most the merged page can reach from it. The
+// count is every room's own count added together
+export const searchMessages = async ({
+  filters,
+  limit,
+  offset,
+  query,
+  roomId,
+}: SearchMessagesInput): Promise<SearchMessagesResult> => {
+  const searchableFilters = getSearchableFilters(filters);
+  const roomFilters = searchableFilters.filter(({ type }) => type !== FilterType.In);
+  const results = await fanOutRoomReads(getSearchRoomIds(searchableFilters, roomId), (roomObject) =>
+    roomObject.searchMessages({ filters: roomFilters, limit: offset + limit + 1, offset: 0, query }),
+  );
+  const roomResults = [...results.values()];
+  const lists = roomResults.map(({ messages }) => messages);
+  const count = roomResults.reduce((total, { count: roomCount }) => total + roomCount, 0);
+  const merged = getSearchExpression(query) ? interleaveByRank(lists) : mergeNewestFirst(lists);
+  return { count, data: getBasePaginationData(merged.slice(offset), limit) };
 };

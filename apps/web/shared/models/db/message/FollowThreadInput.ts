@@ -1,8 +1,6 @@
-import { roomIdSchema, standardMessageEntitySchema } from "@esposter/db-schema";
+import { roomIdSchema, roomMessageSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
-export const followThreadInputSchema = z.object({
-  ...roomIdSchema.shape,
-  threadRootRowKey: standardMessageEntitySchema.shape.rowKey,
-});
+// A thread is named by its room and the integer id of its root message
+export const followThreadInputSchema = z.object({ ...roomIdSchema.shape, threadRootId: roomMessageSchema.shape.id });
 export type FollowThreadInput = z.infer<typeof followThreadInputSchema>;

@@ -1,37 +1,47 @@
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
+import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
+import type { RoomActor, RoomMessage } from "@esposter/db-schema";
 
-import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
+import { getJobQueue } from "#server/services/queue/getJobQueue";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import {
-  createMessage,
   createReplyThreadFollows,
+  getLinkPreviewResponse,
+  getMentionIds,
   getMessageCreationRejection,
   incrementMentionCounts,
 } from "@esposter/db";
 import {
   AppNotificationType,
-  DatabaseEntityType,
+  MessageType,
   publishNotification,
   QueueJob,
-  roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, NotFoundError } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { getResultAsync, noop } from "@esposter/shared";
+
+type RoomObject = ReturnType<typeof useRoomObject>;
+
+// The root's author, which a reply's thread follow owes the root's author a follow for. A message that is not a reply
+// has no root to read
+const readThreadRootUserId = async (roomObject: RoomObject, replyToId: number | null) => {
+  if (replyToId === null) return undefined;
+
+  const [threadRoot] = await roomObject.readMessagesByIds([replyToId]);
+  return threadRoot?.userId ?? undefined;
+};
 
 export const createUserMessage = async (
   db: Context["db"],
-  { session, user }: GetSessionPayload,
-  input: StandardCreateMessageInput,
-): Promise<MessageEntity> => {
+  actor: RoomActor,
+  input: CreateMessageInput,
+): Promise<RoomMessage> => {
+  const { files, replyToId, roomId, type } = input;
+  const message = input.message || "";
   const now = new Date();
   // The gate reads the slowmode clock and the send advances it, so the member's row is held across both: two sends
   // Racing one window then run one after the other, and the second reads the first's stamp rather than both passing
@@ -39,19 +49,36 @@ export const createUserMessage = async (
     await tx
       .select({ userId: usersToRoomsInMessage.userId })
       .from(usersToRoomsInMessage)
-      .where(getRoomMembershipWhere(input.roomId, user.id))
+      .where(getRoomMembershipWhere(roomId, actor.userId))
       .for("update");
-    const messageCreationRejection = await getMessageCreationRejection(tx, user.id, input.roomId, input.message);
+    const messageCreationRejection = await getMessageCreationRejection(tx, actor.userId, roomId, input.message);
     if (!messageCreationRejection)
-      await updateUserToRoom(tx, user.id, { lastMessageAt: now, lastReadAt: now, roomId: input.roomId });
+      await updateUserToRoom(tx, actor.userId, { lastMessageAt: now, lastReadAt: now, roomId });
     return messageCreationRejection;
   });
-  await rejectMessageCreation(db, user.id, input.roomId, rejection);
-  const messageClient = useStreamTableClient(StreamTable.Messages);
-  const newMessageEntity = await createMessage(messageClient, { ...input, userId: user.id });
-  messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
-  // Best-effort after the Table write — a failed increment loses one badge count, never a message.
-  const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))
+  await rejectMessageCreation(db, actor.userId, roomId, rejection);
+
+  // The room's object writes the message, indexes it for the sender and broadcasts it to the room's viewers. The room's
+  // updatedAt is not written here: the object's own alarm moves the room to the top of its members' lists
+  const roomObject = useRoomObject(roomId);
+  // Only a text message is unfurled and notified by its mentions: a poll's text is its own JSON, not a message to read
+  const isTextMessage = type === MessageType.Message && message !== "";
+  const newMessage = await roomObject.createMessage(
+    {
+      files,
+      linkPreviewResponse: isTextMessage ? await getLinkPreviewResponse(message) : null,
+      mentions: isTextMessage ? getMentionIds(message) : [],
+      message,
+      replyToId: replyToId ?? undefined,
+      type,
+    },
+    actor,
+  );
+
+  // Best-effort after the write — a failed increment loses one badge count, never a message
+  const mentionedUsersToRooms = await getResultAsync(() =>
+    incrementMentionCounts(db, { message, roomId, userId: actor.userId }),
+  )
     .orTee(console.error)
     .unwrapOr([]);
   await Promise.all(
@@ -59,39 +86,21 @@ export const createUserMessage = async (
       callUserObjects([mentionedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(mentionedUserToRoom)),
     ),
   );
-  // Post-persist and best-effort — a follow failure must never fail the reply that already landed — but
-  // Strictly before the publish below, for the reason `createReplyThreadFollows` states
-  await getResultAsync(() => createReplyThreadFollows(db, messageClient, newMessageEntity)).match(noop, console.error);
-  // One notification for the send, thread reply or not: the room's own recipients and the thread's followers are
-  // One recipient set resolved by ProcessNotification, so a follower is never notified twice and this path runs
-  // No recipient query of its own. Best-effort after the Table write — a failed publish loses one notification,
-  // Never the message that landed
+  // Post-persist and best-effort — a follow failure must never fail the reply that already landed — but strictly
+  // before the publish below, for the reason `createReplyThreadFollows` states
+  await getResultAsync(async () => {
+    const threadRootUserId = await readThreadRootUserId(roomObject, newMessage.replyToId);
+    await createReplyThreadFollows(db, { message: newMessage, roomId, threadRootUserId });
+  }).match(noop, console.error);
+  // One notification for the send, thread reply or not: the room's own recipients and the thread's followers are one
+  // recipient set resolved by ProcessNotification, so a follower is never notified twice and this path runs no
+  // recipient query of its own. Best-effort after the write — a failed publish loses one notification, never the message
   await getResultAsync(() =>
     publishNotification(getJobQueue(QueueJob.ProcessNotification), {
-      message: {
-        message: newMessageEntity.message,
-        partitionKey: newMessageEntity.partitionKey,
-        rowKey: newMessageEntity.rowKey,
-        userId: newMessageEntity.userId,
-      },
-      threadRootRowKey: newMessageEntity.replyRowKey,
+      message: { id: newMessage.id, message: newMessage.message, roomId, userId: newMessage.userId },
+      threadRootId: newMessage.replyToId,
       type: AppNotificationType.Message,
     }),
   ).match(noop, console.error);
-  // Best-effort after the Table write — a failed touch leaves the room list sorted one send behind until the
-  // Next one lands, never costs the message that already landed
-  const updatedRoom = await getResultAsync(
-    async () =>
-      (
-        await db.update(roomsInMessage).set({ updatedAt: now }).where(eq(roomsInMessage.id, input.roomId)).returning()
-      )[0],
-  )
-    .orTee(console.error)
-    .unwrapOr(undefined);
-  // A zero-row update is not a rejection, so it arrives here as `undefined` rather than through `orTee`: the room
-  // The message was just written into is gone. Still best-effort — the message landed and the caller keeps it —
-  // But never silent, or the room list simply stops re-sorting with nothing anywhere saying why
-  if (updatedRoom) roomEventEmitter.emit("updateRoom", updatedRoom);
-  else console.error(new NotFoundError(DatabaseEntityType.Room, input.roomId));
-  return newMessageEntity;
+  return newMessage;
 };

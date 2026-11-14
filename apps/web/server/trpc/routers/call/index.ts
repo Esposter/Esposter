@@ -59,10 +59,10 @@ export const baseCallRouter = router({
       };
     }),
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallResult>(
-    async ({ ctx, input: { roomId, threadRootRowKey } }) => {
+    async ({ ctx, input: { roomId, threadRootId } }) => {
       const { session, user } = ctx.getSessionPayload;
-      await requireThreadRoot(roomId, threadRootRowKey);
-      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootRowKey);
+      await requireThreadRoot(roomId, threadRootId);
+      const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootId);
       // Nobody knocks on a room call — membership is its door, asked here as the webhook asks it of every connection,
       // So a member timed out of the room is refused a token rather than handed one the webhook then disconnects
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
@@ -76,8 +76,8 @@ export const baseCallRouter = router({
       if (!join) throw getForbiddenError("You are timed out of this room");
       // A call's first join announces it in the thread the call is in, or the room, as a line with no duration yet
       if (join.isFirstJoiner)
-        await createSystemRoomMessage(roomId, user.id, "", session.id, {
-          replyRowKey: threadRootRowKey,
+        await createSystemRoomMessage(roomId, user.id, "", {
+          replyToId: threadRootId || undefined,
           type: MessageType.Call,
         }).match(noop, console.error);
 
@@ -112,7 +112,7 @@ export const baseCallRouter = router({
       return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
     }),
   readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
-    ({ ctx, input: { roomId, threadRootRowKey } }) => readCallSessionId(ctx.db, roomId, threadRootRowKey),
+    ({ ctx, input: { roomId, threadRootId } }) => readCallSessionId(ctx.db, roomId, threadRootId),
   ),
   setCameraEnabled: standardAuthedProcedure
     .input(setCameraEnabledInputSchema)

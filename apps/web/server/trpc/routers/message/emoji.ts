@@ -1,115 +1,37 @@
-import { useMessageEmojiMetadataClient } from "#server/composables/streams/useMessageEmojiMetadataClient";
-import { getDevice } from "#server/services/auth/getDevice";
-import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
-import { getEmojiMetadataClauses } from "#server/services/message/emoji/getEmojiMetadataClauses";
-import { emojiEventEmitter } from "#server/services/message/events/emojiEventEmitter";
+import type { RoomReaction } from "@esposter/db-schema";
+
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
-import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
-import { createEmojiInputSchema } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import {
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  deleteEmojiInputSchema,
-  MessageEmojiMetadataEntity,
-  MessageEmojiMetadataEntityPropertyNames,
-  MessageMetadataType,
-  updateEmojiInputSchema,
-} from "@esposter/db-schema";
-import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
-import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import type { Clause } from "@esposter/db-schema";
-import { createEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
-import { checkIsOnlyReactor, getUpdatedUserIds, Operation } from "@esposter/shared";
+import { addReactionInputSchema } from "#shared/models/db/message/reaction/AddReactionInput";
+import { readReactionsInputSchema } from "#shared/models/db/message/reaction/ReadReactionsInput";
+import { removeReactionInputSchema } from "#shared/models/db/message/reaction/RemoveReactionInput";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
+// A reaction is held by its message's room, which decides each write and sends it to the room's viewers. The reactor is
+// the caller, named by the session, so no input can add or remove someone else's reaction
 export const emojiRouter = router({
-  createEmoji: getMemberProcedure(
-    createEmojiInputSchema,
-    CompositeKeyPropertyNames.partitionKey,
-  ).mutation<MessageEmojiMetadataEntity>(async ({ ctx, input }) => {
-    const messagesMetadataClient = await useMessageEmojiMetadataClient();
-    const clauses: Clause<MessageEmojiMetadataEntity>[] = [
-      ...getEmojiMetadataClauses(input.partitionKey),
-      {
-        key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
-        operator: BinaryOperator.Eq,
-        value: input.messageRowKey,
-      },
-      { key: MessageEmojiMetadataEntityPropertyNames.emojiTag, operator: BinaryOperator.Eq, value: input.emojiTag },
-    ];
-    const existingEmoji = (await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, clauses))[0];
-    if (existingEmoji)
-      throw getInvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
-
-    const newEmoji = createMessageEmojiMetadataEntity({ ...input, userIds: [ctx.getSessionPayload.user.id] });
-    await createEntity(messagesMetadataClient, newEmoji);
-    emojiEventEmitter.emit("createEmoji", [newEmoji, getDevice(ctx.getSessionPayload)]);
-    return newEmoji;
+  addReaction: getMemberProcedure(addReactionInputSchema, "roomId").mutation<RoomReaction>(async ({ ctx, input }) =>
+    requireEntity(
+      useRoomObject(input.roomId).addReaction(
+        { emojiTag: input.emojiTag, messageId: input.messageId },
+        getRoomActor(ctx.getSessionPayload, ctx.headers),
+      ),
+      DatabaseEntityType.Message,
+      JSON.stringify(input),
+    ),
+  ),
+  removeReaction: getMemberProcedure(removeReactionInputSchema, "roomId").mutation<void>(async ({ ctx, input }) => {
+    const isRemoved = await useRoomObject(input.roomId).removeReaction(
+      { emojiTag: input.emojiTag, messageId: input.messageId },
+      getRoomActor(ctx.getSessionPayload, ctx.headers),
+    );
+    if (!isRemoved) throw getNotFoundError(DatabaseEntityType.Reaction, JSON.stringify(input));
   }),
-  deleteEmoji: getMemberProcedure(deleteEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
-    async ({ ctx, input }) => {
-      const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      const { entity: existingEmoji, etag } = await requireEntity(
-        getEntityWithEtag(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
-        MessageMetadataType.Emoji,
-        JSON.stringify(input),
-      );
-      if (!checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
-        throw getInvalidOperationError(Operation.Delete, MessageMetadataType.Emoji, JSON.stringify(input));
-      // Conditional on the version read, so a member who reacts between the check and the delete keeps their
-      // Reaction rather than losing it with the row
-      await messagesMetadataClient.deleteEntity(input.partitionKey, input.rowKey, { etag });
-      emojiEventEmitter.emit("deleteEmoji", [input, getDevice(ctx.getSessionPayload)]);
-    },
-  ),
-  onCreateEmoji: getRoomEventSubscription(emojiEventEmitter, "createEmoji", ({ partitionKey }) => partitionKey),
-  onDeleteEmoji: getRoomEventSubscription(emojiEventEmitter, "deleteEmoji", ({ partitionKey }) => partitionKey),
-  onUpdateEmoji: getRoomEventSubscription(emojiEventEmitter, "updateEmoji", ({ partitionKey }) => partitionKey),
-  readEmojis: getMemberProcedure(readMetadataInputSchema, "roomId").query<MessageEmojiMetadataEntity[]>(
-    async ({ input: { messageRowKeys, roomId } }) => {
-      const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      const clauses: Clause<MessageEmojiMetadataEntity>[] = [
-        ...getEmojiMetadataClauses(roomId),
-        ...messageRowKeys.map((messageRowKey) => ({
-          key: MessageEmojiMetadataEntityPropertyNames.messageRowKey,
-          operator: BinaryOperator.Eq,
-          value: messageRowKey,
-        })),
-      ];
-      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, clauses);
-    },
-  ),
-  updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
-    async ({ ctx, input }) => {
-      const messagesMetadataClient = await useMessageEmojiMetadataClient();
-      // Two members reacting at once each read the same user list, so the toggle is computed against the version it
-      // Was read from and written only if that version still stands. A lost race reads again and toggles again
-      const existingEmojiWithEtag = await requireEntity(
-        getEntityWithEtag(messagesMetadataClient, MessageEmojiMetadataEntity, input.partitionKey, input.rowKey),
-        MessageMetadataType.Emoji,
-        JSON.stringify(input),
-      );
-      const updatedEmoji = await updateEntityConditionally(messagesMetadataClient, MessageEmojiMetadataEntity, {
-        entityType: MessageMetadataType.Emoji,
-        entityWithEtag: existingEmojiWithEtag,
-        getUpdateEntity: (existingEmoji) => {
-          if (checkIsOnlyReactor(existingEmoji.userIds, ctx.getSessionPayload.user.id))
-            throw getInvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
-
-          // The row's own message: the input names the reaction alone, so a caller has no message to move it onto
-          return {
-            messageRowKey: existingEmoji.messageRowKey,
-            partitionKey: input.partitionKey,
-            rowKey: input.rowKey,
-            userIds: getUpdatedUserIds(existingEmoji.userIds, ctx.getSessionPayload.user.id),
-          };
-        },
-        writeEntity: (entity, etag) => updateEntity(messagesMetadataClient, entity, undefined, { etag }),
-      });
-      emojiEventEmitter.emit("updateEmoji", [updatedEmoji, getDevice(ctx.getSessionPayload)]);
-    },
+  readReactions: getMemberProcedure(readReactionsInputSchema, "roomId").query<RoomReaction[]>(
+    ({ input: { messageIds, roomId } }) => useRoomObject(roomId).readReactions(messageIds),
   ),
 });

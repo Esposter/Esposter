@@ -13,16 +13,16 @@ export const createCallSessionId = async (
   db: Context["db"],
   roomId: string,
   userId: string,
-  threadRootRowKey: CallSessionInMessage["threadRootRowKey"] = "",
+  threadRootId: CallSessionInMessage["threadRootId"] = 0,
 ): Promise<string> => {
   for (let attempt = 0; attempt < MAX_CALL_SESSION_ID_ATTEMPTS; attempt++) {
-    const existingCallSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
+    const existingCallSessionId = await readCallSessionId(db, roomId, threadRootId);
     if (existingCallSessionId) return existingCallSessionId;
-    const callSessionId = await insertCallSessionId(db, { roomId, threadRootRowKey, userId });
+    const callSessionId = await insertCallSessionId(db, { roomId, threadRootId, userId });
     if (callSessionId) return callSessionId;
   }
   // Every attempt lost the race to another creator, so the session is whatever they landed
-  const callSessionId = await readCallSessionId(db, roomId, threadRootRowKey);
+  const callSessionId = await readCallSessionId(db, roomId, threadRootId);
   if (!callSessionId)
     throw getInvalidOperationError(Operation.Create, DatabaseEntityType.CallSession, roomId, "UNPROCESSABLE_CONTENT");
   return callSessionId;

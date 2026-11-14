@@ -7,18 +7,17 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { BanInMessage, ModerationLogInMessage, ModerationNoteInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import { containsLike } from "#server/services/db/containsLike";
-import { on } from "#server/services/events/on";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { readRoomCallSessionIds } from "#server/services/message/call/readRoomCallSessionIds";
-import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
 import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNameMap";
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
-import { publishSoftDeletedMessages } from "#server/services/message/moderation/publishSoftDeletedMessages";
+import { broadcastAdminAction } from "#server/services/message/moderation/broadcastAdminAction";
+import { publishDeletedMessageFiles } from "#server/services/message/moderation/publishDeletedMessageFiles";
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
@@ -42,10 +41,9 @@ import { readModerationNotesCountInputSchema } from "#shared/models/db/moderatio
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 
-import { checkHasPermission, softDeleteRoomMessagesByUser } from "@esposter/db";
+import { checkHasPermission } from "@esposter/db";
 import {
   AdminActionType,
-  StreamTable,
   bansInMessage,
   DatabaseEntityType,
   getDisplayNameExpression,
@@ -53,7 +51,6 @@ import {
   moderationLogsInMessage,
   moderationNotesInMessage,
   PublishSource,
-  roomIdSchema,
   RoomPermission,
   usersInAuth,
   usersToRoomsInMessage,
@@ -136,19 +133,13 @@ export const moderationRouter = router({
               sessionId,
               RoomMemberRemovalAction.Banned,
             );
-          // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect
-          // That must not be lost, and rethrowing here would fail a mutation whose row already landed. Nothing
-          // Re-runs the purge — re-issuing the ban hits `onConflictDoNothing`, and there is no sweeper or retry
-          // Queue — so a partial failure leaves some of the banned user's messages visible until a moderator
-          // Deletes them by hand. Accepted while the purge is a table scan the request path already owns; a
-          // Durable version belongs on the event pipeline
+          // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect that
+          // must not be lost. The purge is one call to the member's room, which tombstones every message they wrote in one
+          // turn, and the blobs those messages named are queued for deletion behind it
           if (input.type === AdminActionType.SoftBan)
-            await getResultAsync(async () => {
-              const messageClient = useStreamTableClient(StreamTable.Messages);
-              await softDeleteRoomMessagesByUser(messageClient, roomId, targetUserId, (batch) =>
-                publishSoftDeletedMessages(roomId, batch),
-              );
-            }).match(noop, console.error);
+            await getResultAsync(async () =>
+              publishDeletedMessageFiles(roomId, await useRoomObject(roomId).deleteUserMessages(targetUserId)),
+            ).match(noop, console.error);
           await evictAfterRemoval();
           break;
         }
@@ -204,27 +195,12 @@ export const moderationRouter = router({
           exhaustiveGuard(input);
       }
 
-      moderationEventEmitter.emit("adminAction", {
+      await broadcastAdminAction(roomId, {
         durationMs: input.type === AdminActionType.TimeoutUser ? input.durationMs : undefined,
-        roomId,
         targetUserId,
         type: input.type,
       });
     }),
-  onAdminAction: getMemberProcedure(roomIdSchema, "roomId").subscription(async function* ({
-    ctx,
-    input: { roomId },
-    signal,
-  }) {
-    for await (const [{ durationMs, roomId: emittedRoomId, targetUserId, type }] of on(
-      moderationEventEmitter,
-      "adminAction",
-      { signal },
-    )) {
-      if (emittedRoomId !== roomId || targetUserId !== ctx.getSessionPayload.user.id) continue;
-      yield { durationMs, type };
-    }
-  }),
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInRoom>
   >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {

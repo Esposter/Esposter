@@ -1,12 +1,14 @@
-import type { z } from "zod";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { roomIdSchema, roomMessageSchema } from "@esposter/db-schema";
+import { MAX_READ_LIMIT } from "@esposter/shared";
+import { z } from "zod";
 
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { standardMessageEntitySchema } from "@esposter/db-schema";
-
-export const readMySentMessagesInputSchema = createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [
-  CREATED_AT_DESCENDING_SORT_ITEM,
-])
-  .omit({ sortBy: true })
-  .prefault({});
+// The sent messages of the caller, newest first, from the one after `before`: the last message of the previous page,
+// named by the triple the sender's index holds it under
+export const readMySentMessagesInputSchema = z.object({
+  before: z
+    .object({ createdAt: z.coerce.date(), messageId: roomMessageSchema.shape.id, roomId: roomIdSchema.shape.roomId })
+    .optional(),
+  limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
+});
 export type ReadMySentMessagesInput = z.infer<typeof readMySentMessagesInputSchema>;

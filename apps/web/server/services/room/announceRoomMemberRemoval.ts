@@ -25,11 +25,9 @@ export const announceRoomMemberRemoval = async (
       where: { id: { eq: userId } },
     });
     if (removedMember)
-      await createSystemRoomMessage(
-        roomId,
-        actorUserId,
-        `${removedMember.name} was ${action} from the room.`,
-        sessionId,
-      ).match(noop, console.error);
+      await createSystemRoomMessage(roomId, actorUserId, `${removedMember.name} was ${action} from the room.`).match(
+        noop,
+        console.error,
+      );
   }).match(noop, console.error);
 };

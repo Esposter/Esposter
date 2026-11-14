@@ -1,18 +1,14 @@
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { roomIdSchema, standardMessageEntitySchema } from "@esposter/db-schema";
+import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { roomIdSchema, roomMessageSchema } from "@esposter/db-schema";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
-// Azure Table Storage has no real sorting; messages are insert-sorted via a reverse-ticked timestamp rowKey.
-// The default sortBy stands in because cursor pagination always requires one
+// A room's messages newest first, from the one before `before` (the id of the last message the client holds). The
+// pinned filter narrows the same listing, so the pinned list pages the same way
 export const readMessagesInputSchema = z.object({
-  ...createCursorPaginationParamsSchema(standardMessageEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).omit({
-    sortBy: true,
-  }).shape,
+  before: roomMessageSchema.shape.id.optional(),
+  filter: roomMessageSchema.pick({ isPinned: true }).optional(),
+  limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
   ...roomIdSchema.shape,
-  filter: standardMessageEntitySchema.pick({ isPinned: true }).optional(),
-  isIncludeValue: z.literal(true).optional(),
-  order: z.literal(SortOrder.Asc).optional(),
 });
 export type ReadMessagesInput = z.infer<typeof readMessagesInputSchema>;

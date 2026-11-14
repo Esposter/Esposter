@@ -10,19 +10,19 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const writeCallSummary = (
   db: Context["db"],
   callSessionId: string,
-  { callDurationSeconds, sessionId, userId }: CallLeave,
+  { callDurationSeconds, userId }: CallLeave,
 ) => {
   if (callDurationSeconds === null) return Promise.resolve();
   return getResultAsync(async () => {
     const callSession = await db.query.callSessionsInMessage.findFirst({
-      columns: { roomId: true, threadRootRowKey: true },
+      columns: { roomId: true, threadRootId: true },
       where: { id: { eq: callSessionId } },
     });
     if (!callSession?.roomId) return;
 
     // The line is worded by the duration it reports, which is what the renderer reads an ended call back as
-    await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), sessionId, {
-      replyRowKey: callSession.threadRootRowKey,
+    await createSystemRoomMessage(callSession.roomId, userId, String(callDurationSeconds), {
+      replyToId: callSession.threadRootId || undefined,
       type: MessageType.Call,
     }).match(noop, console.error);
   }).match(noop, console.error);

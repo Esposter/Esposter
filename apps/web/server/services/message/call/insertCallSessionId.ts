@@ -9,7 +9,7 @@ import { getResultAsync } from "@esposter/shared";
 // Already taken — the only case a caller may retry. Anything else throws, because it is not a collision
 export const insertCallSessionId = (
   db: Context["db"],
-  values: Pick<typeof callSessionsInMessage.$inferInsert, "roomId" | "threadRootRowKey" | "userId">,
+  values: Pick<typeof callSessionsInMessage.$inferInsert, "roomId" | "threadRootId" | "userId">,
 ): Promise<string | undefined> => {
   const id = createId(CALL_ID_LENGTH);
   return getResultAsync(() =>

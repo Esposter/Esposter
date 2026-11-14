@@ -1,11 +1,11 @@
 import type { Context } from "#server/trpc/context";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
+import { broadcastAdminAction } from "#server/services/message/moderation/broadcastAdminAction";
 import { executeAutomodAction as baseExecuteAutomodAction } from "@esposter/db";
 
-// The in-process wrapper around the shared automod core: it fans the executed action out to the moderation
-// Subscriptions, which only exist in the app process — the scheduled-delivery function calls the core directly.
+// The in-process wrapper around the shared automod core: it tells the target's sockets what the action was. The
+// scheduled-delivery function calls the core directly, and so tells no one
 export const executeAutomodAction = async (
   db: Context["db"],
   input: Pick<RoomFilterInMessage, "action" | "timeoutDurationMs"> & { roomId: string; userId: string },
@@ -13,9 +13,8 @@ export const executeAutomodAction = async (
   const executedAutomodAction = await baseExecuteAutomodAction(db, input, console.error);
   if (!executedAutomodAction) return;
 
-  moderationEventEmitter.emit("adminAction", {
+  await broadcastAdminAction(input.roomId, {
     durationMs: executedAutomodAction.durationMs,
-    roomId: input.roomId,
     targetUserId: input.userId,
     type: executedAutomodAction.type,
   });
