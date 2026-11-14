@@ -14,6 +14,9 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
+// A Claude Code session id, which is a v4 UUID the CLI mints, never one this app does
+const sessionId = "11111111-1111-4111-8111-111111111111";
+
 describe("todoListRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(todoListRouter);
   let caller: DecorateRouterRecord<TRPCRouter["todoList"]>;
@@ -59,7 +62,6 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { contentVersion, id } = await caller.createResource({ name });
-    const sessionId = v7();
     const ownerItem = new TodoListItem({ name });
     await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
 
@@ -84,7 +86,6 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { contentVersion, id } = await caller.createResource({ name });
-    const sessionId = v7();
     const ownerItem = new TodoListItem({ name });
     await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
     const itemId = await caller.addFollowUp({ id, name, notes: "", repository, sessionId });
@@ -111,7 +112,6 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { id } = await caller.createResource({ name });
-    const sessionId = v7();
     const itemId = await caller.addFollowUp({ id, name, notes: "", repository, sessionId });
 
     await caller.handBackFollowUp({ id, itemId, reason: " " });

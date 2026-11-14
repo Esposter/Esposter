@@ -38,7 +38,7 @@ import {
   usersToRoomsInMessage,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { chunk, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -55,6 +55,8 @@ describe("roomRouter", () => {
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   let messageAssets: R2Bucket;
+  // An empty attachment under a room's prefix, written outside the loops that write many, which may not close over a let
+  const putBlob = (blobName: string) => messageAssets.put(blobName, Buffer.alloc(0));
   let publicUserAssets: R2Bucket;
   let disposeMessageAssets: () => Promise<void>;
   let disposePublicUserAssets: () => Promise<void>;
@@ -82,7 +84,7 @@ describe("roomRouter", () => {
   });
 
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomObjectCalls.length = 0;
     userObjectCalls.length = 0;
   });
@@ -450,7 +452,10 @@ describe("roomRouter", () => {
       { length: MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES + 1 },
       (_value, index) => `${newRoom.id}/${index}`,
     );
-    await Promise.all(blobNames.map((blobName) => messageAssets.put(blobName, Buffer.alloc(0))));
+    // Fifty at a time: Miniflare's local proxy resets its connections when hundreds of writes open at once
+    for (const blobNameChunk of chunk(blobNames, 50))
+      // oxlint-disable-next-line no-await-in-loop -- each chunk waits for the last, so the proxy never holds them all
+      await Promise.all(blobNameChunk.map((blobName) => putBlob(blobName)));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
