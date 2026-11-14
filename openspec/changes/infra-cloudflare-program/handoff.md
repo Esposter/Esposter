@@ -56,7 +56,7 @@ In flight when the lead handed off; each one pushes to `ai/cloudflare` when it f
   - Re-issue invite codes.
   - Drop the D1 message tables.
 - Typecheck to clean, in the message, room and realtime code.
-- Not started; it was briefed, but its agent stopped before editing anything. It is the rest of the typecheck:
+- The rest of the typecheck:
   - Workers types are server-only. The Cloudflare env and binding declarations leave `apps/web/shared/types/env.d.ts` for the server program, which loads `@cloudflare/workers-types` through its own tsconfig. That clears the browser program's `HTMLElement`-to-`Response` family.
   - Insert-selects whose `sql` fields are not aliased.
   - `MockJobQueue` implements the whole Workers `Queue`, including `sendBatch` and `metrics`.
