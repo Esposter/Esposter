@@ -33,5 +33,5 @@ export const devQEsposterSendTodoReminderConsumer: cloudflare.QueueConsumer = ne
     settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.SendTodoReminder], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
-  { parent: devQEsposterSendTodoReminder, protect: true },
+  { parent: devQEsposterSendTodoReminder, protect: false },
 );

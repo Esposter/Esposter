@@ -11,5 +11,5 @@ const deadLetterQueueName = getCloudflareResourceName(
 export const prodDlqEsposterSendTodoReminder: cloudflare.Queue = new cloudflare.Queue(
   deadLetterQueueName,
   { accountId: CloudflareAccountId, queueName: deadLetterQueueName },
-  { protect: true },
+  { protect: false },
 );

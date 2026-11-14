@@ -11,5 +11,5 @@ const queueName = getCloudflareResourceName(
 export const devQEsposterSendTodoReminder: cloudflare.Queue = new cloudflare.Queue(
   queueName,
   { accountId: CloudflareAccountId, queueName },
-  { protect: true },
+  { protect: false },
 );
