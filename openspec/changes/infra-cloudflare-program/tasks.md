@@ -44,7 +44,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 
 ## 6. Bundle
 
-- [ ] 6.1 Take the email editor's compile chain (cosmiconfig, htmlnano, mjml) and `@tiptap/html`'s happy-dom out of the server bundle, and correct the runtime design's bundle paragraph: only `.client.vue` or an `ssr: false` route rule removes a library from it. Verified by `server-bundle:check`.
+- [x] 6.1 Keep the web Worker's server bundle under its code limit with only code that runs in workerd: the email editor's compile chain (mjml, htmlnano, cosmiconfig) stays, since the server compiles for preview, publish and program invites and mjml compiles under workerd; a note renders to HTML through `@tiptap/static-renderer`, since `@tiptap/html`'s `generateHTML` throws without a DOM, and the runtime design's bundle paragraph says what a client-only component does and does not remove. Verified by `server-bundle:check` (28.21 MiB against 64 MiB) and an mjml compile run in Miniflare.
 
 ## 7. Deploy and cutover
 
