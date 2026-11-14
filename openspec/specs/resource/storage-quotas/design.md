@@ -27,7 +27,7 @@ flowchart TD
   created --> reconcile["ReconcileStorageLedgerEntry<br/>counter += actual - countedBytes"]
   reconcile --> counter[("users.storageBytesUsed")]
   del["Object deletion / purge"] -->|"counter -= countedBytes, row dropped"| counter
-  save["Server-side writes, no presigned URL<br/>content · version objects · duplicate's copied assets"] -->|"chargeStorageLedgerEntry<br/>row + counter += actual - countedBytes"| counter
+  save["Server-side writes, no reserve<br/>content · version objects · duplicate copies"] -->|"chargeStorageLedgerEntry<br/>row + counter += actual - countedBytes"| counter
   ledger -.->|"expiresAt passes with no object-create —<br/>the hold simply stops counting"| gone(["Nothing runs"])
   reconcile -->|"whose counter moved"| uo["owner's User object<br/>updateUsage, on the user socket"]
   del -->|"whose counter moved"| uo
