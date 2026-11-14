@@ -1,4 +1,3 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -10,7 +9,7 @@ import { and, eq } from "drizzle-orm";
 // Embeds are dropped, so the rows name exactly what the stored content embeds. The caller releases the hashes handed back,
 // After its own commit, through the one release every path takes
 export const pruneWorkingAssets = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   resourceId: ResourceInResource["id"],
   assetHashes: Set<string>,
 ): Promise<string[]> => {
