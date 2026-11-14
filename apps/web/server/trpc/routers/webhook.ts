@@ -8,10 +8,10 @@ import type {
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
-import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createWebhookInputSchema } from "#shared/models/db/webhook/CreateWebhookInput";
@@ -40,107 +40,99 @@ import { v7 } from "uuid";
 const { tokenHash: _tokenHash, ...publicWebhookColumns } = getColumns(webhooksInMessage);
 
 export const webhookRouter = router({
-  createWebhook: getPermissionsProcedure(
-    RoomPermission.ManageWebhooks,
-    createWebhookInputSchema,
-    "roomId",
-    RateLimiterType.Slow,
-  )
-    .meta({
-      topics: getProcedureTopics(createWebhookInputSchema, ({ roomId }) => [getTopic(TopicKind.Webhook, roomId)]),
-    })
-    .mutation<IssuedWebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
-      const webhookContext = JSON.stringify({ name, roomId });
-      // The webhook posts as its app user, so the app user's id is named up front. Both rows are selected from the room
-      // Only while it holds fewer webhooks than the cap, so a full room refuses the pair and writes neither of them
-      const appUserId = v7();
-      const webhookId = v7();
-      const creatorId = ctx.getSessionPayload.user.id;
-      // Only the hash is stored. The credential leaves in this response alone, and no later read can return it again
-      const token = generateSecretToken();
-      const tokenHash = await hashSecretToken(token);
-      const isUnderWebhookCap = and(
-        eq(roomsInMessage.id, roomId),
-        sql`(select count(*) from ${webhooksInMessage} where ${eq(webhooksInMessage.roomId, roomId)}) < ${WEBHOOK_MAX_LENGTH}`,
-      );
-      const [, webhookRows] = await ctx.db.batch([
-        ctx.db.insert(appUsersInMessage).select(
+  createWebhook: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageWebhooks, createWebhookInputSchema, "roomId", RateLimiterType.Slow),
+    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  ).mutation<IssuedWebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
+    const webhookContext = JSON.stringify({ name, roomId });
+    // The webhook posts as its app user, so the app user's id is named up front. Both rows are selected from the room
+    // Only while it holds fewer webhooks than the cap, so a full room refuses the pair and writes neither of them
+    const appUserId = v7();
+    const webhookId = v7();
+    const creatorId = ctx.getSessionPayload.user.id;
+    // Only the hash is stored. The credential leaves in this response alone, and no later read can return it again
+    const token = generateSecretToken();
+    const tokenHash = await hashSecretToken(token);
+    const isUnderWebhookCap = and(
+      eq(roomsInMessage.id, roomId),
+      sql`(select count(*) from ${webhooksInMessage} where ${eq(webhooksInMessage.roomId, roomId)}) < ${WEBHOOK_MAX_LENGTH}`,
+    );
+    const [, webhookRows] = await ctx.db.batch([
+      ctx.db.insert(appUsersInMessage).select(
+        ctx.db
+          .select({
+            ...getInsertSelectMetadata(appUsersInMessage),
+            id: sql`${appUserId}`.as("id"),
+            name: sql`${name}`.as("name"),
+          })
+          .from(roomsInMessage)
+          .where(isUnderWebhookCap),
+      ),
+      ctx.db
+        .insert(webhooksInMessage)
+        .select(
           ctx.db
             .select({
-              ...getInsertSelectMetadata(appUsersInMessage),
-              id: sql`${appUserId}`.as("id"),
+              ...getInsertSelectMetadata(webhooksInMessage),
+              creatorId: sql`${creatorId}`.as("creatorId"),
+              id: sql`${webhookId}`.as("id"),
+              isActive: sql`${sql.param(true, webhooksInMessage.isActive)}`.as("isActive"),
               name: sql`${name}`.as("name"),
+              roomId: roomsInMessage.id,
+              tokenHash: sql`${tokenHash}`.as("tokenHash"),
+              userId: sql`${appUserId}`.as("userId"),
             })
             .from(roomsInMessage)
             .where(isUnderWebhookCap),
-        ),
-        ctx.db
-          .insert(webhooksInMessage)
-          .select(
-            ctx.db
-              .select({
-                ...getInsertSelectMetadata(webhooksInMessage),
-                creatorId: sql`${creatorId}`.as("creatorId"),
-                id: sql`${webhookId}`.as("id"),
-                isActive: sql`${sql.param(true, webhooksInMessage.isActive)}`.as("isActive"),
-                name: sql`${name}`.as("name"),
-                roomId: roomsInMessage.id,
-                tokenHash: sql`${tokenHash}`.as("tokenHash"),
-                userId: sql`${appUserId}`.as("userId"),
-              })
-              .from(roomsInMessage)
-              .where(isUnderWebhookCap),
-          )
-          .returning(publicWebhookColumns),
-      ]);
-      return {
-        token,
-        webhook: requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext),
-      };
-    }),
-  deleteWebhook: getPermissionsProcedure(RoomPermission.ManageWebhooks, deleteWebhookInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(deleteWebhookInputSchema, ({ roomId }) => [getTopic(TopicKind.Webhook, roomId)]),
-    })
-    .mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
-      const webhook = await requireEntity(
-        ctx.db.query.webhooksInMessage.findFirst({
-          columns: { tokenHash: false },
-          where: { id: { eq: id }, roomId: { eq: roomId } },
-        }),
-        DatabaseEntityType.Webhook,
-        id,
-      );
-      // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
-      requireMutation(
-        (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
-        Operation.Delete,
-        DatabaseEntityType.AppUser,
-        webhook.userId,
-      );
-      return webhook;
-    }),
-  readAppUsers: getMemberProcedure(readAppUsersInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(readAppUsersInputSchema, ({ roomId }) => [getTopic(TopicKind.Webhook, roomId)]),
-    })
-    .query<AppUserInMessage[]>(({ ctx, input: { ids, roomId } }) =>
-      ctx.db
-        .select(getColumns(appUsersInMessage))
-        .from(appUsersInMessage)
-        .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
-        .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
-    ),
-  readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId")
-    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Webhook, roomId)]) })
-    .query<WebhookInMessageWithRelations[]>(({ ctx, input: { roomId } }) =>
-      ctx.db.query.webhooksInMessage.findMany({
+        )
+        .returning(publicWebhookColumns),
+    ]);
+    return {
+      token,
+      webhook: requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext),
+    };
+  }),
+  deleteWebhook: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageWebhooks, deleteWebhookInputSchema, "roomId"),
+    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
+    const webhook = await requireEntity(
+      ctx.db.query.webhooksInMessage.findFirst({
         columns: { tokenHash: false },
-        orderBy: { id: "desc" },
-        where: { roomId: { eq: roomId } },
-        with: WebhookInMessageRelations,
+        where: { id: { eq: id }, roomId: { eq: roomId } },
       }),
-    ),
+      DatabaseEntityType.Webhook,
+      id,
+    );
+    // The webhook row is cascade-deleted with the app user it posts as, so the app user is the one delete
+    requireMutation(
+      (await ctx.db.delete(appUsersInMessage).where(eq(appUsersInMessage.id, webhook.userId)).returning())[0],
+      Operation.Delete,
+      DatabaseEntityType.AppUser,
+      webhook.userId,
+    );
+    return webhook;
+  }),
+  readAppUsers: getTopicsProcedure(getMemberProcedure(readAppUsersInputSchema, "roomId"), ({ input }) => [
+    getTopic(TopicKind.Webhook, input.roomId),
+  ]).query<AppUserInMessage[]>(({ ctx, input: { ids, roomId } }) =>
+    ctx.db
+      .select(getColumns(appUsersInMessage))
+      .from(appUsersInMessage)
+      .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
+      .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
+  ),
+  readWebhooks: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId"),
+    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  ).query<WebhookInMessageWithRelations[]>(({ ctx, input: { roomId } }) =>
+    ctx.db.query.webhooksInMessage.findMany({
+      columns: { tokenHash: false },
+      orderBy: { id: "desc" },
+      where: { roomId: { eq: roomId } },
+      with: WebhookInMessageRelations,
+    }),
+  ),
   regenerateToken: getPermissionsProcedure(RoomPermission.ManageWebhooks, regenerateTokenInputSchema, "roomId")
     .meta({ staticReason: "The credential is never read back, so no reader's copy of a webhook changes" })
     .mutation<IssuedWebhookInMessage>(async ({ ctx, input: { id, roomId } }) => {
@@ -161,22 +153,21 @@ export const webhookRouter = router({
       );
       return { token, webhook };
     }),
-  updateWebhook: getPermissionsProcedure(RoomPermission.ManageWebhooks, updateWebhookInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(updateWebhookInputSchema, ({ roomId }) => [getTopic(TopicKind.Webhook, roomId)]),
-    })
-    .mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
-      requireMutation(
-        (
-          await ctx.db
-            .update(webhooksInMessage)
-            .set(rest)
-            .where(inRoom(webhooksInMessage, id, roomId))
-            .returning(publicWebhookColumns)
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Webhook,
-        id,
-      ),
+  updateWebhook: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageWebhooks, updateWebhookInputSchema, "roomId"),
+    ({ input }) => [getTopic(TopicKind.Webhook, input.roomId)],
+  ).mutation<PublicWebhookInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) =>
+    requireMutation(
+      (
+        await ctx.db
+          .update(webhooksInMessage)
+          .set(rest)
+          .where(inRoom(webhooksInMessage, id, roomId))
+          .returning(publicWebhookColumns)
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.Webhook,
+      id,
     ),
+  ),
 });

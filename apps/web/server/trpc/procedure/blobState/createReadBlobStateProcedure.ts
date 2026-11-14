@@ -4,6 +4,7 @@ import type { z } from "zod";
 import { getUnreadableSaveError } from "#server/services/blobState/getUnreadableSaveError";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { getTopic } from "#shared/services/realtime/getTopic";
 import { getSaveBlobName } from "@esposter/db-schema";
@@ -18,17 +19,18 @@ export const createReadBlobStateProcedure = <TData, TInit>(
   schema: z.ZodType<TInit>,
   topicKind: TopicKind,
 ) =>
-  standardAuthedProcedure
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(topicKind, userId)]) })
-    .query<{ data: TData; etag?: string }>(async ({ ctx }) => {
-      const bucket = getBucket(container);
-      const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
-      if (!json) return { data: new Model(), etag };
+  getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [getTopic(topicKind, ctx.getSessionPayload.user.id)]).query<{
+    data: TData;
+    etag?: string;
+  }>(async ({ ctx }) => {
+    const bucket = getBucket(container);
+    const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
+    if (!json) return { data: new Model(), etag };
 
-      const parsedSave = schema.safeParse(jsonDateParse(json.toString()));
-      if (!parsedSave.success) {
-        console.error(parsedSave.error);
-        throw getUnreadableSaveError(parsedSave.error);
-      }
-      return { data: new Model(parsedSave.data), etag };
-    });
+    const parsedSave = schema.safeParse(jsonDateParse(json.toString()));
+    if (!parsedSave.success) {
+      console.error(parsedSave.error);
+      throw getUnreadableSaveError(parsedSave.error);
+    }
+    return { data: new Model(parsedSave.data), etag };
+  });

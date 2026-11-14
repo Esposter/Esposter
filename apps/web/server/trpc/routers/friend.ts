@@ -2,10 +2,10 @@ import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import { searchUsersInputSchema } from "#shared/models/db/friend/SearchUsersInput";
@@ -22,44 +22,43 @@ import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
 import { and, eq, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
-  deleteFriend: standardAuthedProcedure
-    .meta({
-      topics: getProcedureTopics(friendUserIdInputSchema, (friendId, { userId }) =>
-        userId === undefined ? [] : [getTopic(TopicKind.Friend, userId), getTopic(TopicKind.Friend, friendId)],
-      ),
-    })
-    .input(friendUserIdInputSchema)
-    .mutation<void>(async ({ ctx, input: friendId }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
+  deleteFriend: getTopicsProcedure(
+    standardAuthedProcedure.input(friendUserIdInputSchema),
+    ({ ctx, input: friendId }) => [
+      getTopic(TopicKind.Friend, ctx.getSessionPayload.user.id),
+      getTopic(TopicKind.Friend, friendId),
+    ],
+  ).mutation<void>(async ({ ctx, input: friendId }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
 
-      const friendshipId = getFriendshipId(userId, friendId);
-      requireMutation(
-        (await ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning())[0],
-        Operation.Delete,
-        DatabaseEntityType.Friend,
-        friendshipId,
-        "NOT_FOUND",
+    const friendshipId = getFriendshipId(userId, friendId);
+    requireMutation(
+      (await ctx.db.delete(friendsInSocial).where(eq(friendsInSocial.id, friendshipId)).returning())[0],
+      Operation.Delete,
+      DatabaseEntityType.Friend,
+      friendshipId,
+      "NOT_FOUND",
+    );
+    await callUserObjects([userId, friendId], (userObject) =>
+      userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
+    );
+  }),
+  readFriends: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
+    getTopic(TopicKind.Friend, ctx.getSessionPayload.user.id),
+  ]).query<PublicUser[]>(({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    return ctx.db
+      .select(getPublicUserColumns(usersInAuth))
+      .from(friendsInSocial)
+      .innerJoin(
+        usersInAuth,
+        or(
+          and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
+          and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
+        ),
       );
-      await callUserObjects([userId, friendId], (userObject) =>
-        userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
-      );
-    }),
-  readFriends: standardAuthedProcedure
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.Friend, userId)]) })
-    .query<PublicUser[]>(({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      return ctx.db
-        .select(getPublicUserColumns(usersInAuth))
-        .from(friendsInSocial)
-        .innerJoin(
-          usersInAuth,
-          or(
-            and(eq(friendsInSocial.senderId, userId), eq(usersInAuth.id, friendsInSocial.receiverId)),
-            and(eq(friendsInSocial.receiverId, userId), eq(usersInAuth.id, friendsInSocial.senderId)),
-          ),
-        );
-    }),
+  }),
   searchUsers: standardAuthedProcedure
     .meta({
       staticReason:

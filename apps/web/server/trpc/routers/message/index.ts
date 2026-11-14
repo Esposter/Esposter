@@ -1,9 +1,10 @@
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { RoomMessage } from "@esposter/db-schema";
+import type { RoomMessage, Topic } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -30,6 +31,7 @@ import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMessageProcedure } from "#server/trpc/procedure/message/getMessageProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -81,6 +83,11 @@ import {
 import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
+
+// The member's own thread follows, which only their own follows and unfollows change
+const getThreadFollowTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
+  getTopic(TopicKind.ThreadFollow, ctx.getSessionPayload.user.id),
+];
 
 export const baseMessageRouter = router({
   // The sender's time zone is the call's and never the message's, so it is dropped before the message is written
@@ -166,12 +173,13 @@ export const baseMessageRouter = router({
         console.error,
       );
     }),
-  followThread: getMemberProcedure(followThreadInputSchema, "roomId")
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
-    .mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
-      // The bell is the member's own decision, so it clears any unfollow they recorded earlier
-      await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id }, true);
-    }),
+  followThread: getTopicsProcedure(
+    getMemberProcedure(followThreadInputSchema, "roomId"),
+    getThreadFollowTopics,
+  ).mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
+    // The bell is the member's own decision, so it clears any unfollow they recorded earlier
+    await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id }, true);
+  }),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId")
     .meta({ staticReason: "The room objects push the forwarded messages to their sockets as typed events" })
     .mutation<void>(async ({ ctx, input: { id, message, roomId, roomIds } }) => {
@@ -305,15 +313,16 @@ export const baseMessageRouter = router({
   // `threadRootIds` is the follow-STATE source of truth — every followed root, including those whose root message was
   // Deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose follow row remains — while
   // `threads` drops deleted roots so the drawer never lists a dangling follow
-  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId")
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
-    .query<ReadFollowedThreadsResult>(async ({ ctx, input: { roomId } }) => {
-      const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.getSessionPayload.user.id);
-      if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
-      // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
-      const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
-      return { threadRootIds, threads };
-    }),
+  readFollowedThreads: getTopicsProcedure(
+    getMemberProcedure(roomIdSchema, "roomId"),
+    getThreadFollowTopics,
+  ).query<ReadFollowedThreadsResult>(async ({ ctx, input: { roomId } }) => {
+    const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.getSessionPayload.user.id);
+    if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
+    // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
+    const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
+    return { threadRootIds, threads };
+  }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
     .query<BasePaginationData<RoomMessage>>(async ({ input: { after, before, filter, limit, roomId } }) =>
@@ -346,11 +355,12 @@ export const baseMessageRouter = router({
       else if (inFilterRoomIds.length > 0) await assertIsMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
       return searchMessages(input);
     }),
-  unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId")
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
-    .mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
-      await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id });
-    }),
+  unfollowThread: getTopicsProcedure(
+    getMemberProcedure(unfollowThreadInputSchema, "roomId"),
+    getThreadFollowTopics,
+  ).mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
+    await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id });
+  }),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input }) => {

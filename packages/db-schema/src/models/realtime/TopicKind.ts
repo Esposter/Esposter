@@ -11,7 +11,6 @@ export const TopicKind = {
   Friend: "friend",
   FriendRequest: "friendRequest",
   Genshin: "genshin",
-  Invite: "invite",
   Notification: "notification",
   Post: "post",
   PushSubscription: "pushSubscription",

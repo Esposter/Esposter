@@ -1,7 +1,7 @@
-import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { ScheduledReminder } from "@esposter/db-schema";
+import type { ScheduledReminder, Topic } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
@@ -9,6 +9,7 @@ import { readMyScheduledMessageJobs } from "#server/services/message/scheduledMe
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readMyScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadMyScheduledMessagesInput";
@@ -20,49 +21,51 @@ import { v7 } from "uuid";
 
 // The person's scheduled items, reminders and scheduled messages alike, which only their own writes change. No object
 // Pushes them as events, so readers learn of a change through this topic
-const scheduledMessageTopics: ProcedureTopics = ({ userId }) =>
-  userId === undefined ? [] : [getTopic(TopicKind.ScheduledMessage, userId)];
+const getScheduledMessageTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
+  getTopic(TopicKind.ScheduledMessage, ctx.getSessionPayload.user.id),
+];
 
 // The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
 // Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
 export const scheduledMessageJobRouter = router({
   // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message, which
   // Its room's object deletes for the sender who scheduled it and for nobody else
-  cancelScheduledMessageJob: standardAuthedProcedure
-    .input(scheduledMessageIdentityInputSchema)
-    .meta({ topics: scheduledMessageTopics })
-    .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
-      if (await useUserObject(ctx.getSessionPayload.user.id).removeReminder(id)) return;
+  cancelScheduledMessageJob: getTopicsProcedure(
+    standardAuthedProcedure.input(scheduledMessageIdentityInputSchema),
+    getScheduledMessageTopics,
+  ).mutation<void>(async ({ ctx, input: { id, roomId } }) => {
+    if (await useUserObject(ctx.getSessionPayload.user.id).removeReminder(id)) return;
 
-      const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(
-        id,
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
-      );
-      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
-    }),
-  readMyScheduledMessageJobs: standardAuthedProcedure
-    .input(readMyScheduledMessagesInputSchema)
-    .meta({ topics: scheduledMessageTopics })
-    .query<BasePaginationData<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
-      readMyScheduledMessageJobs(ctx.db, ctx.getSessionPayload.user.id, input),
-    ),
-  readMyScheduledMessageJobsCount: standardAuthedProcedure
-    .meta({ topics: scheduledMessageTopics })
-    .query<number>(async ({ ctx }) => {
+    const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(
+      id,
+      getRoomActor(ctx.getSessionPayload, ctx.headers),
+    );
+    if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
+  }),
+  readMyScheduledMessageJobs: getTopicsProcedure(
+    standardAuthedProcedure.input(readMyScheduledMessagesInputSchema),
+    getScheduledMessageTopics,
+  ).query<BasePaginationData<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
+    readMyScheduledMessageJobs(ctx.db, ctx.getSessionPayload.user.id, input),
+  ),
+  readMyScheduledMessageJobsCount: getTopicsProcedure(standardAuthedProcedure, getScheduledMessageTopics).query<number>(
+    async ({ ctx }) => {
       const userObject = useUserObject(ctx.getSessionPayload.user.id);
       const [scheduledMessages, reminders] = await Promise.all([
         userObject.readScheduledMessages(),
         userObject.readReminders(),
       ]);
       return scheduledMessages.length + reminders.length;
-    }),
+    },
+  ),
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
   // To, so only a member of that room can set one
-  scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId")
-    .meta({ topics: scheduledMessageTopics })
-    .mutation<ScheduledReminder>(async ({ ctx, input }) => {
-      const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
-      await useUserObject(ctx.getSessionPayload.user.id).addReminder(reminder);
-      return reminder;
-    }),
+  scheduleReminder: getTopicsProcedure(
+    getMemberProcedure(scheduleReminderInputSchema, "roomId"),
+    getScheduledMessageTopics,
+  ).mutation<ScheduledReminder>(async ({ ctx, input }) => {
+    const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
+    await useUserObject(ctx.getSessionPayload.user.id).addReminder(reminder);
+    return reminder;
+  }),
 });

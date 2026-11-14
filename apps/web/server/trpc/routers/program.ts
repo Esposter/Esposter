@@ -11,6 +11,7 @@ import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { regenerateProgramParticipantTokenInputSchema } from "#shared/models/db/program/RegenerateProgramParticipantTokenInput";
@@ -24,16 +25,16 @@ export const programRouter = router({
   ...createResourceProcedures(ResourceType.Program),
   // Answers only the credentials issued by this run: a participant already holding one keeps it, and its link is not
   // Answered again, since no read can give it back
-  generateProgramParticipants: getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id")
-    .meta({
+  generateProgramParticipants: getTopicsProcedure(
+    getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id").meta({
       mcp: {
         description:
           "Issue one participant token per member of a program's audience that has none yet. Answers the tokens issued by this run, and nothing on a repeat that finds no new member.",
         scope: McpScope.Resources,
       },
-      topics: getResourceTopics(resourceIdInputSchema),
-    })
-    .mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
+    }),
+    getResourceTopics,
+  ).mutation<GeneratedProgramParticipants>(({ ctx }) => generateProgramParticipants(ctx, ctx.resource.id)),
   // The invite export issues each participant in scope a new link, the one answer besides generation that carries links
   // Scoped to the still-awaiting for the reminder, so the reminder never re-sends a responder
   issueProgramInvites: getOwnerProcedure(
@@ -50,22 +51,22 @@ export const programRouter = router({
   // Which is blade work, not chart work.
   // Projected down to what the blade renders: the join's publicId is the dataset's identity and nothing on
   // This surface reads it, so the response carries no participant identifier the owner is not being shown
-  readProgramStatus: getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id")
-    .meta({
+  readProgramStatus: getTopicsProcedure(
+    getOwnerProcedure(ResourceType.Program, resourceIdInputSchema, "id").meta({
       mcp: {
         description:
           "Read a program's status: which of its audience has answered and which has not, with no participant credentials. Answers the status.",
         scope: McpScope.Resources,
       },
-      topics: getResourceTopics(resourceIdInputSchema),
-    })
-    .query<ProgramStatus>(async ({ ctx }) => {
-      const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.db, ctx.resource);
-      return {
-        isRespondedPartial,
-        rows: rows.map(({ addedAt, isResponded, keyValue }) => ({ addedAt, isResponded, keyValue })),
-      };
     }),
+    getResourceTopics,
+  ).query<ProgramStatus>(async ({ ctx }) => {
+    const { isRespondedPartial, rows } = await readProgramStatusRows(ctx.db, ctx.resource);
+    return {
+      isRespondedPartial,
+      rows: rows.map(({ addedAt, isResponded, keyValue }) => ({ addedAt, isResponded, keyValue })),
+    };
+  }),
   regenerateProgramParticipantToken: getOwnerProcedure(
     ResourceType.Program,
     regenerateProgramParticipantTokenInputSchema,

@@ -1,11 +1,12 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
-import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   ApiKeyPermissions,
   DataExportInUser,
   DeleteAccountQueueMessage,
   ExportUserDataQueueMessage,
+  Topic,
   UserInAuth,
   UserSettingsInMessage,
   UserStatusInMessage,
@@ -20,7 +21,6 @@ import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -31,6 +31,7 @@ import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
@@ -72,7 +73,9 @@ import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // The session's own user, whose profile, settings and call backgrounds the procedures below read or change
-const userTopics: ProcedureTopics = ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.User, userId)]);
+const userTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
+  getTopic(TopicKind.User, ctx.getSessionPayload.user.id),
+];
 
 export const userRouter = router({
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
@@ -110,23 +113,23 @@ export const userRouter = router({
       });
       await deleteAccountSessions(ctx);
     }),
-  deleteCallBackground: standardAuthedProcedure
-    .meta({ topics: userTopics })
-    .input(callBackgroundSlotSchema)
-    .mutation<void>(async ({ ctx, input: { slot } }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
-      // And a delete address the same blob, so a redelivered delete would take the replacement with it. The
-      // Bound is the instant the delete was decided, so a slot re-uploaded after it keeps its new image and the
-      // Worst case is a blob nothing points at rather than a background that vanishes after being replaced.
-      // The settings row keeps naming a slot that no longer resolves, which the picker already renders as no
-      // Background - so there is nothing to unwind here and no cleanup pass to schedule
-      await publishBlobPrefixDeletion(
-        StorageBucket.UserAssets,
-        getCallBackgroundBlobName(userId, slot),
-        new Date(),
-      ).match(noop, console.error);
-    }),
+  deleteCallBackground: getTopicsProcedure(
+    standardAuthedProcedure.input(callBackgroundSlotSchema),
+    userTopics,
+  ).mutation<void>(async ({ ctx, input: { slot } }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
+    // And a delete address the same blob, so a redelivered delete would take the replacement with it. The
+    // Bound is the instant the delete was decided, so a slot re-uploaded after it keeps its new image and the
+    // Worst case is a blob nothing points at rather than a background that vanishes after being replaced.
+    // The settings row keeps naming a slot that no longer resolves, which the picker already renders as no
+    // Background - so there is nothing to unwind here and no cleanup pass to schedule
+    await publishBlobPrefixDeletion(
+      StorageBucket.UserAssets,
+      getCallBackgroundBlobName(userId, slot),
+      new Date(),
+    ).match(noop, console.error);
+  }),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .meta({
       staticReason:
@@ -176,32 +179,33 @@ export const userRouter = router({
       const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
       return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
     }),
-  readCallBackgrounds: standardAuthedProcedure.meta({ topics: userTopics }).query<CallBackground[]>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const bucket = getBucket(StorageBucket.UserAssets);
-    const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
-    // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
-    const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
-    const unservableBlobNames: string[] = [];
-    for (const callBackgroundBlob of callBackgroundBlobs)
-      if (checkIsServableCallBackground(callBackgroundBlob)) servableCallBackgroundBlobs.push(callBackgroundBlob);
-      else unservableBlobNames.push(callBackgroundBlob.name);
-    // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
-    // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
-    // Occupied by a blob nothing will ever hand out
-    await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
-    return Promise.all(
-      servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
-        sasUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
-        slot,
-      })),
-    );
-  }),
+  readCallBackgrounds: getTopicsProcedure(standardAuthedProcedure, userTopics).query<CallBackground[]>(
+    async ({ ctx }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const bucket = getBucket(StorageBucket.UserAssets);
+      const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
+      // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
+      const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
+      const unservableBlobNames: string[] = [];
+      for (const callBackgroundBlob of callBackgroundBlobs)
+        if (checkIsServableCallBackground(callBackgroundBlob)) servableCallBackgroundBlobs.push(callBackgroundBlob);
+        else unservableBlobNames.push(callBackgroundBlob.name);
+      // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
+      // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
+      // Occupied by a blob nothing will ever hand out
+      await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
+      return Promise.all(
+        servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
+          sasUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
+          slot,
+        })),
+      );
+    },
+  ),
   // The export the settings page shows: the one being built, else the latest export of any status, so a failed build is
   // Shown rather than hidden behind an older ready one
-  readDataExport: standardAuthedProcedure
-    .meta({ topics: userTopics })
-    .query<DataExportInUser | undefined>(async ({ ctx }) => {
+  readDataExport: getTopicsProcedure(standardAuthedProcedure, userTopics).query<DataExportInUser | undefined>(
+    async ({ ctx }) => {
       const activeDataExport = await readActiveDataExport(ctx);
       if (activeDataExport) return activeDataExport;
       else
@@ -209,7 +213,8 @@ export const userRouter = router({
           orderBy: { requestedAt: "desc" },
           where: { userId: { eq: ctx.getSessionPayload.user.id } },
         });
-    }),
+    },
+  ),
   readStatuses: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
@@ -236,22 +241,20 @@ export const userRouter = router({
     }),
   // Public profile identity — projects only the allowlisted columns so private fields (email) never
   // Leave the database, and runs unauthenticated on the rate-limited procedure
-  readUser: standardRateLimitedProcedure
-    .meta({ topics: getProcedureTopics(readUserInputSchema, (userId) => [getTopic(TopicKind.User, userId)]) })
-    .input(readUserInputSchema)
-    .query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
-      requireEntity(
-        ctx.db.query.usersInAuth.findFirst({
-          columns: { biography: true, image: true, name: true },
-          where: { id: { eq: input } },
-        }),
-        DatabaseEntityType.User,
-        input,
-      ),
+  readUser: getTopicsProcedure(standardRateLimitedProcedure.input(readUserInputSchema), ({ input }) => [
+    getTopic(TopicKind.User, input),
+  ]).query<Pick<UserInAuth, "biography" | "image" | "name">>(({ ctx, input }) =>
+    requireEntity(
+      ctx.db.query.usersInAuth.findFirst({
+        columns: { biography: true, image: true, name: true },
+        where: { id: { eq: input } },
+      }),
+      DatabaseEntityType.User,
+      input,
     ),
-  readUserSettings: standardAuthedProcedure
-    .meta({ topics: userTopics })
-    .query<UserSettingsInMessage>(async ({ ctx }) => {
+  ),
+  readUserSettings: getTopicsProcedure(standardAuthedProcedure, userTopics).query<UserSettingsInMessage>(
+    async ({ ctx }) => {
       const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
         where: { userId: { eq: ctx.getSessionPayload.user.id } },
       });
@@ -275,13 +278,13 @@ export const userRouter = router({
           virtualBackground: "",
           voiceInputMode: VoiceInputMode.VoiceActivity,
         } satisfies UserSettingsInMessage;
-    }),
+    },
+  ),
   // A request while one is queued or building conflicts with that export's row, so nothing is inserted and the
   // Active one comes back unpublished. The event goes out after the row lands; a refused publish deletes the row, so
   // The retry queues a new export rather than returning one that nothing will build
-  requestDataExport: standardAuthedProcedure
-    .meta({ topics: userTopics })
-    .mutation<DataExportInUser>(async ({ ctx }) => {
+  requestDataExport: getTopicsProcedure(standardAuthedProcedure, userTopics).mutation<DataExportInUser>(
+    async ({ ctx }) => {
       const userId = ctx.getSessionPayload.user.id;
       const [insertedDataExport] = await ctx.db
         .insert(dataExportsInUser)
@@ -299,42 +302,39 @@ export const userRouter = router({
         const activeDataExport = readActiveDataExport(ctx);
         return requireEntity(activeDataExport, DatabaseEntityType.DataExport, userId);
       }
-    }),
-  updateUser: standardAuthedProcedure
-    // A post card shows its author's name and image, so the feed reads the change as well
-    .meta({ topics: (options) => [...userTopics(options), getTopic(TopicKind.Feed, "posts")] })
-    .input(updateUserInputSchema)
-    .mutation<UserInAuth>(async ({ ctx, input }) =>
-      requireMutation(
-        (
-          await ctx.db
-            .update(usersInAuth)
-            .set(input)
-            .where(eq(usersInAuth.id, ctx.getSessionPayload.user.id))
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.User,
-        ctx.getSessionPayload.user.id,
-      ),
+    },
+  ),
+  // A post card shows its author's name and image, so the feed reads the change as well
+  updateUser: getTopicsProcedure(standardAuthedProcedure.input(updateUserInputSchema), (options) => [
+    ...userTopics(options),
+    getTopic(TopicKind.Feed, "posts"),
+  ]).mutation<UserInAuth>(async ({ ctx, input }) =>
+    requireMutation(
+      (
+        await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.getSessionPayload.user.id)).returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.User,
+      ctx.getSessionPayload.user.id,
     ),
-  updateUserSettings: standardAuthedProcedure
-    .meta({ topics: userTopics })
-    .input(updateUserSettingsInputSchema)
-    .mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
-      requireMutation(
-        (
-          await ctx.db
-            .insert(userSettingsInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
-            .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.UserSettings,
-        JSON.stringify(input),
-      ),
+  ),
+  updateUserSettings: getTopicsProcedure(
+    standardAuthedProcedure.input(updateUserSettingsInputSchema),
+    userTopics,
+  ).mutation<UserSettingsInMessage>(async ({ ctx, input }) =>
+    requireMutation(
+      (
+        await ctx.db
+          .insert(userSettingsInMessage)
+          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.UserSettings,
+      JSON.stringify(input),
     ),
+  ),
   upsertStatus: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(upsertStatusInputSchema)

@@ -1,6 +1,7 @@
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { runSheetCommand } from "#server/services/resource/sheet/runSheetCommand";
 import { router } from "#server/trpc";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { runSheetCommandInputSchema } from "#shared/models/db/resource/sheet/RunSheetCommandInput";
@@ -8,16 +9,16 @@ import { McpScope, ResourceType } from "@esposter/db-schema";
 
 export const sheetRouter = router({
   ...createResourceProcedures(ResourceType.Sheet),
-  runSheetCommand: getOwnerProcedure(ResourceType.Sheet, runSheetCommandInputSchema, "id")
-    .meta({
+  runSheetCommand: getTopicsProcedure(
+    getOwnerProcedure(ResourceType.Sheet, runSheetCommandInputSchema, "id").meta({
       mcp: {
         description:
           "Run one of the sheet editor's own commands on a Sheet, so every row changes as the editor would change it: rename a column, change its type or its date format, or set the cells of a row named by its id, which still lands on that row after rows are inserted above it. Pass the contentVersion you read and the command is refused if the Sheet changed since; left out, it applies to the latest content. Answers the new contentVersion.",
         scope: McpScope.Resources,
       },
-      topics: getChangedResourceTopics(runSheetCommandInputSchema),
-    })
-    .mutation<{ contentVersion: number }>(async ({ ctx, input }) => ({
-      contentVersion: await runSheetCommand(ctx, ctx.resource, input),
-    })),
+    }),
+    getChangedResourceTopics,
+  ).mutation<{ contentVersion: number }>(async ({ ctx, input }) => ({
+    contentVersion: await runSheetCommand(ctx, ctx.resource, input),
+  })),
 });

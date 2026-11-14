@@ -3,6 +3,7 @@ import type { z } from "zod";
 
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { getBucket } from "#server/services/storage/getBucket";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { getTopic } from "#shared/services/realtime/getTopic";
 import { getSaveBlobName } from "@esposter/db-schema";
@@ -16,16 +17,15 @@ export const createSaveBlobStateProcedure = <TData, TDataInput>(
   inputSchema: z.ZodType<{ data: TData; etag?: string }, { data: TDataInput; etag?: string }>,
   topicKind: TopicKind,
 ) =>
-  standardAuthedProcedure
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(topicKind, userId)]) })
-    .input(inputSchema)
-    .mutation<{ etag: string }>(async ({ ctx, input }) => {
-      const bucket = getBucket(container);
-      const etag = await writeBlobState(
-        bucket,
-        getSaveBlobName(ctx.getSessionPayload.user.id),
-        JSON.stringify(input.data),
-        input.etag,
-      );
-      return { etag };
-    });
+  getTopicsProcedure(standardAuthedProcedure.input(inputSchema), ({ ctx }) => [
+    getTopic(topicKind, ctx.getSessionPayload.user.id),
+  ]).mutation<{ etag: string }>(async ({ ctx, input }) => {
+    const bucket = getBucket(container);
+    const etag = await writeBlobState(
+      bucket,
+      getSaveBlobName(ctx.getSessionPayload.user.id),
+      JSON.stringify(input.data),
+      input.etag,
+    );
+    return { etag };
+  });

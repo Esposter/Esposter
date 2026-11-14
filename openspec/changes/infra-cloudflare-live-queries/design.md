@@ -4,7 +4,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md), built o
 
 ## Topics
 
-A topic names a piece of state a query reads and a mutation changes: `post:<id>`, `resource:<id>`, `user:<id>`, `room:<id>`, `feed:posts`, `friends:<userId>`. Each tRPC query declares the topics of its result from its input, and each mutation declares the topics it changed from its input and its output, both through the procedure's `meta`, in one shared file per router so the client and the server compute the same names. A procedure without a declaration fails a test, so no read can quietly stay static and no write can quietly skip its readers.
+A topic names a piece of state a query reads and a mutation changes: `post:<id>`, `resource:<id>`, `user:<id>`, `room:<id>`, `feed:posts`, `friend:<userId>`. Each tRPC query declares the topics of its result from its input, and each mutation declares the topics it changed from its input and its output, both through the procedure's `meta`, in one shared file per router so the client and the server compute the same names. A procedure without a declaration fails a test, so no read can quietly stay static and no write can quietly skip its readers.
 
 ## How an invalidation travels
 
@@ -42,16 +42,15 @@ SpacetimeDB and Zero evaluate each subscribed query on the server and push the r
 
 ## Key files
 
-| File                                                         | Role after the change                                                                             |
-| :----------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
-| `packages/db-schema/src/models/realtime/Topic.ts`            | the topic names, `<kind>:<id>`, shared by procedures, objects and the client                      |
-| `packages/db-schema/src/models/realtime/UserClientFrame.ts`  | the `watch` and `unwatch` frames a tab sends up its user socket                                   |
-| `apps/web/server/models/trpc/Meta.ts`                        | each procedure's `topics` or its `staticReason`, which `server/trpc/routers/topics.test.ts` holds |
-| `apps/web/server/trpc/middleware/publishTopicsMiddleware.ts` | publishes a mutation's topics after it resolves, on every procedure base                          |
-| `apps/web/app/store/realtime/connection.ts`                  | the watched topics' refcounts, re-watched on every open and refetched on a reconnect              |
-| `apps/web/app/composables/shared/useQuery.ts`                | its `topics` option watches a mounted read's topics                                               |
-| `apps/realtime/src/durableObjects/TopicObject.ts`            | one per topic: its subscribers and the coalesced fan-out on its alarm                             |
-| `apps/realtime/src/durableObjects/UserObject.ts`             | each socket's watched topics, subscribing and unsubscribing its topics                            |
+| File                                                        | Role after the change                                                                                                                                                                                    |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/models/realtime/Topic.ts`           | the topic names, `<kind>:<id>`, shared by procedures, objects and the client                                                                                                                             |
+| `packages/db-schema/src/models/realtime/UserClientFrame.ts` | the `watch` and `unwatch` frames a tab sends up its user socket                                                                                                                                          |
+| `apps/web/server/trpc/procedure/getTopicsProcedure.ts`      | a procedure's topics, typed by its own builder's input and context, and a resolved mutation's publish; `server/trpc/routers/topics.test.ts` holds that every procedure declares them or a `staticReason` |
+| `apps/web/app/store/realtime/connection.ts`                 | the watched topics' refcounts, re-watched on every open and refetched on a reconnect                                                                                                                     |
+| `apps/web/app/composables/shared/useQuery.ts`               | its `topics` option watches a mounted read's topics                                                                                                                                                      |
+| `apps/realtime/src/durableObjects/TopicObject.ts`           | one per topic: its subscribers and the coalesced fan-out on its alarm                                                                                                                                    |
+| `apps/realtime/src/durableObjects/UserObject.ts`            | each socket's watched topics, subscribing and unsubscribing its topics                                                                                                                                   |
 
 ## Sources
 

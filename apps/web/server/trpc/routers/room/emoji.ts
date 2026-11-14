@@ -8,7 +8,6 @@ import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmo
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
-import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -16,6 +15,7 @@ import { getStorageCredentials } from "#server/services/storage/getStorageCreden
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
@@ -42,94 +42,87 @@ import { and, eq, notExists, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
 export const emojiRouter = router({
-  createRoomEmoji: getPermissionsProcedure(
-    RoomPermission.ManageEmojis,
-    createRoomEmojiInputSchema,
-    "roomId",
-    RateLimiterType.Slow,
-  )
-    .meta({
-      topics: getProcedureTopics(createRoomEmojiInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]),
-    })
-    .mutation<RoomEmojiWithSasUrl>(async ({ ctx, input: { id, name, roomId } }) => {
-      const bucket = getBucket(StorageBucket.MessageAssets);
-      // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
-      // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
-      // The declared size is an input check the client could lie about, so the row is only created for a blob
-      // Whose bytes are actually within the cap — a write SAS cannot constrain what is PUT through it
-      const uploadedObject = await bucket.head(getRoomEmojiBlobName(roomId, id));
-      if (!uploadedObject || uploadedObject.size > MAX_ROOM_EMOJI_SIZE_BYTES)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
+  createRoomEmoji: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageEmojis, createRoomEmojiInputSchema, "roomId", RateLimiterType.Slow),
+    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  ).mutation<RoomEmojiWithSasUrl>(async ({ ctx, input: { id, name, roomId } }) => {
+    const bucket = getBucket(StorageBucket.MessageAssets);
+    // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
+    // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
+    // The declared size is an input check the client could lie about, so the row is only created for a blob
+    // Whose bytes are actually within the cap — a write SAS cannot constrain what is PUT through it
+    const uploadedObject = await bucket.head(getRoomEmojiBlobName(roomId, id));
+    if (!uploadedObject || uploadedObject.size > MAX_ROOM_EMOJI_SIZE_BYTES)
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
 
-      if (checkIsUnicodeEmojiSlug(name))
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
+    if (checkIsUnicodeEmojiSlug(name))
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
-      const roomEmojiContext = JSON.stringify({ name, roomId });
-      // The cap and the name are checked by the insert itself: the row is only selected while the room holds fewer emoji
-      // Than the cap and none of its emoji already answers to the name. Both refusals are the same answer, so one check
-      const newRoomEmoji = requireMutation(
-        (
-          await ctx.db
-            .insert(roomEmojisInMessage)
-            .select(
-              ctx.db
-                .select({
-                  ...getInsertSelectMetadata(roomEmojisInMessage),
-                  id: sql`${id}`.as("id"),
-                  name: sql`${name}`.as("name"),
-                  roomId: roomsInMessage.id,
-                })
-                .from(roomsInMessage)
-                .where(
-                  and(
-                    eq(roomsInMessage.id, roomId),
-                    sql`(select count(*) from ${roomEmojisInMessage} where ${eq(roomEmojisInMessage.roomId, roomId)}) < ${MAX_ROOM_EMOJIS}`,
-                    notExists(
-                      ctx.db
-                        .select({ _: sql`1` })
-                        .from(roomEmojisInMessage)
-                        .where(and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name))),
-                    ),
+    const roomEmojiContext = JSON.stringify({ name, roomId });
+    // The cap and the name are checked by the insert itself: the row is only selected while the room holds fewer emoji
+    // Than the cap and none of its emoji already answers to the name. Both refusals are the same answer, so one check
+    const newRoomEmoji = requireMutation(
+      (
+        await ctx.db
+          .insert(roomEmojisInMessage)
+          .select(
+            ctx.db
+              .select({
+                ...getInsertSelectMetadata(roomEmojisInMessage),
+                id: sql`${id}`.as("id"),
+                name: sql`${name}`.as("name"),
+                roomId: roomsInMessage.id,
+              })
+              .from(roomsInMessage)
+              .where(
+                and(
+                  eq(roomsInMessage.id, roomId),
+                  sql`(select count(*) from ${roomEmojisInMessage} where ${eq(roomEmojisInMessage.roomId, roomId)}) < ${MAX_ROOM_EMOJIS}`,
+                  notExists(
+                    ctx.db
+                      .select({ _: sql`1` })
+                      .from(roomEmojisInMessage)
+                      .where(and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name))),
                   ),
                 ),
-            )
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.RoomEmoji,
-        roomEmojiContext,
-      );
-      const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
-      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
-      await broadcastRoomEvent(roomId, { data: roomEmojiWithSasUrl, type: "createRoomEmoji" }, actor);
-      return roomEmojiWithSasUrl;
-    }),
-  deleteRoomEmoji: getPermissionsProcedure(RoomPermission.ManageEmojis, deleteRoomEmojiInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(deleteRoomEmojiInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]),
-    })
-    .mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
-      const deletedRoomEmoji = requireMutation(
-        (
-          await ctx.db
-            .delete(roomEmojisInMessage)
-            .where(inRoom(roomEmojisInMessage, id, roomId))
-            .returning()
-        )[0],
-        Operation.Delete,
-        DatabaseEntityType.RoomEmoji,
-        id,
-      );
-      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
-      await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRoomEmoji" }, actor);
-      // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
-      // Sweeps anyway, and every reaction and token naming this id already renders its fallback
-      await publishBlobDeletion(StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
-        noop,
-        console.error,
-      );
-      return deletedRoomEmoji;
-    }),
+              ),
+          )
+          .returning()
+      )[0],
+      Operation.Create,
+      DatabaseEntityType.RoomEmoji,
+      roomEmojiContext,
+    );
+    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: roomEmojiWithSasUrl, type: "createRoomEmoji" }, actor);
+    return roomEmojiWithSasUrl;
+  }),
+  deleteRoomEmoji: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageEmojis, deleteRoomEmojiInputSchema, "roomId"),
+    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, roomId } }) => {
+    const deletedRoomEmoji = requireMutation(
+      (
+        await ctx.db
+          .delete(roomEmojisInMessage)
+          .where(inRoom(roomEmojisInMessage, id, roomId))
+          .returning()
+      )[0],
+      Operation.Delete,
+      DatabaseEntityType.RoomEmoji,
+      id,
+    );
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRoomEmoji" }, actor);
+    // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
+    // Sweeps anyway, and every reaction and token naming this id already renders its fallback
+    await publishBlobDeletion(StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
+      noop,
+      console.error,
+    );
+    return deletedRoomEmoji;
+  }),
   generateUploadRoomEmojiSasEntity: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
     generateUploadRoomEmojiSasEntityInputSchema,
@@ -164,38 +157,37 @@ export const emojiRouter = router({
     }),
   // Membership rather than the `ManageEmojis` its panel is gated on: the picker and every rendered message read
   // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
-  readRoomEmojis: getMemberProcedure(roomIdSchema, "roomId")
-    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
-    .query<RoomEmojiWithSasUrl[]>(async ({ ctx, input: { roomId } }) => {
-      const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
-      return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, roomEmoji)));
-    }),
-  updateRoomEmoji: getPermissionsProcedure(RoomPermission.ManageEmojis, updateRoomEmojiInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(updateRoomEmojiInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]),
-    })
-    .mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
-      if (checkIsUnicodeEmojiSlug(name))
-        throw getInvalidOperationError(Operation.Update, DatabaseEntityType.RoomEmoji, name);
+  readRoomEmojis: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
+    getTopic(TopicKind.Room, roomId),
+  ]).query<RoomEmojiWithSasUrl[]>(async ({ ctx, input: { roomId } }) => {
+    const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
+    return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, roomEmoji)));
+  }),
+  updateRoomEmoji: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageEmojis, updateRoomEmojiInputSchema, "roomId"),
+    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  ).mutation<RoomEmojiInMessage>(async ({ ctx, input: { id, name, roomId } }) => {
+    if (checkIsUnicodeEmojiSlug(name))
+      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.RoomEmoji, name);
 
-      const updatedRoomEmoji = requireMutation(
-        (
-          await ctx.db
-            .update(roomEmojisInMessage)
-            .set({ name })
-            // The room's other emoji are the ones this name may not already belong to, and the unique index is
-            // What makes that true — matching here is what turns a taken name into a stated refusal
-            .where(
-              and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))),
-            )
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.RoomEmoji,
-        id,
-      );
-      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
-      await broadcastRoomEvent(roomId, { data: updatedRoomEmoji, type: "updateRoomEmoji" }, actor);
-      return updatedRoomEmoji;
-    }),
+    const updatedRoomEmoji = requireMutation(
+      (
+        await ctx.db
+          .update(roomEmojisInMessage)
+          .set({ name })
+          // The room's other emoji are the ones this name may not already belong to, and the unique index is
+          // What makes that true — matching here is what turns a taken name into a stated refusal
+          .where(
+            and(inRoom(roomEmojisInMessage, id, roomId), notExists(getRoomEmojiNameQuery(ctx.db, id, name, roomId))),
+          )
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.RoomEmoji,
+      id,
+    );
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: updatedRoomEmoji, type: "updateRoomEmoji" }, actor);
+    return updatedRoomEmoji;
+  }),
 });

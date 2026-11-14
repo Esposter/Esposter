@@ -11,6 +11,7 @@ import { getChangedResourceTopics } from "#server/services/resource/getChangedRe
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
@@ -61,21 +62,21 @@ const fileCallers: Record<FileAssetsResourceType, (ctx: Context) => FileCaller> 
 // Typeless, so one tool serves a resource of any type: the type decides whether the operation exists at all, and a type
 // Without the capability is refused in words before the type's procedure is reached
 export const resourceDispatchRouter = router({
-  deleteFile: getOwnerProcedure(undefined, deleteFileInputSchema, "id")
-    .meta({
+  deleteFile: getTopicsProcedure(
+    getOwnerProcedure(undefined, deleteFileInputSchema, "id").meta({
       mcp: {
         description:
           "Remove a file from a resource by the hash it is stored under. The file leaves the resource and is released once no saved version names it. Answers nothing.",
         scope: McpScope.Resources,
       },
-      topics: getResourceTopics(deleteFileInputSchema),
-    })
-    .mutation<void>(({ ctx, input }) => {
-      const { type } = ctx.resource;
-      if (!checkHasCapability(type, "fileAssets"))
-        throw getInvalidOperationError(Operation.Update, type, "does not take files");
-      return fileCallers[type](ctx).deleteFile(input);
     }),
+    getResourceTopics,
+  ).mutation<void>(({ ctx, input }) => {
+    const { type } = ctx.resource;
+    if (!checkHasCapability(type, "fileAssets"))
+      throw getInvalidOperationError(Operation.Update, type, "does not take files");
+    return fileCallers[type](ctx).deleteFile(input);
+  }),
   generateUploadFileSasEntities: getOwnerProcedure(undefined, generateUploadFileSasEntitiesInputSchema, "id")
     .meta({
       mcp: {
@@ -91,34 +92,34 @@ export const resourceDispatchRouter = router({
         throw getInvalidOperationError(Operation.Read, type, "does not take files");
       return fileCallers[type](ctx).generateUploadFileSasEntities(input);
     }),
-  publishResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
-    .meta({
+  publishResource: getTopicsProcedure(
+    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
       mcp: {
         description:
           "Publish a resource as its type publishes it, so its published address serves the content. A type that does not publish is refused. Answers the publication.",
         scope: McpScope.Resources,
       },
-      topics: getChangedResourceTopics(resourceIdInputSchema),
-    })
-    .mutation<ResourcePublicationInResource>(({ ctx, input }) => {
-      const { type } = ctx.resource;
-      if (!checkHasCapability(type, "publishable"))
-        throw getInvalidOperationError(Operation.Update, type, "does not publish");
-      return publishCallers[type](ctx).publishResource(input);
     }),
-  unpublishResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
-    .meta({
+    getChangedResourceTopics,
+  ).mutation<ResourcePublicationInResource>(({ ctx, input }) => {
+    const { type } = ctx.resource;
+    if (!checkHasCapability(type, "publishable"))
+      throw getInvalidOperationError(Operation.Update, type, "does not publish");
+    return publishCallers[type](ctx).publishResource(input);
+  }),
+  unpublishResource: getTopicsProcedure(
+    getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({
       mcp: {
         description:
           "Take a published resource down, leaving its draft as it is. A type that does not publish is refused. Answers the resource.",
         scope: McpScope.Resources,
       },
-      topics: getChangedResourceTopics(resourceIdInputSchema),
-    })
-    .mutation<ResourceInResource>(({ ctx, input }) => {
-      const { type } = ctx.resource;
-      if (!checkHasCapability(type, "publishable"))
-        throw getInvalidOperationError(Operation.Update, type, "does not publish");
-      return publishCallers[type](ctx).unpublishResource(input);
     }),
+    getChangedResourceTopics,
+  ).mutation<ResourceInResource>(({ ctx, input }) => {
+    const { type } = ctx.resource;
+    if (!checkHasCapability(type, "publishable"))
+      throw getInvalidOperationError(Operation.Update, type, "does not publish");
+    return publishCallers[type](ctx).unpublishResource(input);
+  }),
 });

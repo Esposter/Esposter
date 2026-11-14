@@ -1,8 +1,8 @@
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { upsertRoomFilterInputSchema } from "#shared/models/db/room/UpsertRoomFilterInput";
 import { getTopic } from "#shared/services/realtime/getTopic";
@@ -19,31 +19,31 @@ import { Operation } from "@esposter/shared";
 export const filterRouter = router({
   // Gated like the write it sits beside, rather than at membership: the banned words *are* the filter, so a
   // Member who can read them can spell around every one of them
-  readRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId")
-    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
-    .query<RoomFilterInMessage | undefined>(({ ctx, input: { roomId } }) =>
-      ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } }),
-    ),
-  upsertRoomFilter: getPermissionsProcedure(RoomPermission.ManageRoom, upsertRoomFilterInputSchema, "roomId")
-    .meta({
-      topics: getProcedureTopics(upsertRoomFilterInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]),
-    })
-    .mutation<RoomFilterInMessage>(async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
-      // A duration only belongs to a Timeout action — clear it for every other action so a stale value
-      // Can never re-arm a timeout after the action is switched back.
-      // The column is the one place a filter with no timeout is null, which the database's CHECK reads
-      const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
-      return requireMutation(
-        (
-          await ctx.db
-            .insert(roomFiltersInMessage)
-            .values({ ...set, roomId })
-            .onConflictDoUpdate({ set, target: roomFiltersInMessage.roomId })
-            .returning()
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.RoomFilter,
-        roomId,
-      );
-    }),
+  readRoomFilter: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId"),
+    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  ).query<RoomFilterInMessage | undefined>(({ ctx, input: { roomId } }) =>
+    ctx.db.query.roomFiltersInMessage.findFirst({ where: { roomId: { eq: roomId } } }),
+  ),
+  upsertRoomFilter: getTopicsProcedure(
+    getPermissionsProcedure(RoomPermission.ManageRoom, upsertRoomFilterInputSchema, "roomId"),
+    ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
+  ).mutation<RoomFilterInMessage>(async ({ ctx, input: { action, roomId, timeoutDurationMs, words } }) => {
+    // A duration only belongs to a Timeout action — clear it for every other action so a stale value
+    // Can never re-arm a timeout after the action is switched back.
+    // The column is the one place a filter with no timeout is null, which the database's CHECK reads
+    const set = { action, timeoutDurationMs: action === WordFilterAction.Timeout ? timeoutDurationMs : null, words };
+    return requireMutation(
+      (
+        await ctx.db
+          .insert(roomFiltersInMessage)
+          .values({ ...set, roomId })
+          .onConflictDoUpdate({ set, target: roomFiltersInMessage.roomId })
+          .returning()
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.RoomFilter,
+      roomId,
+    );
+  }),
 });

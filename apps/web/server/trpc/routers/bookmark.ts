@@ -3,6 +3,7 @@ import type { PageLink } from "#shared/models/app/PageLink";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
@@ -12,61 +13,60 @@ import { Operation } from "@esposter/shared";
 import { and, eq, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
-  readBookmarks: standardAuthedProcedure
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.Bookmark, userId)]) })
-    .query<PageLink[]>(async ({ ctx }) => {
-      const userBookmarks = await ctx.db.query.bookmarksInApp.findMany({
-        orderBy: { createdAt: "asc" },
-        where: { userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-      // A bookmark of a resource's page carries its type as the place's mark; any other page has none
-      return userBookmarks.map(({ path, resourceType, title }): PageLink =>
-        resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
-      );
-    }),
-  toggleBookmark: standardAuthedProcedure
-    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.Bookmark, userId)]) })
-    .input(toggleBookmarkInputSchema)
-    .mutation<boolean>(async ({ ctx, input }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
-      // Was bookmarked, so the toggle can never race with itself
-      const deletedBookmarks = await ctx.db
-        .delete(bookmarksInApp)
-        .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
-        .returning();
-      if (deletedBookmarks.length > 0) return false;
+  readBookmarks: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
+    getTopic(TopicKind.Bookmark, ctx.getSessionPayload.user.id),
+  ]).query<PageLink[]>(async ({ ctx }) => {
+    const userBookmarks = await ctx.db.query.bookmarksInApp.findMany({
+      orderBy: { createdAt: "asc" },
+      where: { userId: { eq: ctx.getSessionPayload.user.id } },
+    });
+    // A bookmark of a resource's page carries its type as the place's mark; any other page has none
+    return userBookmarks.map(({ path, resourceType, title }): PageLink =>
+      resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
+    );
+  }),
+  toggleBookmark: getTopicsProcedure(standardAuthedProcedure.input(toggleBookmarkInputSchema), ({ ctx }) => [
+    getTopic(TopicKind.Bookmark, ctx.getSessionPayload.user.id),
+  ]).mutation<boolean>(async ({ ctx, input }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
+    // Was bookmarked, so the toggle can never race with itself
+    const deletedBookmarks = await ctx.db
+      .delete(bookmarksInApp)
+      .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
+      .returning();
+    if (deletedBookmarks.length > 0) return false;
 
-      // The cap is a count, so the insert carries it: the row is only selected while the user is under the cap, and
-      // The batch reads the page back after the insert, which tells a page another device just bookmarked (kept) from
-      // A full list (refused) without a read ahead of the write
-      const [, existingBookmarks] = await ctx.db.batch([
-        ctx.db
-          .insert(bookmarksInApp)
-          .select(
-            ctx.db
-              .select({
-                ...getInsertSelectMetadata(bookmarksInApp),
-                path: sql`${input.path}`.as("path"),
-                resourceType: sql`${input.mark?.resourceType ?? null}`.as("resourceType"),
-                title: sql`${input.title}`.as("title"),
-                userId: sql`${userId}`.as("userId"),
-              })
-              .from(usersInAuth)
-              .where(
-                and(
-                  eq(usersInAuth.id, userId),
-                  sql`(select count(*) from ${bookmarksInApp} where ${eq(bookmarksInApp.userId, userId)}) < ${MAX_BOOKMARKS}`,
-                ),
+    // The cap is a count, so the insert carries it: the row is only selected while the user is under the cap, and
+    // The batch reads the page back after the insert, which tells a page another device just bookmarked (kept) from
+    // A full list (refused) without a read ahead of the write
+    const [, existingBookmarks] = await ctx.db.batch([
+      ctx.db
+        .insert(bookmarksInApp)
+        .select(
+          ctx.db
+            .select({
+              ...getInsertSelectMetadata(bookmarksInApp),
+              path: sql`${input.path}`.as("path"),
+              resourceType: sql`${input.mark?.resourceType ?? null}`.as("resourceType"),
+              title: sql`${input.title}`.as("title"),
+              userId: sql`${userId}`.as("userId"),
+            })
+            .from(usersInAuth)
+            .where(
+              and(
+                eq(usersInAuth.id, userId),
+                sql`(select count(*) from ${bookmarksInApp} where ${eq(bookmarksInApp.userId, userId)}) < ${MAX_BOOKMARKS}`,
               ),
-          )
-          .onConflictDoNothing(),
-        ctx.db
-          .select({ path: bookmarksInApp.path })
-          .from(bookmarksInApp)
-          .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path))),
-      ]);
-      if (existingBookmarks.length > 0) return true;
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
-    }),
+            ),
+        )
+        .onConflictDoNothing(),
+      ctx.db
+        .select({ path: bookmarksInApp.path })
+        .from(bookmarksInApp)
+        .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path))),
+    ]);
+    if (existingBookmarks.length > 0) return true;
+    throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
+  }),
 });
