@@ -24,7 +24,6 @@ describe("jsonClassMap", () => {
       "Row",
       "StandardMessageEntity",
       "StringColumn",
-      "SurveyResponseEntity",
       "TodoListItem",
       "Visual",
       "WebhookMessageEntity",
