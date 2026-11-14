@@ -4,8 +4,7 @@ import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessa
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { Clause } from "@esposter/azure";
-import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
+import type { AzureUpdateEntity, Clause, MessageEntity } from "@esposter/db-schema";
 import type { TrackedEnvelope } from "@trpc/server";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
@@ -46,6 +45,7 @@ import { scheduledMessageJobRouter } from "#server/trpc/routers/message/schedule
 import { deleteFileInputSchema } from "#shared/models/db/message/DeleteFileInput";
 import {
   AzureEntityType,
+  BinaryOperator,
   DatabaseEntityType,
   deleteMessageInputSchema,
   FileEntity,
@@ -82,7 +82,6 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { MESSAGE_OLDEST_FIRST_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { BinaryOperator } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
