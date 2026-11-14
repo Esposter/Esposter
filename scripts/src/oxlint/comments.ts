@@ -1,6 +1,7 @@
 import type { Plugin } from "@oxlint/plugins";
 
 import { noCapitalizedIdentifier } from "#src/services/oxlint/comments/noCapitalizedIdentifier";
+import { noRepeatedDisableNextLine } from "#src/services/oxlint/comments/noRepeatedDisableNextLine";
 import { noTrailingComment } from "#src/services/oxlint/comments/noTrailingComment";
 import { requireDirectiveReason } from "#src/services/oxlint/comments/requireDirectiveReason";
 import { definePlugin } from "@oxlint/plugins";
@@ -26,6 +27,10 @@ import { definePlugin } from "@oxlint/plugins";
  * (`packages/configuration/eslint/plugins/directives.js`). A bare directive naming no rule switches this one off
  * with the rest, so it is the one shape neither half sees; the only ones are generated files the lint ignores.
  *
+ * `no-repeated-disable-next-line` enforces the oxlint skill's rule that a file repeating one rule's `-next-line` disable
+ * collapses into one file-level directive at its top. It reads the comments alone: the grouping is by linter prefix and
+ * rule name, and the fix writes the file-level directive from the reasons the repeats already carry, so no list either.
+ *
  * `no-trailing-comment` enforces the formatting skill's rule that a `//` comment sits on its own line above its
  * code. Stock `no-inline-comments` reads block comments too, and so fires on the `@vue-ignore` block a props
  * interface needs inline; this reads `//` lines only, and passes the same-line disable directive, which names the
@@ -35,6 +40,7 @@ const plugin: Plugin = definePlugin({
   meta: { name: "comments" },
   rules: {
     "no-capitalized-identifier": noCapitalizedIdentifier,
+    "no-repeated-disable-next-line": noRepeatedDisableNextLine,
     "no-trailing-comment": noTrailingComment,
     "require-directive-reason": requireDirectiveReason,
   },

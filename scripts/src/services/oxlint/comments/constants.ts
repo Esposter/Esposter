@@ -22,3 +22,13 @@ export const TERNARY_OPERATORS: ReadonlySet<string> = new Set([":", "?"]);
 // The one directive that has to share its line: a same-line disable names the line it sits on
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SAME_LINE_DIRECTIVE_REGEX: RegExp = /^\s*(?:eslint|oxlint)-disable-line(?:\s|$)/u;
+// A next-line disable of either linter, split at its rule list. `head` runs up to the list, `rules` is the list (absent
+// For a bare directive, which names none), and `tail` is the ` -- reason` text, kept as written
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const NEXT_LINE_DIRECTIVE_REGEX: RegExp =
+  /^(?<head>\s*(?<prefix>oxlint|eslint)-disable-next-line)(?<rules>\s[\s\S]*?)?(?<tail>\s--(?<reason>\s[\s\S]*)?)?$/u;
+// A reason that only points at the reason above it, which the collapsed file-level directive already carries
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const BACK_REFERENCE_REASON_REGEX: RegExp = /^as above$/iu;
+export const buildRepeatedDisableMessage = (prefix: string, rule: string): string =>
+  `\`${rule}\` is disabled on several lines of this file. Collapse them into one file-level \`/* ${prefix}-disable ${rule} -- reason */\` at the top of the file, which the autofix writes. See the oxlint skill.`;

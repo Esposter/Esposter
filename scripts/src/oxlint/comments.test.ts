@@ -161,3 +161,85 @@ describe("comments/no-trailing-comment", () => {
   ];
   setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
 });
+
+describe("comments/no-repeated-disable-next-line", () => {
+  const ESLINT_DIRECTIVE = "eslint-disable-next-line";
+  const OXLINT_DIRECTIVE = "oxlint-disable-next-line";
+  const RULE = "comments/no-repeated-disable-next-line";
+  const FIXTURES = [
+    // The second occurrence is reported, and the fix collapses both into one file-level directive on the first line
+    {
+      fixed: `/* oxlint-disable no-void -- a; b */\nvoid 0;\nvoid 1;`,
+      name: "twoOccurrencesCollapse",
+      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
+      violations: 1,
+    },
+    {
+      fixed: `/* oxlint-disable no-void -- a; b; c */\nvoid 0;\nvoid 1;\nvoid 2;`,
+      name: "threeOccurrencesCollapse",
+      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void -- b\nvoid 1;\n// ${OXLINT_DIRECTIVE} no-void -- c\nvoid 2;`,
+      violations: 2,
+    },
+    // The directives sit inside a function, so their removal takes their indentation with them
+    {
+      fixed: `/* oxlint-disable no-void -- a; b */\nexport const a = () => {\n  void 0;\n  void 1;\n};`,
+      name: "indentedOccurrencesCollapse",
+      source: `export const a = () => {\n  // ${OXLINT_DIRECTIVE} no-void -- a\n  void 0;\n  // ${OXLINT_DIRECTIVE} no-void -- b\n  void 1;\n};`,
+      violations: 1,
+    },
+    // The file-level directive goes after a shebang, which stays the first line
+    {
+      fixed: `#!/usr/bin/env node\n/* oxlint-disable no-void -- a; b */\nvoid 0;\nvoid 1;`,
+      name: "shebangKeepsFirstLine",
+      source: `#!/usr/bin/env node\n// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
+      violations: 1,
+    },
+    // A combined directive keeps the rule it names that did not repeat, and its reason stays as written
+    {
+      fixed: `/* oxlint-disable no-void -- a; b */\n// ${OXLINT_DIRECTIVE} no-debugger -- a\nvoid 0;\nvoid 1;`,
+      name: "combinedDirectiveKeepsOtherRule",
+      source: `// ${OXLINT_DIRECTIVE} no-void, no-debugger -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
+      violations: 1,
+    },
+    // A reason that only points at the reason above it is dropped, since the file-level reason already carries that one
+    {
+      fixed: `/* oxlint-disable no-void -- a */\nvoid 0;\nvoid 1;`,
+      name: "backReferenceReasonDropped",
+      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void -- As above\nvoid 1;`,
+      violations: 1,
+    },
+    // Nothing is given a reason it did not state
+    {
+      fixed: `/* oxlint-disable no-void */\nvoid 0;\nvoid 1;`,
+      name: "occurrencesWithoutReason",
+      source: `// ${OXLINT_DIRECTIVE} no-void\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-void\nvoid 1;`,
+      violations: 1,
+    },
+    // The eslint prefix is its own group, and its file-level directive keeps it
+    {
+      fixed: `/* eslint-disable no-void -- a; b */\nvoid 0;\nvoid 1;`,
+      name: "eslintOccurrencesCollapse",
+      source: `// ${ESLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${ESLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
+      violations: 1,
+    },
+    // An oxlint and an eslint directive for one rule are each read by one linter, so neither repeats the other
+    {
+      name: "oxlintAndEslintNotRepeated",
+      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${ESLINT_DIRECTIVE} no-void -- b\nvoid 1;`,
+      violations: 0,
+    },
+    {
+      name: "differentRulesNotRepeated",
+      source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;\n// ${OXLINT_DIRECTIVE} no-debugger -- b\ndebugger;`,
+      violations: 0,
+    },
+    { name: "singleOccurrenceNotReported", source: `// ${OXLINT_DIRECTIVE} no-void -- a\nvoid 0;`, violations: 0 },
+    // A bare directive names no rule, so it is not one to collapse
+    {
+      name: "bareOccurrencesNotReported",
+      source: `// ${OXLINT_DIRECTIVE}\nvoid 0;\n// ${OXLINT_DIRECTIVE}\nvoid 1;`,
+      violations: 0,
+    },
+  ];
+  setupPluginSuite({ fixtures: FIXTURES, plugin: "comments", rules: [RULE] });
+});
