@@ -11,4 +11,4 @@ Read when scheduling work to run at a future time (scheduled messages, reminders
 
 **No timer function** — the alarm is the due time, so nothing polls for due jobs.
 
-**Scheduler object** — `apps/functions/src/durableObjects/Scheduler.ts`, one per job id. A reschedule replaces its job and alarm; a cancel removes both. A TodoList reminder uses the same object per item (`getTodoReminderId`, `apps/web/server/services/resource/todoList/`) and sends to `SendTodoReminder` instead.
+**Scheduler object** — `apps/functions/src/durableObjects/Scheduler.ts`, one per job id. A reschedule replaces its job and alarm; a cancel removes both. A TodoList reminder does not use it: `apps/web/server/services/resource/todoList/scheduleTodoReminders.ts` gives the reminder to the resource owner's `UserObject`, which keeps it in `todoRemindersInUser` and sends it from its one alarm.

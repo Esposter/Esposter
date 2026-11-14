@@ -21,7 +21,7 @@ A room call joins by `joinCallByRoomId` under room RBAC; a standalone call is `c
 
 ## Call session lifecycle
 
-`readCallSessionId` on room entry, `joinCallByRoomId` or `joinCall` to join, subscriptions keyed by `callSessionId`, and `leaveCall` writing a room call's duration message when its last participant leaves (`references/session-lifecycle.md`).
+`readCallSessionId` on room entry, `joinCallByRoomId` or `joinCall` to join, the call socket opened for `callSessionId`, and `leaveCall` writing a room call's duration message when its last participant leaves (`references/session-lifecycle.md`).
 
 ## Call leave boundaries
 
@@ -33,7 +33,7 @@ Only user intent, moderation, session loss and leaving `/calls/[id]` remove the 
 
 ## Deep Dives
 
-- `references/participant-state.md` — when reading, iterating or mutating call participants on the client, adding a field that describes one, or deciding which surface subscribes a session's participants.
+- `references/participant-state.md` — when reading, iterating or mutating call participants on the client, adding a field that describes one, or deciding which surface registers a session's participant frames.
 - `references/permissions-and-admin-actions.md` — when adding a `RoomPermission` bit or an `AdminActionType`, or wiring an admin action hook into the call stores.
 - `references/standalone-lobby.md` — when working on `/calls` or `/calls/[id]`: the shareable link, pre-join states, and knock/admit.
 - `references/session-lifecycle.md` — when changing what a call persists or holds in memory, or a join or leave step.

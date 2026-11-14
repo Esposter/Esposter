@@ -7,7 +7,7 @@ Read when a change touches how a call is joined, who may join it, or where it li
 | Procedure             | `joinCallByRoomId({ roomId })`             | `createCall()` then `joinCall({ id })`              |
 | Auth requirement      | Room membership (via `getMemberProcedure`) | Auth only — no room membership                      |
 | `callRoomId` in store | Set to the room ID                         | Empty `""`                                          |
-| Page                  | Room's message view + `Panel/Dialog`       | `/calls/[id]`                                       |
+| Page                  | Room's message view + the call panel       | `/calls/[id]`                                       |
 | InviteCard shown      | No (hidden when `callRoomId` is set)       | Yes — shares `window.location.href`                 |
 | RBAC / moderation     | Full room RBAC applies                     | No room — the creator, in the call, admits knockers |
 

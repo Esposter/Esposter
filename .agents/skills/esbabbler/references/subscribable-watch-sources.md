@@ -1,11 +1,11 @@
 # Subscribable watch sources
 
-Read when a composable sets up subscriptions from a reactive list, or resumes one after an `await`.
+Read when a composable sets up live updates from a reactive list, or sets them up after an `await`.
 
-When a subscription only needs to react to the reader moving to another room, watch the room id, which changes only then. A `toSorted()` array produces a new reference on every `updatedAt` change, causing needless teardown and rebuild on every incoming message.
+When live updates only need to react to the reader moving to another room, watch the room id, which changes only then. A `toSorted()` array produces a new reference on every `updatedAt` change, causing needless teardown and rebuild on every incoming message.
 
 ```ts
-// WRONG — re-subscribes on every updatedAt bump (every incoming message)
+// WRONG — re-registers on every updatedAt bump (every incoming message)
 useOnlineSubscribable(directMessages, (newDirectMessages) => { ... });
 
 // CORRECT — the room id changes only when the reader moves to another room

@@ -1,6 +1,6 @@
 # The Call Session and Its Lifecycle
 
-Read when changing what a call persists or holds in memory, or a step of joining, subscribing or leaving on the server.
+Read when changing what a call persists or holds in memory, or a step of joining, opening its call socket or leaving on the server.
 
 ## Key entities
 
@@ -16,7 +16,7 @@ Read when changing what a call persists or holds in memory, or a step of joining
 
 ## Call session lifecycle
 
-1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` (`""` if none). Called by `useCallSubscribables` on viewed-room change; subscriptions skipped when `""`.
+1. **Room entry**: `readCallSessionId({ roomId })` → reads `callSessionsInMessage`, returns `id` (`""` if none). Called by `useCallSubscribables` on viewed-room change; nothing is read while no room is viewed.
 2. **Join via room**: `joinCallByRoomId({ roomId })` → membership required → creates session row if none (an inline upsert with bounded retries) → returns `{ authToken, callSessionId, isDoorkeeper, meetingId, participantMap }`.
 3. **Join via id**: `joinCall({ id })` → auth only → finds **standalone** session by id → allows creator or admitted session → same join flow.
 4. **Call socket**: the joined call is held by one call socket (`/ws/call/[callSessionId]`), which the object accepts only while the connection is joined or knocking on the call. Its events are the `CallEvent` frames the object broadcasts: a join to the others, a rejoin to its own connection, a knock to the doorkeeper, an admission or dismissal to the knocker's session. Reads of the participant map go through `readCallParticipantMap`, which requires the joined gate.
