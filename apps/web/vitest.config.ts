@@ -34,5 +34,11 @@ const vitestConfig = await defineVitestProject({ test });
 // Intact, so per-file directives still resolve the nuxt environment.
 vitestConfig.test ??= {};
 vitestConfig.test.environment = "node";
+// `cloudflare:workers` exists only in the Workers runtime, so the server's imports of it resolve to the package whose
+// `env` `createMockDb` fills with the file's Miniflare bindings
+vitestConfig.resolve = {
+  ...vitestConfig.resolve,
+  alias: { ...vitestConfig.resolve?.alias, "cloudflare:workers": "@esposter/db-mock" },
+};
 
 export default vitestConfig;

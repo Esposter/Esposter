@@ -7,7 +7,6 @@ describe(checkIsExcludedPath, () => {
 
     expect(checkIsExcludedPath("pnpm-lock.yaml")).toBe(true);
     expect(checkIsExcludedPath("apps/web/server/db/migrations/0001.sql")).toBe(true);
-    expect(checkIsExcludedPath("packages/db-mock/src/snapshot.tar.gz")).toBe(true);
   });
 
   test("reads the paths no pattern names", () => {

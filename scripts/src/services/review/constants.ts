@@ -105,8 +105,6 @@ export const EXCLUDED_PATH_PATTERNS: readonly string[] = [
   "packages/*/auto-imports.d.ts",
   // The bundle-size record: every built file's size, written by `pnpm bundle-sizes:gen` from a build
   "bundle-sizes.md",
-  // Generated pglite snapshot (binary)
-  "packages/db-mock/src/snapshot.tar.gz",
   // Persona cards: authored prose in a character's voice, one module per character, reviewed where its shape is declared
   "packages/genshin-persona/src/personaCards/**",
   // The lockfile is pnpm's output, and a lockfile diff is never a change a reader can judge

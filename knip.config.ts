@@ -63,7 +63,6 @@ const knipConfiguration: KnipConfig = {
         "tresjs-nuxt",
       ],
     },
-    "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
     "packages/follow-ups": { entry: ["scripts/**/*.ts"] },
     "packages/genshin-interface": {
       entry: ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],

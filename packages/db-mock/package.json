@@ -39,7 +39,6 @@
     "build": "tsdown",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "snapshot:gen": "vpx scripts/generateSnapshot.ts",
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },
@@ -49,11 +48,9 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "drizzle-kit": "catalog:",
     "tsdown": "catalog:"
   },
   "peerDependencies": {
-    "@electric-sql/pglite": "catalog:",
     "@esposter/db-schema": "workspace:*",
     "drizzle-orm": "catalog:"
   }

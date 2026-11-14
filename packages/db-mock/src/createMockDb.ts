@@ -1,26 +1,18 @@
-import type { Database } from "@esposter/db-schema";
+import type { MockDatabase } from "#src/models/MockDatabase";
 
-import { SNAPSHOT_FILENAME } from "#src/services/constants";
-import { PGlite } from "@electric-sql/pglite";
-import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
-import { relations } from "@esposter/db-schema";
-import { drizzle } from "drizzle-orm/pglite";
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
+import { createMockDatabase } from "#src/services/createMockDatabase";
+import { fileURLToPath } from "node:url";
 
-// The snapshot is immutable, so the read is shared across every call in a worker instead of hitting disk per database
-let snapshotPromise: ReturnType<typeof readFile> | undefined;
-// Loads a pre-migrated data directory snapshot instead of running migrations at runtime, which skips
-// PGlite's `initdb` boot and migration generation and takes well under half the time per call.
-// Regenerate the snapshot with `pnpm snapshot:gen` whenever the schema changes.
-export const createMockDb = async (): Promise<Database> => {
-  snapshotPromise ??= readFile(join(import.meta.dirname, SNAPSHOT_FILENAME));
-  const loadDataDir = new Blob([await snapshotPromise]);
-  // The snapshot was dumped with pg_trgm installed, so the extension must be loaded here too —
-  // Otherwise the resources trigram index and similarity() ranking resolve against nothing.
-  const client = new PGlite({ extensions: { pg_trgm }, loadDataDir });
-  // `new PGlite()` returns before init finishes, so the first query would otherwise pay the
-  // Boot cost and blow past the per-test timeout. Await readiness here so it lands in `beforeAll`.
-  await client.waitReady;
-  return drizzle({ client, relations });
+// The migration folders `drizzle.config.ts` writes, one per database. This file sits directly under the package's `src`,
+// and `dist` is one folder deep the same way, so three levels up is the repository root from either
+const CORE_MIGRATIONS_DIRECTORY = fileURLToPath(new URL("../../../apps/web/server/db/migrations", import.meta.url));
+const STREAMS_MIGRATIONS_DIRECTORY = fileURLToPath(
+  new URL("../../../apps/web/server/db/migrations-streams", import.meta.url),
+);
+
+// A test file gets one database, shared by every call in it, so a `beforeAll` and a helper can both ask for it
+let mockDatabase: Promise<MockDatabase> | undefined;
+export const createMockDb = async (): Promise<MockDatabase> => {
+  mockDatabase ??= createMockDatabase(CORE_MIGRATIONS_DIRECTORY, STREAMS_MIGRATIONS_DIRECTORY);
+  return mockDatabase;
 };

@@ -7,11 +7,11 @@ How tRPC router tests wire up an in-memory database, mocked Azure services, and 
 ```mermaid
 flowchart LR
   MOCK["vi.mock, hoisted above every import<br/>auth.api.getSession"] --> BA
-  AZ["azure-mock — table, container, EventGrid"] --> BA
-  BA["beforeAll<br/>createMockContext()"] --> DB["PGlite, loaded from<br/>the pre-migrated snapshot"]
+  MF["Miniflare — D1, R2 and Queues"] --> BA
+  BA["beforeAll<br/>createMockContext()"] --> DB["Miniflare D1, both<br/>databases migrated"]
   DB --> CTX[("mockContext")]
   CTX --> CALLER["createCallerFactory(router)(mockContext)<br/>procedures called directly, no HTTP"]
-  CALLER --> AE["afterEach<br/>clear Azure state, delete rows, restoreAllMocks"]
+  CALLER --> AE["afterEach<br/>reset, restoreAllMocks"]
   AE -->|"next test"| CALLER
 ```
 
@@ -19,61 +19,36 @@ flowchart LR
 
 ### 1. `@esposter/db-mock` — in-memory PostgreSQL
 
-`createMockDb()` in `packages/db-mock/src/createMockDb.ts`:
+`createMockDb()` in `packages/db-mock/src/createMockDb.ts` returns one `MockDatabase` per test file, backed by one Miniflare instance:
 
-1. Reads the pre-migrated PGlite data directory snapshot (`snapshot.tar.gz`) from disk.
-2. Creates a `PGlite` instance with `loadDataDir: <snapshot>` (WebAssembly PostgreSQL, runs in-process).
-3. Awaits `client.waitReady` — `new PGlite()` returns before init finishes, so without this the first query pays the boot cost and can blow past the per-test timeout.
-4. Returns the drizzle-orm `db` instance as `Database` — the driver-agnostic `PgAsyncDatabase` the pglite handle satisfies as it is, so nothing is cast.
+1. Starts Miniflare with a `CORE` and a `STREAMS` D1 database, one R2 bucket per container and one Queue per job.
+2. Applies each database's migration folder through drizzle's D1 migrator, the same SQL production runs.
+3. Copies the instance's bindings into `env`, the `cloudflare:workers` stand-in that app code reads.
+4. Returns `db` (the core database as `Database`), `streamsDb` (the streams D1 binding), `getBucket`, `getQueue`, `reset` and `dispose`.
 
-**Why a snapshot instead of running migrations at runtime?** Loading a pre-migrated data directory skips PGlite's `initdb` boot + migration generation, roughly halving boot per call. Regenerate it with `pnpm snapshot:gen` (in `packages/db-mock`) whenever the schema changes. `createMockDb.test.ts` fails if the committed snapshot drifts from the live schema (it diffs the snapshot against a freshly `generateMigration`-built DB). The hookTimeout in `vitest.config.ts` stays at five minutes to absorb PGlite boot under parallel test load.
+**Why Miniflare instead of an in-process database?** It is the runtime's own D1, R2 and Queues, so a test exercises the SQL and bindings production runs, and nothing outlives the test file that started it.
 
-**Why PGlite instead of a real PostgreSQL?** No external process, no port, no cleanup — each test suite gets an isolated in-memory database that vanishes when the worker exits.
+**Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only the Miniflare boot + the auth `vi.mock` (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build.
 
-**Environment cost.** Server tests — including almost every tRPC router test — run in the default `node` environment. They get **no DOM** — happy-dom is built by the nuxt environment only, so there is no manual happy-dom registration and node-env tests run without a `window`. A server test pays only PGlite boot + the Azure/auth `vi.mock`s (plus the cheap global `fake-indexeddb/auto` polyfill). The one exception is a router that calls a Nuxt composable neither `context.test.ts` nor `shared/test/setup.ts` mocks, and such a router declares `// @vitest-environment nuxt` and pays the Nuxt environment build. The Web PubSub service client is one of the registered doubles, so the message router's group calls need no Nuxt runtime.
+### 2. Bindings in place of Azure mocks
 
-### 2. `azure-mock` — in-memory Azure services
-
-`packages/azure-mock` ships mock implementations:
-
-| Mock class                     | Replaces                                                        | In-memory store                                                                       |
-| ------------------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `MockTableClient`              | `CustomTableClient` (Azure Table Storage)                       | `MockTableDatabase` (static `Map`)                                                    |
-| `MockContainerClient`          | `ContainerClient` (Azure Blob Storage)                          | `MockContainerDatabase` (static `Map`)                                                |
-| `MockBlobClient`               | `BlobClient` (single blob)                                      | `MockContainerDatabase`                                                               |
-| `MockBlockBlobClient`          | `BlockBlobClient` — what every SAS upload path resolves through | `MockContainerDatabase`                                                               |
-| `MockBlobBatchClient`          | `BlobBatchClient` (batch blob deletes)                          | `MockContainerDatabase`                                                               |
-| `MockEventGridPublisherClient` | `EventGridPublisherClient`                                      | `MockEventGridDatabase` (static `Map`)                                                |
-| `MockServiceBusSender`         | `ServiceBusSender`                                              | `MockServiceBusDatabase` (static `Map`)                                               |
-| `MockQueueClient`              | `QueueClient` (Azure Storage Queue)                             | `MockQueueDatabase` (static `Map`)                                                    |
-| `MockSearchClient`             | `SearchClient` (Azure AI Search)                                | `MockSearchDatabase` (static `Map`)                                                   |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`                                        | `MockWebPubSubDatabase` (static `Map`) — group membership, `addUser` and `removeUser` |
-
-The static maps persist across calls within a test run, so **every store your suite writes to is cleared in `afterEach`** — the Store column above names the one behind each client. `MockEventGridPublisherClient.send` accumulates events, and a suite that fires events but clears only the blob and table stores leaks them into the next test; the same holds for a suite that enqueues Service Bus or storage-queue messages. The common three:
-
-```ts
-afterEach(() => {
-  MockContainerDatabase.clear();
-  MockEventGridDatabase.clear();
-  MockTableDatabase.clear();
-});
-```
+The Azure mock classes are deleted. A service takes the binding it uses as a parameter, so a test passes `getBucket(...)`, `getQueue(...)` or `streamsDb` from `createMockDb` and no in-memory store stands in for a client. `reset()` empties the databases and buckets after every test.
 
 ### 3. `context.test.ts` — wiring hub
 
 `apps/web/server/trpc/context.test.ts` is the central test utility file. It exports the session helpers and the mock context consumed by every tRPC router test. The auth mock itself is registered once, by the shared test setup file.
 
-**Every Azure composable is mocked once in `shared/test/setup.ts`, not here.** A registration written in a helper module reaches the router path but not a suite's own direct import of the composable, while one in the setup file covers both — the hoisting rule behind that is `.agents/skills/testing/references/colocated-mocks.md`. Import the composable from its **real** path; never from its `.test` mock.
+**The auth session is mocked once, in `shared/test/setup.ts`, not here.** A registration written in a helper module reaches the router path but not a suite's own direct import of the module, while one in the setup file covers both — the hoisting rule behind that is `.agents/skills/testing/references/colocated-mocks.md`.
 
-**`createMockContext()`** builds a full `Context`: PGlite DB + mocked Azure clients + mocked auth. The default user (base user) is inserted into PGlite and always available via `getMockSession()` — this user becomes the owner for all rooms/resources created in tests.
+**`createMockContext()`** builds a full `Context`: the Miniflare database + mocked auth. The default user (base user) is inserted into the database and always available via `getMockSession()` — this user becomes the owner for all rooms/resources created in tests.
 
 **Session helpers:**
 
-| Helper                       | What it does                                                                                                                                                           |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getMockSession()`           | Returns the default identity the test acts as: one user and one session for the whole run. A queued session does not change it, and reading it consumes nothing.       |
-| `mockSessionOnce(db, user?)` | Inserts a new test user into PGlite (if no `user` given) and queues their session for the **next** API call only. After that call the default (owner) session resumes. |
-| `replayMockSession(payload)` | Re-queues an existing session payload without inserting a new user. Use when the same non-owner user must make multiple sequential calls.                              |
+| Helper                       | What it does                                                                                                                                                                 |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getMockSession()`           | Returns the default identity the test acts as: one user and one session for the whole run. A queued session does not change it, and reading it consumes nothing.             |
+| `mockSessionOnce(db, user?)` | Inserts a new test user into the database (if no `user` given) and queues their session for the **next** API call only. After that call the default (owner) session resumes. |
+| `replayMockSession(payload)` | Re-queues an existing session payload without inserting a new user. Use when the same non-owner user must make multiple sequential calls.                                    |
 
 ### 4. tRPC caller
 
@@ -90,7 +65,7 @@ await caller.readStatuses([userId]);
 
 ```text
 beforeAll
-  └─ createMockContext()     ← one DB + auth + Azure mocks for the whole suite
+  └─ createMockContext()     ← one DB + auth for the whole suite
   └─ createCallerFactory()   ← bind router to context
 
 beforeEach
@@ -101,26 +76,18 @@ beforeEach
   └─ caller.someProc(input)
 
 afterEach
-  └─ <every mock store the suite writes to>.clear()   ← Container/Table, plus EventGrid,
-  │                                                     ServiceBus, Queue or Search when used
-  └─ db.delete(affectedTable)
+  └─ reset()                  ← empties every table and bucket
   └─ vi.restoreAllMocks()    ← restores spy implementations + clears call history
 ```
 
-All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `beforeEach`: the mock stores and the PGlite database persist for the whole suite, so each test removes its own writes immediately instead of relying on the next test to sweep up before running. Tests stay order-independent and the suite's last test leaks nothing. `beforeEach` is reserved for per-test setup such as fake timers or fixture rows.
+All cleanup — the database and its buckets — lives in `afterEach`, never `beforeEach`: the database persists for the whole suite, so each test empties what it wrote immediately instead of relying on the next test to sweep up before running. Tests stay order-independent and the suite's last test leaks nothing. `beforeEach` is reserved for per-test setup such as fake timers or fixture rows.
 
 ## Key files
 
-| File                                                                              | Role                                                                                     |
-| --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `packages/db-mock/src/createMockDb.ts`                                            | PGlite setup + snapshot loading                                                          |
-| `packages/azure-mock/src/`                                                        | `MockTableClient`, `MockContainerClient`, `MockEventGridPublisherClient`                 |
-| `apps/web/server/trpc/context.test.ts`                                            | `createMockContext`, session helpers, `vi.mock` wiring                                   |
-| `apps/web/server/composables/azure/table/useTableClient.test.ts`                  | module double — re-exports `useTableClient` over `MockTableClient`                       |
-| `apps/web/server/composables/azure/container/useContainerClient.test.ts`          | module double — re-exports `useContainerClient`                                          |
-| `apps/web/server/composables/azure/eventGrid/useEventGridPublisherClient.test.ts` | module double — re-exports `useEventGridPublisherClient`                                 |
-| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.test.ts`        | module double — re-exports `useServiceBusSender`                                         |
-| `apps/web/server/composables/azure/webPubSub/useWebPubSubServiceClient.test.ts`   | module double — re-exports `useWebPubSubServiceClient` over `MockWebPubSubServiceClient` |
+| File                                   | Role                                                   |
+| -------------------------------------- | ------------------------------------------------------ |
+| `packages/db-mock/src/createMockDb.ts` | Miniflare setup, migrations and bindings               |
+| `apps/web/server/trpc/context.test.ts` | `createMockContext`, session helpers, `vi.mock` wiring |
 
 ## Adding a new router test
 
@@ -129,4 +96,4 @@ All cleanup — Azure mock stores and DB rows — lives in `afterEach`, never `b
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.
 5. Use `mockSessionOnce(db)` only when a non-owner perspective is needed.
-6. Clean up DB rows and Azure mock state in `afterEach` (not `beforeEach`).
+6. Reset the database in `afterEach` (not `beforeEach`).

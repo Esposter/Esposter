@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It provides an in-memory PostgreSQL database factory for tests, for the server environment only. It uses [PGlite](https://github.com/electric-sql/pglite) to start a real Drizzle ORM database with the full Esposter schema applied, so no running Postgres instance is needed.
+It provides in-memory D1, R2 and Queues for tests, for the server environment only. It starts a [Miniflare](https://github.com/cloudflare/workers-sdk/tree/main/packages/miniflare) instance with the Esposter databases, applies their migrations and returns the Drizzle handle and the bindings, so no running Cloudflare account is needed.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -16,28 +16,36 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="key-exports">🧩 Key Exports</a>
 
-| Export              | Kind     | Purpose                                                                                                         |
-| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| `createMockDb`      | function | Boots an in-memory PGlite database from the committed snapshot, as a Drizzle handle with the Esposter relations |
-| `SNAPSHOT_FILENAME` | const    | File name of the pre-migrated data directory snapshot, which `pnpm snapshot:gen` produces                       |
+| Export         | Kind     | Purpose                                                                                                                                          |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `createMockDb` | function | Starts the file's Miniflare instance, applies both databases' migrations and returns a `MockDatabase`. Calls in one file share the instance      |
+| `env`          | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings |
+
+`MockDatabase` has `db` (the core database as a Drizzle handle), `streamsDb` (the streams database's D1 binding), `getBucket(container)`, `getQueue(job)`, `reset()` and `dispose()`.
 
 ## <a name="usage">📝 Usage</a>
 
-`@esposter/db-mock` is a `devDependency`. Import it only in test files:
+`@esposter/db-mock` is a `devDependency`. Import it only in test files. The Vitest configuration of an app that reads `cloudflare:workers` aliases that module to this package:
 
 ```ts
 import { createMockDb } from "@esposter/db-mock";
 
-const db = await createMockDb();
-// db is a fully-typed `Database` (the driver-agnostic drizzle handle) with all Esposter relations applied
+let mockDatabase: MockDatabase;
+
+beforeAll(async () => {
+  mockDatabase = await createMockDb();
+});
+
+afterAll(async () => {
+  await mockDatabase.dispose();
+});
+
+beforeEach(async () => {
+  await mockDatabase.reset();
+});
 ```
 
-After a schema change, regenerate the snapshot:
-
-1. Run `pnpm build` in `packages/db-schema/`. The build exits without errors.
-2. Run `pnpm snapshot:gen` in `packages/db-mock/`. The output contains `Wrote`.
-
-Install the peer dependencies: `pnpm i -D @electric-sql/pglite @esposter/db-schema drizzle-orm`.
+`reset` empties every table of both databases, the full-text tables included, and every bucket. Queues cannot be emptied, since a queue producer has no consumer in the mock.
 
 ## <a name="license">⚖️ License</a>
 
