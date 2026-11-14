@@ -36,7 +36,7 @@ describe(releaseStorageLedgerEntries, () => {
       .values({ blobName, containerName, countedBytes: 0, declaredBytes, expiresAt: new Date(0), userId });
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db.insert(usersInAuth).values(createUser(userId, new Date(0), "name"));
   });
 

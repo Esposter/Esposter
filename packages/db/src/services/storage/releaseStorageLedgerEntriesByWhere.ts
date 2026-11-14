@@ -1,42 +1,39 @@
 import type { Database, UserInAuth } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { adjustStorageBytesUsed } from "#src/services/storage/adjustStorageBytesUsed";
-import { storageLedgerInStorage } from "@esposter/db-schema";
+import { storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { inArray, sql } from "drizzle-orm";
 
-// The one place bytes leave `users.storageBytesUsed`. The amount is read off the ledger row being dropped
-// Rather than recomputed, which is what makes a release idempotent — the row is gone after the first pass, so
+// The one place bytes leave `users.storageBytesUsed`. The amount is summed off the ledger rows being dropped
+// Rather than recomputed, which is what makes a release idempotent — the rows are gone after the first pass, so
 // A redelivered deletion event or a replayed sweep decrements nothing a second time. It is also the only way
 // A blob can be attributed to an owner at all: a message asset is keyed by room, not by uploader.
 // Returns the owners whose counters moved, so a release running outside the app process — the deletion Function —
 // Can tell their meters. A release covers a set, so that is a list rather than the reconcile path's single owner.
-export const releaseStorageLedgerEntriesByWhere = (
+//
+// The counter's update and the row's delete are one batch, with the update first: its subquery reads the rows the
+// Delete is about to remove, inside the same transaction, so the sum is exactly what the delete drops
+export const releaseStorageLedgerEntriesByWhere = async (
   db: Database,
   // Undefined is what `and()` collapses to when every operand is, and an unfiltered delete here would empty
   // The ledger for every user — so it is a no-op rather than a filter drizzle would happily drop
   where: SQL | undefined,
 ): Promise<UserInAuth["id"][]> => {
-  if (!where) return Promise.resolve([]);
+  if (!where) return [];
 
-  return db.transaction(async (transaction) => {
-    const releasedStorageLedgerEntries = await transaction
-      .delete(storageLedgerInStorage)
-      .where(where)
-      .returning({ countedBytes: storageLedgerInStorage.countedBytes, userId: storageLedgerInStorage.userId });
-    if (releasedStorageLedgerEntries.length === 0) return [];
-    // One statement per owner rather than per blob: a prefix release covers a whole directory, and a
-    // Deletion event carries hundreds of names, so decrementing row by row is that many round trips
-    const userIdReleasedBytesMap = new Map<string, number>();
-    for (const { countedBytes, userId } of releasedStorageLedgerEntries)
-      userIdReleasedBytesMap.set(userId, (userIdReleasedBytesMap.get(userId) ?? 0) + countedBytes);
-    // Sorted because `DELETE ... RETURNING` fixes no row order: two releases over an overlapping set of owners
-    // Would otherwise take their `users` locks in opposite orders and deadlock
-    const releasedUserEntries = [...userIdReleasedBytesMap].toSorted(([firstUserId], [secondUserId]) =>
-      firstUserId.localeCompare(secondUserId),
-    );
-    for (const [userId, releasedBytes] of releasedUserEntries)
-      // oxlint-disable-next-line no-await-in-loop -- Lock order: owners are updated in sorted order so two releases cannot deadlock
-      await adjustStorageBytesUsed(transaction, userId, -releasedBytes);
-    return releasedUserEntries.map(([userId]) => userId);
-  });
+  const [, releasedStorageLedgerEntries] = await db.batch([
+    db
+      .update(usersInAuth)
+      .set({
+        storageBytesUsed: sql`MAX(0, ${usersInAuth.storageBytesUsed} - (SELECT COALESCE(SUM(${storageLedgerInStorage.countedBytes}), 0) FROM ${storageLedgerInStorage} WHERE ${where} AND ${storageLedgerInStorage.userId} = ${usersInAuth.id}))`,
+      })
+      .where(
+        inArray(
+          usersInAuth.id,
+          db.select({ userId: storageLedgerInStorage.userId }).from(storageLedgerInStorage).where(where),
+        ),
+      ),
+    db.delete(storageLedgerInStorage).where(where).returning({ userId: storageLedgerInStorage.userId }),
+  ]);
+  return [...new Set(releasedStorageLedgerEntries.map(({ userId }) => userId))];
 };
