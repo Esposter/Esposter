@@ -25,6 +25,7 @@ import {
   realtimeKitParticipants,
 } from "#src/durableObjects/call/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { addRealtimeKitParticipant } from "#src/services/realtimeKit/addRealtimeKitParticipant";
 import { JOIN_PUBLISH_SOURCES } from "#src/services/realtimeKit/constants";
 import { createRealtimeKitMeeting } from "#src/services/realtimeKit/createRealtimeKitMeeting";
@@ -43,6 +44,7 @@ const CALL_STATE_ID = 1;
 export class CallObject extends RealtimeObject<CallEvent> implements CallObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, callMigrations.migrations);
   private readonly core = drizzle(this.env.CORE, { relations });
+  private readonly callSessionId = getObjectName(this.ctx, "CallObject");
   // The preset update in flight for each connection, so the next one starts from what the last one wrote
   private readonly connectionUpdates = new Map<string, Promise<void>>();
   // The meeting being made, shared by every join that arrives while the first one is still creating it
@@ -104,6 +106,13 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   async removeConnection({ sessionId }: { sessionId: string }): Promise<void> {
     const { meetingId } = this.readCallState();
     await getResultAsync(() => removeRealtimeKitParticipant(meetingId, sessionId)).match(noop, console.error);
+  }
+
+  // A revoked session's sockets close first, so the leave that follows finds none left to close.
+  // The connection then leaves as a leave does, and its RealtimeKit participant is dropped so its media stops
+  async closeSession(sessionId: string): Promise<void> {
+    this.closeRevokedSession(sessionId);
+    if (this.removeParticipant(this.callSessionId, sessionId)) await this.removeConnection({ sessionId });
   }
 
   readAccess({ sessionId }: { sessionId: string }): CallAccess {

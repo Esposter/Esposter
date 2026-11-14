@@ -492,6 +492,21 @@ describe(RoomObject, () => {
     expect(userStubs.has(otherUserId)).toBe(false);
   });
 
+  test("a read after a cursor is the live messages past it, oldest first, and a read with none is the newest first", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const first = await sendMessage(object, "first");
+    const second = await sendMessage(object, "second");
+    const deleted = await sendMessage(object, "deleted");
+    const third = await sendMessage(object, "third");
+    await object.deleteMessage(deleted.id, actor);
+
+    expect(object.readMessages({ after: first.id, limit: 1 })).toStrictEqual([second]);
+    expect(object.readMessages({ after: first.id, limit: 10 })).toStrictEqual([second, third]);
+    expect(object.readMessages({ limit: 10 })).toStrictEqual([third, second, first]);
+  });
+
   test("erasing a person's messages blanks what they said and leaves the rest, and their export pages by id", async () => {
     expect.hasAssertions();
 
@@ -655,5 +670,28 @@ describe(RoomObject, () => {
 
     expect(memberSocket.close).toHaveBeenCalledExactlyOnceWith(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
     expect(bystanderSocket.close).not.toHaveBeenCalled();
+  });
+
+  test("closing a session closes the room's sockets of that session and no other", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createRoomObject();
+    const revokedSessionId = v7();
+    const revokedSocket = createSocket();
+    const revokedOtherDeviceSocket = createSocket();
+    const otherSessionSocket = createSocket();
+    state.ctx.acceptWebSocket(revokedSocket, [`user:${userId}`, `session:${revokedSessionId}`, `device:${deviceId}`]);
+    state.ctx.acceptWebSocket(revokedOtherDeviceSocket, [
+      `user:${userId}`,
+      `session:${revokedSessionId}`,
+      `device:${otherDeviceId}`,
+    ]);
+    state.ctx.acceptWebSocket(otherSessionSocket, [`user:${userId}`, `session:${v7()}`, `device:${v7()}`]);
+
+    object.closeSession(revokedSessionId);
+
+    expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(revokedOtherDeviceSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(otherSessionSocket.close).not.toHaveBeenCalled();
   });
 });

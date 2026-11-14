@@ -22,30 +22,22 @@ import {
   todoRemindersInUser,
 } from "#src/durableObjects/user/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
 import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import { AppNotificationType, publishNotification } from "@esposter/db-schema";
-import { getResultAsync, noop, NotInitializedError } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
-
-// A revoked session's sockets close with code 1008, the policy close a server gives for a credential it no longer accepts
-const SESSION_REVOKED_CLOSE_CODE = 1008;
-
-// A person's object is named for the person, so the name is the person the object holds
-const getUserId = ({ id }: DurableObjectState): string => {
-  if (id.name === undefined) throw new NotInitializedError("UserObject");
-  return id.name;
-};
 
 // One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages, their
 // reminders and their TodoList reminders, and its one alarm is set to the earliest of them still ahead, or a retry for one
 // that failed
 export class UserObject extends RealtimeObject<UserEvent> implements UserObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
-  private readonly userId = getUserId(this.ctx);
+  private readonly userId = getObjectName(this.ctx, "UserObject");
 
   // The first socket brings the person online and the last one to close takes them offline. The count is taken before
   // the base accepts the socket, and that accept runs synchronously inside its fetch, so a concurrent upgrade sees it
@@ -80,8 +72,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   // A revoked session's sockets close here and no other session's do. Each close runs the base's own close hook, so the
   // presence it ends is reported like any other close
   async closeSession(sessionId: string): Promise<void> {
-    for (const ws of this.ctx.getWebSockets(`session:${sessionId}`))
-      ws.close(SESSION_REVOKED_CLOSE_CODE, "Session revoked");
+    this.closeRevokedSession(sessionId);
   }
 
   async addScheduledMessage(scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }): Promise<void> {

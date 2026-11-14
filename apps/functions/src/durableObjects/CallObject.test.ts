@@ -127,6 +127,34 @@ describe(CallObject, () => {
     expect(repeatedLeave).toStrictEqual(null);
   });
 
+  test("closing a session closes its sockets and leaves the call as a leave does, kicking its media at RealtimeKit", async () => {
+    expect.hasAssertions();
+
+    const fetchMock = stubRealtimeKit();
+    const state = createMockObjectState(callSessionId);
+    const callObject = createCallObject(state);
+    seedMeeting(state);
+    const revoked = createParticipant();
+    const remainer = createParticipant();
+    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: revoked });
+    await callObject.joinCall({ callSessionId, isAdmissionRequired: false, participant: remainer });
+    const revokedSocket = createSocket();
+    const remainerSocket = createSocket();
+    state.ctx.acceptWebSocket(revokedSocket, [`user:${revoked.userId}`, `session:${revoked.id}`]);
+    state.ctx.acceptWebSocket(remainerSocket, [`user:${remainer.userId}`, `session:${remainer.id}`]);
+    fetchMock.mockClear();
+
+    await callObject.closeSession(revoked.id);
+
+    const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
+    expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(readFrames(remainerSocket)).toStrictEqual([{ data: { callSessionId, id: revoked.id }, type: "leaveCall" }]);
+    expect(callObject.readAccess({ sessionId: revoked.id }).isJoined).toBe(false);
+    expect(fetchMock.mock.calls.map(([input]) => input)).toStrictEqual([
+      `${appUrl}/meetings/${meetingId}/active-session/kick`,
+    ]);
+  });
+
   test("a knock reaches only the doorkeeper, and the admission only the knocker", () => {
     expect.hasAssertions();
 

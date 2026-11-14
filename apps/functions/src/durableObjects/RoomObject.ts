@@ -27,6 +27,7 @@ import {
 } from "#src/durableObjects/room/schema";
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { getObjectName } from "#src/services/durableObject/getObjectName";
 import {
   MESSAGE_REPLAY_LIMIT,
   ROOM_ACTIVITY_DELAY_MS,
@@ -47,7 +48,7 @@ import {
   roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { chunk, getResultAsync, getSearchExpression, noop, NotFoundError, NotInitializedError } from "@esposter/shared";
+import { chunk, getResultAsync, getSearchExpression, noop, NotFoundError } from "@esposter/shared";
 import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, max, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
@@ -121,19 +122,13 @@ const getMessageRow = (
 const getSendOptions = ({ deviceId }: RoomActor): SendOptions =>
   deviceId === undefined ? {} : { excludeTag: `device:${deviceId}` };
 
-// A room's object is named for its room, so the name is the room the object holds
-const getRoomId = ({ id }: DurableObjectState): string => {
-  if (id.name === undefined) throw new NotInitializedError("RoomObject");
-  return id.name;
-};
-
 // One Room object per room. Its SQLite holds the room's messages, their reactions and their search index, the scheduled
 // messages still to send and the members online. Its sockets are the room's viewers. The caller authorises each write
 // against D1 and names the actor; the write is applied in one synchronous turn and broadcasts exactly what it wrote
 export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, roomMigrations.migrations);
   private readonly core = drizzle(this.env.CORE, { relations });
-  private readonly roomId = getRoomId(this.ctx);
+  private readonly roomId = getObjectName(this.ctx, "RoomObject");
 
   // One alarm serves two jobs: the scheduled messages that have come due, and the room-activity wave a message owes
   override async alarm(): Promise<void> {
@@ -163,18 +158,31 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       server.send(JSON.stringify({ data: batch, type: "createMessage" } satisfies RoomEvent));
   }
 
-  readMessages({ before, isPinned, limit }: { before?: number; isPinned?: boolean; limit: number }): RoomMessage[] {
+  // With `after`, the live messages past that id, oldest first, so a jump to an older message reads its newer side.
+  // Without `after`, the live messages newest first, before `before` when one is named
+  readMessages({
+    after,
+    before,
+    isPinned,
+    limit,
+  }: {
+    after?: number;
+    before?: number;
+    isPinned?: boolean;
+    limit: number;
+  }): RoomMessage[] {
     return this.db
       .select(messageColumns)
       .from(messagesInRoom)
       .where(
         and(
           isNull(messagesInRoom.deletedAt),
+          after === undefined ? undefined : gt(messagesInRoom.id, after),
           before === undefined ? undefined : lt(messagesInRoom.id, before),
           isPinned ? eq(messagesInRoom.isPinned, true) : undefined,
         ),
       )
-      .orderBy(desc(messagesInRoom.id))
+      .orderBy(after === undefined ? desc(messagesInRoom.id) : asc(messagesInRoom.id))
       .limit(limit)
       .all();
   }
@@ -596,6 +604,10 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
     for (const webSocket of this.ctx.getWebSockets(`user:${userId}`))
       webSocket.close(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
+  }
+
+  closeSession(sessionId: string): void {
+    this.closeRevokedSession(sessionId);
   }
 
   setMemberStatus(status: UserStatusInMessage): void {

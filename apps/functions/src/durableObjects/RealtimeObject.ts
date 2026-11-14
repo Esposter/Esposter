@@ -2,6 +2,9 @@ import { DurableObject } from "cloudflare:workers";
 
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 
+// A revoked session's sockets close with code 1008, the policy close for a credential the server no longer accepts
+const SESSION_REVOKED_CLOSE_CODE = 1008;
+
 // The socket shape the three objects share: a socket accepted under tags for its user, session and device, hibernated
 // while no message is in flight, and an event written to every socket a tag names, one JSON frame each. A socket is
 // never listened to with addEventListener, which would hold the object awake for as long as it stayed open
@@ -36,6 +39,12 @@ export abstract class RealtimeObject<
 
   override webSocketError(ws: WebSocket) {
     ws.close(1011, "Socket error");
+  }
+
+  // A revoked session's sockets on this object close, and no other session's do
+  protected closeRevokedSession(sessionId: string): void {
+    for (const ws of this.ctx.getWebSockets(`session:${sessionId}`))
+      ws.close(SESSION_REVOKED_CLOSE_CODE, "Session revoked");
   }
 
   // A broadcast reaches every socket a tag names, or every socket when none is named, and `excludeTag` skips the

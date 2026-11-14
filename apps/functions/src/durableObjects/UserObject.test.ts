@@ -1,3 +1,4 @@
+import type { RoomObject } from "#src/durableObjects/RoomObject";
 import type { RoomObjectRpc, TodoReminder } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
@@ -41,7 +42,9 @@ const { getRoomStub, roomStubs } = vi.hoisted(() => {
   return { getRoomStub: getOrCreateRoomStub, roomStubs: stubsByRoom };
 });
 
-vi.mock(import("#src/services/room/getRoomObject"), () => ({ getRoomObject: getRoomStub }));
+vi.mock(import("#src/services/room/getRoomObject"), () => ({
+  getRoomObject: (roomId: string) => getRoomStub(roomId) as unknown as DurableObjectStub<RoomObject>,
+}));
 
 vi.mock(import("#src/services/todoReminder/sendTodoReminder"), () => ({
   sendTodoReminder: vi.fn<(reminder: TodoReminder) => Promise<void>>(() => Promise.resolve()),
@@ -150,7 +153,7 @@ describe(UserObject, () => {
 
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
     await state.settleWaitUntil();
-    object.webSocketClose(firstSocket, 1000, "");
+    object.webSocketClose(firstSocket as unknown as WebSocket, 1000, "");
     await state.settleWaitUntil();
 
     expect(getRoomStub(firstRoom.id).attachMember).toHaveBeenCalledExactlyOnceWith(
@@ -159,7 +162,7 @@ describe(UserObject, () => {
     );
     expect(getRoomStub(firstRoom.id).detachMember).not.toHaveBeenCalled();
 
-    object.webSocketClose(secondSocket, 1000, "");
+    object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
     await state.settleWaitUntil();
 
     expect(getRoomStub(firstRoom.id).detachMember).toHaveBeenCalledExactlyOnceWith(
