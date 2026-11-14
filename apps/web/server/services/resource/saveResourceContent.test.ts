@@ -145,16 +145,16 @@ describe(saveResourceContent, () => {
   // Storage's own per-blob ordering value, as the first save's event would carry it
   const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
-  const createReminderCall = (resource: Pick<ResourceInResource, "id" | "userId">) => ({
+  const createReminderCall = (reminderResource: Pick<ResourceInResource, "id" | "userId">) => ({
     args: [
       {
         cancelledItemIds: [],
-        reminders: [{ dueAt, itemId: item.id, resourceId: resource.id }],
-        resourceId: resource.id,
+        reminders: [{ dueAt, itemId: item.id, resourceId: reminderResource.id }],
+        resourceId: reminderResource.id,
       },
     ],
     method: "reconcileTodoReminders",
-    userId: resource.userId,
+    userId: reminderResource.userId,
   });
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";

@@ -26,19 +26,19 @@ type RoomStub = Record<"attachMember" | "detachMember", Mock>;
 
 // Each room object as the person's presence reaches it, so a test reads what the person's sockets asked each room to do
 const { getRoomStub, roomStubs } = vi.hoisted(() => {
-  const roomStubs = new Map<string, RoomStub>();
-  const getRoomStub = (roomId: string): RoomStub => {
-    const existingStub = roomStubs.get(roomId);
+  const stubsByRoom = new Map<string, RoomStub>();
+  const getOrCreateRoomStub = (roomId: string): RoomStub => {
+    const existingStub = stubsByRoom.get(roomId);
     if (existingStub) return existingStub;
 
     const stub: RoomStub = {
       attachMember: vi.fn<RoomObjectRpc["attachMember"]>(),
       detachMember: vi.fn<RoomObjectRpc["detachMember"]>(),
     };
-    roomStubs.set(roomId, stub);
+    stubsByRoom.set(roomId, stub);
     return stub;
   };
-  return { getRoomStub, roomStubs };
+  return { getRoomStub: getOrCreateRoomStub, roomStubs: stubsByRoom };
 });
 
 vi.mock(import("#src/services/room/getRoomObject"), () => ({ getRoomObject: getRoomStub }));

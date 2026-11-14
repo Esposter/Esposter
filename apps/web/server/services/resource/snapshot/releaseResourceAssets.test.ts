@@ -72,7 +72,7 @@ describe(releaseResourceAssets, () => {
         ),
       ),
     );
-    return { assetHashes: referenceRows.map(({ assetHash }) => assetHash), deletedVersions };
+    return { assetHashes: referenceRows.map((referenceRow) => referenceRow.assetHash), deletedVersions };
   };
   const readAssetHashes = () =>
     mockContext.db

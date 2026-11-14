@@ -35,7 +35,7 @@ export const writeSnapshotVersion = async (
   const { previousVersion, releasedAssetHashes, writtenVersion } = await withResourceObjectLock(db, id, async () => {
     const prepared = await prepareSnapshotVersion(db, resource, channel, serializedContent);
     // Read before the batch replaces them, so the caller learns what the write displaced
-    const [previousVersion, replacedAssetRows] = await Promise.all([
+    const [previousVersionRow, replacedAssetRows] = await Promise.all([
       db.query.resourceVersionsInResource.findFirst({
         columns: { baseHash: true, hash: true },
         where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },
@@ -53,7 +53,7 @@ export const writeSnapshotVersion = async (
     ]);
     await db.batch(getSnapshotVersionWrites(db, id, { channel, reason, version }, prepared));
     return {
-      previousVersion,
+      previousVersion: previousVersionRow,
       releasedAssetHashes: replacedAssetRows
         .map(({ assetHash }) => assetHash)
         .filter((assetHash) => !prepared.assetHashes.has(assetHash)),
