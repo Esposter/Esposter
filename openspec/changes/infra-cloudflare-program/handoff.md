@@ -102,9 +102,8 @@ When it lands, it commits by pathspec, then runs `git pull --rebase origin ai/cl
 
 Each item names its next step.
 
-- The web Worker build is red on origin. `apps/web/server/trpc/routers/program.ts` imports `#server/services/program/readProgramInvites`, which the token agent's webhook commit removed. Its program half is in the worktree `.agents/worktrees/cf-token-hash` and lands when that agent finishes. If it does not, restore the import's target or finish the program half. Then rerun the develop deploy above. The functions Worker is deployed, and rate limiting is on the binding, so nothing else is known to block the upload.
+- The web Worker builds again. Next is the develop deploy above. The functions Worker is deployed, and rate limiting is on the binding, so nothing is known to block the web upload.
 - Cutover: the re-key, the room import and the drop of the D1 message tables have landed.
-  - `scripts/src/services/cutover/ids/issueTokenHash.ts` needs `hashSecretToken` from the token agent.
   - A real run needs a reader for the old estate's pending scheduled messages and reminders, because their D1 table is gone.
   - Its known gaps: a delta does not delete messages the source no longer lists; verify does not round-trip sample text; the old ids' version is unverified.
 - Rate limiting: the API-key plugin still uses better-auth's own limiter, which is stored in D1. Move it onto a binding.
@@ -118,4 +117,4 @@ Each item names its next step.
   - `updateUserToRoom` passes a transaction into the RBAC helper.
   - `useSingletonDialog` now takes number targets, against the string-target convention.
 - One room `leaves` test times out. It may be the new rate-limit middleware; that is unconfirmed.
-- Lint: its agent is still fixing by hand in `.agents/worktrees/cf-lint`. Read its commits, then run `vp lint` again.
+- Lint: its agent's fixes are on the branch. Run `vp lint` again to find what remains, and fix by hand.
