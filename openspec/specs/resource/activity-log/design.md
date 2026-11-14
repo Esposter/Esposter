@@ -28,7 +28,7 @@ sequenceDiagram
   P-->>U: mutation result
   U->>B: open Activity blade
   B->>RA: resource.readActivities { id, cursor }
-  RA-->>B: newest-first page (index on resource, createdAt, id)
+  RA-->>B: newest-first page (index on resource, id)
 ```
 
 ## Data model

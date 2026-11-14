@@ -29,9 +29,9 @@ export const surveyResponsesInResource = sqliteTable(
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ createdAt, id, isDraft, resourceId }) => [
-      // A survey's submitted responses are counted and listed oldest-first under its id, and its deletion cascades through it
-      index("surveyResponses_resourceId_isDraft_createdAt_id_index").on(resourceId, isDraft, createdAt, id),
+    extraConfig: ({ id, isDraft, resourceId }) => [
+      // A survey's submitted responses are counted and listed oldest-first on id, which is creation order, and its deletion cascades through it
+      index("surveyResponses_resourceId_isDraft_id_index").on(resourceId, isDraft, id),
     ],
     schema: resourceSchema,
   },

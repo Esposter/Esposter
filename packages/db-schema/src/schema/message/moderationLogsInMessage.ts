@@ -31,9 +31,9 @@ export const moderationLogsInMessage = sqliteTable(
     type: createEnumColumn(AdminActionType).notNull(),
   },
   {
-    extraConfig: ({ actorUserId, createdAt, id, roomId, targetUserId }) => [
-      // A room's log pages newest-first, and its deletion cascades through it
-      index("moderationLogs_roomId_createdAt_id_index").on(roomId, createdAt, id),
+    extraConfig: ({ actorUserId, id, roomId, targetUserId }) => [
+      // A room's log pages newest-first on id, which is creation order, and its deletion cascades through it
+      index("moderationLogs_roomId_id_index").on(roomId, id),
       // An archive reads the actions one person took, and the actions taken against them, across every room
       index("moderationLogs_actorUserId_index").on(actorUserId),
       index("moderationLogs_targetUserId_index").on(targetUserId),

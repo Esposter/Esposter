@@ -19,7 +19,7 @@ export const readSurveyResponseEntities = async (
     .select()
     .from(surveyResponsesInResource)
     .where(getSurveyResponsesWhere(surveyId))
-    .orderBy(asc(surveyResponsesInResource.createdAt), asc(surveyResponsesInResource.id))
+    .orderBy(asc(surveyResponsesInResource.id))
     .limit(MAX_READ_LIMIT + 1);
   const { hasMore, items: surveyResponses } = getBasePaginationData(rows, MAX_READ_LIMIT);
   return { hasMore, surveyResponses };

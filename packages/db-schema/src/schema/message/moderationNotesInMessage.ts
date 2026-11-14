@@ -25,9 +25,9 @@ export const moderationNotesInMessage = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ actorUserId, createdAt, id, roomId, targetUserId }) => [
-      // A target's notes in a room page newest-first, and their badge counts the same rows: one index serves both
-      index("moderationNotes_roomId_targetUserId_createdAt_id_index").on(roomId, targetUserId, createdAt, id),
+    extraConfig: ({ actorUserId, id, roomId, targetUserId }) => [
+      // A target's notes in a room page newest-first on id, which is creation order, and their badge counts the same rows
+      index("moderationNotes_roomId_targetUserId_id_index").on(roomId, targetUserId, id),
       index("moderationNotes_actorUserId_index").on(actorUserId),
       index("moderationNotes_targetUserId_index").on(targetUserId),
     ],

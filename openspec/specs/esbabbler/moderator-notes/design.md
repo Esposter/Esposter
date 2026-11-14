@@ -4,7 +4,7 @@ Free-text notes a moderator can attach to a room member, visible only to holders
 
 ## How it works
 
-Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in the core database beside the audit log, as a SQLite table. Each note belongs to its room by `roomId` and is read newest first by a cursor over `createdAt` and `id`, and carries the target member, the authoring moderator, and the note text. A member's actions — their profile's overflow menu and their row's context menu, one list built by `useMemberActionItems` — carry a **Notes** item, titled with how many notes exist once the profile has read the count, and the dialog lists them newest-first with an input to append another.
+Notes are moderation-log-shaped (append-heavy, time-ordered, per-room, no joins), so they live in the core database beside the audit log, as a SQLite table. Each note belongs to its room by `roomId` and is read newest first by a cursor over `id`, which is creation order, and carries the target member, the authoring moderator, and the note text. A member's actions — their profile's overflow menu and their row's context menu, one list built by `useMemberActionItems` — carry a **Notes** item, titled with how many notes exist once the profile has read the count, and the dialog lists them newest-first with an input to append another.
 
 ```mermaid
 flowchart LR

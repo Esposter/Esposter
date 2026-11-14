@@ -105,7 +105,7 @@ export const webhookRouter = router({
     WebhookInMessageWithRelations[]
   >(({ ctx, input: { roomId } }) =>
     ctx.db.query.webhooksInMessage.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { id: "desc" },
       where: { roomId: { eq: roomId } },
       with: WebhookInMessageRelations,
     }),

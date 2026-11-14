@@ -34,7 +34,9 @@ export const resourceActivitiesInResource = sqliteTable(
   },
   {
     extraConfig: ({ apiKeyId, createdAt, id, resourceId, userId }) => [
-      // A resource's trail pages newest-first, and its deletion cascades through it
+      // A resource's trail pages newest-first on id, which is creation order, and its deletion cascades through it
+      index("resourceActivities_resourceId_id_index").on(resourceId, id),
+      // The save coalesce reads one user's recent saves of a resource by a time window, so createdAt stays in this index
       index("resourceActivities_resourceId_createdAt_id_index").on(resourceId, createdAt, id),
       index("resourceActivities_apiKeyId_index").on(apiKeyId),
       index("resourceActivities_userId_index").on(userId),
