@@ -16,4 +16,15 @@ export const typescript: NuxtConfig["typescript"] = {
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },
   },
+  // The Workers globals are the server's alone: loaded into the browser program, their `Request` and `Response` replace
+  // the DOM's, so the server tsconfig names the package and the app and shared code never see it
+  serverTsConfig: { compilerOptions: { types: ["@cloudflare/workers-types"] } },
+};
+// Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` the Workers globals
+// do, and `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take them away.
+// The hook sets the server's lib once Nuxt has computed it
+export const typescriptHooks: NuxtConfig["hooks"] = {
+  "prepare:types": ({ serverTsConfig }) => {
+    serverTsConfig.compilerOptions = { ...serverTsConfig.compilerOptions, lib: ["ESNext"] };
+  },
 };

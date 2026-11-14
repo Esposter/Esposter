@@ -18,7 +18,7 @@ import { runtimeConfig } from "./configuration/runtimeConfig.ts";
 import { security } from "./configuration/security.ts";
 import { site } from "./configuration/site.ts";
 import { skewProtection } from "./configuration/skewProtection.ts";
-import { typescript } from "./configuration/typescript.ts";
+import { typescript, typescriptHooks } from "./configuration/typescript.ts";
 import { vite } from "./configuration/vite.ts";
 
 export default defineNuxtConfig({
@@ -29,6 +29,7 @@ export default defineNuxtConfig({
   devtools,
   experimental,
   fonts,
+  hooks: typescriptHooks,
   ignore,
   image,
   imports,

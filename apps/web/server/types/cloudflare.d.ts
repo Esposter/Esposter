@@ -1,7 +1,7 @@
-/// <reference types="@cloudflare/workers-types" />
 import type {
   CallObjectRpc,
   CloudflareEnvironment,
+  QueueJobBindingName,
   RateLimiterBinding,
   RoomObjectRpc,
   StorageBucket,
@@ -9,7 +9,7 @@ import type {
 } from "@esposter/db-schema";
 
 // The binding names `nitro.ts` derives from the same enum: a bucket is bound under its SCREAMING_SNAKE name. The queue
-// producers are declared in `shared/types/env.d.ts`, under the names `QueueJobBindingNameMap` gives
+// producers sit on `Env` beside the bindings, one per job, under the names `QueueJobBindingNameMap` gives
 type ScreamingSnakeCase<T extends string> = T extends `${infer Head}-${infer Tail}`
   ? `${Uppercase<Head>}_${ScreamingSnakeCase<Tail>}`
   : Uppercase<T>;
@@ -29,7 +29,8 @@ interface Bindings extends BucketBindings, RateLimiterBindings {
 
 declare global {
   namespace Cloudflare {
-    interface Env extends Bindings {}
+    // One producer per job, read by getJobQueue under the job's binding name
+    interface Env extends Bindings, Record<QueueJobBindingName, Queue> {}
   }
 }
 
