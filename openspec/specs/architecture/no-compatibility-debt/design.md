@@ -9,7 +9,7 @@ This is the rule the codebase's other absences follow from: there are no `@depre
 The usual reason to keep a wrong name is that changing it is expensive. Here it is not, and each of the places that could have been expensive has already been paid for:
 
 - **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the workspace tests and the prose sweep the `finishing` skill owns.
-- **Deployed identities** — infrastructure is Pulumi code ([infra](../../infra/README.md)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
+- **Deployed identities** — infrastructure is Pulumi code ([infra](../../infra/README.md)), so renaming a Cloudflare resource, a Worker, a queue, or the identifier a notification points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
 - **A published package's exports** — a package whose manifest is not `private` is published, and renaming, folding away or removing an export from one
   is **not treated as a breaking change here**. Each is kept at its smallest, most refactored form: an export the
   simplest shape no longer needs is deleted like any other code, never kept behind a forwarding wrapper for a caller
@@ -41,8 +41,8 @@ flowchart TD
   PREVIEW --> PLAN{"Plan says replace?"}
   PLAN -->|"no — update in place"| DONE["Ship it, paste the plan line"]
   PLAN -->|"yes"| CUTOVER["Create, cut over, delete<br/>never an alias"]
-  OWNED -->|"App-owned blob or local state"| RESET["Latest-shape schema<br/>unparseable data resets"]
-  OWNED -->|"Postgres"| FORWARD["One forward migration<br/>no legacy arm left behind"]
+  OWNED -->|"App-owned object or local state"| RESET["Latest-shape schema<br/>unparseable data resets"]
+  OWNED -->|"D1"| FORWARD["One forward migration<br/>no legacy arm left behind"]
   CODE --> DONE
   PUBLISHED --> DONE
   CUTOVER --> DONE

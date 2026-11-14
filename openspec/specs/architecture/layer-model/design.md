@@ -12,8 +12,8 @@ New products join the platform by adding one `ResourceType` and one `ResourceDef
 
 | Layer          | Contract                                                                                                              |
 | -------------- | --------------------------------------------------------------------------------------------------------------------- |
-| **Identity**   | `users.id` (better-auth) keys every row, blob path, and session — shared by all products                              |
-| **Resources**  | Postgres identity row + content blob + capability declaration → [resources](../resource/design.md)                    |
+| **Identity**   | `users.id` (better-auth) keys every row, object key, and session — shared by all products                             |
+| **Resources**  | D1 identity row + content object + capability declaration → [resources](../resource/design.md)                        |
 | **Datasets**   | Columns + rows served by DatasetProvider types → [datasets](../dataset/design.md)                                     |
 | **Publishing** | Versioned publish copy + public rate-limited read at `/view/[type]/[id]` → [publishing](../publishing/design.md)      |
 | **Events**     | tRPC mutation path = achievement trigger key (`achievementPlugin`) — every new procedure is automatically triggerable |
@@ -57,4 +57,4 @@ sequenceDiagram
 
 Each resource type declares its capabilities in `capabilities` on its entry in `ResourceDefinitionMap` ([resources](../resource/design.md)), which is the one place they are read from. `publishable` gives a type a versioned publish copy and a public read; `datasetProvider` lets it serve columns and rows to a dataset consumer; `fileAssets` lets its content reference uploaded files; `portable` gives it the file formats it can be imported from and exported to (`PortableFormatMap`). A capability a type does not declare is absent, not false.
 
-Outside the resource model: **Posts** (relational Postgres, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves.
+Outside the resource model: **Posts** (relational D1, social feed semantics), **Esbabbler** (distribution channel for published links), **Achievements** (the events layer itself), and **games/anime/fluid** (blob save state or none; achievements only). Single-blob-per-user save state (`useSave`, blob `${userId}/save`) remains only for genuinely one-per-user saves.

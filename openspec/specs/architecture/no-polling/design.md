@@ -1,12 +1,12 @@
 # No Polling
 
-Waiting for something by repeatedly checking whether it happened yet — `expect.poll`, `vi.waitFor`, an interval that re-reads until a value flips, a loop draining a queue on a timer — is **banned everywhere in this repository**: app code, server code, Azure Functions, and tests. Polling converts a completion signal we already own into a timing guess; the guess is flaky under load, wastes cycles when idle, and hides the real dependency (the code no longer says _what_ it is waiting for, only _how often it checks_).
+Waiting for something by repeatedly checking whether it happened yet — `expect.poll`, `vi.waitFor`, an interval that re-reads until a value flips, a loop draining a queue on a timer — is **banned everywhere in this repository**: app code, server code, the functions Worker, and tests. Polling converts a completion signal we already own into a timing guess; the guess is flaky under load, wastes cycles when idle, and hides the real dependency (the code no longer says _what_ it is waiting for, only _how often it checks_).
 
 Every wait must be one of:
 
 - **An awaited promise** — the operation hands back its own completion. Fire-and-forget work is still awaitable on demand: `getSynchronizedFunction` tracks every in-flight call and `waitForSynchronizedFunctions()` drains them deterministically (this is how tests assert on view-count telemetry without racing it).
-- **An event or callback** — emitters (`messageEventEmitter`), tRPC subscriptions, Web PubSub, watchers. The producer tells the consumer; the consumer never asks.
-- **A scheduled delivery** — work that must happen _at a time_ is enqueued for that time (Service Bus scheduled messages, EventGrid) rather than discovered by a consumer loop asking "anything yet?".
+- **An event or callback** — a typed event pushed over a socket, a queue message, watchers. The producer tells the consumer; the consumer never asks.
+- **A scheduled delivery** — work that must happen _at a time_ is enqueued for that time (an alarm on the owning object, or a queue's delay) rather than discovered by a consumer loop asking "anything yet?".
 
 Periodic _work_ on a fixed cadence is not polling: the clicker game tick, the autosave interval, and animation timers run **because time passed**, not to check whether something else finished. A managed service's own schedule is the service's, not a timer this repo runs; replacing it with push indexing on write is a separate decision. The test is the purpose of the timer — "do the thing every N seconds" is scheduling; "check every N seconds whether the thing happened" is polling and gets rewritten around the signal that already exists.
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-The two-step Azure Blob SAS upload pattern, the upload procedure inventory, and the staged path that commits a resource document too large for one request body by reference.
+The two-step presigned upload pattern, the upload procedure inventory, and the staged path that commits a resource document too large for one request body by reference.
 
 ## Requirements
 

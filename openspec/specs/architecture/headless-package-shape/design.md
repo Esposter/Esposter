@@ -19,7 +19,7 @@ flowchart TD
 
 ## Why a headless package can be a Vue package
 
-Every consumer of these packages is Vue code or runs beside it. The Nuxt app and its sibling packages are Vue, and the app's server, which checks a save, applies an agent's edit and compiles an email, is the same Nuxt app with Vue installed. The Azure Functions app has no Vue, and none of these packages has a consumer there. A package that needs Vue costs the server nothing it does not already carry.
+Every consumer of these packages is Vue code or runs beside it. The Nuxt app and its sibling packages are Vue, and the app's server, which checks a save, applies an agent's edit and compiles an email, is the same Nuxt app with Vue installed. The functions Worker, which runs the queue consumers and the cron, has no Vue, and none of these packages has a consumer there. A package that needs Vue costs the server nothing it does not already carry.
 
 The functions stay pure. A function over a document is the same function with a reactive wrapper beside it, so nothing is rewritten to use a ref. The wrapper is the only part that moves: it lives in the package once, rather than in each editor.
 
