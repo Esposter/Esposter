@@ -39,10 +39,10 @@ next build**. For a library that is exactly right — `exports` supersedes `main
 targets, so a hand-written `main` would be a second source of truth that drifts from the generated map.
 
 **It is wrong for a package a runtime host loads by convention rather than by resolution.** Such a host reads a
-fixed field and never consults `exports`: the Azure Functions v4 model loads an app by `main`. Generation
+fixed field and never consults `exports`: a host that loads an app by `main` is the case. Generation
 therefore deletes the one field that makes the artifact work, and nothing catches it — no import resolves through
 it, a private package gets no publint, and typecheck, lint and every other test pass. What ships is a host that
-reports Running with **zero functions registered**, so every trigger stops silently.
+has no entry to load, so every trigger stops silently.
 
 So a package like that sets `exports: { legacy: true }`, which makes tsdown own the field rather than remove it:
 with no CJS output the ESM chunk is written into `main`, generated from the build on every run. Pin it with an

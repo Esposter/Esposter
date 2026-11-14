@@ -2,7 +2,7 @@
 
 Read when creating the replacement package, its README or its docs section. The package skeleton is the `file-organization` skill's `references/new-package.md` and the README the `readme-standards` skill's; this page is what an absorbed package adds to both.
 
-- **Unscoped and publishable**, like `azure-mock` and `keyframe-store`, under a name free on npm — the upstream name is taken by definition. `npm view <name> version` answering `E404` is the check.
+- **Unscoped and publishable**, like `keyframe-store` and `parse-tmx`, under a name free on npm — the upstream name is taken by definition. `npm view <name> version` answering `E404` is the check.
 - **Engines as peers.** Both engines the adapter joins are `peerDependencies`, never `dependencies`: the adapter is meaningless without the consumer's own instances, and a second copy of either splits its types (the `build` skill's `references/dependency-placement.md`).
 - **A spec area** at `openspec/specs/<package>/` (the `openspec` skill), holding:
   - how the package works, with a diagram of the path a request or event takes through it;

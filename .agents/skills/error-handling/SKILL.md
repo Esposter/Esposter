@@ -1,6 +1,6 @@
 ---
 name: error-handling
-description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or Azure Functions handlers. Esposter's error handling — neverthrow Results, how each is chained and terminated, where a failure is logged or shown, and how errors are thrown and guarded on the server.
+description: Apply when handling errors or logging in components, composables, stores, server routes, tRPC routers, or queue consumer handlers. Esposter's error handling — neverthrow Results, how each is chained and terminated, where a failure is logged or shown, and how errors are thrown and guarded on the server.
 ---
 
 # Error Handling Conventions
@@ -23,7 +23,7 @@ description: Apply when handling errors or logging in components, composables, s
 - `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, or attaches a `cause` to a `TRPCError`.
 - `references/rollback-compensated-effects.md` — when a function has a fire-and-forget tail and a failure path a caller rolls back through.
 - `references/ban-exceptions.md` — when a callback must become a rejection, a throw is being kept synchronous for a test, or a `.then`/`.catch`/`.finally` looks unavoidable.
-- `references/azure-functions.md` — when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query.
+- `references/queue-consumers.md` — when writing or changing a queue consumer's job handler, its dead-letter replay, or a handler that enumerates its own work from a query.
 - `references/throwing.md` — when a code path throws, or a mock stubs a vendor method it never serves.
 - `references/json-parsing.md` — when parsing JSON: user input, a stored blob, or a round trip carrying dates.
 - `references/error-classes.md` — when writing or deduplicating an error class.
@@ -57,7 +57,7 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 - **Never leave a `Result` unterminated** — `.match` or `.unwrapOr`; no lint rule can see it, so it is a review catch and `pnpm ai:sweep:unterminated-results` a scan (`references/wrapping.md`).
 - **`._unsafeUnwrap()` and `._unsafeUnwrapErr()` are banned, tests included** (`no-underscore-dangle`, which allows only Zod's `_def`). A test asserts the error with `.match(noop, (error) => error)`, and a step that must succeed, or a value it reads, takes `.match(onOk, (error) => { throw error; })`, so a failure surfaces as the error itself.
 - `.isOk()` / `.isErr()` are banned (`no-restricted-syntax`) — branch with `.match(...)` instead so both branches are handled in one place. To rethrow/cleanup on failure, `throw` inside the err handler (works in sync and async handlers alike); to fall back, `.unwrapOr(fallback)`.
-- **Never a silent swallow, and never `console.warn` as an err handler** — `.orTee(console.error)`, `context.error` in an Azure Function (`references/logging-sinks.md`).
+- **Never a silent swallow, and never `console.warn` as an err handler** — `.orTee(console.error)`, and `console.error` in a queue consumer's handler (`references/logging-sinks.md`).
 - **`.match(noop, noop)` is a silent swallow** — a best-effort err handler names what was lost (`no-restricted-syntax`, `references/logging-sinks.md`).
 - Never `void` a ResultAsync — always `await` (ResultAsync never rejects, so awaiting is safe).
 - **Code that cannot import `@esposter/shared`** — a package a stranger installs alone, a config loaded before any package builds — handles a rejection without it (`references/no-shared-import.md`).

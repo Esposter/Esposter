@@ -9,8 +9,8 @@ The lens a change or a tree is read through for what an attacker could do with i
 
 ## Settled — do not re-propose
 
-- **Restating a defence another skill or page owns.** The sanitizer, the room RBAC builders, the upload SAS, the CSP and the workflow `env:` rule each have one owner. A copy here would drift from the code the owner describes. The checklist points at owners (`references/owasp-top-10.md`).
-- **Re-flagging an accepted risk.** A risk its owning page records as accepted is a decision, not a finding. Examples: message images leaking a viewer's IP address, the XSS validator the module does not build, and the Azure hardenings gated on a migration. Only that page's revisit trigger reopens it.
+- **Restating a defence another skill or page owns.** The sanitizer, the room RBAC builders, the presigned upload URL, the CSP and the workflow `env:` rule each have one owner. A copy here would drift from the code the owner describes. The checklist points at owners (`references/owasp-top-10.md`).
+- **Re-flagging an accepted risk.** A risk its owning page records as accepted is a decision, not a finding. Examples: message images leaking a viewer's IP address, the XSS validator the module does not build, and the hardenings gated on an app-side migration. Only that page's revisit trigger reopens it.
 - **Copying a cheat sheet into the skill.** OWASP revises its pages. A link stays right, and a paraphrase goes stale on the next release (`references/sources.md`).
 - **A paid scanner or a second security tool as a gate.** The Claude interface is free, and a gate that can hold a push forever is not one. A finding becomes a fix with a regression test, and a finding written twice becomes an enforcer (the `sweeps` skill, `references/handing-to-an-enforcer.md`).
 

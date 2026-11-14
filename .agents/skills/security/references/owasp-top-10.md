@@ -7,8 +7,8 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 - Does every procedure start from a builder that says who may call it: `standardAuthedProcedure`, a room builder, or `standardRateLimitedProcedure` for a read that is public on purpose (the `trpc` skill, `references/room-procedures.md`)?
 - Does a read or write by an id from input scope its `where` to the caller, the room or the owned resource, so a guessed id returns nothing (the `trpc` skill, `references/ownership-guards.md`)? This is OWASP's insecure direct object reference.
 - Does a room action check the permission bit, not just membership (`openspec/specs/esbabbler/rbac/design.md`)?
-- Does an asset url grant only the blob it names, for minutes, and does an anonymous read reach only published content (`openspec/specs/resource/resource-file-assets/design.md`, `openspec/specs/architecture/file-uploads/design.md`)?
-- Does a row describing another user carry only `PublicUser`'s columns, never the account holder's email or storage account (the `drizzle` skill, `references/queries.md`)? A `with:` relation to `users` or a `getColumns(users)` select is where a whole row slips through.
+- Does an asset url grant only the object it names, for minutes, and does an anonymous read reach only published content (`openspec/specs/resource/resource-file-assets/design.md`, `openspec/specs/architecture/file-uploads/design.md`)?
+- Does a row describing another user carry only `PublicUser`'s columns, never the account holder's email or any other private column (the `drizzle` skill, `references/queries.md`)? A `with:` relation to `users` or a `getColumns(users)` select is where a whole row slips through.
 - Does a server route outside tRPC (`apps/web/server/api/**`) do its own session and ownership check, since no builder does it there?
 - Is an action against another member enforced in server state — a row, the SFU — rather than by the targeted client obeying an event? A removal from a room reaches its calls too, and a token that outlives the membership is refused where it reconnects (`openspec/specs/architecture/security/server-authority/design.md`).
 - Does a read through an id held in content — a dataset, a survey, an asset url — scope itself to the content owner, answering an unowned id as if it were missing (`openspec/specs/architecture/security/cross-owner-references/design.md`)?
@@ -18,7 +18,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 
 - Does a new third-party origin, worker or browser capability have its CSP or permissions-policy entry, with the dependency behind it named (`openspec/specs/architecture/security-posture/design.md`)?
 - Does a new body-carrying route respect the request size limits (`openspec/specs/architecture/file-uploads/design.md`)?
-- Does a new Azure resource follow the estate's posture, or name the constraint it is gated on (`openspec/specs/infra/cost-and-security-posture/design.md`, `apps/infra/docs/azure/security-constraints.md`)?
+- Does a new infra resource follow the estate's posture — `protect: true`, no secret in the stack file — or name the constraint it is gated on (the `pulumi-infra` skill; `openspec/specs/infra/cost-and-security-posture/design.md`)?
 - Does an error reaching the client carry a message meant for it, and never a stack or an internal identifier (the `error-handling` skill, `references/error-classes.md`)?
 
 ## A03 Software Supply Chain Failures
@@ -31,14 +31,13 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 ## A04 Cryptographic Failures
 
 - Is a secret or bearer token (a webhook token, a share id) made from a cryptographic source, never `Math.random`, and is it compared as a whole value?
-- Does a credential reach the code through the secret store, never a literal or a committed env file (the `pulumi-infra` skill, and `openspec/rejected/infra/keyless-auth-hardening/design.md` for why keys stay in configuration and Key Vault)?
-- Is a signed url short-lived and scoped to one blob (`openspec/specs/architecture/file-uploads/design.md`)?
+- Does a credential reach the code through the secret store, never a literal or a committed env file (the `pulumi-infra` skill, and `openspec/rejected/infra/keyless-auth-hardening/design.md` for why keys stay in configuration)?
+- Is a signed url short-lived and scoped to one object (`openspec/specs/architecture/file-uploads/design.md`)?
 
 ## A05 Injection
 
 - **HTML**: is every `v-html` fed only by a sanitizer's output, with the disable comment naming that source, and is rich text sanitized at the Zod boundary (the `string-utils` skill, `references/html-sanitization.md`)? Text the server writes itself — a system line with a member's name in it — never passed that boundary, so a surface rendering several message types as markup renders only the sanitized ones that way.
-- **SQL**: is every query built with Drizzle's builder or the `sql` tag's interpolation, which parameterizes, and is `sql.raw` fed only by constants (the `drizzle` skill)?
-- **Azure Table filters**: are they built by `serializeClauses`, never by string concatenation (the `azure-table` skill)?
+- **SQL (D1)**: is every query built with Drizzle's builder or the `sql` tag's interpolation, which binds each value as a D1 parameter and never concatenates it into the statement, and is `sql.raw` fed only by constants (the `drizzle` skill)?
 - **Spreadsheets**: does exported CSV neutralize a cell starting with a formula character (`openspec/specs/resource/dataset-csv-export/design.md`)?
 - **Shell**: does a script run a process with an argument array, never a command string built from input?
 - **Workflows**: does template data reach the shell only through `env:` (the `github-actions` skill, `references/template-data.md`)?
@@ -74,5 +73,5 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 ## A10 Mishandling of Exceptional Conditions
 
 - Does a failed check stop the operation, failing closed, rather than log and carry on (the `error-handling` skill, `references/server-guards.md`)?
-- Does a partial failure roll back what it already wrote, so no half-created row or orphaned blob is left granting access?
+- Does a partial failure roll back what it already wrote, so no half-created row or orphaned object is left granting access?
 - Is every `Result` terminated, so no failure is silently dropped (the `error-handling` skill)?

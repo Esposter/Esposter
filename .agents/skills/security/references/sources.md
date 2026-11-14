@@ -57,7 +57,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
   - https://cheatsheetseries.owasp.org/cheatsheets/XS_Leaks_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Third_Party_Javascript_Management_Cheat_Sheet.html
 - Realtime:
-  - https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html — Web PubSub
+  - https://cheatsheetseries.owasp.org/cheatsheets/WebSocket_Security_Cheat_Sheet.html — the hibernating WebSockets of the realtime Durable Objects
 - Abuse and availability:
   - https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Bot_Management_and_Anti-Automation_Cheat_Sheet.html
@@ -96,8 +96,8 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
 - tRPC authorization — https://trpc.io/docs/server/authorization — middleware-based authorization, the pattern the procedure builders follow.
 - better-auth session management — https://www.better-auth.com/docs/concepts/session-management — cookie sessions and their expiry.
 - Drizzle `sql` operator — https://orm.drizzle.team/docs/sql — which interpolations parameterize and what `sql.raw` does not.
-- Azure Storage SAS overview — https://learn.microsoft.com/en-us/azure/storage/common/storage-sas-overview — scope, expiry and revocation of the upload and read grants.
-- Azure security best practices — https://learn.microsoft.com/en-us/azure/security/fundamentals/best-practices-and-patterns
+- Cloudflare R2 presigned URLs — https://developers.cloudflare.com/r2/api/s3/presigned-urls/ — scope to one object and expiry of the upload and read grants.
+- Cloudflare Workers security model — https://developers.cloudflare.com/workers/reference/security-model/ — isolation between Workers and the secrets they hold.
 - GitHub Actions security hardening — https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions
 - GitHub Security Lab, preventing pwn requests — https://securitylab.github.com/resources/github-actions-preventing-pwn-requests/ — `pull_request_target` and untrusted checkouts.
 

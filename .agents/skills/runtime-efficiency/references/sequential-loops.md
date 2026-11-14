@@ -39,7 +39,7 @@ one wrote and nothing depends on the order they land in:
 | Each step reads the last | An iteration's check or input is what the ones before it wrote                                              | adding direct-message participants, a topological deploy          |
 | Stop at the first        | The loop ends at the first iteration that answers, and the rest must not run                                | an interaction handler that consumes the input                    |
 | Bounded concurrency      | A pool or a wave is the concurrency, set by a constant, and each worker takes one task at a time            | the registry pool, `deleteDirectory`'s waves, `settleAll`         |
-| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                     | the Azure mocks' listings, a response body reader                 |
+| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                     | the paged bucket listings, a response body reader                 |
 | One device               | The work shares a resource that runs one job at a time                                                      | voice synthesis on the GPU, audio playback                        |
 
 **A count is not a reason.** "There are only a few" makes a sequence cheap, not correct, and the rule exists so the

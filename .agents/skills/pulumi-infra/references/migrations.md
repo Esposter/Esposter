@@ -1,6 +1,6 @@
 # Renaming, re-parenting and importing resources
 
-Read when changing the `parent` of an already-deployed resource, renaming or replacing one, when a review suggests adding an `alias`, or when importing an existing Azure resource with `pulumi import --generate-code`.
+Read when changing the `parent` of an already-deployed resource, renaming or replacing one, when a review suggests adding an `alias`, or when importing an existing resource with `pulumi import --generate-code`.
 
 ## Re-parenting already-deployed resources
 
@@ -11,22 +11,22 @@ Run these from `apps/infra/`.
 1. Update `parent` in code to the correct final parent.
 2. `pulumi state unprotect "<old-urn>"` for each affected resource — allows Pulumi to delete the old state entry.
 3. `pnpm infra:preview` — confirm the plan shows delete (old URN) + create (new URN) per affected resource, plus any net-new creates.
-4. `pnpm infra:up` — Pulumi deletes old state entries and creates resources under the new parent URN. The Azure resources themselves aren't deleted; only the state tree changes unless properties also changed.
+4. `pnpm infra:up` — Pulumi deletes old state entries and creates resources under the new parent URN. The live resources aren't deleted; only the state tree changes unless properties also changed.
 
 ## Renames
 
-During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent`. New target resources include the best parent from the start whenever the Azure hierarchy makes that natural.
+During naming migration waves, prefer create/cutover/delete over aliases for resources whose final shape should also gain a `parent`. New target resources include the best parent from the start whenever the Cloudflare hierarchy makes that natural.
 
-**When the final Azure name matches the legacy name** (e.g. event subscriptions reused under a new topic), there is no `New` suffix in the final code. The sequence depends on whether the resource holds data to migrate:
+**A resource whose final name is the name it already has** needs no `New` suffix in the code. The sequence depends on whether the resource holds data to migrate:
 
-- **No external data** (event subscriptions, role assignments): unprotect old → delete old file → create new file with the final name → a single `pulumi up` deletes old and creates new. The old Azure resource is deleted automatically when the file is removed.
-- **External data to migrate** (storage accounts, search indexes): two-phase create/cutover/delete — (1) create the new resource under a temporary name, migrate data, cut the app over, then (2) delete the old → rename the new to the final name → second cutover. Never leave a `New`-suffixed resource file permanently in the codebase.
+- **No external data** (queue consumers, R2 bucket event notifications): unprotect old → delete old file → create new file with the final name → a single `pulumi up` deletes old and creates new. The old resource is deleted automatically when the file is removed.
+- **External data to migrate** (R2 buckets, D1 databases, queues holding messages): two-phase create/cutover/delete — (1) create the new resource under a temporary name, migrate data, cut the app over, then (2) delete the old → rename the new to the final name → second cutover. Never leave a `New`-suffixed resource file permanently in the codebase.
 
 ## Why the alias ban is unconditional
 
-The Pulumi logical name **is** the Azure resource name here (the constructor's first argument, matching the `name` property — never the export constant), which leaves no case an alias could serve:
+The Pulumi logical name **is** the Cloudflare resource name here (the constructor's first argument, matching the `name` property — never the export constant), which leaves no case an alias could serve:
 
-- **The `name` property changed** — the URN changed with it, and an alias only remaps the URN, so it cannot prevent the replacement; under the new name it is genuinely a different Azure resource.
+- **The `name` property changed** — the URN changed with it, and an alias only remaps the URN, so it cannot prevent the replacement; under the new name it is genuinely a different Cloudflare resource.
 - **Only the export/file name changed** — the URN never moved, so there is nothing for an alias to remap.
 
 The fix for a wrong name is a correct name, applied through the sequences under "Re-parenting already-deployed resources" and "Renames" on this page, not a compatibility shim carried forever.
@@ -37,6 +37,6 @@ The fix for a wrong name is a correct name, applied through the sequences under 
 
 `pulumi import --generate-code` output, discovery scripts and `import.json` are throwaway: write them to a scratch location outside the repository, never the repo. Import output may contain live callback URLs, signatures and webhook secrets. Refactor the relevant resources into `src/<provider>/` by hand, then discard the generated file.
 
-## A deployed identity is renamed like any other identifier
+## A deployed resource is renamed like any other identifier
 
-An Azure resource name, a function name, or any string a resource's properties point at (an event subscription's `destination` naming a function) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration (`openspec/specs/architecture/no-compatibility-debt/design.md`). Rename, `pnpm infra:preview`, read the plan. The one exception is a resource holding data — a storage account, a search index — whose rename is a replacement that would drop the data, so it goes through the two-phase create/cutover/delete under "Renames" on this page. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.
+A resource name, a Worker script name, or any string a resource's properties point at (a queue consumer's `scriptName`) is corrected in place the moment it is wrong — infra being code is what makes that ordinary rather than a migration (`openspec/specs/architecture/no-compatibility-debt/design.md`). Rename, `pnpm infra:preview`, read the plan. The one exception is a resource holding data — an R2 bucket, a D1 database, a queue holding messages — whose rename is a replacement that would drop the data, so it goes through the two-phase create/cutover/delete under "Renames" on this page. Hesitating on an unpreviewed guess about what a rename would cost is the same false positive as asserting a replacement without one, and it is the more expensive mistake: it leaves the wrong name in place permanently.

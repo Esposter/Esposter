@@ -22,7 +22,7 @@ which checks a session runs and how it waits on them.
   catch what neither a typecheck nor a lint can — the behaviour the change was for.
 - **Lint, a typecheck or any other check in the pre-commit hook.** Checks stay in CI, which runs them on every push; the
   pre-commit hook only formats, so no commit waits on a check.
-- **A Pulumi apply.** `pnpm typecheck` in `apps/infra` runs before `infra:up`, since an apply reaches Azure and CI runs after it.
+- **A Pulumi apply.** `pnpm typecheck` in `apps/infra` runs before `infra:up`, since an apply reaches the live Cloudflare account and CI runs after it.
 
 ## Before the push: `pnpm ai:precheck`
 

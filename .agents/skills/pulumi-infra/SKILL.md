@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Azure, Cloudflare and GitHub in one prod stack, and the hardenings and observability the estate declines.
+description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Cloudflare and GitHub in one prod stack, and the decisions the estate has settled.
 ---
 
 # Pulumi Infrastructure
@@ -8,54 +8,51 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure f
 ## Settled — do not re-propose
 
 - **A secret in a stack file, encrypted or not.** `pulumi config set --secret` writes ciphertext into `Pulumi.prod.yaml`, which is tracked and public — the secret is then published to everybody and rests on one algorithm and one key for as long as the repository outlives them. Every secret this estate holds is in the `esposter-infra/prod` ESC environment the stack imports, and `apps/infra/docs/stacks.md` has the `pulumi env set` form that puts one there.
-- **Reading a role assignment's, budget's or event subscription's `scope` from the scoped resource's `.id`.** `.id` carries the leading slash the interpolated `subscriptions/…` shape omits, and `scope` is a path parameter, so the preview is a replacement of every `protect: true` grant (`+-1 to replace … marked for protection` in `pnpm infra:preview`). The interpolated shape stays; `getWorkflowResourceGroupPath` builds the same prefix for the Logic App actions.
-- **Reading the Function Apps' `AzureWebJobsStorage__*ServiceUri` settings and `WEBSITE_RUN_FROM_PACKAGE` from the storage account's `primaryEndpoints`.** Three of the four values lack the trailing slash the endpoint outputs carry, so deriving them is an app-settings update that restarts both apps for a value that cannot drift while the account name is the file's own constant.
-- **Tying `WEBSITE_NODE_DEFAULT_VERSION` to `.node-version`.** The Functions runtime supports fewer majors than the repo runs on, so the setting stays on the major Functions supports and moves by hand when that support lands; `pnpm update:node` does not rewrite it. When it moves, and what else moves with it, is the `dependency-updates` skill's `references/node-major.md`.
-- **A `get<Resource>Arguments` factory for each dev/prod pair of property bags** (storage accounts, blob services, sites, plans, search services, action groups, Web PubSub). Each pair is Azure's exported shape, and a factory per resource type is a second copy of the SDK's argument type; only what the pairs share beyond the SDK's shape — a rule list, a subscription's arguments, a workflow's actions — is a service.
-- **Widening `.github/workflows/Pulumi.yaml`'s `paths:` — a gate job over the workspace graph, a content hash at two refs, a `pnpm-workspace.yaml` entry — so a pull request previews on a workspace-package edit or a `@pulumi/*` bump.** Nothing merges to Azure off a pull request: `up` is local with a preview in front of it (`references/operations.md`), and a provider bump automerges without a pull request, so no preview runs on a pull request and its absence costs nothing (`openspec/specs/architecture/monorepo-tooling/design.md` → "What a CI proposal has to beat").
-- **Adding any Azure observability resource** — App Insights, Log Analytics and the alerting built on them — as an unprompted best practice. The estate runs with none by a free-tier cost decision — the `$0.01` guard budgets are the ceiling and portal platform metrics answer operator questions for free — so the suggestion reintroduces ingestion cost with no consumer and is closed, not applied; what a condition worth noticing does instead (`context.error`, the `deadletter` container) and what would reopen it: `openspec/specs/infra/observability/design.md`.
+- **Widening `.github/workflows/Pulumi.yaml`'s `paths:` — a gate job over the workspace graph, a content hash at two refs, a `pnpm-workspace.yaml` entry — so a pull request previews on a workspace-package edit or a `@pulumi/*` bump.** Nothing applies to the estate off a pull request: `up` is local with a preview in front of it (`references/operations.md`), and the workflow previews only pushes to `ai/queue` (`openspec/specs/architecture/monorepo-tooling/design.md` → "What a CI proposal has to beat").
+- **Adding an observability resource — a telemetry store, an alert rule — as an unprompted best practice.** The estate runs with none by a cost decision: paid ingestion recurs with no consumer, so the suggestion is closed, not applied. What a condition worth noticing does instead (`console.error`, the dead-letter queue) and what would reopen the decision: `openspec/specs/infra/observability/design.md`.
 
 ## Package Shape
 
-One private package, one `prod` stack, `src/` split by provider with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`).
+One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). **Teardown pending:** the Azure resources are still declared, so an untargeted `pulumi up` applies them too, and every apply names its resources with `--target` — the first apply after a provider bump is the one exception (`references/operations.md`).
+
+## Cloudflare Rules
+
+- **Provider.** Every Cloudflare resource is declared with `@pulumi/cloudflare`, imported as a namespace (Provider Imports below).
+- **Names.** An environment's resource is `<env>-<assetType>-esposter-<purpose>` and an account's is `<assetType>-esposter-<purpose>`. `getCloudflareResourceName` and `getCloudflareAccountResourceName` in `packages/db-schema/src/services/cloudflare/` build both, for Pulumi and for the Workers, and `apps/infra/docs/cloudflare/naming-conventions.md` lists the asset types. A Pulumi logical name is that name.
+- **Secrets.** Only in the ESC environment, never in Pulumi config (Settled, above).
+- **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. CI's deploy job runs `wrangler deploy` for both Workers, on `main` for production and `ai/queue` for development (`.github/workflows/CI.yaml`).
 
 ## Resource Files
 
-- One resource declaration per tracked source file; export exactly one resource constant per file. The Cloudflare resources follow the same rule under `src/cloudflare/resources/<resourceType>/`, named by `apps/infra/docs/cloudflare/naming-conventions.md`.
-- Put declarations under `src/azure/resources/<ProviderNamespace>/<resourceTypes>/` mirroring Azure resource IDs after `/providers/`, e.g. `Microsoft.Web/sites`, `Microsoft.Insights/actionGroups`, `Microsoft.EventGrid/eventSubscriptions`.
-- File names use camelCase derived from the Azure resource name: `dev-rg-esposter-ae-001` → `devRgEsposterAe001.ts`. The export constant name must match the file name (minus `.ts`).
-- Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted (they add no information): `devstesposter001Properties.ts`, `devstesposter001ManagementPolicy.ts`.
-- Keep `protect: true` on imported resources unless the user explicitly asks for a lifecycle change.
-- **Never add `aliases` to any resource** (`no-restricted-syntax`) — the Pulumi logical name **is** the Azure resource name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
-- **A deployed identity is renamed like any other identifier** — rename, preview, read the plan (`references/migrations.md`).
+- One resource declaration per tracked source file; export exactly one resource constant per file, named as the file minus `.ts`. Cloudflare resources live under `src/cloudflare/resources/<resourceType>/`, the folder named for the provider type (`r2Buckets`, `queueConsumers`, …), and each file is the camelCase of its Cloudflare name (`prod-r2-esposter-message-assets` is `prodR2EsposterMessageAssets.ts`).
+- A child resource takes its parent's name with its own resource type as a suffix (`prodQEsposterProcessWebhookConsumer`, `prodR2EsposterMessageAssetsLifecycle`).
+- Every resource carries `protect: true` unless the user explicitly asks for a lifecycle change.
+- **Never add `aliases` to any resource** (`no-restricted-syntax`) — the Pulumi logical name **is** the Cloudflare name here, so an alias can never serve the rename it is suggested for. The recurring review suggestion to add one is closed, never applied.
+- **A deployed resource is renamed like any other identifier** — rename, preview, read the plan (`references/migrations.md`).
 
 ## Pointing at Another Resource
 
-- **Every new resource sets `parent` to the nearest final Azure containment/extension parent** — the category table, and the deferral rule for a natural parent still scheduled for rename: `references/resource-references.md`.
-- **Prefer a resource output over a repeated Azure identifier literal**; a named constant is earned at two resource files, and a managed resource's principal id is never one (it comes from `getPrincipalId`).
+- **A resource with a containing resource sets `parent` to it** — a queue consumer to its queue, an R2 bucket's lifecycle and event notification to the bucket, a zone's DNS records, ruleset and Workers custom domains to the zone. A queue, dead-letter queue, D1 database, R2 bucket or zone is account-scoped and takes no parent (`references/resource-references.md`).
+- **Prefer a resource output over a repeated identifier literal**; a named constant is earned at two resource files, as the account id is (`apps/infra/src/cloudflare/constants/CloudflareAccountId.ts`).
 - **`resource.name` and `resource.id` are `Output<string>`** — a plain backtick interpolation and a computed object key both produce `"[object Object]"` silently, so a template literal takes `pulumi.interpolate` and a key takes a plain-string source of truth.
 
 ## Provider Imports (namespace, not named)
 
-Provider packages are imported as a namespace (`import * as azure_native from "@pulumi/azure-native"`), and a named import off `@pulumi/*` is a `no-restricted-syntax` error (`packages/configuration/eslint/restrictedImportSyntaxes.js`).
+Provider packages are imported as a namespace (`import * as cloudflare from "@pulumi/cloudflare"`), and a named import off `@pulumi/*` is a `no-restricted-syntax` error (`packages/configuration/eslint/restrictedImportSyntaxes.js`).
 
 The one exception to named imports from libraries, and a review suggestion to switch is closed: why is `references/provider-quirks.md`.
 
-## Security Constraints
-
-Every hardening the estate declines — shared-key and public blob access, local auth on Search, Event Grid and Web PubSub, a `Deny` storage default — is an accepted trade gated on an app-side migration, each with its blocker and its path in `apps/infra/docs/azure/security-constraints.md`. None is applied until its migration completes.
-
 ## Docs
 
-- Durable infrastructure docs live in `apps/infra/docs/`, one directory per provider that has any (`azure/`) with the cross-cutting pages at its root. The convention is the layout, not a list: `ls apps/infra/docs` names the current set, and each page's title says what it holds.
+- Durable infrastructure docs live in `apps/infra/docs/`, one directory per provider that has any, with the cross-cutting pages at its root. The convention is the layout, not a list: `ls apps/infra/docs` names the current set, and each page's title says what it holds.
 - Open infra work is each its own `infra-` change under `openspec/changes/`; the area index + shipped log is `openspec/specs/infra/README.md`; phase-2 cost/security findings are in `openspec/specs/infra/cost-and-security-posture/design.md`.
 - Move completed one-off migration notes out of the package once their durable content is represented in `docs/`.
 
 ## Deep Dives
 
-- `references/operations.md` — when running `infra:preview`/`infra:up`, after a catalog bump to a provider package, or when something reads as deployed but does not work.
-- `references/migrations.md` — when renaming, re-parenting, or replacing an already-deployed resource, when a review suggests adding an `alias`, or when importing an existing Azure resource with `pulumi import --generate-code`.
+- `references/operations.md` — when running `infra:preview`/`infra:up`, after a catalog bump to a `@pulumi/*` provider package, or when something reads as deployed but does not work.
+- `references/migrations.md` — when renaming, re-parenting, or replacing an already-deployed resource, when a review suggests adding an `alias`, or when importing an existing resource with `pulumi import --generate-code`.
 - `references/resource-references.md` — when setting a resource's `parent`, reading another resource's `.name`/`.id`, or choosing between an output and a named constant.
-- `references/provider-quirks.md` — when picking an Azure Native resource token, naming a Logic App API connection, or touching the GitHub `Repository` resource and branch protection.
+- `references/provider-quirks.md` — when touching the GitHub `Repository` resource and its branch protection, a setting the GitHub provider has no field for, or a review that asks for named imports from a provider package.
 - `references/package-shape.md` — when adding a provider folder or a non-resource stack output, or touching the barrel or the entrypoint.
-- `references/function-apps-and-event-grid.md` — when a Function App reads as running but registers or executes nothing, or a rename touches a function an event subscription names.
+- `references/queues-and-notifications.md` — when a job's messages reach its dead-letter queue, a consumer or an R2 notification names a Worker or queue that is being renamed, or a consumer's Worker is deployed but its jobs do nothing.

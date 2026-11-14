@@ -5,12 +5,12 @@ description: Apply when adding a query, an index, a fan-out, a background handle
 
 # Runtime Efficiency
 
-Where work is placed decides its cost far more than how it is written. These are the placement rules; **which `pnpm` script measures it is `package-scripts`, writing the benchmark itself is `bench`, and how the session spends its own turns is `context-efficiency`.** Query and column mechanics belong to `drizzle` and `azure-table` — this skill only decides what runs, where, and how often.
+Where work is placed decides its cost far more than how it is written. These are the placement rules; **which `pnpm` script measures it is `package-scripts`, writing the benchmark itself is `bench`, and how the session spends its own turns is `context-efficiency`.** Query and column mechanics belong to `drizzle` — this skill only decides what runs, where, and how often.
 
 ## Settled — do not re-propose
 
 - **A scheduled sweep that trims a table nothing deletes from.** It has to rediscover keys the write already holds, and it runs on a schedule nothing watches; the trim is one indexed delete on the write path (`Bound growth where the keys already are`, this file).
-- **Routing a large document's bytes through the server.** Past one request body they move through a SAS the server signs, and the server holds them only to validate or compute (`openspec/specs/architecture/large-documents/design.md`).
+- **Routing a large document's bytes through the server.** Past one request body they move through a presigned URL the server signs, and the server holds them only to validate or compute (`openspec/specs/architecture/large-documents/design.md`).
 
 ## Resolve a fact once, at the consumer
 
@@ -52,9 +52,9 @@ Measure a script end to end first (`scripts/src/workspace/sweepCommands.bench.md
 
 ## The server never carries what it does not interpret
 
-Past one request body (`MAX_REQUEST_SIZE`), a document moves between the browser and Blob Storage through a SAS the server signs, in both directions; the server holds it only to validate a write or to compute from it. And a write that changes nothing must serialize to the same bytes — an import or rebuild that mints fresh ids or timestamps carries the previous ones over, or every content-addressed copy pays for the document again. Both rules, and the pieces a new large blob composes, are `openspec/specs/architecture/large-documents/design.md`.
+Past one request body (`MAX_REQUEST_SIZE`), a document moves between the browser and R2 through a presigned URL the server signs, in both directions; the server holds it only to validate a write or to compute from it. And a write that changes nothing must serialize to the same bytes — an import or rebuild that mints fresh ids or timestamps carries the previous ones over, or every content-addressed copy pays for the document again. Both rules, and the pieces a new large blob composes, are `openspec/specs/architecture/large-documents/design.md`.
 
-A JSON document stored in Blob Storage is never a plain upload: it is written by `writeJsonBlob` and read by `readJsonBlob` (`@esposter/db`), a zstd frame served with `Content-Encoding: zstd`, so a change to that path reaches every document at once (`openspec/specs/architecture/compressed-json-blobs/design.md`).
+A JSON document stored in R2 is never a plain upload: it is written by `writeJsonBlob` and read by `readJsonBlob` (`@esposter/db`), a zstd frame served with `Content-Encoding: zstd`, so a change to that path reaches every document at once (`openspec/specs/architecture/compressed-json-blobs/design.md`).
 
 ## Bound growth where the keys already are
 

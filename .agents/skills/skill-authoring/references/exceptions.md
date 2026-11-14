@@ -8,7 +8,7 @@ bar is that something **outside our control** forces the shape — a dependency'
 platform or language requirement, a published surface whose rename is a breaking change, an enforcer that
 demands the opposite. Those are worth writing down precisely because no amount of editing our code removes them.
 
-So an exception states its forcing agent by name (`@azure/storage-blob`'s `listBlobsFlat`, `MediaRecorder`'s
+So an exception states its forcing agent by name (`@cloudflare/workers-types`'s `MessageBatch`, `MediaRecorder`'s
 optional properties, `vitest/padding-around-test-blocks`). One that cannot name a source outside the repo is
 either a rule branch wearing the wrong word — `flex-wrap` on a three-control row is _when the rule says yes_,
 not an escape from it — or a defect the exception is hiding, and the fix is the code. The second kind reads

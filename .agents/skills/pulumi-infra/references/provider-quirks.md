@@ -1,20 +1,6 @@
-# Azure Native and GitHub provider quirks
+# GitHub and provider-package quirks
 
-Read when picking an Azure Native resource token, naming a Logic App API connection, touching the GitHub `Repository` resource and its branch protection, or when a review asks for named imports from a provider package.
-
-## Azure Native resource tokens
-
-Use tokens matching the installed provider version. The Azure Native ones are:
-
-- Action Groups: `azure-native:monitor:ActionGroup`
-- Budgets: `azure-native:consumption:Budget`
-- Event Grid subscriptions: `azure-native:eventgrid:EventSubscription`
-
-Logic App API connections may have live names like `azureappservice-1`, `azureappservice-2`, `arm`, `arm-1` — don't assume a naming convention's names are the live Azure resource names.
-
-An `ApiReferenceArgs` block is the connector's own published metadata, so it is identical in both stacks — only the connection's own name and resource group differ. Declare it once as a shared constant rather than per stack.
-
-Azure rotates that metadata on its own — `iconUri` moves to a new CDN host and connector version — so a stack the estate has not applied in a while previews the connections as `~properties` with only `api.iconUri` differing. The pinned constant is the stale side of that diff, and applying it pushes the older URL back over the live one. Converge by re-pinning the constant to the value the preview reports as current, never by applying the plan as it stands.
+Read when touching the GitHub `Repository` resource and its branch protection, when a GitHub setting has no field in the provider, or when a review asks for named imports from a provider package.
 
 ## GitHub branch auto-delete
 
@@ -32,8 +18,8 @@ A field the provider _does_ carry can still be refused: enabling a GitHub Secret
 
 ## Why a provider package is imported as a namespace
 
-The rule — `import * as azure_native from "@pulumi/azure-native"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".
+The rule — `import * as cloudflare from "@pulumi/cloudflare"`, the one exception to named imports from libraries — is in `SKILL.md`; this is what breaks when it is "fixed".
 
-- Provider packages are CommonJS and lazy-load every resource submodule through utilities.lazyLoad, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`.
+- Provider packages are CommonJS and lazy-load every resource submodule through utilities.lazyLoad, which installs getters on the `exports` object via `Object.defineProperty`. That mechanism only works through the live namespace object from `import * as`. `@pulumi/cloudflare`'s `index.js` does this for every resource.
 - `apps/infra` is `"type": "module"`, so named ESM imports from those CJS modules force Node's interop to evaluate bindings eagerly — `require()`-ing every referenced submodule at import time and defeating the lazy-load (slower startup, higher memory). They are not tree-shakable.
 - Pulumi's own codegen always emits `import * as`. Match it; do not "fix" provider imports for lint/style consistency.

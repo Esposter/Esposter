@@ -8,7 +8,7 @@ tsdown externalizes `dependencies` and `peerDependencies` and bundles `devDepend
 - `peerDependencies` → externalized, and additionally a demand on the consumer. Reserve them for things that must be a single instance — framework singletons such as `vue` and `pinia`, and the Drizzle and Pulumi runtimes. A dependency that merely appears in a signature does not need to be a peer.
 - `optionalDependencies` → externalized, and the only kind that may be absent at runtime: the consumer installs one when their platform allows it. Reach for it behind a check, never as though it resolved. `peerDependenciesMeta` is read the same way, so a name appearing only there is external too — both are in the `onlyImport` allowlist for that reason.
 - `devDependencies` → build, lint, test, codegen and typecheck tooling, plus anything a self-contained bundle deliberately vendors.
-- Don't redeclare a transitive peer. If `azure-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is db-schema's peer, not azure-mock's.
+- Don't redeclare a transitive peer. If `@esposter/db-mock` imports `@esposter/db-schema` which imports `zod`, `zod` is db-schema's peer, not db-mock's.
 
 **Never bundle a dependency to save the consumer an install.** It saves nothing — they never install it by hand — and it costs deduplication, it strands them on a vendored copy when that dependency ships a fix, and it splits any type the dependency owns into two nominally distinct copies that fail `instanceof` against each other.
 

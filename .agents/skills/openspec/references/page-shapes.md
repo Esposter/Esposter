@@ -52,7 +52,7 @@ Omit any section with nothing to say. The `spec.md` beside it holds the requirem
 
 ## Changes
 
-A change's `design.md` takes the same template plus an explicit scope: what works today against what the change adds, the cheapest viable infrastructure (reuse existing Azure resources first), and failure and retry semantics when background work is involved. A design is the conversation done in advance — trim it the moment implementation teaches you better. Its `proposal.md` is the why and the what in plain terms, and its `tasks.md` the build order, each task naming how it is verified.
+A change's `design.md` takes the same template plus an explicit scope: what works today against what the change adds, the cheapest viable infrastructure (reuse existing resources first), and failure and retry semantics when background work is involved. A design is the conversation done in advance — trim it the moment implementation teaches you better. Its `proposal.md` is the why and the what in plain terms, and its `tasks.md` the build order, each task naming how it is verified.
 
 **A change that borrows ends with a Sources section** in its design: an algorithm, a paper, a library's technique or another product's design it takes something from, one bullet per source, linking the source and naming the part taken (`references/links-and-sources.md`). A change is executed cold later, and whoever builds it reads the original rather than a paraphrase. When it ships, its sources go with its substance into the capability's design.
 
