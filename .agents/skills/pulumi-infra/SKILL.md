@@ -1,6 +1,6 @@
 ---
 name: pulumi-infra
-description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Azure and GitHub in one prod stack, and the hardenings and observability the estate declines.
+description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure for Azure, Cloudflare and GitHub in one prod stack, and the hardenings and observability the estate declines.
 ---
 
 # Pulumi Infrastructure
@@ -21,7 +21,7 @@ One private package, one `prod` stack, `src/` split by provider with a generated
 
 ## Resource Files
 
-- One Azure resource declaration per tracked source file; export exactly one resource constant per file.
+- One resource declaration per tracked source file; export exactly one resource constant per file. The Cloudflare resources follow the same rule under `src/cloudflare/resources/<resourceType>/`, named by `apps/infra/docs/cloudflare/naming-conventions.md`.
 - Put declarations under `src/azure/resources/<ProviderNamespace>/<resourceTypes>/` mirroring Azure resource IDs after `/providers/`, e.g. `Microsoft.Web/sites`, `Microsoft.Insights/actionGroups`, `Microsoft.EventGrid/eventSubscriptions`.
 - File names use camelCase derived from the Azure resource name: `dev-rg-esposter-ae-001` → `devRgEsposterAe001.ts`. The export constant name must match the file name (minus `.ts`).
 - Child resources append the Pulumi resource type name as a suffix. Mandatory singleton Azure names like `default` are omitted (they add no information): `devstesposter001Properties.ts`, `devstesposter001ManagementPolicy.ts`.
