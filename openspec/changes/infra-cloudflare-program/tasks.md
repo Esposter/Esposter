@@ -40,7 +40,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 ## 5. Calls
 
 - [ ] 5.1 A provisioning command creates each environment's RealtimeKit app, the four presets and the webhook subscription, and writes `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN` to ESC under `dev_` and `prod_`. Verified by a dry run listing what it would create.
-- [ ] 5.2 Replace `MicrophoneProcessor`'s `ScriptProcessorNode` with an AudioWorklet. Verified by the microphone processor test.
+- [x] 5.2 Replace `MicrophoneProcessor`'s `ScriptProcessorNode` with an AudioWorklet. Verified by the microphone processor test.
 
 ## 6. Bundle
 
