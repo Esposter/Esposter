@@ -1,6 +1,8 @@
 import type { RealtimeKitAction } from "#src/models/realtimeKit/RealtimeKitAction";
 import type { RealtimeKitDesired } from "#src/models/realtimeKit/RealtimeKitDesired";
 
+import { exhaustiveGuard } from "@esposter/shared";
+
 // The line a run prints for one change, naming what it touches and never a value
 export const describeRealtimeKitAction = (action: RealtimeKitAction, desired: RealtimeKitDesired): string => {
   switch (action.kind) {
@@ -18,5 +20,7 @@ export const describeRealtimeKitAction = (action: RealtimeKitAction, desired: Re
       return "Write the app id to ESC";
     case "updateWebhook":
       return `Update webhook ${desired.webhookUrl}`;
+    default:
+      return exhaustiveGuard(action);
   }
 };
