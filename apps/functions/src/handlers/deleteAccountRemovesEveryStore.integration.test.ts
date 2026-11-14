@@ -37,7 +37,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { generateSecretToken, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -121,12 +121,8 @@ describe(deleteAccountHandler, () => {
     const otherUserId = v7();
     const hash = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
-    await mockDb
-      .insert(accountsInAuth)
-      .values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
-    await mockDb
-      .insert(sessionsInAuth)
-      .values({ expiresAt: new Date(0), id: v7(), token: v7(), userId });
+    await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
+    await mockDb.insert(sessionsInAuth).values({ expiresAt: new Date(0), id: v7(), token: v7(), userId });
 
     // The account's owned room, with its own message and reaction, a member's membership, a profile image and a charged
     // attachment
@@ -150,9 +146,7 @@ describe(deleteAccountHandler, () => {
     );
     const memberRoomMessage = await memberRoomObject.createMessage(
       {
-        files: [
-          { filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 },
-        ],
+        files: [{ filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 }],
         message,
         type: MessageType.Message,
       },
@@ -231,15 +225,8 @@ describe(deleteAccountHandler, () => {
     );
     await mockDb
       .insert(programParticipantsInResource)
-      .values({
-        keyValue: v7(),
-        publicId: v7(),
-        resourceId: ownedProgram.id,
-        token: v7(),
-      });
-    await mockDb
-      .insert(apiKeysInAuth)
-      .values({ id: v7(), key: v7(), referenceId: userId });
+      .values({ keyValue: v7(), publicId: v7(), resourceId: ownedProgram.id, token: generateSecretToken() });
+    await mockDb.insert(apiKeysInAuth).values({ id: v7(), key: v7(), referenceId: userId });
 
     // A resource the account does not own, with the account's own activity on it, which is kept
     const otherResource = takeOne(

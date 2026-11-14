@@ -1,6 +1,7 @@
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { sqliteTable } from "#src/sqliteTable";
+import { secretTokenSchema } from "@esposter/shared";
 import { text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
@@ -22,8 +23,8 @@ export const programParticipantsInResource = sqliteTable(
     resourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),
-    // A UUID, never derived from the key value, so no one can mint one from an email address. A survey response names
-    // its participant by this column, so it is unique on its own
+    // A 256-bit secret from `generateSecretToken`, never derived from the key value, so no one can mint one from it.
+    // A survey response names its participant by this column, so it is unique on its own
     token: text().notNull(),
   },
   {
@@ -41,5 +42,5 @@ export const selectProgramParticipantInResourceSchema = createSelectSchema(progr
   id: () => z.uuidv7(),
   publicId: () => z.uuidv7(),
   resourceId: () => z.uuidv7(),
-  token: () => z.uuidv7(),
+  token: () => secretTokenSchema,
 });

@@ -15,7 +15,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
-import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
+import { downloadFile, generateSecretToken, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
@@ -135,7 +135,7 @@ describe("resourceProgramStatus", () => {
   test("hands the owner every participant's link when they generate", async () => {
     expect.hasAssertions();
 
-    const participants = [{ keyValue, token: v7() }];
+    const participants = [{ keyValue, token: generateSecretToken() }];
     setStatus(false);
     trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants }));
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
@@ -164,7 +164,7 @@ describe("resourceProgramStatus", () => {
   test("exports each invited participant's personalized email as one zip", async () => {
     expect.hasAssertions();
 
-    const token = v7();
+    const token = generateSecretToken();
     const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
     const emailHtml = `<a href="${surveyPath}">Take it</a>`;
     const invite = { keyValue, row: { [keyColumn]: keyValue }, token };
@@ -278,7 +278,7 @@ describe("resourceProgramStatus", () => {
   test("names the participants left out of the file and still exports the rest", async () => {
     expect.hasAssertions();
 
-    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: v7() };
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: generateSecretToken() };
     trpcMsw.program.readResourceContent.query(() => ({
       audience: { id: v7(), type: DatasetProviderType.Sheet },
       emailId: v7(),
@@ -303,7 +303,7 @@ describe("resourceProgramStatus", () => {
   test("reports the reminders ready when the export is for those still awaiting", async () => {
     expect.hasAssertions();
 
-    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: v7() };
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: generateSecretToken() };
     trpcMsw.program.readResourceContent.query(() => ({
       audience: { id: v7(), type: DatasetProviderType.Sheet },
       emailId: v7(),

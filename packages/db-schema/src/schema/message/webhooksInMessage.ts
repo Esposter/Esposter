@@ -6,6 +6,7 @@ import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
+import { secretTokenSchema } from "@esposter/shared";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { v7 } from "uuid";
@@ -25,6 +26,7 @@ export const webhooksInMessage = sqliteTable(
     roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    // The credential in the delivery url, a 256-bit secret from `generateSecretToken`
     token: text().notNull(),
     userId: text()
       .notNull()
@@ -48,5 +50,6 @@ export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage
   id: () => z.uuidv7(),
   name: (schema) => createNameSchema(WEBHOOK_NAME_MAX_LENGTH, schema),
   roomId: () => z.uuidv7(),
+  token: () => secretTokenSchema,
   userId: () => z.uuidv7(),
 });

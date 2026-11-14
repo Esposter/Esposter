@@ -1,5 +1,5 @@
 // Compares the presented secret with the configured one without reading either's contents by position: every byte is folded
-// into one difference before the answer is read, and a length mismatch counts too
+// Into one difference before the answer is read, and a length mismatch counts too
 export const checkIsSecretEqual = (presented: string, expected: string): boolean => {
   const presentedBytes = new TextEncoder().encode(presented);
   const expectedBytes = new TextEncoder().encode(expected);

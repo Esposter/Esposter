@@ -5,7 +5,7 @@ import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAdd
 import { webhookRateLimiter } from "#server/services/rateLimiter/webhookRateLimiter";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
-import { getResult, getResultAsync } from "@esposter/shared";
+import { checkIsSecretEqual, getResult, getResultAsync } from "@esposter/shared";
 import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
 import { v7 } from "uuid";
 
@@ -25,12 +25,13 @@ export default defineEventHandler(async (event) => {
     // Would cap the route across ids
     await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""));
     await webhookRateLimiter.consume(id);
-    // The token is the credential, so an unknown id and a wrong token are the same 404 and a sender cannot tell them apart
+    // The id is public and the token is the credential, so the row is read by id and the token compared in constant time.
+    // An unknown id and a wrong token are the same 404, and a sender cannot tell them apart
     const webhook = await db.query.webhooksInMessage.findFirst({
-      columns: { roomId: true, userId: true },
-      where: { id: { eq: id }, token: { eq: token } },
+      columns: { roomId: true, token: true, userId: true },
+      where: { id: { eq: id } },
     });
-    if (!webhook) {
+    if (!webhook || !checkIsSecretEqual(token, webhook.token)) {
       event.res.status = 404;
       return { message: "Webhook not found." };
     }
@@ -46,7 +47,12 @@ export default defineEventHandler(async (event) => {
     }
 
     // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message once
-    await getJobQueue(QueueJob.ProcessWebhook).send({ deliveryId: v7(), payload, webhook });
+    // The job is handed the room and its app user alone, never the credential
+    await getJobQueue(QueueJob.ProcessWebhook).send({
+      deliveryId: v7(),
+      payload,
+      webhook: { roomId: webhook.roomId, userId: webhook.userId },
+    });
     event.res.status = 202;
     return { message: "Accepted." };
   }).match(

@@ -12,6 +12,8 @@ A database uuid column is the one place the validator is not written by hand. dr
 
 Ids are text columns in D1, which drizzle-zod maps to a plain string. So each id column names its own override in the select schema it is read through, `id: () => z.uuidv7()`, as the rooms select schema does. A foreign-key column takes the same override, since its value is the referenced row's id. A column in a new table takes it too. A field that holds another resource's id is that same validator registered in the resource-link registry, so the [resource-link index](../resource-links/design.md) finds it as well as validating it.
 
+A bearer credential is not an id, and it is not minted with `v7`: a webhook's token and a program participant's token are 256 random bits from `crypto.getRandomValues`, written as unpadded base64url (43 characters) by `generateSecretToken` in `@esposter/shared`, and checked by `secretTokenSchema`. A v7 carries 74 random bits and its ordering is public, so no credential is built from one. A stored credential is compared with `checkIsSecretEqual` where the app compares it itself, and is looked up by its value where the row is keyed by it.
+
 Fixed ids are built on one constant, `ZERO_UUID`, which is the all-zero v7 with the version digit 7 and the variant digit 8. The shared sentinels are that constant, so none of them changes shape. A second row of one table steps the last digits and leaves the version and variant digits alone. Ids of different tables share `ZERO_UUID`, since they never meet. The pure nil UUID is never a fixed id, because it is not a v7 and fails the check.
 
 ```mermaid
@@ -32,7 +34,7 @@ Tests hold to the same rule with one distinction. A test's real id is `v7()`. A 
 | Column defaults (`$defaultFn`) on primary keys, in the Worker and the objects                    | The select schema override, `z.uuidv7()`      | A v7 from the one generator.                                                                                                   |
 | Foreign-key id columns                                                                           | The same override                             | A v7 by copy: the value is the referenced row's id.                                                                            |
 | Client `v7()`, such as placeholder rows, todo steps, canvas elements and session ids             | The field's validator                         | A v7 from the same generator. The `checkIsUuidV7` test holds the generator's id to that pattern.                               |
-| Server `v7()`, such as file ids, custom emoji tags and survey participant tokens                 | The entity's or the row's validator           | A v7 from the same generator.                                                                                                  |
+| Server `v7()`, such as file ids and custom emoji tags                                            | The entity's or the row's validator           | A v7 from the same generator.                                                                                                  |
 | Claude Code session id carried by a todo's origin                                                | The origin's `sessionId`                      | A v4. Claude Code mints the id outside the repo and names each session file by it, in the v4 layout.                           |
 | Survey response id, minted by the respondent's browser                                           | The survey response id on create and update   | A v7: the respondent's client random seed, kept in the browser for that respondent.                                            |
 | Fixed ids, such as `ZERO_UUID` and its steps, the sentinels, the driven user and the seeded rows | The seeded rows and the sentinels' validators | v7-shaped by construction. No id in the repo is the nil UUID.                                                                  |
@@ -51,7 +53,7 @@ Tests hold to the same rule with one distinction. A test's real id is `v7()`. A 
 | `apps/web/shared/services/pageBuilder/constants.ts`                   | `NO_SURVEY_ID`, the "no survey" sentinel, built on `ZERO_UUID`                                        |
 | `packages/shared/src/services/devSeed/constants.ts`                   | `DRIVEN_USER_ID`, a v7-shaped id that is not the zero UUID                                            |
 | `packages/db-schema/src/schema/resource/surveyResponsesInResource.ts` | The survey response's id, validated as v7 by its select schema                                        |
-| `apps/web/shared/models/db/survey/ParticipantTokenInput.ts`           | The participant token a response names: empty, or a v7                                                |
+| `apps/web/shared/models/db/survey/ParticipantTokenInput.ts`           | The participant token a response names: empty, or a secret token                                      |
 | `apps/web/shared/models/resource/todoList/TodoListItemOrigin.ts`      | The origin's session id, the one `z.uuidv4()`: Claude Code's id, not one the repo mints               |
 | `apps/web/server/auth.ts`                                             | `advanced.database.generateId`, which gives better-auth's model ids the same generator                |
 

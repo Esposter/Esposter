@@ -12,7 +12,7 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
-import { chunk } from "@esposter/shared";
+import { chunk, generateSecretToken } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { v7 } from "uuid";
 
@@ -51,7 +51,7 @@ export const generateProgramParticipants = async (
       continue;
 
     newKeyValues.add(keyValue);
-    newParticipants.push({ keyValue, publicId: v7(), resourceId: programId, token: v7() });
+    newParticipants.push({ keyValue, publicId: v7(), resourceId: programId, token: generateSecretToken() });
   }
   // The batches are independent, so they overlap. A participant another run claimed first conflicts and comes back
   // unreturned, and its token is the one a link may already carry, so this run adopts it and drops the token it minted

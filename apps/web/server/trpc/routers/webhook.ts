@@ -1,7 +1,6 @@
 import type { AppUserInMessage, WebhookInMessage, WebhookInMessageWithRelations } from "@esposter/db-schema";
 
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
-import { generateToken } from "#server/services/auth/generateToken";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
 import { router } from "#server/trpc";
@@ -25,7 +24,7 @@ import {
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { inJsonArray } from "@esposter/db";
-import { Operation } from "@esposter/shared";
+import { generateSecretToken, Operation } from "@esposter/shared";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { v7 } from "uuid";
 
@@ -42,7 +41,7 @@ export const webhookRouter = router({
     const appUserId = v7();
     const webhookId = v7();
     const creatorId = ctx.getSessionPayload.user.id;
-    const token = generateToken();
+    const token = generateSecretToken();
     const isUnderWebhookCap = and(
       eq(roomsInMessage.id, roomId),
       sql`(select count(*) from ${webhooksInMessage} where ${eq(webhooksInMessage.roomId, roomId)}) < ${WEBHOOK_MAX_LENGTH}`,
@@ -120,7 +119,7 @@ export const webhookRouter = router({
       (
         await ctx.db
           .update(webhooksInMessage)
-          .set({ token: generateToken() })
+          .set({ token: generateSecretToken() })
           .where(inRoom(webhooksInMessage, id, roomId))
           .returning()
       )[0],

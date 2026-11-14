@@ -32,12 +32,19 @@ import {
   surveyResponsesInResource,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, MAX_READ_LIMIT, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  generateSecretToken,
+  InvalidOperationError,
+  MAX_READ_LIMIT,
+  NotFoundError,
+  Operation,
+  secretTokenSchema,
+  takeOne,
+} from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
 import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
-import { z } from "zod";
 
 // The stored rows are what prove a concurrent or purged run left exactly the rows it should have
 const readStoredParticipants = (db: Context["db"], programId: string) =>
@@ -126,10 +133,10 @@ describe("programRouter", () => {
 
     expect(participants.map(({ keyValue: participantKeyValue }) => participantKeyValue)).toStrictEqual([" ", "a"]);
 
-    // Tokens are UUIDs, never derived from the key — a derivable token could be minted by anyone
+    // Tokens are 256-bit secrets, never derived from the key — a derivable token could be minted by anyone
     for (const { keyValue: participantKeyValue, token } of participants) {
       expect(token).not.toBe(participantKeyValue);
-      expect(z.uuidv7().safeParse(token).success).toBe(true);
+      expect(secretTokenSchema.safeParse(token).success).toBe(true);
     }
   });
 
@@ -317,7 +324,7 @@ describe("programRouter", () => {
       surveyId: foreignSurvey.id,
     });
     // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
-    const token = v7();
+    const token = generateSecretToken();
     await mockContext.db
       .insert(programParticipantsInResource)
       .values({ keyValue, publicId: v7(), resourceId: program.id, token });

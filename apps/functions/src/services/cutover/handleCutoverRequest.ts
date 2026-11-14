@@ -1,6 +1,6 @@
 import { CUTOVER_SECRET_HEADER, RESCHEDULE_PATH } from "#src/services/cutover/constants";
-import { checkIsSecretEqual } from "#src/services/cutover/checkIsSecretEqual";
 import { rescheduleTodoReminders } from "#src/services/cutover/rescheduleTodoReminders";
+import { checkIsSecretEqual } from "@esposter/shared";
 import { drizzle } from "drizzle-orm/d1";
 
 // The temporary internal route of the cutover, deleted at teardown. The only route the functions Worker answers; every other

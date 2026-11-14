@@ -24,7 +24,7 @@ import {
   surveyResponsesInResource,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { generateSecretToken, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
@@ -418,7 +418,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     // A stale participant link into an anonymous survey still works, it just carries nothing
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, v7());
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, generateSecretToken());
 
     expect(newSurveyResponse.participantToken).toBe("");
   });
