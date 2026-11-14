@@ -1,8 +1,9 @@
 import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
 
+import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
 import { storageLedgerInStorage } from "@esposter/db-schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // Give a named set of blobs' bytes back. One statement per set, so the set is what bounds the bind parameters
 // It expands to — deleteStorageBlobs, the only caller, hands it one deletion wave at a time.
@@ -15,6 +16,9 @@ export const releaseStorageLedgerEntries = (
   else
     return releaseStorageLedgerEntriesByWhere(
       db,
-      and(eq(storageLedgerInStorage.containerName, containerName), inArray(storageLedgerInStorage.blobName, blobNames)),
+      and(
+        eq(storageLedgerInStorage.containerName, containerName),
+        inJsonArray(storageLedgerInStorage.blobName, blobNames),
+      ),
     );
 };

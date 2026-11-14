@@ -4,7 +4,7 @@ import { getPushNotificationPayload } from "#src/services/notification/getPushNo
 import { resolveNotification } from "#src/services/notification/resolveNotification";
 import { sendWebPushNotifications } from "#src/services/notification/sendWebPushNotifications";
 import { db } from "#src/services/shared/db";
-import { getPushSubscriptionsForUsers } from "@esposter/db";
+import { getPushSubscriptionsForUsers, inJsonArray } from "@esposter/db";
 import {
   AppNotificationTypeChannelMap,
   AppNotificationTypeSeverityMap,
@@ -13,7 +13,7 @@ import {
   notificationsInNotification,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { and, inArray, lt } from "drizzle-orm";
+import { and, lt } from "drizzle-orm";
 
 // The whole fan-out, and the only place that decides where a notification lands. Recipient resolution is the one
 // Thing that varies by type; everything past it reads the type's declared channels, so adding a notification is
@@ -49,7 +49,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
         .delete(notificationsInNotification)
         .where(
           and(
-            inArray(notificationsInNotification.userId, userIds),
+            inJsonArray(notificationsInNotification.userId, userIds),
             lt(notificationsInNotification.createdAt, new Date(Date.now() - NOTIFICATION_RETENTION_MS)),
           ),
         ),

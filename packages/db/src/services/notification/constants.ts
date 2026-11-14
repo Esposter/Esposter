@@ -1,7 +1,7 @@
 import { pushSubscriptionsInNotification } from "@esposter/db-schema";
 
-// Postgres caps a statement at 65,535 bind parameters, and a device read binds one per user, so a room is read in waves
-// Of this many, well under the cap: a room the size of the cap is seven round trips
+// A device read carries its user ids as one JSON array, so this bounds the size of one wave's statement rather than a
+// bind parameter count. A room the size of the cap is read in a single round trip
 export const MAX_USER_IDS_PER_STATEMENT = 10_000;
 
 export const PUSH_SUBSCRIPTION_COLUMNS = Object.freeze({

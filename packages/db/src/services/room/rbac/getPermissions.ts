@@ -8,6 +8,7 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { and, eq, inArray, or } from "drizzle-orm";
 
 // Administrator is answered from the roles alone, so an override can neither grant it nor strip it
@@ -22,18 +23,20 @@ export const getPermissions: GetPermissions = (async (
   const memberRoomIdsSubquery = db
     .select({ roomId: usersToRoomsInMessage.roomId })
     .from(usersToRoomsInMessage)
-    .where(and(eq(usersToRoomsInMessage.userId, userId), inArray(usersToRoomsInMessage.roomId, roomIdArray)));
+    .where(and(eq(usersToRoomsInMessage.userId, userId), inJsonArray(usersToRoomsInMessage.roomId, roomIdArray)));
   const roleIdsSubquery = db
     .select({ id: usersToRoomRolesInMessage.roleId })
     .from(usersToRoomRolesInMessage)
-    .where(and(eq(usersToRoomRolesInMessage.userId, userId), inArray(usersToRoomRolesInMessage.roomId, roomIdArray)));
+    .where(
+      and(eq(usersToRoomRolesInMessage.userId, userId), inJsonArray(usersToRoomRolesInMessage.roomId, roomIdArray)),
+    );
   const [rows, overrideRows] = await Promise.all([
     db
       .select({ permissions: roomRolesInMessage.permissions, roomId: roomRolesInMessage.roomId })
       .from(roomRolesInMessage)
       .where(
         and(
-          inArray(roomRolesInMessage.roomId, roomIdArray),
+          inJsonArray(roomRolesInMessage.roomId, roomIdArray),
           or(
             and(eq(roomRolesInMessage.isEveryone, true), inArray(roomRolesInMessage.roomId, memberRoomIdsSubquery)),
             inArray(roomRolesInMessage.id, roleIdsSubquery),
@@ -50,7 +53,7 @@ export const getPermissions: GetPermissions = (async (
       .where(
         and(
           eq(roomMemberPermissionsInMessage.userId, userId),
-          inArray(roomMemberPermissionsInMessage.roomId, roomIdArray),
+          inJsonArray(roomMemberPermissionsInMessage.roomId, roomIdArray),
         ),
       ),
   ]);
