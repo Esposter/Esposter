@@ -4,7 +4,7 @@ import type { JoinRoomInput } from "#shared/models/db/room/JoinRoomInput";
 import type { LeaveRoomInput } from "#shared/models/db/room/LeaveRoomInput";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
+import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { MessageHookMap } from "@/services/message/MessageHookMap";

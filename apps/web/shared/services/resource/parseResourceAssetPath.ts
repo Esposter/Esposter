@@ -1,7 +1,7 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
+import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
-import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
 import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
 import { FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 

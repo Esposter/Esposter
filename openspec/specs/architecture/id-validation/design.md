@@ -45,8 +45,8 @@ Tests hold to the same rule with one distinction. A test's real id is `v7()`. A 
 | File                                                                  | Role                                                                                                  |
 | :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
 | `packages/shared/src/util/id/uuid/constants.ts`                       | `ZERO_UUID`, the all-zero v7 every fixed id builds on                                                 |
-| `apps/web/shared/util/id/uuid/checkIsUuidV7.ts`                       | The client's check of an id against the v7 pattern                                                    |
-| `apps/web/shared/util/id/uuid/checkIsUuidV7.test.ts`                  | Holds the generator's id to that check, and refuses a v4                                              |
+| `apps/web/shared/services/id/checkIsUuidV7.ts`                        | The client's check of an id against the v7 pattern                                                    |
+| `apps/web/shared/services/id/checkIsUuidV7.test.ts`                   | Holds the generator's id to that check, and refuses a v4                                              |
 | `apps/web/shared/services/resource/link/createResourceLinkSchema.ts`  | The validator of a field holding another resource's id: `z.uuidv7()`, registered in the link registry |
 | `packages/db-schema/src/schema/message/roomsInMessage.ts`             | A select schema overriding its id column with `z.uuidv7()`, the pattern every id column copies        |
 | `packages/db-schema/src/services/message/constants.ts`                | `AUTOMOD_USER_ID`, the reserved moderation actor, built on `ZERO_UUID`                                |

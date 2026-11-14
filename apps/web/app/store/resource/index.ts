@@ -10,11 +10,11 @@ import type {
 
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
+import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";

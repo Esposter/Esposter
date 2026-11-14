@@ -1,4 +1,4 @@
-import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
+import { checkIsUuidV7 } from "#shared/services/id/checkIsUuidV7";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
