@@ -25,8 +25,9 @@ interface WranglerEnvironment {
 // The names this file shares with Pulumi and the app: a queue, bucket or database a wrangler config names that Pulumi does
 // not create is a binding that resolves to nothing. Each expected name is built by the same function Pulumi calls, so the
 // two cannot disagree. Read from this package's own file so the suite runs from the repo root too.
+// The config is JSONC: the formatter keeps its trailing commas, which JSON.parse refuses, so they are removed first
 const configuration = jsonDateParse<{ env: Record<CloudflareEnvironment, WranglerEnvironment> }>(
-  readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8"),
+  readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8").replaceAll(/,(\s*[}\]])/g, "$1"),
 );
 
 const environments = [
