@@ -9,6 +9,8 @@ export interface FunctionsEnvironmentVariables {
   BASE_URL: string;
   // The environment this Worker runs in, which names its queues: the dispatcher finds a batch's job by it
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
+  // The cutover routes' shared secret, deleted with them at teardown
+  CUTOVER_SECRET: string;
   REALTIMEKIT_API_TOKEN?: string;
   REALTIMEKIT_APP_ID?: string;
   VAPID_PRIVATE_KEY: string;
@@ -18,6 +20,7 @@ export interface FunctionsEnvironmentVariables {
 export const functionsEnvironmentVariablesSchema = z.object({
   BASE_URL: z.url(),
   CLOUDFLARE_ENVIRONMENT: z.enum(CloudflareEnvironment),
+  CUTOVER_SECRET: z.string().min(1).meta({ secret: true }),
   REALTIMEKIT_API_TOKEN: z.string().min(1).optional().meta({ secret: true }),
   REALTIMEKIT_APP_ID: z.string().min(1).optional().meta({ secret: true }),
   VAPID_PRIVATE_KEY: z.string().min(1).meta({ secret: true }),

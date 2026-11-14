@@ -6,8 +6,12 @@ import { defineCommand } from "citty";
 
 export const rescheduleCommand: SubCommandsDef[string] = defineCommand({
   args: { ...environmentArgs },
-  meta: { description: "Ask the functions Worker to schedule every pending scheduled message job", name: "reschedule" },
-  run: async () => {
-    await runReschedule();
+  meta: {
+    description:
+      "Ask the functions Worker to arm the pending message reminders and the copied TodoList reminders on their owners' objects. In the freeze, after copy-tables --delta",
+    name: "reschedule",
+  },
+  run: async ({ args }) => {
+    await runReschedule(args.environment);
   },
 });

@@ -3,6 +3,7 @@ import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { IdMap } from "#src/models/cutover/IdMap";
 import type { LegacyMessage } from "#src/models/cutover/LegacyMessage";
 import type { LegacyMessageEmoji } from "#src/models/cutover/LegacyMessageEmoji";
+import type { LegacyScheduledJob } from "#src/models/cutover/LegacyScheduledJob";
 import type { R2Client } from "#src/models/cutover/R2Client";
 import type { TableParents } from "#src/models/cutover/TableParents";
 
@@ -14,7 +15,7 @@ import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint"
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
 import { MESSAGE_NUMBER_SCOPE, ROOM_IMPORT_PATH } from "#src/services/cutover/constants";
 import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
-import { readScheduledRoomMessages } from "#src/services/cutover/messages/readScheduledRoomMessages";
+import { toRoomScheduledMessages } from "#src/services/cutover/messages/toRoomScheduledMessages";
 import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
@@ -32,6 +33,9 @@ export interface CopyRoomMessagesOptions {
   functionsUrl: string;
   idMap: IdMap;
   parents: TableParents;
+  // The old estate's pending jobs, read inside the freeze only and empty for the live copy: a job cancelled after the
+  // Pre-copy would otherwise stay in its room's object, since no route deletes one
+  scheduledJobs: LegacyScheduledJob[];
   secret: string;
 }
 
@@ -46,7 +50,8 @@ interface CopyRoomOptions {
 // The full copy runs while the app is live and records when it began; the delta imports the rooms' changed rows, and every write is an upsert, so a re-run writes the same rows again rather than adding to them.
 // A delta does not remove a message Azure no longer lists: no route deletes a message from an object yet
 export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promise<void> => {
-  const { archiveBucket, client, connectionString, delta, functionsUrl, idMap, parents, secret } = options;
+  const { archiveBucket, client, connectionString, delta, functionsUrl, idMap, parents, scheduledJobs, secret } =
+    options;
   const unit = `${COPY_TABLES_UNIT_PREFIX}/${LegacyAzureTable.Messages}`;
   const checkpoint: CutoverCheckpoint = (await readCheckpoint(client, archiveBucket, unit)) ?? {};
   const roomOldIds = idMap.oldIds().filter((oldId) => {
@@ -83,7 +88,7 @@ export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promis
     );
     await idMap.flush(MESSAGE_NUMBER_SCOPE);
     const getNumber = (rowKey: string) => idMap.getMessageNumber(roomId, rowKey);
-    const scheduledMessages = readScheduledRoomMessages(roomId);
+    const scheduledMessages = toRoomScheduledMessages({ getNumber, idMap, jobs: scheduledJobs, parents, roomId });
     if (messages.length === 0 && emojis.length === 0 && scheduledMessages.length === 0) return;
 
     const roomImport = roomImportSchema.parse(

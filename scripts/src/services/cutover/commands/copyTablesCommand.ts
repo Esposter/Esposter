@@ -36,6 +36,7 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
       executor: createCoreExecutor(cloudflareEnvironment, variables),
       functionsUrl: requireEnvironmentVariable("CUTOVER_FUNCTIONS_URL"),
       secret: requireEnvironmentVariable("CUTOVER_SECRET"),
+      sourceDatabaseUrl: variables.SOURCE_DATABASE_URL,
     });
   },
 });

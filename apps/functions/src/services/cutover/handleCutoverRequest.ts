@@ -13,6 +13,12 @@ import { z } from "zod";
 // A room's copy names the room it is for beside the rows the room's object takes
 const roomImportRequestSchema = roomImportSchema.extend({ roomId: z.uuidv7() });
 const roomSummaryRequestSchema = z.object({ roomId: z.uuidv7() });
+// The old estate's pending message reminders, each armed on its owner's object beside the TodoList reminders the route arms
+const rescheduleRequestSchema = z.object({
+  reminders: z.array(
+    z.object({ id: z.uuidv7(), roomId: z.uuidv7(), runAt: z.coerce.date(), text: z.string(), userId: z.string() }),
+  ),
+});
 
 // The temporary internal routes of the cutover are all deleted at teardown.
 // They are the reschedule of the copied jobs, and the import and summary of each room's copied history in its object.
@@ -26,10 +32,22 @@ export const handleCutoverRequest = async (request: Request, env: Cloudflare.Env
     return new Response("Unauthorized", { status: 401 });
 
   if (pathname === RESCHEDULE_PATH) {
-    const database = drizzle(env.CORE);
-    const now = Date.now();
-    const scheduledTodoReminders = await rescheduleTodoReminders(database, env.RESOURCE_ASSETS, env.USER, now);
-    return Response.json({ scheduledTodoReminders });
+    const rescheduleRequest = await getResultAsync(async () => rescheduleRequestSchema.parse(await request.json()));
+    return rescheduleRequest.match(
+      async ({ reminders }) => {
+        await Promise.all(
+          reminders.map(({ userId, ...reminder }) => env.USER.get(env.USER.idFromName(userId)).addReminder(reminder)),
+        );
+        const scheduledTodoReminders = await rescheduleTodoReminders(
+          drizzle(env.CORE),
+          env.RESOURCE_ASSETS,
+          env.USER,
+          Date.now(),
+        );
+        return Response.json({ scheduledReminders: reminders.length, scheduledTodoReminders });
+      },
+      () => new Response("Bad request", { status: 400 }),
+    );
   }
   // A body that is not JSON, or not the shape its route takes, is a 400, so the cutover sees what it sent wrong
   if (pathname === ROOM_IMPORT_PATH) {
