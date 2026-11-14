@@ -26,10 +26,10 @@ export default defineEventHandler(async (event) => {
     await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""));
     await webhookRateLimiter.consume(id);
     // The id is public and the token is the credential, so the row is read by id and the token compared in constant time.
-    // An unknown id and a wrong token are the same 404, and a sender cannot tell them apart
+    // An unknown id, a deactivated webhook and a wrong token are the same 404, and a sender cannot tell them apart
     const webhook = await db.query.webhooksInMessage.findFirst({
       columns: { roomId: true, token: true, userId: true },
-      where: { id: { eq: id } },
+      where: { id: { eq: id }, isActive: { eq: true } },
     });
     if (!webhook || !checkIsSecretEqual(token, webhook.token)) {
       event.res.status = 404;

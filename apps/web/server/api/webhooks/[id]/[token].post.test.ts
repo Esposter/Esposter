@@ -1,21 +1,21 @@
 import type { H3Event } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/[id]/[token].post";
-import { generateSecretToken } from "@esposter/shared";
+import { generateSecretToken, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { findFirst, send } = vi.hoisted(() => ({
   findFirst: vi.fn<(query: unknown) => Promise<unknown>>(),
-  send: vi.fn<(job: unknown) => Promise<void>>(),
+  send: vi.fn<(job: { webhook: unknown }) => Promise<void>>(),
 }));
 
-vi.mock("#server/db", () => ({ db: { query: { webhooksInMessage: { findFirst } } } }));
-vi.mock("#server/services/queue/getJobQueue", () => ({ getJobQueue: () => ({ send }) }));
-vi.mock("#server/services/rateLimiter/consumeAddressRateLimit", () => ({
+vi.mock(import("#server/db"), () => ({ db: { query: { webhooksInMessage: { findFirst } } } }));
+vi.mock(import("#server/services/queue/getJobQueue"), () => ({ getJobQueue: () => ({ send }) }));
+vi.mock(import("#server/services/rateLimiter/consumeAddressRateLimit"), () => ({
   consumeAddressRateLimit: () => Promise.resolve(),
 }));
-vi.mock("#server/services/rateLimiter/webhookRateLimiter", () => ({
+vi.mock(import("#server/services/rateLimiter/webhookRateLimiter"), () => ({
   webhookRateLimiter: { consume: () => Promise.resolve() },
 }));
 
@@ -43,7 +43,7 @@ describe("api/webhooks/[id]/[token]", () => {
     expect.hasAssertions();
 
     // A guess that matches every character but the last is the attack a byte-by-byte search makes, so it is refused as
-    // any other wrong token, with the same 404 an unknown id gets
+    // Any other wrong token, with the same 404 an unknown id gets
     const lastCharacter = storedToken.at(-1) === "A" ? "B" : "A";
     findFirst.mockResolvedValueOnce({ roomId, token: storedToken, userId });
     const event = createEvent(webhookId, `${storedToken.slice(0, -1)}${lastCharacter}`);
@@ -52,6 +52,21 @@ describe("api/webhooks/[id]/[token]", () => {
 
     expect(event.res.status).toBe(404);
     expect(send).not.toHaveBeenCalled();
+  });
+
+  test("reads only an active webhook, so a deactivated one with its own token is refused as an unknown id", async () => {
+    expect.hasAssertions();
+
+    findFirst.mockResolvedValueOnce(undefined);
+    const event = createEvent(webhookId, storedToken);
+
+    await callWebhook(event);
+
+    expect(event.res.status).toBe(404);
+    expect(findFirst.mock.calls.at(-1)?.[0]).toStrictEqual({
+      columns: { roomId: true, token: true, userId: true },
+      where: { id: { eq: webhookId }, isActive: { eq: true } },
+    });
   });
 
   test("queues the payload with the room and its app user, never the token", async () => {
@@ -64,8 +79,8 @@ describe("api/webhooks/[id]/[token]", () => {
 
     expect(event.res.status).toBe(202);
     expect(send).toHaveBeenCalledTimes(1);
-    const [job] = send.mock.calls.at(-1) ?? [];
-    expect(job).toMatchObject({ webhook: { roomId, userId } });
+    const [job] = takeOne(send.mock.calls);
+    expect(job.webhook).toStrictEqual({ roomId, userId });
     expect(JSON.stringify(job)).not.toContain(storedToken);
   });
 });
