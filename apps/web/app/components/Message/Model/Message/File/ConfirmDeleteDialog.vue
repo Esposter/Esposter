@@ -20,8 +20,7 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     confirm-label="Remove"
     title="Remove attachment"
     :confirm="
-      () =>
-        file && deletingMessageId && deleteFile({ id: file.id, messageId: deletingMessageId, roomId: deletingRoomId })
+      () => file && deletingMessageId && deleteFile({ fileId: file.id, id: deletingMessageId, roomId: deletingRoomId })
     "
     is-optimistic
   >
