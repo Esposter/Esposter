@@ -2,7 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
-import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
+import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";

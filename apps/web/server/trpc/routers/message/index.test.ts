@@ -55,7 +55,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { isTrackedEnvelope } from "@trpc/server";
-import { MockSearchDatabase, MockTableClient } from "azure-mock";
+import { MockTableClient } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
@@ -1159,9 +1159,7 @@ describe("messageRouter", () => {
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(
-      getExpectedBlobDeletionData(id),
-    );
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(getExpectedBlobDeletionData(id));
   });
 
   test("publishes thumbnail deletion on delete message", async () => {
@@ -1182,9 +1180,7 @@ describe("messageRouter", () => {
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(
-      getExpectedBlobDeletionData(id),
-    );
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(getExpectedBlobDeletionData(id));
   });
 
   test("fails delete file with non-existent file id", async () => {
