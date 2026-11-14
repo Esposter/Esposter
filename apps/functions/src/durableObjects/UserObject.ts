@@ -1,4 +1,4 @@
-import type { ReconcileTodoRemindersInput, SentMessageCursor, UserObjectRpc } from "@esposter/db-schema";
+import type { ReconcileTodoRemindersInput, SentMessageCursor, UserEvent, UserObjectRpc } from "@esposter/db-schema";
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import userMigrations from "#src/durableObjects/user/migrations/migrations";
@@ -11,7 +11,7 @@ import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
 // One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages and
 // their TodoList reminders, and its one alarm is set to the earliest reminder still ahead, or a retry for one that failed
-export class UserObject extends RealtimeObject implements UserObjectRpc {
+export class UserObject extends RealtimeObject<UserEvent> implements UserObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
 
   // A reminder whose send failed is retried this long after the failure. The alarm is re-armed here and in the alarm
@@ -106,6 +106,10 @@ export class UserObject extends RealtimeObject implements UserObjectRpc {
           and(eq(todoRemindersInUser.resourceId, resourceId), inArray(todoRemindersInUser.itemId, cancelledItemIds)),
         );
     await this.armAlarm();
+  }
+
+  roomActivity(roomId: string, updatedAt: Date): void {
+    this.broadcast({ data: { id: roomId, updatedAt }, type: "roomActivity" });
   }
 
   async removeScheduledMessage(scheduledId: string): Promise<void> {
