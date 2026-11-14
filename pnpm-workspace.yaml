@@ -166,7 +166,7 @@ catalog:
   knip: ^6.45.1
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
-  livekit-client: ^2.24.0
+  livekit-client: ^2.24.1
   livekit-server-sdk: ^2.19.3
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
