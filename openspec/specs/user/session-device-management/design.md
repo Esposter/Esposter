@@ -10,7 +10,7 @@ A row renders what the session row already stores, and nothing more:
 - **Last active**, as a `NuxtTime` like every rendered date ([date and time display](../../architecture/date-time-display/design.md)). The value is the session's `updatedAt`, which better-auth refreshes on its own session-update age rather than on every request — so this is "recently" rather than "to the second", and reads as such.
 - **This device**, marked on the current row, because that is the one whose button signs the reader out rather than removing someone else.
 
-**Neither the address nor the raw user agent leaves the server.** `SessionSummary` is the shape the endpoint returns: a `deviceLabel` the parse has already produced, and no address field at all. An address does not help the holder recognise a session, and a shared screenshot would carry it; the agent string is unreadable and states more than the reader asked for. Parsing server-side is also what keeps `bowser` out of the client bundle. Place would be worth showing, and stays out for a settled reason: Railway hands the app no geo header, so it would take a database — and every free one is a multi-megabyte file committed here and refreshed by hand, or a credential and a third party the address gets sent to. That is a dependency rather than a computation. Until the trade changes, the row shows a device and a time, which is enough to recognise.
+**Neither the address nor the raw user agent leaves the server.** `SessionSummary` is the shape the endpoint returns: a `deviceLabel` the parse has already produced, and no address field at all. An address does not help the holder recognise a session, and a shared screenshot would carry it; the agent string is unreadable and states more than the reader asked for. Parsing server-side is also what keeps `bowser` out of the client bundle. Place would be worth showing and stays out for now. Its cost is a geolocation source: a free one is a multi-megabyte file committed here and refreshed by hand, and a paid one is a credential and a third party the address gets sent to. That is a dependency rather than a computation. The request metadata the Worker receives is a source the program could read instead, so this is an open trade, to be decided on the privacy terms above. Until it is, the row shows a device and a time, which is enough to recognise.
 
 ## Revoking
 
@@ -19,18 +19,18 @@ sequenceDiagram
   actor Owner
   participant Card as Sessions card
   participant R as session router
-  participant PG as sessions
+  participant DB as D1 sessions
   participant BA as better-auth
   participant PS as pushSubscriptions
-  participant WPS as Web PubSub
+  participant UO as UserObject
 
   Owner->>Card: Revoke (confirm dialog)
   Card->>R: deleteSession(id)
-  R->>PG: read own unexpired row
+  R->>DB: read own unexpired row
   R->>BA: revokeSession({ token })
-  BA->>PG: row deleted
-  PG->>PS: sessionId cascades
-  R->>WPS: closeUserConnections(deviceId) — best-effort
+  BA->>DB: row deleted
+  DB->>PS: sessionId cascades
+  R->>UO: closeSession(sessionId) — best-effort
   Note over Card: current row instead lands on the login route
 ```
 
@@ -44,13 +44,13 @@ Expired rows are filtered out of the listing, the same way better-auth's own lis
 
 **A push subscription belongs to the session that created it, not to the browser that holds it.** `pushSubscriptions.sessionId` references `sessions` and cascades, so a revoke takes that device's pushes with it — and so do a plain sign-out and an expiry, with no cleanup path of their own. A subscription outliving its session still resolves and still delivers ([push notifications](../../esbabbler/push-notifications/design.md)). Keyed to the session, a device that signs out stops receiving that account's pushes.
 
-Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` resubscribes on mount, so the next authenticated load writes it again under the session actually in use. That is also why the migration **clears the rows it finds** — they have no session to reference, so no value would satisfy the constraint, and each browser rewrites its own on its next visit.
+Losing the row costs nothing, which is what makes the cascade cheap rather than destructive: `usePushSubscription` resubscribes on mount, so the next authenticated load writes it again under the session actually in use. A row whose session no longer exists is removed rather than kept, since no value would satisfy its reference, and each browser rewrites its own on its next visit.
 
 Writing a subscription requires its session to exist as a row. The test mock for `auth.api.getSession` writes the row it fabricates, as sign-in does, so the suite exercises the same invariant production does.
 
 `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
 
-**Live connections are closed explicitly**, because a Web PubSub client access url outlives the session that minted it. Web PubSub identifies a connection by _device_ — `userId⟂sessionId`, see `generateWebPubSubClientAccessUrl` — so `closeUserConnections` addresses exactly one session's connections. It is best-effort in full, the service client included: the revoke has already landed by then, so a hub that cannot be reached costs a connection living until it drops on its own, rather than a revoke reported as failed.
+**Live connections are closed explicitly**, because a socket outlives the session that opened it. A socket is accepted with its session's tag, and the person's user object closes the sockets carrying that tag with code 1008, the policy close a server gives a credential it no longer accepts, so `closeSession` addresses exactly one session's sockets. It is best-effort: the revoke has already landed by then, so an object that cannot be reached costs a socket living until it drops on its own, rather than a revoke reported as failed.
 
 Revoking your **own** row is sign-out: the wording says so before the click, and the card lands on the login route rather than refreshing a listing the page can no longer read. The auth cookie is left in place and inert — it names a session row that no longer exists, so the next request resolves no session.
 
@@ -72,15 +72,16 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 
 ## Key files
 
-| File                                                                            | Role                                             |
-| ------------------------------------------------------------------------------- | ------------------------------------------------ |
-| `apps/web/server/trpc/routers/session.ts`                                       | the three procedures                             |
-| `apps/web/server/services/auth/readSession.ts`                                  | the server's session read, forwarding its cookie |
-| `apps/web/server/middleware/session.ts`                                         | a page's session read ahead of its render        |
-| `apps/web/server/models/session/SessionSummary.ts`                              | what a row is allowed to say — no address        |
-| `apps/web/server/services/auth/closeDeviceConnections.ts`                       | best-effort per-device Web PubSub close          |
-| `apps/web/app/components/User/SessionsCard/`                                    | the card, its row, and the two confirm dialogs   |
-| `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label  |
-| `apps/web/app/store/user/sessionDialog.ts`                                      | the singleton revoke target                      |
-| `packages/db-schema/src/schema/notification/pushSubscriptionsInNotification.ts` | `sessionId`, cascading on the session row        |
-| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, cascading on the user          |
+| File                                                                            | Role                                                         |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `apps/web/server/trpc/routers/session.ts`                                       | the three procedures                                         |
+| `apps/web/server/services/auth/readSession.ts`                                  | the server's session read, forwarding its cookie             |
+| `apps/web/server/middleware/session.ts`                                         | a page's session read ahead of its render                    |
+| `apps/web/server/models/session/SessionSummary.ts`                              | what a row is allowed to say — no address                    |
+| `apps/functions/src/durableObjects/UserObject.ts`                               | `closeSession`, the best-effort close of a session's sockets |
+| `apps/web/server/services/realtime/forwardSocket.ts`                            | the socket upgrade the Worker forwards to the user object    |
+| `apps/web/app/components/User/SessionsCard/`                                    | the card, its row, and the two confirm dialogs               |
+| `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label              |
+| `apps/web/app/store/user/sessionDialog.ts`                                      | the singleton revoke target                                  |
+| `packages/db-schema/src/schema/notification/pushSubscriptionsInNotification.ts` | `sessionId`, cascading on the session row                    |
+| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, cascading on the user                      |
