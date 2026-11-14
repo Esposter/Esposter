@@ -3,6 +3,7 @@ import type { RealtimeKitDesired } from "#src/models/realtimeKit/RealtimeKitDesi
 import type { RealtimeKitExisting } from "#src/models/realtimeKit/RealtimeKitExisting";
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
+import { RequestMethod } from "#src/models/realtimeKit/RequestMethod";
 import { getEscKey } from "#src/services/realtimeKit/getEscKey";
 import { readEscValue } from "#src/services/realtimeKit/readEscValue";
 import { requestCloudflare } from "#src/services/realtimeKit/requestCloudflare";
@@ -22,7 +23,7 @@ export const readRealtimeKitExisting = async (
   desired: RealtimeKitDesired,
 ): Promise<RealtimeKitExisting> => {
   const { data: apps } = await requestCloudflare(credentials, {
-    method: "GET",
+    method: RequestMethod.Get,
     path: "/realtime/kit/apps?per_page=100",
     schema: z.object({ data: z.array(appSchema) }),
   });
@@ -32,7 +33,7 @@ export const readRealtimeKitExisting = async (
       ? []
       : (
           await requestCloudflare(credentials, {
-            method: "GET",
+            method: RequestMethod.Get,
             path: `/realtime/kit/${app.id}/presets?per_page=100`,
             schema: z.object({ data: z.array(presetSchema) }),
           })
@@ -42,13 +43,13 @@ export const readRealtimeKitExisting = async (
       ? []
       : (
           await requestCloudflare(credentials, {
-            method: "GET",
+            method: RequestMethod.Get,
             path: `/realtime/kit/${app.id}/webhooks`,
             schema: z.object({ data: z.array(webhookSchema) }),
           })
         ).data;
   const { result: tokens } = await requestCloudflare(credentials, {
-    method: "GET",
+    method: RequestMethod.Get,
     path: "/tokens?per_page=100",
     schema: z.object({ result: z.array(tokenSchema) }),
   });

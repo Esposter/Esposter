@@ -1,7 +1,6 @@
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-
-import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 
 describe(forEachConcurrently, () => {
   const items = ["a", "b", "c", "d", "e"];

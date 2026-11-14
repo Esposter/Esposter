@@ -1,5 +1,6 @@
 import type { CloudflareCredentials } from "#src/models/realtimeKit/CloudflareCredentials";
 
+import { RequestMethod } from "#src/models/realtimeKit/RequestMethod";
 import { REALTIMEKIT_TOKEN_PERMISSION_GROUP_NAME } from "#src/services/realtimeKit/constants";
 import { requestCloudflare } from "#src/services/realtimeKit/requestCloudflare";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -9,7 +10,7 @@ import { z } from "zod";
 // Account does not carry stops the run before an app or a preset exists
 export const readPermissionGroupId = async (credentials: CloudflareCredentials): Promise<string> => {
   const { result } = await requestCloudflare(credentials, {
-    method: "GET",
+    method: RequestMethod.Get,
     path: `/tokens/permission_groups?name=${encodeURIComponent(REALTIMEKIT_TOKEN_PERMISSION_GROUP_NAME)}`,
     schema: z.object({ result: z.array(z.object({ id: z.string(), name: z.string() })) }),
   });

@@ -1,7 +1,7 @@
 /* oxlint-disable no-restricted-imports -- the repo-root formatter config, which no `#` map can reach; the formatter's own API, which the apps/web phaser generator uses too */
-import formatterConfiguration from "../../../../oxfmt.config.ts";
-
 import { format } from "oxfmt";
+
+import formatterConfiguration from "../../../../oxfmt.config.ts";
 
 // The text the repository's formatter writes for a generator's output at a path.
 // The formatter's command line skips a `generated/` path, so a generator formats through its API.

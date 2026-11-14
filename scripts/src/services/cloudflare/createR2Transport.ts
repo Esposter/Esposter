@@ -5,7 +5,7 @@ import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { AwsClient } from "aws4fetch";
 
 // The one signed transport to R2's S3 API, shared by the tooling's bucket clients and the cutover. Credentials are read from the
-// environment when it is made. `retries` overrides aws4fetch's own, so a streamed body (which can be sent once) can be given none
+// Environment when it is made. `retries` overrides aws4fetch's own, so a streamed body (which can be sent once) can be given none
 export const createR2Transport = ({ retries }: { retries?: number } = {}): R2Transport => {
   const client = new AwsClient({
     accessKeyId: readR2Credential("R2_ACCESS_KEY_ID"),

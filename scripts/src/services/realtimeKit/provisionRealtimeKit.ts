@@ -16,8 +16,8 @@ export const provisionRealtimeKit = async (environment: CloudflareEnvironment, i
   await requirePulumiLogin();
   const desired = getRealtimeKitDesired(environment);
   const permissionGroupId = await readPermissionGroupId(credentials);
-  const existing = await readRealtimeKitExisting(credentials, environment, desired);
-  const actions = planRealtimeKitProvision(desired, existing);
+  const existingState = await readRealtimeKitExisting(credentials, environment, desired);
+  const actions = planRealtimeKitProvision(desired, existingState);
 
   if (actions.length === 0) {
     console.log(`RealtimeKit for ${environment} is already provisioned: nothing to change.`);
@@ -29,6 +29,6 @@ export const provisionRealtimeKit = async (environment: CloudflareEnvironment, i
     console.log(`Dry run for ${environment}: nothing was written.`);
     return;
   }
-  await applyRealtimeKitActions(credentials, environment, desired, permissionGroupId, existing, actions);
+  await applyRealtimeKitActions(credentials, environment, desired, permissionGroupId, existingState, actions);
   console.log(`RealtimeKit for ${environment} is provisioned.`);
 };

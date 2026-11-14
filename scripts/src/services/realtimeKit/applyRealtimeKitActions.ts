@@ -5,6 +5,7 @@ import type { RealtimeKitDesired } from "#src/models/realtimeKit/RealtimeKitDesi
 import type { RealtimeKitExisting } from "#src/models/realtimeKit/RealtimeKitExisting";
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
+import { RequestMethod } from "#src/models/realtimeKit/RequestMethod";
 import { getEscKey } from "#src/services/realtimeKit/getEscKey";
 import { getRealtimeKitPresetBody } from "#src/services/realtimeKit/getRealtimeKitPresetBody";
 import { requestCloudflare } from "#src/services/realtimeKit/requestCloudflare";
@@ -23,10 +24,10 @@ export const applyRealtimeKitActions = async (
   environment: CloudflareEnvironment,
   desired: RealtimeKitDesired,
   permissionGroupId: string,
-  existing: RealtimeKitExisting,
+  existingState: RealtimeKitExisting,
   actions: RealtimeKitAction[],
 ): Promise<void> => {
-  let appId = existing.app?.id;
+  let appId = existingState.app?.id;
   // The app is created by the first action when it is missing, so anything that names it reads the id once that exists
   const requireAppId = (): string => {
     if (appId === undefined)
@@ -34,12 +35,12 @@ export const applyRealtimeKitActions = async (
     return appId;
   };
 
-  for (const action of actions) {
+  for (const action of actions)
     switch (action.kind) {
       case "createApp": {
         const { data } = await requestCloudflare(credentials, {
           body: { name: desired.appName },
-          method: "POST",
+          method: RequestMethod.Post,
           path: "/realtime/kit/apps",
           schema: z.object({ data: z.object({ app: z.object({ id: z.string() }) }) }),
         });
@@ -49,7 +50,7 @@ export const applyRealtimeKitActions = async (
       case "createPreset":
         await requestCloudflare(credentials, {
           body: getRealtimeKitPresetBody(action.preset),
-          method: "POST",
+          method: RequestMethod.Post,
           path: `/realtime/kit/${requireAppId()}/presets`,
           schema: successSchema,
         });
@@ -66,7 +67,7 @@ export const applyRealtimeKitActions = async (
               },
             ],
           },
-          method: "POST",
+          method: RequestMethod.Post,
           path: "/tokens",
           schema: z.object({ result: z.object({ value: z.string() }) }),
         });
@@ -76,14 +77,14 @@ export const applyRealtimeKitActions = async (
       case "createWebhook":
         await requestCloudflare(credentials, {
           body: { enabled: true, events: desired.webhookEvents, name: desired.appName, url: desired.webhookUrl },
-          method: "POST",
+          method: RequestMethod.Post,
           path: `/realtime/kit/${requireAppId()}/webhooks`,
           schema: successSchema,
         });
         break;
       case "rollToken": {
         const { result } = await requestCloudflare(credentials, {
-          method: "PUT",
+          method: RequestMethod.Put,
           path: `/tokens/${action.id}/value`,
           schema: z.object({ result: z.string() }),
         });
@@ -96,11 +97,16 @@ export const applyRealtimeKitActions = async (
       case "updateWebhook":
         await requestCloudflare(credentials, {
           body: { enabled: true, events: desired.webhookEvents, url: desired.webhookUrl },
-          method: "PATCH",
+          method: RequestMethod.Patch,
           path: `/realtime/kit/${requireAppId()}/webhooks/${action.id}`,
           schema: successSchema,
         });
         break;
+      default:
+        throw new InvalidOperationError(
+          Operation.Update,
+          desired.appName,
+          `has an unknown action ${JSON.stringify(action)}`,
+        );
     }
-  }
 };

@@ -36,7 +36,7 @@ export const publishGameDataToBucket = async (
     })
     .map(({ key, record }) => ({ isCreateOnly: !lastModifiedMap.has(key), key, record }));
   const writeRecord = async ({ isCreateOnly, key, record }: (typeof writes)[number]) =>
-    bucketClient.put(key, await getCompressedJson(record), {
+    bucketClient.put(key, new Uint8Array(await getCompressedJson(record)), {
       cacheControl: GAME_DATA_CACHE_CONTROL,
       contentEncoding: "zstd",
       contentType: "application/json",

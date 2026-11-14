@@ -1,9 +1,9 @@
-import { readServerBundle } from "#src/services/serverBundle/readServerBundle";
 import {
   SERVER_BUNDLE_DIRECTORY,
   SERVER_BUNDLE_REPORTED_FILE_COUNT,
   WORKER_CODE_LIMIT_BYTES,
 } from "#src/services/serverBundle/constants";
+import { readServerBundle } from "#src/services/serverBundle/readServerBundle";
 import { MEBIBYTE, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -24,7 +24,9 @@ await runCommand(
       if (!existsSync(SERVER_BUNDLE_DIRECTORY))
         throw new InvalidOperationError(Operation.Read, bundleName, "it has no build, so build the app first");
 
-      const files = readServerBundle(SERVER_BUNDLE_DIRECTORY).toSorted((a, b) => b.bytes - a.bytes);
+      const files = readServerBundle(SERVER_BUNDLE_DIRECTORY).toSorted(
+        (firstFile, secondFile) => secondFile.bytes - firstFile.bytes,
+      );
       const totalBytes = files.reduce((total, { bytes }) => total + bytes, 0);
       console.info(
         `${bundleName}: ${toMebibytes(totalBytes)} MiB in ${files.length} files, against the ${toMebibytes(WORKER_CODE_LIMIT_BYTES)} MiB Worker code limit`,
