@@ -7,6 +7,12 @@ import { getResultAsync, noop } from "@esposter/shared";
 // The Scheduler is a Durable Object class this Worker exports and binds to itself, so its alarm can send a job to the queue
 export { Scheduler } from "#src/durableObjects/Scheduler";
 
+// The realtime objects, one per room, call and person. The web Worker reaches each through its binding, named by the
+// functions Worker that exports it, and the queue consumers reach them through their own
+export { CallObject } from "#src/durableObjects/CallObject";
+export { RoomObject } from "#src/durableObjects/RoomObject";
+export { UserObject } from "#src/durableObjects/UserObject";
+
 // The functions Worker: a queue consumer for every job, and the nightly purge on its Cron Trigger. Its one HTTP route is
 // the cutover's temporary reschedule, which is deleted at teardown (openspec/changes/infra-cloudflare-cutover/design.md)
 export default {

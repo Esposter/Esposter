@@ -80,7 +80,7 @@ describe.each(environments)("the $environment environment of the functions Worke
     expect(wrangler.triggers.crons).toStrictEqual(["0 3 * * *"]);
   });
 
-  test("calls the web Worker's object by its script and holds its own scheduler, migrated as a SQLite class", () => {
+  test("calls the web Worker's object by its script, and holds its own scheduler and realtime objects, each migrated as a SQLite class", () => {
     expect.hasAssertions();
 
     expect(wrangler.durable_objects.bindings).toStrictEqual([
@@ -90,7 +90,13 @@ describe.each(environments)("the $environment environment of the functions Worke
         name: "SERVER",
         script_name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, "web"),
       },
+      { class_name: "CallObject", name: "CALL" },
+      { class_name: "RoomObject", name: "ROOM" },
+      { class_name: "UserObject", name: "USER" },
     ]);
-    expect(wrangler.migrations).toStrictEqual([{ new_sqlite_classes: ["Scheduler"], tag: "v1" }]);
+    expect(wrangler.migrations).toStrictEqual([
+      { new_sqlite_classes: ["Scheduler"], tag: "v1" },
+      { new_sqlite_classes: ["CallObject", "RoomObject", "UserObject"], tag: "v2" },
+    ]);
   });
 });

@@ -33,9 +33,15 @@
         "bindings": [
           { "name": "SCHEDULER", "class_name": "Scheduler" },
           { "name": "SERVER", "class_name": "$DurableObject", "script_name": "prod-wkr-esposter-web" },
+          { "name": "CALL", "class_name": "CallObject" },
+          { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "USER", "class_name": "UserObject" },
         ],
       },
-      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Scheduler"] }],
+      "migrations": [
+        { "tag": "v1", "new_sqlite_classes": ["Scheduler"] },
+        { "tag": "v2", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] },
+      ],
     },
     "dev": {
       "name": "dev-wkr-esposter-functions",
@@ -66,9 +72,15 @@
         "bindings": [
           { "name": "SCHEDULER", "class_name": "Scheduler" },
           { "name": "SERVER", "class_name": "$DurableObject", "script_name": "dev-wkr-esposter-web" },
+          { "name": "CALL", "class_name": "CallObject" },
+          { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "USER", "class_name": "UserObject" },
         ],
       },
-      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Scheduler"] }],
+      "migrations": [
+        { "tag": "v1", "new_sqlite_classes": ["Scheduler"] },
+        { "tag": "v2", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] },
+      ],
     },
   },
 }

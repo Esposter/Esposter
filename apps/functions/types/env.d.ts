@@ -1,4 +1,7 @@
 /// <reference types="@cloudflare/workers-types" />
+import type { CallObject } from "#src/durableObjects/CallObject";
+import type { RoomObject } from "#src/durableObjects/RoomObject";
+import type { UserObject } from "#src/durableObjects/UserObject";
 import type { FunctionsEnvironmentVariables } from "#src/models/environment/FunctionsEnvironmentVariables";
 import type { SchedulerObject } from "@esposter/db-schema";
 
@@ -7,6 +10,7 @@ import type { SchedulerObject } from "@esposter/db-schema";
 declare global {
   namespace Cloudflare {
     interface Env {
+      CALL: DurableObjectNamespace<CallObject>;
       CLICKER_ASSETS: R2Bucket;
       CORE: D1Database;
       CUTOVER_SECRET: string;
@@ -25,9 +29,11 @@ declare global {
       PUBLIC_USER_ASSETS: R2Bucket;
       RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE: Queue;
       RESOURCE_ASSETS: R2Bucket;
+      ROOM: DurableObjectNamespace<RoomObject>;
       SCHEDULER: DurableObjectNamespace<Rpc.DurableObjectBranded & SchedulerObject>;
       SEND_TODO_REMINDER_QUEUE: Queue;
       SERVER: DurableObjectNamespace;
+      USER: DurableObjectNamespace<UserObject>;
       USER_ASSETS: R2Bucket;
     }
   }

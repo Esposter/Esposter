@@ -12,10 +12,13 @@ type QueueBindings = { [Job in AzureFunction as `${ScreamingSnakeCase<KebabCase<
 interface Bindings extends BucketBindings, QueueBindings {
   $DurableObject: DurableObjectNamespace;
   ASSETS: Fetcher;
+  CALL: DurableObjectNamespace;
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   CORE: D1Database;
+  ROOM: DurableObjectNamespace;
   SCHEDULER: DurableObjectNamespace;
   STREAMS: D1Database;
+  USER: DurableObjectNamespace;
 }
 
 declare global {
