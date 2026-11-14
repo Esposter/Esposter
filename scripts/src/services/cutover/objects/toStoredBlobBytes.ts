@@ -8,7 +8,8 @@ import { zstdCompressSync, zstdDecompressSync } from "node:zlib";
 // The bytes a textual blob is stored with in R2: its text with every old id rewritten, inside the same compression it
 // Was stored with. A blob that names no old id keeps its own bytes, so its MD5 stays Azure's and a re-run skips it
 export const toStoredBlobBytes = (blob: BlobEntry, bytes: Buffer, rewrite: (text: string) => string): Buffer => {
-  if (blob.contentEncoding !== undefined && blob.contentEncoding !== ZSTD_CONTENT_ENCODING)
+  // Azure lists a blob it was never told the encoding of with an empty one, which is no encoding
+  if (blob.contentEncoding && blob.contentEncoding !== ZSTD_CONTENT_ENCODING)
     throw new InvalidOperationError(
       Operation.Read,
       blob.name,
