@@ -52,7 +52,7 @@ When the schema of server-stored content changes, the stored content SHALL be re
 
 ### Requirement: A field added to a stored row applies to rows written from then on
 
-A field added to a stored table entity SHALL describe the rows written after the change. Where the earlier rows must carry it, they SHALL be backfilled, and the schema SHALL require the field.
+A field added to a stored row SHALL describe the rows written after the change. Where the earlier rows must carry it, they SHALL be backfilled, and the schema SHALL require the field.
 
 #### Scenario: A field the earlier rows must carry is backfilled
 
@@ -63,7 +63,7 @@ A field added to a stored table entity SHALL describe the rows written after the
 
 #### Scenario: A default stays only where a current writer omits the value
 
-- **GIVEN** a current writer leaves a stored row's field `undefined`, which the Table stores as no property
+- **GIVEN** a current writer leaves a stored row's field `undefined`, which storage keeps as no value
 - **WHEN** the row is read
 - **THEN** the field reads its default value
 - **AND** no read path infers the field from the row's other values

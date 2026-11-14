@@ -14,7 +14,7 @@ Boundary shapes where `null` is expected and stays:
 
 - **Drizzle ORM** — nullable columns (timestamps like `deletedAt`) infer and return `T | null`, and an absent one-to-one relation loaded through `with` is `null` too, which is why `ResourceWithPublication.publication` keeps it. Prefer non-nullable columns with schema-carried sentinels (`.notNull().default(...)`) so the question never arises; only types with no empty value stay nullable.
 - **better-auth** — session/user fields such as `user.image` are typed `string | null`.
-- **Azure SDK / EventGrid** — payload types own their nullable members.
+- **Cloudflare platform types** — a binding's and a queue message's types own their nullable members.
 - **DOM and web APIs** — `querySelector`, `localStorage.getItem`, `RegExp.exec` return `T | null`; check with `=== null` or truthiness at the call site.
 - **Third-party component props** — the occasional chart prop is typed `T | null`; pass `null` only where the prop type requires it.
 - **Persisted JSON blobs** — `JSON.stringify` drops `undefined` keys, so a blob schema that already stores `null` keeps storing it (see [persisted data — latest shape only](../persisted-data-latest-shape-only/design.md)). The spreadsheet cell is the case that matters: `ColumnValue` is `boolean | null | number | string`, where `null` is the empty cell and `""` a cell holding the empty string — they sort, filter and count apart, and a dropped key is not a readable empty cell.

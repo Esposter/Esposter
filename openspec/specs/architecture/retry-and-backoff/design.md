@@ -29,7 +29,7 @@ The wrapper never gives up. It has no cap on the number of attempts, because a c
 | Genshin start                         | the start of a save lease, with `getGenshinStartRetryDelayMs`        | the loading screen is held meanwhile, so the page's retry can cut the wait short, and the delay is the same formula                                                             |
 | Character pack download               | a file fetch, up to `CHARACTER_PACK_DOWNLOAD_ATTEMPTS` attempts      | a file that fails every attempt is the error the loading reports, and a failed attempt gives back the bytes it counted                                                          |
 | Mutations (every `useMutation` write) | never                                                                | a write is not idempotent in general; a retry can apply a change twice, so a failed write is rolled back and reported, as [client data](../client-data/design.md) says          |
-| Azure conditional writes              | a lost race, re-reading the version                                  | a different mechanism: it retries because another writer won, not because the server is failing, so it does not wait; see [conditional writes](../conditional-writes/design.md) |
+| Conditional writes                    | a lost race, re-reading the version                                  | a different mechanism: it retries because another writer won, not because the server is failing, so it does not wait; see [conditional writes](../conditional-writes/design.md) |
 
 A read that is not listed here does not retry. Adding one is a decision for its owner, and it lands here.
 
