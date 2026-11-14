@@ -20,6 +20,17 @@ pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:<NAME> <value> --
 
 **Never `pulumi config set --secret`.** That writes the ciphertext into `Pulumi.prod.yaml`, which is tracked in a public repository — publishing the encrypted secret to everybody and betting it on one algorithm, one key, and however long the repository outlives them. Nothing is gained: the stack already reads ESC. `scripts/src/workspace/stackConfig.test.ts` fails the build on any stack file carrying an encrypted value.
 
+## Cloudflare
+
+The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account and zone ids and the billing alert's address are plain values in the same environment:
+
+```sh
+pulumi env set esposter-infra/prod pulumiConfig.cloudflare:apiToken <token> --secret
+pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareAccountId <account-id>
+pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareZoneId <zone-id>
+pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareBillingAlertEmail <email>
+```
+
 ## Rule Of Thumb
 
 Only run `pulumi up` after reading the preview and confirming the selected stack owns exactly the resources you intend to change.
