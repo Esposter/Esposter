@@ -68,7 +68,7 @@ describe("api/webhooks/realtimekit", () => {
         meeting: { id: meetingId },
         participant: { customParticipantId: sessionId },
       }),
-    ).buffer as ArrayBuffer;
+    ).buffer;
 
     await callWebhook(createEvent(body, await signer.sign(body)));
 

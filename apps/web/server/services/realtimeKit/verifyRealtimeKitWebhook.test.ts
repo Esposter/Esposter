@@ -4,7 +4,7 @@ import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRea
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(verifyRealtimeKitWebhook, () => {
-  const body = new TextEncoder().encode("").buffer as ArrayBuffer;
+  const body = new TextEncoder().encode("").buffer;
   let signer: Awaited<ReturnType<typeof createRealtimeKitWebhookSigner>>;
 
   beforeAll(async () => {
@@ -37,7 +37,7 @@ describe(verifyRealtimeKitWebhook, () => {
 
     stubPublishedKey();
     const signature = await signer.sign(body);
-    const tamperedBody = new TextEncoder().encode(" ").buffer as ArrayBuffer;
+    const tamperedBody = new TextEncoder().encode(" ").buffer;
 
     await expect(verifyRealtimeKitWebhook(tamperedBody, signature)).resolves.toBe(false);
   });
