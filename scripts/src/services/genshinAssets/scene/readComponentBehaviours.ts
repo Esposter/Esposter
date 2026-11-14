@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- AnimeStudio reads one block at a time; one block's scripts are read at a time; one file's scripts are listed at a time; one script's bytes are read at a time */
 import type { ComponentBehaviour } from "#src/models/genshinAssets/scene/ComponentBehaviour";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
@@ -50,7 +51,6 @@ export const readComponentBehaviours = async (
   const blocks = new Set([...layoutFiles].flatMap((file) => cabMap.get(file)?.block ?? []));
   await rm(directory.behaviours, { force: true, recursive: true });
   for (const block of blocks)
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio reads one block at a time
     await exportBlockBySource(
       block,
       [AssetType.MonoBehaviour, ...BUILT_IN_ASSET_TYPES],
@@ -71,7 +71,6 @@ export const readComponentBehaviours = async (
     for (const type of [AssetType.MonoBehaviour, ...BUILT_IN_ASSET_TYPES]) {
       const blockDirectory = join(directory.behaviours, basename(block, ".blk"), type);
       if (!existsSync(blockDirectory)) continue;
-      // oxlint-disable-next-line no-await-in-loop -- one block's scripts are read at a time
       for (const file of await readdir(blockDirectory)) {
         const nameTarget = (pointer: ObjectPointer): string | undefined => {
           const resolved = resolveObjectPointer(cabMap, file, pointer);
@@ -86,12 +85,10 @@ export const readComponentBehaviours = async (
           const resolved = resolveObjectPointer(cabMap, file, pointer);
           return `${nameTarget(pointer) ?? ""} (${resolved?.block ?? ""} ${resolved?.file ?? ""} ${pointer.pathId})`;
         };
-        // oxlint-disable-next-line no-await-in-loop -- one file's scripts are listed at a time
         const scripts = (await readdir(join(blockDirectory, file))).filter(
           (name) => !scriptPattern || scriptPattern.test(basename(name, ".dat")),
         );
         for (const name of scripts) {
-          // oxlint-disable-next-line no-await-in-loop -- one script's bytes are read at a time
           const bytes = await readFile(join(blockDirectory, file, name));
           if (bytes.length < SERIALIZED_POINTER_BYTES)
             throw new InvalidOperationError(

@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one browser is open at a time; each reference's solve is read in turn */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
@@ -30,7 +31,6 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
   const measures: ParityPassMeasure[] = [];
   const referenceIds = getCurrentBuildReferenceIds(component);
   for (const referenceId of referenceIds) {
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const samples = await readDisplaySamples(referenceId, component, MIN_DISPLAY);
     if (samples.length < MIN_SAMPLE_COUNT) {
       measures.push({
@@ -41,7 +41,6 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
       });
       continue;
     }
-    // oxlint-disable-next-line no-await-in-loop -- each reference's solve is read in turn
     const { contrast, residual } = await solveToneContrast(samples);
     const shippedResidual = computeLightPlaneResidual(samples, GENSHIN_TONE_CONTRAST);
     measures.push({
@@ -59,7 +58,6 @@ export const measureDisplay = async (component: DerivedAssetComponent): Promise<
     });
   }
   for (const referenceId of getBloomReferenceIds(referenceIds)) {
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const { bloomed, height, reference, unbloomed } = await readBloomFrames(referenceId, component);
     const reading = computeBloomReading(reference, bloomed, unbloomed, DISPLAY_WIDTH, height);
     measures.push({

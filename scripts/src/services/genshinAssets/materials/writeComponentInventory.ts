@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one texture is decoded at a time; one mesh is read at a time; one shader's folder is read at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -65,7 +66,6 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   const textureDirectory = join(directory.assets, AssetType.Texture2D);
   for (const name of await readNames(textureDirectory)) {
     const path = join(textureDirectory, name);
-    // oxlint-disable-next-line no-await-in-loop -- one texture is decoded at a time
     const [{ height, width }, { channels }] = await Promise.all([sharp(path).metadata(), sharp(path).stats()]);
     const spans = channels.map(
       ({ max, mean, min }, index) =>
@@ -80,7 +80,6 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   lines.push("", "## Meshes", "", "| Mesh | Vertices | Drawn with |", "| :-- | --: | :-- |");
   const meshDirectory = join(directory.assets, AssetType.Mesh);
   for (const name of await readNames(meshDirectory)) {
-    // oxlint-disable-next-line no-await-in-loop -- one mesh is read at a time
     const objText = await readFile(join(meshDirectory, name), "utf8");
     const vertexCount = objText.split("\n").filter((line) => line.startsWith("v ")).length;
     const mesh = basename(name, ".obj");
@@ -105,7 +104,6 @@ export const writeComponentInventory = async (component: DerivedAssetComponent):
   for (const block of await readShaderBlockNames(directory.shaders))
     for (const shader of await readNames(join(directory.shaders, block))) {
       const shaderDirectory = join(directory.shaders, block, shader);
-      // oxlint-disable-next-line no-await-in-loop -- one shader's folder is read at a time
       const [files, properties, programs] = await Promise.all([
         readdir(shaderDirectory),
         readFile(join(shaderDirectory, "properties.txt"), "utf8"),

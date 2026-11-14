@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
 import type { AchievementEvent } from "#src/models/achievement/AchievementEvent";
 import type { Quest } from "#src/models/quest/Quest";
 import type { QuestChapter } from "#src/models/quest/QuestChapter";
@@ -103,7 +104,6 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
   const start = (savedQuestProgressMap: ReadonlyMap<string, QuestProgress>) => {
     questProgressMap.value = savedQuestProgressMap;
     events.on("questEvent", doQuestEvent);
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() =>
       Promise.all([
         readQuests(worldSessionStore.gameDataBaseUrl),
@@ -119,7 +119,6 @@ export const useWorldQuestsStore = defineStore("world/quests", () => {
         console.error(error);
       },
     );
-    // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
     getResultAsync(() => QuestTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
       (newQuestTextMap) => {
         questTextMap.value = newQuestTextMap;

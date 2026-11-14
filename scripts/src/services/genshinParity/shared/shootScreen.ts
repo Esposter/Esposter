@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one page is paused at one time and shot before the next, in order; the shot belongs to the time just set, before the next one is */
 import type { ShootOptions } from "#src/models/genshinParity/shared/ShootOptions";
 
 import { ParityMotion } from "#src/models/genshinParity/shared/ParityMotion";
@@ -31,7 +32,6 @@ export const shootScreen = async ({
       }
 
       for (const timeMs of timesMs) {
-        // oxlint-disable-next-line no-await-in-loop -- one page is paused at one time and shot before the next, in order
         await page.evaluate((currentTime) => {
           for (const animation of window.document.getAnimations()) {
             animation.pause();
@@ -39,7 +39,6 @@ export const shootScreen = async ({
           }
         }, timeMs);
         const path = join(SHOTS_DIRECTORY, `${screen}.${motion}@${timeMs}.png`);
-        // oxlint-disable-next-line no-await-in-loop -- the shot belongs to the time just set, before the next one is
         await page.screenshot({ path });
         shotPaths.push(path);
       }

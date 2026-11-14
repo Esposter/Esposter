@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave */
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database, StorageBucket, UserInAuth } from "@esposter/db-schema";
 
@@ -29,7 +30,6 @@ export const deleteStorageBlobs = async (
   for (const blobNamesChunk of chunk(blobNames, MAX_CONCURRENT_BLOB_DELETIONS)) {
     const errors: Error[] = [];
     // A wave that fails removed nothing it can vouch for, so only a wave that landed is released
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     const deletedBlobNames = await getResultAsync(() => deleteBlobs(bucket, blobNamesChunk)).match(
       () => blobNamesChunk,
       (error) => {
@@ -38,12 +38,10 @@ export const deleteStorageBlobs = async (
       },
     );
     // After the blobs are gone, so a release can never hand bytes back for a blob still stored
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     const newlyReleasedUserIds = (await releaseStorageLedgerEntries(db, bucketName, deletedBlobNames)).filter(
       (userId) => !releasedUserIds.has(userId),
     );
     for (const newlyReleasedUserId of newlyReleasedUserIds) releasedUserIds.add(newlyReleasedUserId);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: MAX_CONCURRENT_BLOB_DELETIONS at a time, a chunk per wave
     if (newlyReleasedUserIds.length > 0) await onReleased(newlyReleasedUserIds);
     // Rethrown once the release has landed, never before it: the failure is what makes the queue redeliver, and the
     // Blobs this wave did remove must not wait for that redelivery to be given back

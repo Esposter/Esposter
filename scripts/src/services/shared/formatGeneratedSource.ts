@@ -1,7 +1,6 @@
-// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
+/* oxlint-disable no-restricted-imports -- the repo-root formatter config, which no `#` map can reach; the formatter's own API, which the apps/web phaser generator uses too */
 import formatterConfiguration from "../../../../oxfmt.config.ts";
 
-// oxlint-disable-next-line no-restricted-imports -- the formatter's own API, which the apps/web phaser generator uses too
 import { format } from "oxfmt";
 
 // The text the repository's formatter writes for a generator's output at a path.

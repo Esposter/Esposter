@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs */
 export const MENTION_ID_ATTRIBUTE = "data-id";
 export const MENTION_ITEM_TYPE_ATTRIBUTE = "data-mention-type";
 export const MENTION_LABEL_ATTRIBUTE = "data-label";
@@ -6,7 +7,6 @@ export const MENTION_TYPE = "mention";
 // The selector every mention rewrite queries with. A caller that rewrites what it finds must parse the message
 // Once and query that same tree — mutating elements from a second parse changes nothing the first one
 // Serializes — so what is shared here is the selector rather than a helper that returns someone else's nodes
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const MENTION_SELECTOR: string = `span[${MENTION_TYPE_ATTRIBUTE}='${MENTION_TYPE}']`;
 export const MENTION_HERE_ID = "@here";
 export const MENTION_EVERYONE_ID = "@everyone";
@@ -18,5 +18,4 @@ export const CUSTOM_EMOJI_NAME_ATTRIBUTE = "data-custom-emoji-name";
 // A spoiler is a span the editor writes around text a reader must click to read. The attribute is what the
 // Sanitizer keeps, what the reader's click finds, and what a push body masks
 export const SPOILER_ATTRIBUTE = "data-spoiler";
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const SPOILER_SELECTOR: string = `span[${SPOILER_ATTRIBUTE}]`;

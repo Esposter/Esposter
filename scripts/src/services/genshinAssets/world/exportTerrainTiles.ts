@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- a block's exports are read once AnimeStudio has written them; one tile at a time, each some megabytes; the next block's exports go in a fresh folder */
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
@@ -46,17 +47,13 @@ export const exportTerrainTiles = async (
     );
     const exportedDirectory = join(unparsedDirectory, AssetType.TerrainData);
     if (!existsSync(exportedDirectory)) continue;
-    // oxlint-disable-next-line no-await-in-loop -- a block's exports are read once AnimeStudio has written them
     for (const file of await readdir(exportedDirectory)) {
-      // oxlint-disable-next-line no-await-in-loop -- one tile at a time, each some megabytes
       const bytes = await readFile(join(exportedDirectory, file));
       const name = bytes.toString("utf8", NAME_OFFSET, NAME_OFFSET + bytes.readUInt32LE(0));
       if (!tileNames.has(name) || foundBlocks.has(name)) continue;
-      // oxlint-disable-next-line no-await-in-loop -- as above
       await rename(join(exportedDirectory, file), join(terrainDirectory, `${name}.dat`));
       foundBlocks.set(name, block);
     }
-    // oxlint-disable-next-line no-await-in-loop -- the next block's exports go in a fresh folder
     await rm(unparsedDirectory, { force: true, recursive: true });
   }
   return foundBlocks;

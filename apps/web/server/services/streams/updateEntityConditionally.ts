@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: an attempt runs only because the last one lost the race */
 import type { ConditionalEntityUpdateOptions } from "#server/models/streams/ConditionalEntityUpdateOptions";
 import type { AzureEntity, AzureUpdateEntity } from "@esposter/db-schema";
 import type { StreamTableClient } from "@esposter/db";
@@ -36,7 +37,6 @@ export const updateEntityConditionally = async <
     const { entity, etag } = entityVersion;
     const { partitionKey, rowKey } = entity;
     const updatedEntity = getUpdateEntity(entity);
-    // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
     const updateError = await getResultAsync(() => writeEntity(updatedEntity, etag)).match(
       () => undefined,
       (error) => error,
@@ -46,7 +46,6 @@ export const updateEntityConditionally = async <
     // Rejects the read behind it — so a read that FAILED must not arrive here as the entity being gone. It
     // Leaves the attempt unclassified, which is what CONFLICT already means: the write did not land, the caller
     // Sends it again, and the fault itself is logged rather than renamed into a deletion for the user
-    // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
     const rereadEntityVersion = await getResultAsync(() =>
       getEntityWithEtag(tableClient, entityClass, partitionKey, rowKey),
     ).match(

@@ -1,3 +1,4 @@
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed state machine has members this test never reads; A partial fake: the typed store has members this test never reads; A partial fake: the typed module would load Phaser and its full store type */
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";
@@ -19,9 +20,7 @@ const { setState, showMessages } = vi.hoisted(() => ({
 }));
 
 // The state machine holds every battle state, and the dialog is UI over the scene, so only their calls are recorded
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed state machine has members this test never reads
 vi.mock("@/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
 vi.mock("@/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
 // The ball's flight and the monster's fall are Phaser tweens, and the outcome the ball is thrown for is decided by the
@@ -38,7 +37,6 @@ vi.mock(import("@/services/dungeons/item/createCaptureResult"), () => ({
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const saveModule = await import("#shared/models/dungeons/data/Save");

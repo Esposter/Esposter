@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- the page draws one frame after another until it is ready; read after the frame it drew */
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { Page } from "playwright";
 
@@ -145,9 +146,7 @@ export const openParityPage = async ({
         .waitFor({ timeout: PARITY_READY_TIMEOUT_MS });
     let { parityError, parityReady: readyScreen } = await readPageState();
     while (parityError === undefined && readyScreen === undefined) {
-      // oxlint-disable-next-line no-await-in-loop -- the page draws one frame after another until it is ready
       await page.clock.runFor(PARITY_FRAME_MS);
-      // oxlint-disable-next-line no-await-in-loop -- read after the frame it drew
       ({ parityError, parityReady: readyScreen } = await readPageState());
     }
     if (parityError !== undefined) throw new InvalidOperationError(Operation.Read, screen, parityError);

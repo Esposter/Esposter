@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out */
 import { ReviewSessionRole } from "#src/models/review/ReviewSessionRole";
 
 // The label of the issues the review opens for the findings it owes. It is the review's own, outside the triage roles, so
@@ -78,7 +79,6 @@ export const CLAUDE_CODE_PACKAGE = "@anthropic-ai/claude-code";
 export const CLAUDE_EXEMPT_VARIABLE = "CLAUDE_CODE_OAUTH_TOKEN";
 // Every other variable whose name reads as a secret is dropped from a session's environment, since a session's prompt
 // Can carry text a reviewer read from the repository
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out
 export const SECRET_VARIABLE_REGEX: RegExp = /credential|key|password|secret|token/iu;
 // Tools a reviewer may use, all read-only. Print mode denies every tool not listed, so Edit, Write and the rest are denied.
 // No git grant: a `Bash(git <verb>:*)` grant also allows `--output=<file>`, which git writes to any path, and the batch's
@@ -87,7 +87,6 @@ export const REVIEWER_TOOLS: readonly string[] = ["Read", "Grep", "Glob", "Skill
 
 // Claude Code refusing to start prints its own sentence and exits non-zero. The phrase is bounded to its own line, so a
 // Review discussing "usage limit" in prose is not read as one (`runSession`'s `getIsLimited`).
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise leave out
 export const USAGE_LIMIT_REGEX: RegExp = /(?:you've hit your \w+ limit|usage limit reached)\b[^\n]*\bresets?\b[^\n]*/iu;
 
 // The paths a review does not read, each with the reason the bot's path filters gave for it. Written as globs over the

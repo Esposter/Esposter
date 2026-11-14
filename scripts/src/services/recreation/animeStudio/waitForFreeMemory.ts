@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Polling: each reading is taken after the last wait, so the waits cannot overlap */
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
 import {
   MEMORY_WAIT_MILLISECONDS,
@@ -9,7 +10,6 @@ import { setTimeout as sleep } from "node:timers/promises";
 // Free: macOS's free figure leaves out the memory it hands back on demand, so a gate on it waits with gigabytes to spare
 export const waitForFreeMemory = async (): Promise<void> => {
   for (;;) {
-    // oxlint-disable-next-line no-await-in-loop -- Polling: each reading is taken after the last wait, so the waits cannot overlap
     const freeGigabytes = await readAvailableGigabytes();
     // A gauge that cannot be read would stall the run forever, so the run starts without the gate
     if (freeGigabytes === undefined) {
@@ -17,7 +17,6 @@ export const waitForFreeMemory = async (): Promise<void> => {
       return;
     }
     if (freeGigabytes >= MIN_AVAILABLE_MEMORY_GIGABYTES) return;
-    // oxlint-disable-next-line no-await-in-loop -- As above
     await sleep(MEMORY_WAIT_MILLISECONDS);
   }
 };

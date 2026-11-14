@@ -1,3 +1,4 @@
+/* oxlint-disable no-script-url -- the schema is shown refusing this URL */
 import { createMjmlAttributeSchema } from "#src/services/createMjmlAttributeSchema";
 import { getResultAsync } from "@esposter/shared";
 import mjml2html from "mjml";
@@ -44,10 +45,8 @@ describe(createMjmlAttributeSchema, () => {
   });
 
   test.each([
-    // oxlint-disable-next-line no-script-url -- the schema is shown refusing this URL
     { attribute: "href", value: "javascript:alert(1)" },
     { attribute: "background-url", value: "data:text/html,x" },
-    // oxlint-disable-next-line no-script-url -- the schema is shown refusing this URL
     { attribute: "left-icon", value: "javascript:alert(1)" },
     { attribute: "thumbnails-src", value: "ftp://host/x.png" },
   ])("$attribute refuses the scheme of $value", ({ attribute, value }) => {

@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: the next attempt waits out the interval only because this one failed */
 import type { Socket } from "node:net";
 
 import { MESSAGE_DISPLAY_HOOK_TIMEOUT_MS, VOICE_RETRY_INTERVAL_MS } from "#src/services/constants";
@@ -18,9 +19,7 @@ export const reachVoiceServer = async (): Promise<Socket | undefined> => {
   });
   const deadline = performance.now() + MESSAGE_DISPLAY_HOOK_TIMEOUT_MS;
   while (performance.now() < deadline) {
-    // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt waits out the interval only because this one failed
     await setTimeout(VOICE_RETRY_INTERVAL_MS);
-    // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt waits out the interval only because this one failed
     const retry = await openVoiceSocket();
     if (retry) return retry;
     if (hasExited) return undefined;

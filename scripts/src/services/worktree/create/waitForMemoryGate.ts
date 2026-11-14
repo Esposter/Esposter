@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- the gate is sampled again only once its poll interval has passed; the figure is read again only after the poll it waited on */
 import { checkIsMemoryGateOpen } from "#src/services/machine/checkIsMemoryGateOpen";
 import { GATE_MEMORY_SHARE, GIBIBYTE } from "#src/services/machine/constants";
 import { readAvailableGigabytes } from "#src/services/machine/readAvailableGigabytes";
@@ -12,9 +13,7 @@ export const waitForMemoryGate = async (): Promise<string | undefined> => {
   const totalGigabytes = totalmem() / GIBIBYTE;
   let freeGigabytes = (await readAvailableGigabytes()) ?? 0;
   while (!checkIsMemoryGateOpen(freeGigabytes, totalGigabytes) && Date.now() < deadline) {
-    // oxlint-disable-next-line no-await-in-loop -- the gate is sampled again only once its poll interval has passed
     await sleep(MEMORY_GATE_POLL_MILLISECONDS);
-    // oxlint-disable-next-line no-await-in-loop -- the figure is read again only after the poll it waited on
     freeGigabytes = (await readAvailableGigabytes()) ?? 0;
   }
   return checkIsMemoryGateOpen(freeGigabytes, totalGigabytes)

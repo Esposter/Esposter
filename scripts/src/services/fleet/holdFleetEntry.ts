@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each poll waits for the one before it; a renewal runs once its interval is due, after the poll before it */
 import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 
 import { LOCAL_HOLD_POLL_MILLISECONDS, RENEW_MILLISECONDS } from "#src/services/fleet/constants";
@@ -18,12 +19,10 @@ export const holdFleetEntry = async (entry: string, holder: ClaimHolder): Promis
   let renewedMilliseconds = Temporal.Now.instant().epochMilliseconds;
   let stopReason: string | undefined;
   do {
-    // oxlint-disable-next-line no-await-in-loop -- each poll waits for the one before it
     await sleep(LOCAL_HOLD_POLL_MILLISECONDS);
     if (!existsSync(getHoldFilePath(entry, holder.worker))) stopReason = RELEASED_HERE_REASON;
     else if (Temporal.Now.instant().epochMilliseconds - renewedMilliseconds >= RENEW_MILLISECONDS) {
       renewedMilliseconds = Temporal.Now.instant().epochMilliseconds;
-      // oxlint-disable-next-line no-await-in-loop -- a renewal runs once its interval is due, after the poll before it
       stopReason = await renewOrStop(entry, holder);
     }
   } while (stopReason === undefined);

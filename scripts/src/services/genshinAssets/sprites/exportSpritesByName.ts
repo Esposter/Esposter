@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- One block at a time, in the order the index lists them; One atlas at a time, each cut into all its sprites before the next */
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
@@ -52,7 +53,6 @@ const exportBlocksOf = async (
     assets.filter((asset) => asset.type === type),
     (asset) => asset.block,
   ))
-    // oxlint-disable-next-line no-await-in-loop -- One block at a time, in the order the index lists them
     await exportBlock(block, blockAssets);
 };
 
@@ -76,7 +76,6 @@ const exportBlockSprites = async (block: string, sprites: readonly IndexedAsset[
         atlasPath,
         `AnimeStudio wrote no atlas for ${atlasCuts.map(({ name }) => name).join(", ")}`,
       );
-    // oxlint-disable-next-line no-await-in-loop -- One atlas at a time, each cut into all its sprites before the next
     await cutSprites(
       atlasPath,
       atlasCuts.map(({ name, rectangle }) => ({

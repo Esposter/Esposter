@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one browser is open at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { Vector } from "#src/models/shared/Vector";
@@ -37,9 +38,7 @@ export const measureLayout = async (component: DerivedAssetComponent): Promise<P
   );
   const projected: { families: { gaps: number[]; name: string }[]; referenceId: string }[] = [];
   for (const referenceId of getCurrentBuildReferenceIds(component)) {
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const { close: referenceClose, page: referencePage } = await openWitnessPage(referenceId, component);
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const referenceFamilies = await withFinalizerAsync(
       async () => {
         const [camera, offsets, { height, width }] = await Promise.all([

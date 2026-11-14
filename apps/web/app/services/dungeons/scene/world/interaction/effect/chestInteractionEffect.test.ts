@@ -1,3 +1,4 @@
+/* oxlint-disable vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type; A partial fake: the typed store has members this test never reads; A partial fake: the typed sound has members this test never reads */
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
@@ -18,7 +19,6 @@ const { showMessages } = vi.hoisted(() => ({ showMessages: vi.fn<() => Promise<v
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its save is read here, so
 // The fake keeps the real save shape and holds one save for every reader
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
   const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
@@ -28,11 +28,9 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
 vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // Sound plays through Phaser's scene, which is not run here
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed sound has members this test never reads
 vi.mock("@/services/dungeons/sound/getDungeonsSoundEffect", () => ({
   getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));

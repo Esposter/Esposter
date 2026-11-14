@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- One export at a time: each run waits for the free memory the last one left; One area at a time: each one's bytes are parsed and dropped before the next is read */
 import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { CityAreaCandidate } from "#src/models/genshinAssets/world/CityAreaCandidate";
 import type { ExportRequest } from "#src/models/genshinAssets/world/ExportRequest";
@@ -30,7 +31,6 @@ export const extractCityAreas = async (candidates: readonly CityAreaCandidate[])
   // Cleared first, so a name AnimeStudio exports nothing for is never read from an earlier run's leftovers
   await rm(CITY_AREA_EXPORTS_DIRECTORY, { force: true, recursive: true });
   for (const { block, names, type } of requests.values())
-    // oxlint-disable-next-line no-await-in-loop -- One export at a time: each run waits for the free memory the last one left
     await runAnimeStudioAsync(
       getNamedRawArgs(block, type, [...names], CITY_AREA_EXPORTS_DIRECTORY),
       GENSHIN_ANIMESTUDIO_OPTIONS,
@@ -38,7 +38,6 @@ export const extractCityAreas = async (candidates: readonly CityAreaCandidate[])
     );
   const areas: CityArea[] = [];
   for (const { blob, code, index } of candidates) {
-    // oxlint-disable-next-line no-await-in-loop -- One area at a time: each one's bytes are parsed and dropped before the next is read
     const [blobBytes, indexBytes] = await Promise.all([
       readFile(join(CITY_AREA_EXPORTS_DIRECTORY, AssetType.MiHoYoBinData, `${blob.name}.dat`)),
       readFile(join(CITY_AREA_EXPORTS_DIRECTORY, AssetType.MonoBehaviour, `${index.name}.dat`)),

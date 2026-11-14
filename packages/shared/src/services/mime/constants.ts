@@ -1,13 +1,10 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer */
 // The media type a Content-Type value leads with, up to its parameters or the whitespace after it
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const MEDIA_TYPE_REGEX: RegExp = /^\s*(?<mediaType>[^;\s]*)(?:;|\s|$)/u;
 // A path's separators, which Windows paths use as well as posix ones
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const PATH_SEPARATOR_REGEX: RegExp = /[/\\]/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const TEXT_MEDIA_TYPE_REGEX: RegExp = /^text\//iu;
 // A charset parameter by its own name, so a parameter that only contains the word leaves the default in place
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const CHARSET_PARAMETER_REGEX: RegExp = /;\s*charset=/iu;
 // The charset a text type gets when the dataset names none
 // oxlint-disable-next-line unicorn/text-encoding-identifier-case -- `UTF-8` is the spelling a Content-Type header and the upstream report, and `utf8` would change the value

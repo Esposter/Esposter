@@ -1,3 +1,5 @@
+/* oxlint-disable unicorn/no-hex-escape -- the hex escape is the syntax under test */
+/* oxlint-disable unicorn/escape-case -- the hex escape is the syntax under test */
 import { dedent } from "#src/util/text/dedent";
 import { describe, expect, test } from "vitest";
 
@@ -260,7 +262,6 @@ describe(dedent, () => {
   test("escape sequences: passes through a hex escape", () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
     expect(dedent`\xa0\t`).toBe(" \t");
   });
 
@@ -287,7 +288,6 @@ describe(dedent, () => {
   test("escape sequences when escapeSpecialCharacters is false: keeps a hex escape", () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
     expect(dedenter`\xa0\t`).toBe(String.raw`\xa0\t`);
   });
 
@@ -306,7 +306,6 @@ describe(dedent, () => {
   test("escapes in interpolated values: should escape when called with template strings (hex escape)", () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line unicorn/no-hex-escape, unicorn/escape-case -- the hex escape is the syntax under test
     expect(dedent`a\xa0b`).toBe("a b");
   });
 

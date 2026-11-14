@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-syntax -- the offline save system's writer half, kept beside the reader above; the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy */
+/* oxlint-disable typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it; persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it */
 import type { GenshinSave } from "genshin-world/save";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -17,7 +19,6 @@ import { z } from "zod";
 
 const clearGuestSave = () => {
   getResult(() => {
-    // eslint-disable-next-line no-restricted-syntax -- the offline save system's writer half, kept beside the reader above
     window.localStorage.removeItem(LocalStorageKey.GenshinSave);
   }).match(noop, console.error);
 };
@@ -188,7 +189,6 @@ export const useGenshinSave = async () => {
     // Another window of the browser may have written it since. It is adopted only by the start that replaced the session
     // Which wrote it, since only then is the save it holds the one the account would have kept. Any other journal is out
     // Of date, so it is discarded
-    // eslint-disable-next-line no-restricted-syntax -- the journal is the offline save system's, read imperatively the way `readGuestSave` reads the guest's copy
     const journal = parseGenshinJournal(window.localStorage.getItem(LocalStorageKey.GenshinPending(accountUserId)));
     const adoptedJournal = journal && journal.sessionId === start.previousSessionId ? journal : undefined;
     if (journal && !adoptedJournal) journalJson.value = null;
@@ -210,7 +210,6 @@ export const useGenshinSave = async () => {
     if (checkIsServer() || journalUserId.value) return;
 
     journalUserId.value = accountUserId;
-    // oxlint-disable-next-line typescript/no-floating-promises -- loadAccountSave retries until the save loads and settles every failure itself, so the promise it returns cannot reject and nothing waits on it
     loadAccountSave(accountUserId);
   };
   if (!checkIsServer()) {
@@ -235,7 +234,6 @@ export const useGenshinSave = async () => {
     // Survives a page closed before the send lands
     const leave = () => {
       syncJournal();
-      // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
       persist();
     };
     onScopeDispose(() => {
@@ -244,7 +242,6 @@ export const useGenshinSave = async () => {
       leave();
     });
     useIntervalFn(() => {
-      // oxlint-disable-next-line typescript/no-floating-promises -- persist settles every failure itself, so the promise it returns cannot reject and nothing waits on it
       persist();
     }, AUTOSAVE_INTERVAL_MS);
     useEventListener(

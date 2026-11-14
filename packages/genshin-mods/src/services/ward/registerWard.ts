@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise */
 import type { EngineInterface, On, ToolCallResult } from "claude-code";
 
 import { atom, read } from "claude-code";
@@ -58,11 +59,8 @@ const ward = async (
 const letEditThrough = <E, R>(_$: EngineInterface, e: E, next: (e: E) => R): R => next(e);
 
 export const registerWard = (on: On): void => {
-  // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on("tool.call", { tool: "Edit" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
-  // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on("tool.call", { tool: "Write" }, ($, e, next) => ward($, e.file_path, () => next(e))).catch(letEditThrough);
-  // eslint-disable-next-line no-restricted-syntax -- The engine's registration handler, run when the hook rejects, not a promise
   on("tool.call", { tool: "NotebookEdit" }, ($, e, next) => ward($, e.notebook_path, () => next(e))).catch(
     letEditThrough,
   );

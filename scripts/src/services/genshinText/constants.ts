@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- isolated declarations need a template literal's type written; `isolatedDeclarations` demands the annotation this pattern would otherwise infer */
 import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 
 import { GAME_EXECUTABLE_PATH, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -48,7 +49,6 @@ export const NPC_TABLE_NAME = "NpcExcelConfigData";
 export const BIN_OUTPUT_DIRECTORY = "BinOutput";
 // The quest binaries' folder under the dump, by its path from the dump's root, which the fetch lists to bring each carried
 // Quest's binary the dump lacks
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const QUEST_BINARY_DIRECTORY_PATH: string = `${BIN_OUTPUT_DIRECTORY}/Quest`;
 export const QUEST_BINARY_DIRECTORY: string = join(GAME_TEXT_DIRECTORY, QUEST_BINARY_DIRECTORY_PATH);
 // The install's text chunks sit under this folder, each a MiHoYoBinData named by the path it is built from, and each
@@ -80,7 +80,6 @@ export const TEXT_MAP_MIXER_XOR = 0x7fcdb9dfc6a6de1dn;
 export const TEXT_MAP_MIXER_THIRD_MULTIPLIER = 0x441e34c8d03cabe3n;
 export const TEXT_MAP_MIXER_ROTATION = 31n;
 // A dialog's own id sits under one of the names the dump scrambles, eleven capitals
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const SCRAMBLED_KEY_REGEX: RegExp = /^[A-Z]{11}$/u;
 // The code each language's text map is filed under; the largest are split into numbered parts
 export const GameLanguageCodeMap: Record<GameLanguage, string> = {
@@ -171,7 +170,6 @@ export const GameLanguageSdkFileMap: Record<GameLanguage, string> = {
 // Commit and never a branch. Its directories' trees give each file's git blob sha, which decides whether a file held is
 // Replaced, and list every file, where the contents API stops at a thousand
 export const ANIME_GAME_DATA_COMMIT = "792978e5503ecfba73dcb3562ed44a0d35a2abe2";
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolated declarations need a template literal's type written
 export const ANIME_GAME_DATA_URL: string = `https://raw.githubusercontent.com/DimbreathBot/AnimeGameData/${ANIME_GAME_DATA_COMMIT}`;
 export const ANIME_GAME_DATA_TREES_URL = "https://api.github.com/repos/DimbreathBot/AnimeGameData/git/trees";
 // The text source as a provenance stamp names it, and the code the dump's outputs depend on, whose commits the stamp lists

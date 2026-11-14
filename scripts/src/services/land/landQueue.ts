@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each attempt pulls the queue the one before it failed to land on; each attempt pushes onto the queue the one before it found taken */
 import { checkIsRebaseInProgress } from "#src/services/land/checkIsRebaseInProgress";
 import { LANDING_EXIT_STATUS, MAX_LANDING_ATTEMPTS } from "#src/services/land/constants";
 import { readRebaseStopLines } from "#src/services/land/readRebaseStopLines";
@@ -41,7 +42,6 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
       return LANDING_EXIT_STATUS.conflicted;
     }
     if (pull.status !== 0) {
-      // oxlint-disable-next-line no-await-in-loop -- each attempt pulls the queue the one before it failed to land on
       await waitBeforeRetry(pull.stderr, attempt, MAX_LANDING_ATTEMPTS);
       continue;
     }
@@ -49,7 +49,6 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
     const unlandedCount = Number(runGit(["rev-list", "--count", `${REMOTE_QUEUE_REF}..HEAD`]).trim());
     const push = spawnGit(["push", REMOTE_NAME, `HEAD:${QUEUE_BRANCH}`]);
     if (push.status === 0) landedCount = unlandedCount;
-    // oxlint-disable-next-line no-await-in-loop -- each attempt pushes onto the queue the one before it found taken
     else await waitBeforeRetry(push.stderr, attempt, MAX_LANDING_ATTEMPTS);
   }
 

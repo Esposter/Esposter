@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer */
 import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
 
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
@@ -49,13 +50,11 @@ export const GO_COMPOUND_ASSIGNMENT_OPERATORS: readonly string[] = [
 export const GCSIM_AIM_CHARGE_LEVEL = 1;
 // A value's path in a kit's record: its keys and array indexes joined by dots, `normalAttacks.0.hits.1.poiseDamage`,
 // Where a last key of `length` is an array's length
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const KIT_VALUE_PATH_REGEX: RegExp = /^[A-Za-z][A-Za-z0-9]*(?:\.(?:\d+(?:-\d+)?|[A-Za-z][A-Za-z0-9]*))*$/u;
 export const KIT_LENGTH_KEY = "length";
 // A hit's multiplier path, `hits.fatalBlossoms.1.multiplier`, `skillHolds.0.hits.0.multiplier` or a single hit's own,
 // `hitFields.hymnOfEternalRestLunarBloom.multiplier`, with the path of the hit as `hitPath`. Every hit's multiplier is
 // Read by this one matcher
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a regex literal would otherwise infer
 export const KIT_HIT_MULTIPLIER_REGEX: RegExp =
   /^(?<hitPath>(?:.+\.)?(?:hits\.(?:\d+|[^.]+(?:\.\d+)?)|hitFields\.[^.]+))\.multiplier$/u;
 // Where gcsim's tag is cloned and the wiki's answers are kept between runs, outside the repository: the tag never

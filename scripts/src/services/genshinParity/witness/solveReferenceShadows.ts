@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- the page draws one direction's shadows at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { PricedDirection } from "#src/models/genshinParity/witness/PricedDirection";
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
@@ -147,14 +148,12 @@ export const solveReferenceShadows = async (
       if (isSolved)
         for (const [headingTurn, heightTurn] of PROBE_TURNS_DEGREES) {
           const probeDirection = toSunDirection([azimuth + headingTurn, elevation + heightTurn]);
-          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
           const { distance, edges } = await priceDirection(probeDirection);
           probes.push({ direction: probeDirection, distance, ourEdgeCount: countSetPixels(edges) });
         }
       const grid: PricedDirection[] = [];
       if (isSolved)
         for (const gridDirection of getSkyGridDirections()) {
-          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
           const { distance, edges } = await priceDirection(gridDirection);
           grid.push({ direction: gridDirection, distance, ourEdgeCount: countSetPixels(edges) });
         }
@@ -163,7 +162,6 @@ export const solveReferenceShadows = async (
       if (isSolved)
         for (const { direction: startDirection } of gridBest.slice(0, SOLVE_START_COUNT)) {
           const [startAzimuth = 0, startElevation = 0] = toAngles(startDirection);
-          // oxlint-disable-next-line no-await-in-loop -- the page draws one direction's shadows at a time
           const simplexResult = await minimizeNelderMead(
             async (angles) => {
               const [, angleElevation = 0] = angles;

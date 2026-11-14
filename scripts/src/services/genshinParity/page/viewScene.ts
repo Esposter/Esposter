@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one view is drawn and shot before the next; the shot belongs to the view just set */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
 
@@ -50,9 +51,7 @@ export const viewScene = async ({
       const pose = toPageCamera([x, y, z, yaw, pitch, fov]);
       const shots: Buffer[] = [];
       for (const viewFamilies of [[], families]) {
-        // oxlint-disable-next-line no-await-in-loop -- one view is drawn and shot before the next
         await setPageWitnessView(page, { camera: pose, families: viewFamilies, familyOffsets, familyScales, isAlone });
-        // oxlint-disable-next-line no-await-in-loop -- the shot belongs to the view just set
         shots.push(await page.screenshot());
       }
       const [ours, exported] = shots;

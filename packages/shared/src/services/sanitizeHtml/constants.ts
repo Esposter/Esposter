@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs */
 import { html } from "parse5";
 
 // The namespace every element this filter keeps is read in: an element in another one is unwrapped, never rendered
@@ -137,19 +138,15 @@ export const SRCSET_ATTRIBUTE = "srcset";
 
 // Anchored at its one bang, so the expression reads the value once: a run of spaces before the bang is not rescanned from
 // Each of its positions, which a leading whitespace class would do
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const IMPORTANT_REGEX: RegExp = /!\s*important$/iu;
 
 // The deepest element the filter renders. Deeper content is dropped rather than rendered, since a render recursion that
 // Runs past the stack would throw on input a caller sent
 export const MAX_NESTING_DEPTH = 256;
 
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const SRCSET_DESCRIPTOR_REGEX: RegExp = /^(?:\d+w|\d*\.?\d+x|\d+h)$/u;
 
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const ESCAPED_TEXT_CHARACTERS_REGEX: RegExp = /[&<>]/gu;
-// oxlint-disable-next-line typescript/no-inferrable-types -- the annotation is what --isolatedDeclarations needs
 export const ESCAPED_ATTRIBUTE_CHARACTERS_REGEX: RegExp = /[&"<>]/gu;
 
 // The day the sanitiser last read its packages' advisories. Its advisory watch test fails on any advisory for sanitize-html

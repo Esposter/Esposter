@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
 import type { SetupLogin } from "#src/models/setup/SetupLogin";
 import type { SetupTool } from "#src/models/setup/SetupTool";
 
@@ -101,13 +102,11 @@ export const SYMLINKS_NEXT =
   "git config core.symlinks true, then check the repository out again: Developer Mode or an elevated shell is needed to create the links";
 export const LONG_PATHS_KEY: string = String.raw`HKLM\SYSTEM\CurrentControlSet\Control\FileSystem`;
 export const LONG_PATHS_VALUE_NAME = "LongPathsEnabled";
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const LONG_PATHS_ENABLED_REGEX: RegExp = new RegExp(`${LONG_PATHS_VALUE_NAME}\\s+REG_DWORD\\s+0x1\\b`, "u");
 export const LONG_PATHS_NEXT: string = String.raw`from an elevated PowerShell run Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name LongPathsEnabled -Value 1, then restart the terminal`;
 export const SSH_DIRECTORY: string = join(homedir(), ".ssh");
 export const SSH_PUBLIC_KEY_NAMES: readonly string[] = ["id_ed25519.pub", "id_rsa.pub"];
 export const SSH_KEY_NEXT = "ssh-keygen -t ed25519, then give its .pub to the peer";
 export const FLEET_PROFILE_COMMAND = "pnpm ai:fleet:profile";
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const GENSHIN_ONLY_NEXT: string = `set its areas to ["${GENSHIN_FLEET_AREA}"], the owner's rule: no non-Genshin work until Genshin is done`;
 export const PEERS_NEXT = "write it by hand, since no command writes it";

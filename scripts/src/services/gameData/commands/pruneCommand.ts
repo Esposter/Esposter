@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- The buckets are pruned one after the other, so a failure names one */
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
@@ -36,9 +37,7 @@ export const pruneCommand: SubCommandsDef[string] = defineCommand({
     const bucketClientMap = createGameDataBucketClientMap();
     for (const environment of Object.values(CloudflareEnvironment)) {
       const bucketClient = bucketClientMap[environment];
-      // oxlint-disable-next-line no-await-in-loop -- The buckets are pruned one after the other, so a failure names one
       const liveObjects = await readGameDataReachableObjects(bucketClient, locks);
-      // oxlint-disable-next-line no-await-in-loop -- As above
       const result = await pruneGameData({ bucketClient, isDryRun: args["dry-run"], liveObjects, now: Date.now() });
       console.log(
         `${environment}: ${result.candidateCount} past retention, ${result.deletedCount} deleted, ${result.keptCount} kept by a write since the listing`,

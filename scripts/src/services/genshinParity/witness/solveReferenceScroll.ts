@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each distance is drawn on the one page in turn; read after the view it drew */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
@@ -31,14 +32,12 @@ export const solveReferenceScroll = async (
       const { edgeDistances } = await readFamilyEdgeDistances(page, image, families, 0);
       const readings: { distance: number; offset: number }[] = [];
       for (const offset of offsets) {
-        // oxlint-disable-next-line no-await-in-loop -- each distance is drawn on the one page in turn
         await setPageWitnessView(page, {
           camera,
           familyOffsets: Object.fromEntries(
             families.map((family): [string, [number, number, number]] => [family, [0, 0, offset]]),
           ),
         });
-        // oxlint-disable-next-line no-await-in-loop -- read after the view it drew
         const boundaries = await readFamilyBoundaries(page, families, 0);
         readings.push({ distance: computeMaskedMean(boundaries, edgeDistances), offset });
       }

@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- AnimeStudio exports one block at a time; a file's shaders are read one at a time, each up to megabytes */
 import type { ShaderColorNames } from "#src/models/genshinAssets/shared/ShaderColorNames";
 
 import { ShaderPropertyType } from "#src/models/genshinAssets/materials/ShaderPropertyType";
@@ -38,7 +39,6 @@ export const readShaderColorNames = async (
   return withFinalizerAsync(
     async () => {
       for (const shaderBlock of new Set(shaders.map(({ block }) => block)))
-        // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
         await exportBlockBySource(shaderBlock, [AssetType.Shader], AnimeStudioExportType.Raw, directory, {
           isUnparsed: true,
         });
@@ -52,9 +52,7 @@ export const readShaderColorNames = async (
           );
         const fileDirectory = join(directory, basename(block, ".blk"), AssetType.Shader, file);
         const names = pathIdNamesMap.get(pathId) ?? { colorNames: new Set<string>(), vectorNames: new Set<string>() };
-        // oxlint-disable-next-line no-await-in-loop -- a file's shaders are read one at a time, each up to megabytes
         for (const shaderFile of await readdir(fileDirectory))
-          // oxlint-disable-next-line no-await-in-loop -- as above
           for (const { flags, name, type } of parseShaderProperties(await readFile(join(fileDirectory, shaderFile))))
             if (type === ShaderPropertyType.Color && (flags & GAMMA_FLAG) === 0) names.colorNames.add(name);
             else if (type === ShaderPropertyType.Color || type === ShaderPropertyType.Vector)

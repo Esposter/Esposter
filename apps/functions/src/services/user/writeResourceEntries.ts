@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order; Bounded concurrency: one resource at a time, as its purge runs; One asset at a time, streamed as it is read */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
@@ -20,9 +21,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
   const bucket = getBucket(StorageBucket.ResourceAssets);
   for (const resource of resources) {
     const entryDirectory = `resources/${resource.id}`;
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
     const [publication, links, content, workingAssets] = await Promise.all([
       db.query.resourcePublicationsInResource.findFirst({
         columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
@@ -38,14 +37,10 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
         where: { resourceId: { eq: resource.id } },
       }),
     ]);
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (publication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, publication);
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (links.length > 0) await archive.addJsonEntry(`${entryDirectory}/links.json`, links);
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     if (content) await archive.addEntry(`${entryDirectory}/content.json`, content);
     for (const { assetHash } of workingAssets)
-      // oxlint-disable-next-line no-await-in-loop -- One asset at a time, streamed as it is read
       await writeBlobEntry(
         archive,
         `${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`,

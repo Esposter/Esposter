@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each vertex is one evaluation, and evaluations run one at a time */
 import { combine } from "#src/services/recreation/solve/combine";
 
 // The Nelder–Mead simplex's coefficients: reflection, expansion, contraction and shrink, as the method sets them
@@ -20,7 +21,6 @@ export const minimizeNelderMead = async (
   });
   let vertices = [await evaluate([...start])];
   for (const [axis, step] of steps.entries())
-    // oxlint-disable-next-line no-await-in-loop -- each vertex is one evaluation, and evaluations run one at a time
     vertices.push(await evaluate(start.map((value, index) => (index === axis ? value + step : value))));
   for (let iteration = 0; iteration < iterationCount; iteration++) {
     vertices = vertices.toSorted((firstVertex, secondVertex) => firstVertex.cost - secondVertex.cost);
@@ -32,20 +32,16 @@ export const minimizeNelderMead = async (
     const centroid = start.map(
       (_value, index) => others.reduce((sum, { point }) => sum + (point[index] ?? 0), 0) / others.length,
     );
-    // oxlint-disable-next-line no-await-in-loop -- as above
     const reflected = await evaluate(combine(centroid, worst.point, -REFLECTION));
     if (reflected.cost < best.cost) {
-      // oxlint-disable-next-line no-await-in-loop -- as above
       const expanded = await evaluate(combine(centroid, worst.point, -EXPANSION));
       vertices[vertices.length - 1] = expanded.cost < reflected.cost ? expanded : reflected;
     } else if (reflected.cost < secondWorst.cost) vertices[vertices.length - 1] = reflected;
     else {
-      // oxlint-disable-next-line no-await-in-loop -- as above
       const contracted = await evaluate(combine(centroid, worst.point, CONTRACTION));
       if (contracted.cost < worst.cost) vertices[vertices.length - 1] = contracted;
       else
         for (let index = 1; index < vertices.length; index++)
-          // oxlint-disable-next-line no-await-in-loop -- as above
           vertices[index] = await evaluate(combine(best.point, vertices[index]?.point ?? [], SHRINK));
     }
   }

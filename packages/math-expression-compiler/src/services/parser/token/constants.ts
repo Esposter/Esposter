@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
 import { MathExpressionBinaryOperatorSymbol } from "#src/models/parser/MathExpressionBinaryOperatorSymbol";
 
 const BINARY_SYMBOLS = Object.values(MathExpressionBinaryOperatorSymbol);
@@ -48,7 +49,5 @@ export const DECIMAL_MARK_OPERATOR_FOLLOWERS: ReadonlySet<string> = new Set([
   MathExpressionBinaryOperatorSymbol.Divide,
   MathExpressionBinaryOperatorSymbol.Multiply,
 ]);
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WORD_START_REGEX: RegExp = /^[\p{L}_$]$/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WORD_CHARACTER_REGEX: RegExp = /^[\p{L}\p{Nd}_$]$/u;

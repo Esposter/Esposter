@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent */
 import type { LoadedVoiceModel } from "#src/models/LoadedVoiceModel";
 import type { VoiceDeviceRung } from "#src/models/VoiceDeviceRung";
 import type { VoiceRuntime } from "#src/models/VoiceRuntime";
@@ -80,7 +81,6 @@ export const createVoiceSynthesizer = async (
     synthesize: async (text, speaker) => {
       const inputs = await processor(text);
       for (;;) {
-        // oxlint-disable-next-line no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent
         const [outcome] = await Promise.allSettled([
           loaded.model.generate({
             ...inputs,
@@ -91,7 +91,6 @@ export const createVoiceSynthesizer = async (
         if (outcome?.status === "rejected") {
           const reason = String(outcome.reason);
           // The bottom rung runs nothing on the GPU, so a failure the GPU provider raises always has a rung below
-          // oxlint-disable-next-line no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent
           if (GPU_PROVIDER_FAILURE_REGEX.test(reason) && (await stepDown("failed on the GPU"))) continue;
 
           onFallback?.(`${loaded.rung.name} did not read the line: ${reason}`);
@@ -100,7 +99,6 @@ export const createVoiceSynthesizer = async (
 
         const clip = { sampleRate: VOICE_SAMPLE_RATE, samples: Float32Array.from(outcome.value.data, Number) };
         if (checkIsSpeech(clip)) return clip;
-        // oxlint-disable-next-line no-await-in-loop -- Retry: a rung is tried only because the one above it failed or went silent
         if (!(await stepDown("synthesized silence"))) return undefined;
       }
     },

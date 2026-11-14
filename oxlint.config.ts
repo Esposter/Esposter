@@ -225,6 +225,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     ...PINIA_RULES,
     "class-methods-use-this": "off",
     "comments/no-capitalized-identifier": "error",
+    "comments/no-repeated-disable-next-line": "error",
     "comments/no-trailing-comment": "error",
     "comments/require-directive-reason": "error",
     complexity: "off",

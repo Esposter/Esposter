@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one browser is open at a time */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 import type { StoneLight } from "genshin-engine";
@@ -30,13 +31,10 @@ export const measureLight = async (component: DerivedAssetComponent): Promise<Pa
     const timeOfDay = ParityReferenceMap[referenceId]?.props?.timeOfDay;
     const light = typeof timeOfDay === "string" ? lights[timeOfDay] : undefined;
     if (!light) throw new InvalidOperationError(Operation.Read, STONE_LIGHT_KEY, `no light for ${referenceId}`);
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const reference = await readReferenceStoneSamples(referenceId, component);
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const self = await readReferenceStoneSamples(referenceId, component, true);
     const { distance, heights } = readStoneColourDistance(reference.samples, light, reference.whiteBalance);
     const floor = readStoneColourDistance(self.samples, light, self.whiteBalance).distance;
-    // oxlint-disable-next-line no-await-in-loop -- one browser is open at a time
     const shadows = await solveReferenceShadows(referenceId, component, false);
     measures.push({
       notes: [

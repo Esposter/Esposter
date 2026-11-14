@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer; `isolatedDeclarations` demands the annotation */
 // The agent tree is stored once here. `.claude` is a symlink alias pointing at it, so Claude Code resolves its skills
 // And settings while every tool reads the real path — globbers follow directory symlinks, so a repo-wide walk that did
 // Not ignore the alias would enumerate the whole tree twice under two names.
@@ -17,7 +18,6 @@ export const AGENT_ALIAS_DIRECTORY = ".claude";
 // `oxlint.config.ts` and `oxfmt.config.ts` are loaded by their tool before any workspace package is built. So they
 // Repeat the literal and are pinned against this constant by
 // `scripts/src/workspace/agentDirectories.test.ts`.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_WORKTREES_DIRECTORY: string = `${AGENT_DIRECTORY}/worktrees`;
 // Path prefixes a hand-written citation may use relative to `apps/web` instead of the repository root — the
 // Design pages' Key Files tables write them, so the citations suite resolves them and the citation sync rewrites them.
@@ -29,7 +29,6 @@ export const KIBIBYTE: number = 2 ** 10;
 // Imports and be tested against another.
 export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
 // A request for a stylesheet: a `.css` file, or a component's style block, whose request ends in `lang.css`
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const STYLESHEET_REQUEST_REGEX: RegExp = /\.css(?:\?|$)/u;
 // The export condition under which a package resolves to its own TypeScript source rather than its build.
 // Every tool that can read source opts into it — the tsconfig preset, the shared Vitest config — while Node's
@@ -67,9 +66,7 @@ export const WORKSPACE_FILE = "pnpm-workspace.yaml";
 export const BARREL_FILE = "index.ts";
 export const COMPONENTS_DIRECTORY = "components";
 // A leading dot on a folder name in an output path, such as the `.pnpm` folder pnpm keeps its packages in
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const HIDDEN_FOLDER_REGEX: RegExp = /(?<![^/])\.(?=\w)/gu;
 // The peer suffix of a vendored package's folder, such as `_vue@3.5.45_typescript@6.0.3` after `vize@0.715.0`, which
 // Pnpm keeps whole on Linux and shortens to a hash on Windows
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation
 export const PNPM_PEER_SUFFIX_REGEX: RegExp = /(?<folder>vendor\/pnpm\/@?[^/@]+@[^/_]+)_[^/]*/gu;

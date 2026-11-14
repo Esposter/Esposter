@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- AnimeStudio exports one block at a time */
 import type { DrawableMaterial } from "#src/models/genshinAssets/avatar/DrawableMaterial";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { CabEntry } from "#src/models/recreation/animeStudio/CabEntry";
@@ -23,10 +24,8 @@ export const readDrawableMaterials = async (
   const rawDirectory = join(exportDirectory, "raw");
   const blocks = new Set(materials.map(({ block }) => block));
   for (const block of blocks)
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
     await exportBlockBySource(block, [AssetType.Material], AnimeStudioExportType.Json, jsonDirectory);
   for (const block of blocks)
-    // oxlint-disable-next-line no-await-in-loop -- AnimeStudio exports one block at a time
     await exportBlockBySource(block, [AssetType.Material], AnimeStudioExportType.Raw, rawDirectory);
   const materialValues = await readMaterialValues(
     materials.map((material) => {

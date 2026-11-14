@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- One device: lines synthesize and play back one after another; One device: a line plays once the one before it has */
 import type { AudioPlayer } from "#src/models/AudioPlayer";
 import type { PcmClip } from "#src/models/PcmClip";
 import type { SpeakerTensors } from "#src/models/SpeakerTensors";
@@ -101,7 +102,6 @@ const speak = async (
   let playback: Promise<void> = Promise.resolve();
   let status: VoiceStatus = VoiceStatus.Ok;
   for (const line of lines) {
-    // oxlint-disable-next-line no-await-in-loop -- One device: lines synthesize and play back one after another
     const clip = await synthesizer.synthesize(line, speaker);
     if (!clip) {
       // The reading ends at a line the engine could not speak, once the line before it has played
@@ -116,7 +116,6 @@ const speak = async (
 
     if (!player) continue;
 
-    // oxlint-disable-next-line no-await-in-loop -- One device: a line plays once the one before it has
     await playback;
     if (checkIsSuperseded()) return VoiceStatus.Superseded;
 

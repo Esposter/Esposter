@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer; `isolatedDeclarations` demands the annotation this pattern would otherwise infer */
 // The game's own interface gold, the accent wherever the persona publishes no character
 export const ACCENT_COLOR = "#d3bc8e";
 // The prompt cache's lifetime, which the engine chooses and does not report: an hour on a subscription
@@ -16,10 +17,8 @@ export const WEEKLY_WINDOW_MS: number = Temporal.Duration.from({ hours: 168 }).t
 // The only model a subagent launches on: the main session thinks, and everything it delegates runs on haiku
 export const AGENT_MODEL = "haiku";
 // What a launch on any other model, or a fork, is told instead
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const AGENT_MODEL_REFUSAL: string = `A subagent runs on "${AGENT_MODEL}" alone: pass model "${AGENT_MODEL}", and never a fork, which runs on the session's own model. Work too judged for ${AGENT_MODEL} stays in the main session, and a spec ${AGENT_MODEL} cannot carry still has a call open.`;
 // What a workflow refused under a reserve is told to do instead, after the reserve's summary
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const RESERVE_REFUSAL_INSTRUCTION: string = `Launch an agent with model "${AGENT_MODEL}" instead, for cleanup or a compute runner whose judgement is settled; otherwise write the unit down as a follow-up and leave it for after the reset.`;
 export const MAX_WAYPOINTS = 3;
 export const MAX_SHOWN_TASKS = 8;
@@ -31,7 +30,6 @@ export const MINUTE_FORMATTER: Intl.NumberFormat = new Intl.NumberFormat("en", {
 });
 export const WARD_WINDOW_MS: number = Temporal.Duration.from({ minutes: 30 }).total("milliseconds");
 export const NO_WAYPOINTS_ANSWER = "NONE";
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const WAYPOINTS_QUESTION: string = `Leave the conversation as it is and answer one side question. List the next steps worth taking from here, at most ${MAX_WAYPOINTS}, most useful first: each one short imperative line the person could send you as their next prompt, with no numbering, no markup and nothing else. When the work is finished or waits on the person, answer ${NO_WAYPOINTS_ANSWER}.`;
 export const WARM_QUESTION = "Answer with the one word OK.";
 export const HANDOFF_QUESTION =
@@ -48,16 +46,13 @@ export const LOOKUP_TOOLS: readonly string[] = ["Glob", "Grep", "Read", "WebFetc
 export const RESET_TOOLS: readonly string[] = ["Agent", "Edit", "NotebookEdit", "Write"];
 export const SHELL_TOOLS: readonly string[] = ["Bash", "PowerShell"];
 // The `export` and `cd` a session chains ahead of its command, each stripped as one leading segment
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const LEADING_SEGMENT_REGEX: RegExp = /^\s*(?:export\s[^&;]*&&|cd\s[^&;]*&&|cd\s[^&;]*;)\s*/u;
 // The commands that only read, a whole first word each so `catalog` is not `cat`. No interpreter is one, since what
 // It runs may write as readily as read; PowerShell's cmdlets are matched in any case, as PowerShell matches them
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const LOOKUP_COMMAND_REGEX: RegExp =
   /^\s*(?:cat|sed|grep|rg|find|ls|head|tail|awk|wc|get-content|get-childitem|select-string|git\s+(?:show|log|diff)|gh\s+run\s+view)(?:\s|$)/iu;
 // The reads that write as well: sed's in-place edit, find's actions that write, and a redirection into a file, the
 // Stderr and stdout merges and the null device aside
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WRITING_LOOKUP_REGEX: RegExp =
   /\bsed\b.*\s(?:-[a-zA-Z]*i|--in-place)|\bfind\b.*\s-(?:delete|exec|execdir|ok|okdir|fprint0?|fprintf|fls)\b|>(?!&|\s*\/dev\/null\b)/iu;
 // Every third lookup in a row, the chain a haiku agent should answer as one bounded question

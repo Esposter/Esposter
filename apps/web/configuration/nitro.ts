@@ -1,3 +1,4 @@
+/* oxlint-disable id-denylist -- `dir` is Nitro's own option name */
 import type { NuxtConfig } from "nuxt/schema";
 
 import { readdir, stat } from "node:fs/promises";
@@ -66,36 +67,12 @@ export const nitro: NuxtConfig["nitro"] = {
   publicAssets: [
     // Each Genshin region's data is served from the world package's own copy, so a region is fetched and released
     // By reach rather than bundled
-    {
-      baseURL: GENSHIN_REGION_DATA_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
-      dir: join(genshinWorldDirectory, "src/data/regions"),
-    },
+    { baseURL: GENSHIN_REGION_DATA_BASE_URL, dir: join(genshinWorldDirectory, "src/data/regions") },
     // The recordings the login's music plays over its synthesizer, fetched once the login shows
-    {
-      baseURL: GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- as above
-      dir: join(genshinWorldDirectory, "src/data/login/recordings"),
-    },
-    {
-      baseURL: PDF_CMAP_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
-      dir: join(pdfjsDistDirectory, "cmaps"),
-    },
-    {
-      baseURL: PDF_STANDARD_FONT_DATA_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- as above
-      dir: join(pdfjsDistDirectory, "standard_fonts"),
-    },
-    {
-      baseURL: PDF_WASM_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- as above
-      dir: join(pdfjsDistDirectory, "wasm"),
-    },
-    {
-      baseURL: TEMPORAL_POLYFILL_BASE_URL,
-      // oxlint-disable-next-line id-denylist -- `dir` is Nitro's own option name
-      dir: dirname(createRequire(import.meta.url).resolve("temporal-polyfill")),
-    },
+    { baseURL: GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL, dir: join(genshinWorldDirectory, "src/data/login/recordings") },
+    { baseURL: PDF_CMAP_BASE_URL, dir: join(pdfjsDistDirectory, "cmaps") },
+    { baseURL: PDF_STANDARD_FONT_DATA_BASE_URL, dir: join(pdfjsDistDirectory, "standard_fonts") },
+    { baseURL: PDF_WASM_BASE_URL, dir: join(pdfjsDistDirectory, "wasm") },
+    { baseURL: TEMPORAL_POLYFILL_BASE_URL, dir: dirname(createRequire(import.meta.url).resolve("temporal-polyfill")) },
   ],
 };

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal would otherwise infer; `isolatedDeclarations` demands the annotation this pattern would otherwise infer; isolatedDeclarations demands the annotation this value would otherwise infer */
 import type { ProvenanceSource } from "#src/models/provenance/Provenance";
 
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
@@ -29,7 +30,6 @@ export const LOD_INFO_MAP_NAME = "LODFinInfoMap";
 // Derived names are recorded with
 export const ASSET_PATH_INDEX_COMMIT = "3192b1759a6d1f6879cc348ad92e078092c1fb9f";
 export const ASSET_PATH_INDEX_SHA256 = "108ea704b12389a76f547e459dfdfb1c938c111d99ad62524a80f3e02eb198c4";
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation a template literal would otherwise infer
 export const ASSET_PATH_INDEX_URL: string = `https://raw.githubusercontent.com/radioegor146/gi-asset-indexes/${ASSET_PATH_INDEX_COMMIT}/mapped/GenshinImpact_2.6.0.zip_31049740.blk.asset_index.json`;
 // The index as a source an output built from its derived names is stamped with: the commit it is fetched at and its SHA-256
 export const ASSET_PATH_INDEX_SOURCE: ProvenanceSource = {
@@ -48,7 +48,6 @@ export const PREFAB_ROOT_MAP: Record<string, string> = {
   Indoor: "ART/Stages/Indoor",
   Level: "ART/Stages/Level",
 };
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const PREFAB_STEM_REGEX: RegExp = /^(?:Area|Indoor|Level)_/u;
 // A city area's blob and its index are named `Area_<code>_City` and `Area_<code>_City_Index`, by the code the area is known by
 export const CITY_AREA_PREFIX = "Area_";
@@ -57,5 +56,4 @@ export const CITY_AREA_SUFFIX = "_City";
 export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
 
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this value would otherwise infer
 export const CITY_INDEX_SUFFIX: string = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;

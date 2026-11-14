@@ -1,11 +1,9 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
 export const TYPE_KINDS: readonly string[] = ["interface", "type"];
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const LOCAL_TYPE_REGEX: RegExp = /^(?:interface|type) (?<name>\w+)/gmu;
 // The multi-export files the skill sanctions by name: a constants file and its test and bench twins
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const CONSTANTS_FILE_REGEX: RegExp = /\/constants(?:\.test|\.bench)?\.ts$/u;
 // Where one identifier word ends and the next begins: a case change, a digit run, or a separator
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WORD_BOUNDARY_REGEX: RegExp = /(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[_$]+/u;
 // The naming skill's function prefixes. A name opening on one of them beside a base that does not carry it names
 // What is done to a thing rather than a second spelling of it, however many words the two share — `deleteUser`

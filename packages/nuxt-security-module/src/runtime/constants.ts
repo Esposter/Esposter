@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would otherwise infer */
 import type { SecurityHeaders } from "#src/models/SecurityHeaders";
 
 // The package's name, which prefixes every runtime hook the module calls and is the module's `meta.name`
@@ -40,12 +41,10 @@ export const CSP_HASH_ALGORITHM = "SHA-256";
 // A quoted value is read whole, so markup inside it is never a token of its own
 const HTML_ATTRIBUTE_PATTERN = String.raw`\s+[^\s"'<>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'<>=]+))?`;
 // Every attribute of a start tag, read for its name and its value
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would otherwise infer
 export const HTML_ATTRIBUTE_REGEX: RegExp =
   /\s+(?<name>[^\s"'<>/=]+)(?<assignment>\s*=\s*(?<value>"[^"]*"|'[^']*'|[^\s"'<>=]+))?/gu;
 // A `script` or `style` element with its body, or any other start tag, each with its attribute text.
 // Matched whole, so the markup a quoted attribute holds is never a tag of its own
-// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this regex would otherwise infer
 export const HTML_TAG_REGEX: RegExp = new RegExp(
   String.raw`<(script|style)\b((?:${HTML_ATTRIBUTE_PATTERN})*)(\s*\/?)>([\s\S]*?)<\/\1\s*>|<([a-z][\w:-]*)((?:${HTML_ATTRIBUTE_PATTERN})*)(\s*\/?)>`,
   "giu",

@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows; the union zod infers from a generic map key overlaps no one type's schema */
 import type { Transaction } from "#server/models/db/Transaction";
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
@@ -88,7 +89,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
   const { contentSchema } = ResourceDefinitionMap[type];
   // `args` comes from an unresolved-generic conditional tuple, so the hook params collapse to the
   // Intersection of every content type; pin them back to this TType's concrete content shape.
-  // eslint-disable-next-line no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows
   const { transformPublishedContent } = (args[0] ?? {}) as unknown as PublishableResourceProcedureOptions<
     ResourceContent<TType>
   >;
@@ -97,7 +97,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
   // Input then reaches the stores as a union none of them can index. Both the output and input sides are
   // Declared — leaving the input side defaulted to unknown would erase the procedure's input type for
   // Consumers like achievement condition paths.
-  // eslint-disable-next-line no-restricted-syntax -- the union zod infers from a generic map key overlaps no one type's schema
   const saveResourceContentInputSchema = createSaveResourceContentInputSchema(contentSchema) as unknown as z.ZodType<
     {
       content: ResourceContent<TType>;

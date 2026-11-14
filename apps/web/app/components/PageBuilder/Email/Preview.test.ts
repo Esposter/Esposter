@@ -1,3 +1,4 @@
+/* oxlint-disable testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness waits a turn on setTimeout */
 // @vitest-environment nuxt
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 
@@ -61,7 +62,6 @@ describe("pageBuilderEmailPreview", () => {
       return { message, messages: [] };
     });
     const editedEmailDocument: EmailDocument = { ...emailDocument, root: { props: { preview: html } } };
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness waits a turn on setTimeout
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     await wrapper.setProps({ emailDocument: editedEmailDocument });
     await vi.advanceTimersByTimeAsync(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
@@ -191,7 +191,6 @@ describe("pageBuilderEmailPreview", () => {
       return { html };
     });
     const edits = ["a", "aa", "aaa"].map((preview) => ({ ...emailDocument, root: { props: { preview } } }));
-    // oxlint-disable-next-line testing/no-faked-set-timeout -- the afterEach above restores the real clock before the harness waits a turn on setTimeout
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     for (const edit of edits)
       // oxlint-disable-next-line no-await-in-loop -- each edit is its own watcher flush, the way a keystroke is

@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
 import type { Talk } from "#src/models/dialogue/Talk";
 import type { GcgLevels } from "#src/models/gcg/GcgLevels";
 import type { Interactable } from "#src/models/interaction/Interactable";
@@ -57,7 +58,6 @@ export const useWorldTalks = ({
   // The card game's levels, which open each challenger's duels by the Player Level. Until they arrive, or if they
   // Cannot be read, no duel is offered
   const gcgLevels = shallowRef<GcgLevels>();
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readGcgLevels(worldSessionStore.gameDataBaseUrl)).match(
     (newGcgLevels) => {
       gcgLevels.value = newGcgLevels;
@@ -66,7 +66,6 @@ export const useWorldTalks = ({
       console.error(error);
     },
   );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readStandingTalks(worldSessionStore.gameDataBaseUrl)).match(
     (newStandingTalks) => {
       standingTalks.value = newStandingTalks;
@@ -75,7 +74,6 @@ export const useWorldTalks = ({
       console.error(error);
     },
   );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => StandingTalkTextLoaderMap[worldSessionStore.language](worldSessionStore.gameDataBaseUrl)).match(
     (newStandingTalkTextMap) => {
       standingTalkTextMap.value = newStandingTalkTextMap;

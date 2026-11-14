@@ -1,3 +1,4 @@
+/* oxlint-disable no-restricted-properties -- The plugin's own script prints this shape, with no date in it, and a mod cannot import the shared reviver */
 import type { EngineInterface, Register } from "claude-code";
 
 import { atom, read, update } from "claude-code";
@@ -36,7 +37,6 @@ const refresh = async ($: EngineInterface) => {
     stdin: JSON.stringify({ session_id: sessionId }),
   });
   if (!status.stdout.trim()) return;
-  // oxlint-disable-next-line no-restricted-properties -- The plugin's own script prints this shape, with no date in it, and a mod cannot import the shared reviver
   const { character, isRecorded } = JSON.parse(status.stdout) as PersonaStatus;
   await update($, isCharacterRecordedAtom, () => isRecorded);
   const previous = await read($, characterAtom);
@@ -46,7 +46,6 @@ const refresh = async ($: EngineInterface) => {
   const spinner = await $.process.run(["node", `${$.plugin.root}/scripts/spinner.mjs`, character.name], {
     timeoutMs: SPINNER_TIMEOUT_MS,
   });
-  // oxlint-disable-next-line no-restricted-properties -- The plugin's own script prints this shape, with no date in it, and a mod cannot import the shared reviver
   if (spinner.stdout.trim()) await update($, spinnerAtom, () => JSON.parse(spinner.stdout) as PersonaSpinner);
 };
 

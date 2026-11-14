@@ -1,13 +1,11 @@
+/* oxlint-disable no-restricted-imports -- the repo-root formatter config, which no `#` map can reach; the repo-root linter config, which no `#` map can reach */
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { AGENT_ALIAS_DIRECTORY, AGENT_WORKTREES_DIRECTORY } from "@esposter/configuration";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
 
-// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
 import formatterConfiguration from "../../../oxfmt.config.ts";
-
-// oxlint-disable-next-line no-restricted-imports -- the repo-root linter config, which no `#` map can reach
 import oxlintConfiguration from "../../../oxlint.config.ts";
 
 const readGitignorePatterns = (): string[] =>

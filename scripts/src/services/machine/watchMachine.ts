@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Each reading is one minute after the last, so the waits cannot overlap; Each reader runs once per minute, after the last */
 import type { CpuTotals } from "#src/models/machine/CpuTotals";
 import type { MachineState } from "#src/models/machine/MachineState";
 
@@ -40,18 +41,14 @@ export const watchMachine = async (): Promise<void> => {
   let lastHeartbeatMilliseconds = 0;
   let lastHeartbeatSha: string | undefined;
   for (;;) {
-    // oxlint-disable-next-line no-await-in-loop -- Each reading is one minute after the last, so the waits cannot overlap
     await sleep(SAMPLE_MILLISECONDS);
     const totals = getCpuTotals(cpus());
     cpuAverages.push(getCpuPercentage(previousTotals, totals));
     previousTotals = totals;
     if (cpuAverages.length > WINDOW_MINUTES) cpuAverages.shift();
     const cpuAveragePercentage = cpuAverages.reduce((total, average) => total + average, 0) / cpuAverages.length;
-    // oxlint-disable-next-line no-await-in-loop -- Each reader runs once per minute, after the last
     const freeGigabytes = await readAvailableGigabytes();
-    // oxlint-disable-next-line no-await-in-loop -- As above
     const gpuPercentage = await readGpuPercentage();
-    // oxlint-disable-next-line no-await-in-loop -- As above
     const processes = await readProcesses();
     const adopterProcessId = process.platform === "darwin" ? LAUNCHD_PROCESS_ID : undefined;
     sweepOrphans(selectOrphans(processes, adopterProcessId));

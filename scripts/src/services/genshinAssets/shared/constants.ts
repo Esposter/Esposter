@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer; `isolatedDeclarations` demands the annotation this template literal would otherwise infer */
 import type { SampledInstrument } from "#src/models/genshinAssets/shared/SampledInstrument";
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 import type { ProvenanceTool } from "#src/models/provenance/ProvenanceOptions";
@@ -118,7 +119,6 @@ export const SERIALIZED_POINTER_BYTES = 12;
 // Side and the row its z, named for both (BigWorldTerrain_1_-2.bin, `parseTerrainTileName`), and the texture that
 // Draws a tile from afar
 export const TERRAIN_TILE_SIZE = 1024;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TERRAIN_TILE_REGEX: RegExp = /_(?<column>-?\d+)_(?<row>-?\d+)\.bin$/u;
 export const TERRAIN_BASE_MAP_SUFFIX = "_BaseMap";
 // How far round a region's centre its ground is fitted and its terrain read, in metres: the valley the screen's views see
@@ -339,7 +339,6 @@ export const WORLD_AREA_POLYGONS_PATH: string = join(
   SCENE_WORLD_AREA_FILE_NAME,
 );
 // The key the open world's subarea labels are published under, one record of every level-two area's name and label point
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const MAP_LABELS_KEY: string = `${GameDataset.MapLabels}/subareas`;
 export const SCENE_POINT_AREA_FIELD = "EABBCMGNLEL";
 // The open world's scene, whose groups, points, NPC births and transport points the world is placed from
@@ -356,7 +355,6 @@ export const LOGIN_MUSIC_RECORDING_DIRECTORY: string = join(WORLD_DATA_DIRECTORY
 export const TOWER_BAND_HEIGHT = 2;
 export const TOWER_RADIUS_TOLERANCE = 0.03;
 // A tower's mesh at one level of detail, the tower being its name without the level
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const TOWER_MESH_REGEX: RegExp = /^(?<part>LoginScene_Build\d+_\d+)_Lod(?<level>\d)$/u;
 // The Statue of The Seven is fitted piece by piece, each piece of its meshes as the statue kit's stacks, their sections
 // Five centimetres apart: one upright, its radii at 32 angles, or split into as many blades as `STATUE_BLADE_COUNTS`
@@ -379,9 +377,7 @@ export const STATUE_DECIMALS = 3;
 export const STATUE_COLOUR_NEAREST_COUNT = 6;
 // Every piece of the statue samples and splits from this seed, so the same export always fits the same way
 export const STATUE_FIT_SEED = 12345;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_MESH_REGEX: RegExp = /^Stages_MdGoddess/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const STATUE_FIGURE_MESH_REGEX: RegExp = /^Stages_MdGoddess_Lite/u;
 // The great oak as its export's Lod1 meshes: its canopy's clusters grouped from the leaf's card centres by a seeded
 // K-means, the same export always clustering the same way, as many as the shape pass's envelope stops reading nearer
@@ -473,7 +469,6 @@ export const GILDING_RED_BLUE_RATIO = 1.8;
 // The login's door: its object and the mesh it draws share this name
 export const LOGIN_DOOR_MESH = "LoginScene_Door01_Vo";
 // Every piece the walkway is laid from: its paving, its borders and its wings
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const WALKWAY_MESH_REGEX: RegExp = /^LoginScene_Bridge01_\d+_Vo$/u;
 // The two sounds the door plays, each found in the package the game loads first by `genshin:assets sounds` against the
 // Door recording's burst: a rumble, then a broadband rush 75 milliseconds later, each laid at its mix volume

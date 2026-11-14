@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- One device: the decoder and the embedder below each run one clip at a time; One device: the embedder runs one clip at a time */
 import type { ReferenceCandidate } from "#src/models/voiceMatch/ReferenceCandidate";
 import type { SpeakerEmbedder } from "#src/models/voiceMatch/SpeakerEmbedder";
 import type { ClipDecoder } from "genshin-persona/src/models/ClipDecoder.ts";
@@ -44,7 +45,6 @@ export const readReferenceCandidates = async (
   const candidates: ReferenceCandidate[] = [];
   for (const { bytes, stem } of lineBytes) {
     if (!bytes) continue;
-    // oxlint-disable-next-line no-await-in-loop -- One device: the decoder and the embedder below each run one clip at a time
     const decodedClip = await decode(bytes);
     if (!decodedClip) continue;
 
@@ -53,7 +53,6 @@ export const readReferenceCandidates = async (
     if (modelClip.samples.length < MODEL_SAMPLE_RATE * MIN_CLIP_SECONDS) continue;
 
     const { samples } = resampleClip(clip, VOICE_SAMPLE_RATE);
-    // oxlint-disable-next-line no-await-in-loop -- One device: the embedder runs one clip at a time
     const profile = await getClipProfile(modelClip, embed);
     candidates.push({
       ...profile,

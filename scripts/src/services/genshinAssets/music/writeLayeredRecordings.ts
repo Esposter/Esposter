@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one recording is fetched at a time; one recording is encoded at a time */
 import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/SampledVoiceSolution";
 import type { Music } from "genshin-engine";
 
@@ -39,7 +40,6 @@ export const writeLayeredRecordings = async (
         const { gain, highKey, highVelocity, keyCenter, lowKey, lowVelocity, offset, path, tune } = region;
         const file = `${`${library}-${path.replace(/\.\w+$/u, "")}`.toLowerCase().replaceAll(/[^\da-z]+/gu, "-")}.ogg`;
         instrument.recordings.push({ file, gain, highKey, highVelocity, keyCenter, lowKey, lowVelocity, tune });
-        // oxlint-disable-next-line no-await-in-loop -- one recording is fetched at a time
         const sourcePath = await fetchSampleFile(library, path);
         fileRecordingMap.set(file, {
           offset,
@@ -57,7 +57,6 @@ export const writeLayeredRecordings = async (
   await rm(partialDirectory, { force: true, recursive: true });
   await mkdir(partialDirectory, { recursive: true });
   for (const [file, { offset, seconds, sourcePath }] of fileRecordingMap)
-    // oxlint-disable-next-line no-await-in-loop -- one recording is encoded at a time
     await encodeMusicRecording(sourcePath, offset, roundMusic(seconds), join(partialDirectory, file));
   await rm(backupDirectory, { force: true, recursive: true });
   const isShipped = existsSync(LOGIN_MUSIC_RECORDING_DIRECTORY);

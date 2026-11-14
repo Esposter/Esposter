@@ -1,4 +1,5 @@
 <script setup lang="ts">
+/* eslint-disable no-restricted-syntax -- removes a row from the unsaved note editor draft; removes a column from the unsaved note editor draft; removes a table from the unsaved note editor draft */
 import type { Item } from "@/models/shared/Item";
 import type { Editor } from "@tiptap/vue-3";
 
@@ -41,7 +42,6 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-row-remove",
     isDanger: true,
     onClick: () => {
-      // eslint-disable-next-line no-restricted-syntax -- removes a row from the unsaved note editor draft
       editor?.chain().focus().deleteRow().run();
     },
     title: "Delete row",
@@ -50,7 +50,6 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-column-remove",
     isDanger: true,
     onClick: () => {
-      // eslint-disable-next-line no-restricted-syntax -- removes a column from the unsaved note editor draft
       editor?.chain().focus().deleteColumn().run();
     },
     title: "Delete column",
@@ -73,7 +72,6 @@ const items = computed<Item[]>(() => [
     icon: "i-mdi:table-remove",
     isDanger: true,
     onClick: () => {
-      // eslint-disable-next-line no-restricted-syntax -- removes a table from the unsaved note editor draft
       editor?.chain().focus().deleteTable().run();
     },
     title: "Delete table",

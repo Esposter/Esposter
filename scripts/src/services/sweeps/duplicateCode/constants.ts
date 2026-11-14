@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer */
 import type { WiringBlock } from "#src/models/sweeps/duplicateCode/WiringBlock";
 
 // The code trees the scan reads, relative to the repository root: every tree of code the repository owns. The
@@ -57,7 +58,5 @@ export const WIRING_BLOCKS: WiringBlock[] = [
 ];
 // A fragment's name is its path, behind Windows' verbatim `\\?\` prefix, and a Vue file's name ends in `:` and the
 // Format its script was read as. A drive's `:` is never followed by letters, so the suffix matches only the format.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const WINDOWS_VERBATIM_PREFIX_REGEX: RegExp = /^\\\\\?\\/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const FORMAT_SUFFIX_REGEX: RegExp = /:[a-z]+$/u;

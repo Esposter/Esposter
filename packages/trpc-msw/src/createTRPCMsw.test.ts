@@ -1,3 +1,4 @@
+/* oxlint-disable require-await -- A subscription is an AsyncIterable, which only an async generator yields */
 import type { StandardSchemaV1 } from "@standard-schema/spec";
 
 import { createTRPCMsw } from "#src/createTRPCMsw";
@@ -56,7 +57,6 @@ describe(createTRPCMsw, () => {
         return z.object({ id: z.string() }).parse(value);
       })
       .query(() => ""),
-    // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     events: t.procedure.subscription(async function* () {
       yield 0;
     }),
@@ -332,7 +332,6 @@ describe(createTRPCMsw, () => {
     });
     trpc.nested.query.query(() => " ");
     await webSocketTRPCClient.nested.query.query();
-    // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     trpc.events.subscription(async function* () {
       yield 1;
     });
@@ -348,7 +347,6 @@ describe(createTRPCMsw, () => {
   test("streams a subscription as server-sent events", async () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line require-await -- A subscription is an AsyncIterable, which only an async generator yields
     trpc.events.subscription(async function* () {
       yield 1;
     });

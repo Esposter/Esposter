@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each page is opened in turn, so one that fails leaves the opened ones to close; read on the page just opened; each round's heights are solved under the shares the last solved; the shares are solved again under the heights just solved */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 import type { SetCloudHeights } from "#src/models/genshinParity/sky/SetCloudHeights";
@@ -58,29 +59,22 @@ export const solveReferenceCloudCover = async (
         referenceId: string;
       }[] = [];
       for (const referenceId of referenceIds) {
-        // oxlint-disable-next-line no-await-in-loop -- each page is opened in turn, so one that fails leaves the opened ones to close
         const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness, CLOUDS_WIDTH);
         closes.push(close);
-        // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const { computeClouds, computeDrawnClouds, computeElevationCoverage, readLuminance } = await readCloudSky(
           page,
           { checkIsScored, height },
         );
-        // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const referenceLuminance = await readLuminance(image);
         // Our sky drawn with no cloud, which each guess's clouds are read against (`computeDrawnClouds`)
-        // oxlint-disable-next-line no-await-in-loop -- read on the page just opened
         const bandNames = await readPageFunction<ReturnType<SetCloudCover>>(page, "setSceneCloudCover");
-        // oxlint-disable-next-line no-await-in-loop -- as above
         await page.evaluate(
           (clearCovers) => {
             (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(clearCovers);
           },
           Object.fromEntries(bandNames.map((band) => [band, 0])),
         );
-        // oxlint-disable-next-line no-await-in-loop -- as above
         await setPageWitnessView(page, { families: [] });
-        // oxlint-disable-next-line no-await-in-loop -- as above
         const clearLuminance = await readLuminance(await page.screenshot());
         skies.push({
           page,
@@ -159,9 +153,7 @@ export const solveReferenceCloudCover = async (
       await solveCovers();
       if (isHeightSolved)
         for (let round = 0; round < roundCount; round++) {
-          // oxlint-disable-next-line no-await-in-loop -- each round's heights are solved under the shares the last solved
           heights = await solveHeights(heights);
-          // oxlint-disable-next-line no-await-in-loop -- the shares are solved again under the heights just solved
           await solveCovers();
         }
       const references = await Promise.all(

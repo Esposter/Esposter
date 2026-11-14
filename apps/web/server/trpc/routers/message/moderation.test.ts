@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember); Each step reads the last: each note takes the clock set just before it */
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { StandardMessageEntity } from "@esposter/db-schema";
@@ -232,11 +233,8 @@ describe("moderationRouter", () => {
 
     const searchedName = "a";
     for (const bannedUserName of [searchedName, "b"]) {
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       const member = await createMember();
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await mockContext.db.update(usersInAuth).set({ name: bannedUserName }).where(eq(usersInAuth.id, member.id));
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember)
       await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     }
 
@@ -400,7 +398,6 @@ describe("moderationRouter", () => {
     const noteCount = 2;
     for (let i = 0; i < noteCount; i++) {
       vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(i));
-      // oxlint-disable-next-line no-await-in-loop -- Each step reads the last: each note takes the clock set just before it
       await moderationCaller.createModerationNote({ note, roomId, targetUserId: member.id });
     }
 

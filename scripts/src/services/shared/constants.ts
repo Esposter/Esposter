@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer; the escape is the sequence's opener; `isolatedDeclarations` demands the annotation */
 import type { Vector } from "#src/models/shared/Vector";
 
 import { findRepositoryRoot } from "#src/services/shared/findRepositoryRoot";
@@ -60,7 +61,6 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 export const PACKAGE_JSON_FILENAME = "package.json";
 // `pnpm`'s `packageManager` pin is `<name>@<version>`, with an optional `+sha512.<hex>` suffix.
 // Corepack verifies the download against that suffix, which is no part of the version the registry is asked about.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PACKAGE_MANAGER_REGEX: RegExp = /^(?<packageName>[^@]+)@(?<version>[^+]+)/u;
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
@@ -80,7 +80,7 @@ export const FIELD_SEPARATOR = "\u001F";
 // An ANSI SGR sequence — the colours a check prints to a terminal — as an escape for the same reason. Stripped
 // Wherever a script measures or quotes such output: the outdated report's column widths, a failed check's log
 // Excerpt.
-// oxlint-disable-next-line no-control-regex, typescript/no-inferrable-types -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
+// oxlint-disable-next-line no-control-regex -- the escape is the sequence's opener; `isolatedDeclarations` demands the annotation
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
 // `pnpm run` names the executable it is in `npm_execpath` — the native binary, or the `pnpm.cjs` corepack ships
 // That node runs — so a script spawns that file with its args and never a shell: the `pnpm` on a Windows PATH is

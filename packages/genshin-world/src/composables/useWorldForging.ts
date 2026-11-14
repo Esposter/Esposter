@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it */
 import type { ForgeRecipe } from "#src/models/forging/ForgeRecipe";
 import type { SceneGroupPlace } from "#src/models/sceneGroup/SceneGroupPlace";
 
@@ -24,7 +25,6 @@ export const useWorldForging = () => {
   const { getWorldNow } = worldSessionStore;
   const forgeRecipes = shallowRef<ForgeRecipe[]>([]);
   const blacksmithPlace = shallowRef<SceneGroupPlace | undefined>();
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readForgeRecipes(worldSessionStore.gameDataBaseUrl)).match(
     (recipes) => {
       forgeRecipes.value = recipes;
@@ -33,7 +33,6 @@ export const useWorldForging = () => {
       console.error(error);
     },
   );
-  // oxlint-disable-next-line typescript/no-floating-promises -- match() handles both branches, so the promise it returns cannot reject and nothing waits on it
   getResultAsync(() => readMondstadtBlacksmithPlace(worldSessionStore.gameDataBaseUrl)).match(
     (place) => {
       blacksmithPlace.value = place;

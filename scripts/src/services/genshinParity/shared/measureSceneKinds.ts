@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each kind is hidden alone, one after another; each kind is read against the frames either side of it */
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the kinds script sets */
 
 import type { FrameRange } from "#src/models/genshinParity/shared/FrameRange";
@@ -27,9 +28,7 @@ export const measureSceneKinds = async (page: Page): Promise<SceneKindTrace> => 
   const baselines = [await waitFrames(page, RANGE_FRAMES)];
   const kinds: SceneKindRange[] = [];
   for (const sceneKind of sceneKinds) {
-    // oxlint-disable-next-line no-await-in-loop -- each kind is hidden alone, one after another
     kinds.push(await measureKind(page, sceneKind));
-    // oxlint-disable-next-line no-await-in-loop -- each kind is read against the frames either side of it
     baselines.push(await waitFrames(page, RANGE_FRAMES));
   }
   // The last range's passes are read back from the GPU after their frames

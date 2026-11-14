@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer */
 import type { ParityApproval } from "#src/models/genshinParity/shared/ParityApproval";
 
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
@@ -57,7 +58,6 @@ export const REFERENCE_PACK_LARGEST_COUNT = 10;
 export const SHORT_HASH_LENGTH = 8;
 
 // A reference's source as the map writes it, `<file> at <N>s`, with `, cropped to WxH from X,Y` when the frame is cropped
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const RECORDING_SOURCE_REGEX: RegExp =
   /^(?<file>\S+) at (?<seconds>\d+(?:\.\d+)?)s(?:, cropped to (?<cropWidth>\d+)x(?<cropHeight>\d+) from (?<cropX>\d+),(?<cropY>\d+))?$/u;
 
@@ -66,9 +66,7 @@ export const RECORDING_SOURCE_REGEX: RegExp =
 // A YouTube id is eleven characters.
 // The yt prefix refuses a Bilibili id, which the clip tool writes under it for a Bilibili URL.
 // A Bilibili id is `av` and its digits or `BV` and its characters.
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const YOUTUBE_RECORDING_NAME_REGEX: RegExp = /^yt-(?!av\d+-)(?<id>[\w-]{11})-(?<name>[\w-]+)\.[\da-z]+$/u;
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const BILIBILI_RECORDING_NAME_REGEX: RegExp = /^bili-(?<id>av\d+|BV[\dA-Za-z]+)-(?<name>[\w-]+)\.[\da-z]+$/u;
 
 // The language a reference's id names it in, by the word its id carries, as its language tag
@@ -79,7 +77,6 @@ export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
 };
 
 // A clean plate cached in the scratch folder, named by the digest of what it is filled from
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 
 // The folder the game-data bucket keeps every stored object in, one per hash and extension, whatever its kind

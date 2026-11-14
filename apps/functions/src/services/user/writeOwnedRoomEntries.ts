@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- Bounded concurrency: one room at a time, its emoji read beside its record; The archive takes one entry at a time, so its entries stay in order; Bounded concurrency: one room at a time, as its record is written */
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { UserInAuth } from "@esposter/db-schema";
 
@@ -26,12 +27,10 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
     where: { userId: { eq: userId } },
   });
   for (const room of rooms) {
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, its emoji read beside its record
     const emoji = await db.query.roomEmojisInMessage.findMany({
       columns: { id: true, name: true },
       where: { roomId: { eq: room.id } },
     });
-    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     await archive.addJsonEntry(`rooms/${room.id}/room.json`, {
       createdAt: room.createdAt,
       emoji,
@@ -47,9 +46,7 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
       topic: room.topic,
       type: room.type,
     });
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as its record is written
     await writeRoomImageEntries(archive, room.id);
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as its record is written
     await writeRoomEmojiEntries(archive, room.id, emoji);
   }
 };

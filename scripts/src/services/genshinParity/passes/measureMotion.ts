@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- the clock moves until the frame is drawn; read after the clock moved; the page draws one frame after another */
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/shared/ParityPassMeasure";
 
@@ -73,9 +74,7 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
         const { length } = await readFrameTimes();
         let frameTimes: number[] = [];
         while (frameTimes.length <= length) {
-          // oxlint-disable-next-line no-await-in-loop -- the clock moves until the frame is drawn
           await page.clock.runFor(1);
-          // oxlint-disable-next-line no-await-in-loop -- read after the clock moved
           frameTimes = await readFrameTimes();
         }
         const pieces = await page.evaluate(
@@ -98,7 +97,6 @@ export const measureMotion = async (component: DerivedAssetComponent): Promise<P
       for (let frame = 0; (read.at(-1)?.riseMs ?? 0) <= duration * 1000 + PARITY_FRAME_MS; frame++) {
         if (read.length === 0 && frame > liftFrameCount)
           throw new InvalidOperationError(Operation.Read, DOOR_FAMILY, "never began its lift");
-        // oxlint-disable-next-line no-await-in-loop -- the page draws one frame after another
         const { pieces, time } = await drawFrame();
         if (read.length === 0 && JSON.stringify(pieces) === startElements) originTime = time;
         else read.push({ pieces, riseMs: time - originTime });

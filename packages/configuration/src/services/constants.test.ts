@@ -1,3 +1,4 @@
+/* oxlint-disable no-restricted-properties -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse; the tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse */
 import { NON_SOURCE_SUFFIXES, SOURCE_CONDITION } from "#src/services/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -14,7 +15,6 @@ describe("sourceCondition", () => {
     expect.hasAssertions();
 
     const tsconfigPath = resolve(import.meta.dirname, "../../tsconfig.base.json");
-    // oxlint-disable-next-line no-restricted-properties -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { compilerOptions } = JSON.parse(readFileSync(tsconfigPath, "utf8")) as {
       compilerOptions: { customConditions: string[] };
     };
@@ -37,7 +37,6 @@ describe("nonSourceSuffixes", () => {
   test("are the suffixes the build program excludes", () => {
     expect.hasAssertions();
 
-    // oxlint-disable-next-line no-restricted-properties -- the tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { exclude } = JSON.parse(
       readFileSync(resolve(import.meta.dirname, "../../tsconfig.build.base.json"), "utf8"),
     ) as { exclude: string[] };

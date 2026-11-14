@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-misused-spread -- the row write wants the entity's own fields, not its prototype */
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
@@ -159,7 +160,6 @@ export const baseMessageRouter = router({
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,
         entityWithEtag: { entity: messageEntity, etag: messageEtag },
-        // oxlint-disable-next-line typescript/no-misused-spread -- the row write wants the entity's own fields, not its prototype
         getUpdateEntity: (entity) => ({ ...entity, linkPreviewResponse: null }),
         writeEntity: (entity, etag) => updateMessage(messageClient, entity, "Replace", { etag }),
       });
@@ -244,7 +244,6 @@ export const baseMessageRouter = router({
           );
           const forward = await createMessage(messageClient, {
             files: messageEntity.files.map(
-              // oxlint-disable-next-line typescript/no-misused-spread -- the row write wants the entity's own fields, not its prototype
               (file, index) => new FileEntity({ ...file, ...takeOne(clonedFiles, index) }),
             ),
             isForward: true,
@@ -453,7 +452,6 @@ export const baseMessageRouter = router({
       await updateEntityConditionally(messageClient, StandardMessageEntity, {
         entityType: AzureEntityType.Message,
         entityWithEtag: { entity: messageEntity, etag: messageEtag },
-        // oxlint-disable-next-line typescript/no-misused-spread -- the row write wants the entity's own fields, not its prototype
         getUpdateEntity: (entity) => ({ ...entity, isPinned: undefined }),
         // A pin is not an edit of the message, so this writes through updateEntity rather than updateMessage
         writeEntity: (entity, etag) => updateEntity(messageClient, entity, "Replace", { etag }),

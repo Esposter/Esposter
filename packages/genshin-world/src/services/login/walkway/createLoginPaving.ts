@@ -1,3 +1,4 @@
+/* oxlint-disable unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value */
 import type { LoginPaving } from "#src/models/login/LoginPaving";
 import type { LoginPavingData } from "#src/models/login/LoginPavingData";
 
@@ -66,7 +67,6 @@ export const createLoginPaving = (paving: LoginPavingData): LoginPaving => {
         pocket.map((point) => toCanvas(point)),
       );
     context.fillStyle = "#fff";
-    // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
     context.fill(pockets);
     const getFilledShares = (): Float32Array => {
       const { data } = context.getImageData(0, 0, width, height);
@@ -86,7 +86,6 @@ export const createLoginPaving = (paving: LoginPavingData): LoginPaving => {
       }
       grooves.closePath();
     }
-    // oxlint-disable-next-line unicorn/no-array-fill-with-reference-type -- a canvas's fill takes a path, not an array's value
     context.fill(grooves, "evenodd");
     const depths = getFilledShares();
     blurChannel(depths, width, height, bevelPixels);

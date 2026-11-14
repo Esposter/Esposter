@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- each run is watched only once the one before it was superseded; the runs after this one are read only once it was superseded */
 import type { CiCompletedRun } from "#src/models/ci/CiCompletedRun";
 
 import { FAILED_JOB_CONCLUSIONS, UNSETTLED_CONCLUSIONS } from "#src/services/ci/constants";
@@ -20,12 +21,10 @@ export const watchQueueRun = async (): Promise<"fail" | "none" | "pass"> => {
   let run = selectRunToWatch(await readCommitRun(sha), await readBranchRuns());
   let completedRun: CiCompletedRun | undefined;
   while (run) {
-    // oxlint-disable-next-line no-await-in-loop -- each run is watched only once the one before it was superseded
     completedRun = await readCompletedRun(String(run.databaseId));
     if (!UNSETTLED_CONCLUSIONS.includes(completedRun.conclusion)) break;
 
     console.log(`CI run ${run.databaseId} was ${completedRun.conclusion}, so the run after it is watched`);
-    // oxlint-disable-next-line no-await-in-loop -- the runs after this one are read only once it was superseded
     run = selectRunToWatch({ ...run, conclusion: completedRun.conclusion }, await readBranchRuns());
   }
   if (!run || !completedRun) {

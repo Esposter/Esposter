@@ -1,3 +1,4 @@
+/* oxlint-disable no-await-in-loop -- one half is drawn after the other on one page; one half is read after the other on one page */
 import type { Targets } from "#src/models/genshinParity/passes/Targets";
 import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassReading } from "#src/models/genshinParity/shared/ParityPassReading";
@@ -44,9 +45,7 @@ export const measureEnvelope = async (
   if (!exportsMask.includes(1)) return [];
   const halves: Targets[] = [];
   for (const leafHalf of [0, 1] as const) {
-    // oxlint-disable-next-line no-await-in-loop -- one half is drawn after the other on one page
     await setPageWitnessView(page, { camera, isAlone: true, leafHalf });
-    // oxlint-disable-next-line no-await-in-loop -- one half is read after the other on one page
     halves.push(toTargets(await readWitnessTargets(page, TARGET_NAMES)));
   }
   const [firstHalf, secondHalf] = halves;
