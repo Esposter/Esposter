@@ -1,5 +1,5 @@
 import type { AzureFunctionEventSubscriptionArguments } from "#src/azure/models/AzureFunctionEventSubscriptionArguments";
-import type { AzureFunction } from "@esposter/db-schema";
+import type { AzureFunction } from "#src/azure/models/AzureFunction";
 
 import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
 import { getAzureFunctionEventSubscriptionDestination } from "#src/azure/services/getAzureFunctionEventSubscriptionDestination";

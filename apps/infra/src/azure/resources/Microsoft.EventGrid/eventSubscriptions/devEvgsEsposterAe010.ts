@@ -5,7 +5,7 @@ import { devstesposter001Deadletter } from "#src/azure/resources/Microsoft.Stora
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
 import { getAzureFunctionEventSubscriptionArguments } from "#src/azure/services/getAzureFunctionEventSubscriptionArguments";
-import { AzureFunction } from "@esposter/db-schema";
+import { AzureFunction } from "#src/azure/models/AzureFunction";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 

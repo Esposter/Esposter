@@ -1,9 +1,9 @@
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
-import { StorageBucket } from "@esposter/db-schema";
+import { AzureContainer } from "#src/azure/models/AzureContainer";
 import * as azure_native from "@pulumi/azure-native";
 
-const containerName = StorageBucket.DeadLetter;
+const containerName = AzureContainer.DeadLetter;
 
 export const devstesposter001Deadletter: azure_native.storage.BlobContainer = new azure_native.storage.BlobContainer(
   `devstesposter001/${containerName}`,

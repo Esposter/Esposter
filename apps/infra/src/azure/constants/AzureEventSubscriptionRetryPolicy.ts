@@ -1,4 +1,4 @@
-import { EVENT_GRID_DELIVERY_TTL_MINUTES } from "@esposter/db-schema";
+import { EVENT_GRID_DELIVERY_TTL_MINUTES } from "#src/azure/services/constants";
 
 // The delivery bound every application event subscription carries, declared once because it is set in two
 // Places: the Pulumi resources themselves, and the hard-coded PUT bodies the budget-guard restore Logic Apps

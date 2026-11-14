@@ -1,4 +1,4 @@
-import type { AzureFunction } from "@esposter/db-schema";
+import type { AzureFunction } from "#src/azure/models/AzureFunction";
 import type * as azure_native from "@pulumi/azure-native";
 
 export interface EventSubscriptionGuardTarget {

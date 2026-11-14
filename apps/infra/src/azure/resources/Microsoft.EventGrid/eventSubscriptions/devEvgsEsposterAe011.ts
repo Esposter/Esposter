@@ -7,7 +7,9 @@ import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storage
 import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
 import { getAzureFunctionEventSubscriptionDestination } from "#src/azure/services/getAzureFunctionEventSubscriptionDestination";
 import { getStorageBlobDeadLetterDestination } from "#src/azure/services/getStorageBlobDeadLetterDestination";
-import { StorageBucket, AzureFunction, getBlobSubjectPrefix } from "@esposter/db-schema";
+import { AzureContainer } from "#src/azure/models/AzureContainer";
+import { AzureFunction } from "#src/azure/models/AzureFunction";
+import { getBlobSubjectPrefix } from "#src/azure/services/getBlobSubjectPrefix";
 import * as azure_native from "@pulumi/azure-native";
 
 const eventSubscriptionName = "dev-evgs-esposter-ae-011";
@@ -25,7 +27,7 @@ export const devEvgsEsposterAe011: azure_native.eventgrid.SystemTopicEventSubscr
       filter: {
         enableAdvancedFilteringOnArrays: true,
         includedEventTypes: [AzureBlobCreatedEventType],
-        subjectBeginsWith: getBlobSubjectPrefix(StorageBucket.PublicUserAssets),
+        subjectBeginsWith: getBlobSubjectPrefix(AzureContainer.PublicUserAssets),
         subjectEndsWith: "",
       },
       resourceGroupName: devRgEsposterAe001.name,

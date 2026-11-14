@@ -1,6 +1,6 @@
 import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
 import { devSbnsEsposter001 } from "#src/azure/resources/Microsoft.ServiceBus/namespaces/devSbnsEsposter001";
-import { AzureQueue } from "@esposter/db-schema";
+import { AzureQueue } from "#src/azure/models/AzureQueue";
 import * as azure_native from "@pulumi/azure-native";
 
 const queueName = AzureQueue.TodoReminders;
