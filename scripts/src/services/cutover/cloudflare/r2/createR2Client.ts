@@ -69,6 +69,9 @@ export const createR2Client = (): R2Client => {
     async headObject(bucket, key) {
       const url = buildR2Url(endpoint, bucket, key, {});
       const response = await sendR2Request(transport, Operation.Read, key, url, {
+        // R2 compresses a textual object on the fly for a client that accepts it, and a compressed answer carries no
+        // Content-Length, which is the size this reads
+        headers: { "accept-encoding": "identity" },
         method: "HEAD",
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       });

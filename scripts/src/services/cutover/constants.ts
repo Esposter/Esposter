@@ -3,9 +3,13 @@ export const CUTOVER_ARCHIVE_PURPOSE = "cutover-archive";
 // Every checkpoint and snapshot object sits under one prefix, so the archive lists as its steps read
 export const ARCHIVE_CHECKPOINT_PREFIX = "checkpoints";
 export const ARCHIVE_SNAPSHOT_PREFIX = "snapshots";
-// Live copies run this many objects or entities at a time, enough to hide a round trip.
-// It is few enough to stay inside a container's throttle and a Worker-free machine's memory
-export const COPY_CONCURRENCY = 16;
+// Live copies run this many objects or entities at a time. Sixteen opened new connections to R2's S3 endpoint faster
+// Than it accepted them from one machine, and timed out connecting; four copied the develop estate without one
+export const COPY_CONCURRENCY = 4;
+// A request to R2 that never connected is sent again up to this many times in all. The codes are undici's and the
+// System's for a connection that was never made, so no body was read and a resend repeats nothing
+export const R2_CONNECT_ATTEMPTS = 4;
+export const R2_CONNECT_ERROR_CODES: string[] = ["UND_ERR_CONNECT_TIMEOUT", "ECONNREFUSED", "EAI_AGAIN", "ENOTFOUND"];
 // A D1 statement takes at most this many bound parameters and this many bytes of SQL and values
 export const D1_STATEMENT_PARAMETER_LIMIT = 100;
 export const D1_STATEMENT_BYTE_LIMIT = 100 * 1024;
