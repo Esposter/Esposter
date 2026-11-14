@@ -1,8 +1,10 @@
 import type { Filter } from "#src/models/message/filter/Filter";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { RoomEvent } from "#src/models/realtime/RoomEvent";
+import type { RoomImport } from "#src/models/realtime/RoomImport";
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { RoomReaction } from "#src/models/realtime/RoomReaction";
+import type { RoomSummary } from "#src/models/realtime/RoomSummary";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 
@@ -94,6 +96,12 @@ export interface RoomObjectRpc {
     actor: RoomActor,
   ): Promise<ScheduledRoomMessage | null>;
   deleteScheduledMessage(id: string, actor: RoomActor): Promise<boolean>;
+
+  // The cutover's import of a room's copied history. Each row is written under the number the cutover gave it, so a re-run
+  // writes the same rows again, and each sent message is indexed in its sender's object as a live send is. Returns the
+  // room's summary after the write
+  importRoom(input: RoomImport): Promise<RoomSummary>;
+  summarizeRoom(): RoomSummary;
 
   // The person-level writes, for a moderation action or an account erase the caller has already authorised. Deleting the
   // messages returns them as they were, so the caller can remove the blobs their files named
