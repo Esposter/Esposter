@@ -1,17 +1,16 @@
+import type { MockObjectState } from "#src/services/durableObject/createMockObjectState.test";
 import type { CallParticipant } from "@esposter/db-schema";
-
-import { CLOUDFLARE_ACCOUNT_ID, PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
-import { v7 } from "uuid";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { CallObject } from "#src/durableObjects/CallObject";
 import {
   createMockObjectState,
   createSocket,
   readFrames,
-  type MockObjectState,
 } from "#src/services/durableObject/createMockObjectState.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
+import { CLOUDFLARE_ACCOUNT_ID, PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import { v7 } from "uuid";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const createParticipant = (): CallParticipant => ({
   id: v7(),
@@ -23,7 +22,7 @@ const createParticipant = (): CallParticipant => ({
   userId: v7(),
 });
 
-const respondWith = (data: unknown) => new Response(JSON.stringify({ data }));
+const respondWith = (data: unknown) => Response.json({ data });
 
 const setRejoining = (state: MockObjectState, sessionId: string, isRejoining: boolean) => {
   state.database
@@ -124,7 +123,7 @@ describe(CallObject, () => {
       sessionId: remainer.id,
       userId: remainer.userId,
     });
-    expect(repeatedLeave).toStrictEqual(null);
+    expect(repeatedLeave).toBeNull();
   });
 
   test("closing a session closes its sockets and leaves the call as a leave does, kicking its media at RealtimeKit", async () => {
@@ -200,7 +199,7 @@ describe(CallObject, () => {
       }),
     );
 
-    expect(response.status).toStrictEqual(403);
+    expect(response.status).toBe(403);
   });
 
   test("a revoke that narrows a user's publishing rejoins each of their connections with the new token", async () => {
@@ -287,7 +286,7 @@ describe(CallObject, () => {
     setRejoining(state, participant.id, false);
     const leave = callObject.participantLeft({ callSessionId, sessionId: participant.id });
 
-    expect(replacedLeave).toStrictEqual(null);
+    expect(replacedLeave).toBeNull();
     expect(participantMap).toStrictEqual(new Map([[participant.id, { ...participant, isCameraEnabled: false }]]));
     expect(leave).toStrictEqual({ callDurationSeconds: 0, sessionId: participant.id, userId: participant.userId });
   });
