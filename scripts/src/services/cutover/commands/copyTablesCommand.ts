@@ -26,11 +26,7 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
     const variables = readCutoverEnvironment();
     await runCopyTables({
       archiveBucket: getCutoverArchiveBucketName(args.environment),
-      client: createR2Client({
-        accessKeyId: variables.R2_ACCESS_KEY_ID,
-        accountId: variables.CLOUDFLARE_ACCOUNT_ID,
-        secretAccessKey: variables.R2_SECRET_ACCESS_KEY,
-      }),
+      client: createR2Client(),
       connectionString: variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING,
       delta: args.delta,
       executor: createCoreExecutor(variables),

@@ -1,5 +1,5 @@
 import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
-import type { AwsClient } from "aws4fetch";
+import type { R2Transport } from "#src/models/cloudflare/R2Transport";
 
 import { buildR2Url } from "#src/services/cutover/cloudflare/r2/buildR2Url";
 import { checkR2Response } from "#src/services/cutover/cloudflare/r2/checkR2Response";
@@ -13,14 +13,14 @@ import { FETCH_TIMEOUT_MS } from "#src/services/shared/constants";
 // failure aborts the upload, so no part is left stored and billed. An abort that fails too is logged, and the error that
 // caused the abort is what the caller sees
 export const uploadR2Multipart = async (
-  client: AwsClient,
+  transport: R2Transport,
   endpoint: string,
   bucket: string,
   key: string,
   chunks: AsyncIterable<Uint8Array>,
 ): Promise<void> => {
   const createUrl = buildR2Url(endpoint, bucket, key, { uploads: "" });
-  const created = await sendR2Request(client, Operation.Create, key, createUrl, {
+  const created = await sendR2Request(transport, Operation.Create, key, createUrl, {
     method: "POST",
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
@@ -37,17 +37,17 @@ export const uploadR2Multipart = async (
       bufferedBytes += chunk.byteLength;
       if (bufferedBytes < R2_MULTIPART_PART_BYTES) continue;
       // oxlint-disable-next-line no-await-in-loop -- parts are numbered in the order they are sent, so each waits for the one before
-      etags.push(await uploadR2Part(client, endpoint, bucket, key, uploadId, etags.length + 1, Buffer.concat(buffered)));
+      etags.push(await uploadR2Part(transport, endpoint, bucket, key, uploadId, etags.length + 1, Buffer.concat(buffered)));
       buffered = [];
       bufferedBytes = 0;
     }
     // The last part may be short, and an empty object still needs one part
     if (bufferedBytes > 0 || etags.length === 0)
-      etags.push(await uploadR2Part(client, endpoint, bucket, key, uploadId, etags.length + 1, Buffer.concat(buffered)));
+      etags.push(await uploadR2Part(transport, endpoint, bucket, key, uploadId, etags.length + 1, Buffer.concat(buffered)));
 
     const partsXml = etags.map((etag, index) => `<Part><PartNumber>${index + 1}</PartNumber><ETag>${etag}</ETag></Part>`);
     const completeUrl = buildR2Url(endpoint, bucket, key, { uploadId });
-    const completed = await sendR2Request(client, Operation.Create, key, completeUrl, {
+    const completed = await sendR2Request(transport, Operation.Create, key, completeUrl, {
       body: `<CompleteMultipartUpload>${partsXml.join("")}</CompleteMultipartUpload>`,
       method: "POST",
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
@@ -60,7 +60,7 @@ export const uploadR2Multipart = async (
   }).match(noop, async (error) => {
     await getResultAsync(async () => {
       const abortUrl = buildR2Url(endpoint, bucket, key, { uploadId });
-      const aborted = await sendR2Request(client, Operation.Delete, key, abortUrl, {
+      const aborted = await sendR2Request(transport, Operation.Delete, key, abortUrl, {
         method: "DELETE",
         signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
       });

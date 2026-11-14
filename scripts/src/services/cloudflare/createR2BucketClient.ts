@@ -2,12 +2,11 @@ import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { R2ListedObject } from "#src/models/cloudflare/R2ListedObject";
 import type { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 
+import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
 import { R2_REQUEST_TIMEOUT_MS } from "#src/services/cloudflare/constants";
 import { parseListBucketResult } from "#src/services/cloudflare/parseListBucketResult";
-import { readR2Credential } from "#src/services/cloudflare/readR2Credential";
 import { CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { AwsClient } from "aws4fetch";
 
 // Throws the refusal a response carries, read as the subject it was asked for
 const throwUnlessOk = (response: Response, subject: string): void => {
@@ -21,13 +20,8 @@ export const createR2BucketClient = (
   environment: CloudflareEnvironment,
   storageBucket: StorageBucket,
 ): R2BucketClient => {
-  const bucketUrl = `https://${readR2Credential("CLOUDFLARE_ACCOUNT_ID")}.r2.cloudflarestorage.com/${getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, storageBucket)}`;
-  const client = new AwsClient({
-    accessKeyId: readR2Credential("R2_ACCESS_KEY_ID"),
-    region: "auto",
-    secretAccessKey: readR2Credential("R2_SECRET_ACCESS_KEY"),
-    service: "s3",
-  });
+  const transport = createR2Transport();
+  const bucketUrl = `${transport.endpoint}/${getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, storageBucket)}`;
   // Each segment of a key is encoded on its own, so the slashes that separate a dataset from its hash stay separators
   const getObjectUrl = (key: string): string =>
     `${bucketUrl}/${key
@@ -35,7 +29,7 @@ export const createR2BucketClient = (
       .map((segment) => encodeURIComponent(segment))
       .join("/")}`;
   const send = (url: string, init: RequestInit = {}): Promise<Response> =>
-    client.fetch(url, { ...init, signal: AbortSignal.timeout(R2_REQUEST_TIMEOUT_MS) });
+    transport.fetch(url, { ...init, signal: AbortSignal.timeout(R2_REQUEST_TIMEOUT_MS) });
   // A ListObjectsV2 page and the pages after it, each one following the token the last one returned
   const listPage = async (prefix: string, continuationToken?: string): Promise<R2ListedObject[]> => {
     const url = new URL(bucketUrl);

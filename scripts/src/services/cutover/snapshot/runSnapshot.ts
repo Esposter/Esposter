@@ -18,11 +18,7 @@ import { StreamTable } from "@esposter/db-schema";
 // every Azure Table as JSON lines, kept until teardown
 export const runSnapshot = async (environment: CutoverEnvironment): Promise<void> => {
   const variables = readCutoverEnvironment();
-  const client = createR2Client({
-    accessKeyId: variables.R2_ACCESS_KEY_ID,
-    accountId: variables.CLOUDFLARE_ACCOUNT_ID,
-    secretAccessKey: variables.R2_SECRET_ACCESS_KEY,
-  });
+  const client = createR2Client();
   const archiveBucket = getCutoverArchiveBucketName(environment);
   const keyPrefix = `${ARCHIVE_SNAPSHOT_PREFIX}/${environment}`;
   if (await hasPgDump()) {

@@ -26,11 +26,7 @@ export const copyObjectsCommand: SubCommandsDef[string] = defineCommand({
   },
   run: async ({ args }) => {
     const variables = readCutoverEnvironment();
-    const client = createR2Client({
-      accessKeyId: variables.R2_ACCESS_KEY_ID,
-      accountId: variables.CLOUDFLARE_ACCOUNT_ID,
-      secretAccessKey: variables.R2_SECRET_ACCESS_KEY,
-    });
+    const client = createR2Client();
     const azure = createBlobServiceClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
     const archiveBucket = getCutoverArchiveBucketName(args.environment);
     for (const bucket of getCopyBuckets()) {

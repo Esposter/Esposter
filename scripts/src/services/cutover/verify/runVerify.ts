@@ -22,11 +22,7 @@ export const runVerify = async (environment: CutoverEnvironment): Promise<void> 
   const variables = readCutoverEnvironment();
   const source = createSourceClient(variables.SOURCE_DATABASE_URL);
   const executor = createCoreExecutor(variables);
-  const client = createR2Client({
-    accessKeyId: variables.R2_ACCESS_KEY_ID,
-    accountId: variables.CLOUDFLARE_ACCOUNT_ID,
-    secretAccessKey: variables.R2_SECRET_ACCESS_KEY,
-  });
+  const client = createR2Client();
   for (const table of orderCoreTables(getCoreTables())) {
     await checkTimestampUniqueIndexes(source, table);
     console.info(`${table.name}: ${await verifyCoreTable(source, executor, table)} rows match`);
