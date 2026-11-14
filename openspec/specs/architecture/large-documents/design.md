@@ -29,7 +29,7 @@ flowchart TD
 
 **Server-side readers.** A dataset read for a dashboard, a blueprint capture or a revision interprets content on the server. Its whole job is to compute something from the document, so no signed url can stand in for it.
 
-**Real-time sync.** Every save emits the parsed document it just validated on `resourceEventEmitter`, and `onSaveResourceContent` streams it whole to the owner's other devices with that resource open ([resource](../resource/design.md)). So a device subscribed to a large document still receives it through the server on each save from another device, at any size. A type whose documents outgrow one request body would have the subscription send the new `contentVersion` alone past `MAX_REQUEST_SIZE`, and the device read the blob through a read SAS like any other large read.
+**Real-time sync.** Every save sends its `{ apiKeyName, contentVersion, id }` through the owner's User object to the owner's sockets other than the saving session's ([resource](../resource/design.md)). The event carries no document, so a device with that resource open reads the new content through the type's own read, and a large document never crosses the socket.
 
 Nowhere else does the server hold a large document: carrying one from the browser to storage, or back, is never a reason to.
 

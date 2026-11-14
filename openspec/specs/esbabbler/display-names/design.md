@@ -77,7 +77,7 @@ sequenceDiagram
   participant R as userToRoom.updateUserToRoom
   participant G as assertIsManageable
   participant DB as usersToRoomsInMessage
-  participant E as userToRoomEventEmitter
+  participant E as Target's User object
   participant Q as room.readUsersByIds
   participant T as Renamed member's client
   A->>M: opens a member's menu
@@ -91,7 +91,7 @@ sequenceDiagram
   else allowed
     R->>DB: set displayName on the target's row
     DB->>E: updated row
-    E-->>T: onUpdateUserToRoom, to the target only
+    E-->>T: updateUserToRoom UserEvent, to the target's sockets only
     D->>Q: read the target's row back
     Q-->>D: resolved displayName
     D-->>A: the member list and the room's names take it
