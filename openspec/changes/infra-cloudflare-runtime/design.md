@@ -40,6 +40,15 @@ A Worker's code is capped at 64 MiB uncompressed. The server bundle carries libr
 
 A Worker has no process start, so the Nitro plugins that ran once at boot run on first use: environment validation runs on the first request of an isolate, and `getCommitCount`'s cached promise is per isolate, which is the same contract as per process.
 
+## Environment
+
+Each Worker declares every variable it reads in its schema, and [the environment spec](../../specs/architecture/environment/design.md) holds that model. Bindings are not variables: D1, R2, Queues and the Durable Objects come from `cloudflare:workers`'s `env`.
+
+- **Vars** are the values an environment's name fixes, written into wrangler: the web Worker's come from `configuration/wrangler.ts` (`APP_ENV`, `BASE_URL`, `BETTER_AUTH_URL`, `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_ENVIRONMENT`, `PUBLIC_ASSETS_BASE_URL`), the functions Worker's are in its `wrangler.jsonc`.
+- **Secrets** are the schema keys marked `.meta({ secret: true })`. Each Worker's list is in `.github/worker-secrets.json`, and the deploy job puts them with `wrangler secret bulk` after the Worker deploys. Each value is read from Pulumi ESC `esposter-infra/prod` as `pulumiConfig.esposter-infra:<environment>_<NAME>`, so `dev_` and `prod_` values sit side by side in one environment.
+- **Build-time values.** The web build bakes its public config into its runtime config, so `FACEBOOK_CLIENT_ID` and `VAPID_PUBLIC_KEY` are read from ESC before the build, and the origins come from the workflow's environment for each branch.
+- **Local development.** `predev` writes `.wrangler/local/wrangler.jsonc` from the same function and applies the `core` migrations to local D1. Nitro's Miniflare takes its bindings from `configuration/nitro.ts`, and `.env` supplies the variables, as `.env.example` lists them.
+
 ## Key files
 
 | File                                                                         | Role after the change                                                   |
