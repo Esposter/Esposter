@@ -1,6 +1,5 @@
-import { functionsEnvironmentVariablesSchema } from "#src/models/environment/FunctionsEnvironmentVariables";
 import { QueueJobHandlerMap } from "#src/services/queue/QueueJobHandlerMap";
-import { CloudflareAssetType, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
+import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 // A batch names its queue in this environment's spelling, so its job is the one whose queue name this environment builds
@@ -8,10 +7,10 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 // One batch is one queue's messages, so its handler is the job's. Each message is acknowledged when its handler resolves
 // and retried when it throws, so one failing message neither holds nor repeats the others. Past the job's retry count the
 // queue sends the message to the job's dead-letter queue, which keeps what failed.
-export const handleQueueBatch = async (batch: MessageBatch<unknown>): Promise<void> => {
-  const { CLOUDFLARE_ENVIRONMENT: environment } = functionsEnvironmentVariablesSchema
-    .pick({ CLOUDFLARE_ENVIRONMENT: true })
-    .parse(process.env);
+export const handleQueueBatch = async (
+  batch: MessageBatch<unknown>,
+  environment: CloudflareEnvironment,
+): Promise<void> => {
   const job = Object.values(QueueJob).find(
     (queueJob) => getCloudflareResourceName(environment, CloudflareAssetType.Queue, queueJob) === batch.queue,
   );

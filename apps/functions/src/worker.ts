@@ -10,8 +10,7 @@ export { Scheduler } from "#src/durableObjects/Scheduler";
 // route, so it has no fetch handler.
 export default {
   queue: (batch) => {
-    validateFunctionsEnvironment();
-    return handleQueueBatch(batch);
+    return handleQueueBatch(batch, validateFunctionsEnvironment().CLOUDFLARE_ENVIRONMENT);
   },
   scheduled: (_controller, _env, context) => {
     validateFunctionsEnvironment();
