@@ -18,9 +18,11 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Calls m
 
 The user-facing call — devices, push-to-talk, per-user volume, screenshare, picture-in-picture, hand raise, camera and mute state — keeps its stores and components; only `useLiveKitStore` and the services under `app/services/message/room/liveKit` change underneath them.
 
-## The open check
+## Revoking a permission mid-call
 
-RealtimeKit's documentation confirms the participant webhooks and client-side kick, but not a server-side participant removal or a server-side preset change, and its last explicit status was a closed beta. The first task reads the REST reference for both; if either is missing, the moderation actions would lose their server enforcement, so the part stops and reports instead of shipping that.
+RealtimeKit's REST API removes a participant from a meeting's active session and changes a participant's preset, but a preset change does not take a track that is already live off the air, and nothing in the API mutes one. So a revoke is enforced by the SFU the only way it can be: the server kicks the participant, adds them back with the narrower preset, and sends the new auth token to that user on the call's tRPC subscription; the client rejoins with it at once, so the participant sees a brief reconnect and their camera, microphone or screen share is gone. A kick or a ban by a moderator is a plain kick and sends no token. Rejected: changing the preset alone, which leaves the revoked track live until the participant toggles it themselves.
+
+The four presets — camera alone, and camera with microphone, screen share or both — and the webhook subscription are created once per environment by the provisioning step, since the Pulumi provider declares neither.
 
 ## Key files
 
