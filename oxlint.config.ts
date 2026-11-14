@@ -295,6 +295,12 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     ],
     "no-restricted-properties": [
       "error",
+      // Property alone, so `crypto.randomUUID()`, `globalThis.crypto.randomUUID()` and `window.crypto` all match
+      {
+        message:
+          "Mint an id with `v7` from `uuid`, never `randomUUID`: a version 4 is refused by the id validators. See openspec/specs/architecture/id-validation/design.md.",
+        property: "randomUUID",
+      },
       {
         message:
           "Avoid `expect.any` — capture the real value from the mock call and assert it exactly (or toBeTypeOf).",

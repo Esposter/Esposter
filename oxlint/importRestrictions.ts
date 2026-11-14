@@ -4,14 +4,16 @@ import type { RestrictedImportPattern } from "#oxlint/models/RestrictedImportPat
 import { CONTEXT_MESSAGE, USE_ROUTE_MESSAGE, VUETIFY_MESSAGE } from "#oxlint/messages";
 import { getAutoImportedPaths } from "#oxlint/services/getAutoImportedPaths";
 
+// An id is minted by `v7` from `uuid` alone: `randomUUID` and `v4` both make a version 4, which the id validators refuse
+const RANDOM_UUID_MESSAGE =
+  "Mint an id with `v7` from `uuid`, never `randomUUID`: a version 4 is refused by the id validators. See openspec/specs/architecture/id-validation/design.md.";
+const V4_MESSAGE =
+  "Mint an id with `v7` from `uuid`, never `v4`: a version 4 is refused by the id validators. See openspec/specs/architecture/id-validation/design.md.";
 // Banned in every tree, the child process ones aside: the Vuetify 0 bans hold everywhere but the UI library and the packages
 export const OTHER_RESTRICTED_IMPORT_PATHS: RestrictedImportPath[] = [
-  {
-    importNames: ["randomUUID"],
-    message:
-      "Use the global `crypto.randomUUID()` — it needs no import. (`node:crypto`'s `randomUUID` is identical but forces a Node-only import.)",
-    name: "node:crypto",
-  },
+  { importNames: ["randomUUID"], message: RANDOM_UUID_MESSAGE, name: "crypto" },
+  { importNames: ["randomUUID"], message: RANDOM_UUID_MESSAGE, name: "node:crypto" },
+  { importNames: ["v4"], message: V4_MESSAGE, name: "uuid" },
   {
     importNames: ["parseArgs"],
     message:
