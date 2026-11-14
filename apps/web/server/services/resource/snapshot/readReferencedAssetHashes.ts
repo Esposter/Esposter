@@ -1,4 +1,3 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -6,10 +5,9 @@ import { resourceVersionAssetsInResource, resourceWorkingAssetsInResource } from
 import { eq } from "drizzle-orm";
 
 // Every asset a row of this resource names, in a stored version or in the working copy. A row keeps its asset, so a write
-// That names one has no grace window to restart for it, and a write is only owed a touch for the rest. Read under the
-// Resource's object lock, where no release can drop a row between this read and the write that relies on it
+// That names one has no grace window to restart for it, and a write is only owed a touch for the rest.
 export const readReferencedAssetHashes = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   resourceId: ResourceInResource["id"],
 ): Promise<Set<string>> => {
   const versionRows = await db

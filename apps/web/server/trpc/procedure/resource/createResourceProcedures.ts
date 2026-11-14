@@ -1,5 +1,4 @@
 /* eslint-disable no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows; the union zod infers from a generic map key overlaps no one type's schema */
-import type { Transaction } from "#server/models/db/Transaction";
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
 import type { Device } from "#shared/models/auth/Device";
@@ -11,7 +10,6 @@ import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
-import type { WrittenVersion } from "keyframe-store";
 import type { z } from "zod";
 
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
@@ -35,10 +33,11 @@ import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiv
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { chargeSnapshotVersion } from "#server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
-import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
+import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
+import { getSnapshotVersionWrites } from "#server/services/resource/snapshot/getSnapshotVersionWrites";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
-import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
+import { prepareSnapshotVersion } from "#server/services/resource/snapshot/prepareSnapshotVersion";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
@@ -78,7 +77,7 @@ import {
   SnapshotChannel,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
-import { and, EmptyFilter, eq, sql } from "drizzle-orm";
+import { and, EmptyFilter, eq, exists, sql } from "drizzle-orm";
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
@@ -291,57 +290,52 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const publishedContent = transformPublishedContent
           ? await transformPublishedContent(ctx, ctx.resource, content)
           : content;
-        // What the store wrote, recorded rather than returned, for the charge after the transaction. No reason on the
-        // Row: a published version's reason is that it was published, which its channel already says
-        let writtenVersion: undefined | WrittenVersion;
-        const writePublishedVersion = async (
-          db: Context["db"] | Transaction,
-          publishVersion: ResourcePublicationInResource["publishVersion"],
-          value: unknown,
-        ) => {
-          writtenVersion = await writeSnapshotVersion(
-            db,
-            ctx.resource,
-            { channel: SnapshotChannel.Published, version: publishVersion },
-            JSON.stringify(value),
-          );
-        };
         // The draft version this publish is taken from, written on both the insert and the conflict update: a
         // Row left carrying the column's default reports a draft that has moved since it was published,
         // Whatever the owner has or has not edited since
         const { contentVersion: publishedContentVersion } = ctx.resource;
-        // Bump the version and write the version in one transaction so a failed write rolls the version bump
-        // Back: the publication row can never point at a publishVersion that was never stored.
-        const publication = await ctx.db.transaction(async (tx) => {
-          // The version bump is done in SQL so concurrent publishes each claim a distinct version;
-          // The publication row exists only while the resource is published (the Publishable capability's state)
-          const newPublication = requireMutation(
-            (
-              await tx
-                .insert(resourcePublicationsInResource)
-                .values({ publishedContentVersion, resourceId: id })
-                .onConflictDoUpdate({
-                  set: {
-                    publishedAt: new Date(),
-                    publishedContentVersion,
-                    publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
-                  },
-                  target: resourcePublicationsInResource.resourceId,
-                })
-                .returning()
-            )[0],
-            Operation.Update,
-            DatabaseEntityType.ResourcePublication,
+        // The content is stored before anything is claimed, so a failed store claims nothing and the publication never names a
+        // version that was never stored (openspec/specs/resource/resource-version-store/design.md)
+        const prepared = await prepareSnapshotVersion(
+          ctx.db,
+          ctx.resource,
+          SnapshotChannel.Published,
+          JSON.stringify(publishedContent),
+        );
+        // The claim and the version it names are one batch. The version reads the publication counter the claim has just
+        // bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
+        // version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
+        const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
+        const [publicationRows] = await ctx.db.batch([
+          ctx.db
+            .insert(resourcePublicationsInResource)
+            .values({ publishedContentVersion, resourceId: id })
+            .onConflictDoUpdate({
+              set: {
+                publishedAt: new Date(),
+                publishedContentVersion,
+                publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
+              },
+              target: resourcePublicationsInResource.resourceId,
+            })
+            .returning(),
+          ...getSnapshotVersionWrites(
+            ctx.db,
             id,
-          );
-          await writePublishedVersion(tx, newPublication.publishVersion, publishedContent);
-          return newPublication;
-        });
-        // A version is stored bytes the owner keeps, charged for what its object cost. After the transaction, never
-        // Inside: the charge locks the ledger row
-        // And then the user's, and a transaction held open across that waits on locks it is itself holding.
+            { channel: SnapshotChannel.Published, version: publishVersion },
+            prepared,
+          ),
+        ]);
+        const publication = requireMutation(
+          publicationRows[0],
+          Operation.Update,
+          DatabaseEntityType.ResourcePublication,
+          id,
+        );
+        // A version is stored bytes the owner keeps, charged for what its object cost. After the batch, never inside: the
+        // charge locks the ledger row and then the user's, and a batch held open across that waits on locks it is itself holding.
         // See openspec/specs/resource/storage-quotas/design.md
-        if (writtenVersion) await chargeSnapshotVersion(ctx.db, ctx.resource, writtenVersion);
+        await chargeSnapshotVersion(ctx.db, ctx.resource, prepared.writtenVersion);
         // Best-effort: a failed write loses one trail entry, never the publish.
         getSynchronizedFunction(writeResourceActivity)(ctx, {
           activityType: ResourceActivityType.Published,
@@ -396,30 +390,35 @@ export const createResourceProcedures = <TType extends ResourceType>(
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx }) => {
         const { id } = ctx.resource;
-        // The publication row and the published channel's versions are removed in one transaction, so a publish that
-        // Lands between them cannot have its new version deleted by this unpublish while its publication row survives
-        const unpublication = await ctx.db.transaction(async (tx) => {
-          const [deletedPublication] = await tx
-            .delete(resourcePublicationsInResource)
-            .where(eq(resourcePublicationsInResource.resourceId, id))
-            .returning();
-          // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything, so every
-          // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
-          // Change that never happened
-          if (!deletedPublication) return undefined;
-          // The published channel's versions go with the publication, and the objects nothing else names go to the
-          // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
-          return deleteSnapshotVersions(
-            tx,
-            id,
+        // The publication row and the published channel's versions go in one batch, and the versions are selected only while
+        // the publication exists, so a publish landing between them cannot have its new version deleted by this unpublish
+        // while its publication row survives
+        const [referenceRows, unpublishedVersions, deletedPublications] = await ctx.db.batch([
+          ...getSnapshotVersionDeletes(
+            ctx.db,
             and(
               eq(resourceVersionsInResource.resourceId, id),
               eq(resourceVersionsInResource.channel, SnapshotChannel.Published),
+              exists(
+                ctx.db
+                  .select({ one: sql`1` })
+                  .from(resourcePublicationsInResource)
+                  .where(eq(resourcePublicationsInResource.resourceId, id)),
+              ),
             ),
-          );
-        });
-        if (!unpublication) return ctx.resource;
-        const { assetHashes, deletedVersions: unpublishedVersions } = unpublication;
+          ),
+          ctx.db
+            .delete(resourcePublicationsInResource)
+            .where(eq(resourcePublicationsInResource.resourceId, id))
+            .returning(),
+        ]);
+        // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything, so every
+        // Effect below it is a phantom, and an activity entry or a push to the owner's other devices would report a state
+        // Change that never happened
+        if (deletedPublications.length === 0) return ctx.resource;
+        // The published channel's versions go with the publication, and the objects nothing else names go to the
+        // Deletion path — the working copy's revisions may still share a keyframe with one, which collection keeps
+        const assetHashes = [...new Set(referenceRows.map(({ assetHash }) => assetHash))];
         await getResultAsync(() => collectSnapshotObjects(ctx.db, id, unpublishedVersions)).match(noop, console.error);
         await getResultAsync(() => releaseResourceAssets(ctx.db, id, assetHashes)).match(noop, console.error);
         // Best-effort: a failed write loses one trail entry, never the unpublish.

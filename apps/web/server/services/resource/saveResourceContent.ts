@@ -1,8 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
-import type { Transaction } from "#server/models/db/Transaction";
 import type { SaveResourceContentInput } from "#server/models/resource/SaveResourceContentInput";
 import type { Context } from "#server/trpc/context";
-import type { ResourceInResource } from "@esposter/db-schema";
+import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
 import { getDevice } from "#server/services/auth/getDevice";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
@@ -31,7 +30,7 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, exists, sql } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
 // The durable write and everything that must follow it, as one unit: the save event, the activity entry and the
@@ -124,78 +123,88 @@ export const saveResourceContent = async (
     storedResourceLinkTargets.some(
       (storedResourceLinkTarget) => !resourceLinkKeys.has(getResourceLinkKey(storedResourceLinkTarget)),
     );
-  // No links is the set that can never be wrong — it authorizes nothing — so a clear is safe to apply anywhere
-  const clearResourceLinks = (db: Context["db"] | Transaction) =>
-    db.delete(resourceLinksInResource).where(eq(resourceLinksInResource.sourceId, id));
-  // Under a lock on the row at the version this save established, so the write loses to a newer save the way the
-  // Version bump itself does, and a save committing meanwhile waits for these rows rather than interleaving
-  const writeResourceLinks = (expectedContentVersion: number) =>
-    ctx.db.transaction(async (tx) => {
-      const [lockedResource] = await tx
+  // A save's links are a set its content version names. The clear and the write are guarded on that version, so a save
+  // superseded since it established its version clears nothing and writes nothing
+  const isCurrentContentVersion = (expectedContentVersion: number) =>
+    exists(
+      ctx.db
         .select({ id: resourcesInResource.id })
         .from(resourcesInResource)
-        .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, expectedContentVersion)))
-        .for("update");
-      if (!lockedResource) return;
-
-      await clearResourceLinks(tx);
-      if (resourceLinkTargets.length > 0)
-        await tx
-          .insert(resourceLinksInResource)
-          .values(resourceLinkTargets.map(({ targetId, type }) => ({ sourceId: id, targetId, type })));
-    });
-  // The links are cleared inside the transaction and written after it commits, so they never claim what the blob
-  // Does not back. A cleared set rejects the survey's tokens until the next save that lands writes it again —
-  // Every partial outcome lands there rather than on a stale set:
+        .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, expectedContentVersion))),
+    );
+  // No links is the set that can never be wrong — it authorizes nothing — so a clear is safe to apply anywhere
+  const clearResourceLinks = (where?: ReturnType<typeof isCurrentContentVersion>) =>
+    ctx.db.delete(resourceLinksInResource).where(and(eq(resourceLinksInResource.sourceId, id), where));
+  // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the one this
+  // save wrote or the one the save that superseded it wrote
+  const writeResourceLinks = (expectedContentVersion: number) =>
+    ctx.db.batch([
+      clearResourceLinks(isCurrentContentVersion(expectedContentVersion)),
+      ctx.db.insert(resourceLinksInResource).select(
+        ctx.db
+          .select({
+            sourceId: sql<ResourceInResource["id"]>`${id}`,
+            targetId: sql<string>`json_extract(link.value, '$.targetId')`,
+            type: sql<ResourceLinkInResource["type"]>`json_extract(link.value, '$.type')`,
+          })
+          .from(sql`json_each(${JSON.stringify(resourceLinkTargets)}) AS link`)
+          .where(isCurrentContentVersion(expectedContentVersion)),
+      ),
+    ]);
+  // The links are cleared before the upload and written after the charge, so they never claim what the blob does not back. A
+  // cleared set rejects the survey's tokens until the next save that lands writes it again — every partial outcome lands there
+  // rather than on a stale set:
   //
-  // - the version check loses to a concurrent save: the clear rolls back with it, so the winner's links stand
-  // - the transaction fails after the upload: the rollback restores links for content that is already gone,
-  //   Which for an unbind is fail-open, so the clear is reapplied outside the transaction
-  // - it commits: the new links are written after, once the content they describe is durable
+  // - the version check loses to a concurrent save: nothing was claimed, so no link is cleared
+  // - the upload fails: the version bump is put back and the links are cleared, since for an unbind the content may have landed
+  //   and keeping the old set would be fail-open
+  // - it succeeds: the new links are written after, once the content they describe is durable
   //
   // The assets the content embeds, named by the working copy's reference rows before the upload and settled to them
   // After it. Scanned from the serialized content, the bytes the blob is written from
   const assetHashes = getSnapshotAssetHashes(serializedContent);
   await reserveWorkingAssets(ctx.db, id, assetHashes);
-  // The bump and the blob share one transaction so a failed write rolls the bump back — a write that did not land
-  // Must never advance the version every client caches against. A first write has no version to protect, and
-  // Wrapping it would hold a pooled connection across a storage round trip
+  // The bump is claimed before the upload, so a save that loses the version check writes no content. A failed upload puts it
+  // back, so a write that did not land never leaves a version every client caches against advanced. A first write has no
+  // version to protect and claims none
   let savedResource: ResourceInResource;
   // The rows dropped once the blob has landed, released after the write so a dropped asset is collected like any other
   let removedAssetHashes: string[] = [];
   if (contentVersion === undefined) {
-    if (hasResourceLinksChanged) await clearResourceLinks(ctx.db);
+    if (hasResourceLinksChanged) await clearResourceLinks();
     await writeContentBlob();
     await ctx.db.update(resourcesInResource).set({ contentHash, contentSize }).where(eq(resourcesInResource.id, id));
     removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
     savedResource = { ...resource, contentHash, contentSize };
-  } else
-    savedResource = await getResultAsync(() =>
-      ctx.db.transaction(async (tx) => {
-        // One statement for every column the save moves, with the version check part of it so concurrent saves
-        // Cannot both pass and silently lose one write. Ahead of the upload is safe: nothing it sets is visible
-        // Before the commit, and a failed upload rolls it back
-        const updatedResource = (
-          await tx
-            .update(resourcesInResource)
-            .set({ contentHash, contentSize, contentVersion: contentVersion + 1 })
-            .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, contentVersion)))
-            .returning()
-        )[0];
-        if (!updatedResource)
-          throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
-        if (hasResourceLinksChanged) await clearResourceLinks(tx);
-        await writeContentBlob();
-        removedAssetHashes = await pruneWorkingAssets(tx, id, assetHashes);
-        return updatedResource;
-      }),
-    ).match(
-      (updatedResource) => updatedResource,
-      async (error) => {
-        if (hasResourceLinksChanged && isContentBlobWriteAttempted) await clearResourceLinks(ctx.db);
-        throw error;
-      },
-    );
+  } else {
+    // One statement for every column the save moves, with the version check part of it so concurrent saves cannot both
+    // pass and silently lose one write
+    const [updatedResource] = await ctx.db
+      .update(resourcesInResource)
+      .set({ contentHash, contentSize, contentVersion: contentVersion + 1 })
+      .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, contentVersion)))
+      .returning();
+    if (!updatedResource) throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
+    savedResource = updatedResource;
+    if (hasResourceLinksChanged) await clearResourceLinks(isCurrentContentVersion(savedResource.contentVersion));
+    await getResultAsync(async () => {
+      isContentBlobWriteAttempted = true;
+      await writeContentBlob();
+      removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
+    }).match(noop, async (error) => {
+      // Put back only while it is still this save's bump, and the failure clears links whichever way the upload went
+      await getResultAsync(() =>
+        ctx.db
+          .update(resourcesInResource)
+          .set({ contentHash: resource.contentHash, contentSize: resource.contentSize, contentVersion })
+          .where(
+            and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, savedResource.contentVersion)),
+          ),
+      ).match(noop, console.error);
+      if (hasResourceLinksChanged && isContentBlobWriteAttempted) await clearResourceLinks();
+      throw error;
+    });
+  }
   // The owner is charged for their own content as for any upload, from here because this write knows its size
   // And a blob with no reserve behind it has no ledger row for `BlobCreated` to find. `resource.userId`, not the
   // Caller: a blueprint deploy or a restore writes on the owner's behalf. After the transaction, because the
@@ -208,12 +217,12 @@ export const saveResourceContent = async (
     contentBlobName,
     storedContentSize,
   );
-  // Guarded on the version this save established: the bump is what orders two saves, and this write lands after
-  // The transaction that made it, so unguarded a save that committed first could overwrite a later one's links
-  // A failed write clears the set rather than keeping the previous one, which the committed content no longer backs
+  // Guarded on the version this save established: the bump is what orders two saves, and this write lands after the bump, so
+  // unguarded a save that committed first could overwrite a later one's links. A failed write clears the set rather than
+  // keeping the previous one, which the committed content no longer backs
   if (hasResourceLinksChanged)
     await getResultAsync(() => writeResourceLinks(savedResource.contentVersion)).match(noop, async (error) => {
-      await clearResourceLinks(ctx.db);
+      await clearResourceLinks();
       throw error;
     });
 

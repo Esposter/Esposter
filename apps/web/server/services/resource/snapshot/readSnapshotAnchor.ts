@@ -1,4 +1,3 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SnapshotChannel } from "@esposter/db-schema";
 import type { VersionAnchor } from "keyframe-store";
@@ -11,7 +10,7 @@ import { and, eq, gt, sum } from "drizzle-orm";
 // It. A column holding either would be a second source of truth for what one indexed read answers, and one
 // That could disagree with the rows after a failed write
 export const readSnapshotAnchor = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   resourceId: ResourceInResource["id"],
   channel: SnapshotChannel,
 ): Promise<VersionAnchor> => {

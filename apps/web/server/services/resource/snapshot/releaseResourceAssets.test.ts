@@ -2,7 +2,7 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
+import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -60,11 +60,10 @@ describe(releaseResourceAssets, () => {
   const setGraceElapsed = () => {
     vi.setSystemTime(Date.now() + ASSET_GRACE_MS);
   };
-  const deleteVersion = (version: number) =>
-    mockContext.db.transaction((tx) =>
-      deleteSnapshotVersions(
-        tx,
-        resource.id,
+  const deleteVersion = async (version: number) => {
+    const [referenceRows, deletedVersions] = await mockContext.db.batch(
+      getSnapshotVersionDeletes(
+        mockContext.db,
         and(
           eq(resourceVersionsInResource.resourceId, resource.id),
           eq(resourceVersionsInResource.channel, SnapshotChannel.Revisions),
@@ -72,6 +71,8 @@ describe(releaseResourceAssets, () => {
         ),
       ),
     );
+    return { assetHashes: referenceRows.map(({ assetHash }) => assetHash), deletedVersions };
+  };
   const readAssetHashes = () =>
     mockContext.db
       .select({ assetHash: resourceVersionAssetsInResource.assetHash })

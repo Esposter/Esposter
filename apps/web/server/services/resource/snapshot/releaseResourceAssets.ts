@@ -1,10 +1,8 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
-import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
 import { getBucket } from "#server/services/storage/getBucket";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import {
@@ -25,10 +23,10 @@ const checkIsWithinGrace = async (bucket: R2Bucket, blobName: string) => {
 };
 // The one release every path takes: an eviction, an unpublish, a file delete and a content write each name the asset
 // Hashes they may have just left unreferenced. A candidate is deleted only when no version row and no working-copy row
-// Of the resource names it, and it is outside the grace window. Under the resource's object lock, so a write reserving
-// An asset is either committed before the rows are read or not started until the release has finished
+// Of the resource names it, and it is outside the grace window. A reference written after the rows are read is touched
+// Under its own write, which restarts the window, so the grace check keeps its blob and the decision needs no lock
 export const releaseResourceAssets = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   resourceId: ResourceInResource["id"],
   candidateHashes: string[],
 ): Promise<void> => {
@@ -36,35 +34,34 @@ export const releaseResourceAssets = async (
 
   // Taken before the rows are read, so a reference written after the read is dated after this decision and its blob is kept
   const decidedAt = new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS);
-  const unreferencedHashes = await db.transaction(async (tx) => {
-    await lockSnapshotObjects(tx, resourceId);
-    const retainedRows = await tx
+  const [retainedRows, workingRows] = await Promise.all([
+    db
       .select({ assetHash: resourceVersionAssetsInResource.assetHash })
       .from(resourceVersionAssetsInResource)
-      .where(eq(resourceVersionAssetsInResource.resourceId, resourceId));
-    const workingRows = await tx
+      .where(eq(resourceVersionAssetsInResource.resourceId, resourceId)),
+    db
       .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
       .from(resourceWorkingAssetsInResource)
-      .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId));
-    const survivors = new Set([
-      ...retainedRows.map(({ assetHash }) => assetHash),
-      ...workingRows.map(({ assetHash }) => assetHash),
-    ]);
-    const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
+      .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId)),
+  ]);
+  const survivors = new Set([
+    ...retainedRows.map(({ assetHash }) => assetHash),
+    ...workingRows.map(({ assetHash }) => assetHash),
+  ]);
+  const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
 
-    const bucket = getBucket(StorageBucket.ResourceAssets);
-    const graceChecks = await settleAll(
-      unclaimedHashes.map((hash) => async () => ({
-        hash,
-        isWithinGrace: await checkIsWithinGrace(bucket, getResourceFileBlobName(resourceId, hash)),
-      })),
-      MAX_CONCURRENT_BLOB_COPIES,
-    );
-    return graceChecks.filter(({ isWithinGrace }) => !isWithinGrace).map(({ hash }) => hash);
-  });
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const graceChecks = await settleAll(
+    unclaimedHashes.map((hash) => async () => ({
+      hash,
+      isWithinGrace: await checkIsWithinGrace(bucket, getResourceFileBlobName(resourceId, hash)),
+    })),
+    MAX_CONCURRENT_BLOB_COPIES,
+  );
+  const unreferencedHashes = graceChecks.filter(({ isWithinGrace }) => !isWithinGrace).map(({ hash }) => hash);
 
-  // Best-effort and after the transaction: nothing here is written, and a failed publish leaves the blob stored and
-  // Charged until the next release names it again
+  // Best-effort: nothing here is written, and a failed publish leaves the blob stored and charged until the next
+  // release names it again
   await publishBlobDeletion(
     StorageBucket.ResourceAssets,
     unreferencedHashes.map((hash) => getResourceFileBlobName(resourceId, hash)),
