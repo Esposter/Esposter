@@ -42,7 +42,6 @@
     "infra:up": "pnpm build && pulumi up",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "test": "vitest",
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
