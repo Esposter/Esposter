@@ -4,15 +4,36 @@ import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import userMigrations from "#src/durableObjects/user/migrations/migrations";
 import { scheduledMessagesInUser, sentMessagesInUser, todoRemindersInUser } from "#src/durableObjects/user/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { TODO_REMINDER_RETRY_DELAY_MS } from "#src/services/todoReminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
-import { getResultAsync } from "@esposter/shared";
+import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
+import { getResultAsync, noop } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
+
+// A revoked session's sockets close with code 1008, the policy close a server gives for a credential it no longer accepts
+const SESSION_REVOKED_CLOSE_CODE = 1008;
 
 // One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages and
 // their TodoList reminders, and its one alarm is set to the earliest reminder still ahead, or a retry for one that failed
 export class UserObject extends RealtimeObject<UserEvent> implements UserObjectRpc {
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
+
+  // The first socket brings the person online and the last one to close takes them offline. The count is taken before
+  // the base accepts the socket, and that accept runs synchronously inside its fetch, so a concurrent upgrade sees it
+  override async fetch(request: Request): Promise<Response> {
+    const isFirstSocket = this.ctx.getWebSockets().length === 0;
+    const response = await super.fetch(request);
+    const identity = readSocketIdentity(request.headers);
+    if (isFirstSocket && response.status === 101 && identity) this.reportPresence(identity.userId, true);
+    return response;
+  }
+
+  override webSocketClose(ws: WebSocket, code: number, reason: string) {
+    super.webSocketClose(ws, code, reason);
+    const userId = this.ctx.id.name;
+    if (userId && this.ctx.getWebSockets().every((socket) => socket === ws)) this.reportPresence(userId, false);
+  }
 
   // A reminder whose send failed is retried this long after the failure. The alarm is re-armed here and in the alarm
   // itself, so a row that stays overdue is never left without one
@@ -43,6 +64,13 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
           );
     }
     await this.armAlarm();
+  }
+
+  // A revoked session's sockets close here and no other session's do. Each close runs the base's own close hook, so the
+  // presence it ends is reported like any other close
+  async closeSession(sessionId: string): Promise<void> {
+    for (const ws of this.ctx.getWebSockets(`session:${sessionId}`))
+      ws.close(SESSION_REVOKED_CLOSE_CODE, "Session revoked");
   }
 
   async addScheduledMessage(scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }): Promise<void> {
@@ -120,6 +148,15 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.db
       .delete(sentMessagesInUser)
       .where(and(eq(sentMessagesInUser.roomId, input.roomId), eq(sentMessagesInUser.messageId, input.messageId)));
+  }
+
+  // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on
+  private reportPresence(userId: string, isConnected: boolean) {
+    this.ctx.waitUntil(
+      getResultAsync(() => setUserConnectedInRooms(userId, isConnected)).match(noop, (error) => {
+        console.error("UserStatus failed to report presence", { error, isConnected, userId });
+      }),
+    );
   }
 
   // The alarm is the earliest reminder still ahead, or a retry for one that is overdue: the rows the alarm could not

@@ -1,7 +1,7 @@
-import type { UserStatusInMessage } from "@esposter/db-schema";
+import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 
-import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
-import { UserStatus, UserStatuses } from "@esposter/db-schema";
+import { getDetectedUserStatus } from "#src/services/user/getDetectedUserStatus";
+import { UserStatus, UserStatuses } from "#src/models/user/UserStatus";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getDetectedUserStatus, () => {

@@ -15,7 +15,7 @@ import { on } from "#server/services/events/on";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { readCallBackgroundBlobs } from "#server/services/message/call/readCallBackgroundBlobs";
-import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
+import { getDetectedUserStatus } from "@esposter/db-schema";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
@@ -26,7 +26,6 @@ import { deleteAccountSessions } from "#server/services/user/deleteAccountSessio
 import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
-import { upsertConnectedStatus } from "#server/services/user/upsertConnectedStatus";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -69,7 +68,6 @@ import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const userRouter = router({
-  connect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, true)),
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
   // Side that can, so the scopes a key holds are the ones its owner ticked. Answers with the whole key, which is stored
   // Only hashed, so the owner is shown it once
@@ -115,7 +113,6 @@ export const userRouter = router({
         new Date(),
       ).match(noop, console.error);
     }),
-  disconnect: standardAuthedProcedure.mutation<void>(({ ctx }) => upsertConnectedStatus(ctx, false)),
   generateCallBackgroundUploadUrl: standardAuthedProcedure
     .input(generateCallBackgroundUploadUrlInputSchema)
     .mutation<string>(async ({ ctx, input: { mimetype, size, slot } }) => {
