@@ -96,6 +96,7 @@ export const createR2Client = (): R2Client => {
       });
       if (options.cacheControl) headers.set("cache-control", options.cacheControl);
       if (options.contentDisposition) headers.set("content-disposition", options.contentDisposition);
+      if (options.contentEncoding) headers.set("content-encoding", options.contentEncoding);
       if (options.contentType) headers.set("content-type", options.contentType);
       const url = buildR2Url(endpoint, bucket, key, {});
       const response = await sendR2Request(streamTransport, Operation.Create, key, url, {

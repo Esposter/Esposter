@@ -2,6 +2,7 @@
 export interface R2PutStreamOptions {
   cacheControl?: string;
   contentDisposition?: string;
+  contentEncoding?: string;
   contentType?: string;
   size: number;
 }

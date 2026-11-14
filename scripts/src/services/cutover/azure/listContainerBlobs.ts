@@ -14,6 +14,7 @@ export const listContainerBlobs = async function* (containerClient: ContainerCli
       yield {
         cacheControl: properties.cacheControl,
         contentDisposition: properties.contentDisposition,
+        contentEncoding: properties.contentEncoding,
         contentType: properties.contentType,
         lastModified: properties.lastModified,
         md5: properties.contentMD5 === undefined ? undefined : Buffer.from(properties.contentMD5).toString("base64"),

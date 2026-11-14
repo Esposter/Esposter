@@ -39,3 +39,5 @@ export const CUTOVER_SECRET_HEADER = "x-cutover-secret";
 export const ESTIMATE_BYTES_PER_SECOND = 10 * 1024 * 1024;
 export const ESTIMATE_ROWS_PER_SECOND = 2000;
 export const MD5_ALGORITHM = "md5";
+// The compression the app stores a JSON document in, which the copy rewrites inside and carries to R2
+export const ZSTD_CONTENT_ENCODING = "zstd";

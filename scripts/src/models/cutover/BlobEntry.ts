@@ -3,6 +3,8 @@
 export interface BlobEntry {
   cacheControl?: string;
   contentDisposition?: string;
+  // How the stored bytes are compressed, such as `zstd` for a JSON document the app wrote as a compressed frame
+  contentEncoding?: string;
   contentType?: string;
   lastModified: Date;
   md5?: string;

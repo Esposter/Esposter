@@ -3,35 +3,34 @@ import type { R2Object } from "#src/models/cutover/R2Object";
 import type { VerifyBucketObjectsOptions } from "#src/models/cutover/VerifyBucketObjectsOptions";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { downloadBlobBody } from "#src/services/cutover/azure/downloadBlobBody";
 import { listContainerBlobs } from "#src/services/cutover/azure/listContainerBlobs";
 import { readBlobMd5 } from "#src/services/cutover/azure/readBlobMd5";
 import { COPY_CONCURRENCY, MD5_ALGORITHM } from "#src/services/cutover/constants";
 import { base64ToHex } from "#src/services/cutover/objects/base64ToHex";
 import { checkIsTextualBlob } from "#src/services/cutover/objects/checkIsTextualBlob";
-import { readBlobText } from "#src/services/cutover/objects/readBlobText";
+import { readStoredBlobBytes } from "#src/services/cutover/objects/readStoredBlobBytes";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { Buffer } from "node:buffer";
 import { createHash } from "node:crypto";
 
-// The MD5 an object holds: a textual blob's bytes with its ids rewritten, which the copy wrote.
-// Any other blob's own digest, or one hashed from its bytes when Azure stored none
-const readExpectedMd5 = async (
+// The size and MD5 an object holds: a textual blob's bytes as the copy stored them, its ids rewritten.
+// Any other blob's own size and digest, or a digest hashed from its bytes when Azure stored none
+const readExpectedObject = async (
   containerClient: ContainerClient,
   blob: BlobEntry,
   rewrite: (text: string) => string,
-): Promise<string> => {
+): Promise<{ md5: string; size: number }> => {
   if (checkIsTextualBlob(blob)) {
-    const text = await readBlobText(await downloadBlobBody(containerClient, blob.name));
-    return createHash(MD5_ALGORITHM)
-      .update(Buffer.from(rewrite(text), "utf8"))
-      .digest("hex");
+    const bytes = await readStoredBlobBytes(containerClient, blob, rewrite);
+    return { md5: createHash(MD5_ALGORITHM).update(bytes).digest("hex"), size: bytes.byteLength };
   }
-  return blob.md5 === undefined ? readBlobMd5(containerClient, blob.name) : base64ToHex(blob.md5);
+  return {
+    md5: blob.md5 === undefined ? await readBlobMd5(containerClient, blob.name) : base64ToHex(blob.md5),
+    size: blob.size,
+  };
 };
 
-// Checks a bucket against its container: no key names an old id, the same number of objects and bytes, then each blob's object by its new key, its size and its MD5.
+// Checks a bucket against its container: no key names an old id, the same number of objects, then each blob's object by its new key, its size and its MD5.
 // The first difference fails the step, naming its key
 export const verifyBucketObjects = async (options: VerifyBucketObjectsOptions): Promise<void> => {
   const { azure, bucket, client, idMap, r2Bucket } = options;
@@ -52,18 +51,13 @@ export const verifyBucketObjects = async (options: VerifyBucketObjectsOptions): 
       bucket,
       `holds ${blobs.length} blobs but ${objects.size} objects in R2`,
     );
-  const blobBytes = blobs.reduce((total, blob) => total + blob.size, 0);
-  const objectBytes = [...objects.values()].reduce((total, object) => total + object.size, 0);
-  if (blobBytes !== objectBytes)
-    throw new InvalidOperationError(Operation.Read, bucket, `holds ${blobBytes} bytes but ${objectBytes} in R2`);
-
   await forEachConcurrently(blobs, COPY_CONCURRENCY, async (blob) => {
     const key = idMap.rewrite(blob.name);
     const object = objects.get(key);
     if (object === undefined) throw new InvalidOperationError(Operation.Read, key, "is missing from R2");
-    if (object.size !== blob.size)
-      throw new InvalidOperationError(Operation.Read, key, `is ${blob.size} bytes in Azure but ${object.size} in R2`);
-    const md5 = await readExpectedMd5(containerClient, blob, (text) => idMap.rewrite(text));
+    const { md5, size } = await readExpectedObject(containerClient, blob, (text) => idMap.rewrite(text));
+    if (object.size !== size)
+      throw new InvalidOperationError(Operation.Read, key, `is ${size} bytes as copied but ${object.size} in R2`);
     if (md5 !== object.etag)
       throw new InvalidOperationError(Operation.Read, key, `has MD5 ${md5} in Azure but ${object.etag} in R2`);
   });
