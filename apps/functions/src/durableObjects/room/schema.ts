@@ -1,6 +1,6 @@
 import type { FileEntity, LinkPreviewResponse, MessageType } from "@esposter/db-schema";
 
-import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 // One row is one message in the room. Its id is the room's sequence: `autoIncrement` keeps it from being handed out
 // again after the newest row is removed, so it only grows and a page is `id < ?`. Every field a query filters on is a
@@ -8,29 +8,35 @@ import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlit
 // space-joined file names the search index reads, written with the row so the index's triggers stay plain SQL.
 // A reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages. A webhook message
 // has no `userId`; its `appUserId` names the webhook identity that sent it
-export const messagesInRoom = sqliteTable("messages", {
-  appUserId: text(),
-  // The image the webhook identity had when it sent, copied in so a read names the sender without the app user's row
-  appUserImage: text().notNull().default(""),
-  createdAt: integer({ mode: "timestamp_ms" }).notNull(),
-  deletedAt: integer({ mode: "timestamp_ms" }),
-  filenames: text().notNull().default(""),
-  files: text({ mode: "json" }).$type<FileEntity[]>().notNull().default([]),
-  id: integer().primaryKey({ autoIncrement: true }),
-  isEdited: integer({ mode: "boolean" }).notNull().default(false),
-  isForward: integer({ mode: "boolean" }).notNull().default(false),
-  isPinned: integer({ mode: "boolean" }).notNull().default(false),
-  linkPreviewResponse: text({ mode: "json" }).$type<LinkPreviewResponse>(),
-  mentions: text({ mode: "json" }).$type<string[]>().notNull().default([]),
-  message: text().notNull().default(""),
-  replyToId: integer(),
-  // The name a webhook message was sent under; null for a member's own message
-  senderName: text(),
-  type: text().$type<MessageType>().notNull(),
-  updatedAt: integer({ mode: "timestamp_ms" }).notNull(),
-  // Null for a webhook message and for a message whose author's account was erased
-  userId: text(),
-});
+export const messagesInRoom = sqliteTable(
+  "messages",
+  {
+    appUserId: text(),
+    // The image the webhook identity had when it sent, copied in so a read names the sender without the app user's row
+    appUserImage: text().notNull().default(""),
+    createdAt: integer({ mode: "timestamp_ms" }).notNull(),
+    deletedAt: integer({ mode: "timestamp_ms" }),
+    filenames: text().notNull().default(""),
+    files: text({ mode: "json" }).$type<FileEntity[]>().notNull().default([]),
+    id: integer().primaryKey({ autoIncrement: true }),
+    isEdited: integer({ mode: "boolean" }).notNull().default(false),
+    isForward: integer({ mode: "boolean" }).notNull().default(false),
+    isPinned: integer({ mode: "boolean" }).notNull().default(false),
+    linkPreviewResponse: text({ mode: "json" }).$type<LinkPreviewResponse>(),
+    mentions: text({ mode: "json" }).$type<string[]>().notNull().default([]),
+    message: text().notNull().default(""),
+    replyToId: integer(),
+    // The name a webhook message was sent under; null for a member's own message
+    senderName: text(),
+    type: text().$type<MessageType>().notNull(),
+    updatedAt: integer({ mode: "timestamp_ms" }).notNull(),
+    // Null for a webhook message and for a message whose author's account was erased
+    userId: text(),
+    // The id a webhook push was accepted under. Unique, so a redelivered push finds the message it already wrote
+    webhookDeliveryId: text(),
+  },
+  (table) => [uniqueIndex("messagesWebhookDeliveryIdIndex").on(table.webhookDeliveryId)],
+);
 
 // One row is one reaction on one message: the members who chose one emoji. A deleted message takes its reactions with it
 export const messageEmojisInRoom = sqliteTable(

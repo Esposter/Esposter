@@ -44,8 +44,8 @@ export default defineEventHandler(async (event) => {
       return { message: "Invalid payload." };
     }
 
-    // Accepted once queued: the job creates the message and is not idempotent, so it runs once per accepted push
-    await getJobQueue(QueueJob.ProcessWebhook).send({ payload, webhook });
+    // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message once
+    await getJobQueue(QueueJob.ProcessWebhook).send({ deliveryId: crypto.randomUUID(), payload, webhook });
     event.res.status = 202;
     return { message: "Accepted." };
   }).match(

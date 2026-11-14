@@ -9,6 +9,7 @@ vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/
 
 describe(processWebhookHandler, () => {
   const content = "content";
+  const deliveryId = crypto.randomUUID();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const username = "username";
@@ -31,6 +32,7 @@ describe(processWebhookHandler, () => {
     expect.hasAssertions();
 
     await processWebhookHandler({
+      deliveryId,
       payload: { content, username } satisfies WebhookPayload,
       webhook: { roomId, userId },
     } satisfies WebhookQueueMessage);
@@ -56,5 +58,23 @@ describe(processWebhookHandler, () => {
         userId: null,
       },
     ]);
+  });
+
+  test("a redelivered push writes its message once, under the delivery id it was accepted as", async () => {
+    expect.hasAssertions();
+
+    const delivery = {
+      deliveryId,
+      payload: { content, username } satisfies WebhookPayload,
+      webhook: { roomId, userId },
+    } satisfies WebhookQueueMessage;
+    await processWebhookHandler(delivery);
+    await processWebhookHandler(delivery);
+
+    expect(
+      getRoomObject(roomId)
+        .readMessages({ limit: 10 })
+        .map(({ id }) => id),
+    ).toStrictEqual([1]);
   });
 });

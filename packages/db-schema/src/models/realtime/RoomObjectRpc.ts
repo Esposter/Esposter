@@ -23,6 +23,8 @@ export interface CreateRoomMessageInput {
 
 export interface CreateWebhookRoomMessageInput {
   appUserId: string;
+  // The id the push was accepted under. A delivery can be made more than once, and every one of them writes this message
+  deliveryId: string;
   files?: FileEntity[];
   message: string;
   replyToId?: number;

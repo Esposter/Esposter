@@ -37,6 +37,7 @@ import { createReplyThreadFollows, getMessageCreationRejection } from "@esposter
 import {
   AppNotificationType,
   appUsersInMessage,
+  DatabaseEntityType,
   MessageType,
   publishNotification,
   MESSAGE_BATCH_MAX_LENGTH,
@@ -44,13 +45,17 @@ import {
   roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { chunk, getResultAsync, getSearchExpression, noop, NotInitializedError } from "@esposter/shared";
+import { chunk, getResultAsync, getSearchExpression, noop, NotFoundError, NotInitializedError } from "@esposter/shared";
 import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
-// The columns a message is read by. Its search text stays in the row: nothing a reader is sent. Its tombstone time is sent
-// only on the tombstone a delete leaves, since every reader filters deleted rows out
-const { filenames: _filenames, ...messageColumns } = getTableColumns(messagesInRoom);
+// The columns a message is read by. Its search text and its webhook delivery id stay in the row: nothing a reader is
+// sent. Its tombstone time is sent only on the tombstone a delete leaves, since every reader filters deleted rows out
+const {
+  filenames: _filenames,
+  webhookDeliveryId: _webhookDeliveryId,
+  ...messageColumns
+} = getTableColumns(messagesInRoom);
 
 type NewMessage = typeof messagesInRoom.$inferInsert;
 type SendOptions = { excludeTag?: string };
@@ -69,6 +74,7 @@ interface MessageFields {
   senderName?: string;
   type: MessageType;
   userId?: string;
+  webhookDeliveryId?: string;
 }
 
 const getFilenames = (files: FileEntity[]): string => files.map(({ filename }) => filename).join(" ");
@@ -86,6 +92,7 @@ const getMessageRow = (
     senderName,
     type,
     userId,
+    webhookDeliveryId,
   }: MessageFields,
   now: Date,
 ): NewMessage => ({
@@ -105,6 +112,7 @@ const getMessageRow = (
   type,
   updatedAt: now,
   userId: userId ?? null,
+  webhookDeliveryId: webhookDeliveryId ?? null,
 });
 
 // A write from a device excludes that device's own socket, so the device that made it does not hear its echo
@@ -283,16 +291,36 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     return message;
   }
 
+  // A push is delivered at least once, and every delivery of it names the same delivery id. The row is inserted under that
+  // id, so a delivery that finds it already written returns the message the first one wrote, and sends nothing new
   async createWebhookMessage(input: CreateWebhookRoomMessageInput): Promise<RoomMessage> {
     const now = new Date();
     // The message keeps the image its webhook identity has now, so every reader names the sender without the app user's row
     const appUserImage = await this.readAppUserImage(input.appUserId);
-    const message = this.insertMessage(
-      getMessageRow({ ...input, appUserImage, type: MessageType.Webhook }, now),
-      now,
-      {},
-    );
+    const insertedMessage: RoomMessage | undefined = this.db
+      .insert(messagesInRoom)
+      .values(
+        getMessageRow({ ...input, appUserImage, type: MessageType.Webhook, webhookDeliveryId: input.deliveryId }, now),
+      )
+      .onConflictDoNothing({ target: messagesInRoom.webhookDeliveryId })
+      .returning(messageColumns)
+      .get();
+    if (!insertedMessage) return this.readWebhookMessage(input.deliveryId);
+
+    this.announceMessage(insertedMessage, now, {});
     await this.armAlarm();
+    return insertedMessage;
+  }
+
+  // The message a push's delivery id wrote. A deleted one is still read, since its tombstone keeps the id
+  private readWebhookMessage(webhookDeliveryId: string): RoomMessage {
+    const message = this.db
+      .select(messageColumns)
+      .from(messagesInRoom)
+      .where(eq(messagesInRoom.webhookDeliveryId, webhookDeliveryId))
+      .get();
+    if (!message) throw new NotFoundError(DatabaseEntityType.Message, webhookDeliveryId);
+
     return message;
   }
 
@@ -519,9 +547,13 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   // A message is written and broadcast in one synchronous turn, and marks the room active for the fan-out it owes
   private insertMessage(values: NewMessage, now: Date, sendOptions: SendOptions): RoomMessage {
     const message = this.db.insert(messagesInRoom).values(values).returning(messageColumns).get();
+    this.announceMessage(message, now, sendOptions);
+    return message;
+  }
+
+  private announceMessage(message: RoomMessage, now: Date, sendOptions: SendOptions): void {
     this.broadcast({ data: [message], type: "createMessage" }, sendOptions);
     this.markRoomActive(now);
-    return message;
   }
 
   private markRoomActive(now: Date): void {

@@ -141,7 +141,12 @@ describe(RoomObject, () => {
       .insert(appUsersInMessage)
       .values({ id: appUserId, image: "https://example.com/hook.png", name: "hook" });
     const { object } = createRoomObject();
-    const message = await object.createWebhookMessage({ appUserId, message: "from a hook", senderName: "hook" });
+    const message = await object.createWebhookMessage({
+      appUserId,
+      deliveryId: crypto.randomUUID(),
+      message: "from a hook",
+      senderName: "hook",
+    });
 
     expect(message.appUserImage).toBe("https://example.com/hook.png");
     expect(object.readMessages({ limit: 10 })).toStrictEqual([message]);
