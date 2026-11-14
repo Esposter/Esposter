@@ -20,6 +20,14 @@ export default [
     selector: "ImportDeclaration[source.value=/^prosemirror-/]",
   },
   {
+    // `@tiptap/html` resolves its browser build in a Worker, whose `generateHTML` throws wherever `window` is absent, so a
+    // Render reached from the server fails in production while a Node test, which resolves the happy-dom build, passes
+    message:
+      "Render a document to HTML with `renderToHTMLString` from `@tiptap/static-renderer/pm/html-string`, never `@tiptap/html`'s `generateHTML` or `getHTMLFromFragment`, which throw in the web Worker. See the tiptap skill.",
+    selector:
+      "ImportDeclaration[source.value='@tiptap/html'] > ImportSpecifier[imported.name=/^(?:generateHTML|getHTMLFromFragment)$/]",
+  },
+  {
     // `drizzle-zod` is the v1 package; the v2 relations API the repo is on ships its own schema builders, and the two
     // Generate from different table metadata
     message:

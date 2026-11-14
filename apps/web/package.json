@@ -67,6 +67,7 @@
     "@tiptap/html": "catalog:",
     "@tiptap/pm": "catalog:",
     "@tiptap/starter-kit": "catalog:",
+    "@tiptap/static-renderer": "catalog:",
     "@tiptap/suggestion": "catalog:",
     "@tiptap/vue-3": "catalog:",
     "@tresjs/cientos": "catalog:",

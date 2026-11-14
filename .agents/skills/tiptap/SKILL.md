@@ -35,6 +35,10 @@ seeded by then) and destroys it in its own `onBeforeUnmount`. A component adding
 that calls `editor.destroy()` tears the same editor down twice — harmless today and a double-free the moment
 Tiptap's teardown stops being idempotent. Nothing about the editor's lifetime belongs in the calling component.
 
+## A document renders to HTML through the static renderer
+
+`renderToHTMLString` from `@tiptap/static-renderer/pm/html-string` renders a document from the schema's output specs with no DOM, so the same call works in the browser, in Node and in the web Worker. `@tiptap/html`'s `generateHTML` and `getHTMLFromFragment` are a `no-restricted-syntax` error: a Worker resolves that package's browser build, which throws where `window` is absent, while a Node test resolves its happy-dom build and passes. Its `generateJSON` stays for parsing pasted or imported HTML, which only the browser does.
+
 ## Reference pages
 
 - `references/suggestion-extensions.md` — when adding or changing a suggestion or custom extension.

@@ -89,6 +89,7 @@ catalog:
   "@tiptap/html": ^3.34.0
   "@tiptap/pm": ^3.34.0
   "@tiptap/starter-kit": ^3.34.0
+  "@tiptap/static-renderer": ^3.34.0
   "@tiptap/suggestion": ^3.34.0
   "@tiptap/vue-3": ^3.34.0
   "@tresjs/cientos": ^5.11.0

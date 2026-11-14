@@ -13,6 +13,18 @@ describe("restrictedImportSyntaxes", () => {
         violations: 0,
       },
       {
+        filePath: "tiptapGenerateHtml.ts",
+        name: "tiptapGenerateHtml",
+        source: `import { generateHTML } from "@tiptap/html";\ngenerateHTML(a, b);`,
+        violations: 1,
+      },
+      {
+        filePath: "tiptapGenerateJson.ts",
+        name: "tiptapGenerateJson",
+        source: `import { generateJSON } from "@tiptap/html";\ngenerateJSON(a, b);`,
+        violations: 0,
+      },
+      {
         filePath: "zodNamedImport.ts",
         name: "zodNamedImport",
         source: `import { z, ZodError } from "zod";\nz.string();\nZodError.name;`,
