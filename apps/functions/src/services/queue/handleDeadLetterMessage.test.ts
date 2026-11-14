@@ -7,6 +7,7 @@ import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/serv
 import {
   CloudflareAssetType,
   CloudflareEnvironment,
+  DEAD_LETTER_CONSUMER_MAX_RETRIES,
   getCloudflareResourceName,
   QueueJob,
   StorageBucket,
@@ -66,6 +67,18 @@ describe(handleDeadLetterMessage, () => {
 
     const body = { attempt: MAX_DEAD_LETTER_ATTEMPTS, userId };
     await handleDeadLetterMessage(createQueueMessage(messageId, body), QueueJob.DeleteAccount, sourceQueueName);
+
+    expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toBeUndefined();
+    expect(await readQuarantine()).toBe(JSON.stringify(body));
+  });
+
+  // The body is under the attempt cap, so only the delivery count can quarantine it: the last delivery is never republished
+  test("quarantines a dead letter on the delivery that reaches the consumer's retry count, and does not republish it", async () => {
+    expect.hasAssertions();
+
+    const body = { userId };
+    const finalDelivery = { ...createQueueMessage(messageId, body), attempts: DEAD_LETTER_CONSUMER_MAX_RETRIES };
+    await handleDeadLetterMessage(finalDelivery, QueueJob.DeleteAccount, sourceQueueName);
 
     expect(MockJobQueueDatabase.get(QueueJob.DeleteAccount)).toBeUndefined();
     expect(await readQuarantine()).toBe(JSON.stringify(body));
