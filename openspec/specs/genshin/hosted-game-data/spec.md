@@ -1,6 +1,6 @@
 ## Purpose
 
-Every static dataset genshin-world reads — the game's tables and words, the fitted scenes and the authored world files — is published to Azure Blob Storage as content-addressed objects under a committed lock of their hashes and fetched by the browser at the world's gate, as the opening plays or as a screen opens, so the package bundles only the lock and one save bound, and the suites read the same objects through a local mirror.
+Every static dataset genshin-world reads — the game's tables and words, the fitted scenes and the authored world files — is published to R2 public buckets as content-addressed objects under a committed lock of their hashes and fetched by the browser at the world's gate, as the opening plays or as a screen opens, so the package bundles only the lock and one save bound, and the suites read the same objects through a local mirror.
 
 ## Requirements
 
@@ -27,7 +27,7 @@ The game's static datasets SHALL be stored as records each named by the hash of 
 - **GIVEN** the dataset holds records and the lock already names the hash of every one
 - **WHEN** its builder runs again as a real publish
 - **THEN** each account is listed
-- **AND** only the blobs an account lacks are stored
+- **AND** only the objects an account lacks are stored
 
 #### Scenario: An empty publication makes no request and leaves the lock as it is
 

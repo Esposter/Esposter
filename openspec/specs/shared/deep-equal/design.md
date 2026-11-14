@@ -1,6 +1,6 @@
 # Deep equality
 
-`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaces `fast-deep-equal` for the call sites in `apps/web` and `azure-mock`. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, because the callers need a Map or Set compared by its contents, and the upstream's default entry compares one as an object with no keys.
+`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaces `fast-deep-equal` for the call sites in `apps/web`. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, because the callers need a Map or Set compared by its contents, and the upstream's default entry compares one as an object with no keys.
 
 ## How a comparison is decided
 

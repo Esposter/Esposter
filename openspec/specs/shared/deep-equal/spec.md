@@ -1,6 +1,6 @@
 ## Purpose
 
-checkIsDeepEqual in @esposter/shared — the structural comparison the app and azure-mock use, and the absorption of fast-deep-equal it replaces, with every upstream issue's verdict.
+checkIsDeepEqual in @esposter/shared — the structural comparison the app uses, and the absorption of fast-deep-equal it replaces, with every upstream issue's verdict.
 
 ## Requirements
 
