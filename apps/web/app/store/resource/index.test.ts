@@ -3,6 +3,7 @@ import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
+import type { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -33,6 +34,12 @@ import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/resource/encodeContentDelta"), () => ({
   encodeContentDelta: () => Promise.resolve(new Uint8Array(1)),
 }));
+// The write is an XMLHttpRequest, which the test environment does not answer at the network the way fetch is. The staged
+// path's own steps are what these tests hold, so the PUT is a stored success rather than a request
+const { uploadFileToUrlMock } = vi.hoisted(() => ({
+  uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(() => Promise.resolve()),
+}));
+vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 // Sheet is not publishable and Note is, so the pair covers both sides of every capability gate below
 const createResource = (id: string, type = ResourceType.Sheet) => createResourceListItem({ id, type });
 // The unpublished answer the read carries, which is what a publishable type's test overrides
@@ -79,7 +86,6 @@ describe(useResourceStore, () => {
     const saveStagedResourceContent = vi.fn<
       (options: { input: { contentVersion: number; hash: string; id: string } }) => ResourceInResource
     >(() => ({ ...createResource(resourceId), contentHash, contentVersion: 1 }));
-    server.use(http.put(`${window.location.origin}/${resourceId}`, () => new HttpResponse()));
     trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl);
     trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent);
     return { generateUploadContentSasUrl, saveStagedResourceContent };
