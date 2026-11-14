@@ -1,9 +1,4 @@
-import { UNIQUE_VIOLATION_ERROR_CODE } from "#server/services/db/constants";
-
-// Drizzle reports a failed query as its own error with the driver's underneath it as `cause`, so the code is
-// Read down the chain rather than off the top
-export const checkIsUniqueViolation = (error: unknown): boolean => {
-  if (typeof error !== "object" || error === null) return false;
-  else if ("code" in error && error.code === UNIQUE_VIOLATION_ERROR_CODE) return true;
-  else return "cause" in error && checkIsUniqueViolation(error.cause);
-};
+// D1 names the constraint a write broke in its message, and Drizzle wraps that error with the statement as its own
+// Message, so the cause chain is read down rather than the top error alone
+export const checkIsUniqueViolation = (error: unknown): boolean =>
+  error instanceof Error && (error.message.includes("UNIQUE constraint failed") || checkIsUniqueViolation(error.cause));

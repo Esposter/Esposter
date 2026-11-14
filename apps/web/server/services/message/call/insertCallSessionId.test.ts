@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 
-import { UNIQUE_VIOLATION_ERROR_CODE } from "#server/services/db/constants";
 import { insertCallSessionId } from "#server/services/message/call/insertCallSessionId";
 import { describe, expect, test } from "vitest";
 
@@ -25,7 +24,9 @@ describe(insertCallSessionId, () => {
 
     // Drizzle hands the driver's error up as the cause of its own
     const db = createDb(() =>
-      Promise.reject(new Error(" ", { cause: Object.assign(new Error(" "), { code: UNIQUE_VIOLATION_ERROR_CODE }) })),
+      Promise.reject(
+        new Error(" ", { cause: new Error("D1_ERROR: UNIQUE constraint failed: callSessionsInMessage.id") }),
+      ),
     );
 
     await expect(insertCallSessionId(db, { userId })).resolves.toBeUndefined();

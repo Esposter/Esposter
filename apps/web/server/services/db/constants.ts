@@ -1,9 +1,7 @@
 import type { styleText } from "node:util";
 
-// Postgres `unique_violation`. A generated id is short enough to collide, so a duplicate key is the one insert
-// Failure that means "try another id" — every other failure is the database itself, and retrying through it only
-// Delays the report and dresses it up as an id-allocation problem
-export const UNIQUE_VIOLATION_ERROR_CODE = "23505";
+// D1 refuses a statement that binds more values than this, so a statement that writes a list is split to stay under it
+export const D1_MAX_BOUND_PARAMETERS = 100;
 
 // The words the query log paints as keywords: the reserved words Drizzle's Postgres dialect emits, plus the rest of the
 // Keyword set a Postgres query reads in the log. A word not on this list is left unpainted, never guessed at
