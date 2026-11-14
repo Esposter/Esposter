@@ -1,5 +1,5 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
-import type { RoomInMessage, StandardMessageEntity } from "@esposter/db-schema";
+import type { RoomInMessage, RoomMessage } from "@esposter/db-schema";
 
 import { getBucket } from "#src/services/storage/getBucket";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
@@ -11,7 +11,7 @@ import { StorageBucket } from "@esposter/db-schema";
 export const writeRoomFileEntries = async (
   archive: UserDataArchive,
   roomId: RoomInMessage["id"],
-  messages: StandardMessageEntity[],
+  messages: RoomMessage[],
 ): Promise<void> => {
   const bucket = getBucket(StorageBucket.MessageAssets);
   const attachments = messages.flatMap(({ files }) => files);

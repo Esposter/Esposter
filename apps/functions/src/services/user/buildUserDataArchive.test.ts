@@ -1,12 +1,13 @@
-import type { Database, StandardMessageEntity } from "@esposter/db-schema";
+import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
-import { createMessage, getContentBlobName, getFileBlobNames, serializeEntity, writeJsonBlob } from "@esposter/db";
+import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
+import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
@@ -14,7 +15,6 @@ import {
   AdminActionType,
   AppNotificationType,
   StorageBucket,
-  StreamTable,
   blocksInSocial,
   bookmarksInApp,
   callSessionsInMessage,
@@ -22,12 +22,10 @@ import {
   friendRequestsInSocial,
   friendsInSocial,
   getResourceFileBlobName,
-  getReverseTickedTimestamp,
   getRoomEmojiBlobName,
   getSaveBlobName,
   getUserProfileImageBlobName,
   likesInPost,
-  MessageMetadataType,
   MessageType,
   moderationLogsInMessage,
   moderationNotesInMessage,
@@ -69,6 +67,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 const readArchiveEntries = async (blobName: string) => {
   const archiveBucket = getBucket(StorageBucket.UserAssets);
@@ -95,6 +94,7 @@ describe(buildUserDataArchive, () => {
   const note = "note";
   const otherMessage = "b";
   const path = "path";
+  const threadRootId = 1;
   const title = "title";
   const file = {
     filename,
@@ -109,6 +109,7 @@ describe(buildUserDataArchive, () => {
     const mockDatabase = await createMockDb();
     mockDb = mockDatabase.db;
     resetMockDb = mockDatabase.reset;
+    await openMockRooms();
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -122,6 +123,7 @@ describe(buildUserDataArchive, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
+    clearMockRooms();
     await resetMockDb();
   });
 
@@ -151,19 +153,14 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    const messageClient = getStreamTableClient(StreamTable.Messages);
-    await createMessage(messageClient, { files: [file], message, roomId: room.id, type: MessageType.Message, userId });
-    await createMessage(messageClient, {
-      message: otherMessage,
-      roomId: room.id,
-      type: MessageType.Message,
-      userId: otherUserId,
-    });
+    const roomObject = getRoomObject(room.id);
+    await roomObject.createMessage({ files: [file], message, type: MessageType.Message }, { userId });
+    await roomObject.createMessage({ message: otherMessage, type: MessageType.Message }, { userId: otherUserId });
     await seedAttachment(getFileBlobNames(room.id, file.id, file.filename).blobName);
 
     // A room the person has left, whose message is not in the archive
     const leftRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await createMessage(messageClient, { message, roomId: leftRoom.id, type: MessageType.Message, userId });
+    await getRoomObject(leftRoom.id).createMessage({ message, type: MessageType.Message }, { userId });
 
     // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
     // Moderation record naming the person as its target
@@ -208,7 +205,7 @@ describe(buildUserDataArchive, () => {
         "searches.json",
       ].toSorted(),
     );
-    const messages = jsonDateParse<StandardMessageEntity[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
   });
 
@@ -287,29 +284,25 @@ describe(buildUserDataArchive, () => {
     );
     await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
 
-    // The person reacted in a room they are a member of, on a message whose reaction row another member shares, and
-    // Another member's reaction on the same message is not theirs
+    // The person reacted in a room they are a member of, on a message another member reacted to as well, and another
+    // Member's reaction on a message of their own is not theirs
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    const messageRowKey = getReverseTickedTimestamp();
-    const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
-    // A variable, not a literal: the table's entity type has no userIds, so a literal fails the excess-property check
-    const createReaction = (reactorUserIds: string[]) => {
-      const reaction = {
-        emojiTag,
-        messageRowKey,
-        partitionKey: room.id,
-        rowKey: getReverseTickedTimestamp(),
-        type: MessageMetadataType.Emoji,
-        userIds: reactorUserIds,
-      };
-      return messagesMetadataClient.createEntity(serializeEntity(reaction));
-    };
-    await createReaction([userId, otherUserId]);
-    await createReaction([otherUserId]);
+    const roomObject = getRoomObject(room.id);
+    const sharedMessage = await roomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
+    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
+    const otherReactedMessage = await roomObject.createMessage(
+      { message: otherMessage, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    await roomObject.addReaction({ emojiTag, messageId: otherReactedMessage.id }, { userId: otherUserId });
 
     // A request the person sent, one they received, and a friendship with a fourth account
     const sentRequest = takeOne(
@@ -345,7 +338,7 @@ describe(buildUserDataArchive, () => {
     // The first reactor's, not the person's, and the exact shape leaves it out
     expect(readEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
-      { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageRowKey },
+      { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: sharedMessage.id },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
     // Row for the pair, made when the receiver accepted it, so neither carries a time
@@ -582,7 +575,7 @@ describe(buildUserDataArchive, () => {
     ]);
 
     await buildUserDataArchive(userId, blobName);
-    const entries = readArchiveEntries(blobName);
+    const entries = await readArchiveEntries(blobName);
 
     // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
     expect(readEntryJson(entries, "moderation.json")).toStrictEqual({
@@ -635,7 +628,6 @@ describe(buildUserDataArchive, () => {
     const blobName = `${crypto.randomUUID()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    const threadRootRowKey = getReverseTickedTimestamp();
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
@@ -645,19 +637,19 @@ describe(buildUserDataArchive, () => {
     const follow = takeOne(
       await mockDb
         .insert(threadFollowsInMessage)
-        .values({ isUnfollowed: true, roomId: room.id, threadRootRowKey, userId })
+        .values({ isUnfollowed: true, roomId: room.id, threadRootId, userId })
         .returning(),
     );
     await mockDb
       .insert(threadFollowsInMessage)
-      .values({ isUnfollowed: false, roomId: room.id, threadRootRowKey, userId: otherUserId });
+      .values({ isUnfollowed: false, roomId: room.id, threadRootId, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
 
     // A follow carries the time of the person's first decision about the thread
     expect(readEntryJson(entries, "follows.json")).toStrictEqual([
-      { createdAt: follow.createdAt, isUnfollowed: true, roomId: room.id, threadRootRowKey },
+      { createdAt: follow.createdAt, isUnfollowed: true, roomId: room.id, threadRootId },
     ]);
   });
 
@@ -742,7 +734,40 @@ describe(buildUserDataArchive, () => {
     ]);
   });
 
-  test("reads an attachment through its object, which streams into the archive", async () => {
+  // A room's messages are read a page at a time, so a history longer than one page must come through whole and in order
+  test("archives every page of a room's messages, in the order they were sent, and none of another person's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const roomObject = getRoomObject(room.id);
+    const pagedMessages = Array.from(
+      { length: DATA_EXPORT_MESSAGE_PAGE_LIMIT + 1 },
+      (_, index) => `${message}${index}`,
+    );
+    // A message's id is its place in the room, so the messages are sent one after another, in the order they are listed
+    for (const pagedMessage of pagedMessages) {
+      // oxlint-disable-next-line no-await-in-loop -- sent in turn, so each id follows the last
+      await roomObject.createMessage({ message: pagedMessage, type: MessageType.Message }, { userId });
+      // oxlint-disable-next-line no-await-in-loop -- sent in turn, so each id follows the last
+      await roomObject.createMessage({ message: otherMessage, type: MessageType.Message }, { userId: otherUserId });
+    }
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+
+    expect(messages.map(({ message: text }) => text)).toStrictEqual(pagedMessages);
+  });
+
+  test("streams an attachment's bytes into the archive, under its room and its file", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
@@ -751,18 +776,12 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     const attachmentBlobName = getFileBlobNames(room.id, file.id, file.filename).blobName;
-    await createMessage(getStreamTableClient(StreamTable.Messages), {
-      files: [file],
-      message,
-      roomId: room.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await getRoomObject(room.id).createMessage({ files: [file], message, type: MessageType.Message }, { userId });
     await seedAttachment(attachmentBlobName);
-    const getSpy = vi.spyOn(getBucket(StorageBucket.MessageAssets), "get");
 
     await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
 
-    expect(getSpy).toHaveBeenCalledWith(attachmentBlobName);
+    expect(entries[`rooms/${room.id}/files/${file.id}/${filename}`]).toStrictEqual(attachmentBytes);
   });
 });

@@ -4,13 +4,11 @@ import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { createMessage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   StorageBucket,
-  StreamTable,
   dataExportsInUser,
   DataExportStatus,
   MessageType,
@@ -19,7 +17,6 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -31,10 +28,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 const readExportRow = async (dataExportId: string) =>
   takeOne(
@@ -62,6 +56,7 @@ describe(exportUserDataHandler, () => {
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockRooms();
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -75,7 +70,7 @@ describe(exportUserDataHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockTableDatabase.clear();
+    clearMockRooms();
     await mockDb.delete(usersInAuth);
   });
 
@@ -91,15 +86,16 @@ describe(exportUserDataHandler, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The message attaches a file whose blob was never written, so reading that entry fails
-    await createMessage(getStreamTableClient(StreamTable.Messages), {
-      files: [
-        { filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "mimetype", size: 0 },
-      ],
-      message: "message",
-      roomId: room.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await getRoomObject(room.id).createMessage(
+      {
+        files: [
+          { filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "mimetype", size: 0 },
+        ],
+        message: "message",
+        type: MessageType.Message,
+      },
+      { userId },
+    );
     const dataExportId = await seedQueuedExport(userId);
 
     await exportUserDataHandler({ dataExportId });

@@ -3,10 +3,8 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { getRoomObject } from "#src/services/room/getRoomObject";
 import { db } from "#src/services/shared/db";
-import { readRoomEmojiReactionsByUser } from "#src/services/user/readRoomEmojiReactionsByUser";
-import { StreamTable } from "@esposter/db-schema";
 
 // The person's likes and dislikes of posts, and their emoji reactions in the rooms they are a member of.
 // Each entry names its target and carries no counts, and no other person's reaction is listed.
@@ -17,12 +15,20 @@ export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInA
     columns: { createdAt: true, postId: true, value: true },
     where: { userId: { eq: userId } },
   });
-  const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
   const roomIds = await getAccountMemberRoomIds(userId);
   const emojiReactions = [];
-  for (const roomId of roomIds)
+  for (const roomId of roomIds) {
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as the room entries are read
-    emojiReactions.push(...(await readRoomEmojiReactionsByUser(messagesMetadataClient, roomId, userId)));
+    const reactions = await getRoomObject(roomId).exportUserReactions(userId);
+    emojiReactions.push(
+      ...reactions.map(({ emojiTag, messageId }) => ({
+        emojiTag,
+        kind: ArchiveLikeKind.Emoji,
+        roomId,
+        targetId: messageId,
+      })),
+    );
+  }
   await archive.addJsonEntry("likes.json", [
     ...postLikes.map(({ createdAt, postId, value }) => ({
       createdAt,

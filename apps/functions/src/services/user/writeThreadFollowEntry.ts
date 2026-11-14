@@ -8,7 +8,7 @@ import { db } from "#src/services/shared/db";
 // An unfollow is kept, since it is the person's decision
 export const writeThreadFollowEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const follows = await db.query.threadFollowsInMessage.findMany({
-    columns: { createdAt: true, isUnfollowed: true, roomId: true, threadRootRowKey: true },
+    columns: { createdAt: true, isUnfollowed: true, roomId: true, threadRootId: true },
     where: { userId: { eq: userId } },
   });
   await archive.addJsonEntry("follows.json", follows);

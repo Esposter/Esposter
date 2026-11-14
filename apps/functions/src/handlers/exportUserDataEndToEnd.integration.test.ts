@@ -5,14 +5,13 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { createMessage, getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
+import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
   StorageBucket,
-  StreamTable,
   dataExportsInUser,
   DataExportStatus,
   friendsInSocial,
@@ -33,7 +32,6 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { unzipSync } from "fflate";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -46,6 +44,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});
@@ -56,6 +55,7 @@ describe(exportUserDataHandler, () => {
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockRooms();
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -69,7 +69,7 @@ describe(exportUserDataHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockTableDatabase.clear();
+    clearMockRooms();
     await mockDb.delete(usersInAuth);
   });
 
@@ -105,13 +105,10 @@ describe(exportUserDataHandler, () => {
       mimetype: "mimetype",
       size: 0,
     };
-    await createMessage(getStreamTableClient(StreamTable.Messages), {
-      files: [file],
-      message: "message",
-      roomId: room.id,
-      type: MessageType.Message,
-      userId,
-    });
+    await getRoomObject(room.id).createMessage(
+      { files: [file], message: "message", type: MessageType.Message },
+      { userId },
+    );
     await seedBlob(StorageBucket.MessageAssets, getFileBlobNames(room.id, file.id, file.filename).blobName);
     const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
     await seedBlob(StorageBucket.MessageAssets, getRoomEmojiBlobName(room.id, emoji.id));
