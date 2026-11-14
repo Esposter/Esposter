@@ -1,5 +1,6 @@
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
+import { PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH } from "#src/services/program/constants";
 import { sqliteTable } from "#src/sqliteTable";
 import { SECRET_TOKEN_HASH_LENGTH } from "@esposter/shared";
 import { text, unique } from "drizzle-orm/sqlite-core";
@@ -40,6 +41,7 @@ export type ProgramParticipantInResource = typeof programParticipantsInResource.
 
 export const selectProgramParticipantInResourceSchema = createSelectSchema(programParticipantsInResource, {
   id: () => z.uuidv7(),
+  keyValue: (schema) => schema.max(PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH),
   publicId: () => z.uuidv7(),
   resourceId: () => z.uuidv7(),
   tokenHash: () => z.hex().length(SECRET_TOKEN_HASH_LENGTH),

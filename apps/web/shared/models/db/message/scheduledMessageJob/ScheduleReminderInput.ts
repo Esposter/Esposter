@@ -6,6 +6,6 @@ import { z } from "zod";
 export const scheduleReminderInputSchema = z.object({
   ...roomIdSchema.shape,
   runAt: z.coerce.date(),
-  text: sanitizedMessageSchema.pipe(z.string().min(1)),
+  text: sanitizedMessageSchema.refine((text) => text.length > 0),
 });
 export type ScheduleReminderInput = z.infer<typeof scheduleReminderInputSchema>;

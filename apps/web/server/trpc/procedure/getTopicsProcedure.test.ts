@@ -1,9 +1,10 @@
 import type { Topic } from "@esposter/db-schema";
 
 import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
-import { createCallerFactory, publicProcedure, router } from "#server/trpc";
+import { createCallerFactory, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
-import { publishTopicsMiddleware } from "#server/trpc/middleware/publishTopicsMiddleware";
+import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
+import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { getTopic } from "#shared/services/realtime/getTopic";
 import { TopicKind } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
@@ -11,27 +12,18 @@ import { afterEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 const postInputSchema = z.object({ id: z.string() });
-const getPostTopics = ({ input }: { input: unknown }): Topic[] => [
-  getTopic(TopicKind.Post, postInputSchema.parse(input).id),
+const getPostTopics = ({ input }: { input: z.output<typeof postInputSchema> }): Topic[] => [
+  getTopic(TopicKind.Post, input.id),
 ];
 
-describe("publishTopicsMiddleware", () => {
-  const procedure = publicProcedure.use(publishTopicsMiddleware);
+describe(getTopicsProcedure, () => {
+  const postProcedure = getTopicsProcedure(standardRateLimitedProcedure.input(postInputSchema), getPostTopics);
   const testRouter = router({
-    failPost: procedure
-      .meta({ topics: getPostTopics })
-      .input(postInputSchema)
-      .mutation<void>(() => {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Post failed" });
-      }),
-    readPost: procedure
-      .meta({ topics: getPostTopics })
-      .input(postInputSchema)
-      .query<boolean>(() => true),
-    updatePost: procedure
-      .meta({ topics: getPostTopics })
-      .input(postInputSchema)
-      .mutation<boolean>(() => true),
+    failPost: postProcedure.mutation<void>(() => {
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Post failed" });
+    }),
+    readPost: postProcedure.query<boolean>(() => true),
+    updatePost: postProcedure.mutation<boolean>(() => true),
   });
   const createTestCaller = createCallerFactory(testRouter);
   const id = "id";

@@ -10,7 +10,11 @@ import { readOwnedResource } from "#server/services/resource/readOwnedResource";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
+import {
+  PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH,
+  programParticipantsInResource,
+  ResourceType,
+} from "@esposter/db-schema";
 import { chunk, generateSecretToken, hashSecretToken } from "@esposter/shared";
 import { v7 } from "uuid";
 
@@ -42,7 +46,15 @@ export const generateProgramParticipants = async (
   const newKeyValues = new Set<string>();
   for (const row of rows) {
     const keyValue = row[keyColumn];
-    if (typeof keyValue === "string" && keyValue && !existingKeyValues.has(keyValue)) newKeyValues.add(keyValue);
+    // A cell longer than any identifier is not a key, so it is left out rather than issued a credential no later
+    // Request could name
+    if (
+      typeof keyValue === "string" &&
+      keyValue &&
+      keyValue.length <= PROGRAM_PARTICIPANT_KEY_VALUE_MAX_LENGTH &&
+      !existingKeyValues.has(keyValue)
+    )
+      newKeyValues.add(keyValue);
   }
   // Only the hash is stored. The credential leaves in this run's answer alone, and no later read can return it again
   const issuedParticipants = await Promise.all(
