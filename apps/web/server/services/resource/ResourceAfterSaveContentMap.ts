@@ -18,5 +18,5 @@ export const ResourceAfterSaveContentMap: {
   ) => Promise<void>;
 } = {
   [ResourceType.TodoList]: (_ctx, resource, content, previousContent) =>
-    scheduleTodoReminders(resource.id, content, previousContent),
+    scheduleTodoReminders(resource, content, previousContent),
 };
