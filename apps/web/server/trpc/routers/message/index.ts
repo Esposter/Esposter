@@ -302,11 +302,8 @@ export const baseMessageRouter = router({
     async ({ ctx, input: { roomId } }) => {
       const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.getSessionPayload.user.id);
       if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
-      // The object returns the roots in the order asked, so they are asked newest first: a message id only grows within
-      // its room, so the largest id is the newest root. The read drops the deleted ones
-      const threads = await useRoomObject(roomId).readMessagesByIds(
-        threadRootIds.toSorted((firstId, secondId) => secondId - firstId),
-      );
+      // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
+      const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
       return { threadRootIds, threads };
     },
   ),
