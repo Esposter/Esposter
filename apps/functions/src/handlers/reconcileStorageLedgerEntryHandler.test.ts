@@ -1,3 +1,4 @@
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database, PublishEvent, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
@@ -19,7 +20,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+// Handed out as a spy so one call can be given a bucket with only the method under test: Miniflare's bucket takes no spy on its methods
+vi.mock(import("#src/services/storage/getBucket"), async () => {
+  const actual = await import("#src/services/storage/getBucket.test");
+  return { ...actual, getBucket: vi.fn(actual.getBucket) };
+});
 
 // The meter lives in the app process, so publishing is the only thing this handler can do about it — which
 // Makes the event it publishes the assertable half: it has to be the owner whose counter moved
@@ -29,6 +34,8 @@ vi.mock(import("#src/services/server/publishToServer"), () => ({ publishToServer
 
 const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
 const readResourceAssetNames = async () => readBlobNames(StorageBucket.ResourceAssets);
+// The one method a test needs, handed out once in place of the mock bucket the handler reads
+const createBucketWith = (methods: Partial<R2Bucket>) => methods as R2Bucket;
 
 describe(reconcileStorageLedgerEntryHandler, () => {
   const userId = crypto.randomUUID();
@@ -92,12 +99,11 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     const messageBlobName = getBlobName(`${resourceId}/${crypto.randomUUID()}`, "filename");
     const messageContainerName = StorageBucket.MessageAssets;
     await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
-    const getSpy = vi.spyOn(getBucket(StorageBucket.MessageAssets), "get");
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageContainerName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
-    expect(getSpy).not.toHaveBeenCalled();
+    expect(getBucket).not.toHaveBeenCalled();
   });
 
   // The counter settles in this process and is read in the app's, so a redelivery that moves nothing must not
@@ -128,7 +134,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await seedResourceAsset(matchingResourceAssetName);
-    const getSpy = vi.spyOn(getBucket(StorageBucket.ResourceAssets), "get");
+    const resourceAssetsBucket = getBucket(StorageBucket.ResourceAssets);
+    const getSpy = vi.fn((name: string) => resourceAssetsBucket.get(name));
+    vi.mocked(getBucket).mockImplementationOnce(() => createBucketWith({ get: getSpy }));
     const errorSpy = vi.spyOn(console, "error");
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(matchingResourceAssetName));
 
@@ -166,7 +174,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await seedResourceAsset(mismatchedResourceAssetName);
-    vi.spyOn(getBucket(StorageBucket.ResourceAssets), "get").mockRejectedValueOnce(new Error("service unavailable"));
+    vi.mocked(getBucket).mockImplementationOnce(() =>
+      createBucketWith({ get: () => Promise.reject(new Error("service unavailable")) }),
+    );
 
     await expect(
       reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(mismatchedResourceAssetName)),

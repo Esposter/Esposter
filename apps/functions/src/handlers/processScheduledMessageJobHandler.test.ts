@@ -2,6 +2,8 @@ import type { Database, ScheduledJob, ScheduledMessageJobPayload } from "@espost
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { MockJobQueue } from "#src/services/queue/getJobQueue.test";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { clearMockStreams, openMockStreams } from "#src/services/streams/getStreamTableClient.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -22,8 +24,7 @@ import {
   WordFilterAction,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
-import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ schedule: vi.fn<(runAt: number, job: ScheduledJob) => Promise<void>>() }));
 
@@ -92,6 +93,7 @@ describe(processScheduledMessageJobHandler, () => {
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockStreams();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values([
       { id: roomId, name, userId },
@@ -110,7 +112,7 @@ describe(processScheduledMessageJobHandler, () => {
   // Every timestamp this handler writes comes from `new Date()`, so a frozen clock is what lets them be asserted
   // Exactly rather than as "some Date"
   beforeEach(() => {
-    vi.useFakeTimers({ now: 0 });
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
   });
 
   afterEach(async () => {
@@ -119,7 +121,7 @@ describe(processScheduledMessageJobHandler, () => {
     await mockDb.delete(roomFiltersInMessage);
     await mockDb.delete(threadFollowsInMessage);
     mocks.schedule.mockClear();
-    MockTableDatabase.clear();
+    await clearMockStreams();
     vi.restoreAllMocks();
   });
 
@@ -132,7 +134,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     await processScheduledMessageJobHandler({ id: crypto.randomUUID() });
 
-    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toStrictEqual([]);
     expect(mocks.schedule).not.toHaveBeenCalled();
   });
 
@@ -173,7 +175,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(logSpy).toHaveBeenCalledWith(`${QueueJob.ProcessScheduledMessageJob} skipped: no active job`, {
       id: job.id,
     });
-    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toStrictEqual([]);
   });
 
   test("requeues when job is visible before runAt", async () => {
@@ -202,7 +204,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
     expect(processedJob?.processingStartedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toStrictEqual([]);
   });
 
   test("records processing start and creates message for scheduled message job", async () => {
@@ -215,7 +217,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
     expect(processedJob?.processingStartedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(StreamTable.Messages)?.size).toBe(1);
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toHaveLength(1);
   });
 
   // The payload stores a room-level send as the "" sentinel, but a message's replyRowKey is absent when it replies
@@ -226,10 +228,7 @@ describe(processScheduledMessageJobHandler, () => {
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id });
 
-    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
-    assert.exists(messagesTable);
-
-    expect(takeOne([...messagesTable.values()]).replyRowKey).toBe("");
+    expect(takeOne(await getStreamTableClient(StreamTable.Messages).list()).replyRowKey).toBe("");
   });
 
   // Thread placement is the whole point of the payload's replyRowKey, and every other case here sends the
@@ -240,10 +239,7 @@ describe(processScheduledMessageJobHandler, () => {
     const job = await insertJob(threadReplyPayload);
     await processScheduledMessageJobHandler({ id: job.id });
 
-    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
-    assert.exists(messagesTable);
-
-    expect(takeOne([...messagesTable.values()]).replyRowKey).toBe(replyRowKey);
+    expect(takeOne(await getStreamTableClient(StreamTable.Messages).list()).replyRowKey).toBe(replyRowKey);
   });
 
   // The follow rows are what ProcessNotification resolves a reply's recipients from, so a scheduled reply that
@@ -295,7 +291,7 @@ describe(processScheduledMessageJobHandler, () => {
     const processedJob = await getJob(job.id);
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(StreamTable.Messages)?.size).toBe(1);
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toHaveLength(1);
   });
 
   // The slowmode clock gates the NEXT send, so it advances with the guards rather than inside the best-effort
@@ -341,7 +337,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(cancelledJob?.processingStartedAt).toStrictEqual(new Date(0));
     expect(cancelledJob?.cancelledAt).toStrictEqual(new Date(0));
     expect(member?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
-    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toStrictEqual([]);
   });
 
   test("releases the claim when delivery precondition rejects", async () => {
@@ -357,6 +353,6 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(failedJob?.completedAt).toBeNull();
     expect(failedJob?.processingStartedAt).toBeNull();
-    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
+    expect(await getStreamTableClient(StreamTable.Messages).list()).toStrictEqual([]);
   });
 });

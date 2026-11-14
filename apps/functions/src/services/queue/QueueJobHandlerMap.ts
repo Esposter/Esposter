@@ -1,4 +1,4 @@
-import type { QueueJob } from "@esposter/db-schema";
+import { QueueJob } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedProfileImageHandler";

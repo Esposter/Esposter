@@ -1,3 +1,4 @@
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage, Database, PublishEvent } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
@@ -25,7 +26,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 
-vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+// Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its methods
+vi.mock(import("#src/services/storage/getBucket"), async () => {
+  const actual = await import("#src/services/storage/getBucket.test");
+  return { ...actual, getBucket: vi.fn(actual.getBucket) };
+});
 
 // Released bytes are published to the owner's meter, which lives in the app process — so the event published
 // Is the only observable this handler has for the half of a deletion the owner actually watches
@@ -42,6 +47,10 @@ const createEvent = (blobNames: string[]) =>
 
 const createPrefixEvent = (prefix: string, createdBefore: Date) =>
   createBlobDeletionEvent({ containerName: StorageBucket.MessageAssets, createdBefore, prefix });
+
+// The bucket the handler reads once, with only the delete under test: the handler's other reads are the mock's own
+const createDeletingBucket = (deleteNames: (names: string | string[]) => Promise<void>) =>
+  ({ delete: deleteNames }) as R2Bucket;
 
 describe(processBlobDeletionHandler, () => {
   const blobName = "";
@@ -200,7 +209,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);
-    vi.spyOn(getBucket(StorageBucket.MessageAssets), "delete").mockRejectedValue(new Error(" "));
+    vi.mocked(getBucket).mockImplementationOnce(() => createDeletingBucket(() => Promise.reject(new Error(" "))));
 
     await expect(processBlobDeletionHandler(createEvent([blobName]))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error:  ]`,
@@ -218,24 +227,27 @@ describe(processBlobDeletionHandler, () => {
     const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_, index) => `blob/${index}`);
     const lastBlobName = `blob/${MAX_CONCURRENT_BLOB_DELETIONS}`;
     const bucket = getBucket(StorageBucket.MessageAssets);
-    const deleteFirstWave = bucket.delete.bind(bucket);
     await Promise.all(blobNames.map(async (name) => seedBlob(name)));
-    await mockDb
-      .insert(storageLedgerInStorage)
-      .values(
-        blobNames.map((name) => ({
-          blobName: name,
-          containerName: StorageBucket.MessageAssets,
-          countedBytes,
-          declaredBytes: countedBytes,
-          expiresAt: new Date(0),
-          reconciledAt: new Date(0),
-          userId,
-        })),
-      );
+    await Promise.all(
+      blobNames.map(async (name) =>
+        mockDb
+          .insert(storageLedgerInStorage)
+          .values({
+            blobName: name,
+            containerName: StorageBucket.MessageAssets,
+            countedBytes,
+            declaredBytes: countedBytes,
+            expiresAt: new Date(0),
+            reconciledAt: new Date(0),
+            userId,
+          }),
+      ),
+    );
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes * blobNames.length });
-    vi.spyOn(bucket, "delete").mockImplementation(async (names) =>
-      Array.isArray(names) && names.includes(lastBlobName) ? Promise.reject(new Error(" ")) : deleteFirstWave(names),
+    vi.mocked(getBucket).mockImplementationOnce(() =>
+      createDeletingBucket(async (names) =>
+        Array.isArray(names) && names.includes(lastBlobName) ? Promise.reject(new Error(" ")) : bucket.delete(names),
+      ),
     );
 
     await expect(processBlobDeletionHandler(createEvent(blobNames))).rejects.toThrowErrorMatchingInlineSnapshot(

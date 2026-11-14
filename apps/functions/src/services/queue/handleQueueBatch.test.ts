@@ -3,12 +3,6 @@ import { handleQueueBatch } from "#src/services/queue/handleQueueBatch";
 import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-const queueName = getCloudflareResourceName(
-  CloudflareEnvironment.Development,
-  CloudflareAssetType.Queue,
-  QueueJob.ProcessWebhook,
-);
-
 const createMessage = (body: unknown) => ({
   ack: vi.fn<() => void>(),
   attempts: 1,
@@ -18,7 +12,7 @@ const createMessage = (body: unknown) => ({
   timestamp: new Date(0),
 });
 
-const createBatch = (messages: ReturnType<typeof createMessage>[], queue = queueName): MessageBatch<unknown> => ({
+const createBatch = (messages: ReturnType<typeof createMessage>[], queue: string): MessageBatch<unknown> => ({
   ackAll: vi.fn<() => void>(),
   messages,
   metadata: { metrics: { backlogBytes: 0, backlogCount: 0 } },
@@ -27,6 +21,12 @@ const createBatch = (messages: ReturnType<typeof createMessage>[], queue = queue
 });
 
 describe(handleQueueBatch, () => {
+  const queueName = getCloudflareResourceName(
+    CloudflareEnvironment.Development,
+    CloudflareAssetType.Queue,
+    QueueJob.ProcessWebhook,
+  );
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -37,7 +37,7 @@ describe(handleQueueBatch, () => {
     const handlerSpy = vi.spyOn(QueueJobHandlerMap, QueueJob.ProcessWebhook).mockResolvedValue();
     const messages = [createMessage({ first: true }), createMessage({ second: true })];
 
-    await handleQueueBatch(createBatch(messages), CloudflareEnvironment.Development);
+    await handleQueueBatch(createBatch(messages, queueName), CloudflareEnvironment.Development);
 
     expect(handlerSpy).toHaveBeenCalledTimes(2);
     for (const message of messages) {
@@ -55,7 +55,7 @@ describe(handleQueueBatch, () => {
       .mockResolvedValueOnce();
     const [failedMessage, resolvedMessage] = [createMessage({ failed: true }), createMessage({ resolved: true })];
 
-    await handleQueueBatch(createBatch([failedMessage, resolvedMessage]), CloudflareEnvironment.Development);
+    await handleQueueBatch(createBatch([failedMessage, resolvedMessage], queueName), CloudflareEnvironment.Development);
 
     expect(failedMessage.retry).toHaveBeenCalledExactlyOnceWith();
     expect(failedMessage.ack).not.toHaveBeenCalled();
