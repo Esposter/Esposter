@@ -1,6 +1,5 @@
 import type { ExecutedAutomodAction } from "#src/models/message/moderation/ExecutedAutomodAction";
-import type { Database, ModerationLogEntity, RoomFilterInMessage } from "@esposter/db-schema";
-import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
+import type { Database, RoomFilterInMessage } from "@esposter/db-schema";
 
 import { writeModerationLogEntry } from "#src/services/message/moderation/writeModerationLogEntry";
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
@@ -13,8 +12,6 @@ import { and, eq, sql } from "drizzle-orm";
 // Returns what it did so an in-process caller can fan the action out to its subscriptions.
 export const executeAutomodAction = async (
   db: Database,
-  // Resolved lazily so a Reject filter — the common case, which has no follow-up action — never builds a client
-  getModerationLogClient: () => Promise<StreamTableClient<ModerationLogEntity>>,
   {
     action,
     roomId,
@@ -42,9 +39,9 @@ export const executeAutomodAction = async (
   const type = action === WordFilterAction.Timeout ? AdminActionType.TimeoutUser : AdminActionType.Warn;
   // The audit-log write is best-effort — a logging failure must never turn the block into a 500.
   await getResultAsync(async () =>
-    writeModerationLogEntry(await getModerationLogClient(), {
+    writeModerationLogEntry(db, {
       actorUserId: AUTOMOD_USER_ID,
-      durationMs,
+      durationMs: durationMs ?? null,
       roomId,
       targetUserId: userId,
       type,

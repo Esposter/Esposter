@@ -1,24 +1,12 @@
-import type { ModerationLogEntity } from "@esposter/db-schema";
-import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
+import type { Database, ModerationLogInMessage } from "@esposter/db-schema";
 
-import { createEntity } from "#src/services/streams/createEntity";
-import { getReverseTickedTimestamp, ModerationLogEntity as ModerationLogEntityClass } from "@esposter/db-schema";
+import { moderationLogsInMessage } from "@esposter/db-schema";
 
-// Appends one row to the moderation audit log. Shared by the manual admin-action plugin, by automod, and by
-// The scheduled-delivery function, so the reverse-ticked rowKey is constructed in exactly one place.
+// Appends one row to the moderation audit log. Shared by the manual admin-action plugin, by automod, and by the
+// scheduled-delivery function, so every entry is written by this one insert
 export const writeModerationLogEntry = async (
-  moderationLogClient: StreamTableClient<ModerationLogEntity>,
-  entry: Pick<ModerationLogEntity, "actorUserId" | "durationMs" | "targetUserId" | "type"> & { roomId: string },
+  db: Database,
+  entry: Pick<ModerationLogInMessage, "actorUserId" | "durationMs" | "targetUserId" | "type"> & { roomId: string },
 ): Promise<void> => {
-  await createEntity(
-    moderationLogClient,
-    new ModerationLogEntityClass({
-      actorUserId: entry.actorUserId,
-      durationMs: entry.durationMs,
-      partitionKey: entry.roomId,
-      rowKey: getReverseTickedTimestamp(),
-      targetUserId: entry.targetUserId,
-      type: entry.type,
-    }),
-  );
+  await db.insert(moderationLogsInMessage).values(entry);
 };
