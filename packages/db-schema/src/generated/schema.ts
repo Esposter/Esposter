@@ -13,6 +13,8 @@ import { callSessionsInMessage } from "#src/schema/message/callSessionsInMessage
 import { invitesInMessage } from "#src/schema/message/invitesInMessage";
 import { messageEmojisInMessage } from "#src/schema/message/messageEmojisInMessage";
 import { messagesInMessage } from "#src/schema/message/messagesInMessage";
+import { moderationLogsInMessage } from "#src/schema/message/moderationLogsInMessage";
+import { moderationNotesInMessage } from "#src/schema/message/moderationNotesInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { roomEmojisInMessage } from "#src/schema/message/roomEmojisInMessage";
 import { roomFiltersInMessage } from "#src/schema/message/roomFiltersInMessage";
@@ -31,14 +33,18 @@ import { notificationsInNotification } from "#src/schema/notification/notificati
 import { pushSubscriptionsInNotification } from "#src/schema/notification/pushSubscriptionsInNotification";
 import { likesInPost } from "#src/schema/post/likesInPost";
 import { postsInPost } from "#src/schema/post/postsInPost";
+import { programParticipantsInResource } from "#src/schema/resource/programParticipantsInResource";
 import { resourceAccessesInResource } from "#src/schema/resource/resourceAccessesInResource";
+import { resourceActivitiesInResource } from "#src/schema/resource/resourceActivitiesInResource";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
 import { resourceLinksInResource } from "#src/schema/resource/resourceLinksInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { resourceVersionAssetsInResource } from "#src/schema/resource/resourceVersionAssetsInResource";
 import { resourceVersionsInResource } from "#src/schema/resource/resourceVersionsInResource";
+import { resourceViewsInResource } from "#src/schema/resource/resourceViewsInResource";
 import { resourceWorkingAssetsInResource } from "#src/schema/resource/resourceWorkingAssetsInResource";
+import { surveyResponsesInResource } from "#src/schema/resource/surveyResponsesInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
@@ -61,17 +67,22 @@ export const schema = {
   likesInPost,
   messageEmojisInMessage,
   messagesInMessage,
+  moderationLogsInMessage,
+  moderationNotesInMessage,
   notificationsInNotification,
   postsInPost,
+  programParticipantsInResource,
   pushSubscriptionsInNotification,
   rateLimiterFlexibleInApp,
   resourceAccessesInResource,
+  resourceActivitiesInResource,
   resourceFavoritesInResource,
   resourceLinksInResource,
   resourcePublicationsInResource,
   resourcesInResource,
   resourceVersionAssetsInResource,
   resourceVersionsInResource,
+  resourceViewsInResource,
   resourceWorkingAssetsInResource,
   roomCategoriesInMessage,
   roomEmojisInMessage,
@@ -83,6 +94,7 @@ export const schema = {
   searchHistoriesInMessage,
   sessionsInAuth,
   storageLedgerInStorage,
+  surveyResponsesInResource,
   threadFollowsInMessage,
   userAchievementsInAchievement,
   userSettingsInMessage,
