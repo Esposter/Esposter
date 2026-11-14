@@ -1,10 +1,5 @@
-import { StorageBucket } from "#src/models/storage/StorageBucket";
-import { getBlobSubjectPrefix } from "#src/services/storage/getBlobSubjectPrefix";
 import { ID_SEPARATOR } from "@esposter/shared";
 
-export const DEAD_LETTER_ARCHIVED_PREFIX = "archived/";
-export const DEAD_LETTER_BLOB_SUBJECT_PREFIX = getBlobSubjectPrefix(StorageBucket.DeadLetter);
-export const DEAD_LETTER_QUARANTINE_PREFIX = "quarantine/";
 // Every client-supplied piece of a blob name is one separator-free, non-dot segment. Blob names are assembled by
 // Interpolation and the storage sdk hands the result to `URL.pathname`, which normalizes `..` away — so a segment
 // Carrying a separator or a dot segment steers the write or the delete out of the prefix the caller was authorized for.

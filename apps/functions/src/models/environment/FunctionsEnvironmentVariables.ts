@@ -2,8 +2,6 @@ import { sharedEnvironmentVariablesShape } from "@esposter/shared";
 import { z } from "zod";
 
 export interface FunctionsEnvironmentVariables {
-  AZURE_EVENT_GRID_TOPIC_ENDPOINT: string;
-  AZURE_EVENT_GRID_TOPIC_KEY: string;
   AZURE_SEARCH_BASE_URL: string;
   AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
   BASE_URL: string;

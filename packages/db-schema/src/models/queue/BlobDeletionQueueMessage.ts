@@ -1,25 +1,25 @@
 import type { StorageBucket } from "#src/models/storage/StorageBucket";
 
 import { storageBucketSchema } from "#src/models/storage/StorageBucket";
-import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "#src/services/azure/eventGrid/constants";
+import { MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES } from "#src/services/queue/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
 // Two ways to name what to delete. **Names** for a caller that already knows them — the blobs of one message,
 // One file — which is most of them. **A prefix** for a caller whose set is unbounded: a room's whole attachment
-// Directory can hold more blobs than a request has time to enumerate, let alone chunk into events, so the
+// Directory can hold more blobs than a request has time to enumerate, let alone chunk into messages, so the
 // Prefix is published instead and the handler does the listing. That puts the walk where the retries and the
 // Time budget are, rather than blocking a mutation's response on it.
-export type BlobDeletionEventGridData = (
+export type BlobDeletionQueueMessage = (
   | { blobNames: string[]; createdBefore?: never; decidedAt?: Date; prefix?: never }
   | { blobNames?: never; createdBefore?: Date; decidedAt?: never; prefix: string }
 ) & { containerName: StorageBucket };
 
-export const blobDeletionEventGridDataSchema = z.union([
+export const blobDeletionQueueMessageSchema = z.union([
   z.object({
-    blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
+    blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
     containerName: storageBucketSchema,
-    // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a replay can
+    // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can
     // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
     // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
     decidedAt: z.coerce.date().optional(),
@@ -27,12 +27,12 @@ export const blobDeletionEventGridDataSchema = z.union([
   z.object({
     containerName: storageBucketSchema,
     // The listing happens at delivery time, but the set the publisher meant is the one that existed when it
-    // Published. Delivery is at-least-once and a dead-lettered event can be replayed hours later, so without
+    // Published. Delivery is at-least-once and a dead-lettered message can be retried hours later, so without
     // This bound a redelivery would enumerate — and delete — blobs written after the deletion was decided.
     // Omitted only where the prefix can never be re-owned (a deleted room): there is no later writer for a
-    // Replay to destroy, and this is the sole sweep of that prefix, so a bound would strand every upload
+    // Retry to destroy, and this is the sole sweep of that prefix, so a bound would strand every upload
     // Whose write SAS was still live when the owner deleted
     createdBefore: z.coerce.date().optional(),
     prefix: z.string().min(1),
   }),
-]) satisfies z.ZodType<BlobDeletionEventGridData>;
+]) satisfies z.ZodType<BlobDeletionQueueMessage>;
