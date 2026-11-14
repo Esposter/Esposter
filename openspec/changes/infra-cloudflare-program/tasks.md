@@ -9,3 +9,47 @@
 - [ ] 1.5 Ship [calls](../infra-cloudflare-calls/tasks.md). Verified by its tasks all ticked.
 - [ ] 1.6 Ship [pulumi](../infra-cloudflare-pulumi/tasks.md). Verified by its tasks all ticked.
 - [ ] 1.7 Ship [cutover](../infra-cloudflare-cutover/tasks.md). Verified by its tasks all ticked.
+
+## 2. Realtime and ids
+
+- [ ] 2.1 Land the realtime foundation: the three event unions, the object skeletons and their bindings, the authenticated `/ws/user`, `/ws/room/:roomId` and `/ws/call/:callSessionId` routes, and the client connection manager ([realtime](../infra-cloudflare-realtime/tasks.md) 1.1, 3.1). Verified by the socket route tests.
+- [ ] 2.2 Mint every D1 id with the `uuid` package's `v7`, validate `z.uuidv7()`, page creation-ordered cursors on `id` alone, and ban `crypto.randomUUID` and `uuid`'s `v4` by lint (realtime 1.2). Verified by the cursor tests and the lint rule's cases.
+- [ ] 2.3 Build `RoomObject` and move every room-scoped mutation and its events onto it: messages with per-room integer ids, reactions, room emojis, roles, moderation, typing, the external-content FTS5 table, replay after an id, online members and the debounced room-activity fan-out, scheduled messages on its alarm, erase, export and delete (realtime 2.2). Verified by its Miniflare tests.
+- [ ] 2.4 Build `CallObject` and move the call maps, the knock flow, the RealtimeKit webhook and the revoke's rejoin onto it (realtime 2.3). Verified by its Miniflare tests.
+- [ ] 2.5 Build `UserObject` and move achievements, friends, storage usage, Genshin session replacement, resource saves on other devices, room-list events and mention counts onto it, with the sent-message and scheduled-message index, TodoList reminders on its alarm, and session revocation closing sockets on every object (realtime 2.1). Verified by its Miniflare tests.
+- [ ] 2.6 Delete the fourteen EventEmitters, every tRPC subscription procedure and `use*Subscribables` composable, the `$DurableObject` binding and `trpcDurableObject.ts`, `/_internal/publish`, the `Scheduler` object, and the scheduled-message and todo-reminder queues with their dead-letter queues in Pulumi (unprotect, then remove). Verified by no import of them remaining.
+- [ ] 2.7 Split `apps/functions` into `apps/realtime` and `apps/jobs` (realtime 5.1). A folder under `apps/` is a unit that deploys — a Worker, a Pulumi program — and a folder under `packages/` is a library apps import, so both new Workers and `apps/infra` stay apps. Verified by each Worker's wrangler test.
+
+## 3. Database and storage leftovers
+
+- [ ] 3.1 Finish the transactions-to-batches conversion in the resource, storage and router files, including the snapshot lease row that replaces `pg_advisory_xact_lock` and R2 multipart for the user-data archive. Verified by the guarded-write tests.
+- [ ] 3.2 Point `apps/web/server/trpc/context.ts` and the functions Worker's `db.ts` at the D1 binding, and delete the `postgres` driver from every manifest but the cutover's. Verified by the context test.
+- [ ] 3.3 Replace `rate-limiter-flexible` with the Workers Rate Limiting binding declared in the web Worker's wrangler config. Verified by the rate-limit middleware test.
+- [ ] 3.4 A batch update or delete that matches no row throws `NotFoundError` from `meta.changes`, as the Azure 404 did. Verified by a not-found test per writer.
+- [ ] 3.5 Move `apps/web/scripts/phaser/filePack/createFilePack.ts` and `getGenshinGameDataBaseUrl.ts` to R2, delete `packages/db/src/services/azure/container/getContainerClient.ts`, the generic streams layer, `packages/azure`, the `STREAMS` binding and every `@azure/*` dependency outside the cutover tool. Verified by no `@azure/` import outside `scripts/src/services/cutover`.
+- [ ] 3.6 Regenerate one fresh `core` migration with `db:gen`, then `registry:gen` and the schema snapshot. Verified by the migration applying on Miniflare.
+
+## 4. Tests
+
+- [ ] 4.1 Move every suite still importing `azure-mock` onto `@esposter/db-mock`, fix the `createMockDb` "must be of scheme file" load error, the `createMockDb` call sites that expect a raw database, `trpc-msw`'s build, the hoisted `useScheduler` mock and the epoch-zero clock in `drizzleAdapterConfiguration.test.ts`. Verified by `apps/web`, `apps/functions` and `packages/db` suites loading.
+
+## 5. Calls
+
+- [ ] 5.1 A provisioning command creates each environment's RealtimeKit app, the four presets and the webhook subscription, and writes `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN` to ESC under `dev_` and `prod_`. Verified by a dry run listing what it would create.
+- [ ] 5.2 Replace `MicrophoneProcessor`'s `ScriptProcessorNode` with an AudioWorklet. Verified by the microphone processor test.
+
+## 6. Bundle
+
+- [ ] 6.1 Take the email editor's compile chain (cosmiconfig, htmlnano, mjml) and `@tiptap/html`'s happy-dom out of the server bundle, and correct the runtime design's bundle paragraph: only `.client.vue` or an `ssr: false` route rule removes a library from it. Verified by `server-bundle:check`.
+
+## 7. Deploy and cutover
+
+- [ ] 7.1 Deploy both Workers to the develop estate with `wrangler deploy`, then run the second `pulumi up` for the queue consumers and custom domains. Verified by `dev.esposter.com` serving.
+- [ ] 7.2 Confirm the deploy job runs migrations before `wrangler deploy`, uploads secrets with `wrangler secret bulk`, and is never cancelled mid-deploy. Verified by one green deploy run.
+- [ ] 7.3 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and import each room's messages into its object (realtime 4.1), then rehearse the whole cutover on the develop estate. Verified by `verify` passing on develop.
+- [ ] 7.4 Run the production cutover on `next.esposter.com`, switch the apex record from Railway to the web Worker, soak, then tear down: the Azure resources and `src/azure` in Pulumi, the Railway services, the cutover tool and its reschedule route. The `esposter.com` nameservers already point at Cloudflare. Verified by the cutover design's checks.
+
+## 8. Docs and names
+
+- [ ] 8.1 Sweep every spec, skill, ledger and README for the retired platform: delete pages describing retired mechanisms, merge duplicates, give the `drizzle` skill its D1 rules (batches, guarded writes, FTS5, `json_each`, the hundred-parameter cap), and replace the root README's Railway and Postgres badges with Cloudflare's. Verified by no mention of Azure, Railway, LiveKit, Postgres or Web PubSub outside the cutover and the archive.
+- [ ] 8.2 Rename any package, folder or identifier still named for the retired platform. Verified by the same search.
