@@ -14,15 +14,16 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 const createMention = (id: string) =>
   `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${id}">@stale</span>`;
 
 describe(useMessageHtml, () => {
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
-  const roomEmojiId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
+  const roomEmojiId = v7();
   const name = "name";
   const sasUrl = "https://example.com/emoji.png";
   const displayName = "displayName";

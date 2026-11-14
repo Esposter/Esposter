@@ -6,12 +6,13 @@ import { useDataStore } from "@/store/message/data";
 import { useReplyStore } from "@/store/message/input/reply";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useReplyStore, () => {
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
+  const userId = v7();
 
   beforeEach(() => {
     setCurrentRoomId(roomId);

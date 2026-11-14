@@ -11,10 +11,11 @@ import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TextSize } from "#src/models/TextSize";
 import { getTextLineHeight } from "#src/services/export/getTextLineHeight";
 import { getHitElementIndex } from "#src/services/getHitElementIndex";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getHitElementIndex, () => {
-  const DIAMOND_ID = crypto.randomUUID();
+  const DIAMOND_ID = v7();
 
   test("a click on a diamond's edge hits it and its corner misses", () => {
     expect.hasAssertions();
@@ -49,7 +50,7 @@ describe(getHitElementIndex, () => {
 
     const textElement: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "",
       textSize: TextSize.Small,

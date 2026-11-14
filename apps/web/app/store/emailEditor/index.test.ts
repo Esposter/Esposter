@@ -10,11 +10,12 @@ import { useEmailEditorStore } from "@/store/emailEditor";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useEmailEditorStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
   let content: EmailEditor;
@@ -56,7 +57,7 @@ describe(useEmailEditorStore, () => {
   test("carries the dataset binding across an email save", async () => {
     expect.hasAssertions();
 
-    const datasetReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    const datasetReference = { id: v7(), type: DatasetProviderType.Sheet };
     content = new EmailEditor({ content: [], datasetReference, root: { props: {} } });
     const emailEditorStore = useEmailEditorStore();
     const { loadContent, saveEmail } = emailEditorStore;

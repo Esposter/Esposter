@@ -17,6 +17,7 @@ import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { updateBlockNodeProps } from "vue-block-editor-headless";
 
@@ -70,7 +71,7 @@ describe(useVersionHistoryStore, () => {
     expect.hasAssertions();
 
     const webpage = createResourceListItem({ type: ResourceType.Webpage });
-    const buttonId = crypto.randomUUID();
+    const buttonId = v7();
     // The restored draft's label differs from the one the undo would write back, so a surviving entry is visible
     const restoredContent: WebpageNode[] = [
       { props: { href: TEST_URL, id: buttonId, label: TEST_RESTORED_LABEL }, type: WebpageNodeType.Button },

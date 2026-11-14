@@ -2,12 +2,13 @@
 import UserProfileHeader from "@/components/User/Profile/Header.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe("userProfileHeader", () => {
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const user = { biography: "biography", image: "", name: "name" };
   const mountHeader = (viewerId: string, profileUserId: string) => {
     useSession.mockReturnValue({ data: ref({ user: { id: viewerId } }) });
@@ -27,7 +28,7 @@ describe("userProfileHeader", () => {
   test("offers no edit entry point on another user's profile", async () => {
     expect.hasAssertions();
 
-    const component = await mountHeader(crypto.randomUUID(), userId);
+    const component = await mountHeader(v7(), userId);
 
     expect(component.text()).not.toContain("Edit profile");
   });

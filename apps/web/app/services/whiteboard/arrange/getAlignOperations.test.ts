@@ -4,6 +4,7 @@ import { AlignEdge } from "@/models/whiteboard/AlignEdge";
 import { getAlignOperations } from "@/services/whiteboard/arrange/getAlignOperations";
 import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind } from "vue-block-editor-headless";
 
@@ -17,10 +18,10 @@ const createShape = (id: string, x: number, y: number, width: number, height: nu
 });
 
 describe(getAlignOperations, () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const THIRD_ID = crypto.randomUUID();
-  const ARROW_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const THIRD_ID = v7();
+  const ARROW_ID = v7();
 
   test("aligning to the left edge moves each box to the leftmost edge", () => {
     expect.hasAssertions();

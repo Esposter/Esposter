@@ -5,6 +5,7 @@ import type { ShapeElement } from "vue-block-editor-headless";
 import { useWhiteboardArrangeKeyboard } from "@/composables/whiteboard/useWhiteboardArrangeKeyboard";
 import { createWhiteboardEditState, pressKey, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The stacking keys mounted as a surface, so their commands are bound for as long as the mount lasts
@@ -25,9 +26,9 @@ const mountArrangeKeyboard = (
 const createShape = (id: string): ShapeElement => ({ ...WHITEBOARD_PROCESS, id });
 
 describe(useWhiteboardArrangeKeyboard, () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const THIRD_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const THIRD_ID = v7();
 
   test("the bracket keys stack the selection", async () => {
     expect.hasAssertions();

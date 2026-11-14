@@ -1,9 +1,10 @@
 import { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import { FilterType, FilterTypeHas } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("searchMessagesInputSchema", () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const filter = { type: FilterType.Has, value: FilterTypeHas.File };
 
   // Nothing to search on at all is the one shape the endpoint refuses — an empty text query with no filter

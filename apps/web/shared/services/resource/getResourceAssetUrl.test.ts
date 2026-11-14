@@ -3,10 +3,11 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { getResourceFilesDirectoryName } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getResourceAssetUrl, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
 
   test("should encode delimiter characters into the closed charset", () => {
     expect.hasAssertions();

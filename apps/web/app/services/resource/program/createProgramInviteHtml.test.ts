@@ -1,9 +1,10 @@
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createProgramInviteHtml, () => {
   const surveyPath = "/view/Survey/surveyId";
-  const token = crypto.randomUUID();
+  const token = v7();
 
   test("tokens every link to the survey and fills the merge fields from the row", () => {
     expect.hasAssertions();

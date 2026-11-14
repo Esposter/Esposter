@@ -9,6 +9,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyStore } from "@/store/survey";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument } from "vue-survey-engine-headless";
 
@@ -21,7 +22,7 @@ const setupStore = async () => {
 
 describe(useSurveyStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const document = createSurveyDocument();
   const newDocument: SurveyDocument = { ...document, root: { props: { ...document.root.props, title: "edited" } } };
   const identifiedNewDocumentContent = {
@@ -80,7 +81,7 @@ describe(useSurveyStore, () => {
   test("leaves the survey opened since alone when a save lands late", async () => {
     expect.hasAssertions();
 
-    const otherResourceId = crypto.randomUUID();
+    const otherResourceId = v7();
     const otherContent = { document: createSurveyDocument(), settings: surveySettingsSchema.parse({}) };
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));
@@ -144,7 +145,7 @@ describe(useSurveyStore, () => {
   test("discards a content read that lands after another resource opened", async () => {
     expect.hasAssertions();
 
-    const otherResourceId = crypto.randomUUID();
+    const otherResourceId = v7();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(), id: input.id, publication: null }));

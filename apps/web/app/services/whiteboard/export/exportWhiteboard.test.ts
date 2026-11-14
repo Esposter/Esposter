@@ -13,6 +13,7 @@ import { useResourceStore } from "@/store/resource";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import {
   CornerStyle,
@@ -36,10 +37,10 @@ vi.mock(import("@/services/capture/rasterizeSvg"), () => ({ rasterizeSvg: vi.fn<
 
 describe(exportWhiteboard, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const resourceName = "a";
-  const PROCESS_ID = crypto.randomUUID();
-  const IMAGE_ID = crypto.randomUUID();
+  const PROCESS_ID = v7();
+  const IMAGE_ID = v7();
   const IMAGE_FILE_ID = "5e1a7c3b9d2f4e6a8b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a";
   const positionedDocument: PositionedDocument = {
     elements: [

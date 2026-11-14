@@ -3,6 +3,7 @@ import { SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { getSurveyPageErrors } from "#src/services/runner/getSurveyPageErrors";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyPageErrors, () => {
@@ -16,7 +17,7 @@ describe(getSurveyPageErrors, () => {
         {
           props: {
             children: [{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: SurveyNodeType.Panel,
         },

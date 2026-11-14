@@ -8,6 +8,7 @@ import { UiStyles } from "@/models/ui/UiStyle";
 import { SURVEY_SMILEY_MEANINGS } from "@/services/resource/survey/constants";
 import { UiIconMap } from "@/services/ui/UiIconMap";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { SurveyNodeType, surveyRatingNodePropsSchema, SurveyRatingType } from "vue-survey-engine-headless";
 
@@ -21,7 +22,7 @@ describe("resourceSurveyFieldRating", () => {
     const createNode = (rateType: SurveyRatingType, count: number): SurveyRatingNode => ({
       props: {
         ...surveyRatingNodePropsSchema.parse({ name: "question", rateCount: count, rateType, title }),
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: SurveyNodeType.Rating,
     });

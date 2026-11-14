@@ -10,6 +10,7 @@ import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
+import { v7 } from "uuid";
 
 // One row is one message. Every field a query filters, sorts or joins on is a column; `files` and the link preview are
 // nested shapes read whole, so they stay JSON. `filenames` is the space-joined file names the search index reads, written
@@ -25,7 +26,7 @@ export const messagesInMessage = sqliteTable(
     files: text({ mode: "json" }).notNull().$type<FileEntity[]>().default([]),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     isEdited: integer({ mode: "boolean" }).notNull().default(false),
     isForward: integer({ mode: "boolean" }).notNull().default(false),
     isPinned: integer({ mode: "boolean" }).notNull().default(false),

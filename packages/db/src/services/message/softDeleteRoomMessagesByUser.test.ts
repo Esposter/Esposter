@@ -6,6 +6,7 @@ import { softDeleteRoomMessagesByUser } from "#src/services/message/softDeleteRo
 import { StreamTable, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(softDeleteRoomMessagesByUser, () => {
@@ -20,10 +21,10 @@ describe(softDeleteRoomMessagesByUser, () => {
   test("soft-deletes only the target user's live messages in that room", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const otherRoomId = crypto.randomUUID();
-    const targetUserId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const roomId = v7();
+    const otherRoomId = v7();
+    const targetUserId = v7();
+    const otherUserId = v7();
     const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
       StreamTableEntityMap[StreamTable.Messages]
     >;

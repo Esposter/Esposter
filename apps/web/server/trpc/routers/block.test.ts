@@ -9,6 +9,7 @@ import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import { blocksInSocial, DatabaseEntityType, friendRequestsInSocial, friendsInSocial } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("blockRouter", () => {
@@ -60,7 +61,7 @@ describe("blockRouter", () => {
   test("fails to block non-existent user", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
 
     await expect(blockCaller.createBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,
@@ -112,7 +113,7 @@ describe("blockRouter", () => {
   test("fails to unblock non-existent block", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
 
     await expect(blockCaller.deleteBlock(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId).message}]`,

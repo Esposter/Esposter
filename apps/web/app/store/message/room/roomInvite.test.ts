@@ -6,11 +6,12 @@ import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHo
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
 import { INVITE_ID_LENGTH } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomInviteStore, () => {
-  const roomId = crypto.randomUUID();
-  const unreadRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const unreadRoomId = v7();
   const user = createUser({ id: "userId" });
   const otherUser = createUser({ id: "otherUserId" });
   const createRoomInvite = (id: string, creator = user): InviteInMessageWithCreator => ({

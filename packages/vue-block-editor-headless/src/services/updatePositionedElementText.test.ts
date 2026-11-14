@@ -8,6 +8,7 @@ import { getTextWidth } from "#src/services/export/getTextWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementText } from "#src/services/updatePositionedElementText";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(updatePositionedElementText, () => {
@@ -44,7 +45,7 @@ describe(updatePositionedElementText, () => {
       altText: "",
       fileId: "0".repeat(64),
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       type: PositionedElementType.Image,
       width: 100,
       x: 0,
@@ -59,7 +60,7 @@ describe(updatePositionedElementText, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "a",
       textSize: TextSize.Small,

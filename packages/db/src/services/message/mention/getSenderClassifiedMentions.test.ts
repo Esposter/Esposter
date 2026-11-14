@@ -14,17 +14,18 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe(getSenderClassifiedMentions, () => {
   let db: Database;
   const name = "name";
-  const roomId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
-  const ownerUserId = crypto.randomUUID();
-  const senderUserId = crypto.randomUUID();
-  const mentionEveryoneUserId = crypto.randomUUID();
-  const mentionedUserId = crypto.randomUUID();
+  const roomId = v7();
+  const roleId = v7();
+  const ownerUserId = v7();
+  const senderUserId = v7();
+  const mentionEveryoneUserId = v7();
+  const mentionedUserId = v7();
 
   beforeAll(async () => {
     db = await createMockDb();

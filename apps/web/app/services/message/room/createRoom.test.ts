@@ -1,6 +1,7 @@
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { MimeCategory, RoomType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The room row every room and direct message test stores, removes and rolls back — a direct message is a room
@@ -9,18 +10,18 @@ export const createRoom = (name: string, type = RoomType.Room): RoomInMessage =>
   allowedMimeCategories: [MimeCategory.Image],
   createdAt: new Date(0),
   deletedAt: null,
-  id: crypto.randomUUID(),
+  id: v7(),
   image: "",
   isInvitePaused: false,
   isReadOnly: false,
   maxFileSizeBytes: 0,
   name,
-  participantKey: type === RoomType.DirectMessage ? crypto.randomUUID() : null,
+  participantKey: type === RoomType.DirectMessage ? v7() : null,
   slowmodeMs: 0,
   topic: "",
   type,
   updatedAt: new Date(0),
-  userId: crypto.randomUUID(),
+  userId: v7(),
 });
 
 describe.todo("createRoom");

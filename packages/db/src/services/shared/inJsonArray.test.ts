@@ -4,6 +4,7 @@ import { inJsonArray } from "#src/services/shared/inJsonArray";
 import { notInJsonArray } from "#src/services/shared/notInJsonArray";
 import { createMockDb } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(inJsonArray, () => {
@@ -40,8 +41,8 @@ describe(inJsonArray, () => {
   test("matches every listed id past the statement's parameter cap", async () => {
     expect.hasAssertions();
 
-    const ids = Array.from({ length: listLength }, () => crypto.randomUUID());
-    await insertUsers([...ids, crypto.randomUUID()]);
+    const ids = Array.from({ length: listLength }, () => v7());
+    await insertUsers([...ids, v7()]);
 
     const users = await mockDatabase.db
       .select({ id: usersInAuth.id })
@@ -54,7 +55,7 @@ describe(inJsonArray, () => {
   test("matches nothing for an empty list, and excludes nothing from the negation", async () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
     await insertUsers([id]);
 
     const included = await mockDatabase.db
@@ -73,8 +74,8 @@ describe(inJsonArray, () => {
   test("the negation keeps the rows the listed ids do not name, past the cap", async () => {
     expect.hasAssertions();
 
-    const ids = Array.from({ length: listLength }, () => crypto.randomUUID());
-    const otherId = crypto.randomUUID();
+    const ids = Array.from({ length: listLength }, () => v7());
+    const otherId = v7();
     await insertUsers([...ids, otherId]);
 
     const users = await mockDatabase.db

@@ -2,10 +2,11 @@ import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCr
 import { defineTriggerAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { MessageAchievementDefinitionMap } from "#shared/services/achievement/definitions/MessageAchievementDefinitionMap";
 import { MessageAchievementName } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("defineAchievementDefinition", () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const timeZone = "UTC";
   const { check } = MessageAchievementDefinitionMap[MessageAchievementName.EssayWriter];
   // EssayWriter unlocks at 1,000 characters, so a message one short is the case the condition must reject

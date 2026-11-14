@@ -4,6 +4,7 @@ import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 import { createMessage } from "#src/services/message/createMessage";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const createTableClient = (createEntityError?: Error) => {
@@ -29,16 +30,11 @@ const storeAndReadDefaults = async (messageInput: CreateMessageInput) => {
 };
 
 describe(createMessage, () => {
-  const ROOM_ID = crypto.randomUUID();
+  const ROOM_ID = v7();
   const storedDefaults = { mentions: [], message: "", replyRowKey: "" };
 
   // No url in the message, so the entity needs no link-preview fetch
-  const input = {
-    message: "message",
-    roomId: ROOM_ID,
-    type: MessageType.Message,
-    userId: crypto.randomUUID(),
-  } as const;
+  const input = { message: "message", roomId: ROOM_ID, type: MessageType.Message, userId: v7() } as const;
 
   test("writes the message as one row and returns it", async () => {
     expect.hasAssertions();
@@ -68,13 +64,7 @@ describe(createMessage, () => {
     expect.hasAssertions();
 
     await expect(
-      storeAndReadDefaults({
-        message: undefined,
-        replyRowKey: undefined,
-        roomId: ROOM_ID,
-        type,
-        userId: crypto.randomUUID(),
-      }),
+      storeAndReadDefaults({ message: undefined, replyRowKey: undefined, roomId: ROOM_ID, type, userId: v7() }),
     ).resolves.toStrictEqual(storedDefaults);
   });
 
@@ -82,12 +72,7 @@ describe(createMessage, () => {
     expect.hasAssertions();
 
     await expect(
-      storeAndReadDefaults({
-        appUser: { id: crypto.randomUUID() },
-        message: undefined,
-        roomId: ROOM_ID,
-        type: MessageType.Webhook,
-      }),
+      storeAndReadDefaults({ appUser: { id: v7() }, message: undefined, roomId: ROOM_ID, type: MessageType.Webhook }),
     ).resolves.toStrictEqual(storedDefaults);
   });
 });

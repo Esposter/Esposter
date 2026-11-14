@@ -4,6 +4,7 @@ import { DEFAULT_COMPRESSION_LEVEL } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";
+import { v7 } from "uuid";
 import { describe, test } from "vitest";
 
 const BENCH_DOCUMENT_BYTE_COUNTS = [100_000, 10_000_000];
@@ -16,7 +17,7 @@ const createDocument = (byteCount: number) =>
   JSON.stringify({
     rows: Array.from({ length: Math.floor(byteCount / 100) }, (_value, index) => ({
       data: { a: index, b: `${index % 97}` },
-      id: crypto.randomUUID(),
+      id: v7(),
     })),
   });
 // The level is what this settles, so each task compresses the same document the writer does at one candidate:

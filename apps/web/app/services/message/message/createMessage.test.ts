@@ -1,6 +1,7 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The message row every message test stores, reads and compares, so each suite states only what it varies
@@ -11,7 +12,7 @@ export const createMessage = (roomId: string, message = "", type = MessageType.M
   deletedAt: null,
   filenames: "",
   files: [],
-  id: crypto.randomUUID(),
+  id: v7(),
   isEdited: false,
   isForward: false,
   isPinned: false,
@@ -23,7 +24,7 @@ export const createMessage = (roomId: string, message = "", type = MessageType.M
   senderName: null,
   type,
   updatedAt: new Date(0),
-  userId: crypto.randomUUID(),
+  userId: v7(),
 });
 
 describe.todo("createMessage");

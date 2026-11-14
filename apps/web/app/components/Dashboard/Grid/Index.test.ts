@@ -13,6 +13,7 @@ import { useDashboardStore } from "@/store/dashboard";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType, useGridLayout } from "vue-grid-layout-headless";
 
@@ -221,7 +222,7 @@ describe("dashboardGrid", () => {
   // A body drag released over another grid is handed to it with the group that grid stands for, read from its root. The
   // Grid under the pointer is stubbed, since a DOM without layout has no hit test, and the target mounts as a group's grid does
   test.each([
-    ["a group's grid", crypto.randomUUID()],
+    ["a group's grid", v7()],
     ["the dashboard's own grid", undefined],
   ])(
     "a body drag released over %s hands the visual over with that grid's group",

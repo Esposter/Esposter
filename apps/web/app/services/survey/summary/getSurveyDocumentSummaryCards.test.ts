@@ -3,6 +3,7 @@ import type { SurveyQuestionNode } from "vue-survey-engine-headless";
 import { CHECKBOX_ANSWER_SEPARATOR } from "#shared/services/resource/survey/constants";
 import { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 import { getSurveyDocumentSummaryCards } from "@/services/survey/summary/getSurveyDocumentSummaryCards";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   surveyBooleanNodeType,
@@ -23,8 +24,8 @@ import {
 
 describe(getSurveyDocumentSummaryCards, () => {
   const checkboxAnswers = ["a", "b"].join(CHECKBOX_ANSWER_SEPARATOR);
-  const id = crypto.randomUUID();
-  const responseId = crypto.randomUUID();
+  const id = v7();
+  const responseId = v7();
   const questions: SurveyQuestionNode[] = [
     {
       props: {

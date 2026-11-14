@@ -5,15 +5,11 @@ import { createSurveyRadioGroupAnswerSchema } from "#src/services/runner/answer/
 import { SURVEY_NONE_ANSWER, SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createRadioGroupNode = (hasNone: boolean): SurveyRadioGroupNode => ({
-  props: {
-    ...surveyRadioGroupNodeType.createDefaultProps(),
-    choices: [{ text: "", value: "a" }],
-    hasNone,
-    id: crypto.randomUUID(),
-  },
+  props: { ...surveyRadioGroupNodeType.createDefaultProps(), choices: [{ text: "", value: "a" }], hasNone, id: v7() },
   type: SurveyNodeType.RadioGroup,
 });
 

@@ -6,13 +6,14 @@ import { createOptimisticMessage } from "@/services/message/createOptimisticMess
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useReadMessageMetadata, () => {
   const { trpcMsw } = setupMswTrpc();
   let readMessageMetadata: ReturnType<typeof useReadMessageMetadata>;
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
 
   test("reads only the replies a message names", async () => {
     expect.hasAssertions();

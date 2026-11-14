@@ -1,5 +1,6 @@
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getMissingProgramInviteBindings, () => {
@@ -19,10 +20,10 @@ describe(getMissingProgramInviteBindings, () => {
 
     expect(
       getMissingProgramInviteBindings({
-        audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-        emailId: crypto.randomUUID(),
+        audience: { id: v7(), type: DatasetProviderType.Sheet },
+        emailId: v7(),
         keyColumn: "email",
-        surveyId: crypto.randomUUID(),
+        surveyId: v7(),
       }),
     ).toStrictEqual([]);
   });

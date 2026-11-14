@@ -1,4 +1,5 @@
 import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource/SaveStagedResourceContentInput";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("saveStagedResourceContentInputSchema", () => {
@@ -8,7 +9,7 @@ describe("saveStagedResourceContentInputSchema", () => {
     expect.hasAssertions();
 
     const hash = "ab".repeat(32);
-    const input = { contentVersion: 0, id: crypto.randomUUID() };
+    const input = { contentVersion: 0, id: v7() };
 
     expect(saveStagedResourceContentInputSchema.safeParse({ ...input, hash }).success).toBe(true);
     expect(saveStagedResourceContentInputSchema.safeParse({ ...input, hash: hash.toUpperCase() }).success).toBe(false);

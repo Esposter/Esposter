@@ -5,13 +5,14 @@ import { createSurveyImagePickerAnswerSchema } from "#src/services/runner/answer
 import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyImagePickerNodeType } from "#src/services/surveyImagePickerNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createImagePickerNode = (multiSelect: boolean): SurveyImagePickerNode => ({
   props: {
     ...surveyImagePickerNodeType.createDefaultProps(),
     choices: [{ imageLink: "", text: "", value: "a" }],
-    id: crypto.randomUUID(),
+    id: v7(),
     multiSelect,
   },
   type: SurveyNodeType.ImagePicker,

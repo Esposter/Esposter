@@ -11,6 +11,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePageBuilderStyle, () => {
@@ -21,7 +22,7 @@ describe(usePageBuilderStyle, () => {
   test("paste style applies copied styles to another node", () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const style: NodeStyle = { [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
@@ -43,7 +44,7 @@ describe(usePageBuilderStyle, () => {
   test("resetting a node's last override removes its style", () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createButton(TEST_ID)],
@@ -66,7 +67,7 @@ describe(usePageBuilderStyle, () => {
   test("resetting a property a node does not set records no edit", () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createButton(TEST_ID)],
@@ -84,7 +85,7 @@ describe(usePageBuilderStyle, () => {
   test("dragging an opacity slider records one undoable change", () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createButton(TEST_ID)],

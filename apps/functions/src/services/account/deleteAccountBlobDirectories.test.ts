@@ -3,6 +3,7 @@ import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { StorageBucket, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
@@ -29,8 +30,8 @@ describe(deleteAccountBlobDirectories, () => {
   test("removes the account's blobs under its prefix and no other account's blobs", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(otherUserId));
     await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);

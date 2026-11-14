@@ -6,7 +6,13 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 // Inserts into the document the store holds for the resource, the way the shell does
 const insertIntoResource = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType) => {
@@ -21,11 +27,11 @@ const insertIntoResource = (resourceId: string, slotPointer: string, index: numb
 // The id the insert gives its new node is fixed, so a test reads it exactly
 const setup = () => {
   setActivePinia(createPinia());
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
-  const insertedId = crypto.randomUUID();
-  vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
+  const insertedId = v7();
+  vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
   return { insertedId, resourceId };
 };
 

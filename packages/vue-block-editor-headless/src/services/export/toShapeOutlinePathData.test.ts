@@ -9,6 +9,7 @@ import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TextSize } from "#src/models/TextSize";
 import { toShapeOutlinePathData } from "#src/services/export/toShapeOutlinePathData";
 import { toShapeSvg } from "#src/services/export/toShapeSvg";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // Each path starts on the left edge, at the radius its corner curves by, so the start shows how far a corner has grown
@@ -27,7 +28,7 @@ const createRectangle = (
   dashPattern: DashPattern.Solid,
   fill: "#ffffff",
   height,
-  id: crypto.randomUUID(),
+  id: v7(),
   kind: ShapeKind.Rectangle,
   sketchLevel,
   strokeWidth: StrokeWidth.Medium,

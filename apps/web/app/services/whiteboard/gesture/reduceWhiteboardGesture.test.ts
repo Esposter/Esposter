@@ -18,6 +18,7 @@ import { MINIMUM_ELEMENT_SIZE, PRIMARY_BUTTON, STROKE_WIDTH } from "@/services/w
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { WHITEBOARD_SHAPE_FILL, WHITEBOARD_SHAPE_SIZE } from "@/services/whiteboard/palette/constants";
 import { JsonPatchOperationType, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   ArrowheadKind,
@@ -57,17 +58,17 @@ const createIdsInOrder = (ids: string[]): (() => string) => {
 
 describe(reduceWhiteboardGesture, () => {
   const POINTER_ID = 0;
-  const PROCESS_ID = crypto.randomUUID();
-  const SECOND_PROCESS_ID = crypto.randomUUID();
-  const THIRD_PROCESS_ID = crypto.randomUUID();
-  const ARROW_ID = crypto.randomUUID();
-  const ANNOTATION_ID = crypto.randomUUID();
-  const DECISION_ID = crypto.randomUUID();
-  const NEW_ARROW_ID = crypto.randomUUID();
-  const PLACED_SHAPE_ID = crypto.randomUUID();
-  const STROKE_ID = crypto.randomUUID();
-  const COPY_ID = crypto.randomUUID();
-  const ARROW_COPY_ID = crypto.randomUUID();
+  const PROCESS_ID = v7();
+  const SECOND_PROCESS_ID = v7();
+  const THIRD_PROCESS_ID = v7();
+  const ARROW_ID = v7();
+  const ANNOTATION_ID = v7();
+  const DECISION_ID = v7();
+  const NEW_ARROW_ID = v7();
+  const PLACED_SHAPE_ID = v7();
+  const STROKE_ID = v7();
+  const COPY_ID = v7();
+  const ARROW_COPY_ID = v7();
   const VIEWPORT: Viewport = { scale: 1, x: 0, y: 0 };
   const PROCESS_BOUNDS: Bounds = { height: 50, width: 100, x: 100, y: 100 };
   // A decision's bottom point to a process's left point, both bound, with its arrowhead at the end only

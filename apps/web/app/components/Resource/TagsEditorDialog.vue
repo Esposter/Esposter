@@ -9,6 +9,7 @@ import { getResourceTags } from "@/services/resource/tag/getResourceTags";
 import { getTagRows } from "@/services/resource/tag/getTagRows";
 import { UiRules } from "@/services/ui/UiRules";
 import { MAX_TAG_NAME_LENGTH, MAX_TAG_VALUE_LENGTH, MAX_TAGS_COUNT } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
 interface Props {
   tags: ResourceTags;
@@ -23,7 +24,7 @@ const valueRules = [UiRules.maxLength(MAX_TAG_VALUE_LENGTH)];
 // An empty trailing row means the first thing the user sees is somewhere to type.
 // A row is keyed by its own id rather than its place, so removing one leaves each remaining row's field, and the error
 // Its field shows, with the row it belongs to
-const createRow = (row: TagRow = { name: "", value: "" }) => ({ ...row, id: crypto.randomUUID() });
+const createRow = (row: TagRow = { name: "", value: "" }) => ({ ...row, id: v7() });
 const rows = ref(Object.keys(tags).length > 0 ? getTagRows(tags).map((row) => createRow(row)) : [createRow()]);
 </script>
 

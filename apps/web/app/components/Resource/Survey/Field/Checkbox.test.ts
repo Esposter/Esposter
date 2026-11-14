@@ -5,6 +5,7 @@ import ResourceSurveyFieldCheckbox from "@/components/Resource/Survey/Field/Chec
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   getSurveyChoiceText,
@@ -24,13 +25,10 @@ describe("resourceSurveyFieldCheckbox", () => {
     ];
     const error = "error";
     const otherText = "a";
-    const seed = crypto.randomUUID();
+    const seed = v7();
     const title = "Favourite colour";
     const createNode = (props: Partial<SurveyCheckboxNodeProps>): SurveyCheckboxNode => ({
-      props: {
-        ...surveyCheckboxNodePropsSchema.parse({ choices, name: "question", title, ...props }),
-        id: crypto.randomUUID(),
-      },
+      props: { ...surveyCheckboxNodePropsSchema.parse({ choices, name: "question", title, ...props }), id: v7() },
       type: SurveyNodeType.Checkbox,
     });
 

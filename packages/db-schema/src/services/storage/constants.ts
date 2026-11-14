@@ -5,7 +5,7 @@ import { ID_SEPARATOR } from "@esposter/shared";
 // Carrying a separator or a dot segment steers the write or the delete out of the prefix the caller was authorized for.
 export const BLOB_SEGMENT_REGEX = /^(?!\.{1,2}$)[^/\\]+$/u;
 export const FILENAME_MAX_LENGTH = 1000;
-// Characters in the canonical string form `crypto.randomUUID` returns.
+// Characters in the canonical string form `uuid`'s `v7` returns.
 const UUID_LENGTH = 36;
 // A `{uuid}|{filename}` blob segment at its longest, for the inputs that carry one whole. Derived rather than
 // Restated, so a filename the upload accepts can never be one the delete rejects.

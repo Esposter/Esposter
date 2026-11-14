@@ -8,6 +8,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import DashboardVisualTable from "@/components/Dashboard/Visual/Table.vue";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("dashboardVisualTable", () => {
@@ -28,7 +29,7 @@ describe("dashboardVisualTable", () => {
         ],
         xColumn: "c",
       },
-      reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      reference: { id: v7(), type: DatasetProviderType.Sheet },
     },
     type: VisualType.Table,
   });

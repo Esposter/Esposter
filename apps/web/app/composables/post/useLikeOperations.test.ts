@@ -6,12 +6,13 @@ import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useLikeOperations, () => {
   const { trpcMsw } = setupMswTrpc();
-  const postId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const postId = v7();
+  const userId = v7();
   const createLike = (value: -1 | 1): LikeInPost => ({
     createdAt: new Date(0),
     deletedAt: null,

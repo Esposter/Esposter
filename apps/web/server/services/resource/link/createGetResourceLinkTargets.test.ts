@@ -1,11 +1,12 @@
 import { createGetResourceLinkTargets } from "#server/services/resource/link/createGetResourceLinkTargets";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { ResourceLinkType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe(createGetResourceLinkTargets, () => {
-  const targetId = crypto.randomUUID();
+  const targetId = v7();
   const linkSchema = createResourceLinkSchema(ResourceLinkType.Dataset);
   const recursiveSchema = z.object({
     get children() {

@@ -8,6 +8,7 @@ import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const webhooksInMessage = sqliteTable(
@@ -18,7 +19,7 @@ export const webhooksInMessage = sqliteTable(
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     isActive: integer({ mode: "boolean" }).notNull().default(true),
     name: text().notNull(),
     roomId: text()

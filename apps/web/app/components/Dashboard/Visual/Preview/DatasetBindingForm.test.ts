@@ -9,6 +9,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -24,8 +25,8 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: firstReadReached, resolve: onFirstReadReached } = Promise.withResolvers<void>();
     const { promise: boundReadReached, resolve: onBoundReadReached } = Promise.withResolvers<void>();
-    const firstReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
-    const secondReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    const firstReference = { id: v7(), type: DatasetProviderType.Sheet };
+    const secondReference = { id: v7(), type: DatasetProviderType.Sheet };
     let secondReferenceReadCount = 0;
     trpcMsw.dataset.readDataset.query(async ({ input }) => {
       if (input.id === firstReference.id) {
@@ -38,7 +39,7 @@ describe("dashboardVisualPreviewDatasetBindingForm", () => {
       }
       return { columns: [{ name: "", type: ColumnType.String }], rows: [] };
     });
-    useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
+    useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
     const wrapper = await mountSuspended(DashboardVisualPreviewDatasetBindingForm, {
       props: { modelValue: undefined },
       shallow: true,

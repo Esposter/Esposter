@@ -1,4 +1,5 @@
 import { whiteboardResourceSchema } from "#shared/models/resource/whiteboard/WhiteboardResource";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("whiteboardResourceSchema", () => {
@@ -9,7 +10,7 @@ describe("whiteboardResourceSchema", () => {
       color: "",
       dashPattern: "solid",
       end: { hasArrowhead: true, point: { x: 100, y: 0 } },
-      id: crypto.randomUUID(),
+      id: v7(),
       label: "",
       pathKind: "straight",
       sketchLevel: "artist",

@@ -2,10 +2,11 @@ import type { MjmlTextNode } from "mjml-blocks";
 
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getEmailAttributeValue, () => {
-  const TEST_TEXT_ID = crypto.randomUUID();
+  const TEST_TEXT_ID = v7();
   const createText = (props: Partial<MjmlTextNode["props"]> = {}): MjmlTextNode => ({
     props: { content: { content: [], type: "doc" }, id: TEST_TEXT_ID, ...props },
     type: MjmlNodeType.Text,

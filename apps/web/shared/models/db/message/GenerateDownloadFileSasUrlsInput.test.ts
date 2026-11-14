@@ -1,11 +1,12 @@
 import { generateDownloadFileSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadFileSasUrlsInput";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("generateDownloadFileSasUrlsInputSchema", () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const filename = "a";
   const mimetype = "mimetype";
-  const file = { filename, id: crypto.randomUUID(), mimetype };
+  const file = { filename, id: v7(), mimetype };
 
   test("parses the files a room asks read urls for", () => {
     expect.hasAssertions();

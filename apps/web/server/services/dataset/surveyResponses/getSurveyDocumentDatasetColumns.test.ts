@@ -2,6 +2,7 @@ import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode } from "vue-su
 
 import { getSurveyDocumentDatasetColumns } from "#server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   surveyBooleanNodeType,
@@ -23,7 +24,7 @@ import {
 } from "vue-survey-engine-headless";
 
 describe(getSurveyDocumentDatasetColumns, () => {
-  const id = crypto.randomUUID();
+  const id = v7();
   const name = "a";
   const createPage = (children: SurveyPlaceableNode[]): SurveyPageNode => ({
     props: { ...surveyPageNodeType.createDefaultProps(), children, id },

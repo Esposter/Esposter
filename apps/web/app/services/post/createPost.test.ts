@@ -1,6 +1,7 @@
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
 import { createUser } from "@/services/message/user/createUser.test";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The post row every feed, thread and vote test works against. A comment is the same shape with a `parentId`,
@@ -15,7 +16,7 @@ export const createPost = (overrides: Partial<PostInPostWithRelations> = {}): Po
     deletedAt: null,
     depth: 0,
     description: "description",
-    id: crypto.randomUUID(),
+    id: v7(),
     likeCount: 0,
     parentId: null,
     ranking: 0,

@@ -3,10 +3,11 @@ import { createRoomRole } from "@/services/message/member/createRoomRole.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useRoleStore, () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const { trpcMsw } = setupMswTrpc();
   const first = createRoomRole({ name: "first", position: 1, roomId });
   const second = createRoomRole({ name: "second", position: 2, roomId });
@@ -47,7 +48,7 @@ describe(useRoleStore, () => {
   test("restores only the role whose revocation was rejected", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     trpcMsw.role.revokeRole.mutation(({ input: { roleId } }) => {
       if (roleId === first.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });

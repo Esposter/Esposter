@@ -16,6 +16,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -39,7 +40,7 @@ const seedContent = async (
 
 describe(sendTodoReminder, () => {
   const name = "name";
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const dueAt = new Date(0);
 
   const insertResource = async () =>
@@ -66,7 +67,7 @@ describe(sendTodoReminder, () => {
     expect.hasAssertions();
 
     const resource = await insertResource();
-    const itemId = crypto.randomUUID();
+    const itemId = v7();
     await seedContent(resource.id, [{ dueAt: dueAt.toISOString(), id: itemId, name }]);
     await sendTodoReminder({ dueAt, itemId, resourceId: resource.id });
 
@@ -78,7 +79,7 @@ describe(sendTodoReminder, () => {
   test("skips when the resource is gone", async () => {
     expect.hasAssertions();
 
-    await sendTodoReminder({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() });
+    await sendTodoReminder({ dueAt, itemId: v7(), resourceId: v7() });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
@@ -88,7 +89,7 @@ describe(sendTodoReminder, () => {
 
     const resource = await insertResource();
     await seedContent(resource.id, []);
-    await sendTodoReminder({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id });
+    await sendTodoReminder({ dueAt, itemId: v7(), resourceId: resource.id });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
@@ -97,7 +98,7 @@ describe(sendTodoReminder, () => {
     expect.hasAssertions();
 
     const resource = await insertResource();
-    const itemId = crypto.randomUUID();
+    const itemId = v7();
     const reDatedAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
     await sendTodoReminder({ dueAt, itemId, resourceId: resource.id });
@@ -110,7 +111,7 @@ describe(sendTodoReminder, () => {
     expect.hasAssertions();
 
     const resource = await insertResource();
-    const itemId = crypto.randomUUID();
+    const itemId = v7();
     await seedContent(resource.id, [
       { completedAt: dueAt.toISOString(), dueAt: dueAt.toISOString(), id: itemId, name },
     ]);

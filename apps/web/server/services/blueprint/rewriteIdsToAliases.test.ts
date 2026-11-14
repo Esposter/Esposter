@@ -1,10 +1,11 @@
 import { rewriteIdsToAliases } from "#server/services/blueprint/rewriteIdsToAliases";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { ResourceType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(rewriteIdsToAliases, () => {
-  const selectedId = crypto.randomUUID();
+  const selectedId = v7();
   const alias = buildBlueprintEntryToken("a");
   const idAliasMap = new Map([[selectedId, alias]]);
 
@@ -22,7 +23,7 @@ describe(rewriteIdsToAliases, () => {
   test("leaves unselected ids and id fragments untouched", () => {
     expect.hasAssertions();
 
-    const otherId = crypto.randomUUID();
+    const otherId = v7();
     const result = rewriteIdsToAliases(
       { content: { "": `${selectedId} `, " ": otherId }, type: ResourceType.Program },
       idAliasMap,

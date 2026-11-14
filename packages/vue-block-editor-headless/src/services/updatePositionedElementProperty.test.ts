@@ -17,6 +17,7 @@ import { getTextWidth } from "#src/services/export/getTextWidth";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { updatePositionedElementProperty } from "#src/services/updatePositionedElementProperty";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(updatePositionedElementProperty, () => {
@@ -38,7 +39,7 @@ describe(updatePositionedElementProperty, () => {
       altText: "",
       fileId: "0".repeat(64),
       height: 50,
-      id: crypto.randomUUID(),
+      id: v7(),
       type: PositionedElementType.Image,
       width: 50,
       x: 0,
@@ -122,7 +123,7 @@ describe(updatePositionedElementProperty, () => {
 
     const stroke: StrokeElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       points: [
         { x: 0, y: 0 },
         { x: 10, y: 10 },
@@ -158,7 +159,7 @@ describe(updatePositionedElementProperty, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "ab\nabcd",
       textSize: TextSize.Small,
@@ -183,7 +184,7 @@ describe(updatePositionedElementProperty, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "ab",
       textSize: TextSize.Small,
@@ -206,7 +207,7 @@ describe(updatePositionedElementProperty, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "abcd",
       textSize: TextSize.Small,
@@ -239,7 +240,7 @@ describe(updatePositionedElementProperty, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "ab",
       textSize: TextSize.Small,

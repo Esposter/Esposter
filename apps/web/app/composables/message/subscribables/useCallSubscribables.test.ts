@@ -11,6 +11,7 @@ import { useParticipantStore } from "@/store/message/room/call/participant";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The participant frames and their read are the seam, since the nuxt test environment does not run the call socket.
@@ -34,10 +35,10 @@ const mountCallSubscribables = () =>
 
 describe(useCallSubscribables, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const callSessionId = createId(CALL_ID_LENGTH);
-  const participantId = crypto.randomUUID();
+  const participantId = v7();
   let opened: ReturnType<typeof createCounter>;
   let closed: ReturnType<typeof createCounter>;
   let roomReads: ReturnType<typeof createCounter>;

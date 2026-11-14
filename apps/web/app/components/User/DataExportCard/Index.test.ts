@@ -9,6 +9,7 @@ import { DataExportOmittedItems } from "@/services/user/settings/DataExportOmitt
 import { DataExportStatus } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const hasButton = (component: VueWrapper, label: string) =>
@@ -36,7 +37,7 @@ describe("userDataExportCard", () => {
   });
 
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
+  const id = v7();
   const epoch = new Date(0);
   const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
   const link = "https://example.com";

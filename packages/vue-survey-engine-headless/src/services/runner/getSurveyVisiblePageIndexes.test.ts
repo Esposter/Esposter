@@ -2,6 +2,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { getSurveyVisiblePageIndexes } from "#src/services/runner/getSurveyVisiblePageIndexes";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyVisiblePageIndexes, () => {
@@ -36,7 +37,7 @@ describe(getSurveyVisiblePageIndexes, () => {
         {
           props: {
             children: [{ props: { id: "a", name: "a", visibleIf: "{x} = 'x'" }, type: SurveyNodeType.Text }],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: SurveyNodeType.Panel,
         },

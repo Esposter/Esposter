@@ -6,6 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { SurveyNodeType, surveyRankingNodePropsSchema } from "vue-survey-engine-headless";
 
@@ -14,7 +15,7 @@ describe("resourceSurveyFieldRanking", () => {
     setupUiStyle(uiStyle);
 
     const error = "error";
-    const id = crypto.randomUUID();
+    const id = v7();
     const title = "title";
     const node: SurveyRankingNode = {
       props: {

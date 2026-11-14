@@ -3,11 +3,12 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useDataset, () => {
   const { trpcMsw } = setupMswTrpc();
-  const reference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+  const reference = { id: v7(), type: DatasetProviderType.Sheet };
 
   // A reference outlives its source in the consumer's content, so the read that finds nothing tells the owner how to
   // Fix the binding rather than echoing the id it could not resolve
@@ -27,7 +28,7 @@ describe(useDataset, () => {
   test("drops the previous source's dataset when the next one cannot be read", async () => {
     expect.hasAssertions();
 
-    const missingReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    const missingReference = { id: v7(), type: DatasetProviderType.Sheet };
     trpcMsw.dataset.readDataset.query(({ input }) => {
       if (input.id === missingReference.id) throw new TRPCError({ code: "NOT_FOUND", message: " " });
       return { columns: [], rows: [] };

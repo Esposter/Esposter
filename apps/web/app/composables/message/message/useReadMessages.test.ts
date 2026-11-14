@@ -6,14 +6,15 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useReadMessages, () => {
   const { trpcMsw } = setupMswTrpc();
   let readMessages: ReturnType<typeof useReadMessages>["readMessages"];
   let getEmojis: ReturnType<typeof useEmojiStore>["getEmojis"];
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const emojiTag = "👍";
 
   // A page's metadata is read after the page lands, so a room switched to in between must not become the room the

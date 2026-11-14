@@ -12,6 +12,7 @@ import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -32,7 +33,7 @@ describe("dashboardVisualPreviewContainer", () => {
           series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
           xColumn: responseColumn,
         },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
       },
       type: VisualType.Card,
     });

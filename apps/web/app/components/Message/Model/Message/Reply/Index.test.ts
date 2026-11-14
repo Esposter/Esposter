@@ -10,12 +10,13 @@ import { useUserStore } from "@/store/message/user";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageReply", () => {
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
+  const userId = v7();
   const message = "message";
   // The preview of one replied message, read with `currentRoomId` on screen
   const readPreviewText = async (repliedMessage: ClientMessage, currentRoomId: string) => {

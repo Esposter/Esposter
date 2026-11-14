@@ -26,6 +26,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
@@ -40,7 +41,7 @@ import {
 
 // A text question of the given name, the one kind a save with repeated question names needs
 const createQuestion = (questionName: string): SurveyTextNode => ({
-  props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name: questionName },
+  props: { ...surveyTextNodeType.createDefaultProps(), id: v7(), name: questionName },
   type: SurveyNodeType.Text,
 });
 
@@ -81,7 +82,7 @@ describe("surveyRouter", () => {
   // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
   const createSurveyResponse = (resourceId: string, answer: number, participantToken = "") =>
     caller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: answer },
       pageNo: 0,
@@ -156,7 +157,7 @@ describe("surveyRouter", () => {
           props: {
             ...surveyPageNodeType.createDefaultProps(),
             children: [createQuestion("a"), createQuestion("a")],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: SurveyNodeType.Page,
         },
@@ -265,7 +266,7 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
-        id: crypto.randomUUID(),
+        id: v7(),
         isDraft: false,
         model: { a: largeAnswer, b: largeAnswer, c: largeAnswer, d: largeAnswer },
         pageNo: 0,
@@ -322,7 +323,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 0 },
       pageNo: 0,
@@ -348,7 +349,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 0 },
       pageNo: 2,
@@ -417,7 +418,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     // A stale participant link into an anonymous survey still works, it just carries nothing
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, crypto.randomUUID());
+    const newSurveyResponse = await createSurveyResponse(newResource.id, 0, v7());
 
     expect(newSurveyResponse.participantToken).toBe("");
   });
@@ -749,7 +750,7 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const draftSurveyResponse = await caller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: true,
       model: { a: 0 },
       pageNo: 0,
@@ -808,7 +809,7 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
-        id: crypto.randomUUID(),
+        id: v7(),
         isDraft: false,
         model: { rating: 9 },
         pageNo: 0,
@@ -833,7 +834,7 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
-        id: crypto.randomUUID(),
+        id: v7(),
         isDraft: true,
         model: {},
         pageNo: 0,
@@ -843,7 +844,7 @@ describe("surveyRouter", () => {
     ).resolves.toHaveProperty("isDraft", true);
     await expect(
       caller.createSurveyResponse({
-        id: crypto.randomUUID(),
+        id: v7(),
         isDraft: false,
         model: {},
         pageNo: 0,

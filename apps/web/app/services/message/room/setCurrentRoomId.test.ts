@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { getRouteParam } from "@/util/router/getRouteParam";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // Every room-scoped store keys its state by the room in the route, so its state only exists once one is current.
@@ -16,7 +17,7 @@ describe(setCurrentRoomId, () => {
   test("puts the room id on the route and invalidates what reads it", () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const roomId = v7();
     const router = useRouter();
     const currentRoomId = computed(() => getRouteParam(router.currentRoute.value.params, "id"));
 

@@ -8,6 +8,7 @@ import type { HeadingNode, ImageNode } from "#src/services/constants.test";
 import { TEST_HEADING_ID, TEST_SECTION_ID, TEST_SECTION_OTHER_ID } from "#src/services/constants.test";
 import { renderBlockNodes } from "#src/services/renderBlockNodes";
 import { exhaustiveGuard } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -44,7 +45,7 @@ describe(renderBlockNodes, () => {
     ],
   };
 
-  const TEST_HEADING_OTHER_ID: string = crypto.randomUUID();
+  const TEST_HEADING_OTHER_ID: string = v7();
 
   test("a renderer reads a child through the port", () => {
     expect.hasAssertions();
@@ -77,7 +78,7 @@ describe(renderBlockNodes, () => {
     expect.hasAssertions();
 
     const nodes: TestNode[] = [
-      { props: { id: crypto.randomUUID() }, type: "image" },
+      { props: { id: v7() }, type: "image" },
       { props: { children: [], id: TEST_SECTION_OTHER_ID }, type: "section" },
     ];
 

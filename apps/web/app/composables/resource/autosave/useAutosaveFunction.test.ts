@@ -9,6 +9,7 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { RouterView } from "vue-router";
 
@@ -28,8 +29,8 @@ describe(useAutosaveFunction, () => {
       autosave = useAutosaveFunction(save);
     },
   });
-  const resourceId = crypto.randomUUID();
-  const otherResourceId = crypto.randomUUID();
+  const resourceId = v7();
+  const otherResourceId = v7();
   const hostRoute = "/autosave-host/:id";
   const hostPath = `/autosave-host/${resourceId}`;
   const otherHostPath = `/autosave-host/${otherResourceId}`;

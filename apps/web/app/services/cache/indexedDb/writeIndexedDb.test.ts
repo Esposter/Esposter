@@ -6,11 +6,12 @@ import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { createMessage } from "@/services/message/message/createMessage.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(writeIndexedDb, () => {
   const { message1, message2, message3 } = setupIndexedDbSuite();
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const room = createRoom("");
 
   afterEach(() => {

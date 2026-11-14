@@ -5,6 +5,7 @@ import { applyResourceContentPatches } from "#server/services/resource/applyReso
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
 import { ResourceType } from "@esposter/db-schema";
 import { JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   ArrowheadKind,
@@ -19,7 +20,7 @@ import {
 } from "vue-block-editor-headless";
 
 describe(applyResourceContentPatches, () => {
-  const rectangleId = crypto.randomUUID();
+  const rectangleId = v7();
   const rectangle: ShapeElement = {
     color: "",
     cornerStyle: CornerStyle.Sharp,
@@ -42,7 +43,7 @@ describe(applyResourceContentPatches, () => {
     color: "",
     dashPattern: DashPattern.Solid,
     end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
-    id: crypto.randomUUID(),
+    id: v7(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,
@@ -66,7 +67,7 @@ describe(applyResourceContentPatches, () => {
     expect.hasAssertions();
 
     const operations: JsonPatchOperation[] = [
-      { op: JsonPatchOperationType.Replace, path: "/elements/1/start/binding/elementId", value: crypto.randomUUID() },
+      { op: JsonPatchOperationType.Replace, path: "/elements/1/start/binding/elementId", value: v7() },
     ];
 
     expect(() => applyResourceContentPatches(ResourceType.Whiteboard, { elements: [rectangle, arrow] }, operations))

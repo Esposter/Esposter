@@ -3,11 +3,12 @@ import { useReadUsersByIds } from "@/composables/message/room/useReadUsersByIds"
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUserStore } from "@/store/message/user";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useReadUsersByIds, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const user = createUser({ name: "accountName" });
 
   // A user who has left is not a member, so the room keeps no row for them and their name comes from their account. A

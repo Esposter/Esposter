@@ -1,11 +1,12 @@
 import type { Database } from "@esposter/db-schema";
 
 import { readResourceAccess } from "#server/services/resource/readResourceAccess";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(readResourceAccess, () => {
-  const resourceId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const resourceId = v7();
+  const userId = v7();
   const publishVersion = 1;
   // The two rows that answer the question, each present or absent: an owned, undeleted resource row for a working
   // Copy, and the publication row

@@ -5,6 +5,7 @@ import { createId } from "#shared/util/math/random/createId";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The session user as a participant row — the shape every write here addresses
@@ -22,13 +23,13 @@ const createSessionParticipant = (): CallParticipant => {
 };
 
 const createParticipant = (): CallParticipant => ({
-  id: crypto.randomUUID(),
+  id: v7(),
   image: "image",
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,
   name: "name",
-  userId: crypto.randomUUID(),
+  userId: v7(),
 });
 
 describe(useParticipantStore, () => {

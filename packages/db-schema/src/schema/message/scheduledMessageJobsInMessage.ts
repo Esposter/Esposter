@@ -9,6 +9,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const scheduledMessageJobsInMessage = sqliteTable(
@@ -18,7 +19,7 @@ export const scheduledMessageJobsInMessage = sqliteTable(
     completedAt: integer({ mode: "timestamp_ms" }),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     payload: text({ mode: "json" }).notNull().$type<ScheduledMessageJobPayload>(),
     processingStartedAt: integer({ mode: "timestamp_ms" }),
     roomId: text()

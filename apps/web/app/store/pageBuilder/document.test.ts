@@ -4,6 +4,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import { TEST_LANG } from "#shared/services/pageBuilder/constants.test";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(usePageBuilderDocumentStore, () => {
@@ -13,8 +14,8 @@ describe(usePageBuilderDocumentStore, () => {
   test("two open webpages keep their own documents", () => {
     expect.hasAssertions();
 
-    const firstResourceId = crypto.randomUUID();
-    const secondResourceId = crypto.randomUUID();
+    const firstResourceId = v7();
+    const secondResourceId = v7();
     const firstDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG, tokens: {} } } };
     const secondDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_OTHER_LANG, tokens: {} } } };
     const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_CHANGED_LANG, tokens: {} } } };
@@ -31,7 +32,7 @@ describe(usePageBuilderDocumentStore, () => {
   test("a save hands the writer the document held for its resource", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const document: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG, tokens: {} } } };
     const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -48,7 +49,7 @@ describe(usePageBuilderDocumentStore, () => {
     const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { saveDocument } = pageBuilderDocumentStore;
-    await saveDocument(crypto.randomUUID(), writeDocument);
+    await saveDocument(v7(), writeDocument);
 
     expect(writeDocument).not.toHaveBeenCalled();
   });

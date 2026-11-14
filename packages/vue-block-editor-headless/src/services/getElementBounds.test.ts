@@ -5,6 +5,7 @@ import { TextSize } from "#src/models/TextSize";
 import { getTextLineHeight } from "#src/services/export/getTextLineHeight";
 import { getTextWidth } from "#src/services/export/getTextWidth";
 import { getElementBounds } from "#src/services/getElementBounds";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getElementBounds, () => {
@@ -12,7 +13,7 @@ describe(getElementBounds, () => {
   const TWO_CHARACTERS_WIDTH = getTextWidth("aa", TextSize.Small);
   const textBox = (isWrapped: boolean): TextElement => ({
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     isWrapped,
     text: "a b c",
     textSize: TextSize.Small,

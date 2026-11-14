@@ -5,6 +5,7 @@ import { createRoomMessage } from "#server/services/message/createRoomMessage.te
 import { searchMessages } from "#server/services/message/searchMessages";
 import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { FilterType, FilterTypeHas } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // Each room's index is that room's object, so the object is faked and every room answers from the list a test sets
@@ -14,8 +15,8 @@ vi.mock("#server/composables/realtime/useRoomObject", () => ({
 }));
 
 describe(searchMessages, () => {
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const hasFile = { type: FilterType.Has, value: FilterTypeHas.File };
   const query = "gate";
   const sortBy = [CREATED_AT_DESCENDING_SORT_ITEM];

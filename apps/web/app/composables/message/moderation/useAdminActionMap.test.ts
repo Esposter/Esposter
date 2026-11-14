@@ -3,13 +3,14 @@ import { useAdminActionMap } from "@/composables/message/moderation/useAdminActi
 import { useSession } from "@/services/auth/authClient.test";
 import { useAlertStore } from "@/store/alert";
 import { AdminActionType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useAdminActionMap, () => {
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
 
   beforeEach(() => {
     useSession.mockImplementation((fetcher?: unknown) =>

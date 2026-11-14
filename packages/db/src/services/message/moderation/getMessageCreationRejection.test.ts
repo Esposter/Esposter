@@ -14,18 +14,19 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(getMessageCreationRejection, () => {
   let db: Database;
   const name = "name";
-  const roomId = crypto.randomUUID();
-  const directMessageRoomId = crypto.randomUUID();
-  const everyoneRoleId = crypto.randomUUID();
-  const administratorRoleId = crypto.randomUUID();
-  const ownerUserId = crypto.randomUUID();
-  const memberUserId = crypto.randomUUID();
-  const administratorUserId = crypto.randomUUID();
+  const roomId = v7();
+  const directMessageRoomId = v7();
+  const everyoneRoleId = v7();
+  const administratorRoleId = v7();
+  const ownerUserId = v7();
+  const memberUserId = v7();
+  const administratorUserId = v7();
 
   beforeAll(async () => {
     db = await createMockDb();

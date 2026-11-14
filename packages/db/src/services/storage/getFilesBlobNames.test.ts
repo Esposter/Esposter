@@ -1,11 +1,12 @@
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 import { getFilesBlobNames } from "#src/services/storage/getFilesBlobNames";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getFilesBlobNames, () => {
-  const prefix = crypto.randomUUID();
-  const firstId = crypto.randomUUID();
-  const secondId = crypto.randomUUID();
+  const prefix = v7();
+  const firstId = v7();
+  const secondId = v7();
   const filename = "a";
 
   test("names nothing when the delete carries no files", () => {

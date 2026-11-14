@@ -12,6 +12,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile, noop } from "@esposter/shared";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -25,7 +26,7 @@ vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
 
 describe("portableFormatMap", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const resource = createResourceListItem({ id: resourceId, name: "Meeting", type: ResourceType.Note });
   const commands = {
     delete: noop,
@@ -107,7 +108,7 @@ describe("portableFormatMap", () => {
   test("the dashboard's overflow menu lists Export PNG and no import", () => {
     expect.hasAssertions();
 
-    const dashboard = createResourceListItem({ id: crypto.randomUUID(), name: "Sales", type: ResourceType.Dashboard });
+    const dashboard = createResourceListItem({ id: v7(), name: "Sales", type: ResourceType.Dashboard });
     const { exportFormats, importFormats } = usePortableFormats(() => dashboard);
     const titles = getResourceBladeItems(dashboard, {
       commands,
@@ -127,7 +128,7 @@ describe("portableFormatMap", () => {
   test("the format is offered beside the others", () => {
     expect.hasAssertions();
 
-    const sheet = createResourceListItem({ id: crypto.randomUUID(), type: ResourceType.Sheet });
+    const sheet = createResourceListItem({ id: v7(), type: ResourceType.Sheet });
     const { exportFormats } = usePortableFormats(() => sheet);
 
     expect(exportFormats.value.map(({ label }) => label)).toStrictEqual([

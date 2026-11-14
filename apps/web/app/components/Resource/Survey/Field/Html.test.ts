@@ -3,6 +3,7 @@ import ResourceSurveyFieldHtml from "@/components/Resource/Survey/Field/Html.vue
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyHtmlNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -18,10 +19,7 @@ describe("resourceSurveyFieldHtml", () => {
           error: "",
           isDisabled: false,
           node: {
-            props: {
-              ...surveyHtmlNodePropsSchema.parse({ html: "<p>a</p><script></script>", name: "a" }),
-              id: crypto.randomUUID(),
-            },
+            props: { ...surveyHtmlNodePropsSchema.parse({ html: "<p>a</p><script></script>", name: "a" }), id: v7() },
             type: SurveyNodeType.Html,
           },
         },

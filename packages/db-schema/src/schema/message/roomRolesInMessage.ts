@@ -11,6 +11,7 @@ import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, index, integer, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const roomRolesInMessage = sqliteTable(
@@ -19,7 +20,7 @@ export const roomRolesInMessage = sqliteTable(
     color: text().notNull().default(""),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     isEveryone: integer({ mode: "boolean" }).notNull().default(false),
     name: text().notNull(),
     permissions: createBitfieldColumn(),

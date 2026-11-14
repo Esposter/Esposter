@@ -11,14 +11,15 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useGenshinSave, () => {
   const { trpcMsw } = setupMswTrpc();
-  const userId = crypto.randomUUID();
-  const sessionId = crypto.randomUUID();
+  const userId = v7();
+  const sessionId = v7();
   const etag = "etag";
   const journalSave: GenshinSave = { ...EMPTY_GENSHIN_SAVE, adventureExp: 1 };
   let wrapper: undefined | VueWrapper;
@@ -93,7 +94,7 @@ describe(useGenshinSave, () => {
   test("adopts the journal as the browser holds it when the start answers, not as the page first read it", async () => {
     expect.hasAssertions();
 
-    const previousSessionId = crypto.randomUUID();
+    const previousSessionId = v7();
     trpcMsw.genshin.startGenshin.mutation(() => {
       localStorage.setItem(
         LocalStorageKey.GenshinPending(userId),

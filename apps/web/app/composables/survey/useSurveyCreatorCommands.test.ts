@@ -11,6 +11,7 @@ import type {
 import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorCommands";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
@@ -20,24 +21,15 @@ import {
 } from "vue-survey-engine-headless";
 
 const createQuestion = (name: string): SurveyTextNode => ({
-  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: crypto.randomUUID(), name },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: v7(), name },
   type: SurveyNodeType.Text,
 });
 const createDynamicPanel = (name: string, template: SurveyTemplateNode[]): SurveyPanelDynamicNode => ({
-  props: {
-    ...surveyNodeTypeDefinitionMap[SurveyNodeType.PanelDynamic].createDefaultProps(),
-    id: crypto.randomUUID(),
-    name,
-    template,
-  },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.PanelDynamic].createDefaultProps(), id: v7(), name, template },
   type: SurveyNodeType.PanelDynamic,
 });
 const createPage = (children: SurveyPlaceableNode[]): SurveyPageNode => ({
-  props: {
-    ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(),
-    children,
-    id: crypto.randomUUID(),
-  },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(), children, id: v7() },
   type: SurveyNodeType.Page,
 });
 const createDocument = (content: SurveyPageNode[]): SurveyDocument => ({ ...createSurveyDocument(), content });

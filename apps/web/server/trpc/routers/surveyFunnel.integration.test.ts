@@ -27,6 +27,7 @@ import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -115,7 +116,7 @@ describe("surveyFunnel", () => {
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -123,7 +124,7 @@ describe("surveyFunnel", () => {
       resourceId: survey.id,
     });
     const secondResponse = await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -133,11 +134,11 @@ describe("surveyFunnel", () => {
 
     await expect(
       surveyCaller.createSurveyResponse({
-        id: crypto.randomUUID(),
+        id: v7(),
         isDraft: false,
         model: { a: 1 },
         pageNo: 0,
-        participantToken: crypto.randomUUID(),
+        participantToken: v7(),
         resourceId: survey.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(

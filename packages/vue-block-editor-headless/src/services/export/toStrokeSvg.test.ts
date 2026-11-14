@@ -4,6 +4,7 @@ import { PositionedElementType } from "#src/models/PositionedElementType";
 import { strokeElementSchema } from "#src/models/StrokeElement";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { toStrokeSvg } from "#src/services/export/toStrokeSvg";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The path data of a freehand stroke's SVG, so a test can read the curve the export draws
@@ -14,7 +15,7 @@ describe(toStrokeSvg, () => {
   // A stroke with a quick turn at its middle point, which a polyline would draw as a corner
   const stroke: StrokeElement = {
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     points: [
       { x: 0, y: 0 },
       { x: 100, y: 0 },

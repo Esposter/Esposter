@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe(useReadPublishedResourceContent, () => {
@@ -13,7 +14,7 @@ describe(useReadPublishedResourceContent, () => {
   test("titles the page and the og unfurl with the name of the resource it read", async () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
     await mountSuspended(
       defineComponent({
         async setup() {
@@ -39,7 +40,7 @@ describe(useReadPublishedResourceContent, () => {
   test("reads the version the route names", async () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
     const version = 1;
     let readVersion = 0;
     await mountSuspended(

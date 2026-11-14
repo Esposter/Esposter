@@ -12,6 +12,7 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useCommandStore } from "@/store/ui/command";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { moveBlockNode } from "vue-block-editor-headless";
 
@@ -19,7 +20,7 @@ describe(usePageBuilderHistoryCommands, () => {
   test("the command bar names the edit it would undo", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const document: WebpageDocument = {
       content: [createButton(TEST_ID), createButton(TEST_OTHER_ID)],
       root: TEST_ROOT,

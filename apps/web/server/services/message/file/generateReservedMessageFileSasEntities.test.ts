@@ -12,6 +12,7 @@ import {
   StorageTierQuotaMap,
 } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // Signed with fixed credentials, so the write targets are real presigned urls and nothing reads the account's environment
@@ -26,7 +27,7 @@ vi.mock(import("#server/services/storage/getStorageCredentials"), () => ({
 describe(generateReservedMessageFileSasEntities, () => {
   let mockContext: Context;
   let userId: string;
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const filename = "filename";
   const size = 1;
   const image = { filename, mimetype: MimeType.Png, size };

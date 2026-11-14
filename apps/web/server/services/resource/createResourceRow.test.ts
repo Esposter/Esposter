@@ -3,12 +3,13 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { ResourceActivityType, resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(createResourceRow, () => {
   const name = "name";
-  const resourceId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const resourceId = v7();
+  const userId = v7();
   // The resource row resolves at once, and the activity entry settles only when the test releases it, so the one
   // Write the row waits on is the one the test holds
   const createContext = (activityWrite: Promise<void>, activityValues: Record<string, unknown>[]) =>

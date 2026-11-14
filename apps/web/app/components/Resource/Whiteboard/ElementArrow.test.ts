@@ -4,6 +4,7 @@ import type { ArrowElement } from "vue-block-editor-headless";
 import ResourceWhiteboardElementArrow from "@/components/Resource/Whiteboard/ElementArrow.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
   ArrowheadKind,
@@ -25,7 +26,7 @@ describe("resourceWhiteboardElementArrow", () => {
     color: "",
     dashPattern: DashPattern.Solid,
     end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
-    id: crypto.randomUUID(),
+    id: v7(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,

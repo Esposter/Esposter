@@ -1,5 +1,6 @@
 import { emailBodyChildrenSchema, emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("emailRegistry", () => {
@@ -11,9 +12,9 @@ describe("emailRegistry", () => {
     for (const definition of emailRegistry.types) {
       const slots: Readonly<Record<string, readonly string[]>> = definition.slots;
       for (const [slot, types] of Object.entries(slots)) {
-        const id = crypto.randomUUID();
+        const id = v7();
         const result = emailNodeSchema.safeParse({
-          props: { id, [slot]: [{ props: { id: crypto.randomUUID() }, type: UNREGISTERED_TYPE }] },
+          props: { id, [slot]: [{ props: { id: v7() }, type: UNREGISTERED_TYPE }] },
           type: definition.type,
         });
 

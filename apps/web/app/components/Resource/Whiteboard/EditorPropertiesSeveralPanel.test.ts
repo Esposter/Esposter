@@ -6,6 +6,7 @@ import { createWhiteboardEditState, WHITEBOARD_PROCESS } from "@/services/whiteb
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
@@ -14,8 +15,8 @@ describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
 
     const whiteboardStore = useWhiteboardStore();
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    const first: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#0000ff", id: crypto.randomUUID() };
-    const second: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#ff0000", id: crypto.randomUUID(), x: 200 };
+    const first: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#0000ff", id: v7() };
+    const second: ShapeElement = { ...WHITEBOARD_PROCESS, fill: "#ff0000", id: v7(), x: 200 };
     whiteboardStore.editState = createWhiteboardEditState({ elements: [first, second] });
     whiteboardEditorStore.selectedIds = [first.id, second.id];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSeveralPanel);
@@ -38,9 +39,9 @@ describe("resourceWhiteboardEditorPropertiesSeveralPanel", () => {
 
     const whiteboardStore = useWhiteboardStore();
     const whiteboardEditorStore = useWhiteboardEditorStore();
-    const first: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID() };
-    const second: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID(), x: 200 };
-    const third: ShapeElement = { ...WHITEBOARD_PROCESS, id: crypto.randomUUID(), x: 400 };
+    const first: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7() };
+    const second: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7(), x: 200 };
+    const third: ShapeElement = { ...WHITEBOARD_PROCESS, id: v7(), x: 400 };
     whiteboardStore.editState = createWhiteboardEditState({ elements: [first, second, third] });
     whiteboardEditorStore.selectedIds = [first.id, second.id];
     const wrapper = await mountSuspended(ResourceWhiteboardEditorPropertiesSeveralPanel);

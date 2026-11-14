@@ -11,6 +11,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { zstdCompressSync } from "node:zlib";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
@@ -24,8 +25,8 @@ describe("genshinRouter", () => {
   let genshinCaller: DecorateRouterRecord<TRPCRouter["genshin"]>;
   let bucket: R2Bucket;
   let dispose: () => Promise<void>;
-  const firstSessionId = crypto.randomUUID();
-  const secondSessionId = crypto.randomUUID();
+  const firstSessionId = v7();
+  const secondSessionId = v7();
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.GenshinAssets));

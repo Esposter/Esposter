@@ -5,12 +5,13 @@ import { useSurveyResponse } from "@/composables/survey/useSurveyResponse";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSurveyResponse, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
-  const responseId = crypto.randomUUID();
+  const resourceId = v7();
+  const responseId = v7();
   const participantToken = "";
   const model = { a: "" };
   const submittedModel = { a: " " };

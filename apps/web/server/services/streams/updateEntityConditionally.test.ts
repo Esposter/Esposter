@@ -5,6 +5,7 @@ import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/streams/constants";
 import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { AzureEntityType, getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 type WriteEntity = (entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>;
@@ -14,7 +15,7 @@ const getTableClient = (getEntityImplementation: () => Promise<Record<string, un
   ({ getEntity: getEntityImplementation }) as unknown as StreamTableClient<StandardMessageEntity>;
 
 describe(updateEntityConditionally, () => {
-  const partitionKey = crypto.randomUUID();
+  const partitionKey = v7();
   const rowKey = getReverseTickedTimestamp();
   const message = "message";
   const concurrentMessage = "concurrentMessage";

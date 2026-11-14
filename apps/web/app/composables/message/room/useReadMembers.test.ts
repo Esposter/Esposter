@@ -7,6 +7,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useMemberStore } from "@/store/message/user/member";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadMembers, () => {
@@ -14,9 +15,9 @@ describe(useReadMembers, () => {
   let memberCount: Ref<number>;
   let memberCountsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
+  const roleId = v7();
   const newCount = 1;
 
   const mountRead = async () => {

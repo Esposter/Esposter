@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { splitBackgroundLayers } from "@/services/pageBuilder/splitBackgroundLayers";
+import { v7 } from "uuid";
 
 interface Layer {
   id: string;
@@ -13,8 +14,7 @@ interface Props {
 const modelValue = defineModel<string>({ required: true });
 defineProps<Props>();
 // Each layer is keyed by its own id rather than its place, so removing one keeps the unsaved draft of the layers after it
-const toLayers = (value: string): Layer[] =>
-  splitBackgroundLayers(value).map((layer) => ({ id: crypto.randomUUID(), value: layer }));
+const toLayers = (value: string): Layer[] => splitBackgroundLayers(value).map((layer) => ({ id: v7(), value: layer }));
 // An added layer stays in the list until it holds a value, since an empty one joins to nothing
 const layers = ref(toLayers(modelValue.value));
 const joinLayers = () =>
@@ -38,7 +38,7 @@ const removeLayer = (id: string) => {
   commitLayers();
 };
 const addLayer = () => {
-  layers.value.push({ id: crypto.randomUUID(), value: "" });
+  layers.value.push({ id: v7(), value: "" });
 };
 </script>
 

@@ -11,6 +11,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { mockNuxtImport, mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { surveyRootPropsSchema } from "vue-survey-engine-headless";
 
@@ -30,7 +31,7 @@ mockNuxtImport("useSurveyResponse", () => () => ({
 
 describe("resourceSurveyView", () => {
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
+  const id = v7();
   const name = "a";
   // A one-page survey, so its only button is the page's Complete
   const mockPublishedSurvey = (settings: object, completedHtml = "") => {

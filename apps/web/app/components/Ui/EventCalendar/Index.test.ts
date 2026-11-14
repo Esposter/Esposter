@@ -14,6 +14,7 @@ import {
 import { getZonedDateTime, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // A day of the month's grid, found by the ISO date it carries
@@ -31,7 +32,7 @@ describe("uiEventCalendar", () => {
     // The epoch's own day where the test runs, which the calendar shows the epoch's event under
     const date = epochZonedDateTime.toPlainDate();
     const nextDay = date.add({ days: 1 });
-    const event: UiCalendarEvent = { id: crypto.randomUUID(), start: epoch, title: "title" };
+    const event: UiCalendarEvent = { id: v7(), start: epoch, title: "title" };
     const mountEventCalendar = async (props: Partial<InstanceType<typeof UiEventCalendar>["$props"]> = {}) => {
       // Attached, so a key that moves the focus can be read off the document
       const component = await mountSuspended(UiEventCalendar, {
@@ -58,10 +59,7 @@ describe("uiEventCalendar", () => {
     test("folds a day's events past its limit into a count", async () => {
       expect.hasAssertions();
 
-      const events = Array.from({ length: CALENDAR_DAY_EVENT_LIMIT + 1 }, () => ({
-        ...event,
-        id: crypto.randomUUID(),
-      }));
+      const events = Array.from({ length: CALENDAR_DAY_EVENT_LIMIT + 1 }, () => ({ ...event, id: v7() }));
       const component = await mountEventCalendar({ events });
 
       expect(component.get(getDaySelector(date.toString())).findAll(".event")).toHaveLength(CALENDAR_DAY_EVENT_LIMIT);

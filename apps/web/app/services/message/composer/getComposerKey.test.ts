@@ -3,17 +3,18 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import { getComposerKey } from "@/services/message/composer/getComposerKey";
 import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
 import { ID_SEPARATOR } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getComposerKey, () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
 
   // The drafts page reads composer keys back out of storage, so a key that cannot be split into the room and
   // Thread it came from strands every thread draft it lists
   test("round-trips a thread composer through its key", () => {
     expect.hasAssertions();
 
-    const target: ComposerTarget = { roomId, threadRootId: crypto.randomUUID() };
+    const target: ComposerTarget = { roomId, threadRootId: v7() };
 
     expect(getComposerTarget(getComposerKey(target))).toStrictEqual(target);
   });

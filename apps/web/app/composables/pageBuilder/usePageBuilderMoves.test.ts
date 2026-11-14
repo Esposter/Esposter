@@ -19,6 +19,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const createSection = (id: string, children: WebpagePlaceableNode[]): SectionNode => ({
@@ -56,7 +57,7 @@ const setupMoves = <
   selectedNodeId: string,
 ) => {
   setActivePinia(createPinia());
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   seed(pageBuilderDocumentStore, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();

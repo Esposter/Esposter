@@ -3,6 +3,7 @@ import { createId } from "#shared/util/math/random/createId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket.test";
 import { useConnectionStore } from "@/store/realtime/connection";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
@@ -27,7 +28,7 @@ describe(useConnectionStore, () => {
     expect.hasAssertions();
 
     const connectionStore = useConnectionStore();
-    const roomId = crypto.randomUUID();
+    const roomId = v7();
     const handler = vi.fn();
     connectionStore.onRoomEvent("deleteMessage", handler);
     await connectionStore.openRoom(

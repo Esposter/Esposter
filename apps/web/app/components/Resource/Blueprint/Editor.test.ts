@@ -10,6 +10,7 @@ import { useBlueprintStore } from "@/store/resource/blueprint";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
@@ -18,7 +19,7 @@ vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
 
 describe("resourceBlueprintEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });

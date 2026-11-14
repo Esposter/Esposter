@@ -9,6 +9,7 @@ import { runGit } from "#src/services/shared/runGit";
 import { getResult, getResultAsync, noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { v7 } from "uuid";
 
 // Every batch of every window in one pool, at most `REVIEW_RUNNER_SESSION_CAP` sessions at once, taken in window order so
 // The earliest windows finish first. A batch not started by `deadline` (epoch milliseconds) is unreached rather than read,
@@ -38,7 +39,7 @@ export const reviewWindows = async (
     const known = directories.get(windowIndex);
     if (known !== undefined) return known;
 
-    const directory = join(tmpdir(), `review-${crypto.randomUUID()}`);
+    const directory = join(tmpdir(), `review-${v7()}`);
     runGit(["worktree", "add", "--detach", directory, end]);
     directories.set(windowIndex, directory);
     return directory;

@@ -9,6 +9,7 @@ import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const { getSha256HexMock, uploadFileToUrlMock } = vi.hoisted(() => ({
@@ -27,8 +28,8 @@ const createFile = () => new File(["a"], "a", { type: MimeType.PlainText });
 
 describe(useUploadResourceFile, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
-  const fileId = crypto.randomUUID();
+  const resourceId = v7();
+  const fileId = v7();
   const sasUrl = "sasUrl";
 
   const generateUploadFileSasEntities = () => {

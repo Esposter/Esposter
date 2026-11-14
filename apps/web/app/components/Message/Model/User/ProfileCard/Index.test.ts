@@ -5,11 +5,12 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelUserProfileCard", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const user = createUser({ name: "globalName" });
   const displayName = "displayName";
 

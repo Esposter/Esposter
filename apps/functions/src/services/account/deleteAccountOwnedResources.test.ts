@@ -16,6 +16,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -49,8 +50,8 @@ describe(deleteAccountOwnedResources, () => {
   test("purges an owned resource's directory, activity trail and row, and no other owner's resource", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),

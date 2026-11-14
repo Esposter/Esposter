@@ -10,6 +10,7 @@ import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Neither the thumbnail nor the viewer draws in this file, which asserts the shell around them and when the dialog
@@ -23,7 +24,7 @@ describe("messageModelFileRendererPdf", () => {
   const file: Pick<FileEntity, "filename" | "hasThumbnail" | "id" | "isSpoiler" | "mimetype" | "size"> = {
     filename,
     hasThumbnail: false,
-    id: crypto.randomUUID(),
+    id: v7(),
     isSpoiler: false,
     mimetype: MimeType.Pdf,
     size: 1,

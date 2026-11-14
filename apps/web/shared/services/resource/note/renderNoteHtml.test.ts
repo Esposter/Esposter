@@ -3,10 +3,11 @@ import type { JSONContent } from "@tiptap/core";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { getResourceFileBlobName } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(renderNoteHtml, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const alt = "a";
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));

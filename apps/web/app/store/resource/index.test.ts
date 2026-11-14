@@ -28,6 +28,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { http, HttpResponse } from "msw";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // A worker has no place in the test environment, and what it encodes is the generated module's own test to prove
@@ -60,8 +61,8 @@ describe(useResourceStore, () => {
   // Held as a spy rather than an inline resolver, so a test can assert the read was never issued at all
   let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
-  const resourceId = crypto.randomUUID();
-  const otherResourceId = crypto.randomUUID();
+  const resourceId = v7();
+  const otherResourceId = v7();
   const newName = "newName";
   const failingName = "failingName";
   const tags: ResourceTags = { a: "" };

@@ -7,6 +7,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeRoleEditor", () => {
@@ -15,12 +16,12 @@ describe("messageModelRoomSettingsTypeRoleEditor", () => {
     color: "",
     createdAt: new Date(0),
     deletedAt: null,
-    id: crypto.randomUUID(),
+    id: v7(),
     isEveryone: false,
     name: "name",
     permissions: RoomPermission.ReadMessages,
     position: 1,
-    roomId: crypto.randomUUID(),
+    roomId: v7(),
     updatedAt: new Date(0),
   };
 

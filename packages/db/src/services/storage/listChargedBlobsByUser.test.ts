@@ -4,16 +4,17 @@ import { createUser } from "#src/services/message/createUser.test";
 import { listChargedBlobsByUser } from "#src/services/storage/listChargedBlobsByUser";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(listChargedBlobsByUser, () => {
   let db: Database;
-  const userId = crypto.randomUUID();
-  const otherUserId = crypto.randomUUID();
-  const resourceId = crypto.randomUUID();
-  const otherResourceId = crypto.randomUUID();
-  const roomId = crypto.randomUUID();
-  const fileId = crypto.randomUUID();
+  const userId = v7();
+  const otherUserId = v7();
+  const resourceId = v7();
+  const otherResourceId = v7();
+  const roomId = v7();
+  const fileId = v7();
   // A ledger row is what a charge leaves behind, so the rows are written as the counter writes them and the sweep
   // Reads them back by owner — no blob listing is involved
   const createLedgerEntry = (ownerId: string, containerName: StorageBucket, blobName: string) =>

@@ -15,19 +15,20 @@ import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessag
 import { surveyBooleanNodeType } from "#src/services/surveyBooleanNodeType";
 import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createPanelDynamicNode = (isRequired = false): SurveyPanelDynamicNode => ({
   props: {
     ...surveyPanelDynamicNodeType.createDefaultProps(),
-    id: crypto.randomUUID(),
+    id: v7(),
     maxPanelCount: 2,
     minPanelCount: 1,
     template: [
       {
         props: {
           ...surveyTextNodeType.createDefaultProps(),
-          id: crypto.randomUUID(),
+          id: v7(),
           inputType: SurveyTextInputType.Text,
           isRequired,
           maxLength: 1,
@@ -46,22 +47,13 @@ const createConditionedPanelDynamicNode = (
 ): SurveyPanelDynamicNode => ({
   props: {
     ...surveyPanelDynamicNodeType.createDefaultProps(),
-    id: crypto.randomUUID(),
+    id: v7(),
     maxPanelCount: 2,
     minPanelCount: 1,
     template: [
+      { props: { ...surveyBooleanNodeType.createDefaultProps(), id: v7(), name: "a" }, type: SurveyNodeType.Boolean },
       {
-        props: { ...surveyBooleanNodeType.createDefaultProps(), id: crypto.randomUUID(), name: "a" },
-        type: SurveyNodeType.Boolean,
-      },
-      {
-        props: {
-          ...surveyTextNodeType.createDefaultProps(),
-          ...condition,
-          id: crypto.randomUUID(),
-          isRequired,
-          name: "b",
-        },
+        props: { ...surveyTextNodeType.createDefaultProps(), ...condition, id: v7(), isRequired, name: "b" },
         type: SurveyNodeType.Text,
       },
     ],

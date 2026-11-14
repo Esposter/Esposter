@@ -2,11 +2,12 @@ import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
 import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { createMessage } from "@/services/message/message/createMessage.test";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSameBatch, () => {
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
   const createdAt = new Date(0);
   const createStandardMessage = (messageUserId: string, messageCreatedAt: Date) => ({
     ...createMessage(roomId),
@@ -39,9 +40,9 @@ describe(checkIsSameBatch, () => {
   test("does not batch another author's message", () => {
     expect.hasAssertions();
 
-    expect(
-      checkIsSameBatch(createStandardMessage(userId, createdAt), createStandardMessage(crypto.randomUUID(), createdAt)),
-    ).toBe(false);
+    expect(checkIsSameBatch(createStandardMessage(userId, createdAt), createStandardMessage(v7(), createdAt))).toBe(
+      false,
+    );
   });
 
   // A webhook has no user id, so the posts of one app batch with each other and not with those of another app

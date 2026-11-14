@@ -1,9 +1,10 @@
 import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createProgramInviteFiles, () => {
   const surveyPath = "/view/Survey/surveyId";
-  const token = crypto.randomUUID();
+  const token = v7();
 
   test("keeps every participant when two key values sanitize to one file name", () => {
     expect.hasAssertions();

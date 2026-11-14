@@ -2,6 +2,7 @@
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { useResourceStore } from "@/store/resource";
 import { useSurveyResponseDialogStore } from "@/store/resource/surveyResponseDialog";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useSurveyResponseDialogStore, () => {
@@ -15,7 +16,7 @@ describe(useSurveyResponseDialogStore, () => {
     resource.value = createResourceListItem();
     const surveyResponseDialogStore = useSurveyResponseDialogStore();
     const { deletingResponseId, detailResponseId } = storeToRefs(surveyResponseDialogStore);
-    const responseId = crypto.randomUUID();
+    const responseId = v7();
     deletingResponseId.value = responseId;
     detailResponseId.value = responseId;
     resource.value = createResourceListItem();

@@ -6,6 +6,7 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -27,7 +28,7 @@ const createObjectCreatedMessage = (key: string) =>
 const hasBlob = async (blobName: string) => (await getBucket(StorageBucket.PublicUserAssets).head(blobName)) !== null;
 
 describe(deleteOrphanedProfileImageHandler, () => {
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const blobContent = " ";
   const seedBlob = async (blobName: string) => {
     await getBucket(StorageBucket.PublicUserAssets).put(blobName, blobContent);
@@ -51,7 +52,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
   test("deletes a profile image that lands after its account is gone", async () => {
     expect.hasAssertions();
 
-    const blobName = getUserProfileImageBlobName(crypto.randomUUID());
+    const blobName = getUserProfileImageBlobName(v7());
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
@@ -83,7 +84,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
   test("keeps a room's profile image, which no account owns", async () => {
     expect.hasAssertions();
 
-    const blobName = `rooms/${crypto.randomUUID()}/ProfileImage/${crypto.randomUUID()}`;
+    const blobName = `rooms/${v7()}/ProfileImage/${v7()}`;
     await seedBlob(blobName);
     await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 

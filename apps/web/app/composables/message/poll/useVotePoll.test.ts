@@ -6,15 +6,16 @@ import { useSession } from "@/services/auth/authClient.test";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useVotePoll, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
-  const optionId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
+  const optionId = v7();
   const pollContent: PollMessageContent = {
     options: [{ id: optionId, label: "label" }],
     question: "question",

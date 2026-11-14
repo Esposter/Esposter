@@ -1,12 +1,13 @@
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 import { deleteUserDirectories } from "#src/services/storage/deleteUserDirectories";
 import { listBlobNames } from "#src/services/storage/listBlobNames";
 
 describe(deleteUserDirectories, () => {
-  const userId = crypto.randomUUID();
+  const userId = v7();
   let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
   let dispose: () => Promise<void>;
 

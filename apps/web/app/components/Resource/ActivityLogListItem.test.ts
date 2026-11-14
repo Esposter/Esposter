@@ -4,6 +4,7 @@ import type { ResourceActivityInResource } from "@esposter/db-schema";
 import ResourceActivityLogListItem from "@/components/Resource/ActivityLogListItem.vue";
 import { ResourceActivityType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("resourceActivityLogListItem", () => {
@@ -14,17 +15,17 @@ describe("resourceActivityLogListItem", () => {
     const name = "Assistant";
     const activity: ResourceActivityInResource = {
       activityType: ResourceActivityType.ContentSaved,
-      apiKeyId: crypto.randomUUID(),
+      apiKeyId: v7(),
       apiKeyName: name,
       createdAt: new Date(0),
       deletedAt: null,
-      id: crypto.randomUUID(),
+      id: v7(),
       newName: null,
       oldName: null,
       publishVersion: null,
-      resourceId: crypto.randomUUID(),
+      resourceId: v7(),
       updatedAt: new Date(0),
-      userId: crypto.randomUUID(),
+      userId: v7(),
     };
     const component = await mountSuspended(ResourceActivityLogListItem, { props: { activity } });
 

@@ -13,15 +13,21 @@ import {
 } from "#src/services/constants.test";
 import { pasteBlockNodes } from "#src/services/pasteBlockNodes";
 import { applyPatches, JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 describe(pasteBlockNodes, () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  const TEST_IMAGE_ID: string = crypto.randomUUID();
-  const TEST_HEADING_COPY_ID = crypto.randomUUID();
+  const TEST_IMAGE_ID: string = v7();
+  const TEST_HEADING_COPY_ID = v7();
 
   test("pasting a node twice", () => {
     expect.hasAssertions();
@@ -86,7 +92,7 @@ describe(pasteBlockNodes, () => {
     expect.hasAssertions();
 
     const copiedHeading: HeadingNode = { props: { id: TEST_HEADING_ID, text: "" }, type: "heading" };
-    vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(TEST_HEADING_COPY_ID);
+    vi.mocked<() => string>(v7).mockReturnValueOnce(TEST_HEADING_COPY_ID);
 
     expect(
       pasteBlockNodes(

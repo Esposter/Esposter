@@ -1,9 +1,10 @@
 import { parseGenshinJournal } from "@/services/genshin/parseGenshinJournal";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(parseGenshinJournal, () => {
-  const SESSION_ID = crypto.randomUUID();
+  const SESSION_ID = v7();
 
   test("reads back the journal a page wrote, its instants still ISO strings", () => {
     expect.hasAssertions();

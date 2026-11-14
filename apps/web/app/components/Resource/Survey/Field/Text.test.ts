@@ -5,6 +5,7 @@ import SurveyFieldText from "@/components/Resource/Survey/Field/Text.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { SurveyNodeType, SurveyTextInputType, surveyTextNodePropsSchema } from "vue-survey-engine-headless";
 
@@ -15,7 +16,7 @@ describe("resourceSurveyFieldText", () => {
     const error = "message";
     const title = "title";
     const createNode = (inputType?: SurveyTextInputType): SurveyTextNode => ({
-      props: { ...surveyTextNodePropsSchema.parse({ inputType, name: "a", title }), id: crypto.randomUUID() },
+      props: { ...surveyTextNodePropsSchema.parse({ inputType, name: "a", title }), id: v7() },
       type: SurveyNodeType.Text,
     });
 

@@ -25,6 +25,7 @@ import {
 import { jsonDateParse } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
@@ -65,7 +66,7 @@ describe("emailRouter", () => {
     // The dataset binding and the save-time compiled html are part of the round-trip
     // So the schema provably preserves them
     const emailEditor = new EmailEditor({
-      datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
+      datasetReference: { id: v7(), type: DatasetProviderType.SurveyResponses },
       html,
     });
     await caller.saveResourceContent({
@@ -83,10 +84,7 @@ describe("emailRouter", () => {
 
     const newResource = await caller.createResource({ name });
     await caller.saveResourceContent({
-      content: new EmailEditor({
-        datasetReference: { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses },
-        html,
-      }),
+      content: new EmailEditor({ datasetReference: { id: v7(), type: DatasetProviderType.SurveyResponses }, html }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
@@ -129,16 +127,16 @@ describe("emailRouter", () => {
                 props: {
                   children: [
                     {
-                      props: { content: TEST_LABEL, id: crypto.randomUUID(), padding: "1px 2px 3px 4px 5px" },
+                      props: { content: TEST_LABEL, id: v7(), padding: "1px 2px 3px 4px 5px" },
                       type: MjmlNodeType.Button,
                     },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },
@@ -158,7 +156,7 @@ describe("emailRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const datasetReference = { id: crypto.randomUUID(), type: DatasetProviderType.SurveyResponses };
+    const datasetReference = { id: v7(), type: DatasetProviderType.SurveyResponses };
     const preview = "Your order has shipped";
     const savedResource = await caller.saveResourceContent({
       content: new EmailEditor({ datasetReference, root: { props: { preview: name } } }),

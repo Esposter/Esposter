@@ -45,6 +45,7 @@ import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctio
 import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
@@ -229,7 +230,7 @@ describe(createResourceProcedures, () => {
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     const savingPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
-    const deviceId = crypto.randomUUID();
+    const deviceId = v7();
     replayMockSession(savingPayload);
     const tabCaller = createCallerFactory(dashboardRouter)({
       ...mockContext,
@@ -254,7 +255,7 @@ describe(createResourceProcedures, () => {
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     const keyedCaller = createCallerFactory(dashboardRouter)({
       ...mockContext,
-      apiKey: { id: crypto.randomUUID(), name: apiKeyName },
+      apiKey: { id: v7(), name: apiKeyName },
     });
     await keyedCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
 

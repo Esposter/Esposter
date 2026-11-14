@@ -12,6 +12,7 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The blueprint router's own procedures: the deploy wiring, its validation and owner guards, and capture's
@@ -222,9 +223,9 @@ describe("blueprintRouter", () => {
   test("fails deploy with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(
-      caller.deployBlueprint({ id: crypto.randomUUID(), parameterValues: {} }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(caller.deployBlueprint({ id: v7(), parameterValues: {} })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("captures selected resources, rewriting cross-resource ids to aliases", async () => {
@@ -245,9 +246,9 @@ describe("blueprintRouter", () => {
   test("fails capture with non-existent id", async () => {
     expect.hasAssertions();
 
-    await expect(
-      caller.captureBlueprint({ ids: [crypto.randomUUID()], name }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(caller.captureBlueprint({ ids: [v7()], name })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test("round-trips: a captured set deploys back to an isomorphically wired set", async () => {

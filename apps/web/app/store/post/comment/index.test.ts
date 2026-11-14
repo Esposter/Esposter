@@ -7,11 +7,12 @@ import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useCommentStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const postId = crypto.randomUUID();
+  const postId = v7();
   const comment = createPost({ depth: 1, parentId: postId });
   const otherComment = createPost({ depth: 1, parentId: postId });
   const newDescription = "a";

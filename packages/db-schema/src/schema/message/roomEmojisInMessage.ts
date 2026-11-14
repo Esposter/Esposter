@@ -7,6 +7,7 @@ import { normalizeString } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 import { check, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const roomEmojisInMessage = sqliteTable(
@@ -14,7 +15,7 @@ export const roomEmojisInMessage = sqliteTable(
   {
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     name: text().notNull(),
     roomId: text()
       .notNull()

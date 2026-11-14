@@ -7,6 +7,7 @@ import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // The per-resource audit trail: one row per save, rename, restore and the rest, read newest-first
@@ -20,7 +21,7 @@ export const resourceActivitiesInResource = sqliteTable(
     apiKeyName: text().notNull().default(""),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     // Per-activityType payload, so every field is optional beside the ones its type never sets
     newName: text(),
     oldName: text(),

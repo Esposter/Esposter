@@ -16,6 +16,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -147,12 +148,7 @@ describe("webpageRouter", () => {
     const newResource = await caller.createResource({ name });
     await caller.saveResourceContent({
       content: new WebpageEditor({
-        content: [
-          {
-            props: { id: crypto.randomUUID(), label: name, surveyId: newSurvey.id },
-            type: WebpageNodeType.SurveyInvite,
-          },
-        ],
+        content: [{ props: { id: v7(), label: name, surveyId: newSurvey.id }, type: WebpageNodeType.SurveyInvite }],
       }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,

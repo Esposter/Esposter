@@ -11,6 +11,7 @@ import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { mjmlNodeChildren } from "#src/services/mjmlNodeChildren";
 import { createMjmlNodeSchema } from "#src/services/mjmlNodeSchema";
 import { parse } from "node-html-parser";
+import { v7 } from "uuid";
 import { assert, describe } from "vitest";
 import { z } from "zod";
 
@@ -22,14 +23,14 @@ declare module "#src/models/MjmlLeafNodes" {
   }
 }
 
-export const TEST_SECTION_ID: string = crypto.randomUUID();
-export const TEST_COLUMN_ID: string = crypto.randomUUID();
-export const TEST_TEXT_ID: string = crypto.randomUUID();
-export const TEST_BUTTON_ID: string = crypto.randomUUID();
-export const TEST_IMAGE_ID: string = crypto.randomUUID();
-export const TEST_GROUP_ID: string = crypto.randomUUID();
-export const TEST_HERO_ID: string = crypto.randomUUID();
-export const TEST_WRAPPER_ID: string = crypto.randomUUID();
+export const TEST_SECTION_ID: string = v7();
+export const TEST_COLUMN_ID: string = v7();
+export const TEST_TEXT_ID: string = v7();
+export const TEST_BUTTON_ID: string = v7();
+export const TEST_IMAGE_ID: string = v7();
+export const TEST_GROUP_ID: string = v7();
+export const TEST_HERO_ID: string = v7();
+export const TEST_WRAPPER_ID: string = v7();
 export const TEST_MAX_NODES: number = Number.MAX_SAFE_INTEGER;
 const mjmlRichTextAttributeValueSchema: z.ZodType<MjmlRichTextAttributeValue> = z.lazy(() =>
   z.union([

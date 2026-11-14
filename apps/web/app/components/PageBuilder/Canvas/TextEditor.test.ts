@@ -13,13 +13,14 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe("pageBuilderCanvasTextEditor", () => {
   test("a text node being edited shows its own text in the editor", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
@@ -38,7 +39,7 @@ describe("pageBuilderCanvasTextEditor", () => {
   test("escape leaves a text node being edited", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -71,7 +72,7 @@ describe("pageBuilderCanvasTextEditor", () => {
   test("each edit session is its own history entry", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
@@ -101,8 +102,8 @@ describe("pageBuilderCanvasTextEditor", () => {
   test("typing two braces offers the dataset's columns", async () => {
     expect.hasAssertions();
 
-    const columnId = crypto.randomUUID();
-    const resourceId = crypto.randomUUID();
+    const columnId = v7();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
       content: [

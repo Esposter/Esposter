@@ -5,13 +5,14 @@ import { cloneFiles } from "#src/services/storage/cloneFiles";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 import { createMockBucket, createMockDb } from "@esposter/db-mock";
 import { FileEntity, storageLedgerInStorage, StorageBucket, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(cloneFiles, () => {
   let db: Database;
   let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
   let dispose: () => Promise<void>;
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const filename = "a";
 
   beforeAll(async () => {
@@ -33,9 +34,9 @@ describe(cloneFiles, () => {
   test("copies the original and its sibling thumbnail, and reports the thumbnail as written", async () => {
     expect.hasAssertions();
 
-    const sourcePrefix = crypto.randomUUID();
-    const destinationPrefix = crypto.randomUUID();
-    const id = crypto.randomUUID();
+    const sourcePrefix = v7();
+    const destinationPrefix = v7();
+    const id = v7();
     const { blobName, thumbnailBlobName } = getFileBlobNames(sourcePrefix, id, filename);
     await bucket.put(blobName, "original");
     await bucket.put(thumbnailBlobName, "thumbnail");
@@ -60,9 +61,9 @@ describe(cloneFiles, () => {
   test("clears what it wrote and releases its charges when a copy fails", async () => {
     expect.hasAssertions();
 
-    const sourcePrefix = crypto.randomUUID();
-    const destinationPrefix = crypto.randomUUID();
-    const id = crypto.randomUUID();
+    const sourcePrefix = v7();
+    const destinationPrefix = v7();
+    const id = v7();
     // The original is there and the thumbnail the entity claims is not
     await bucket.put(getFileBlobNames(sourcePrefix, id, filename).blobName, "original");
 

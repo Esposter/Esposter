@@ -2,6 +2,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { getSurveyRunnerValues } from "#src/services/runner/getSurveyRunnerValues";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyRunnerValues, () => {
@@ -35,7 +36,7 @@ describe(getSurveyRunnerValues, () => {
         {
           props: {
             children: [{ props: { expression: "{a}", id: "b", name: "b" }, type: SurveyNodeType.Expression }],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: SurveyNodeType.Panel,
         },

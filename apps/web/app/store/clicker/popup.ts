@@ -3,6 +3,7 @@ import type { Popup } from "@/models/clicker/Popup";
 import { POPUP_DURATION_MS } from "@/services/clicker/constants";
 import { useMouseStore } from "@/store/clicker/mouse";
 import { usePointStore } from "@/store/clicker/point";
+import { v7 } from "uuid";
 
 export const usePopupStore = defineStore("clicker/popup", () => {
   const mouseStore = useMouseStore();
@@ -10,7 +11,7 @@ export const usePopupStore = defineStore("clicker/popup", () => {
   const { incrementPoints } = pointStore;
   const popups = ref<Popup[]>([]);
   const createPopup = (event: MouseEvent) => {
-    const id = crypto.randomUUID();
+    const id = v7();
     incrementPoints(mouseStore.mousePower);
     popups.value.push({
       duration: POPUP_DURATION_MS,

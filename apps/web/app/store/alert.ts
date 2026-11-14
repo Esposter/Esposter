@@ -2,6 +2,7 @@ import type { Alert } from "@/models/shared/Alert";
 
 import { TOAST_DURATION_MS } from "@/services/ui/constants";
 import { checkIsServer } from "@esposter/shared";
+import { v7 } from "uuid";
 
 export const useAlertStore = defineStore("alert", () => {
   const alerts = ref<Alert[]>([]);
@@ -28,7 +29,7 @@ export const useAlertStore = defineStore("alert", () => {
       return;
     }
 
-    const id = crypto.randomUUID();
+    const id = v7();
     alerts.value.push({ id, text, type, ...props });
     scheduleAlertDismissal(id);
   };

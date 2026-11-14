@@ -1,6 +1,7 @@
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
 import { ResourceType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The resource row every test pages, selects, renames, deletes and opens a blade on. A `ResourceListItem` is a
@@ -12,7 +13,7 @@ export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}
   contentVersion: 0,
   createdAt: new Date(0),
   deletedAt: null,
-  id: crypto.randomUUID(),
+  id: v7(),
   lastAccessedAt: null,
   name: "name",
   revisionTakenAt: null,
@@ -20,7 +21,7 @@ export const createResourceListItem = (overrides: Partial<ResourceListItem> = {}
   tags: {},
   type: ResourceType.Sheet,
   updatedAt: new Date(0),
-  userId: crypto.randomUUID(),
+  userId: v7(),
   ...overrides,
 });
 

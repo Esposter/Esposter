@@ -9,13 +9,14 @@ import { createMention } from "#src/services/message/createMention.test";
 import { getMentions } from "#src/services/message/getMentions";
 import { sanitizeTextHtml } from "#src/services/sanitizeHtml/sanitizeTextHtml";
 import { takeOne } from "#src/util/array/takeOne";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(sanitizeTextHtml, () => {
   test("preserves role mention metadata", () => {
     expect.hasAssertions();
 
-    const roleId = crypto.randomUUID();
+    const roleId = v7();
     const sanitizedHtml = sanitizeTextHtml(createMention(roleId, MentionType.Role));
     const mention = takeOne(getMentions(sanitizedHtml));
 

@@ -14,6 +14,7 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { useMemberStore } from "@/store/message/user/member";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
@@ -22,8 +23,8 @@ describe(useMemberCache, () => {
   let members: Ref<MemberInRoom[]>;
   let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
   let initializeCursorPaginationData: (data: CursorPaginationData<MemberInRoom>) => void;
-  const partitionKey = crypto.randomUUID();
-  const secondPartitionKey = crypto.randomUUID();
+  const partitionKey = v7();
+  const secondPartitionKey = v7();
   const user = createUser();
   const member: MemberInRoom = { ...user, displayName: user.name };
   const mountCache = async (initialRouteId: string = partitionKey) => {
@@ -67,7 +68,7 @@ describe(useMemberCache, () => {
     // Both totals are server-computed, so the room left behind is the last thing that set them. Neither can be
     // Refetched offline, and the room being switched into must not inherit either
     getMemberCountsRef(partitionKey).value.memberCount = 1;
-    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 1, roleId: crypto.randomUUID() }];
+    getMemberCountsRef(partitionKey).value.countsByTopRole = [{ count: 1, roleId: v7() }];
     setCurrentRoomId(secondPartitionKey);
     await flushCache();
 

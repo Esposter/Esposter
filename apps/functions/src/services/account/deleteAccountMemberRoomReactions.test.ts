@@ -6,6 +6,7 @@ import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room
 import { createMockDb } from "@esposter/db-mock";
 import { MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -35,8 +36,8 @@ describe(deleteAccountMemberRoomReactions, () => {
   test("takes the account off the reactions it shares, removes the ones it holds alone, and leaves rooms it is not in alone", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const nonMemberRoom = takeOne(

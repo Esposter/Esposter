@@ -5,6 +5,7 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { useInputStore } from "@/store/message/input";
 import { marked } from "marked";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Both helpers go through the serializer the store itself uses, so the test speaks the persisted format rather
@@ -18,8 +19,8 @@ const setStoredDraft = (composerKey: string, content: string) => {
 };
 
 describe(useInputStore, () => {
-  const roomId1 = crypto.randomUUID();
-  const roomId2 = crypto.randomUUID();
+  const roomId1 = v7();
+  const roomId2 = v7();
   const draftContent = marked.parse("draftContent", { async: false });
 
   beforeEach(() => {

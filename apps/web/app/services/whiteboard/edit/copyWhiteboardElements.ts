@@ -5,6 +5,7 @@ import { applyWhiteboardEdit } from "@/services/whiteboard/edit/applyWhiteboardE
 import { WHITEBOARD_DUPLICATE_OFFSET } from "@/services/whiteboard/edit/constants";
 import { getCopyOperations } from "@/services/whiteboard/edit/getCopyOperations";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 
 // Inserts a copy of each original on top of the element list under a new id, offset by the duplicate offset, as one edit. The shape
 // Copies are inserted before the arrow copies, so an arrow copy finds the shape copy its binding names. Returns the copies' ids, which
@@ -15,7 +16,7 @@ export const copyWhiteboardElements = (
   originals: PositionedElement[],
 ): { copiedIds: string[]; state: WhiteboardEditState } => {
   const originalIdCopyIdMap: Record<string, string> = Object.fromEntries(
-    originals.map(({ id }): [string, string] => [id, crypto.randomUUID()]),
+    originals.map(({ id }): [string, string] => [id, v7()]),
   );
   const operations = getCopyOperations(state.document, originals, originalIdCopyIdMap, {
     x: WHITEBOARD_DUPLICATE_OFFSET,

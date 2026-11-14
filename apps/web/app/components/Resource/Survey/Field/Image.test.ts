@@ -3,6 +3,7 @@ import ResourceSurveyFieldImage from "@/components/Resource/Survey/Field/Image.v
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyImageNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -20,10 +21,7 @@ describe("resourceSurveyFieldImage", () => {
           error: "",
           isDisabled: false,
           node: {
-            props: {
-              ...surveyImageNodePropsSchema.parse({ altText: "a", imageLink, name: "a" }),
-              id: crypto.randomUUID(),
-            },
+            props: { ...surveyImageNodePropsSchema.parse({ altText: "a", imageLink, name: "a" }), id: v7() },
             type: SurveyNodeType.Image,
           },
         },
@@ -42,10 +40,7 @@ describe("resourceSurveyFieldImage", () => {
           error: "",
           isDisabled: false,
           node: {
-            props: {
-              ...surveyImageNodePropsSchema.parse({ altText: "", imageLink, name: "a" }),
-              id: crypto.randomUUID(),
-            },
+            props: { ...surveyImageNodePropsSchema.parse({ altText: "", imageLink, name: "a" }), id: v7() },
             type: SurveyNodeType.Image,
           },
         },

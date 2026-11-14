@@ -4,6 +4,7 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_WEBPAGE_NODES } from "#shared/services/pageBuilder/constants";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const TEST_ID = "a";
@@ -13,7 +14,7 @@ export const TEST_LABEL = "Go";
 export const TEST_LANG = "en";
 export const TEST_ORIGIN = "https://esposter.test";
 export const TEST_URL = "https://example.com/";
-export const TEST_SURVEY_ID = crypto.randomUUID();
+export const TEST_SURVEY_ID = v7();
 export const TEST_CONTEXT: RenderContext = { origin: TEST_ORIGIN };
 export const TEST_ROOT: WebpageDocument["root"] = { props: { lang: TEST_LANG, tokens: {} } };
 // One paragraph of the text node at the middle of a 2,000-node page, the edit a keystroke's commit makes
@@ -23,7 +24,7 @@ export const TEST_EDIT_CONTENT = {
   type: "doc",
 };
 // An image node that loads from the address given, the way a page that names a file asset holds it
-export const createTestImageNode = (src: string, id: string = crypto.randomUUID()): ImageNode => ({
+export const createTestImageNode = (src: string, id: string = v7()): ImageNode => ({
   props: { alt: "", decorative: true, id, src },
   type: WebpageNodeType.Image,
 });

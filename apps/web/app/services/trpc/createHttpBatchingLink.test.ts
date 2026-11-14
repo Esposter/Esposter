@@ -6,14 +6,15 @@ import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { createTRPCClient } from "@trpc/client";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const serveCounts = (ids: string[]) => ids.map((id) => ({ commentCount: 0, id, likeCount: 0 }));
 
 describe(createHttpBatchingLink, () => {
   const { server, trpcMsw } = setupMswTrpc();
-  const firstPostId = crypto.randomUUID();
-  const secondPostId = crypto.randomUUID();
+  const firstPostId = v7();
+  const secondPostId = v7();
 
   test("batches two reads sent in one tick into one request", async () => {
     expect.hasAssertions();

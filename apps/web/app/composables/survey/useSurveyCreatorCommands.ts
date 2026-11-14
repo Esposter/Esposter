@@ -12,6 +12,7 @@ import { getSurveyNodeLocation } from "@/services/resource/survey/getSurveyNodeL
 import { getSurveyNodeMove } from "@/services/resource/survey/getSurveyNodeMove";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { JsonPatchOperationType, redoHistory, undoHistory } from "@esposter/shared";
+import { v7 } from "uuid";
 import {
   applyBlockEdit,
   duplicateBlockNode,
@@ -84,11 +85,7 @@ export const useSurveyCreatorCommands = () => {
   };
   // A kind inserted at an index of a slot, as one history entry, and selected. The core refuses a slot that takes no node of its kind
   const insertNodeAt = (type: SurveyNodeType, slotPointer: string, index: number) => {
-    const node = createSurveyNode(
-      type,
-      crypto.randomUUID(),
-      addUniqueName("question", getElementNames(document.value)),
-    );
+    const node = createSurveyNode(type, v7(), addUniqueName("question", getElementNames(document.value)));
     if (node === undefined) return false;
 
     const isInserted = applyEdit(

@@ -5,6 +5,7 @@ import ResourceSurveyFieldMultipleText from "@/components/Resource/Survey/Field/
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyMultipleTextNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -13,7 +14,7 @@ describe("resourceSurveyFieldMultipleText", () => {
     setupUiStyle(uiStyle);
 
     const error = "error";
-    const id = crypto.randomUUID();
+    const id = v7();
     const itemTitles = ["A", "B"];
     const text = "text";
     const title = "title";

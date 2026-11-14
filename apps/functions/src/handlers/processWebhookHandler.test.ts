@@ -3,15 +3,16 @@ import type { WebhookPayload, WebhookQueueMessage } from "@esposter/db-schema";
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 describe(processWebhookHandler, () => {
   const content = "content";
-  const deliveryId = crypto.randomUUID();
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const deliveryId = v7();
+  const roomId = v7();
+  const userId = v7();
   const username = "username";
 
   beforeAll(async () => {

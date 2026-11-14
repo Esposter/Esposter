@@ -8,13 +8,14 @@ import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useDirectMessageStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const first = createUser({ name: "first" });
   const second = createUser({ name: "second" });
   const third = createUser({ name: "third" });

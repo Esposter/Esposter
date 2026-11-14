@@ -8,6 +8,7 @@ import { StorageBucket, getSaveBlobName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
+import { v7 } from "uuid";
 import { describe, test } from "vitest";
 
 // The bag is the one collection that reaches its ceiling, so its entry count is the scale: a typical bag,
@@ -44,7 +45,7 @@ const getAcknowledgedEtag = (etag: string | undefined) => {
 describe("client stringify and send", () => {
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);
-    const sessionId = crypto.randomUUID();
+    const sessionId = v7();
     await bench.compare(
       bench("stringify", () => {
         JSON.stringify(save);
@@ -67,10 +68,10 @@ describe("client stringify and send", () => {
 describe(saveGenshin, () => {
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);
-    const sessionId = crypto.randomUUID();
+    const sessionId = v7();
     const bucket = getBucket(StorageBucket.GenshinAssets);
-    const putUserId = crypto.randomUUID();
-    const conflictUserId = crypto.randomUUID();
+    const putUserId = v7();
+    const conflictUserId = v7();
     const serializedEnvelope = JSON.stringify({ save, sessionId });
     let putEtag = getAcknowledgedEtag(
       await writeBlobState(bucket, getSaveBlobName(putUserId), serializedEnvelope, undefined),

@@ -15,6 +15,7 @@ import { HIT_TOLERANCE, PRIMARY_BUTTON } from "@/services/whiteboard/gesture/con
 import { getResizeHandle } from "@/services/whiteboard/gesture/getResizeHandle";
 import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhiteboardGesture";
 import { JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   ArrowheadKind,
@@ -26,7 +27,7 @@ import {
 } from "vue-block-editor-headless";
 
 const createState = (document: PositionedDocument, selectedIds: string[]): WhiteboardGestureState => ({
-  createId: () => crypto.randomUUID(),
+  createId: () => v7(),
   document,
   isSpaceHeld: false,
   isToolLocked: false,
@@ -38,10 +39,10 @@ const createState = (document: PositionedDocument, selectedIds: string[]): White
 
 describe(getResizeHandle, () => {
   const POINTER_ID = 0;
-  const TEXT_ID = crypto.randomUUID();
-  const STROKE_ID = crypto.randomUUID();
-  const LEFT_ARROW_ID = crypto.randomUUID();
-  const RIGHT_ARROW_ID = crypto.randomUUID();
+  const TEXT_ID = v7();
+  const STROKE_ID = v7();
+  const LEFT_ARROW_ID = v7();
+  const RIGHT_ARROW_ID = v7();
   const TEXT_BOX: TextElement = {
     color: "",
     id: TEXT_ID,

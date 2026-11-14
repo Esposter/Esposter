@@ -3,6 +3,7 @@ import type { SurveyRankingNode } from "#src/models/SurveyRankingNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyRankingAnswerSchema } from "#src/services/runner/answer/createSurveyRankingAnswerSchema";
 import { surveyRankingNodeType } from "#src/services/surveyRankingNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyRankingAnswerSchema, () => {
@@ -13,7 +14,7 @@ describe(createSurveyRankingAnswerSchema, () => {
         { text: "", value: "a" },
         { text: "", value: "b" },
       ],
-      id: crypto.randomUUID(),
+      id: v7(),
     },
     type: SurveyNodeType.Ranking,
   };

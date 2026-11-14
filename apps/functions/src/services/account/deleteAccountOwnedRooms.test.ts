@@ -22,6 +22,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -59,9 +60,9 @@ describe(deleteAccountOwnedRooms, () => {
   test("deletes an owned room's object, moderation records, attachments and row, and no other owner's room", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const fileId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
+    const fileId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());

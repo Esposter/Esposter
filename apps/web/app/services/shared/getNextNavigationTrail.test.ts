@@ -3,12 +3,13 @@ import { NavigationTrailPage } from "@/models/shared/NavigationTrailPage";
 import { getResourceBladePath } from "@/services/resource/getResourceBladePath";
 import { getNextNavigationTrail } from "@/services/shared/getNextNavigationTrail";
 import { RoutePath } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getNextNavigationTrail, () => {
-  const id = crypto.randomUUID();
+  const id = v7();
   const resourcePath = RoutePath.Resource(id);
-  const otherResourcePath = RoutePath.Resource(crypto.randomUUID());
+  const otherResourcePath = RoutePath.Resource(v7());
   const bladePath = getResourceBladePath(id, ResourceBladeSlug.Data);
 
   test("appends the page drilled in from", () => {

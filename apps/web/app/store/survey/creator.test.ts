@@ -3,15 +3,12 @@ import type { SurveyPageNode } from "vue-survey-engine-headless";
 
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 const createPage = (): SurveyPageNode => ({
-  props: {
-    ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(),
-    children: [],
-    id: crypto.randomUUID(),
-  },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(), children: [], id: v7() },
   type: SurveyNodeType.Page,
 });
 

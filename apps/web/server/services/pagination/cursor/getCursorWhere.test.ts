@@ -7,6 +7,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { StorageTier, usersInAuth } from "@esposter/db-schema";
 import { and, eq, gt, gte, lt, lte, or, sql } from "drizzle-orm";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getCursorWhere, () => {
@@ -18,7 +19,7 @@ describe(getCursorWhere, () => {
     deletionRequestedAt: null,
     email: "",
     emailVerified: false,
-    id: crypto.randomUUID(),
+    id: v7(),
     image: "",
     name: "",
     storageBytesUsed: 0,

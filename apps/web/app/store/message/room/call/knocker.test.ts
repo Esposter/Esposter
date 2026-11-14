@@ -5,18 +5,19 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
 
 const createParticipant = (name: string): CallParticipant => ({
-  id: crypto.randomUUID(),
+  id: v7(),
   image: "",
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,
   name,
-  userId: crypto.randomUUID(),
+  userId: v7(),
 });
 
 describe(useKnockerStore, () => {

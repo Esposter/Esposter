@@ -1,6 +1,7 @@
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { getMockSession } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(assertIsMember, () => {
@@ -18,7 +19,7 @@ describe(assertIsMember, () => {
     expect.hasAssertions();
 
     await expect(
-      assertIsMember(getMockContext().db, getMockSession(), [getRoomId(), crypto.randomUUID()]),
+      assertIsMember(getMockContext().db, getMockSession(), [getRoomId(), v7()]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

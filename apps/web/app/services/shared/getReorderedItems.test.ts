@@ -1,10 +1,11 @@
 import { getReorderedItems } from "@/services/shared/getReorderedItems";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getReorderedItems, () => {
-  const firstItem = { id: crypto.randomUUID() };
-  const hiddenItem = { id: crypto.randomUUID() };
-  const lastItem = { id: crypto.randomUUID() };
+  const firstItem = { id: v7() };
+  const hiddenItem = { id: v7() };
+  const lastItem = { id: v7() };
 
   // A search hides a row between the two that swap, and the hidden row keeps its place between them
   test("keeps a row the order leaves out in its own place", () => {

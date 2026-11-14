@@ -5,6 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { SurveyDocument } from "vue-survey-engine-headless";
 import type { z } from "zod";
 
+import { v7 } from "uuid";
 import { describe } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -34,13 +35,13 @@ export const createPublishedSurvey = async (
 // A survey document whose one page holds the elements given, parsed so a fixture is a document a save would accept
 export const createPageDocument = (children: unknown[]): SurveyDocument =>
   surveyDocumentSchema.parse({
-    content: [{ props: { children, id: crypto.randomUUID() }, type: SurveyNodeType.Page }],
+    content: [{ props: { children, id: v7() }, type: SurveyNodeType.Page }],
     root: { props: {} },
   });
 
 // A survey document whose one page holds a question of each given name and kind. Each question takes its kind's
 // Defaults and a fresh id the document requires to be unique
 export const createSurveyDocumentWith = (questions: { name: string; type: SurveyNodeType }[]): SurveyDocument =>
-  createPageDocument(questions.map(({ name, type }) => ({ props: { id: crypto.randomUUID(), name }, type })));
+  createPageDocument(questions.map(({ name, type }) => ({ props: { id: v7(), name }, type })));
 
 describe.todo("createSurvey");

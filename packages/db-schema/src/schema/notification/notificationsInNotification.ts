@@ -7,6 +7,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // One row per recipient per notification, written by ProcessNotification for every type whose
@@ -22,7 +23,7 @@ export const notificationsInNotification = sqliteTable(
     body: text().notNull().default(""),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     isRead: integer({ mode: "boolean" }).notNull().default(false),
     // The in-app route the notification opens, and the same path the push payload deep-links to. Empty for a
     // Notification with nowhere to go rather than nullable, so a reader never branches on two kinds of absence

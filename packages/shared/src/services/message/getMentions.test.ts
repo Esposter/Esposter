@@ -2,6 +2,7 @@ import { MENTION_ID_ATTRIBUTE } from "#src/services/message/constants";
 import { createMention } from "#src/services/message/createMention.test";
 import { getMentions } from "#src/services/message/getMentions";
 import { takeOne } from "#src/util/array/takeOne";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getMentions, () => {
@@ -14,7 +15,7 @@ describe(getMentions, () => {
   test("mention", () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
     const mentions = getMentions(createMention(id));
 
     expect(mentions).toHaveLength(1);

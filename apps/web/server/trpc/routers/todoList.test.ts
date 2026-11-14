@@ -10,6 +10,7 @@ import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { jsonDateParse, NotFoundError } from "@esposter/shared";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe("todoListRouter", () => {
@@ -41,7 +42,7 @@ describe("todoListRouter", () => {
     expect(newResource.type).toBe(ResourceType.TodoList);
 
     const todoListResource: TodoListResource = {
-      items: [new TodoListItem({ name, steps: [{ completedAt: new Date(0), id: crypto.randomUUID(), name }] })],
+      items: [new TodoListItem({ name, steps: [{ completedAt: new Date(0), id: v7(), name }] })],
     };
     await caller.saveResourceContent({
       content: todoListResource,
@@ -57,7 +58,7 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { contentVersion, id } = await caller.createResource({ name });
-    const sessionId = crypto.randomUUID();
+    const sessionId = v7();
     const ownerItem = new TodoListItem({ name });
     await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
 
@@ -82,7 +83,7 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { contentVersion, id } = await caller.createResource({ name });
-    const sessionId = crypto.randomUUID();
+    const sessionId = v7();
     const ownerItem = new TodoListItem({ name });
     await caller.saveResourceContent({ content: { items: [ownerItem] }, contentVersion, id });
     const itemId = await caller.addFollowUp({ id, name, notes: "", repository, sessionId });
@@ -109,7 +110,7 @@ describe("todoListRouter", () => {
     expect.hasAssertions();
 
     const { id } = await caller.createResource({ name });
-    const sessionId = crypto.randomUUID();
+    const sessionId = v7();
     const itemId = await caller.addFollowUp({ id, name, notes: "", repository, sessionId });
 
     await caller.handBackFollowUp({ id, itemId, reason: " " });

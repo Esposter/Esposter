@@ -4,11 +4,12 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { setVisualType } from "@/services/dashboard/setVisualType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createDataset = () => ({
   query: { series: [{ aggregation: DatasetAggregationType.Count, column: "column" }], xColumn: "xColumn" },
-  reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+  reference: { id: v7(), type: DatasetProviderType.Sheet },
 });
 
 describe(setVisualType, () => {

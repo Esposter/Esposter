@@ -6,6 +6,7 @@ import type { HTMLElement, Node } from "node-html-parser";
 import { STRAY_ID_ATTRIBUTE_KEY } from "#src/services/constants";
 import { getMjmlRefusalKey } from "#src/services/getMjmlRefusalKey";
 import { readMjmlContent } from "#src/services/readMjmlContent";
+import { v7 } from "uuid";
 import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
 // A tag as a node of its type: an empty alternative text marks it decorative, its content is read by its kind, and its children
@@ -35,7 +36,7 @@ export const readMjmlNode = <TContext, TContent extends MjmlRichText>(
   if (isDecorative) entries.push(["decorative", true]);
   else if (alt !== undefined) entries.push(["alt", alt]);
   if (idAttribute !== undefined) entries.push([STRAY_ID_ATTRIBUTE_KEY, idAttribute]);
-  entries.push(["id", crypto.randomUUID()]);
+  entries.push(["id", v7()]);
 
   if (definition?.contentKind === undefined) {
     const children = readChildNodes(element.childNodes);

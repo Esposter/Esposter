@@ -5,6 +5,7 @@ import { createSurveyTagBoxAnswerSchema } from "#src/services/runner/answer/crea
 import { SURVEY_TOO_MANY_SELECTED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyTagBoxNodeType } from "#src/services/surveyTagBoxNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyTagBoxAnswerSchema, () => {
@@ -15,7 +16,7 @@ describe(createSurveyTagBoxAnswerSchema, () => {
         { text: "", value: "a" },
         { text: "", value: "b" },
       ],
-      id: crypto.randomUUID(),
+      id: v7(),
       maxSelected: 1,
     },
     type: SurveyNodeType.TagBox,

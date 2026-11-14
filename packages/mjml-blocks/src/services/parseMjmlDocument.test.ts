@@ -12,11 +12,12 @@ import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema
 import { parseMjmlDocument } from "#src/services/parseMjmlDocument";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import { serializeMjml } from "#src/services/serializeMjml";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import { getBlockPropValue } from "vue-block-editor-headless";
 
 const createNode = (type: string, props: Record<string, unknown> = {}): BlockNode => ({
-  props: { id: crypto.randomUUID(), ...props },
+  props: { id: v7(), ...props },
   type,
 });
 // A read mints each node's id fresh, so the structure is compared with every id swapped for one placeholder

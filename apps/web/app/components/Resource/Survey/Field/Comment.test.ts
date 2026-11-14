@@ -5,6 +5,7 @@ import SurveyFieldComment from "@/components/Resource/Survey/Field/Comment.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyCommentNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -15,7 +16,7 @@ describe("resourceSurveyFieldComment", () => {
     const error = "message";
     const title = "title";
     const createNode = (): SurveyCommentNode => ({
-      props: { ...surveyCommentNodePropsSchema.parse({ name: "a", title }), id: crypto.randomUUID() },
+      props: { ...surveyCommentNodePropsSchema.parse({ name: "a", title }), id: v7() },
       type: SurveyNodeType.Comment,
     });
 

@@ -4,6 +4,7 @@ import type { ApiKeyPermissions } from "@esposter/db-schema";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Session, User } from "better-auth";
 import { sessionsInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, vi } from "vitest";
 
 export const createMockSession = (userId: string): Session => {
@@ -11,9 +12,9 @@ export const createMockSession = (userId: string): Session => {
   return {
     createdAt,
     expiresAt: new Date(createdAt.getTime() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
-    id: crypto.randomUUID(),
+    id: v7(),
     // Unique like the real thing — `sessions.token` is unique, and every session fabricated here becomes a row
-    token: crypto.randomUUID(),
+    token: v7(),
     updatedAt: createdAt,
     userId,
   };
@@ -24,7 +25,7 @@ const user: User = {
   createdAt,
   email: "",
   emailVerified: true,
-  id: crypto.randomUUID(),
+  id: v7(),
   image: null,
   name: "name",
   updatedAt: createdAt,

@@ -1,7 +1,8 @@
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
-const createUpdate = (position: number) => ({ id: crypto.randomUUID(), position });
+const createUpdate = (position: number) => ({ id: v7(), position });
 
 describe("reorderRoomCategoriesInputSchema", () => {
   test("parses the position updates one drag produces", () => {

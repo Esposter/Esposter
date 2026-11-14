@@ -20,6 +20,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 import { getBlockNode } from "vue-block-editor-headless";
 
@@ -41,7 +42,7 @@ describe(usePageBuilderDrag, () => {
     [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
     [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
   };
-  const RESOURCE_ID = crypto.randomUUID();
+  const RESOURCE_ID = v7();
   const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
     checkIsHorizontalOwner: () => false,
     frameRect: { height: 500, left: 0, top: 0, width: 500 },
@@ -78,11 +79,11 @@ describe(usePageBuilderDrag, () => {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: crypto.randomUUID() },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: v7() },
               type: WebpageNodeType.Column,
             },
           ],
-          id: crypto.randomUUID(),
+          id: v7(),
         },
         type: WebpageNodeType.Columns,
       },
@@ -95,7 +96,7 @@ describe(usePageBuilderDrag, () => {
   test("dragging a column into a text inserts a merge field", async () => {
     expect.hasAssertions();
     const COLUMN_NAME = "first_name";
-    const columnId = crypto.randomUUID();
+    const columnId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const EMAIL_TEXT_DOCUMENT: MjmlDocument = {
       content: [

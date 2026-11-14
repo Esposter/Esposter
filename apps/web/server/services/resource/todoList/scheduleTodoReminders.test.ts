@@ -1,10 +1,11 @@
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { scheduleTodoReminders } from "#server/services/resource/todoList/scheduleTodoReminders";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(scheduleTodoReminders, () => {
-  const resource = { id: crypto.randomUUID(), userId: crypto.randomUUID() };
+  const resource = { id: v7(), userId: v7() };
   const name = "name";
   // The clock is pinned at the epoch, so the epoch itself is already past and the next hour is the future
   const futureDueAt = new Date(Temporal.Duration.from({ hours: 1 }).total("milliseconds"));

@@ -26,36 +26,37 @@ import { surveyPanelDynamicNodeType } from "#src/services/surveyPanelDynamicNode
 import { surveyPanelNodeType } from "#src/services/surveyPanelNodeType";
 import { surveyRadioGroupNodeType } from "#src/services/surveyRadioGroupNodeType";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // Each builder starts from its kind's own defaults, so a case writes only the fields it reads
 const createText = (name: string, overrides: Partial<SurveyTextNodeProps> = {}): SurveyTextNode => ({
-  props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name, ...overrides },
+  props: { ...surveyTextNodeType.createDefaultProps(), id: v7(), name, ...overrides },
   type: SurveyNodeType.Text,
 });
 
 const createHtml = (name: string): SurveyHtmlNode => ({
-  props: { ...surveyHtmlNodeType.createDefaultProps(), id: crypto.randomUUID(), name },
+  props: { ...surveyHtmlNodeType.createDefaultProps(), id: v7(), name },
   type: SurveyNodeType.Html,
 });
 
 const createExpression = (name: string, expression: string): SurveyExpressionNode => ({
-  props: { ...surveyExpressionNodeType.createDefaultProps(), expression, id: crypto.randomUUID(), name },
+  props: { ...surveyExpressionNodeType.createDefaultProps(), expression, id: v7(), name },
   type: SurveyNodeType.Expression,
 });
 
 const createPanel = (children: SurveyPlaceableNode[]): SurveyPanelNode => ({
-  props: { ...surveyPanelNodeType.createDefaultProps(), children, id: crypto.randomUUID() },
+  props: { ...surveyPanelNodeType.createDefaultProps(), children, id: v7() },
   type: SurveyNodeType.Panel,
 });
 
 const createDynamicPanel = (name: string, template: SurveyTemplateNode[]): SurveyPanelDynamicNode => ({
-  props: { ...surveyPanelDynamicNodeType.createDefaultProps(), id: crypto.randomUUID(), name, template },
+  props: { ...surveyPanelDynamicNodeType.createDefaultProps(), id: v7(), name, template },
   type: SurveyNodeType.PanelDynamic,
 });
 
 const createPage = (children: SurveyPlaceableNode[], visibleIf = ""): SurveyPageNode => ({
-  props: { ...surveyPageNodeType.createDefaultProps(), children, id: crypto.randomUUID(), visibleIf },
+  props: { ...surveyPageNodeType.createDefaultProps(), children, id: v7(), visibleIf },
   type: SurveyNodeType.Page,
 });
 
@@ -73,7 +74,7 @@ describe(checkSurveyDocument, () => {
         ...surveyRadioGroupNodeType.createDefaultProps(),
         choices: [{ text: "Nothing", value: SURVEY_NONE_ANSWER }],
         hasNone: true,
-        id: crypto.randomUUID(),
+        id: v7(),
         name: "a",
       },
       type: SurveyNodeType.RadioGroup,
@@ -94,7 +95,7 @@ describe(checkSurveyDocument, () => {
       props: {
         ...surveyCheckboxNodeType.createDefaultProps(),
         choices: [{ text: "None of the above", value: SURVEY_NONE_ANSWER }],
-        id: crypto.randomUUID(),
+        id: v7(),
         name: "a",
       },
       type: SurveyNodeType.Checkbox,
@@ -107,13 +108,7 @@ describe(checkSurveyDocument, () => {
     expect.hasAssertions();
 
     const checkbox: SurveyCheckboxNode = {
-      props: {
-        ...surveyCheckboxNodeType.createDefaultProps(),
-        id: crypto.randomUUID(),
-        maxSelected: 1,
-        minSelected: 3,
-        name: "a",
-      },
+      props: { ...surveyCheckboxNodeType.createDefaultProps(), id: v7(), maxSelected: 1, minSelected: 3, name: "a" },
       type: SurveyNodeType.Checkbox,
     };
 
@@ -131,7 +126,7 @@ describe(checkSurveyDocument, () => {
     const matrix: SurveyMatrixDynamicNode = {
       props: {
         ...surveyMatrixDynamicNodeType.createDefaultProps(),
-        id: crypto.randomUUID(),
+        id: v7(),
         maxRowCount: 3,
         minRowCount: 5,
         name: "a",

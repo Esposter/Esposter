@@ -5,6 +5,7 @@ import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefa
 import { useSheetStore } from "@/store/resource/sheet";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 const mountSettings = async () => {
@@ -24,7 +25,7 @@ describe("resourceSheetSettings", () => {
   test("swaps in a file type's default configuration when it is chosen, keeping the columns' widths", async () => {
     expect.hasAssertions();
 
-    const columnIdWidthMap = { [crypto.randomUUID()]: 1 };
+    const columnIdWidthMap = { [v7()]: 1 };
     const { component, sheetStore } = await mountSettings();
     sheetStore.sheetResource.settings.columnIdWidthMap = columnIdWidthMap;
     const radio = component

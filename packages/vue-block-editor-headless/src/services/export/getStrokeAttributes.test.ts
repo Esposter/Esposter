@@ -15,6 +15,7 @@ import { getStrokeAttributes } from "#src/services/export/getStrokeAttributes";
 import { toArrowSvg } from "#src/services/export/toArrowSvg";
 import { toElementTextSvg } from "#src/services/export/toElementTextSvg";
 import { toShapeSvg } from "#src/services/export/toShapeSvg";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The value of the first attribute of this name the SVG writes, which is the outline or route the element draws before its heads and text
@@ -28,7 +29,7 @@ describe(getStrokeAttributes, () => {
     dashPattern: DashPattern.Solid,
     fill: "#ffffff",
     height: 100,
-    id: crypto.randomUUID(),
+    id: v7(),
     kind: ShapeKind.Process,
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
@@ -80,7 +81,7 @@ describe(getStrokeAttributes, () => {
       color: "",
       dashPattern: DashPattern.Dotted,
       end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
-      id: crypto.randomUUID(),
+      id: v7(),
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,

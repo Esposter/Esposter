@@ -9,7 +9,13 @@ import { useAlertStore } from "@/store/alert";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { MjmlNodeType, parseMjmlDocument } from "mjml-blocks";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 describe(useImportEmailSource, () => {
   afterEach(() => {
@@ -31,7 +37,7 @@ describe(useImportEmailSource, () => {
     );
     if (!result.success) throw new Error("the test email should parse");
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setEmailDocument } = pageBuilderDocumentStore;
     setEmailDocument(resourceId, emailKind, result.data);
@@ -48,10 +54,10 @@ describe(useImportEmailSource, () => {
     const { undo } = pageBuilderHistoryStore;
     const importEmailSource = useImportEmailSource();
     // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is handed its own in turn
-    const sectionId = crypto.randomUUID();
-    const columnId = crypto.randomUUID();
-    const buttonId = crypto.randomUUID();
-    vi.spyOn(crypto, "randomUUID")
+    const sectionId = v7();
+    const columnId = v7();
+    const buttonId = v7();
+    vi.mocked<() => string>(v7)
       .mockReturnValueOnce(sectionId)
       .mockReturnValueOnce(columnId)
       .mockReturnValueOnce(buttonId);

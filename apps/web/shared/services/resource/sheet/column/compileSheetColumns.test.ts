@@ -6,6 +6,7 @@ import { ColumnTransformationType } from "#shared/models/resource/sheet/column/t
 import { createDataSource } from "#shared/models/resource/sheet/datasource/createDataSource.test";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { compileSheetColumns } from "#shared/services/resource/sheet/column/compileSheetColumns";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(compileSheetColumns, () => {
@@ -43,10 +44,10 @@ describe(compileSheetColumns, () => {
   test("every column on a cycle reads null, including one that reaches it through a column already finished", () => {
     expect.hasAssertions();
 
-    const aId = crypto.randomUUID();
-    const bId = crypto.randomUUID();
-    const cId = crypto.randomUUID();
-    const dId = crypto.randomUUID();
+    const aId = v7();
+    const bId = v7();
+    const cId = v7();
+    const dId = v7();
     const columns = [
       new ComputedColumn({
         id: aId,
@@ -106,8 +107,8 @@ describe(compileSheetColumns, () => {
   test("a column reading a cyclic column reads an empty source", () => {
     expect.hasAssertions();
 
-    const firstId = crypto.randomUUID();
-    const secondId = crypto.randomUUID();
+    const firstId = v7();
+    const secondId = v7();
     const firstColumn = new ComputedColumn({
       id: firstId,
       name: "a",

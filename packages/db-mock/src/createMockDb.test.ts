@@ -3,6 +3,7 @@ import type { MockDatabase } from "#src/models/MockDatabase";
 import { createMockDb } from "#src/createMockDb";
 import { StorageBucket, accountsInAuth, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(createMockDb, () => {
@@ -39,7 +40,7 @@ describe(createMockDb, () => {
   test("deleting a user removes the account rows linked to it", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await insertUser(userId);
     await mockDatabase.db
       .insert(accountsInAuth)
@@ -57,7 +58,7 @@ describe(createMockDb, () => {
   test("reset empties every table and bucket, and leaves a full-text table's index working", async () => {
     expect.hasAssertions();
 
-    await insertUser(crypto.randomUUID());
+    await insertUser(v7());
     await mockDatabase.streamsDb.exec("CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)");
     await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('before')").run();
     const bucket = await mockDatabase.getBucket(StorageBucket.ClickerAssets);

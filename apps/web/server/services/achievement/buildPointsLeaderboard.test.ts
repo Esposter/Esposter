@@ -1,4 +1,5 @@
 import { buildPointsLeaderboard } from "#server/services/achievement/buildPointsLeaderboard";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createUserTotal = (userId: string, points: number, unlockCount = 1) => ({
@@ -8,8 +9,8 @@ const createUserTotal = (userId: string, points: number, unlockCount = 1) => ({
 });
 
 describe(buildPointsLeaderboard, () => {
-  const highUserId = crypto.randomUUID();
-  const lowUserId = crypto.randomUUID();
+  const highUserId = v7();
+  const lowUserId = v7();
   const highPoints = 1;
   const lowPoints = 0;
 
@@ -32,7 +33,7 @@ describe(buildPointsLeaderboard, () => {
 
     const { entries } = buildPointsLeaderboard([
       createUserTotal(highUserId, highPoints),
-      createUserTotal(crypto.randomUUID(), highPoints),
+      createUserTotal(v7(), highPoints),
       createUserTotal(lowUserId, lowPoints),
     ]);
 

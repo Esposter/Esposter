@@ -12,6 +12,7 @@ import { useBlueprintStore } from "@/store/resource/blueprint";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -25,7 +26,7 @@ vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
 
 describe(createBlueprintPortableFormat, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const resource = createResourceListItem({ id: resourceId, name: "Launch", type: ResourceType.Blueprint });
   const savedManifest = { entries: [{ key: "notes", name: "Kickoff", type: ResourceType.Note }], parameters: [] };
   const savedJson = JSON.stringify(savedManifest, null, 2);

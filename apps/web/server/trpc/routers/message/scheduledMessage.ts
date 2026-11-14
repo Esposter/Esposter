@@ -22,6 +22,7 @@ import { updateScheduledMessageInputSchema } from "#shared/models/db/message/sch
 import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
 import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 
 // A scheduled message is held by its room's object, which sends it when it comes due and applies the sender's rules
 // then. The id is the object's key for it, minted here
@@ -32,7 +33,7 @@ export const scheduledMessageRouter = router({
   ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
     await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
     return useRoomObject(input.roomId).createScheduledMessage(
-      { id: crypto.randomUUID(), message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
+      { id: v7(), message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
       getRoomActor(ctx.getSessionPayload, ctx.headers),
     );
   }),

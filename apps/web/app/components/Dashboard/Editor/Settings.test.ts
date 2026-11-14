@@ -20,6 +20,7 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -32,7 +33,7 @@ const chooseRadio = async (wrapper: VueWrapper, title: string) => {
 
 describe("dashboardEditorSettings", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   // The editor's grid is twelve columns across this width, a column pitch of 80px, the same as the grid's own suite
   const gridWidth = 970;
   const columnPitch = 80;

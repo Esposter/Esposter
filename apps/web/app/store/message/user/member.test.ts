@@ -10,6 +10,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
@@ -29,8 +30,8 @@ const waitForCounts = (readRoomId: string) => {
 
 describe(useMemberStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const user = createUser();
   const member: MemberInRoom = { ...user, displayName: user.name };
   const role = createRoomRole({ roomId });
@@ -216,7 +217,7 @@ describe(useMemberStore, () => {
 
     expect(members.value).toStrictEqual([member]);
 
-    setCurrentRoomId(crypto.randomUUID());
+    setCurrentRoomId(v7());
 
     expect(members.value).toStrictEqual([]);
   });

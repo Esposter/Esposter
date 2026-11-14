@@ -5,6 +5,7 @@ import { ITEM_NAME_MAX_LENGTH, TODO_LIST_ITEM_STEPS_MAX_LENGTH } from "#shared/s
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiRules } from "@/services/ui/UiRules";
+import { v7 } from "uuid";
 
 // Absent until the first step, and absent again once the last is removed, as the item's schema wants it
 const modelValue = defineModel<TodoListStep[] | undefined>({ required: true });
@@ -16,7 +17,7 @@ const isAtMaxSteps = computed(() => (modelValue.value?.length ?? 0) >= TODO_LIST
 // A browser global the template cannot reach
 const addStep = () => {
   if (isAtMaxSteps.value || !name.value) return;
-  modelValue.value = [...(modelValue.value ?? []), { id: crypto.randomUUID(), name: name.value }];
+  modelValue.value = [...(modelValue.value ?? []), { id: v7(), name: name.value }];
   name.value = "";
 };
 </script>

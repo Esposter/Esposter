@@ -5,6 +5,7 @@ import SurveyFieldBoolean from "@/components/Resource/Survey/Field/Boolean.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { SurveyBooleanDisplayStyle, surveyBooleanNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -15,7 +16,7 @@ describe("resourceSurveyFieldBoolean", () => {
     const error = "message";
     const title = "title";
     const createNode = (displayStyle?: SurveyBooleanDisplayStyle): SurveyBooleanNode => ({
-      props: { ...surveyBooleanNodePropsSchema.parse({ displayStyle, name: "a", title }), id: crypto.randomUUID() },
+      props: { ...surveyBooleanNodePropsSchema.parse({ displayStyle, name: "a", title }), id: v7() },
       type: SurveyNodeType.Boolean,
     });
 

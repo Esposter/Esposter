@@ -1,6 +1,7 @@
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
 import { NotificationType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): UserToRoomInMessage => ({
@@ -13,10 +14,10 @@ export const createUserToRoom = (overrides: Partial<UserToRoomInMessage> = {}): 
   lastReadAt: null,
   mentionCount: 0,
   notificationType: NotificationType.DirectMessage,
-  roomId: crypto.randomUUID(),
+  roomId: v7(),
   timeoutUntil: null,
   updatedAt: new Date(0),
-  userId: crypto.randomUUID(),
+  userId: v7(),
   ...overrides,
 });
 

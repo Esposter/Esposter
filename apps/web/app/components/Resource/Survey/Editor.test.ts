@@ -18,6 +18,7 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { checkSurveyDocument } from "vue-survey-engine-headless";
 
@@ -38,7 +39,7 @@ vi.mock(import("@/composables/survey/useSurveyFiles"), () => ({
 
 describe("resourceSurveyEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const surveyDocument = createSurveyTestDocument([createSurveyTestPage([createSurveyTestQuestion("a")])]);
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Survey });

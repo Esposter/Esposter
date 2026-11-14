@@ -9,11 +9,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useWebhookStore } from "@/store/message/room/webhook";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useWebhookStore, () => {
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const { trpcMsw } = setupMswTrpc();
   const first = createWebhook({ roomId });
   const second = createWebhook({ roomId });

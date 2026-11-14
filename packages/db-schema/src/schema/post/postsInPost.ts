@@ -11,6 +11,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { check, index, integer, real, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const postsInPost = sqliteTable(
@@ -25,7 +26,7 @@ export const postsInPost = sqliteTable(
     description: text().notNull().default(""),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     likeCount: integer().notNull().default(0),
     parentId: text().references((): AnySQLiteColumn => postsInPost.id, { onDelete: "cascade" }),
     ranking: real().notNull(),

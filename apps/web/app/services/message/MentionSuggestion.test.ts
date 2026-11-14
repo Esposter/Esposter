@@ -8,12 +8,13 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("mentionSuggestion", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
@@ -77,7 +78,7 @@ describe("mentionSuggestion", () => {
   test("offers the room-wide mentions while the room's permissions are not read", async () => {
     expect.hasAssertions();
 
-    setCurrentRoomId(crypto.randomUUID());
+    setCurrentRoomId(v7());
     trpcMsw.room.readMembers.query(() => ({ hasMore: false, items: [], nextCursor: "" }));
     assert.exists(MentionSuggestion?.items);
     const items = await MentionSuggestion.items({

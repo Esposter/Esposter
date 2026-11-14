@@ -6,6 +6,7 @@ import { reduceWhiteboardGesture } from "@/services/whiteboard/gesture/reduceWhi
 import { getWheelViewport } from "@/services/whiteboard/viewport/getWheelViewport";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
+import { v7 } from "uuid";
 
 // Each pointer event is read by the gesture reducer over the stores' own document, selection, tool and viewport, and what it leaves is
 // Written back to the stores: the gesture and its preview, the tool, the selection and the viewport. A release's operations are one edit,
@@ -24,7 +25,7 @@ export const useWhiteboardGesture = () => {
       gesture.value?.phase === GesturePhase.Moving ? gesture.value.originalIdCopyIdMap : undefined;
     const result = reduceWhiteboardGesture(
       {
-        createId: () => crypto.randomUUID(),
+        createId: () => v7(),
         document: editState.value.document,
         gesture: gesture.value,
         isSpaceHeld: isSpaceHeld.value,

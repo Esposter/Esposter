@@ -22,6 +22,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 
@@ -46,7 +47,7 @@ describe(usePageBuilderHistoryStore, () => {
   const TEST_EDITED_LABEL = "e";
   const TEST_EDITED_URL = "https://example.com/edited";
   const setupDocument = () => {
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;
     setDocument(resourceId, webpageKind, TEST_DOCUMENT);
@@ -75,7 +76,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -100,7 +101,7 @@ describe(usePageBuilderHistoryStore, () => {
   test("a text session is one undoable change", () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const textDocument: WebpageDocument = {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -108,7 +109,7 @@ describe(usePageBuilderHistoryStore, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, setDocument } = pageBuilderDocumentStore;
     setDocument(resourceId, webpageKind, textDocument);
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
     for (const text of ["a", "ab"])
@@ -131,7 +132,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -304,7 +305,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -335,7 +336,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -372,7 +373,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -431,7 +432,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect.hasAssertions();
 
     const resourceId = setupDocument();
-    const interactionId = crypto.randomUUID();
+    const interactionId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -476,7 +477,7 @@ describe(usePageBuilderHistoryStore, () => {
     );
     if (!result.success) throw new Error("the test email should parse");
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, result.data);

@@ -7,6 +7,7 @@ import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const roomCategoriesInMessage = sqliteTable(
@@ -14,7 +15,7 @@ export const roomCategoriesInMessage = sqliteTable(
   {
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     name: text().notNull(),
     position: integer().notNull().default(0),
     userId: text()

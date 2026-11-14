@@ -15,6 +15,7 @@ import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter
 import { sql } from "drizzle-orm";
 import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const roomsInMessage = sqliteTable(
@@ -27,7 +28,7 @@ export const roomsInMessage = sqliteTable(
       .default([...MimeCategories]),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     image: text().notNull().default(""),
     // Closes the room to every existing invite link at once, without deleting any of them — the control for a
     // Raid in progress, which the links have to survive.

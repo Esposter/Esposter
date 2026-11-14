@@ -14,6 +14,7 @@ import { useOfflineProgressStore } from "@/store/clicker/offlineProgress";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -93,7 +94,7 @@ describe(useReadClicker, () => {
   test("does not save a change made after the read of the server's save fails", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     useSession.mockImplementation((fetcher?: unknown) =>
       fetcher ? { data: ref({ user: { id: userId } }) } : ref({ data: { user: { id: userId } }, isPending: false }),
     );
@@ -138,7 +139,7 @@ describe(useReadClicker, () => {
     });
     await mountReadClicker();
 
-    session.value = { user: { id: crypto.randomUUID() } };
+    session.value = { user: { id: v7() } };
     await flushPromises();
     const clickerStore = useClickerStore();
     const { clicker } = storeToRefs(clickerStore);

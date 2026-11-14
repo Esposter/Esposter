@@ -1,9 +1,10 @@
 import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
 import { createMessage } from "@/services/message/message/createMessage.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsNewerMessage, () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const createdAt = new Date(0);
   const laterCreatedAt = new Date(1);
   const lowerId = "00000000-0000-4000-8000-000000000001";

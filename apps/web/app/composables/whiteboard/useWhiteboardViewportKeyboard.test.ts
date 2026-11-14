@@ -9,6 +9,7 @@ import {
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 // The viewport keyboard mounted as a surface, so its commands and key listeners are bound for as long as the mount lasts
@@ -25,7 +26,7 @@ const mountViewportKeyboard = () =>
 describe(useWhiteboardViewportKeyboard, () => {
   // A canvas 400 units square, so a 100-unit process fits it at full size
   const CANVAS_RECT = { height: 400, width: 400, x: 0, y: 0 };
-  const FAR_PROCESS_ID = crypto.randomUUID();
+  const FAR_PROCESS_ID = v7();
   // A process a thousand units from the origin, outside the view a fresh viewport shows
   const FAR_PROCESS = { ...WHITEBOARD_PROCESS, id: FAR_PROCESS_ID, x: 1000, y: 1000 };
   const INITIAL_VIEWPORT = { scale: 1, x: 0, y: 0 };

@@ -5,6 +5,7 @@ import ResourceSurveyFieldMatrix from "@/components/Resource/Survey/Field/Matrix
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyMatrixNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -13,7 +14,7 @@ describe("resourceSurveyFieldMatrix", () => {
     setupUiStyle(uiStyle);
 
     const error = "error";
-    const id = crypto.randomUUID();
+    const id = v7();
     const title = "title";
     const createNode = (isRequired: boolean, isAllRowRequired: boolean): SurveyMatrixNode => ({
       props: {

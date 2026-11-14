@@ -2,6 +2,7 @@ import type { TRPCError } from "@trpc/server";
 
 import { requireUuid } from "#server/trpc/guards/requireUuid";
 import { getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(requireUuid, () => {
@@ -10,7 +11,7 @@ describe(requireUuid, () => {
   test("returns the value when it is a v4 uuid", () => {
     expect.hasAssertions();
 
-    const uuid = crypto.randomUUID();
+    const uuid = v7();
 
     expect(requireUuid(uuid, name)).toBe(uuid);
   });

@@ -3,6 +3,7 @@ import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // One respondent's answers to a survey. A draft is kept while they are still answering and reads as submitted once
@@ -12,7 +13,7 @@ export const surveyResponsesInResource = sqliteTable(
   {
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     // Set while the respondent is still answering, and cleared once they submit
     isDraft: integer({ mode: "boolean" }).notNull().default(false),
     model: text({ mode: "json" }).notNull().default({}).$type<Record<string, unknown>>(),

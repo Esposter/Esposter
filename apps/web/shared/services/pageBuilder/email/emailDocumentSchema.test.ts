@@ -8,6 +8,7 @@ import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeC
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { applyBlockEdit, insertBlockNode } from "vue-block-editor-headless";
 
@@ -39,7 +40,7 @@ describe("emailDocumentSchema", () => {
     };
     const columnSlot = "/content/0/props/children/0/props/children";
     const surveyInvite: EmailSurveyInviteNode = {
-      props: { id: crypto.randomUUID(), label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
+      props: { id: v7(), label: TEST_LABEL, surveyId: TEST_SURVEY_ID },
       type: EmailNodeType.SurveyInvite,
     };
     const operations = insertBlockNode(document, emailRegistry, emailNodeChildren, columnSlot, 0, surveyInvite);

@@ -5,11 +5,12 @@ import MessageModelRoomSettingsTypeWordFilterForm from "@/components/Message/Mod
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { WordFilterAction } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeWordFilterForm", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const createFilter = (words: string[]): RoomFilterInMessage => ({
     action: WordFilterAction.Reject,
     createdAt: new Date(0),

@@ -1,9 +1,10 @@
 import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSnapshotAssetHashes, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const assetUrl = getResourceAssetUrl(`${resourceId}/files/${assetHash}`);
 

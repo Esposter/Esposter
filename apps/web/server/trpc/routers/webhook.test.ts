@@ -10,6 +10,7 @@ import { webhookRouter } from "#server/trpc/routers/webhook";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
 import { appUsersInMessage, DatabaseEntityType, RoomPermission, webhooksInMessage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("webhookRouter", () => {
@@ -69,9 +70,9 @@ describe("webhookRouter", () => {
   test("fails create with an unknown room id", async () => {
     expect.hasAssertions();
 
-    await expect(
-      webhookCaller.createWebhook({ name, roomId: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(webhookCaller.createWebhook({ name, roomId: v7() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   test(`fails create for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {

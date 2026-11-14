@@ -9,6 +9,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { check, index, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export const searchHistoriesInMessage = sqliteTable(
@@ -17,7 +18,7 @@ export const searchHistoriesInMessage = sqliteTable(
     filters: text({ mode: "json" }).notNull().$type<Filter[]>().default([]),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     query: text().notNull().default(""),
     ...createRoomUserColumns(),
   },

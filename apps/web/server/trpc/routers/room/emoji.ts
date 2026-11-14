@@ -35,6 +35,7 @@ import {
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { and, eq, notExists, sql } from "drizzle-orm";
+import { v7 } from "uuid";
 
 export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
@@ -139,7 +140,7 @@ export const emojiRouter = router({
     if (roomEmojiCount >= MAX_ROOM_EMOJIS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
-    const id: string = crypto.randomUUID();
+    const id: string = v7();
     const sasUrl = await createPresignedPutUrl(
       getStorageCredentials(),
       StorageBucket.MessageAssets,

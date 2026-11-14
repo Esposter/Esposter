@@ -56,6 +56,7 @@ import {
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
 import { strFromU8, unzipSync } from "fflate";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -99,7 +100,7 @@ describe(buildUserDataArchive, () => {
   const file = {
     filename,
     hasThumbnail: false,
-    id: crypto.randomUUID(),
+    id: v7(),
     isSpoiler: false,
     mimetype: "mimetype",
     size: attachmentBytes.length,
@@ -139,13 +140,11 @@ describe(buildUserDataArchive, () => {
   test("unzips to the entries the design lists, and holds none of another person's messages", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
-    await mockDb
-      .insert(accountsInAuth)
-      .values({ accountId: "accountId", id: crypto.randomUUID(), providerId: "providerId", userId });
+    await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
 
     // A room the person is a member of, with their message and attachment beside the other person's message
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
@@ -212,9 +211,9 @@ describe(buildUserDataArchive, () => {
   test("writes the account's rows without their update or delete times, and a creation time only where a row is the person's act", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     const user = takeOne(await mockDb.insert(usersInAuth).values(createUser(userId)).returning());
     await mockDb.insert(usersInAuth).values(createUser(otherUserId));
     const block = takeOne(
@@ -262,11 +261,11 @@ describe(buildUserDataArchive, () => {
   test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const receivedUserId = crypto.randomUUID();
-    const friendUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const receivedUserId = v7();
+    const friendUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb
       .insert(usersInAuth)
       .values([createUser(userId), createUser(otherUserId), createUser(receivedUserId), createUser(friendUserId)]);
@@ -308,15 +307,11 @@ describe(buildUserDataArchive, () => {
     const sentRequest = takeOne(
       await mockDb
         .insert(friendRequestsInSocial)
-        .values({ id: crypto.randomUUID(), receiverId: otherUserId, senderId: userId })
+        .values({ id: v7(), receiverId: otherUserId, senderId: userId })
         .returning(),
     );
-    await mockDb
-      .insert(friendRequestsInSocial)
-      .values({ id: crypto.randomUUID(), receiverId: userId, senderId: receivedUserId });
-    await mockDb
-      .insert(friendsInSocial)
-      .values({ id: crypto.randomUUID(), receiverId: userId, senderId: friendUserId });
+    await mockDb.insert(friendRequestsInSocial).values({ id: v7(), receiverId: userId, senderId: receivedUserId });
+    await mockDb.insert(friendsInSocial).values({ id: v7(), receiverId: userId, senderId: friendUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
@@ -352,9 +347,9 @@ describe(buildUserDataArchive, () => {
   test("writes an owned room's record with its settings, images and emoji, and no other member's record", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ isReadOnly: true, name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
@@ -402,9 +397,9 @@ describe(buildUserDataArchive, () => {
   test("writes the person's own search queries with their filters, and no other person's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
@@ -428,8 +423,8 @@ describe(buildUserDataArchive, () => {
   test("writes a published resource's publication metadata, and none for a resource not published", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const publishedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
@@ -461,8 +456,8 @@ describe(buildUserDataArchive, () => {
   test("writes an owned resource's own fields and its creation time, and none of its bookkeeping", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const resource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
@@ -486,8 +481,8 @@ describe(buildUserDataArchive, () => {
   test("writes an owned resource's link records as stored, and none for a resource with no links", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const linkingResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
@@ -515,9 +510,9 @@ describe(buildUserDataArchive, () => {
   test("writes the moderation actions the person took in rooms they own, and no other moderator's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
@@ -551,9 +546,9 @@ describe(buildUserDataArchive, () => {
   test("writes the moderation records that name the person as their target, from both tables, and none about other people", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const recordTime = new Date(Temporal.Duration.from({ minutes: 5 }).total("milliseconds"));
@@ -596,9 +591,9 @@ describe(buildUserDataArchive, () => {
   test("writes the calls the person started, without their join ids, and no other person's call", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     // A room holds one call per thread, so the other person's call is in a room of their own
@@ -623,9 +618,9 @@ describe(buildUserDataArchive, () => {
   test("writes the person's own thread decisions, an unfollow included, and no other person's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
@@ -656,9 +651,9 @@ describe(buildUserDataArchive, () => {
   test("writes the person's memberships in rooms they do not own, with their roles, and no other member's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
@@ -702,9 +697,9 @@ describe(buildUserDataArchive, () => {
   test("writes the person's own favorites and accesses of a resource, and no other person's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const resource = takeOne(
       await mockDb
@@ -738,9 +733,9 @@ describe(buildUserDataArchive, () => {
   test("archives every page of a room's messages, in the order they were sent, and none of another person's", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
@@ -770,8 +765,8 @@ describe(buildUserDataArchive, () => {
   test("streams an attachment's bytes into the archive, under its room and its file", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const blobName = `${crypto.randomUUID()}.zip`;
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });

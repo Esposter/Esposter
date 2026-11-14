@@ -5,6 +5,7 @@ import ResourceSurveyFieldButtonGroup from "@/components/Resource/Survey/Field/B
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyButtonGroupNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -19,10 +20,7 @@ describe("resourceSurveyFieldButtonGroup", () => {
     const error = "error";
     const title = "Favourite colour";
     const node: SurveyButtonGroupNode = {
-      props: {
-        ...surveyButtonGroupNodePropsSchema.parse({ choices, name: "question", title }),
-        id: crypto.randomUUID(),
-      },
+      props: { ...surveyButtonGroupNodePropsSchema.parse({ choices, name: "question", title }), id: v7() },
       type: SurveyNodeType.ButtonGroup,
     };
 

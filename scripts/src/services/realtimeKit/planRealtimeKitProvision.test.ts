@@ -3,18 +3,19 @@ import type { RealtimeKitExisting } from "#src/models/realtimeKit/RealtimeKitExi
 import { getRealtimeKitDesired } from "#src/services/realtimeKit/getRealtimeKitDesired";
 import { planRealtimeKitProvision } from "#src/services/realtimeKit/planRealtimeKitProvision";
 import { CloudflareEnvironment } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(planRealtimeKitProvision, () => {
   const desired = getRealtimeKitDesired(CloudflareEnvironment.Development);
-  const appId = crypto.randomUUID();
-  const tokenId = crypto.randomUUID();
-  const webhook = { enabled: true, events: desired.webhookEvents, id: crypto.randomUUID(), url: desired.webhookUrl };
+  const appId = v7();
+  const tokenId = v7();
+  const webhook = { enabled: true, events: desired.webhookEvents, id: v7(), url: desired.webhookUrl };
   const provisioned: RealtimeKitExisting = {
     app: { id: appId, name: desired.appName },
     escAppId: appId,
     isEscTokenSet: true,
-    presets: desired.presets.map(({ name }) => ({ id: crypto.randomUUID(), name })),
+    presets: desired.presets.map(({ name }) => ({ id: v7(), name })),
     token: { id: tokenId, name: desired.tokenName },
     webhooks: [webhook],
   };

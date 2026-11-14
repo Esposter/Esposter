@@ -4,10 +4,11 @@ import { createOptimisticMessage } from "@/services/message/createOptimisticMess
 import { createUser } from "@/services/message/user/createUser.test";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageTypeIndex", () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const creator = createUser();
   const editor = "editor";
   const createMessage = (isForward: boolean) => {

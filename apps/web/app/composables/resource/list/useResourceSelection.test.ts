@@ -1,10 +1,11 @@
 import { useResourceSelection } from "@/composables/resource/list/useResourceSelection";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useResourceSelection, () => {
-  const id = crypto.randomUUID();
-  const otherId = crypto.randomUUID();
-  const nextPageId = crypto.randomUUID();
+  const id = v7();
+  const otherId = v7();
+  const nextPageId = v7();
   const firstPage = [{ id }, { id: otherId }];
   const secondPage = [{ id: nextPageId }];
 

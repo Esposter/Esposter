@@ -5,6 +5,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -93,7 +94,7 @@ describe("webpageNodeSchema", () => {
   test("a UUID id is accepted, the form a minted node id takes", () => {
     expect.hasAssertions();
 
-    const result = webpageNodeSchema.safeParse(createButton(crypto.randomUUID()));
+    const result = webpageNodeSchema.safeParse(createButton(v7()));
 
     expect(result.success).toBe(true);
   });

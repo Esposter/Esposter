@@ -15,6 +15,7 @@ import { createMessage } from "@/services/message/message/createMessage.test";
 import { useAlertStore } from "@/store/alert";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
@@ -111,9 +112,9 @@ describe.each<PaginationCacheVariant>([
       getTestSlice(partitionKeyRef.value).isLoaded.value = newIsLoaded;
     },
   });
-  const partitionKey = crypto.randomUUID();
-  const secondPartitionKey = crypto.randomUUID();
-  const messageId = crypto.randomUUID();
+  const partitionKey = v7();
+  const secondPartitionKey = v7();
+  const messageId = v7();
   const message = "message";
   const secondMessage = "secondMessage";
   const createMessageRow = (roomId: string = partitionKey, messageText: string = message): MessageValue => ({
@@ -384,9 +385,9 @@ describe.each<PaginationCacheVariant>([
     expect.hasAssertions();
 
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
-    await mountCache(crypto.randomUUID());
+    await mountCache(v7());
     partitionKeyRef.value = partitionKey;
-    partitionKeyRef.value = crypto.randomUUID();
+    partitionKeyRef.value = v7();
     await flushCache();
 
     expect(items.value).toHaveLength(0);

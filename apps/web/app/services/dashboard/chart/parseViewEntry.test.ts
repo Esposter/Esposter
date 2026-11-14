@@ -1,9 +1,10 @@
 import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
 import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(parseViewEntry, () => {
-  const visualId = crypto.randomUUID();
+  const visualId = v7();
 
   // The encoder is free to put the separator inside the token, so only the first one delimits
   test("splits on the first separator and keeps the rest of the token verbatim", () => {

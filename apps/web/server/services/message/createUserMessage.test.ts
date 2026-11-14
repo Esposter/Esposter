@@ -19,6 +19,7 @@ import {
 } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The room's object writes the message and answers for the root a reply names, so both are faked here: the thread
@@ -141,7 +142,7 @@ describe(createUserMessage, () => {
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     const room = await createRoom();
-    const webhookRoot = createRoomMessage({ appUserId: crypto.randomUUID(), type: MessageType.Webhook });
+    const webhookRoot = createRoomMessage({ appUserId: v7(), type: MessageType.Webhook });
     roomObject.readMessagesByIds.mockResolvedValue([webhookRoot]);
     await createReply(room.id, webhookRoot.id);
     const replierFollows = await readFollowedThreadRootIds(mockContext.db, room.id, replier.user.id);

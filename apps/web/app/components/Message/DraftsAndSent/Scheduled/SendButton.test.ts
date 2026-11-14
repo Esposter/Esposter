@@ -8,11 +8,12 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 import { MessageType, ScheduledMessageJobType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageDraftsAndSentScheduledSendButton", () => {
   const { trpcMsw } = setupMswTrpc();
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const room = createRoom("name");
   const createJob = (message: string) =>
     createScheduledMessageJob({
@@ -34,8 +35,8 @@ describe("messageDraftsAndSentScheduledSendButton", () => {
     });
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-    const sentScheduledMessageJob = createJob(crypto.randomUUID());
-    const otherScheduledMessageJob = createJob(crypto.randomUUID());
+    const sentScheduledMessageJob = createJob(v7());
+    const otherScheduledMessageJob = createJob(v7());
     items.value = [sentScheduledMessageJob, otherScheduledMessageJob];
     scheduledMessageJobCount.value = 2;
 

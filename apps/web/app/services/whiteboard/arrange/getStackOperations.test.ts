@@ -4,6 +4,7 @@ import { StackMove } from "@/models/whiteboard/StackMove";
 import { getStackOperations } from "@/services/whiteboard/arrange/getStackOperations";
 import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The element list's ids in order, the first drawn beneath the rest, so a stacking reads as the order of these ids
@@ -14,10 +15,10 @@ const getOrder = (document: PositionedDocument, operations: ReturnType<typeof ge
   applyPatches(document, operations).document.elements.map(({ id }) => id);
 
 describe(getStackOperations, () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const THIRD_ID = crypto.randomUUID();
-  const FOURTH_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const THIRD_ID = v7();
+  const FOURTH_ID = v7();
 
   test("bring to front lifts a selection above the rest in its order", () => {
     expect.hasAssertions();
@@ -40,7 +41,7 @@ describe(getStackOperations, () => {
   test("bring forward lifts each run of a split selection one step and leaves the others in their order", () => {
     expect.hasAssertions();
 
-    const FIFTH_ID = crypto.randomUUID();
+    const FIFTH_ID = v7();
     const document = createDocument([FIRST_ID, SECOND_ID, THIRD_ID, FOURTH_ID, FIFTH_ID]);
     const operations = getStackOperations(document, [FIRST_ID, FOURTH_ID], StackMove.BringForward);
 
@@ -50,7 +51,7 @@ describe(getStackOperations, () => {
   test("send backward sinks each run of a split selection one step and leaves the others in their order", () => {
     expect.hasAssertions();
 
-    const FIFTH_ID = crypto.randomUUID();
+    const FIFTH_ID = v7();
     const document = createDocument([FIRST_ID, SECOND_ID, THIRD_ID, FOURTH_ID, FIFTH_ID]);
     const operations = getStackOperations(document, [SECOND_ID, FIFTH_ID], StackMove.SendBackward);
 

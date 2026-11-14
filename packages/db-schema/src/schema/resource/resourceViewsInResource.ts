@@ -4,6 +4,7 @@ import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSq
 import { sqliteTable } from "#src/sqliteTable";
 import { check, integer, text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 
 // The public view counter: one row per resource per UTC day, incremented in place so every view counts exactly once
 export const resourceViewsInResource = sqliteTable(
@@ -12,7 +13,7 @@ export const resourceViewsInResource = sqliteTable(
     count: integer().notNull().default(0),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     resourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),

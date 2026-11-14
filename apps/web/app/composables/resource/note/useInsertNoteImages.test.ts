@@ -10,6 +10,7 @@ import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteIm
 import { useResourceStore } from "@/store/resource";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Editor } from "@tiptap/vue-3";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const { uploadResourceFileMock } = vi.hoisted(() => ({
@@ -26,7 +27,7 @@ const getImageSources = (content: JSONContent | undefined) =>
   (content?.content ?? []).filter(({ type }) => type === "image").map(({ attrs }) => attrs?.src);
 
 describe(useInsertNoteImages, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));
   const file = new File(["a"], "a", { type: MimeType.Png });

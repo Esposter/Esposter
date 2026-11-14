@@ -23,8 +23,14 @@ import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 import { ArrowPathKind, getExportBounds, PositionedElementType, TextSize } from "vue-block-editor-headless";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 const { display, uploadResourceFileMock } = vi.hoisted(() => ({
   display: { isCompact: false, isMobile: false },
@@ -61,10 +67,10 @@ const getMenuTitles = () => {
 
 describe("resourceWhiteboardEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const POINTER_ID = 1;
-  const FIRST_SHAPE_ID = crypto.randomUUID();
-  const SECOND_SHAPE_ID = crypto.randomUUID();
+  const FIRST_SHAPE_ID = v7();
+  const SECOND_SHAPE_ID = v7();
   // The process shape's bottom point is where a right-angled arrow starts, bound to it, and its far end is free
   const RIGHT_ANGLED_ARROW: ArrowElement = { ...WHITEBOARD_ARROW, pathKind: ArrowPathKind.RightAngled };
   const CANVAS_RECT = { height: 600, width: 800, x: 0, y: 0 };
@@ -226,7 +232,7 @@ describe("resourceWhiteboardEditor", () => {
     expect.hasAssertions();
 
     // The third shape is drawn above the selected pair, so the pair can move forward and to the front, but not back, since it holds the bottom element
-    const THIRD_SHAPE_ID = crypto.randomUUID();
+    const THIRD_SHAPE_ID = v7();
     const component = await mountEditor([
       createShape(FIRST_SHAPE_ID, 0),
       createShape(SECOND_SHAPE_ID, 500),
@@ -423,10 +429,10 @@ describe("resourceWhiteboardEditor", () => {
     await flushPromises();
     setCanvasRect(CANVAS_RECT);
     // The id the placement gives the new text box is fixed, so the element is read back exactly
-    const insertedId = crypto.randomUUID();
-    const randomUuidSpy = vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
+    const insertedId = v7();
+    vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
     onTestFinished(() => {
-      randomUuidSpy.mockRestore();
+      vi.mocked<() => string>(v7).mockRestore();
     });
     await component.get('button[aria-label="Text"]').trigger("click");
     await drag(getCanvas(component), CANVAS_CENTRE, CANVAS_CENTRE);

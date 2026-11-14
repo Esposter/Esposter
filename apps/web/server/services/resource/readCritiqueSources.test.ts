@@ -7,6 +7,7 @@ import { SurveyPublishState } from "#shared/models/pageBuilder/SurveyPublishStat
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createTestSurveyInviteNode, createTestTextNode } from "#shared/services/pageBuilder/critique/constants.test";
 import { resourcePublicationsInResource, resourcesInResource, ResourceType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(readCritiqueSources, () => {
@@ -36,9 +37,9 @@ describe(readCritiqueSources, () => {
     expect.hasAssertions();
 
     const { id: otherUserId } = await createMockUser(db);
-    const publishedSurveyId = crypto.randomUUID();
-    const unpublishedSurveyId = crypto.randomUUID();
-    const otherUsersSurveyId = crypto.randomUUID();
+    const publishedSurveyId = v7();
+    const unpublishedSurveyId = v7();
+    const otherUsersSurveyId = v7();
     await db.insert(resourcesInResource).values([
       { id: publishedSurveyId, name: "name", type: ResourceType.Survey, userId },
       { id: unpublishedSurveyId, name: "name", type: ResourceType.Survey, userId },

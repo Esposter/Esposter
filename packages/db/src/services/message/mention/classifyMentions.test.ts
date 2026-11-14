@@ -7,12 +7,13 @@ import {
   MENTION_TYPE_ATTRIBUTE,
   MentionType,
 } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(classifyMentions, () => {
-  const userId = crypto.randomUUID();
-  const otherUserId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
+  const userId = v7();
+  const otherUserId = v7();
+  const roleId = v7();
 
   test("reads an empty message as no mentions", () => {
     expect.hasAssertions();

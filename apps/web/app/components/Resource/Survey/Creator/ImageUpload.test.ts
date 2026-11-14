@@ -7,6 +7,7 @@ import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyDocumentSchema, surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
@@ -24,10 +25,7 @@ const createDocument = (imageLink: string) =>
   surveyDocumentSchema.parse({
     content: [
       {
-        props: {
-          children: [{ props: { id: crypto.randomUUID(), imageLink, name: "image" }, type: SurveyNodeType.Image }],
-          id: crypto.randomUUID(),
-        },
+        props: { children: [{ props: { id: v7(), imageLink, name: "image" }, type: SurveyNodeType.Image }], id: v7() },
         type: SurveyNodeType.Page,
       },
     ],

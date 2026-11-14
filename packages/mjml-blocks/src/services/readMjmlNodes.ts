@@ -7,6 +7,7 @@ import { STRAY_TEXT_TYPE } from "#src/services/constants";
 import { readMjmlNode } from "#src/services/readMjmlNode";
 import { normalizeString } from "@esposter/shared";
 import { HTMLElement, TextNode } from "node-html-parser";
+import { v7 } from "uuid";
 
 // The nodes of a list of children: each element a node, each text that is not blank a node no registry holds
 export const readMjmlNodes = <TContext, TContent extends MjmlRichText>(
@@ -20,6 +21,6 @@ export const readMjmlNodes = <TContext, TContent extends MjmlRichText>(
         readMjmlNode(child, registry, richText, (grandchildren) => readMjmlNodes(grandchildren, registry, richText)),
       ];
     if (child instanceof TextNode && normalizeString(child.text) !== "")
-      return [{ props: { content: child.text, id: crypto.randomUUID() }, type: STRAY_TEXT_TYPE }];
+      return [{ props: { content: child.text, id: v7() }, type: STRAY_TEXT_TYPE }];
     return [];
   });

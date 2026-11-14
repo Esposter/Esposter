@@ -10,12 +10,13 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The document is the webpage fixture: a section holding a text node, then a text node at the root
 const setup = (selectedNodeId: string) => {
   setActivePinia(createPinia());
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();

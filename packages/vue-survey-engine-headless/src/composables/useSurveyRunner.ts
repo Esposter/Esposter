@@ -20,6 +20,7 @@ import { goToNextSurveyPage } from "#src/services/runner/goToNextSurveyPage";
 import { goToPreviousSurveyPage } from "#src/services/runner/goToPreviousSurveyPage";
 import { numberSurveyQuestions } from "#src/services/runner/numberSurveyQuestions";
 import { setSurveyAnswer } from "#src/services/runner/setSurveyAnswer";
+import { v7 } from "uuid";
 import { computed, ref, toValue } from "vue";
 
 // A respondent's session over a survey document: the state the runner's functions move, the errors that block a move and
@@ -30,7 +31,7 @@ export const useSurveyRunner = (
     answers = {},
     pageIndex = 0,
     // A session's seed orders the choices of a question that shuffles them, so one respondent sees one order throughout
-    seed: initialSeed = crypto.randomUUID(),
+    seed: initialSeed = v7(),
   }: { answers?: SurveyAnswers; pageIndex?: number; seed?: string } = {},
 ): SurveyRunner => {
   const getDocument = () => toValue(document);

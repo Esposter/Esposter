@@ -9,6 +9,7 @@ import { RoutePath, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCClientError } from "@trpc/client";
 import { observable } from "@trpc/server/observable";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { navigateTo } = vi.hoisted(() => ({
@@ -23,7 +24,7 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe(errorLink, () => {
   const message = "";
-  const userId = crypto.randomUUID();
+  const userId = v7();
 
   const createTrpcClientError = (code: string) =>
     TRPCClientError.from<TRPCRouter>({ error: { code: -32001, data: { code }, message } });

@@ -4,6 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { createSnapshotObjectStore } from "#server/services/resource/snapshot/createSnapshotObjectStore";
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
@@ -11,7 +12,7 @@ const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket
 vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 describe(createSnapshotObjectStore, () => {
-  const resourceId: ResourceInResource["id"] = crypto.randomUUID();
+  const resourceId: ResourceInResource["id"] = v7();
   const hash = "hash";
   const bytes = new Uint8Array(1);
   let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];

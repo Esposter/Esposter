@@ -1,10 +1,11 @@
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createParticipantLinksCsv, () => {
   const keyColumn = "email";
-  const surveyId = crypto.randomUUID();
-  const token = crypto.randomUUID();
+  const surveyId = v7();
+  const token = v7();
   const origin = "https://esposter.com";
 
   test("pairs each key value with its tokened survey link", () => {

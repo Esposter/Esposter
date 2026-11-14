@@ -4,6 +4,7 @@ import type { FileEntity, FileSasEntity, StorageBucket } from "@esposter/db-sche
 import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutUrl";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 import { getMimeCategory, MAX_THUMBNAIL_BYTES, MimeCategory, THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
 // Every target is named before the first is signed, and `reserve` is handed the whole set before any url exists, so a
 // Refused reserve throws with no write target minted. The caller's reserve decides what the bytes are charged against
@@ -18,7 +19,7 @@ export const generateUploadFileSasEntities = async (
   },
 ): Promise<FileSasEntity[]> => {
   const uploads = files.map(({ filename, mimetype, size }) => {
-    const id: string = crypto.randomUUID();
+    const id: string = v7();
     const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
     // Images get a sibling thumbnail write target so the client can upload a downscaled preview alongside.
     const hasThumbnail = Boolean(options.withThumbnail) && getMimeCategory(mimetype) === MimeCategory.Image;

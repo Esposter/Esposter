@@ -2,6 +2,7 @@ import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { getSurveyElementViews } from "#src/services/runner/getSurveyElementViews";
 import { surveyPlaceableNodeSchema } from "#src/services/surveyNodeSchema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyElementViews, () => {
@@ -18,7 +19,7 @@ describe(getSurveyElementViews, () => {
       }),
       surveyPlaceableNodeSchema.parse({ props: { id: "b", name: "b" }, type: SurveyNodeType.Text }),
       surveyPlaceableNodeSchema.parse({
-        props: { children: [{ props: { id: "c", name: "c" }, type: SurveyNodeType.Text }], id: crypto.randomUUID() },
+        props: { children: [{ props: { id: "c", name: "c" }, type: SurveyNodeType.Text }], id: v7() },
         type: SurveyNodeType.Panel,
       }),
     ];
@@ -41,7 +42,7 @@ describe(getSurveyElementViews, () => {
       surveyPlaceableNodeSchema.parse({
         props: {
           children: [{ props: { id: "a", name: "a", visibleIf: "{x} = 'x'" }, type: SurveyNodeType.Text }],
-          id: crypto.randomUUID(),
+          id: v7(),
         },
         type: SurveyNodeType.Panel,
       }),
@@ -58,7 +59,7 @@ describe(getSurveyElementViews, () => {
         props: {
           children: [{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }],
           enableIf: "{x} = 'x'",
-          id: crypto.randomUUID(),
+          id: v7(),
         },
         type: SurveyNodeType.Panel,
       }),

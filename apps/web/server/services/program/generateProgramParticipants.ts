@@ -14,6 +14,7 @@ import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncat
 import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
 import { chunk } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
+import { v7 } from "uuid";
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.
@@ -50,12 +51,7 @@ export const generateProgramParticipants = async (
       continue;
 
     newKeyValues.add(keyValue);
-    newParticipants.push({
-      keyValue,
-      publicId: crypto.randomUUID(),
-      resourceId: programId,
-      token: crypto.randomUUID(),
-    });
+    newParticipants.push({ keyValue, publicId: v7(), resourceId: programId, token: v7() });
   }
   // The batches are independent, so they overlap. A participant another run claimed first conflicts and comes back
   // unreturned, and its token is the one a link may already carry, so this run adopts it and drops the token it minted

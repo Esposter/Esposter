@@ -5,6 +5,7 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import { ResourceBladeSlug } from "@/models/resource/ResourceBladeSlug";
 import { ResourceType } from "@esposter/db-schema";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const showErrorMock = vi.hoisted(() => vi.fn<() => void>());
@@ -35,7 +36,7 @@ describe(useValidateResourceBlade, () => {
   test("leaves a blade alone while the route names another resource", () => {
     expect.hasAssertions();
 
-    Object.assign(useRouter().currentRoute.value.params, { id: crypto.randomUUID() });
+    Object.assign(useRouter().currentRoute.value.params, { id: v7() });
     const scope = effectScope();
     scope.run(() => {
       useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));

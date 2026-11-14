@@ -2,10 +2,11 @@ import type { Database } from "@esposter/db-schema";
 
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
 import { SnapshotChannel } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(checkIsResourceAssetReadable, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const publishVersion = 1;
   // The one row that answers the per-asset question: the published version's row naming this hash

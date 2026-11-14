@@ -9,13 +9,14 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useCommandStore } from "@/store/ui/command";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(usePageBuilderKeyCommands, () => {
   test("with no node selected, only paste is bound, so the selection's keys are not listed", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
     await mountSuspended(
@@ -40,7 +41,7 @@ describe(usePageBuilderKeyCommands, () => {
   test("a node's delete that asks holds the editor's keys until it answers", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
@@ -85,7 +86,7 @@ describe(usePageBuilderKeyCommands, () => {
   test("a move the selection cannot take is listed unavailable with its reason, and one it can take is not", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {

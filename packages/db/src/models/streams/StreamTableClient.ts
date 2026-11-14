@@ -16,6 +16,7 @@ import { and, asc, count, desc, eq, sql } from "drizzle-orm";
 import { translateWriteError } from "#src/services/streams/error/translateWriteError";
 import { compileClauses } from "#src/services/streams/compileClauses";
 import { readStreamRow } from "#src/services/streams/readStreamRow";
+import { v7 } from "uuid";
 
 type ClauseList = Clause<Record<string, unknown>>[];
 type StreamRowEntity = SerializedEntity & { etag: string };
@@ -43,7 +44,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
   }
 
   async createEntity(entity: SerializedEntity): Promise<{ etag: string }> {
-    const etag = crypto.randomUUID();
+    const etag = v7();
     await this.run(this.database.insert(this.table).values(this.getRow(entity, etag)));
     return { etag };
   }
@@ -92,7 +93,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
     mode: UpdateMode,
     options?: { etag?: string },
   ): Promise<{ etag: string }> {
-    const etag = crypto.randomUUID();
+    const etag = v7();
     const updatedRows = await this.run(
       this.database
         .update(this.table)
@@ -105,7 +106,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
   }
 
   async upsertEntity(entity: SerializedEntity, mode: UpdateMode): Promise<{ etag: string }> {
-    const etag = crypto.randomUUID();
+    const etag = v7();
     await this.run(
       this.database
         .insert(this.table)
@@ -128,7 +129,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
     await this.run(
       this.database
         .insert(this.table)
-        .values(this.getRow({ [property]: 1, partitionKey, rowKey }, crypto.randomUUID()))
+        .values(this.getRow({ [property]: 1, partitionKey, rowKey }, v7()))
         .onConflictDoUpdate({
           set: {
             entity: sql`json_set(${this.table.entity}, ${path}, json_extract(${this.table.entity}, ${path}) + 1)`,
@@ -152,7 +153,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
   private getStatements(action: StreamTableAction): BatchItem<"sqlite">[] {
     switch (action[0]) {
       case "create":
-        return [this.database.insert(this.table).values(this.getRow(action[1], crypto.randomUUID()))];
+        return [this.database.insert(this.table).values(this.getRow(action[1], v7()))];
       case "delete":
         return [this.database.delete(this.table).where(this.getKeyCondition(action[1].partitionKey, action[1].rowKey))];
       case "update":
@@ -170,7 +171,7 @@ export class StreamTableClient<TEntity extends CompositeKey> {
   ): BatchItem<"sqlite">[] {
     const update = this.database
       .update(this.table)
-      .set(this.getUpdateValues(entity, mode, crypto.randomUUID()))
+      .set(this.getUpdateValues(entity, mode, v7()))
       .where(this.getKeyCondition(entity.partitionKey, entity.rowKey));
     if (etag === undefined) return [update];
     const guard = this.database.run(

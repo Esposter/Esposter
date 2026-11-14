@@ -11,12 +11,13 @@ import { statisticsSchema } from "#shared/models/dungeons/monster/Statistics";
 import { statusSchema } from "#shared/models/dungeons/monster/Status";
 import { getMonsterData } from "#shared/services/dungeons/monster/getMonsterData";
 import { createUniqueArraySchema } from "@esposter/shared";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 export class Monster {
   declare asset: Asset;
   declare attackIds: AttackId[];
-  id: string = crypto.randomUUID();
+  id: string = v7();
   declare key: MonsterKey;
   declare statistics: Statistics;
   declare status: Status;

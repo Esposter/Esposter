@@ -1,10 +1,11 @@
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getRestoredItems, () => {
-  const firstItem = { id: crypto.randomUUID() };
-  const restoredItem = { id: crypto.randomUUID() };
-  const lastItem = { id: crypto.randomUUID() };
+  const firstItem = { id: v7() };
+  const restoredItem = { id: v7() };
+  const lastItem = { id: v7() };
 
   test("restores the row where it stood", () => {
     expect.hasAssertions();

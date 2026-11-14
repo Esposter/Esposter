@@ -13,6 +13,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -28,7 +29,7 @@ vi.mock(import("#src/services/resource/purgeResourceAndBroadcast"), () => ({
 }));
 
 describe(purgeExpiredResources, () => {
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const name = "name";
   const expiredDeletedAt = new Date(Date.now() - RECYCLE_BIN_RETENTION_MS - 1000);
   const withinRetentionDeletedAt = new Date(Date.now() - RECYCLE_BIN_RETENTION_MS + 60_000);

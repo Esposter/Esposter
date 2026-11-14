@@ -3,6 +3,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { Editor } from "@tiptap/core";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // A paste reaches the editor's clipboard parser as HTML, so the image's rule is the one a pasted web image meets
@@ -13,7 +14,7 @@ const getPastedImageSources = (html: string) => {
 };
 
 describe(getNoteExtensions, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));
 

@@ -77,13 +77,14 @@ import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation,
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, notExists, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
+import { v7 } from "uuid";
 
 export const baseRoomRouter = router({
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(
     async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       // The id is named up front, since the membership and the @everyone role both belong to the room being created
-      const roomId = crypto.randomUUID();
+      const roomId = v7();
       const [newRoomRows] = await ctx.db.batch([
         ctx.db
           .insert(roomsInMessage)
@@ -113,7 +114,7 @@ export const baseRoomRouter = router({
   }>(async ({ input: { roomId } }) => {
     // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
     // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
-    const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
+    const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${v7()}`;
     const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
     return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
   }),

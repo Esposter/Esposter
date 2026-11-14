@@ -7,6 +7,7 @@ import { VerticalAlignment } from "#src/models/VerticalAlignment";
 import { ARROW_LABEL_WIDTH } from "#src/services/constants";
 import { getTextPlacement } from "#src/services/export/getTextPlacement";
 import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getTextPlacement, () => {
@@ -42,7 +43,7 @@ describe(getTextPlacement, () => {
 
     const text: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "",
       textSize: TextSize.Small,

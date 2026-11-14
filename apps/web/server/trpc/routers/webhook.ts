@@ -27,6 +27,7 @@ import {
 import { inJsonArray } from "@esposter/db";
 import { Operation } from "@esposter/shared";
 import { and, eq, getColumns, sql } from "drizzle-orm";
+import { v7 } from "uuid";
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(
@@ -38,8 +39,8 @@ export const webhookRouter = router({
     const webhookContext = JSON.stringify({ name, roomId });
     // The webhook posts as its app user, so the app user's id is named up front. Both rows are selected from the room
     // Only while it holds fewer webhooks than the cap, so a full room refuses the pair and writes neither of them
-    const appUserId = crypto.randomUUID();
-    const webhookId = crypto.randomUUID();
+    const appUserId = v7();
+    const webhookId = v7();
     const creatorId = ctx.getSessionPayload.user.id;
     const token = generateToken();
     const isUnderWebhookCap = and(

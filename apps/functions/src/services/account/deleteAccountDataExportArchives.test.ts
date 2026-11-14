@@ -8,6 +8,7 @@ import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/serv
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -38,11 +39,11 @@ describe(deleteAccountDataExportArchives, () => {
   test("deletes the archive each of the person's export rows names, and no other person's archive", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const dataExportId = crypto.randomUUID();
-    const secondDataExportId = crypto.randomUUID();
-    const otherDataExportId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
+    const dataExportId = v7();
+    const secondDataExportId = v7();
+    const otherDataExportId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     await mockDb.insert(dataExportsInUser).values([
       { blobName: getDataExportBlobName(dataExportId), id: dataExportId, status: DataExportStatus.Ready, userId },
@@ -53,7 +54,7 @@ describe(deleteAccountDataExportArchives, () => {
         userId,
       },
       // A queued export has no archive yet, so its row names no blob
-      { id: crypto.randomUUID(), status: DataExportStatus.Queued, userId },
+      { id: v7(), status: DataExportStatus.Queued, userId },
       {
         blobName: getDataExportBlobName(otherDataExportId),
         id: otherDataExportId,
@@ -75,9 +76,9 @@ describe(deleteAccountDataExportArchives, () => {
   test("a row whose archive is already gone does not fail the sweep, and the archive it still holds is removed", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const goneDataExportId = crypto.randomUUID();
-    const dataExportId = crypto.randomUUID();
+    const userId = v7();
+    const goneDataExportId = v7();
+    const dataExportId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     await mockDb.insert(dataExportsInUser).values([
       {

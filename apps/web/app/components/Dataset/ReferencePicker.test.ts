@@ -9,6 +9,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -29,7 +30,7 @@ describe("datasetReferencePicker", () => {
       return { hasMore: false, items: [{ ...survey, publication: null }] };
     });
     trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] }));
-    useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
+    useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
     const wrapper = await mountSuspended(DatasetReferencePicker, { props: { error: "", modelValue: undefined } });
     const [typeSelect, sourceSelect] = wrapper.findAllComponents(UiSelect);
     typeSelect?.vm.$emit("update:modelValue", DatasetProviderType.Sheet);

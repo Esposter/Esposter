@@ -2,11 +2,12 @@ import { useSurveyRunner } from "#src/composables/useSurveyRunner";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // A text question under its name, held to the required and visibility flags a test sets
 const createTextQuestion = (name: string, props: { isRequired?: boolean; visibleIf?: string } = {}) => ({
-  props: { id: crypto.randomUUID(), name, ...props },
+  props: { id: v7(), name, ...props },
   type: SurveyNodeType.Text,
 });
 

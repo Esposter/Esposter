@@ -14,6 +14,7 @@ import { useAlertStore } from "@/store/alert";
 import { checkIsServer, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { StorageSerializers } from "@vueuse/core";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 const clearGuestSave = () => {
@@ -181,7 +182,7 @@ export const useGenshinSave = async () => {
   };
   const loadAccountSave = async (accountUserId: string) => {
     const guestSave = readGuestSave();
-    const start = await startUntilStarted(crypto.randomUUID(), 0);
+    const start = await startUntilStarted(v7(), 0);
     if (!start) return;
     // The journal is read from the browser as it stands now, not from the copy this page cached when it was keyed, since
     // Another window of the browser may have written it since. It is adopted only by the start that replaced the session
@@ -256,7 +257,7 @@ export const useGenshinSave = async () => {
   };
   // The game is taken back by a new start, and the page reloads to resume the save that start holds
   const takeBack = async () => {
-    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: crypto.randomUUID() }), {
+    const outcome = await executeMutation(() => $trpc.genshin.startGenshin.mutate({ sessionId: v7() }), {
       key: "startGenshin",
     });
     if (outcome.status === MutationStatus.Succeeded) window.location.reload();

@@ -11,10 +11,11 @@ import {
 } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyTextNodeType } from "#src/services/surveyTextNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createTextNode = (props: Partial<SurveyTextNodeProps>): SurveyTextNode => ({
-  props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), ...props },
+  props: { ...surveyTextNodeType.createDefaultProps(), id: v7(), ...props },
   type: SurveyNodeType.Text,
 });
 

@@ -6,10 +6,11 @@ import ResourceNoteAltTextMenuButton from "@/components/Resource/Note/AltTextMen
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("resourceNoteAltTextMenuButton", () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const alt = "a";
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));

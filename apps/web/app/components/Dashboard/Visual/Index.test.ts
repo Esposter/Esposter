@@ -11,6 +11,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -30,7 +31,7 @@ describe("dashboardVisualIndex", () => {
     const visual = new Visual({
       dataset: {
         query: { series: [{ aggregation: DatasetAggregationType.Count, column: "x" }], xColumn: "x" },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
       },
       type: VisualType.Table,
     });

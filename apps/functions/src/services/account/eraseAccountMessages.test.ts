@@ -11,6 +11,7 @@ import { getFileBlobNames } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { MessageType, roomsInMessage, StorageBucket, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -31,7 +32,7 @@ describe(eraseAccountMessages, () => {
   const createFile = () => ({
     filename,
     hasThumbnail: false,
-    id: crypto.randomUUID(),
+    id: v7(),
     isSpoiler: false,
     mimetype: "mimetype",
     size: 0,
@@ -63,8 +64,8 @@ describe(eraseAccountMessages, () => {
   test("erases the account's messages and scheduled messages in the rooms it is a member of, with their files' blobs, and nothing else", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     const nonMemberRoom = takeOne(
@@ -92,13 +93,13 @@ describe(eraseAccountMessages, () => {
     await seedBlob(StorageBucket.MessageAssets, otherUserBlobName);
 
     const scheduledMessage = { message, runAt: new Date(1) };
-    await memberRoomObject.createScheduledMessage({ ...scheduledMessage, id: crypto.randomUUID() }, { userId });
+    await memberRoomObject.createScheduledMessage({ ...scheduledMessage, id: v7() }, { userId });
     const otherUserScheduledMessage = await memberRoomObject.createScheduledMessage(
-      { ...scheduledMessage, id: crypto.randomUUID() },
+      { ...scheduledMessage, id: v7() },
       { userId: otherUserId },
     );
     const nonMemberScheduledMessage = await getRoomObject(nonMemberRoom.id).createScheduledMessage(
-      { ...scheduledMessage, id: crypto.randomUUID() },
+      { ...scheduledMessage, id: v7() },
       { userId },
     );
 
@@ -115,8 +116,8 @@ describe(eraseAccountMessages, () => {
   test("tells a viewer of the room each message the erase tombstones, as the tombstone it now is", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([

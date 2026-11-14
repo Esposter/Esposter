@@ -1,6 +1,7 @@
 import type { PdfFreeText } from "#src/models/PdfFreeText";
 
 import { err, ok, Result } from "neverthrow";
+import { v7 } from "uuid";
 
 // An empty field is not a number, so a missing coordinate is caught rather than read as zero
 const parseCoordinate = (text: string) => (text.trim() === "" ? Number.NaN : Number(text));
@@ -19,7 +20,7 @@ const readFreeText = (element: Element, index: number, usedIds: Set<string>): Re
   if (contents.trim() === "") return err(`Free text ${index + 1} has no contents`);
 
   const name = element.getAttribute("name") ?? "";
-  const id = name === "" || usedIds.has(name) ? crypto.randomUUID() : name;
+  const id = name === "" || usedIds.has(name) ? v7() : name;
   usedIds.add(id);
 
   return ok({ contents, id, pageNumber: Number(page) + 1, rect: coordinates });

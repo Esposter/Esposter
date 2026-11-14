@@ -9,6 +9,7 @@ import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInNotification, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { WebPushError } from "web-push";
 
@@ -24,7 +25,7 @@ vi.mock(import("#src/services/notification/webpush"), () => import("#src/service
 
 describe(sendWebPushNotifications, () => {
   const payload = "";
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
   const seedSubscription = async () =>
     takeOne(await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription).returning(), 0);
@@ -78,7 +79,7 @@ describe(sendWebPushNotifications, () => {
     const subscriptions = Array.from({ length: MAX_CONCURRENT_PUSH_SENDS + 1 }, () => ({
       ...pushSubscription,
       expirationTime: null,
-      id: crypto.randomUUID(),
+      id: v7(),
     }));
     await sendWebPushNotifications(subscriptions, payload);
     sendNotification.mockReset();

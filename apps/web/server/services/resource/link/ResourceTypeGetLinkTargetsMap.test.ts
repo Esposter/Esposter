@@ -5,6 +5,7 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe("resourceTypeGetLinkTargetsMap", () => {
@@ -27,7 +28,7 @@ describe("resourceTypeGetLinkTargetsMap", () => {
 
     const getResourceLinkTargets = ResourceTypeGetLinkTargetsMap.get(ResourceType.Dashboard);
     assert.exists(getResourceLinkTargets);
-    const targetId = crypto.randomUUID();
+    const targetId = v7();
     const dashboard = new Dashboard({
       visuals: [
         new Visual({

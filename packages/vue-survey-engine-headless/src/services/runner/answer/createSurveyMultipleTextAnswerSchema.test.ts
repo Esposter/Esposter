@@ -6,13 +6,14 @@ import { createSurveyMultipleTextAnswerSchema } from "#src/services/runner/answe
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMultipleTextNodeType } from "#src/services/surveyMultipleTextNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyMultipleTextAnswerSchema, () => {
   const node: SurveyMultipleTextNode = {
     props: {
       ...surveyMultipleTextNodeType.createDefaultProps(),
-      id: crypto.randomUUID(),
+      id: v7(),
       items: [
         { inputType: SurveyMultipleTextItemInputType.Text, isRequired: true, name: "a", title: "" },
         { inputType: SurveyMultipleTextItemInputType.Email, isRequired: false, name: "b", title: "" },

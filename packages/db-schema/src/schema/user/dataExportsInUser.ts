@@ -6,6 +6,7 @@ import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
 import { index, integer, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // One row per request for a person's data archive. The archive is one blob named after the row's id, so a replayed
@@ -21,7 +22,7 @@ export const dataExportsInUser = sqliteTable(
     failureReason: text(),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     readyAt: integer({ mode: "timestamp_ms" }),
     // When the person asked for the export. The settings page orders by it, so the latest export is the one it shows
     // Whatever its status, a failed one included

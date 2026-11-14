@@ -7,12 +7,13 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useBanStore } from "@/store/message/user/ban";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useBanStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const first = { ...createUser({ name: "first" }), displayName: "first" };
   const second = { ...createUser({ name: "second" }), displayName: "second" };
   const createBan = (user: MemberInRoom): BanInRoom => ({

@@ -19,6 +19,7 @@ import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { strToU8, unzipSync } from "fflate";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument } from "vue-survey-engine-headless";
 
@@ -43,12 +44,12 @@ const getNotificationTitles = () => {
 // So the blade awaits everything it renders from in setup rather than mounting empty behind its own flag
 describe("resourceProgramStatus", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const resource = createResourceListItem({ id: resourceId, type: ResourceType.Program });
   const keyValue = "keyValue";
   const statusRow: ProgramStatusRow = { addedAt: new Date(0), isResponded: true, keyValue };
   const keyColumn = "keyColumn";
-  const surveyId = crypto.randomUUID();
+  const surveyId = v7();
   const setSurveyMode = (responseMode: SurveyResponseMode) => {
     trpcMsw.survey.readResourceContent.query(() => ({
       document: createSurveyDocument(),
@@ -134,7 +135,7 @@ describe("resourceProgramStatus", () => {
   test("hands the owner every participant's link when they generate", async () => {
     expect.hasAssertions();
 
-    const participants = [{ keyValue, token: crypto.randomUUID() }];
+    const participants = [{ keyValue, token: v7() }];
     setStatus(false);
     trpcMsw.program.generateProgramParticipants.mutation(() => ({ participants }));
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
@@ -163,13 +164,13 @@ describe("resourceProgramStatus", () => {
   test("exports each invited participant's personalized email as one zip", async () => {
     expect.hasAssertions();
 
-    const token = crypto.randomUUID();
+    const token = v7();
     const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
     const emailHtml = `<a href="${surveyPath}">Take it</a>`;
     const invite = { keyValue, row: { [keyColumn]: keyValue }, token };
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));
@@ -224,8 +225,8 @@ describe("resourceProgramStatus", () => {
     expect.hasAssertions();
 
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));
@@ -242,8 +243,8 @@ describe("resourceProgramStatus", () => {
     expect.hasAssertions();
 
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));
@@ -259,8 +260,8 @@ describe("resourceProgramStatus", () => {
     expect.hasAssertions();
 
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));
@@ -277,10 +278,10 @@ describe("resourceProgramStatus", () => {
   test("names the participants left out of the file and still exports the rest", async () => {
     expect.hasAssertions();
 
-    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: crypto.randomUUID() };
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: v7() };
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));
@@ -302,10 +303,10 @@ describe("resourceProgramStatus", () => {
   test("reports the reminders ready when the export is for those still awaiting", async () => {
     expect.hasAssertions();
 
-    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: crypto.randomUUID() };
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: v7() };
     trpcMsw.program.readResourceContent.query(() => ({
-      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
-      emailId: crypto.randomUUID(),
+      audience: { id: v7(), type: DatasetProviderType.Sheet },
+      emailId: v7(),
       keyColumn,
       surveyId,
     }));

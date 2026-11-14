@@ -1,10 +1,11 @@
 import { DASHBOARD_VIEW_SEPARATOR } from "@/services/dashboard/chart/constants";
 import { setViewEntryToken } from "@/services/dashboard/chart/setViewEntryToken";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(setViewEntryToken, () => {
-  const visualId = crypto.randomUUID();
-  const otherEntry = `${crypto.randomUUID()}${DASHBOARD_VIEW_SEPARATOR} `;
+  const visualId = v7();
+  const otherEntry = `${v7()}${DASHBOARD_VIEW_SEPARATOR} `;
   const token = "b";
 
   test("replaces this visual's entry and leaves every other visual's alone", () => {

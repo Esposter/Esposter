@@ -10,6 +10,7 @@ import { createSurveyTestPage } from "@/services/survey/createSurveyTestPage.tes
 import { createSurveyTestQuestion } from "@/services/survey/createSurveyTestQuestion.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   SURVEY_REQUIRED_MESSAGE,
@@ -22,11 +23,7 @@ import {
 // A dynamic panel named "rows" of two panels over the template, on a page of its own
 const createRowsDocument = (template: SurveyTemplateNode[]) => {
   const panel: SurveyPanelDynamicNode = {
-    props: {
-      ...surveyPanelDynamicNodePropsSchema.parse({ name: "rows", panelCount: 2 }),
-      id: crypto.randomUUID(),
-      template,
-    },
+    props: { ...surveyPanelDynamicNodePropsSchema.parse({ name: "rows", panelCount: 2 }), id: v7(), template },
     type: SurveyNodeType.PanelDynamic,
   };
 
@@ -302,7 +299,7 @@ describe("runner", () => {
         props: {
           ...surveyPanelNodeType.createDefaultProps(),
           children: [createSurveyTestQuestion("first")],
-          id: crypto.randomUUID(),
+          id: v7(),
           title: "Contact",
         },
         type: SurveyNodeType.Panel,

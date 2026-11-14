@@ -7,17 +7,18 @@ import { usePostStore } from "@/store/post";
 import { useCommentStore } from "@/store/post/comment";
 import { useLikeStore } from "@/store/post/like";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useLikeStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const postId = crypto.randomUUID();
+  const postId = v7();
   const like: LikeInPost = {
     createdAt: new Date(0),
     deletedAt: null,
     postId,
     updatedAt: new Date(0),
-    userId: crypto.randomUUID(),
+    userId: v7(),
     value: 1,
   };
 

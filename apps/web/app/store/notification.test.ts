@@ -3,6 +3,7 @@ import type { AppNotification } from "@/models/notification/AppNotification";
 
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
@@ -102,9 +103,9 @@ describe(useNotificationStore, () => {
 
     const { createNotification, dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } =
       notificationStore;
-    const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
-    const tiedNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
-    const newestNotification = createDeliveredNotification(crypto.randomUUID(), nextDay);
+    const heldNotification = createDeliveredNotification(v7(), epoch);
+    const tiedNotification = createDeliveredNotification(v7(), epoch);
+    const newestNotification = createDeliveredNotification(v7(), nextDay);
     initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
     createNotification({ severity: NotificationSeverity.Info, title });
     const [localNotification] = notifications.value;
@@ -134,9 +135,9 @@ describe(useNotificationStore, () => {
     expect.hasAssertions();
 
     const { dismissSnackbar, initializeCursorPaginationData, storeDeliveredNotifications } = notificationStore;
-    const heldNotification = createDeliveredNotification(crypto.randomUUID(), epoch);
+    const heldNotification = createDeliveredNotification(v7(), epoch);
     initializeCursorPaginationData({ hasMore: false, items: [heldNotification], nextCursor: "" });
-    const pushedNotification = createDeliveredNotification(crypto.randomUUID(), nextDay);
+    const pushedNotification = createDeliveredNotification(v7(), nextDay);
     const storePushedPage = () => {
       initializeCursorPaginationData({ hasMore: false, items: [pushedNotification, heldNotification], nextCursor: "" });
     };

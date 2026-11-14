@@ -9,6 +9,7 @@ import {
 import { DatabaseEntityType, resourceObjectLocksInResource } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, noop, Operation, sleep } from "@esposter/shared";
 import { and, eq, lt } from "drizzle-orm";
+import { v7 } from "uuid";
 
 // Takes the lease that one request holds over a resource's stored objects while it writes or collects them. The lease is
 // a row, replaced only once it has expired, so a holder that never releases frees the resource when its lease runs out.
@@ -51,7 +52,7 @@ export const withResourceObjectLock = async <T>(
   resourceId: ResourceInResource["id"],
   run: () => Promise<T>,
 ): Promise<T> => {
-  const holder = crypto.randomUUID();
+  const holder = v7();
   const deadline = Date.now() + RESOURCE_OBJECT_LOCK_WAIT_MS;
   // oxlint-disable-next-line no-await-in-loop -- each attempt waits on the one before it, for the same lease
   while (!(await tryAcquireResourceObjectLock(db, resourceId, holder))) {

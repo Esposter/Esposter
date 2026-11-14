@@ -34,6 +34,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, MAX_READ_LIMIT, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 import { z } from "zod";
@@ -250,7 +251,7 @@ describe("programRouter", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -289,7 +290,7 @@ describe("programRouter", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -316,10 +317,10 @@ describe("programRouter", () => {
       surveyId: foreignSurvey.id,
     });
     // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
-    const token = crypto.randomUUID();
+    const token = v7();
     await mockContext.db
       .insert(programParticipantsInResource)
-      .values({ keyValue, publicId: crypto.randomUUID(), resourceId: program.id, token });
+      .values({ keyValue, publicId: v7(), resourceId: program.id, token });
     await mockContext.db
       .insert(surveyResponsesInResource)
       .values({ participantToken: token, resourceId: foreignSurvey.id });
@@ -418,16 +419,13 @@ describe("programRouter", () => {
     const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
     const email = await emailCaller.createResource({ name });
     const invite: MjmlFlowNode | MjmlLeafNode = linksSurvey
-      ? { props: { id: crypto.randomUUID(), label: TEST_LABEL, surveyId: survey.id }, type: EmailNodeType.SurveyInvite }
-      : { props: { content: TEST_LABEL, id: crypto.randomUUID() }, type: MjmlNodeType.Button };
+      ? { props: { id: v7(), label: TEST_LABEL, surveyId: survey.id }, type: EmailNodeType.SurveyInvite }
+      : { props: { content: TEST_LABEL, id: v7() }, type: MjmlNodeType.Button };
     await emailCaller.saveResourceContent({
       content: new EmailEditor({
         content: [
           {
-            props: {
-              children: [{ props: { children: [invite], id: crypto.randomUUID() }, type: MjmlNodeType.Column }],
-              id: crypto.randomUUID(),
-            },
+            props: { children: [{ props: { children: [invite], id: v7() }, type: MjmlNodeType.Column }], id: v7() },
             type: MjmlNodeType.Section,
           },
         ],

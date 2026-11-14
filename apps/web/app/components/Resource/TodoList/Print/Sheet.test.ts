@@ -4,6 +4,7 @@ import ResourceTodoListPrintSheet from "@/components/Resource/TodoList/Print/She
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { useTodoListStore } from "@/store/resource/todoList";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("resourceTodoListPrintSheet", () => {
@@ -14,7 +15,7 @@ describe("resourceTodoListPrintSheet", () => {
     const { items, sort } = storeToRefs(todoListStore);
     const notes = "notes";
     items.value = [
-      new TodoListItem({ name: "b", notes, steps: [{ id: crypto.randomUUID(), name: "c" }] }),
+      new TodoListItem({ name: "b", notes, steps: [{ id: v7(), name: "c" }] }),
       new TodoListItem({ completedAt: new Date(0), name: "d" }),
       new TodoListItem({ name: "a" }),
     ];

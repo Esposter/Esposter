@@ -4,6 +4,7 @@ import type { Mock } from "vitest";
 import { createMockDb } from "@esposter/db-mock";
 import { roomsInMessage, SOCKET_IDENTITY_HEADER, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { UserObject } from "#src/durableObjects/UserObject";
@@ -49,11 +50,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 
 describe(UserObject, () => {
-  const userId = crypto.randomUUID();
-  const sessionId = crypto.randomUUID();
-  const otherSessionId = crypto.randomUUID();
-  const deviceId = crypto.randomUUID();
-  const otherDeviceId = crypto.randomUUID();
+  const userId = v7();
+  const sessionId = v7();
+  const otherSessionId = v7();
+  const deviceId = v7();
+  const otherDeviceId = v7();
   const environment = {} as unknown as Cloudflare.Env;
 
   const createUserObject = () => {
@@ -171,8 +172,8 @@ describe(UserObject, () => {
     const { object } = createUserObject();
     const savingSocket = await connect(object, { deviceId, sessionId });
     const sameSessionSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    const otherSessionSocket = await connect(object, { deviceId: crypto.randomUUID(), sessionId: otherSessionId });
-    const save = { apiKeyName: "", contentVersion: 0, id: crypto.randomUUID() };
+    const otherSessionSocket = await connect(object, { deviceId: v7(), sessionId: otherSessionId });
+    const save = { apiKeyName: "", contentVersion: 0, id: v7() };
 
     await object.saveResourceContent(save, deviceId);
 
@@ -185,12 +186,12 @@ describe(UserObject, () => {
     expect.hasAssertions();
 
     const { object, state } = createUserObject();
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     // Both are ahead of the pinned clock, since a reminder already due when it is set is retried rather than armed
     const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
     const laterDueAt = new Date(dueAt.getTime() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
-    const dueItemId = crypto.randomUUID();
-    const laterItemId = crypto.randomUUID();
+    const dueItemId = v7();
+    const laterItemId = v7();
     await object.reconcileTodoReminders({
       cancelledItemIds: [],
       reminders: [
@@ -222,7 +223,7 @@ describe(UserObject, () => {
     const { object } = createUserObject();
     const revokedSocket = await connect(object, { deviceId, sessionId });
     const otherDeviceSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
-    const otherSessionSocket = await connect(object, { deviceId: crypto.randomUUID(), sessionId: otherSessionId });
+    const otherSessionSocket = await connect(object, { deviceId: v7(), sessionId: otherSessionId });
 
     await object.closeSession(sessionId);
 

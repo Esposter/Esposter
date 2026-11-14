@@ -12,6 +12,7 @@ import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadFileToUrlMock } = vi.hoisted(() => ({
@@ -30,11 +31,11 @@ type DeleteUploadFilesInput = inferProcedureInput<TRPCRouter["message"]["deleteU
 
 describe(useUploadFiles, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   // The room's own composer — attachments are partitioned per composer, so every read below names one
   const target: ComposerTarget = { roomId, threadRootId: "" };
   const filename = "a";
-  const fileId = crypto.randomUUID();
+  const fileId = v7();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
   const token = "token";
   const sasUrl = "sasUrl";
@@ -119,7 +120,7 @@ describe(useUploadFiles, () => {
   test("reverts into the composer the upload started in after a mid-upload room switch", async () => {
     expect.hasAssertions();
 
-    const otherRoomId = crypto.randomUUID();
+    const otherRoomId = v7();
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
@@ -145,7 +146,7 @@ describe(useUploadFiles, () => {
   test("keeps a thread composer's attachments out of the room composer", async () => {
     expect.hasAssertions();
 
-    const threadTarget: ComposerTarget = { roomId, threadRootId: crypto.randomUUID() };
+    const threadTarget: ComposerTarget = { roomId, threadRootId: v7() };
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     uploadFileToUrlMock.mockResolvedValue(undefined);
@@ -160,7 +161,7 @@ describe(useUploadFiles, () => {
   test("reclaims blobs only once every upload in the batch has stopped writing", async () => {
     expect.hasAssertions();
 
-    const slowFileId = crypto.randomUUID();
+    const slowFileId = v7();
     let isSlowUploadFinished = false;
     trpcMsw.message.generateUploadFileSasEntities.mutation(() => [
       { id: fileId, sasUrl, token },

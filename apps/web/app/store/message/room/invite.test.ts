@@ -6,12 +6,13 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useInviteStore } from "@/store/message/room/invite";
 import { INVITE_ID_LENGTH } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useInviteStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const creator = createUser({ name: "creator" });
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const invite: InviteInMessage = {
     createdAt: new Date(0),
     deletedAt: null,
@@ -20,7 +21,7 @@ describe(useInviteStore, () => {
     maxUses: 0,
     roomId,
     updatedAt: new Date(0),
-    userId: crypto.randomUUID(),
+    userId: v7(),
     uses: 0,
   };
 

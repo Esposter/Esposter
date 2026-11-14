@@ -5,6 +5,7 @@ import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResp
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { createMockDb } from "@esposter/db-mock";
 import { ResourceType, resourcesInResource, surveyResponsesInResource, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can afford to create, so the
@@ -12,8 +13,8 @@ import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 describe(readSurveyResponsesCount, () => {
   const email = "email";
   const name = "name";
-  const surveyId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const surveyId = v7();
+  const userId = v7();
   let mockDatabase: MockDatabase;
 
   const createSurveyResponses = (count: number) =>

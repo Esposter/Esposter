@@ -5,6 +5,7 @@ import { blueprintEntrySchema } from "#shared/models/resource/blueprint/Blueprin
 import { BLUEPRINT_ENTRY_TOKEN_REGEX } from "#shared/services/resource/blueprint/constants";
 import { mapBlueprintEntryContentStrings } from "#shared/services/resource/blueprint/mapBlueprintEntryContentStrings";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { v7 } from "uuid";
 
 // Pre-validates every substituted entry — its name against the resource name rules, and its content against
 // Its type's own contentSchema with a placeholder id standing in for each `{{entry:key}}` so uuid-shaped
@@ -15,7 +16,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 // An entry with no content captured a resource whose content was never written and deploys to that same
 // State, so there is nothing to validate against the type's schema
 export const validateBlueprintEntries = (entries: BlueprintEntry[]): Map<BlueprintEntry["key"], string[]> => {
-  const placeholderId = crypto.randomUUID();
+  const placeholderId = v7();
   const keyReferencesMap = new Map<BlueprintEntry["key"], string[]>();
   for (const entry of entries) {
     if (!blueprintEntrySchema.shape.name.safeParse(entry.name).success)

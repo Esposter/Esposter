@@ -19,6 +19,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
@@ -151,7 +152,7 @@ describe(writeSnapshotVersion, () => {
     ["a bare file id that no file backs", JSON.stringify({ fileId: missingAssetHash })],
     [
       "another resource's url to a file this one does not hold",
-      JSON.stringify({ src: getResourceAssetUrl(getResourceFileBlobName(crypto.randomUUID(), missingAssetHash)) }),
+      JSON.stringify({ src: getResourceAssetUrl(getResourceFileBlobName(v7(), missingAssetHash)) }),
     ],
   ])("stores a published version naming %s", async (_description, serializedContent) => {
     expect.hasAssertions();

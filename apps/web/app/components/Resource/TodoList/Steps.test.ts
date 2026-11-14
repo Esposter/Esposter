@@ -5,6 +5,7 @@ import { TODO_LIST_ITEM_STEPS_MAX_LENGTH } from "#shared/services/resource/item/
 import ResourceTodoListSteps from "@/components/Resource/TodoList/Steps.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("resourceTodoListSteps", () => {
@@ -30,9 +31,7 @@ describe("resourceTodoListSteps", () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceTodoListSteps, {
-      props: {
-        modelValue: Array.from({ length: TODO_LIST_ITEM_STEPS_MAX_LENGTH }, () => ({ id: crypto.randomUUID(), name })),
-      },
+      props: { modelValue: Array.from({ length: TODO_LIST_ITEM_STEPS_MAX_LENGTH }, () => ({ id: v7(), name })) },
     });
     const field = wrapper.get('input[placeholder="Add step"]');
     await field.setValue(name);
@@ -44,9 +43,7 @@ describe("resourceTodoListSteps", () => {
   test("leaves no steps key once the last step is removed", async () => {
     expect.hasAssertions();
 
-    const wrapper = await mountSuspended(ResourceTodoListSteps, {
-      props: { modelValue: [{ id: crypto.randomUUID(), name }] },
-    });
+    const wrapper = await mountSuspended(ResourceTodoListSteps, { props: { modelValue: [{ id: v7(), name }] } });
     await wrapper.get('[aria-label="Remove step"]').trigger("click");
 
     expect(wrapper.emitted("update:modelValue")).toStrictEqual([[undefined]]);

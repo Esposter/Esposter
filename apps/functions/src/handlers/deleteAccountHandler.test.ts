@@ -27,6 +27,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -88,11 +89,11 @@ describe(deleteAccountHandler, () => {
   test("deletes the user row, and the sign-in accounts it holds cascade with it", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     await mockDb
       .insert(accountsInAuth)
-      .values({ accountId: "accountId", id: crypto.randomUUID(), providerId: "providerId", userId });
+      .values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
 
     await deleteAccountHandler({ userId });
 
@@ -105,7 +106,7 @@ describe(deleteAccountHandler, () => {
   test("keeps the user row when the blob sweep fails, so the redelivery can finish it", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     blobSweepFailure.error = new Error(" ");
 
@@ -116,9 +117,9 @@ describe(deleteAccountHandler, () => {
   test("a second run over a finished sweep finds nothing and succeeds", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const fileId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
+    const fileId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());

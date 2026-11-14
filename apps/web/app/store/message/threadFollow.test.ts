@@ -6,12 +6,13 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const threadRootId = crypto.randomUUID();
+  const roomId = v7();
+  const threadRootId = v7();
 
   // Every follow button in the room asks on mount, so the read is issued once — and the buttons that joined it
   // Have to see the follow state, or they render an unfollowed star for a thread the user follows

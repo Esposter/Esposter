@@ -9,6 +9,7 @@ import { getSurveyNodePointerById } from "@/services/resource/survey/getSurveyNo
 import { resolveSurveyDropTarget } from "@/services/resource/survey/resolveSurveyDropTarget";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { useSurveyCreatorDragStore } from "@/store/survey/creatorDrag";
+import { v7 } from "uuid";
 import { getBlockNode } from "vue-block-editor-headless";
 import { surveyNodeChildren, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -104,7 +105,7 @@ export const useSurveyCreatorDrag = () => {
   const previewNode = computed<SurveyPlaceableNode | undefined>(() => {
     if (draggedType.value === undefined || draggedNodeId.value !== "") return undefined;
 
-    const node = createSurveyNode(draggedType.value, crypto.randomUUID(), "question");
+    const node = createSurveyNode(draggedType.value, v7(), "question");
     if (node === undefined || node.type === SurveyNodeType.Page) return undefined;
 
     return node;

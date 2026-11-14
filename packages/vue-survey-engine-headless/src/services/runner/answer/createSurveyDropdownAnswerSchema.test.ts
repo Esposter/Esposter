@@ -5,15 +5,11 @@ import { createSurveyDropdownAnswerSchema } from "#src/services/runner/answer/cr
 import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyDropdownNodeType } from "#src/services/surveyDropdownNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createDropdownNode = (hasOther: boolean): SurveyDropdownNode => ({
-  props: {
-    ...surveyDropdownNodeType.createDefaultProps(),
-    choices: [{ text: "", value: "a" }],
-    hasOther,
-    id: crypto.randomUUID(),
-  },
+  props: { ...surveyDropdownNodeType.createDefaultProps(), choices: [{ text: "", value: "a" }], hasOther, id: v7() },
   type: SurveyNodeType.Dropdown,
 });
 

@@ -2,16 +2,17 @@
 import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const sasUrl = "https://example.com/emoji.png";
   const createRoomEmoji = (): RoomEmojiWithSasUrl => ({
     createdAt: new Date(0),
     deletedAt: null,
-    id: crypto.randomUUID(),
+    id: v7(),
     name: "name",
     roomId,
     sasUrl,

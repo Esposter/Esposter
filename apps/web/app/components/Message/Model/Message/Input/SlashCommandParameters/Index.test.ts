@@ -8,10 +8,11 @@ import { useInputStore } from "@/store/message/input";
 import { useSlashCommandStore } from "@/store/message/input/slashCommand";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageInputSlashCommandParameters", () => {
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   // The Me command's one parameter is required; its chip is the input a test types the value into
   const parameterName = "message";
 

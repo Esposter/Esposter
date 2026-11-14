@@ -10,6 +10,7 @@ import { useSearchMessageStore } from "@/store/message/search";
 import { FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // A pending chip opens its picker, whose chunk and reads land after the environment is torn down, and no test here
@@ -29,7 +30,7 @@ vi.mock(import("@/services/message/filter/SearchFilterComponentMap"), async (imp
 
 describe("messageRightSideBarSearchInput", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const query = "a";
   let searchMessages: ReturnType<typeof vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>>;
   // A fresh search writes its history entry after its results land, so a test reading the search awaits the entry
@@ -52,9 +53,9 @@ describe("messageRightSideBarSearchInput", () => {
         createdAt: new Date(0),
         deletedAt: null,
         filters: input.filters ?? [],
-        id: crypto.randomUUID(),
+        id: v7(),
         updatedAt: new Date(0),
-        userId: crypto.randomUUID(),
+        userId: v7(),
       };
     });
     const component = await mountSuspended(MessageRightSideBarSearchInput);

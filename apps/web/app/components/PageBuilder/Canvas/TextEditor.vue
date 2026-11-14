@@ -10,6 +10,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { noop } from "@esposter/shared";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
+import { v7 } from "uuid";
 import { getBlockNode, updateBlockNodeProps } from "vue-block-editor-headless";
 
 interface Props {
@@ -33,7 +34,7 @@ const getNodeContent = () => {
   return node?.type === kind.textType ? (node.props as TextNodeProps).content : undefined;
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one
-const interactionId = crypto.randomUUID();
+const interactionId = v7();
 const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const editor = useEditor({
   autofocus: "end",

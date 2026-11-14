@@ -1,6 +1,7 @@
 import type { SnapshotPush } from "@/models/shared/SnapshotPush";
 
 import { mergeSnapshot } from "@/services/shared/mergeSnapshot";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 interface Item {
@@ -9,8 +10,8 @@ interface Item {
 }
 
 describe(mergeSnapshot, () => {
-  const id = crypto.randomUUID();
-  const otherId = crypto.randomUUID();
+  const id = v7();
+  const otherId = v7();
   const item: Item = { flag: false, id };
   const otherItem: Item = { flag: false, id: otherId };
   const removal: SnapshotPush<Item> = { checkIsRemoved: (snapshotItem) => snapshotItem.id === id, type: "remove" };
@@ -37,7 +38,7 @@ describe(mergeSnapshot, () => {
     expect.hasAssertions();
 
     const patch: SnapshotPush<Item> = { id, patch: { flag: true }, type: "patch" };
-    const unknownPatch: SnapshotPush<Item> = { id: crypto.randomUUID(), patch: { flag: true }, type: "patch" };
+    const unknownPatch: SnapshotPush<Item> = { id: v7(), patch: { flag: true }, type: "patch" };
 
     expect(mergeSnapshot([item], [patch, unknownPatch])).toStrictEqual([{ flag: true, id }]);
   });

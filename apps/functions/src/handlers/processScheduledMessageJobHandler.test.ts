@@ -12,6 +12,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ schedule: vi.fn<(runAt: number, job: ScheduledJob) => Promise<void>>() }));
@@ -32,13 +33,13 @@ describe(processScheduledMessageJobHandler, () => {
   const error = new Error(" ");
   const name = "name";
   const reminderPayload: ScheduledMessageJobPayload = { text: "text", type: ScheduledMessageJobType.Reminder };
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const scheduledMessagePayload: ScheduledMessageJobPayload = {
     message: "message",
     replyRowKey: "",
     type: ScheduledMessageJobType.ScheduledMessage,
   };
-  const userId = crypto.randomUUID();
+  const userId = v7();
 
   const insertJob = async (
     payload: ScheduledMessageJobPayload,
@@ -77,7 +78,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips when no active job exists", async () => {
     expect.hasAssertions();
 
-    await processScheduledMessageJobHandler({ id: crypto.randomUUID() });
+    await processScheduledMessageJobHandler({ id: v7() });
 
     expect(mocks.schedule).not.toHaveBeenCalled();
   });

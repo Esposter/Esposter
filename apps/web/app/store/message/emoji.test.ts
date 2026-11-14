@@ -5,6 +5,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -14,8 +15,8 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe(useEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const messageId = crypto.randomUUID();
+  const roomId = v7();
+  const messageId = v7();
   const emojiTag = "👍";
   const createReaction = (userIds: string[] = []) => ({ emojiTag, messageId, userIds });
 
@@ -70,7 +71,7 @@ describe(useEmojiStore, () => {
   // Stays for everyone else, which is what stops one member's undo taking the others' reactions with it
   test.each([
     { expectedProcedure: "deleteEmoji", userIds: [] as string[] },
-    { expectedProcedure: "updateEmoji", userIds: [crypto.randomUUID()] },
+    { expectedProcedure: "updateEmoji", userIds: [v7()] },
   ])("toggles off through $expectedProcedure when the others are $userIds", async ({ expectedProcedure, userIds }) => {
     expect.hasAssertions();
 
@@ -98,7 +99,7 @@ describe(useEmojiStore, () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const otherUserId = crypto.randomUUID();
+    const otherUserId = v7();
     useSession.mockReturnValue(ref<MockSessionValue>({ data: { user: { id: userId } } }));
     const emojiStore = useEmojiStore();
     const { getEmojis, setEmojis, storeUpdateEmoji, updateEmoji } = emojiStore;

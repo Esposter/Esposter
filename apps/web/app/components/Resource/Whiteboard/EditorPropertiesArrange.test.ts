@@ -6,14 +6,15 @@ import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from 
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createShape = (id: string, x: number): ShapeElement => ({ ...WHITEBOARD_PROCESS, id, x });
 
 describe("resourceWhiteboardEditorPropertiesArrange", () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const ARROW_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const ARROW_ID = v7();
   const ALIGN_LABELS = ["Align left", "Align centre", "Align right", "Align top", "Align middle", "Align bottom"];
   const DISTRIBUTE_LABELS = ["Distribute horizontally", "Distribute vertically"];
   // A free arrow, which takes no part in an align or a distribute

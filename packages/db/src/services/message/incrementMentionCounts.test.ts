@@ -19,6 +19,7 @@ import {
 } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID, MentionType } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 const getMentionedUserIds = (updatedUsersToRooms: { userId: string }[]) =>
@@ -28,14 +29,14 @@ describe(incrementMentionCounts, () => {
   let db: Database;
   let mockDatabase: MockDatabase;
   const name = "name";
-  const roomId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
-  const onlineUserId = crypto.randomUUID();
-  const offlineUserId = crypto.randomUUID();
-  const nullStatusUserId = crypto.randomUUID();
-  const neverUserId = crypto.randomUUID();
-  const roleMemberUserId = crypto.randomUUID();
-  const senderUserId = crypto.randomUUID();
+  const roomId = v7();
+  const roleId = v7();
+  const onlineUserId = v7();
+  const offlineUserId = v7();
+  const nullStatusUserId = v7();
+  const neverUserId = v7();
+  const roleMemberUserId = v7();
+  const senderUserId = v7();
   const sender = { roomId, userId: senderUserId };
 
   beforeAll(async () => {

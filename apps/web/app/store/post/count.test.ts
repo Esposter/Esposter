@@ -4,6 +4,7 @@ import type { PostCounts } from "@/services/post/postCountHooks";
 import { MAX_POST_COUNTS_PER_READ } from "#shared/models/db/post/ReadPostCountsInput";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostCountStore } from "@/store/post/count";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(usePostCountStore, () => {
@@ -16,7 +17,7 @@ describe(usePostCountStore, () => {
 
     const readPostCounts = vi.fn<(postIds: string[]) => PostCounts>(() => []);
     trpcMsw.post.readPostCounts.query(({ input }) => readPostCounts(input));
-    const postIds = Array.from({ length: MAX_POST_COUNTS_PER_READ + 1 }, () => crypto.randomUUID());
+    const postIds = Array.from({ length: MAX_POST_COUNTS_PER_READ + 1 }, () => v7());
     const postCountStore = usePostCountStore();
     const { refreshPostCounts } = postCountStore;
 

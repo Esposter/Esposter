@@ -17,6 +17,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { createHash } from "node:crypto";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -42,7 +43,7 @@ const readResourceAssetNames = async () => readBlobNames(StorageBucket.ResourceA
 const createBucketWith = (methods: Partial<R2Bucket>) => methods as R2Bucket;
 
 describe(reconcileStorageLedgerEntryHandler, () => {
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const containerName = StorageBucket.ResourceAssets;
   const blobName = " ";
   const contentLength = 1;
@@ -71,7 +72,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await disposeMockBuckets();
   });
 
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const resourceAssetContent = " ";
   const matchingResourceAssetName = `${resourceId}/files/${hashOf(resourceAssetContent)}`;
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
@@ -107,7 +108,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   test("charges a message attachment's uploader what storage reported", async () => {
     expect.hasAssertions();
 
-    const messageBlobName = getBlobName(`${resourceId}/${crypto.randomUUID()}`, "filename");
+    const messageBlobName = getBlobName(`${resourceId}/${v7()}`, "filename");
     const messageContainerName = StorageBucket.MessageAssets;
     await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageContainerName));

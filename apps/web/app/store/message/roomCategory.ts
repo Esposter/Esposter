@@ -7,6 +7,7 @@ import { authClient } from "@/services/auth/authClient";
 import { getRoomCategoryPositionUpdates } from "@/services/message/roomCategory/getRoomCategoryPositionUpdates";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { DatabaseEntityType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
 export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
   const session = authClient.useSession();
@@ -29,7 +30,7 @@ export const useRoomCategoryStore = defineStore("message/roomCategory", () => {
     const newRoomCategory = reactive<RoomCategoryInMessage>({
       createdAt: new Date(),
       deletedAt: null,
-      id: crypto.randomUUID(),
+      id: v7(),
       name: input.name,
       // Mirror the server's append-below-existing-order position so the placeholder lands where the row will
       position: roomCategories.value.reduce((maxPosition, { position }) => Math.max(maxPosition, position), -1) + 1,

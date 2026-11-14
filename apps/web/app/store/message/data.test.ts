@@ -18,6 +18,7 @@ import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -28,7 +29,7 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 describe(useDataStore, () => {
   const { trpcMsw } = setupMswTrpc();
   let router: Router;
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   // Every send here is the room's own composer, which is the target `sendMessage` defaults to
   const target: ComposerTarget = { roomId, threadRootId: "" };
   const userId = getMockSession().user.id;
@@ -81,7 +82,7 @@ describe(useDataStore, () => {
 
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     const uploadFileStore = useUploadFileStore();
-    const spoilerFileId = crypto.randomUUID();
+    const spoilerFileId = v7();
     uploadFileStore.storeUploadFiles(target, [
       { file: createFile(`${SPOILER_FILENAME_PREFIX}${filename}`), id: spoilerFileId, token: "" },
     ]);
@@ -176,7 +177,7 @@ describe(useDataStore, () => {
     const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
-    const sentFileId = crypto.randomUUID();
+    const sentFileId = v7();
     let heldFileIds: string[] = [];
     trpcMsw.message.createMessage.mutation(() => {
       heldFileIds = getComposerFiles(target).map(({ id }) => id);
@@ -206,7 +207,7 @@ describe(useDataStore, () => {
     const { getComposerFiles } = uploadFileStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
-    const sentFileId = crypto.randomUUID();
+    const sentFileId = v7();
     trpcMsw.message.createMessage.mutation(() => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
     });
@@ -273,8 +274,8 @@ describe(useDataStore, () => {
     // `createObjectURL` rejects the runtime's own `File` on an instanceof check
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
-    const sentFileId = crypto.randomUUID();
-    const nextFileId = crypto.randomUUID();
+    const sentFileId = v7();
+    const nextFileId = v7();
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
       files: [{ ...baseFile, id: sentFileId }],
@@ -301,8 +302,8 @@ describe(useDataStore, () => {
     const { createMessage } = dataStore;
     vi.spyOn(URL, "createObjectURL").mockReturnValue("");
     vi.spyOn(URL, "revokeObjectURL").mockReturnValue();
-    const sentFileId = crypto.randomUUID();
-    const nextFileId = crypto.randomUUID();
+    const sentFileId = v7();
+    const nextFileId = v7();
     let payloadFileIds: string[] = [];
     trpcMsw.message.createMessage.mutation(({ input }) => {
       payloadFileIds = input.files?.map(({ id }) => id) ?? [];
@@ -332,7 +333,7 @@ describe(useDataStore, () => {
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
-    const replyToId = crypto.randomUUID();
+    const replyToId = v7();
     trpcMsw.message.createMessage.mutation(() =>
       createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
@@ -348,7 +349,7 @@ describe(useDataStore, () => {
   test("keeps the newer-message cursor with the room it was read for", () => {
     expect.hasAssertions();
 
-    const otherRoomId = crypto.randomUUID();
+    const otherRoomId = v7();
     const dataStore = useDataStore();
     const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
     const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
@@ -374,7 +375,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { storeCreateMessage } = dataStore;
-    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, crypto.randomUUID());
+    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, v7());
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockResolvedValue();
     const storePromise = storeCreateMessage(newMessage);
 
@@ -432,9 +433,9 @@ describe(useDataStore, () => {
   test("removes and restores one attachment at a time", async () => {
     expect.hasAssertions();
 
-    const rejectedFileId = crypto.randomUUID();
-    const acceptedFileId = crypto.randomUUID();
-    const keptFileId = crypto.randomUUID();
+    const rejectedFileId = v7();
+    const acceptedFileId = v7();
+    const keptFileId = v7();
     trpcMsw.message.deleteFile.mutation(({ input }) => {
       if (input.fileId === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
     });

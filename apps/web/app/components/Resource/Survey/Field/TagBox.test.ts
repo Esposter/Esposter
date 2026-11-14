@@ -5,6 +5,7 @@ import ResourceSurveyFieldTagBox from "@/components/Resource/Survey/Field/TagBox
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import { SurveyNodeType, surveyTagBoxNodePropsSchema } from "vue-survey-engine-headless";
 
@@ -18,13 +19,10 @@ describe("resourceSurveyFieldTagBox", () => {
     ];
     const description = "a";
     const error = "error";
-    const seed = crypto.randomUUID();
+    const seed = v7();
     const title = "Favourite colour";
     const createNode = (props: Partial<SurveyTagBoxNodeProps>): SurveyTagBoxNode => ({
-      props: {
-        ...surveyTagBoxNodePropsSchema.parse({ choices, name: "question", title, ...props }),
-        id: crypto.randomUUID(),
-      },
+      props: { ...surveyTagBoxNodePropsSchema.parse({ choices, name: "question", title, ...props }), id: v7() },
       type: SurveyNodeType.TagBox,
     });
 

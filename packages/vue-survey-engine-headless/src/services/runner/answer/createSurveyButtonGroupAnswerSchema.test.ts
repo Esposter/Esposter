@@ -5,15 +5,12 @@ import { createSurveyButtonGroupAnswerSchema } from "#src/services/runner/answer
 import { SURVEY_NOT_A_CHOICE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyButtonGroupNodeType } from "#src/services/surveyButtonGroupNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyButtonGroupAnswerSchema, () => {
   const node: SurveyButtonGroupNode = {
-    props: {
-      ...surveyButtonGroupNodeType.createDefaultProps(),
-      choices: [{ text: "", value: "a" }],
-      id: crypto.randomUUID(),
-    },
+    props: { ...surveyButtonGroupNodeType.createDefaultProps(), choices: [{ text: "", value: "a" }], id: v7() },
     type: SurveyNodeType.ButtonGroup,
   };
 

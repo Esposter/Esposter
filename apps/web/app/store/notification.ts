@@ -4,6 +4,7 @@ import type { Except, SetOptional } from "type-fest";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { DatabaseEntityType, NotificationSeverity } from "@esposter/db-schema";
 import { checkIsServer } from "@esposter/shared";
+import { v7 } from "uuid";
 
 // A read row is the row itself; an unread one is copied with it marked read, so each row a read changes is a new row
 const markRead = <T extends { isRead: boolean }>(notification: T): T =>
@@ -92,7 +93,7 @@ export const useNotificationStore = defineStore("notification", () => {
       path: "",
       ...newNotification,
       createdAt: new Date(),
-      id: crypto.randomUUID(),
+      id: v7(),
       isRead: false,
     };
     localNotifications.value = [notification, ...localNotifications.value];

@@ -15,13 +15,14 @@ import {
 } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { applyPatches, createHistory, pushHistory, undoHistory } from "@esposter/shared";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 
 describe(movePositionedElement, () => {
   const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_ARROW] };
   const stroke: StrokeElement = {
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     points: [
       { x: 10, y: 10 },
       { x: 20, y: 10 },

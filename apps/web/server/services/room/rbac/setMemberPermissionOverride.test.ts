@@ -11,6 +11,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(setMemberPermissionOverride, () => {
@@ -21,9 +22,9 @@ describe(setMemberPermissionOverride, () => {
   // A room with one member and its @everyone role, which every member holds, so the override has a row to sit over
   const setupMember = async () => {
     const { db } = mockDatabase;
-    const ownerId = crypto.randomUUID();
-    const userId = crypto.randomUUID();
-    const roomId = crypto.randomUUID();
+    const ownerId = v7();
+    const userId = v7();
+    const roomId = v7();
     await db.insert(usersInAuth).values([
       { email: `${ownerId}@example.com`, emailVerified: false, id: ownerId, name: ownerId },
       { email: `${userId}@example.com`, emailVerified: false, id: userId, name: userId },

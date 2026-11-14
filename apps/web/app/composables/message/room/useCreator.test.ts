@@ -6,11 +6,12 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useCreator, () => {
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const displayName = "displayName";
   const user = createUser({ name: "globalName" });
   // A webhook row has no member author, and carries the app user it was sent under and that user's name
@@ -62,7 +63,7 @@ describe(useCreator, () => {
     const appUser = {
       createdAt: new Date(0),
       deletedAt: null,
-      id: crypto.randomUUID(),
+      id: v7(),
       image: "",
       name: "appUserName",
       updatedAt: new Date(0),
@@ -80,7 +81,7 @@ describe(useCreator, () => {
   test("names a webhook the app user cache does not hold from the app user its message carries", () => {
     expect.hasAssertions();
 
-    const appUser = { id: crypto.randomUUID(), image: "", name: "appUserName" };
+    const appUser = { id: v7(), image: "", name: "appUserName" };
     const message = createWebhookMessage(appUser.id, appUser.name);
     const creator = useCreator(() => message);
 
@@ -92,7 +93,7 @@ describe(useCreator, () => {
   test("names an author nobody can resolve with the placeholder", () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     const message = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     const creator = useCreator(() => message);
 

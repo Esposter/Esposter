@@ -7,6 +7,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { takeOne } from "@esposter/shared";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import {
   MATRIX_CELL_RATING_COUNT,
@@ -75,7 +76,7 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
           rowCount,
           title: label,
         }),
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: SurveyNodeType.MatrixDynamic,
     });
@@ -238,7 +239,7 @@ describe("resourceSurveyFieldMatrixDynamic", () => {
               rowCount: 1,
               title: "label",
             }),
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: SurveyNodeType.MatrixDynamic,
         },

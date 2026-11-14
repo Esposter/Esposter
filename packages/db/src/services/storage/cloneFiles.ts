@@ -6,6 +6,7 @@ import { deleteBlobs } from "#src/services/storage/deleteBlobs";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { getResultAsync, InvalidOperationError, Operation, settleAll } from "@esposter/shared";
+import { v7 } from "uuid";
 
 // Returns each clone's minted id alongside the thumbnail state its blobs actually carry, so the caller
 // Writes an entity that describes what was copied rather than what the source claimed. Every copy is charged to
@@ -35,7 +36,7 @@ export const cloneFiles = async (
   const clonedFiles = await getResultAsync(() =>
     settleAll(
       files.map(({ filename, hasThumbnail, id }) => async () => {
-        const newId: string = crypto.randomUUID();
+        const newId: string = v7();
         const sourceBlobNames = getFileBlobNames(sourcePrefix, id, filename);
         const destinationBlobNames = getFileBlobNames(destinationPrefix, newId, filename);
         await copyChargedBlob(sourceBlobNames.blobName, destinationBlobNames.blobName);

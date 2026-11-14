@@ -6,19 +6,16 @@ import { useSurveyCreatorCommands } from "@/composables/survey/useSurveyCreatorC
 import { useSurveyCreatorDrag } from "@/composables/survey/useSurveyCreatorDrag";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
 const createQuestion = (name: string): SurveyTextNode => ({
-  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: crypto.randomUUID(), name },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: v7(), name },
   type: SurveyNodeType.Text,
 });
 const createPage = (children: SurveyPlaceableNode[]): SurveyPageNode => ({
-  props: {
-    ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(),
-    children,
-    id: crypto.randomUUID(),
-  },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(), children, id: v7() },
   type: SurveyNodeType.Page,
 });
 // The slot of a page holding two questions, each a 40 high row stacked from the top of the page's 300 high box

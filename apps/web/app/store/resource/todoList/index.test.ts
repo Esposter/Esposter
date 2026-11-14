@@ -11,6 +11,7 @@ import { useTodoListStore } from "@/store/resource/todoList";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 const setupStore = async () => {
@@ -22,8 +23,8 @@ const setupStore = async () => {
 
 describe(useTodoListStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
-  const device = { sessionId: crypto.randomUUID(), userId: crypto.randomUUID() };
+  const resourceId = v7();
+  const device = { sessionId: v7(), userId: v7() };
   const adoptedItemName = "adoptedItem";
   const itemName = "item";
   const newItemName = "newItem";
@@ -301,7 +302,7 @@ describe(useTodoListStore, () => {
     expect.hasAssertions();
 
     const dueAt = new Date(0);
-    const stepId = crypto.randomUUID();
+    const stepId = v7();
     content = {
       items: [
         new TodoListItem({

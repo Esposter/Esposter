@@ -8,6 +8,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useActivityStore } from "@/store/resource/activity";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("resourceActivityLog", () => {
@@ -18,11 +19,11 @@ describe("resourceActivityLog", () => {
   test("keeps the rows it already has on screen while a read is out", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
     const data = Object.assign(new CursorPaginationData<ResourceActivityInResource>(), {
-      items: [{ id: crypto.randomUUID() } as ResourceActivityInResource],
+      items: [{ id: v7() } as ResourceActivityInResource],
     });
     trpcMsw.resource.readActivities.query(async () => {
       onReadReached();

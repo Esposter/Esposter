@@ -10,18 +10,14 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 const mountCard = () => mountSuspended(UserSessionsCard, { props: { section: UserSettingsPageSection.Sessions } });
 
 describe("userSessionsCard", () => {
   const { trpcMsw } = setupMswTrpc();
-  const session: SessionSummary = {
-    deviceLabel: "a",
-    id: crypto.randomUUID(),
-    isCurrent: false,
-    updatedAt: new Date(0),
-  };
+  const session: SessionSummary = { deviceLabel: "a", id: v7(), isCurrent: false, updatedAt: new Date(0) };
 
   test("draws the loading rows while the sessions are out", async () => {
     expect.hasAssertions();

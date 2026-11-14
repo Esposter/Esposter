@@ -11,11 +11,12 @@ import { useNotePortableDialogStore } from "@/store/resource/note/portableDialog
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe("resourceNoteDialogs", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const importedDoc: JSONContent = {
     content: [{ content: [{ text: "imported", type: "text" }], type: "paragraph" }],
     type: "doc",

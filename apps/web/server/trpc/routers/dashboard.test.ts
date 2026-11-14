@@ -13,6 +13,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -42,7 +43,7 @@ describe("dashboardRouter", () => {
       settings: {},
     });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { [name]: 1, [unreadName]: unreadName },
       pageNo: 0,
@@ -80,7 +81,7 @@ describe("dashboardRouter", () => {
       settings: {},
     });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { [name]: 1 },
       pageNo: 0,

@@ -8,12 +8,13 @@ import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelMessageLinkPreviewContainer", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const otherRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const otherRoomId = v7();
   const url = "url";
   const linkPreviewResponse = { favicons: [], mediaType: "", url };
 
@@ -26,7 +27,7 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
       await deleteGate;
     });
-    const message = createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, crypto.randomUUID());
+    const message = createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, v7());
     message.linkPreviewResponse = linkPreviewResponse;
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
       props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
@@ -49,7 +50,7 @@ describe("messageModelMessageLinkPreviewContainer", () => {
   test("shows the remove button while the pointer is over the embed", async () => {
     expect.hasAssertions();
 
-    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, crypto.randomUUID());
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, v7());
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
       props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
     });

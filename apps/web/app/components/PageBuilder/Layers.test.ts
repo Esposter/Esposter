@@ -6,13 +6,14 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("pageBuilderLayers", () => {
   test("arrow keys walk the layers tree and select the focused node", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, {
@@ -32,7 +33,7 @@ describe("pageBuilderLayers", () => {
   test("typing a label in the tree moves focus to that node", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, {

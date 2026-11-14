@@ -11,6 +11,7 @@ import {
   POSITIONED_RECTANGLE,
 } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(bindPositionedArrowEnd, () => {
@@ -19,7 +20,7 @@ describe(bindPositionedArrowEnd, () => {
   test("an arrow bound to a missing shape is refused", () => {
     expect.hasAssertions();
 
-    const missingShapeId = crypto.randomUUID();
+    const missingShapeId = v7();
     const binding = { ...rectangleBinding, elementId: missingShapeId };
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE, POSITIONED_FREE_ARROW] };
     const operations = bindPositionedArrowEnd(document, 1, ArrowEndKey.Start, binding);

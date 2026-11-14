@@ -4,6 +4,7 @@ import { DistributeAxis } from "@/models/whiteboard/DistributeAxis";
 import { getDistributeOperations } from "@/services/whiteboard/arrange/getDistributeOperations";
 import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { applyPatches } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createShape = (id: string, x: number, y: number, width: number, height: number): ShapeElement => ({
@@ -16,9 +17,9 @@ const createShape = (id: string, x: number, y: number, width: number, height: nu
 });
 
 describe(getDistributeOperations, () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const THIRD_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const THIRD_ID = v7();
 
   test("distributing horizontally makes every gap equal", () => {
     expect.hasAssertions();

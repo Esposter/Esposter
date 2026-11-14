@@ -3,6 +3,7 @@ import ResourceWhiteboardLabel from "@/components/Resource/Whiteboard/Label.vue"
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
   CornerStyle,
@@ -28,7 +29,7 @@ describe("resourceWhiteboardLabel", () => {
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       kind: ShapeKind.Process,
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
@@ -59,7 +60,7 @@ describe("resourceWhiteboardLabel", () => {
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       kind: ShapeKind.Process,
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
@@ -90,7 +91,7 @@ describe("resourceWhiteboardLabel", () => {
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       kind: ShapeKind.Process,
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,

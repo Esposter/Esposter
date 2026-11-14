@@ -16,6 +16,7 @@ import {
   POSITIONED_RECTANGLE,
 } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(deletePositionedElement, () => {
@@ -31,7 +32,7 @@ describe(deletePositionedElement, () => {
         binding: { connectionPointIndex: 3, elementId: POSITIONED_PROCESS_ID },
         point: { x: 200, y: 50 },
       },
-      id: crypto.randomUUID(),
+      id: v7(),
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Artist,

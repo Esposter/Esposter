@@ -7,6 +7,7 @@ import { getIpAddress } from "#server/services/request/getIpAddress";
 import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { getResult, getResultAsync } from "@esposter/shared";
 import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
+import { v7 } from "uuid";
 
 export default defineEventHandler(async (event) => {
   const { id: rawId, token: rawToken } = getRouterParams(event);
@@ -45,7 +46,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Accepted once queued. The push is queued under the id it is accepted as, so a redelivery of it writes the message once
-    await getJobQueue(QueueJob.ProcessWebhook).send({ deliveryId: crypto.randomUUID(), payload, webhook });
+    await getJobQueue(QueueJob.ProcessWebhook).send({ deliveryId: v7(), payload, webhook });
     event.res.status = 202;
     return { message: "Accepted." };
   }).match(

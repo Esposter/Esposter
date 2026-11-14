@@ -5,18 +5,19 @@ import { createMockDb } from "@esposter/db-mock";
 import { resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(readResourceList, () => {
-  const userId = crypto.randomUUID();
-  const otherUserId = crypto.randomUUID();
+  const userId = v7();
+  const otherUserId = v7();
   const limit = 10;
   let mockDatabase: MockDatabase;
 
   const createResource = async (values: Partial<typeof resourcesInResource.$inferInsert> & { name: string }) => {
     const inserted = await mockDatabase.db
       .insert(resourcesInResource)
-      .values({ id: crypto.randomUUID(), type: ResourceType.Note, userId, ...values })
+      .values({ id: v7(), type: ResourceType.Note, userId, ...values })
       .returning({ id: resourcesInResource.id });
     return takeOne(inserted).id;
   };

@@ -34,6 +34,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createButtonDocument = (): WebpageDocument => ({
@@ -80,7 +81,7 @@ describe("pageBuilderContentPanel", () => {
   test("editing a button's label in the content panel shows on the canvas", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -107,7 +108,7 @@ describe("pageBuilderContentPanel", () => {
   test("an invalid label is not applied", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -124,7 +125,7 @@ describe("pageBuilderContentPanel", () => {
   test("editing an email button's label in the Content panel changes the email", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailButtonDocument("a"));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -145,7 +146,7 @@ describe("pageBuilderContentPanel", () => {
   test("a block with no content fields says where to edit it", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, TEST_EMAIL);
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -162,7 +163,7 @@ describe("pageBuilderContentPanel", () => {
   test("with nothing selected the panel edits the root language", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
@@ -176,7 +177,7 @@ describe("pageBuilderContentPanel", () => {
 
   // A survey invite's picker over one published survey and one that is not, as the survey list answers its query
   const mountInvitePicker = async (kind: typeof emailKind | typeof webpageKind) => {
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const published = createResourceListItem({ type: ResourceType.Survey });
     const unpublished = createResourceListItem({ type: ResourceType.Survey });
     const publishedInList = { ...published, publication: createPublication(published.id) };
@@ -250,7 +251,7 @@ describe("pageBuilderContentPanel", () => {
   test("a bound survey is unpublished later", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const survey = createResourceListItem({ type: ResourceType.Survey });
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
     trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
@@ -274,7 +275,7 @@ describe("pageBuilderContentPanel", () => {
   test("no published survey to offer", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const document = createSurveyInviteDocument(NO_SURVEY_ID);

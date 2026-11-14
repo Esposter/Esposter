@@ -8,11 +8,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { INVITE_ID_LENGTH, RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomInviteRow", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const user = createUser();
   const invite: InviteInMessageWithCreator = {
     createdAt: new Date(0),

@@ -24,6 +24,7 @@ import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_READ_LIMIT, NotFoundError } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -79,7 +80,7 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1, b: true, c: "" },
       pageNo: 0,
@@ -103,7 +104,7 @@ describe("datasetRouter", () => {
 
     const newSurvey = await setupSurvey();
     const rows = Array.from({ length: MAX_READ_LIMIT + 1 }, () => ({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -134,7 +135,7 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
@@ -153,7 +154,7 @@ describe("datasetRouter", () => {
     const newSurvey = await createPublishedSurvey(surveyCaller, name, {
       document: createPageDocument([
         {
-          props: { choices: [{ value: "red" }, { value: 2 }], id: crypto.randomUUID(), name: "c" },
+          props: { choices: [{ value: "red" }, { value: 2 }], id: v7(), name: "c" },
           type: SurveyNodeType.Checkbox,
         },
       ]),
@@ -161,7 +162,7 @@ describe("datasetRouter", () => {
     });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { c: ["red", 2] },
       pageNo: 0,
@@ -180,7 +181,7 @@ describe("datasetRouter", () => {
     const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument, settings: {} });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
-      id: crypto.randomUUID(),
+      id: v7(),
       isDraft: false,
       model: { submittedAt: "answer" },
       pageNo: 0,

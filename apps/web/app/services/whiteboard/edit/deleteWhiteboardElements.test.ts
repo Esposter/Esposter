@@ -8,6 +8,7 @@ import {
 } from "@/services/whiteboard/constants.test";
 import { deleteWhiteboardElements } from "@/services/whiteboard/edit/deleteWhiteboardElements";
 import { undoWhiteboardEdit } from "@/services/whiteboard/edit/undoWhiteboardEdit";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { PositionedElementType, TextSize } from "vue-block-editor-headless";
 
@@ -17,7 +18,7 @@ describe(deleteWhiteboardElements, () => {
 
     const text: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "",
       textSize: TextSize.Small,

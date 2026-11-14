@@ -15,6 +15,7 @@ import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { takeOne, toRawDeep } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 // The visual store reads its visuals straight off the dashboard store's content, so the dashboard has to be
@@ -34,7 +35,7 @@ const createEditedVisual = (visual: Visual, type: VisualType) => {
 
 describe(useVisualStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Dashboard });
   let content: Dashboard;
@@ -90,7 +91,7 @@ describe(useVisualStore, () => {
 
     const dataset = {
       query: { series: [{ aggregation: DatasetAggregationType.Sum, column: "column" }], xColumn: "xColumn" },
-      reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      reference: { id: v7(), type: DatasetProviderType.Sheet },
     };
     content = new Dashboard({
       visuals: [new Visual({ dataset: { ...dataset, snapshot: { columns: [], rows: [] } } })],
@@ -195,7 +196,7 @@ describe(useVisualStore, () => {
   test("puts a visual whose delete failed back into its own dashboard only", async () => {
     expect.hasAssertions();
 
-    const otherResourceId = crypto.randomUUID();
+    const otherResourceId = v7();
     const otherContent = new Dashboard();
     const { promise: saveGate, resolve: releaseSave } = Promise.withResolvers<void>();
     trpcMsw.resource.readResource.query(({ input }) => ({

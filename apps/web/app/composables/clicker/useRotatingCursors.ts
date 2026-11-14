@@ -1,6 +1,7 @@
 import { Target } from "#shared/models/clicker/data/Target";
 import { useClickerStore } from "@/store/clicker";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 
 export const useRotatingCursors = () => {
   const clickerStore = useClickerStore();
@@ -11,7 +12,7 @@ export const useRotatingCursors = () => {
   });
   // A stable per-instance prefix keyed by index — regenerating ids on every amount change would rekey
   // The v-for and make Vue destroy/recreate every cursor node, resetting all animations on each purchase
-  const instanceId = crypto.randomUUID();
+  const instanceId = v7();
   const rotatingDivIds = computed(() =>
     Array.from({ length: amount.value }, (_value, index) => `${instanceId}${ID_SEPARATOR}${index}`),
   );

@@ -5,11 +5,12 @@ import { createSurveyCommentAnswerSchema } from "#src/services/runner/answer/cre
 import { SURVEY_TOO_LONG_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyCommentNodeType } from "#src/services/surveyCommentNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyCommentAnswerSchema, () => {
   const node: SurveyCommentNode = {
-    props: { ...surveyCommentNodeType.createDefaultProps(), id: crypto.randomUUID(), maxLength: 1 },
+    props: { ...surveyCommentNodeType.createDefaultProps(), id: v7(), maxLength: 1 },
     type: SurveyNodeType.Comment,
   };
 

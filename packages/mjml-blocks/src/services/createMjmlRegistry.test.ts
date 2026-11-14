@@ -14,6 +14,7 @@ import {
 } from "#src/services/constants.test";
 import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema";
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
@@ -196,7 +197,7 @@ describe(createMjmlRegistry, () => {
           },
           {
             props: {
-              children: [{ props: { content: { text: "" }, id: crypto.randomUUID() }, type: MjmlNodeType.Text }],
+              children: [{ props: { content: { text: "" }, id: v7() }, type: MjmlNodeType.Text }],
               id: TEST_HERO_ID,
             },
             type: MjmlNodeType.Hero,

@@ -7,6 +7,7 @@ import { useDataStore } from "@/store/message/data";
 import { useConnectionStore } from "@/store/realtime/connection";
 import { MessageType } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
@@ -38,8 +39,8 @@ describe(useMessageEvents, () => {
   test("files a created message under the room its socket was opened for, by its integer id", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const otherRoomId = crypto.randomUUID();
+    const roomId = v7();
+    const otherRoomId = v7();
     const messageId = 1;
     const message = "message";
     const scope = effectScope();
@@ -68,7 +69,7 @@ describe(useMessageEvents, () => {
   test("removes a deleted message from the room its socket was opened for only", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
+    const roomId = v7();
     const messageId = 1;
     const scope = effectScope();
     scope.run(() => {

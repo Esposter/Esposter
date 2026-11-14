@@ -2,10 +2,11 @@ import type { MjmlColumnNode } from "mjml-blocks";
 
 import { getEmailColumnWidths } from "#shared/services/pageBuilder/email/getEmailColumnWidths";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getEmailColumnWidths, () => {
-  const TEST_COLUMN_ID = crypto.randomUUID();
+  const TEST_COLUMN_ID = v7();
   const createColumn = (width?: string): MjmlColumnNode => ({
     props: { children: [], id: TEST_COLUMN_ID, width },
     type: MjmlNodeType.Column,

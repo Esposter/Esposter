@@ -16,6 +16,7 @@ import {
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequestRouter", () => {
@@ -109,7 +110,7 @@ describe("friendRequestRouter", () => {
   test("fails send friend request to non-existent user", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
 
     await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, userId).message}]`,

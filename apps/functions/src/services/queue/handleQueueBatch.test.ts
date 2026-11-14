@@ -11,6 +11,7 @@ import {
   QueueJob,
   StorageBucket,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
@@ -95,9 +96,9 @@ describe(handleQueueBatch, () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     const handlerSpy = vi.spyOn(QueueJobHandlerMap, QueueJob.DeleteAccount).mockResolvedValue();
-    const userId = crypto.randomUUID();
-    const poisonMessage = createQueueMessage(crypto.randomUUID(), poisonBody);
-    const transientMessage = createQueueMessage(crypto.randomUUID(), { userId });
+    const userId = v7();
+    const poisonMessage = createQueueMessage(v7(), poisonBody);
+    const transientMessage = createQueueMessage(v7(), { userId });
 
     await handleQueueBatch(
       createBatch([poisonMessage, transientMessage], deleteAccountDeadLetterQueueName),
@@ -120,10 +121,10 @@ describe(handleQueueBatch, () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(new Error(" "));
-    const userId = crypto.randomUUID();
+    const userId = v7();
     const [failedMessage, resolvedMessage] = [
-      createQueueMessage(crypto.randomUUID(), { userId }),
-      createQueueMessage(crypto.randomUUID(), { userId }),
+      createQueueMessage(v7(), { userId }),
+      createQueueMessage(v7(), { userId }),
     ];
 
     await handleQueueBatch(

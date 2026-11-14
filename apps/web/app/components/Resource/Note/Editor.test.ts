@@ -12,6 +12,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorView } from "@tiptap/pm/view";
 import { Editor } from "@tiptap/vue-3";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadResourceFileMock } = vi.hoisted(() => ({
@@ -34,7 +35,7 @@ const choosesFile = (file: File) => {
 
 describe("resourceNoteEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));
   const file = new File(["a"], "a", { type: MimeType.Png });

@@ -10,6 +10,7 @@ import { VerticalAlignment } from "#src/models/VerticalAlignment";
 import { getTextWidth } from "#src/services/export/getTextWidth";
 import { toElementTextSvg } from "#src/services/export/toElementTextSvg";
 import { POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The lines an export writes for a text, each one the text of a tspan
@@ -44,7 +45,7 @@ describe(toElementTextSvg, () => {
     const storedShape = positionedElementSchema.parse({
       fill: "#ffffff",
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       kind: ShapeKind.Rectangle,
       text: "Review",
       type: PositionedElementType.Shape,
@@ -91,7 +92,7 @@ describe(toElementTextSvg, () => {
     const text: TextElement = {
       color: "",
       horizontalAlignment: HorizontalAlignment.Right,
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "Review",
       textSize: TextSize.Small,
@@ -132,7 +133,7 @@ describe(toElementTextSvg, () => {
 
     const text: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "a b c d\ne f",
       textSize: TextSize.Small,

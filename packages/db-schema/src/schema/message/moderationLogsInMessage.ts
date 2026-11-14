@@ -6,6 +6,7 @@ import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // The moderation audit log: one row per admin action taken in a room, appended and never edited
@@ -19,7 +20,7 @@ export const moderationLogsInMessage = sqliteTable(
     durationMs: integer(),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),

@@ -2,6 +2,7 @@
 import ResourceWhiteboardElementStickyNote from "@/components/Resource/Whiteboard/ElementStickyNote.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import { DashPattern, PositionedElementType, SketchLevel, StrokeWidth, TextSize } from "vue-block-editor-headless";
 
@@ -17,7 +18,7 @@ describe("resourceWhiteboardElementStickyNote", () => {
       dashPattern: DashPattern.Solid,
       fill: "#fde68a",
       height: 120,
-      id: crypto.randomUUID(),
+      id: v7(),
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "Review",

@@ -6,6 +6,7 @@ import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createText = (id: string): TextNode => ({
@@ -17,14 +18,14 @@ describe(resolveDropTarget, () => {
   const TEXT_ONE = TEST_ID;
   const TEXT_TWO = TEST_OTHER_ID;
   const COLUMN_SLOT = "/content/0/props/children/0/props/children";
-  const COLUMNS_ID = crypto.randomUUID();
+  const COLUMNS_ID = v7();
   const COLUMN_DOCUMENT: WebpageDocument = {
     content: [
       {
         props: {
           children: [
             {
-              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: crypto.randomUUID() },
+              props: { children: [createText(TEXT_ONE), createText(TEXT_TWO)], id: v7() },
               type: WebpageNodeType.Column,
             },
           ],
@@ -35,7 +36,7 @@ describe(resolveDropTarget, () => {
     ],
     root: TEST_ROOT,
   };
-  const LONE_COLUMN = crypto.randomUUID();
+  const LONE_COLUMN = v7();
   const LONE_COLUMN_DOCUMENT: WebpageDocument = {
     content: [
       {

@@ -6,6 +6,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   surveyCheckboxNodePropsSchema,
@@ -21,7 +22,7 @@ const mountPanelDynamic = async (node: SurveyPanelDynamicNode, error = "") => {
       isDisabled: false,
       node,
       "onUpdate:modelValue": (answer?: SurveyAnswerValue) => component.setProps({ modelValue: answer }),
-      seed: crypto.randomUUID(),
+      seed: v7(),
     },
   });
   await flushPromises();
@@ -63,7 +64,7 @@ describe("resourceSurveyFieldPanelDynamic", () => {
           panelCount,
           title: label,
         }),
-        id: crypto.randomUUID(),
+        id: v7(),
         template: [],
       },
       type: SurveyNodeType.PanelDynamic,
@@ -100,7 +101,7 @@ describe("resourceSurveyFieldPanelDynamic", () => {
             {
               props: {
                 ...surveyTextNodePropsSchema.parse({ isRequired: true, name: "b", title: "question" }),
-                id: crypto.randomUUID(),
+                id: v7(),
               },
               type: SurveyNodeType.Text,
             },
@@ -130,7 +131,7 @@ describe("resourceSurveyFieldPanelDynamic", () => {
                   name: "q",
                   title: "question",
                 }),
-                id: crypto.randomUUID(),
+                id: v7(),
               },
               type: SurveyNodeType.Checkbox,
             },

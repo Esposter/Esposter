@@ -1,6 +1,7 @@
 import type { SurveyDocument, SurveyPageNode, SurveyPlaceableNode, SurveyTextNode } from "vue-survey-engine-headless";
 
 import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResource";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
@@ -12,11 +13,11 @@ import {
 
 // Each node takes a fresh id, which the document requires to be unique
 const createQuestion = (name: string): SurveyTextNode => ({
-  props: { ...surveyTextNodeType.createDefaultProps(), id: crypto.randomUUID(), name },
+  props: { ...surveyTextNodeType.createDefaultProps(), id: v7(), name },
   type: SurveyNodeType.Text,
 });
 const createPage = (children: SurveyPlaceableNode[]): SurveyPageNode => ({
-  props: { ...surveyPageNodeType.createDefaultProps(), children, id: crypto.randomUUID() },
+  props: { ...surveyPageNodeType.createDefaultProps(), children, id: v7() },
   type: SurveyNodeType.Page,
 });
 const createDocument = (children: SurveyPlaceableNode[]): SurveyDocument => ({

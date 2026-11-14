@@ -6,13 +6,14 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchHistoryStore } from "@/store/message/search/history";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useSearchHistoryStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const id = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const id = v7();
+  const userId = v7();
   const originalQuery = "original";
   const acceptedQuery = "accepted";
   const rejectedQuery = "rejected";
@@ -58,7 +59,7 @@ describe(useSearchHistoryStore, () => {
   test("rolls a queued delete back to the list the delete ahead of it left", async () => {
     expect.hasAssertions();
 
-    const otherId = crypto.randomUUID();
+    const otherId = v7();
     trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
       if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       return { ...createSearchHistory(originalQuery), id: input };
@@ -80,7 +81,7 @@ describe(useSearchHistoryStore, () => {
   test("restores only the row whose edit was rejected", async () => {
     expect.hasAssertions();
 
-    const otherId = crypto.randomUUID();
+    const otherId = v7();
     trpcMsw.searchHistory.updateSearchHistory.mutation(() => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
@@ -105,7 +106,7 @@ describe(useSearchHistoryStore, () => {
   test("puts back only the row whose removal was rejected", async () => {
     expect.hasAssertions();
 
-    const otherId = crypto.randomUUID();
+    const otherId = v7();
     trpcMsw.searchHistory.deleteSearchHistory.mutation(({ input }) => {
       if (input === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
       return { ...createSearchHistory(originalQuery), id: input };

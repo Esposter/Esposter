@@ -1,10 +1,11 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(requirePartitionKey, () => {
-  const partitionKey = crypto.randomUUID();
+  const partitionKey = v7();
   const name = "name";
 
   test("returns the partition key when non-empty", () => {

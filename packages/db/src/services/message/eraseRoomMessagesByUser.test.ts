@@ -7,6 +7,7 @@ import { eraseRoomMessagesByUser } from "#src/services/message/eraseRoomMessages
 import { StreamTable, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(eraseRoomMessagesByUser, () => {
@@ -21,21 +22,14 @@ describe(eraseRoomMessagesByUser, () => {
   test("erases the text and files of the target user's messages in that room, and nothing else", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const otherRoomId = crypto.randomUUID();
-    const targetUserId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const roomId = v7();
+    const otherRoomId = v7();
+    const targetUserId = v7();
+    const otherUserId = v7();
     const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
       StreamTableEntityMap[StreamTable.Messages]
     >;
-    const file = {
-      filename: "",
-      hasThumbnail: false,
-      id: crypto.randomUUID(),
-      isSpoiler: false,
-      mimetype: "",
-      size: 0,
-    };
+    const file = { filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 };
     const createRoomMessage = async (messageRoomId: string, userId: string) => {
       const message = createMessageEntity({
         files: [file],
@@ -64,8 +58,8 @@ describe(eraseRoomMessagesByUser, () => {
   test("clears the link preview of an erased message rather than keeping it", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const targetUserId = crypto.randomUUID();
+    const roomId = v7();
+    const targetUserId = v7();
     const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
       StreamTableEntityMap[StreamTable.Messages]
     >;
@@ -88,8 +82,8 @@ describe(eraseRoomMessagesByUser, () => {
   test("refuses to erase a message another write changed after it was listed, and keeps that write", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const targetUserId = crypto.randomUUID();
+    const roomId = v7();
+    const targetUserId = v7();
     const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
       StreamTableEntityMap[StreamTable.Messages]
     >;
@@ -121,8 +115,8 @@ describe(eraseRoomMessagesByUser, () => {
   test("erases a message a moderation ban already soft-deleted, since the ban keeps its text", async () => {
     expect.hasAssertions();
 
-    const roomId = crypto.randomUUID();
-    const targetUserId = crypto.randomUUID();
+    const roomId = v7();
+    const targetUserId = v7();
     const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
       StreamTableEntityMap[StreamTable.Messages]
     >;

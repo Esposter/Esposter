@@ -6,6 +6,7 @@ import type { MjmlSocialElementNode } from "#src/models/MjmlSocialElementNode";
 import { MjmlNodeType } from "#src/models/MjmlNodeType";
 import { mjmlNavbarType } from "#src/services/components/mjNavbar";
 import { TEST_COLUMN_ID, TEST_IMAGE_ID, TEST_REGISTRY } from "#src/services/constants.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { getBlockTypeDefinition } from "vue-block-editor-headless";
 
@@ -82,7 +83,7 @@ describe("renderMjmlNode", () => {
     expect.hasAssertions();
 
     const navbar: MjmlNavbarNode = {
-      props: { children: [], id: crypto.randomUUID(), [name]: mjmlNavbarType.defaultAttributes[name] },
+      props: { children: [], id: v7(), [name]: mjmlNavbarType.defaultAttributes[name] },
       type: MjmlNodeType.Navbar,
     };
     expect(mjmlNavbarType.render(navbar, {}, undefined)).toStrictEqual({

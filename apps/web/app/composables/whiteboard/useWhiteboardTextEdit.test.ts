@@ -10,6 +10,7 @@ import {
 } from "@/services/whiteboard/constants.test";
 import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   getTextPlacement,
@@ -118,7 +119,7 @@ describe(useWhiteboardTextEdit, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "Review",
       textSize: TextSize.Small,
@@ -160,7 +161,7 @@ describe(useWhiteboardTextEdit, () => {
     const textBox: TextElement = {
       color: "",
       horizontalAlignment: HorizontalAlignment.Right,
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "Review",
       textSize: TextSize.Small,

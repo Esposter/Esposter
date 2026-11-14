@@ -39,6 +39,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -117,21 +118,21 @@ describe(deleteAccountHandler, () => {
   test("removes every store the inventory keys to the account, keeps the activity it left on another's resource, and leaves the other account's data as it was", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const hash = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
+    const hash = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     await mockDb
       .insert(accountsInAuth)
-      .values({ accountId: "accountId", id: crypto.randomUUID(), providerId: "providerId", userId });
+      .values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
     await mockDb
       .insert(sessionsInAuth)
-      .values({ expiresAt: new Date(0), id: crypto.randomUUID(), token: crypto.randomUUID(), userId });
+      .values({ expiresAt: new Date(0), id: v7(), token: v7(), userId });
 
     // The account's owned room, with its own message and reaction, a member's membership, a profile image and a charged
     // attachment
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${crypto.randomUUID()}`;
+    const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${v7()}`;
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId });
     await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
     await seedChargedBlob(userId, StorageBucket.MessageAssets, ownedRoomAttachmentBlobName);
@@ -151,7 +152,7 @@ describe(deleteAccountHandler, () => {
     const memberRoomMessage = await memberRoomObject.createMessage(
       {
         files: [
-          { filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 },
+          { filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 },
         ],
         message,
         type: MessageType.Message,
@@ -162,8 +163,8 @@ describe(deleteAccountHandler, () => {
       { message, type: MessageType.Message },
       { userId: otherUserId },
     );
-    const memberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
-    const otherMemberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
+    const memberRoomAttachmentBlobName = `${memberRoom.id}/${v7()}`;
+    const otherMemberRoomAttachmentBlobName = `${memberRoom.id}/${v7()}`;
     await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
 
@@ -232,14 +233,14 @@ describe(deleteAccountHandler, () => {
     await mockDb
       .insert(programParticipantsInResource)
       .values({
-        keyValue: crypto.randomUUID(),
-        publicId: crypto.randomUUID(),
+        keyValue: v7(),
+        publicId: v7(),
         resourceId: ownedProgram.id,
-        token: crypto.randomUUID(),
+        token: v7(),
       });
     await mockDb
       .insert(apiKeysInAuth)
-      .values({ id: crypto.randomUUID(), key: crypto.randomUUID(), referenceId: userId });
+      .values({ id: v7(), key: v7(), referenceId: userId });
 
     // A resource the account does not own, with the account's own activity on it, which is kept
     const otherResource = takeOne(

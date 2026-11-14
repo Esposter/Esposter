@@ -18,6 +18,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 // Each menu is mounted alone, so the rows read are its own and no other visual's menu is open beside it
@@ -34,7 +35,7 @@ const mountMenu = async (visual: Visual, menuDataset?: Dataset) => {
 
 describe("dashboardVisualPreviewActionsMenu", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const menuLabel = '[aria-label="Visual actions"]';
   const responseColumn = "response";
   const dataset: Dataset = { columns: [], rows: [] };
@@ -82,7 +83,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
           series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
           xColumn: responseColumn,
         },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
       },
       type: VisualType.Table,
     });
@@ -117,7 +118,7 @@ describe("dashboardVisualPreviewActionsMenu", () => {
           series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }],
           xColumn: responseColumn,
         },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
       },
       type: VisualType.Card,
     });

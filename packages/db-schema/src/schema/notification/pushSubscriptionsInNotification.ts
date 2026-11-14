@@ -3,6 +3,7 @@ import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, integer, text, unique } from "drizzle-orm/sqlite-core";
+import { v7 } from "uuid";
 
 // The notification schema rather than messageSchema: a row is per-session and per-user with nothing message-shaped
 // About it, and every notification type — a resource operation, a todo reminder — resolves its devices through this
@@ -15,7 +16,7 @@ export const pushSubscriptionsInNotification = sqliteTable(
     expirationTime: integer({ mode: "timestamp_ms" }),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     p256dh: text().notNull(),
     // A subscription belongs to the session that created it, not to the browser that once signed in, so the
     // Cascade is what makes a revoke, a sign-out and an expiry all stop that device's pushes without a cleanup

@@ -1,6 +1,7 @@
 import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { AZURE_SELF_DESTRUCT_TIMER } from "#src/services/streams/constants";
 import { getReverseTickedTimestamp } from "#src/services/streams/getReverseTickedTimestamp";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("reverseTickedTimestampSchema", () => {
@@ -19,7 +20,7 @@ describe("reverseTickedTimestampSchema", () => {
   // Rather than "that is not a key"
   test.each([
     ["an empty string", ""],
-    ["a uuid", crypto.randomUUID()],
+    ["a uuid", v7()],
     ["a negative countdown", "-1"],
     ["a decimal point", "0.0"],
     ["padding", " 0"],

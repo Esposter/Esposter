@@ -3,6 +3,7 @@ import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } fr
 
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { v7 } from "uuid";
 import { insertBlockNode } from "vue-block-editor-headless";
 
 // Inserts a new block at an index of a slot in one open resource's document, selects it, and reports whether the edit
@@ -20,7 +21,7 @@ export const insertAt = <
   index: number,
   createNode: (id: string) => TNode,
 ): boolean => {
-  const insertedId = crypto.randomUUID();
+  const insertedId = v7();
   const operations = insertBlockNode(
     document,
     kind.registry,

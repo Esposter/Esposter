@@ -3,6 +3,7 @@ import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { sqliteTable } from "#src/sqliteTable";
 import { text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // One row per person in a program's audience. The key value is the participant's identity, so the unique constraint on
@@ -14,7 +15,7 @@ export const programParticipantsInResource = sqliteTable(
     keyValue: text().notNull(),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     // A non-secret stand-in for the participant, safe to publish. The token is the bearer credential a survey write
     // accepts, so it can never be the identity a publishable dataset carries
     publicId: text().notNull(),

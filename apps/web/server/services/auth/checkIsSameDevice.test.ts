@@ -1,5 +1,6 @@
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { getMockSession } from "#server/trpc/context.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSameDevice, () => {
@@ -17,10 +18,7 @@ describe(checkIsSameDevice, () => {
     const { session, user } = getMockSession();
 
     expect(
-      checkIsSameDevice(
-        { sessionId: session.id, userId: user.id },
-        { session: { ...session, id: crypto.randomUUID() }, user },
-      ),
+      checkIsSameDevice({ sessionId: session.id, userId: user.id }, { session: { ...session, id: v7() }, user }),
     ).toBe(false);
   });
 });

@@ -2,6 +2,7 @@ import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMess
 
 import { getDetectedUserStatus } from "#src/services/user/getDetectedUserStatus";
 import { UserStatus, UserStatuses } from "#src/models/user/UserStatus";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(getDetectedUserStatus, () => {
@@ -14,7 +15,7 @@ describe(getDetectedUserStatus, () => {
     message: "message",
     status: UserStatus.DoNotDisturb,
     updatedAt: createdAt,
-    userId: crypto.randomUUID(),
+    userId: v7(),
     ...overrides,
   });
 

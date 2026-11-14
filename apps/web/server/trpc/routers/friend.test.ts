@@ -15,6 +15,7 @@ import {
   PublicUserColumns,
 } from "@esposter/db-schema";
 import { getFriendshipId, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRouter", () => {
@@ -78,7 +79,7 @@ describe("friendRouter", () => {
   test("fails to delete non-existent friend", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     const friendshipId = getFriendshipId(getMockSession().user.id, userId);
 
     await expect(friendCaller.deleteFriend(userId)).rejects.toThrowErrorMatchingInlineSnapshot(

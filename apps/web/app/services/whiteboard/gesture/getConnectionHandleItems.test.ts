@@ -1,6 +1,7 @@
 import type { ShapeElement } from "vue-block-editor-headless";
 
 import { getConnectionHandleItems } from "@/services/whiteboard/gesture/getConnectionHandleItems";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   CornerStyle,
@@ -13,7 +14,7 @@ import {
 } from "vue-block-editor-headless";
 
 describe(getConnectionHandleItems, () => {
-  const SHAPE_ID = crypto.randomUUID();
+  const SHAPE_ID = v7();
   const createShape = (kind: ShapeKind): ShapeElement => ({
     color: "",
     cornerStyle: CornerStyle.Sharp,

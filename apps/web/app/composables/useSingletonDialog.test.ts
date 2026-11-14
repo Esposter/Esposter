@@ -1,10 +1,11 @@
 import { useSingletonDialog } from "@/composables/useSingletonDialog";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
+import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe(useSingletonDialog, () => {
-  const id = crypto.randomUUID();
-  const otherId = crypto.randomUUID();
+  const id = v7();
+  const otherId = v7();
 
   test("resolves the item its target names", () => {
     expect.hasAssertions();

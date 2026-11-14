@@ -9,6 +9,7 @@ import { useDataStore } from "@/store/message/data";
 import { usePollDialogStore } from "@/store/message/input/pollDialog";
 import { useRoomStore } from "@/store/message/room";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 
 const requiredRules = [UiRules.required()];
 const roomStore = useRoomStore();
@@ -29,7 +30,7 @@ const createPoll = async () => {
   const roomId = currentRoomId.value;
   if (!roomId) return;
   const pollContent = pollMessageContentSchema.parse({
-    options: options.value.map((label) => ({ id: crypto.randomUUID(), label })),
+    options: options.value.map((label) => ({ id: v7(), label })),
     question: question.value,
     votes: {},
   });

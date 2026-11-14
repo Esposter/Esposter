@@ -3,6 +3,7 @@ import type { RoomObjectRpc } from "@esposter/db-schema";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 // The room's object is faked, so each test reads what the line asked the room to write
@@ -11,8 +12,8 @@ vi.mock("#server/composables/realtime/useRoomObject", () => ({ useRoomObject: ()
 
 describe(createSystemRoomMessage, () => {
   const message = "message";
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
 
   // No device is named, so the room echoes the line to every tab of the member, including the one that caused it
   test("posts the line to the room as the member, with no device to leave out", async () => {

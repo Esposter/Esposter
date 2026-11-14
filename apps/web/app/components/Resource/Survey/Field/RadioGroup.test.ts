@@ -5,6 +5,7 @@ import SurveyFieldRadioGroup from "@/components/Resource/Survey/Field/RadioGroup
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { flushPromises, mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import { SurveyChoicesOrder, SurveyNodeType, surveyRadioGroupNodePropsSchema } from "vue-survey-engine-headless";
 
@@ -20,11 +21,11 @@ describe("resourceSurveyFieldRadioGroup", () => {
     const description = "a";
     const error = "message";
     const title = "Favourite colour";
-    const seed = crypto.randomUUID();
+    const seed = v7();
     const createNode = (hasOther?: boolean, choicesOrder?: SurveyChoicesOrder): SurveyRadioGroupNode => ({
       props: {
         ...surveyRadioGroupNodePropsSchema.parse({ choices, choicesOrder, hasOther, name: "a", title }),
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: SurveyNodeType.RadioGroup,
     });
@@ -105,10 +106,7 @@ describe("resourceSurveyFieldRadioGroup", () => {
           error,
           isDisabled: false,
           node: {
-            props: {
-              ...surveyRadioGroupNodePropsSchema.parse({ choices, description, name: "a", title }),
-              id: crypto.randomUUID(),
-            },
+            props: { ...surveyRadioGroupNodePropsSchema.parse({ choices, description, name: "a", title }), id: v7() },
             type: SurveyNodeType.RadioGroup,
           },
           seed,

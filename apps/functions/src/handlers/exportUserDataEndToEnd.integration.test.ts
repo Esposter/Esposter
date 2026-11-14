@@ -34,6 +34,7 @@ import {
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { unzipSync } from "fflate";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -80,8 +81,8 @@ describe(exportUserDataHandler, () => {
   test("builds a requested export into an archive holding each entry the design lists, and marks it ready", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
 
     // The account's own post, a like of the other person's post, and a friendship with the other person
@@ -92,7 +93,7 @@ describe(exportUserDataHandler, () => {
       await mockDb.insert(postsInPost).values({ description, ranking: 0, title, userId: otherUserId }).returning(),
     );
     await mockDb.insert(likesInPost).values({ postId: otherPost.id, userId, value: 1 });
-    await mockDb.insert(friendsInSocial).values({ id: crypto.randomUUID(), receiverId: userId, senderId: otherUserId });
+    await mockDb.insert(friendsInSocial).values({ id: v7(), receiverId: userId, senderId: otherUserId });
 
     // The owned room, which the account is a member of, with its message and attachment, its emoji and its image
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
@@ -100,7 +101,7 @@ describe(exportUserDataHandler, () => {
     const file = {
       filename,
       hasThumbnail: false,
-      id: crypto.randomUUID(),
+      id: v7(),
       isSpoiler: false,
       mimetype: "mimetype",
       size: 0,
@@ -134,7 +135,7 @@ describe(exportUserDataHandler, () => {
       .values({ actorUserId: otherUserId, roomId: room.id, targetUserId: userId, type: AdminActionType.Warn });
 
     // The request writes the queued row the web procedure writes, and the event carries its id to the handler
-    const dataExportId = crypto.randomUUID();
+    const dataExportId = v7();
     await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
 
     await exportUserDataHandler({ dataExportId });

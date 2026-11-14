@@ -19,6 +19,7 @@ import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, MessageType, QueueJob, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, noop, Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The room and user objects are programmable: every RPC is a typed fake whose return value a test sets. Each contract
@@ -111,7 +112,7 @@ describe("messageRouter", () => {
   // deliberately put in front of it
   const filteredWord = "spam";
   const filteredMessage = `<p>${filteredWord}</p>`;
-  const pollOptionId = crypto.randomUUID();
+  const pollOptionId = v7();
   const userId = getMockSession().user.id;
   // The message a room object holds, sent by the caller unless a test says otherwise
   const createRoomMessage = (overrides: Partial<RoomMessage> = {}): RoomMessage => ({
@@ -163,7 +164,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const createdMessage = createRoomMessage();
-    const deviceId = crypto.randomUUID();
+    const deviceId = v7();
     const tabCaller = createCallerFactory(messageRouter)({
       ...mockContext,
       headers: new Headers({ [DEVICE_ID_HEADER]: deviceId }),
@@ -203,7 +204,7 @@ describe("messageRouter", () => {
   test("updates the message with the mentions its new text names", async () => {
     expect.hasAssertions();
 
-    const mentionedUserId = crypto.randomUUID();
+    const mentionedUserId = v7();
     const mentionedText = createMentionMessage(mentionedUserId);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ mentions: [userId] })]);
     roomObject.updateMessage.mockReturnValue(createRoomMessage({ isEdited: true, message: mentionedText }));
@@ -249,7 +250,7 @@ describe("messageRouter", () => {
     const file = {
       filename,
       hasThumbnail: true,
-      id: crypto.randomUUID(),
+      id: v7(),
       isSpoiler: false,
       mimetype: MimeType.Png,
       size: 1,

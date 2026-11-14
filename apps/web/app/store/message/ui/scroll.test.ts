@@ -5,6 +5,7 @@ import { useDataStore } from "@/store/message/data";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { RoutePath } from "@esposter/shared";
 import { mockNuxtImport } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn<typeof navigateTo>() }));
@@ -12,9 +13,9 @@ const { navigateToMock } = vi.hoisted(() => ({ navigateToMock: vi.fn<typeof navi
 mockNuxtImport("navigateTo", () => navigateToMock);
 
 describe(useScrollStore, () => {
-  const roomId = crypto.randomUUID();
-  const messageId = crypto.randomUUID();
-  const secondMessageId = crypto.randomUUID();
+  const roomId = v7();
+  const messageId = v7();
+  const secondMessageId = v7();
   const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 

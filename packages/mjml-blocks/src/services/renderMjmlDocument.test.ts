@@ -22,6 +22,7 @@ import { createMjmlDocumentSchema } from "#src/services/createMjmlDocumentSchema
 import { createMjmlRegistry } from "#src/services/createMjmlRegistry";
 import { renderMjmlDocument } from "#src/services/renderMjmlDocument";
 import mjml2html from "mjml";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -244,7 +245,7 @@ describe(renderMjmlDocument, () => {
                             type: MjmlNodeType.Column,
                           },
                         ],
-                        id: crypto.randomUUID(),
+                        id: v7(),
                       },
                       type: MjmlNodeType.Group,
                     },

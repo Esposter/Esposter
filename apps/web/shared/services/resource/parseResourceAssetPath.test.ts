@@ -1,9 +1,10 @@
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { FILES_DIRECTORY_SEGMENT, getResourceFilesDirectoryName, SnapshotChannel } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(parseResourceAssetPath, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const hash = "a".repeat(64);
 
   test("should parse a files path by its hash", () => {

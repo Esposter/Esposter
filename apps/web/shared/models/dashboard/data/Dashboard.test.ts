@@ -6,6 +6,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { MAX_VISUAL_GROUP_DEPTH } from "#shared/services/dashboard/constants";
 import { createGroupChain } from "#shared/services/dashboard/createGroupChain.test";
 import { toRawDeep } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // The messages the dashboard schema reports for a tree, read off a parse of its stored form
@@ -32,7 +33,7 @@ describe("dashboardSchema", () => {
   test("refuses a visual id held twice, across levels of the tree", () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
 
     expect(
       readIssueMessages([new Visual({ id, type: VisualType.Group, visuals: [new Visual({ id })] })]),
@@ -60,7 +61,7 @@ describe("dashboardSchema", () => {
 
     const dataset = {
       query: { series: [{ aggregation: DatasetAggregationType.Count, column: "column" }], xColumn: "xColumn" },
-      reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      reference: { id: v7(), type: DatasetProviderType.Sheet },
     };
 
     expect(readIssueMessages([new Visual({ dataset, type: VisualType.Group, visuals: [] })])).toStrictEqual([

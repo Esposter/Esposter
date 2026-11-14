@@ -5,6 +5,7 @@ import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapte
 import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { betterAuth } from "better-auth";
+import { v7 } from "uuid";
 
 export const auth = betterAuth({
   ...authModelOptions,
@@ -34,6 +35,9 @@ export const auth = betterAuth({
   },
   advanced: {
     database: {
+      // Every model's id is minted by the one id generator, a UUIDv7, so the rows better-auth writes sort and page like
+      // The rest. Its own `"uuid"` option would mint a v4
+      generateId: () => v7(),
       // Better-auth reads a session with its user, and a user with its accounts, in one query instead of two
       // Follow-up round trips. Only the relations-v2 adapter above can serve them — it resolves the join
       // Through `db.query`, which our v2 relations define

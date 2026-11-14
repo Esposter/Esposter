@@ -43,6 +43,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 // The editor's keys are bound on the page's window, so a key is pressed on the element that has focus and bubbles up to it
@@ -90,7 +91,7 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         {
@@ -116,7 +117,7 @@ describe("pageBuilderEditor", () => {
   test("nothing selected offers Page and Theme", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
@@ -130,7 +131,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -145,7 +146,7 @@ describe("pageBuilderEditor", () => {
   test("the Check tab is gone", async () => {
     expect.hasAssertions();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
@@ -164,7 +165,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -187,7 +188,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -214,7 +215,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -239,7 +240,7 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         createTestTextNode(TEST_OTHER_ID, {
@@ -261,7 +262,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         createTestTextNode(TEST_OTHER_ID, {
@@ -284,7 +285,7 @@ describe("pageBuilderEditor", () => {
     vi.useFakeTimers({ now: 0, toFake: ["setTimeout", "clearTimeout"] });
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createTestTextNode(TEST_OTHER_ID, {})],
       root: TEST_ROOT,
@@ -317,7 +318,7 @@ describe("pageBuilderEditor", () => {
       return { hasMore: false, items: [] };
     });
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createTestSurveyInviteNode(TEST_OTHER_ID, TEST_SURVEY_ID)],
       root: TEST_ROOT,
@@ -340,7 +341,7 @@ describe("pageBuilderEditor", () => {
     trpcMsw.survey.readResources.query(readResources);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [createTestTextNode(TEST_OTHER_ID, {})],
       root: TEST_ROOT,
@@ -357,7 +358,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
@@ -381,7 +382,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
@@ -404,7 +405,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
@@ -434,7 +435,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
@@ -458,7 +459,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -476,7 +477,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       root: TEST_ROOT,
@@ -494,7 +495,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -512,7 +513,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -534,7 +535,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -562,7 +563,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [
         { props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text },
@@ -587,7 +588,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -608,7 +609,7 @@ describe("pageBuilderEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
@@ -627,7 +628,7 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 
-    const resourceId = crypto.randomUUID();
+    const resourceId = v7();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });

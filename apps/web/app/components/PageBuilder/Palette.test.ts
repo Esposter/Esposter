@@ -15,8 +15,14 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 const createFrameGeometry = (): FrameGeometry => ({
   checkIsHorizontalOwner: () => false,
@@ -100,8 +106,8 @@ describe("pageBuilderPalette", () => {
   test("a merge field inserts a text carrying its column's token into the selected column", async () => {
     expect.hasAssertions();
 
-    const columnId = crypto.randomUUID();
-    const insertedId = crypto.randomUUID();
+    const columnId = v7();
+    const insertedId = v7();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
       content: [
@@ -128,7 +134,7 @@ describe("pageBuilderPalette", () => {
       },
     });
 
-    vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
+    vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
     await component
       .findAll("button")
       .find((button) => button.text() === "first_name")

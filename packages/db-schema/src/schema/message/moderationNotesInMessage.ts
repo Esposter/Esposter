@@ -4,6 +4,7 @@ import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { sqliteTable } from "#src/sqliteTable";
 import { index, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // A moderator's private note about a member of one room, visible only to the moderators of that room
@@ -14,7 +15,7 @@ export const moderationNotesInMessage = sqliteTable(
     actorUserId: text().references(() => usersInAuth.id, { onDelete: "set null" }),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     note: text().notNull(),
     roomId: text()
       .notNull()

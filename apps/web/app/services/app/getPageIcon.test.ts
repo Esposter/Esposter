@@ -4,6 +4,7 @@ import { getPageIcon } from "@/services/app/getPageIcon";
 import { UserSettingsPageLinkItem } from "@/services/app/UserSettingsPageLinkItem";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getPageIcon, () => {
@@ -18,14 +19,12 @@ describe(getPageIcon, () => {
   test("gives a page its path does not name its mark's icon", () => {
     expect.hasAssertions();
 
-    expect(getPageIcon({ mark, path: RoutePath.Resource(crypto.randomUUID()) })).toBe(
-      ResourceDefinitionMap[mark.resourceType].icon,
-    );
+    expect(getPageIcon({ mark, path: RoutePath.Resource(v7()) })).toBe(ResourceDefinitionMap[mark.resourceType].icon);
   });
 
   test("leaves any other page without an icon", () => {
     expect.hasAssertions();
 
-    expect(getPageIcon({ path: RoutePath.Messages(crypto.randomUUID()) })).toBeUndefined();
+    expect(getPageIcon({ path: RoutePath.Messages(v7()) })).toBeUndefined();
   });
 });

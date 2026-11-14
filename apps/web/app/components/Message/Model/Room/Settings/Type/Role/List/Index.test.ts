@@ -7,16 +7,17 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { RoomPermission } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("messageModelRoomSettingsTypeRoleListIndex", () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const createRole = (position: number): RoomRoleInMessage => ({
     color: "",
     createdAt: new Date(0),
     deletedAt: null,
-    id: crypto.randomUUID(),
+    id: v7(),
     isEveryone: false,
     name: `position ${position}`,
     permissions: 0n,

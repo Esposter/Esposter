@@ -7,16 +7,17 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { createMockDb } from "@esposter/db-mock";
 import { accountsInAuth, sessionsInAuth, usersInAuth } from "@esposter/db-schema";
 import { betterAuth } from "better-auth";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The adapter derives the relation key each join reads from the model name: the model itself for a join to one row
 // (`usersInAuth`), and the model plus `s` for a join to many (`accountsInAuths`). Each relation better-auth joins on is
 // Named that way only for it, so renaming one is invisible to typecheck and to every other test
 describe("drizzleAdapterConfiguration", () => {
-  const accountId = crypto.randomUUID();
+  const accountId = v7();
   const email = "email";
   const providerId = "providerId";
-  const token = crypto.randomUUID();
+  const token = v7();
   let mockDatabase: MockDatabase;
   // One user holding one account and one session, behind the options the app joins with
   const createInternalAdapter = async () => {
@@ -27,16 +28,16 @@ describe("drizzleAdapterConfiguration", () => {
       database: drizzleAdapter(db, drizzleAdapterConfiguration),
     });
     const createdAt = new Date(0);
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await db
       .insert(usersInAuth)
       .values({ biography: "", createdAt, email, emailVerified: true, id: userId, name: "name", updatedAt: createdAt });
     await db
       .insert(accountsInAuth)
-      .values({ accountId, createdAt, id: crypto.randomUUID(), providerId, updatedAt: createdAt, userId });
+      .values({ accountId, createdAt, id: v7(), providerId, updatedAt: createdAt, userId });
     await db
       .insert(sessionsInAuth)
-      .values({ createdAt, expiresAt: new Date(1), id: crypto.randomUUID(), token, updatedAt: createdAt, userId });
+      .values({ createdAt, expiresAt: new Date(1), id: v7(), token, updatedAt: createdAt, userId });
     const { internalAdapter } = await auth.$context;
     return internalAdapter;
   };

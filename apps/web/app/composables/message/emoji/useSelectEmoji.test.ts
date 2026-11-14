@@ -3,6 +3,7 @@ import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Hoisted above the imports by `vi.mock`, so unlike a plain constant these cannot live inside the describe
@@ -26,8 +27,8 @@ vi.mock(import("@/store/message/emoji"), () => ({
 describe(useSelectEmoji, () => {
   const THUMBS_UP = "👍";
   const THUMBS_UP_MEDIUM = "👍🏽";
-  const userId = crypto.randomUUID();
-  const message = createOptimisticMessage({ roomId: crypto.randomUUID(), type: MessageType.Message }, userId);
+  const userId = v7();
+  const message = createOptimisticMessage({ roomId: v7(), type: MessageType.Message }, userId);
 
   beforeEach(() => {
     emojis.length = 0;

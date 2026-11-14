@@ -12,6 +12,7 @@ import {
   NoiseSuppressionMode,
   VoiceInputMode,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useUserSettingsStore, () => {
@@ -29,7 +30,7 @@ describe(useUserSettingsStore, () => {
     pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
     speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
     updatedAt: new Date(0),
-    userId: crypto.randomUUID(),
+    userId: v7(),
     virtualBackground: "",
     voiceInputMode: VoiceInputMode.VoiceActivity,
   };

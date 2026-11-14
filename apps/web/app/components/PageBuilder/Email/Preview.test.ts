@@ -15,6 +15,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
 import http from "node:http";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderEmailPreview", () => {
@@ -129,17 +130,17 @@ describe("pageBuilderEmailPreview", () => {
                           content: [{ content: [{ text: longText, type: "text" }], type: "paragraph" }],
                           type: "doc",
                         },
-                        id: crypto.randomUUID(),
+                        id: v7(),
                       },
                       type: MjmlNodeType.Text,
                     },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },

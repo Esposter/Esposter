@@ -9,6 +9,7 @@ import { TextSize } from "#src/models/TextSize";
 import { insertPositionedElement } from "#src/services/insertPositionedElement";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(insertPositionedElement, () => {
@@ -17,7 +18,7 @@ describe(insertPositionedElement, () => {
     dashPattern: DashPattern.Solid,
     fill: "#000000",
     height: 1,
-    id: crypto.randomUUID(),
+    id: v7(),
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,
     text: "",
@@ -44,7 +45,7 @@ describe(insertPositionedElement, () => {
     const document: PositionedDocument = { elements: [POSITIONED_RECTANGLE] };
     const operations = insertPositionedElement(document, 1, {
       ...POSITIONED_FREE_ARROW,
-      end: { ...POSITIONED_FREE_ARROW.end, binding: { connectionPointIndex: 0, elementId: crypto.randomUUID() } },
+      end: { ...POSITIONED_FREE_ARROW.end, binding: { connectionPointIndex: 0, elementId: v7() } },
     });
 
     expect(operations).toStrictEqual([]);

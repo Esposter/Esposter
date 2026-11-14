@@ -4,6 +4,7 @@ import type { ArrowElement, PositionedDocument, ShapeElement } from "vue-block-e
 
 import { MAX_WHITEBOARD_HISTORY_SIZE } from "@/services/resource/whiteboard/constants";
 import { createHistory } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 import {
   ArrowheadKind,
@@ -17,8 +18,8 @@ import {
   TextSize,
 } from "vue-block-editor-headless";
 
-export const WHITEBOARD_ARROW_ID = crypto.randomUUID();
-export const WHITEBOARD_PROCESS_ID = crypto.randomUUID();
+export const WHITEBOARD_ARROW_ID = v7();
+export const WHITEBOARD_PROCESS_ID = v7();
 
 // A process shape at the origin, 100 by 100: its bottom point is at (50, 100)
 export const WHITEBOARD_PROCESS: ShapeElement = {

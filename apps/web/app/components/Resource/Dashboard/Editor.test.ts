@@ -29,6 +29,7 @@ import { ResourceType } from "@esposter/db-schema";
 import { takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { checkLayout } from "vue-editor-layout-headless";
 
@@ -61,7 +62,7 @@ const pressVisual = async (wrapper: VueWrapper, visualId: Visual["id"]) => {
 
 describe("resourceDashboardEditor", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   // The editor's grid is twelve columns across this width, the same as the grid's own suite
   const gridWidth = 970;
   const createResource = (contentVersion = 0) =>

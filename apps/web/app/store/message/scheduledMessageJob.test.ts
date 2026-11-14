@@ -6,13 +6,14 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
 import { MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useScheduledMessageJobStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
-  const otherId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const id = v7();
+  const otherId = v7();
+  const userId = v7();
   const room = createRoom("name");
   const createJob = (jobId: string) => createScheduledMessageJob({ id: jobId, room, userId });
 

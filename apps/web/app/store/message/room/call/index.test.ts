@@ -13,6 +13,7 @@ import { useRealtimeStore } from "@/store/message/room/realtime";
 import { AdminActionType, CALL_ID_LENGTH } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -32,8 +33,8 @@ describe(useCallStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const callSessionId = createId(CALL_ID_LENGTH);
   const imagePath = "imagePath";
-  const roomId = crypto.randomUUID();
-  const threadRootId = crypto.randomUUID();
+  const roomId = v7();
+  const threadRootId = v7();
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: getMockSession() }));
@@ -94,7 +95,7 @@ describe(useCallStore, () => {
         ],
       ]),
     );
-    await AdminActionHookMap[AdminActionType.ForceMute].run(crypto.randomUUID());
+    await AdminActionHookMap[AdminActionType.ForceMute].run(v7());
 
     expect(callSessionParticipantsMap.value.get(callSessionId)?.get(session.id)?.isMuted).toBe(false);
   });
@@ -215,8 +216,8 @@ describe(useCallStore, () => {
     expect.hasAssertions();
 
     const { session } = getMockSession();
-    const leavingId = crypto.randomUUID();
-    const joiningId = crypto.randomUUID();
+    const leavingId = v7();
+    const joiningId = v7();
     registerJoin(
       new Map([
         [leavingId, createParticipant(leavingId)],

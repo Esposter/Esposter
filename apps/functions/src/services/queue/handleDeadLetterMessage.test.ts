@@ -12,6 +12,7 @@ import {
   QueueJob,
   StorageBucket,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
@@ -23,8 +24,8 @@ describe(handleDeadLetterMessage, () => {
     CloudflareAssetType.Queue,
     QueueJob.DeleteAccount,
   );
-  const userId = crypto.randomUUID();
-  const messageId = crypto.randomUUID();
+  const userId = v7();
+  const messageId = v7();
   const quarantineKey = `quarantine/${sourceQueueName}/${messageId}.json`;
 
   // The quarantined body, or undefined when nothing was quarantined under this message's key

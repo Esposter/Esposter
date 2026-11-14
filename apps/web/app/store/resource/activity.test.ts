@@ -3,6 +3,7 @@ import type { ResourceActivityInResource } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { useActivityStore } from "@/store/resource/activity";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createActivity = (id: string) => ({ id }) as ResourceActivityInResource;
@@ -25,10 +26,10 @@ const openActivityBlade = (id: string) => {
 };
 
 describe(useActivityStore, () => {
-  const firstResourceId = crypto.randomUUID();
-  const secondResourceId = crypto.randomUUID();
-  const firstActivityId = crypto.randomUUID();
-  const secondActivityId = crypto.randomUUID();
+  const firstResourceId = v7();
+  const secondResourceId = v7();
+  const firstActivityId = v7();
+  const secondActivityId = v7();
 
   // The store outlives the blade, so a second resource's blade mounts against state the first one filled. Held
   // As one slice, its rows, `hasMore` and cursor all still answer for the previous resource until its own read

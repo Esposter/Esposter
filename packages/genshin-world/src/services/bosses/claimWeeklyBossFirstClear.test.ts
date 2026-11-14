@@ -1,9 +1,10 @@
 import { claimWeeklyBossFirstClear } from "#src/services/bosses/claimWeeklyBossFirstClear";
 import { WEEKLY_BOSS_TALENT_ITEM_IDS } from "#src/services/bosses/constants";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(claimWeeklyBossFirstClear, () => {
-  const HIGHEST_DIFFICULTY_ID = crypto.randomUUID();
+  const HIGHEST_DIFFICULTY_ID = v7();
 
   test("the first clear of the highest difficulty pays one of each material", () => {
     expect.hasAssertions();

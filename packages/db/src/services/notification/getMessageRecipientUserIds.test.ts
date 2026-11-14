@@ -18,21 +18,22 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { MENTION_EVERYONE_ID, MENTION_HERE_ID } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(getMessageRecipientUserIds, () => {
   let db: Database;
   const name = "name";
-  const roomId = crypto.randomUUID();
-  const roleId = crypto.randomUUID();
+  const roomId = v7();
+  const roleId = v7();
   const threadRootId = 1;
-  const allOnlineUserId = crypto.randomUUID();
-  const allOfflineUserId = crypto.randomUUID();
-  const allNullStatusUserId = crypto.randomUUID();
-  const directMessageOnlineUserId = crypto.randomUUID();
-  const directMessageOfflineUserId = crypto.randomUUID();
-  const neverUserId = crypto.randomUUID();
-  const senderUserId = crypto.randomUUID();
+  const allOnlineUserId = v7();
+  const allOfflineUserId = v7();
+  const allNullStatusUserId = v7();
+  const directMessageOnlineUserId = v7();
+  const directMessageOfflineUserId = v7();
+  const neverUserId = v7();
+  const senderUserId = v7();
   const sender = { roomId, userId: senderUserId };
   const userIds = [
     allOnlineUserId,

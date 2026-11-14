@@ -10,10 +10,11 @@ import { TextSize } from "#src/models/TextSize";
 import { ARROW_STUB_LENGTH } from "#src/services/constants";
 import { getArrowRoute } from "#src/services/getArrowRoute";
 import { POSITIONED_RECTANGLE_ID } from "#src/services/positionedConstants.test";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getArrowRoute, () => {
-  const ARROW_ID = crypto.randomUUID();
+  const ARROW_ID = v7();
 
   test("a right-angled arrow leaves a shape from its bottom point", () => {
     expect.hasAssertions();

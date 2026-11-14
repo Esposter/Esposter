@@ -8,6 +8,7 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import { SurveyNodeType, surveyNodeTypeDefinitionMap, surveyRootPropsSchema } from "vue-survey-engine-headless";
 
@@ -18,7 +19,7 @@ const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocum
       props: {
         ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(),
         children: questions,
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: SurveyNodeType.Page,
     },
@@ -27,12 +28,7 @@ const createSurveyTestDocument = (questions: SurveyPlaceableNode[]): SurveyDocum
 });
 
 const createQuestion = (name: string, visibleIf: string): SurveyPlaceableNode => ({
-  props: {
-    ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(),
-    id: crypto.randomUUID(),
-    name,
-    visibleIf,
-  },
+  props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: v7(), name, visibleIf },
   type: SurveyNodeType.Text,
 });
 

@@ -18,6 +18,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -45,7 +46,7 @@ const readExportRow = async (dataExportId: string) =>
   );
 
 const seedQueuedExport = async (userId: string) => {
-  const dataExportId = crypto.randomUUID();
+  const dataExportId = v7();
   await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
   return dataExportId;
 };
@@ -81,7 +82,7 @@ describe(exportUserDataHandler, () => {
   test("marks an export with a failing entry failed, with its reason, and never sets a ready or expiry time", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
@@ -89,7 +90,7 @@ describe(exportUserDataHandler, () => {
     await getRoomObject(room.id).createMessage(
       {
         files: [
-          { filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "mimetype", size: 0 },
+          { filename, hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "mimetype", size: 0 },
         ],
         message: "message",
         type: MessageType.Message,
@@ -112,7 +113,7 @@ describe(exportUserDataHandler, () => {
   test("marks an export ready, with its expiry the retention after it became ready", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const dataExportId = await seedQueuedExport(userId);
 
@@ -130,7 +131,7 @@ describe(exportUserDataHandler, () => {
   test("a replayed event rebuilds the same blob, leaving one archive for the export", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const dataExportId = await seedQueuedExport(userId);
 

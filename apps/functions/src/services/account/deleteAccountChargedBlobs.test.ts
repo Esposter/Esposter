@@ -8,6 +8,7 @@ import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/serv
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -48,18 +49,18 @@ describe(deleteAccountChargedBlobs, () => {
   test("removes the blobs the account is charged for through the ledger, and no blob another account is charged for", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
-    const otherUserId = crypto.randomUUID();
-    const roomId = crypto.randomUUID();
+    const userId = v7();
+    const otherUserId = v7();
+    const roomId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     // The two charges the account holds are what its counter carries, so the release has bytes to give back
     await mockDb
       .update(usersInAuth)
       .set({ storageBytesUsed: countedBytes * 2 })
       .where(eq(usersInAuth.id, userId));
-    const chargedMessageBlobName = `${roomId}/${crypto.randomUUID()}`;
+    const chargedMessageBlobName = `${roomId}/${v7()}`;
     const chargedBackgroundBlobName = `${userId}/CallBackground/0`;
-    const otherMessageBlobName = `${roomId}/${crypto.randomUUID()}`;
+    const otherMessageBlobName = `${roomId}/${v7()}`;
     await seedChargedBlob(userId, StorageBucket.MessageAssets, chargedMessageBlobName);
     await seedChargedBlob(userId, StorageBucket.UserAssets, chargedBackgroundBlobName);
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMessageBlobName);

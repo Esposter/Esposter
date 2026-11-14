@@ -10,6 +10,7 @@ import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createHash } from "node:crypto";
 import { constants, gzipSync, zstdCompressSync } from "node:zlib";
+import { v7 } from "uuid";
 import { describe, test } from "vitest";
 
 const BENCH_DOCUMENT_BYTE_COUNTS = [1_000_000, 10_000_000];
@@ -26,7 +27,7 @@ const createDocument = (byteCount: number, editedIndex = -1) =>
 // Against, and the gap between them is what the transport itself costs the server
 describe(readStagedResourceContent, () => {
   test.for(BENCH_DOCUMENT_BYTE_COUNTS)("%i bytes", async (byteCount, { bench }) => {
-    const id = crypto.randomUUID();
+    const id = v7();
     const baseline = Buffer.from(createDocument(byteCount));
     const content = createDocument(byteCount, 0);
     const compressedContent = gzipSync(content);

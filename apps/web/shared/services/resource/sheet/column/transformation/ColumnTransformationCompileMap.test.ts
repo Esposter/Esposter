@@ -10,6 +10,7 @@ import { DatePartType } from "#shared/models/resource/sheet/column/transformatio
 import { StringTransformationType } from "#shared/models/resource/sheet/column/transformation/string/StringTransformationType";
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { ColumnTransformationCompileMap } from "#shared/services/resource/sheet/column/transformation/ColumnTransformationCompileMap";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // Binds a source that reads one value on every row, so each transformation's per-value logic is what is under test
@@ -17,7 +18,7 @@ const createBindContext = (sourceValue: null | string, rows: ColumnTransformatio
   ({ readSource: () => () => sourceValue, rows }) satisfies ColumnTransformationBindContext;
 
 describe("columnTransformationCompileMap", () => {
-  const sourceColumnId = crypto.randomUUID();
+  const sourceColumnId = v7();
   const epochDate = new Date(0).toISOString().slice(0, 10);
 
   test(`${ColumnTransformationType.String} returns null for a null source value`, () => {

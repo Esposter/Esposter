@@ -39,6 +39,7 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
@@ -247,7 +248,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${v7()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
@@ -311,7 +312,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${v7()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     // Seeded rather than uploaded, so it is stamped before the in-flight upload and the sweep collects it
     await publicUserAssets.put(blobName, Buffer.alloc(0));
@@ -342,7 +343,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const victimBlobName = `${crypto.randomUUID()}/${crypto.randomUUID()}`;
+    const victimBlobName = `${v7()}/${v7()}`;
     const craftedImage = `${publicUserAssetsUrlPrefix}${getRoomProfileImageBlobPrefix(newRoom.id)}/../../../${victimBlobName}`;
     await roomCaller.updateRoom({ id: newRoom.id, image: craftedImage });
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
@@ -387,7 +388,7 @@ describe("roomRouter", () => {
   test("fails update with non-existent id", async () => {
     expect.hasAssertions();
 
-    const id = crypto.randomUUID();
+    const id = v7();
 
     await expect(roomCaller.updateRoom({ id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -465,7 +466,7 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
+    const blobName = `rooms/${newRoom.id}/ProfileImage/${v7()}`;
     await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);

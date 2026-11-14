@@ -8,6 +8,7 @@ import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { insertBlockNode } from "vue-block-editor-headless";
 
@@ -28,7 +29,7 @@ describe("columnsNodeType", () => {
       root: TEST_ROOT,
     };
     const columnsSlot = "/content/0/props/children";
-    const newId = crypto.randomUUID();
+    const newId = v7();
 
     expect(
       insertBlockNode(document, webpageRegistry, webpageNodeChildren, columnsSlot, 1, {

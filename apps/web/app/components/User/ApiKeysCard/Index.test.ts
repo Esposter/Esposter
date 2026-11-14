@@ -8,6 +8,7 @@ import { UserSettingsPageSection } from "@/models/user/UserSettingsPageSection";
 import { apiKeyList } from "@/services/auth/authClient.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -15,7 +16,7 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 const mountCard = () => mountSuspended(UserApiKeysCard, { props: { section: UserSettingsPageSection.ApiKeys } });
 
 describe("userApiKeysCard", () => {
-  const apiKey = { createdAt: new Date(0), id: crypto.randomUUID(), name: "a", permissions: null, start: "a" };
+  const apiKey = { createdAt: new Date(0), id: v7(), name: "a", permissions: null, start: "a" };
 
   test("draws the loading rows while the keys are out", async () => {
     expect.hasAssertions();

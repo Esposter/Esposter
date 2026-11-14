@@ -8,6 +8,7 @@ import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import {
   checkSurveyDocument,
@@ -19,11 +20,7 @@ import {
 // A survey of one page holding a question named "a", and the calculated values given by name
 const createSurveyTestDocument = (calculatedNames: string[]): SurveyDocument => {
   const question: SurveyNode = {
-    props: {
-      ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(),
-      id: crypto.randomUUID(),
-      name: "a",
-    },
+    props: { ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(), id: v7(), name: "a" },
     type: SurveyNodeType.Text,
   };
 
@@ -33,7 +30,7 @@ const createSurveyTestDocument = (calculatedNames: string[]): SurveyDocument => 
         props: {
           ...surveyNodeTypeDefinitionMap[SurveyNodeType.Page].createDefaultProps(),
           children: [question],
-          id: crypto.randomUUID(),
+          id: v7(),
         },
         type: SurveyNodeType.Page,
       },

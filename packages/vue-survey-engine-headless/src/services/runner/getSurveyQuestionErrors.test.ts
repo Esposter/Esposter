@@ -6,6 +6,7 @@ import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRun
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
 import { getSurveyQuestionErrors } from "#src/services/runner/getSurveyQuestionErrors";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getSurveyQuestionErrors, () => {
@@ -124,7 +125,7 @@ describe(getSurveyQuestionErrors, () => {
                 props: {
                   children: [{ props: { id: "a", isRequired: true, name: "a" }, type: SurveyNodeType.Text }],
                   enableIf: "{x} = 'x'",
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: SurveyNodeType.Panel,
               },
@@ -146,7 +147,7 @@ describe(getSurveyQuestionErrors, () => {
     expect.hasAssertions();
 
     const view = getFirstView({
-      props: { children: [{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }], id: crypto.randomUUID() },
+      props: { children: [{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }], id: v7() },
       type: SurveyNodeType.Panel,
     });
 

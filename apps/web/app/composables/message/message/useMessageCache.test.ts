@@ -15,13 +15,14 @@ import { useDataStore } from "@/store/message/data";
 import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
   let items: ComputedRef<readonly ClientMessage[]>;
   let getSlice: ReturnType<typeof useDataStore>["getSlice"];
-  const roomId = crypto.randomUUID();
-  const secondRoomId = crypto.randomUUID();
+  const roomId = v7();
+  const secondRoomId = v7();
   const message = "message";
   const secondMessage = "second message";
   // A room's messages are numbered from one within the room, so two rooms hold a message under the same integer id

@@ -12,6 +12,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { CollisionMode, CompactType } from "vue-grid-layout-headless";
 
@@ -31,7 +32,7 @@ describe("dashboardIndex", () => {
     new Visual({
       dataset: {
         query: { series: [{ aggregation: DatasetAggregationType.Count, column: responseColumn }], xColumn: "team" },
-        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+        reference: { id: v7(), type: DatasetProviderType.Sheet },
         snapshot: {
           columns: [{ name: responseColumn, type: ColumnType.String }],
           rows: [{ [responseColumn]: "a" }, { [responseColumn]: "b" }],

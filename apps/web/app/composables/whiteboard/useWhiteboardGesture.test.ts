@@ -17,6 +17,11 @@ import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { takeOne } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
+
 describe(useWhiteboardGesture, () => {
   const POINTER_ID = 0;
   const createPointer = (action: GesturePointerAction): GesturePointerEvent => ({
@@ -29,14 +34,14 @@ describe(useWhiteboardGesture, () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.mocked<() => string>(v7).mockRestore();
   });
 
   test("a placement the document check refuses leaves the document unchanged", () => {
     expect.hasAssertions();
 
     // The placed shape takes the id of the process already on the canvas, which the document check refuses
-    vi.spyOn(crypto, "randomUUID").mockReturnValue(WHITEBOARD_PROCESS_ID);
+    vi.mocked<() => string>(v7).mockReturnValue(WHITEBOARD_PROCESS_ID);
     const whiteboardStore = useWhiteboardStore();
     const { editState } = storeToRefs(whiteboardStore);
     const document = { elements: [WHITEBOARD_PROCESS] };
@@ -59,7 +64,7 @@ describe(useWhiteboardGesture, () => {
   test("a refused commit drops the selected ids the document never took", () => {
     expect.hasAssertions();
 
-    vi.spyOn(crypto, "randomUUID").mockReturnValue(WHITEBOARD_PROCESS_ID);
+    vi.mocked<() => string>(v7).mockReturnValue(WHITEBOARD_PROCESS_ID);
     const whiteboardStore = useWhiteboardStore();
     const { editState } = storeToRefs(whiteboardStore);
     editState.value = createWhiteboardEditState({ elements: [WHITEBOARD_PROCESS] });

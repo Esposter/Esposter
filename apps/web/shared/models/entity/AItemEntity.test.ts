@@ -1,5 +1,6 @@
 import { aItemEntitySchema } from "#shared/models/entity/AItemEntity";
 import { ZERO_UUID } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("aItemEntitySchema", () => {
@@ -7,7 +8,7 @@ describe("aItemEntitySchema", () => {
     expect.hasAssertions();
 
     // The real id with only its version digit moved to 7
-    const realId = crypto.randomUUID();
+    const realId = v7();
     const versionSevenId = `${realId.slice(0, 14)}7${realId.slice(15)}`;
 
     expect(aItemEntitySchema.shape.id.safeParse(versionSevenId).success).toBe(false);
@@ -23,6 +24,6 @@ describe("aItemEntitySchema", () => {
   test("a real id passes", () => {
     expect.hasAssertions();
 
-    expect(aItemEntitySchema.shape.id.safeParse(crypto.randomUUID()).success).toBe(true);
+    expect(aItemEntitySchema.shape.id.safeParse(v7()).success).toBe(true);
   });
 });

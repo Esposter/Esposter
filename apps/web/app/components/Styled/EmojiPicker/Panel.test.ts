@@ -17,6 +17,7 @@ import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
@@ -37,7 +38,7 @@ describe("styledEmojiPickerPanel", () => {
   const RAIL_BUTTON_SELECTOR = '[role="radiogroup"][aria-label="Categories"] [role="radio"]';
   const name = "name";
   const customEmoji: CustomEmoji = {
-    id: crypto.randomUUID(),
+    id: v7(),
     name,
     sasUrl: "https://example.com/emoji.png",
     slug: name,

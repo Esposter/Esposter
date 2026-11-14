@@ -11,11 +11,17 @@ import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
+
+vi.mock(import("uuid"), async (importOriginal) => {
+  const actual = await importOriginal();
+  return { ...actual, v7: vi.fn<() => string>(actual.v7) };
+});
 
 const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   setActivePinia(createPinia());
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
@@ -28,8 +34,8 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
     announce,
   );
   // The id the insert gives its new node, fixed so a test reads it exactly
-  const insertedId = crypto.randomUUID();
-  vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
+  const insertedId = v7();
+  vi.mocked<() => string>(v7).mockReturnValueOnce(insertedId);
   return { announce, insert, insertedId, pageBuilderCanvasStore, pageBuilderDocumentStore, resourceId };
 };
 

@@ -8,6 +8,7 @@ import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TextSize } from "#src/models/TextSize";
 import { toArrowSvg } from "#src/services/export/toArrowSvg";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(toArrowSvg, () => {
@@ -18,7 +19,7 @@ describe(toArrowSvg, () => {
       color: "",
       dashPattern: DashPattern.Solid,
       end: { arrowhead: ArrowheadKind.Triangle, point: { x: 100, y: 0 } },
-      id: crypto.randomUUID(),
+      id: v7(),
       label: "",
       pathKind: ArrowPathKind.Straight,
       sketchLevel: SketchLevel.Architect,

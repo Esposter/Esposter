@@ -5,6 +5,7 @@ import ResourceSurveyFieldImagePicker from "@/components/Resource/Survey/Field/I
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { surveyImagePickerNodePropsSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -13,7 +14,7 @@ describe("resourceSurveyFieldImagePicker", () => {
     setupUiStyle(uiStyle);
 
     const error = "error";
-    const id = crypto.randomUUID();
+    const id = v7();
     const imageLink = "/image";
     const title = "title";
     const choices = [

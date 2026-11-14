@@ -9,14 +9,15 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useFriendStore } from "@/store/message/user/friend";
 import { RoomPermission } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useMemberActionItems, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
   const member = { ...createUser(), displayName: "" };
   const name = "name";
   const position = 1;
@@ -65,7 +66,7 @@ describe(useMemberActionItems, () => {
 
     const { friendItem, moderationItems } = useMemberActionItems(
       { ...createUser({ id: userId }), displayName: "" },
-      crypto.randomUUID(),
+      v7(),
       vi.fn<() => void>(),
     );
 

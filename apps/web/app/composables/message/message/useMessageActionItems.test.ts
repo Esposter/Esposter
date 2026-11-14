@@ -11,6 +11,7 @@ import { useUserToRoomStore } from "@/store/message/room/userToRoom";
 import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
 // The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
@@ -33,7 +34,7 @@ const mountActionItem = async (messageEntity: ClientMessage, title: string) => {
 
 describe(useMessageActionItems, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const message = "message";
   const epoch = new Date(0);
   const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));

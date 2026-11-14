@@ -13,6 +13,7 @@ import { useSearchHistoryStore } from "@/store/message/search/history";
 import { FilterType, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe(useReadSearchedMessages, () => {
@@ -25,9 +26,9 @@ describe(useReadSearchedMessages, () => {
   let selectedFilters: Ref<Filter[]>;
   let createSearchHistory: MockInstance<ReturnType<typeof useSearchHistoryStore>["createSearchHistory"]>;
   let readSearchedMessages: ReturnType<typeof useReadSearchedMessages>;
-  const roomId = crypto.randomUUID();
+  const roomId = v7();
   const newCount = 1;
-  const otherRoomId = crypto.randomUUID();
+  const otherRoomId = v7();
   const otherRoomPage = 3;
   const roomPage = 2;
   const query = "a";
@@ -208,7 +209,7 @@ describe(useReadSearchedMessages, () => {
   test("drops the response of a search a newer search superseded", async () => {
     expect.hasAssertions();
 
-    const userId = crypto.randomUUID();
+    const userId = v7();
     const { promise: isStaleResponseReleased, resolve: releaseStaleResponse } = Promise.withResolvers<void>();
     const staleMessage = createOptimisticMessage({ message: query, roomId, type: MessageType.Message }, userId);
     const latestMessage = createOptimisticMessage({ message: latestQuery, roomId, type: MessageType.Message }, userId);

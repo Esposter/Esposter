@@ -9,11 +9,12 @@ import { useSurveyCreatorStore } from "@/store/survey/creator";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument } from "vue-survey-engine-headless";
 
 describe(useSurveyCreatorAutosave, () => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   let save: ReturnType<typeof vi.fn<(document: SurveyDocument) => Promise<boolean>>>;
   let wrapper: VueWrapper;
   const autosaveHost = defineComponent({

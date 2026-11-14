@@ -5,6 +5,7 @@ import ResourceSurveyFieldExpression from "@/components/Resource/Survey/Field/Ex
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   SurveyExpressionDisplayFormat,
@@ -23,7 +24,7 @@ describe("resourceSurveyFieldExpression", () => {
     ): SurveyExpressionNode => ({
       props: {
         ...surveyExpressionNodePropsSchema.parse({ displayFormat, maxFractionDigits, name: "a", title }),
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: SurveyNodeType.Expression,
     });

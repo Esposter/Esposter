@@ -5,6 +5,7 @@ import { SURVEY_INVALID_ANSWER_MESSAGE } from "#src/services/runner/constants";
 import { createSurveyAnswerSchema } from "#src/services/runner/createSurveyAnswerSchema";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyHtmlNodeType } from "#src/services/surveyHtmlNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyAnswerSchema, () => {
@@ -14,7 +15,7 @@ describe(createSurveyAnswerSchema, () => {
     expect.hasAssertions();
 
     const node: SurveyHtmlNode = {
-      props: { ...surveyHtmlNodeType.createDefaultProps(), id: crypto.randomUUID() },
+      props: { ...surveyHtmlNodeType.createDefaultProps(), id: v7() },
       type: SurveyNodeType.Html,
     };
     const result = createSurveyAnswerSchema(node, {}, now).safeParse("a");

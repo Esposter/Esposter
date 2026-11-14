@@ -9,12 +9,13 @@ import { stubGridWidth } from "@/services/dashboard/grid/stubGridWidth.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 import { CompactType } from "vue-grid-layout-headless";
 
 describe("resourceDashboardView", () => {
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
+  const id = v7();
   const name = "a";
   // A desktop-width page takes the six columns of its breakpoint, which leaves room for a visual to pack sideways
   const gridWidth = 970;

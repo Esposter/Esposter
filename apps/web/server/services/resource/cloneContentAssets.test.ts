@@ -16,6 +16,7 @@ import {
   SnapshotChannel,
   usersInAuth,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
@@ -40,9 +41,9 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 });
 
 describe(cloneContentAssets, () => {
-  const userId = crypto.randomUUID();
-  const sourceResourceId = crypto.randomUUID();
-  const destinationResourceId = crypto.randomUUID();
+  const userId = v7();
+  const sourceResourceId = v7();
+  const destinationResourceId = v7();
   const hash = "a".repeat(64);
   const otherHash = "b".repeat(64);
   const sourceBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
@@ -264,7 +265,7 @@ describe(cloneContentAssets, () => {
   test("asks ownership and publication once each for a published resource a stranger clones, and the published lookup once per asset", async () => {
     expect.hasAssertions();
 
-    const db = await createSeededDatabase({ isPublished: true, ownerId: crypto.randomUUID() });
+    const db = await createSeededDatabase({ isPublished: true, ownerId: v7() });
     const findFirstResource = vi.spyOn(db.query.resourcesInResource, "findFirst");
     const findFirstPublication = vi.spyOn(db.query.resourcePublicationsInResource, "findFirst");
     const findFirstPublishedAsset = vi.spyOn(db.query.resourceVersionAssetsInResource, "findFirst");

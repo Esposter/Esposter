@@ -2,6 +2,7 @@
 import ResourceWhiteboardElementShape from "@/components/Resource/Whiteboard/ElementShape.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
   CornerStyle,
@@ -34,7 +35,7 @@ describe("resourceWhiteboardElementShape", () => {
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 80,
-      id: crypto.randomUUID(),
+      id: v7(),
       kind: ShapeKind.Process,
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
@@ -62,7 +63,7 @@ describe("resourceWhiteboardElementShape", () => {
     dashPattern: DashPattern.Solid,
     fill: "",
     height: 80,
-    id: crypto.randomUUID(),
+    id: v7(),
     kind: ShapeKind.Process,
     sketchLevel: SketchLevel.Artist,
     strokeWidth: StrokeWidth.Medium,

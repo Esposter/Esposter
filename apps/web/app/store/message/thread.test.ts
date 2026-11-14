@@ -12,6 +12,7 @@ import { useThreadStore } from "@/store/message/thread";
 import { MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 // The store reaches the layout store, which reads the library's breakpoints — an injection that needs a component
@@ -20,10 +21,10 @@ const mountThreadDrawer = () => mountSuspended(MessageRightSideBarThreadIndex, {
 
 describe(useThreadStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
   const message = "message";
-  const threadRootId = crypto.randomUUID();
+  const threadRootId = v7();
   const createReply = (replyToId: null | ClientMessage["id"] = null) =>
     createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
 
@@ -101,7 +102,7 @@ describe(useThreadStore, () => {
     const file = {
       filename: message,
       hasThumbnail: false,
-      id: crypto.randomUUID(),
+      id: v7(),
       isSpoiler: false,
       mimetype: MimeType.Png,
       size: 1,
@@ -178,7 +179,7 @@ describe(useThreadStore, () => {
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
     await openThread(roomId, threadRootId);
-    await MessageHookMap[Operation.Create].run(createReply(crypto.randomUUID()));
+    await MessageHookMap[Operation.Create].run(createReply(v7()));
 
     expect(threadMessages.value).toStrictEqual([]);
   });

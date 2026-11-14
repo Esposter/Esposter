@@ -1,6 +1,7 @@
 import type { ArrowElement } from "vue-block-editor-headless";
 
 import { getFreeEndHandleItems } from "@/services/whiteboard/gesture/getFreeEndHandleItems";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   ArrowEndKey,
@@ -13,7 +14,7 @@ import {
 } from "vue-block-editor-headless";
 
 describe(getFreeEndHandleItems, () => {
-  const ARROW_ID = crypto.randomUUID();
+  const ARROW_ID = v7();
   const createArrow = (start: ArrowElement["start"], end: ArrowElement["end"]): ArrowElement => ({
     color: "",
     dashPattern: DashPattern.Solid,
@@ -41,7 +42,7 @@ describe(getFreeEndHandleItems, () => {
     expect.hasAssertions();
 
     const arrow = createArrow(
-      { binding: { connectionPointIndex: 2, elementId: crypto.randomUUID() }, point: { x: 0, y: 0 } },
+      { binding: { connectionPointIndex: 2, elementId: v7() }, point: { x: 0, y: 0 } },
       { point: { x: 100, y: 0 } },
     );
     const items = getFreeEndHandleItems({ elements: [arrow] }, [ARROW_ID]);

@@ -12,6 +12,7 @@ import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positioned
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElement } from "#src/services/resizePositionedElement";
 import { JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(resizePositionedElement, () => {
@@ -36,7 +37,7 @@ describe(resizePositionedElement, () => {
 
     const textElement: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "",
       textSize: TextSize.Small,
@@ -58,7 +59,7 @@ describe(resizePositionedElement, () => {
       dashPattern: DashPattern.Solid,
       fill: "#ffffff",
       height: 100,
-      id: crypto.randomUUID(),
+      id: v7(),
       sketchLevel: SketchLevel.Artist,
       strokeWidth: StrokeWidth.Medium,
       text: "",
@@ -87,7 +88,7 @@ describe(resizePositionedElement, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "abcd",
       textSize: TextSize.Small,
@@ -110,7 +111,7 @@ describe(resizePositionedElement, () => {
 
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "abcd",
       textSize: TextSize.Small,

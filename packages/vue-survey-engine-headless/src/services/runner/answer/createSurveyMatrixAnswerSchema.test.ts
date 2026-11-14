@@ -5,6 +5,7 @@ import { createSurveyMatrixAnswerSchema } from "#src/services/runner/answer/crea
 import { SURVEY_INVALID_ANSWER_MESSAGE, SURVEY_REQUIRED_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMatrixNodeType } from "#src/services/surveyMatrixNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createMatrixNode = (isAllRowRequired: boolean): SurveyMatrixNode => ({
@@ -14,7 +15,7 @@ const createMatrixNode = (isAllRowRequired: boolean): SurveyMatrixNode => ({
       { text: "", value: "x" },
       { text: "", value: "y" },
     ],
-    id: crypto.randomUUID(),
+    id: v7(),
     isAllRowRequired,
     rows: [
       { text: "", value: "a" },

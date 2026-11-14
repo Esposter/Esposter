@@ -3,13 +3,14 @@ import { useIsCreator } from "@/composables/message/room/useIsCreator";
 import { useSession } from "@/services/auth/authClient.test";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useIsCreator, () => {
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
 
   beforeEach(() => {
     useSession.mockImplementation((fetcher?: unknown) =>
@@ -32,7 +33,7 @@ describe(useIsCreator, () => {
   test("does not recognise another member as the author", async () => {
     expect.hasAssertions();
 
-    const message = createOptimisticMessage({ roomId, type: MessageType.Poll }, crypto.randomUUID());
+    const message = createOptimisticMessage({ roomId, type: MessageType.Poll }, v7());
     const isCreator = await useIsCreator(() => message);
 
     expect(isCreator.value).toBe(false);
@@ -44,7 +45,7 @@ describe(useIsCreator, () => {
 
     const message = {
       ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId),
-      appUserId: crypto.randomUUID(),
+      appUserId: v7(),
       senderName: "senderName",
       type: MessageType.Webhook,
       userId: null,

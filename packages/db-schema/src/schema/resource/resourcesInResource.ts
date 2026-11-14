@@ -11,6 +11,7 @@ import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // Pure identity + content lifecycle. Publish state is normalized into resourcePublications
@@ -31,7 +32,7 @@ export const resourcesInResource = sqliteTable(
     contentVersion: integer().notNull().default(0),
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     name: text().notNull(),
     // When the last revision was taken, which is what throttles the automatic ones. The save clock cannot
     // Answer it: `updatedAt` moves on every autosave, so a continuously edited resource never looks idle and

@@ -12,6 +12,7 @@ import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { createSurveyDocument, SurveyNodeType, surveyNodeTypeDefinitionMap } from "vue-survey-engine-headless";
 
@@ -19,8 +20,8 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();
-  const surveyId = crypto.randomUUID();
-  const responseId = crypto.randomUUID();
+  const surveyId = v7();
+  const responseId = v7();
   const question = "Favourite colour";
   const surveyDocument = createSurveyDocument();
   const [page] = surveyDocument.content;
@@ -36,7 +37,7 @@ describe("resourceSurveyResponses", () => {
             {
               props: {
                 ...surveyNodeTypeDefinitionMap[SurveyNodeType.Text].createDefaultProps(),
-                id: crypto.randomUUID(),
+                id: v7(),
                 name: "colour",
                 title: question,
               },
@@ -55,7 +56,7 @@ describe("resourceSurveyResponses", () => {
 
   beforeEach(() => {
     // The blade reads its id off the resource page's route, which the auth middleware guards
-    useSession.mockReturnValue({ data: ref({ user: { id: crypto.randomUUID() } }) });
+    useSession.mockReturnValue({ data: ref({ user: { id: v7() } }) });
     Object.assign(useRouter().currentRoute.value.params, { id: surveyId });
     trpcMsw.survey.readSurveyResponseRecords.query(() => records);
     trpcMsw.survey.readResourceContent.query(() => ({

@@ -69,6 +69,7 @@ import {
 } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Every asset the resource's files directory holds
@@ -97,7 +98,7 @@ const createImageEditor = (blobName: string) => new WebpageEditor({ content: [cr
 
 // An asset lives under the resource's files directory, named by the hash of its bytes
 const createFilesBlobName = (id: ResourceInResource["id"]) =>
-  getResourceFileBlobName(id, createHash("sha256").update(crypto.randomUUID()).digest("hex"));
+  getResourceFileBlobName(id, createHash("sha256").update(v7()).digest("hex"));
 const getAssetHash = (blobName: string) => blobName.slice(blobName.lastIndexOf("/") + 1);
 
 describe("resourceRouter", () => {
@@ -627,9 +628,9 @@ describe("resourceRouter", () => {
     await expect(
       callAgentTool("resource_readCritique", { id: otherUserResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
-    await expect(
-      callAgentTool("resource_readCritique", { id: crypto.randomUUID() }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: UNAUTHORIZED]`);
+    await expect(callAgentTool("resource_readCritique", { id: v7() })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[Error: UNAUTHORIZED]`,
+    );
   });
 
   test("a link written into a document appears in references", async () => {
@@ -1365,7 +1366,7 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    const apiKey = { id: crypto.randomUUID(), name };
+    const apiKey = { id: v7(), name };
     // The trail names its key through a foreign key, so the key has to exist before the agent writes through it
     await mockContext.db
       .insert(apiKeysInAuth)

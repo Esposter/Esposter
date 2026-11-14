@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { useSurveyFiles } from "@/composables/survey/useSurveyFiles";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { surveyDocumentSchema, SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -16,10 +17,7 @@ const createDocument = (imageLink: string, logo: string) =>
   surveyDocumentSchema.parse({
     content: [
       {
-        props: {
-          children: [{ props: { id: crypto.randomUUID(), imageLink, name: "image" }, type: SurveyNodeType.Image }],
-          id: crypto.randomUUID(),
-        },
+        props: { children: [{ props: { id: v7(), imageLink, name: "image" }, type: SurveyNodeType.Image }], id: v7() },
         type: SurveyNodeType.Page,
       },
     ],

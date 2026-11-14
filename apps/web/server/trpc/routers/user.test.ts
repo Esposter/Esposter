@@ -40,6 +40,7 @@ import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
@@ -200,7 +201,7 @@ describe("userRouter", () => {
   test("reads empty statuses with default values", async () => {
     expect.hasAssertions();
 
-    const nonExistentUserId = crypto.randomUUID();
+    const nonExistentUserId = v7();
     const userStatus = takeOne(await caller.readStatuses([nonExistentUserId]));
 
     expect(userStatus.expiresAt).toBeNull();

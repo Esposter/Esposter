@@ -2,6 +2,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { rmSync } from "node:fs";
 import { mkdir, rename } from "node:fs/promises";
 import { dirname } from "node:path";
+import { v7 } from "uuid";
 
 // Writes a file whole at a path: `write` fills a partial file of its own beside the path, and the partial file is renamed
 // Onto the path only once `write` has returned, so a write cut short is never taken for the file. A partial file a failed
@@ -11,7 +12,7 @@ export const writePartialThenMove = async (
   write: (partialPath: string) => Promise<void>,
 ): Promise<void> => {
   await mkdir(dirname(path), { recursive: true });
-  const partialPath = `${path}.${crypto.randomUUID()}.part`;
+  const partialPath = `${path}.${v7()}.part`;
   (
     await getResultAsync(async () => {
       await write(partialPath);

@@ -6,6 +6,7 @@ import ResourceWhiteboardEditorPropertiesText from "@/components/Resource/Whiteb
 import { createWhiteboardEditState, WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import {
   getTextWidth,
@@ -25,7 +26,7 @@ const clickButton = async (wrapper: VueWrapper, label: string) => {
 describe("resourceWhiteboardEditorPropertiesText", () => {
   const TEXT_BOX: TextElement = {
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     isWrapped: true,
     text: "Review the order",
     textSize: TextSize.Small,

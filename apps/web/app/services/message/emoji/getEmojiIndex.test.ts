@@ -10,6 +10,7 @@ import { getEmojiSlug } from "@/services/message/emoji/getEmojiSlug";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { takeOne } from "@esposter/shared";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // Throws rather than returning undefined so a slug that stops existing upstream fails as a missing emoji
@@ -146,7 +147,7 @@ describe(searchEmojis, () => {
     expect.hasAssertions();
 
     const customEmoji: CustomEmoji = {
-      id: crypto.randomUUID(),
+      id: v7(),
       name: "thumbs_up_parrot",
       sasUrl: "https://storage.test/emoji",
       slug: "thumbs_up_parrot",

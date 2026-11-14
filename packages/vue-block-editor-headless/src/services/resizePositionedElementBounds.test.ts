@@ -7,6 +7,7 @@ import { POSITIONED_ARROW, POSITIONED_RECTANGLE } from "#src/services/positioned
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { resizePositionedElementBounds } from "#src/services/resizePositionedElementBounds";
 import { JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(resizePositionedElementBounds, () => {
@@ -31,7 +32,7 @@ describe(resizePositionedElementBounds, () => {
 
     const textElement: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: true,
       text: "",
       textSize: TextSize.Small,

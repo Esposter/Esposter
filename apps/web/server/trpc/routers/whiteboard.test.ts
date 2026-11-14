@@ -4,6 +4,7 @@ import type { ArrowElement, ShapeElement } from "vue-block-editor-headless";
 
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
+import { v7 } from "uuid";
 import { beforeAll, describe, expect, test } from "vitest";
 import {
   ArrowheadKind,
@@ -21,7 +22,7 @@ describe("whiteboardRouter", () => {
   const { getCaller } = setupResourceSuite(whiteboardRouter);
   let caller: DecorateRouterRecord<TRPCRouter["whiteboard"]>;
   const name = "name";
-  const shapeId = crypto.randomUUID();
+  const shapeId = v7();
   // A rectangle at the origin, 100 by 100, with an arrow bound at its start to its bottom point
   const shape: ShapeElement = {
     color: "",
@@ -44,7 +45,7 @@ describe("whiteboardRouter", () => {
     color: "",
     dashPattern: DashPattern.Solid,
     end: { arrowhead: ArrowheadKind.Triangle, point: { x: 150, y: 250 } },
-    id: crypto.randomUUID(),
+    id: v7(),
     label: "",
     pathKind: ArrowPathKind.Straight,
     sketchLevel: SketchLevel.Artist,

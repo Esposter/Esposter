@@ -44,6 +44,7 @@ import {
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
@@ -87,7 +88,7 @@ describe(saveResourceContent, () => {
   let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
   let dispose: () => Promise<void>;
   const name = "name";
-  const surveyId = crypto.randomUUID();
+  const surveyId = v7();
   const unboundProgramContent = { emailId: "", keyColumn: "", surveyId: "" };
   // A Program already bound to a survey, which is the only state an unbind can be observed from
   const createBoundProgram = async () => {
@@ -443,7 +444,7 @@ describe(saveResourceContent, () => {
     expect.hasAssertions();
 
     const program = await createBoundProgram();
-    const otherSurveyId = crypto.randomUUID();
+    const otherSurveyId = v7();
     chargeMock.mockImplementationOnce(async (...parameters: Parameters<typeof chargeMock>) => {
       await ctx.db
         .update(resourcesInResource)
@@ -479,7 +480,7 @@ describe(saveResourceContent, () => {
   test("stores one link for a target several fields bind", async () => {
     expect.hasAssertions();
 
-    const sheetId = crypto.randomUUID();
+    const sheetId = v7();
     const dataset = {
       query: { series: [{ aggregation: DatasetAggregationType.Count, column: name }], xColumn: name },
       reference: { id: sheetId, type: DatasetProviderType.Sheet },
@@ -557,7 +558,7 @@ describe(saveResourceContent, () => {
             altText: "",
             fileId: assetHash,
             height: 100,
-            id: crypto.randomUUID(),
+            id: v7(),
             type: PositionedElementType.Image,
             width: 100,
             x: 0,

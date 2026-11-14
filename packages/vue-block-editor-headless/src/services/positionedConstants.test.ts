@@ -10,13 +10,14 @@ import { ShapeKind } from "#src/models/ShapeKind";
 import { SketchLevel } from "#src/models/SketchLevel";
 import { StrokeWidth } from "#src/models/StrokeWidth";
 import { TextSize } from "#src/models/TextSize";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
-export const POSITIONED_ANNOTATION_ID: string = crypto.randomUUID();
-const POSITIONED_ARROW_ID: string = crypto.randomUUID();
-const POSITIONED_FREE_ARROW_ID: string = crypto.randomUUID();
-export const POSITIONED_PROCESS_ID: string = crypto.randomUUID();
-export const POSITIONED_RECTANGLE_ID: string = crypto.randomUUID();
+export const POSITIONED_ANNOTATION_ID: string = v7();
+const POSITIONED_ARROW_ID: string = v7();
+const POSITIONED_FREE_ARROW_ID: string = v7();
+export const POSITIONED_PROCESS_ID: string = v7();
+export const POSITIONED_RECTANGLE_ID: string = v7();
 
 // A rectangle at the origin, 100 by 100: its bottom point is at (50, 100)
 export const POSITIONED_RECTANGLE: ShapeElement = {

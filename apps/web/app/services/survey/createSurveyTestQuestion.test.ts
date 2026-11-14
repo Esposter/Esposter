@@ -1,5 +1,6 @@
 import type { SurveyTextNode } from "vue-survey-engine-headless";
 
+import { v7 } from "uuid";
 import { describe } from "vitest";
 import { SurveyNodeType, surveyTextNodeType } from "vue-survey-engine-headless";
 
@@ -13,15 +14,7 @@ export const createSurveyTestQuestion = (
     visibleIf = "",
   }: { enableIf?: string; isRequired?: boolean; requiredIf?: string; visibleIf?: string } = {},
 ): SurveyTextNode => ({
-  props: {
-    ...surveyTextNodeType.createDefaultProps(),
-    enableIf,
-    id: crypto.randomUUID(),
-    isRequired,
-    name,
-    requiredIf,
-    visibleIf,
-  },
+  props: { ...surveyTextNodeType.createDefaultProps(), enableIf, id: v7(), isRequired, name, requiredIf, visibleIf },
   type: SurveyNodeType.Text,
 });
 

@@ -2,6 +2,7 @@ import type { TextElement } from "vue-block-editor-headless";
 
 import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { getDraftPlacement } from "@/services/whiteboard/text/getDraftPlacement";
+import { v7 } from "uuid";
 import { assert, describe, expect, test } from "vitest";
 import {
   getTextLayout,
@@ -19,7 +20,7 @@ describe(getDraftPlacement, () => {
     const draft = "Review the order\nnow";
     const textBox: TextElement = {
       color: "",
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "Review",
       textSize: TextSize.Small,

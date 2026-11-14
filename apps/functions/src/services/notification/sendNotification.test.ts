@@ -18,6 +18,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, RoutePath } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -38,11 +39,11 @@ describe(sendNotification, () => {
   const name = "name";
   const path = "path";
   const title = "title";
-  const senderUserId = crypto.randomUUID();
-  const subscriberUserId = crypto.randomUUID();
-  const roomId = crypto.randomUUID();
+  const senderUserId = v7();
+  const subscriberUserId = v7();
+  const roomId = v7();
   const rowKey = getReverseTickedTimestamp();
-  const actingSessionId = crypto.randomUUID();
+  const actingSessionId = v7();
   const standardMessage = { message, partitionKey: roomId, rowKey, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 

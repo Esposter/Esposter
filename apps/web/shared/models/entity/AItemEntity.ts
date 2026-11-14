@@ -1,6 +1,7 @@
 import type { ToData } from "@esposter/shared";
 
 import { getPropertyNames, Serializable } from "@esposter/shared";
+import { v7 } from "uuid";
 import { z } from "zod";
 
 // An item stored inside a content blob. It is removed rather than soft deleted, so it keeps the timestamps and not
@@ -10,7 +11,7 @@ export class AItemEntity extends Serializable {
   // Widened deliberately: inferred, `crypto.randomUUID()` types the field as a `${string}-…` template literal,
   // Which `z.uuidv4()`'s plain `string` output then fails to satisfy in every `satisfies z.ZodType<ToData<…>>`
   // Below this class
-  id: string = crypto.randomUUID();
+  id: string = v7();
   updatedAt = new Date();
 }
 

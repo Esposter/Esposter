@@ -7,11 +7,12 @@ import { createPost } from "@/services/post/createPost.test";
 import { PostSortTypeSortByMap } from "@/services/post/PostSortTypeSortByMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useReadComments, () => {
   const { trpcMsw } = setupMswTrpc();
-  const parentId = crypto.randomUUID();
+  const parentId = v7();
 
   test("reads each branch under the comment sort the reader chose", async () => {
     expect.hasAssertions();

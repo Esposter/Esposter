@@ -3,6 +3,7 @@ import { createSurveyPage } from "#src/services/runner/createSurveyPage.test";
 import { createSurveyRunnerDocument } from "#src/services/runner/createSurveyRunnerDocument.test";
 import { flattenSurveyElementViews } from "#src/services/runner/flattenSurveyElementViews";
 import { getSurveyPageViews } from "#src/services/runner/getSurveyPageViews";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(flattenSurveyElementViews, () => {
@@ -12,7 +13,7 @@ describe(flattenSurveyElementViews, () => {
     const document = createSurveyRunnerDocument([
       createSurveyPage([
         {
-          props: { children: [{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }], id: crypto.randomUUID() },
+          props: { children: [{ props: { id: "a", name: "a" }, type: SurveyNodeType.Text }], id: v7() },
           type: SurveyNodeType.Panel,
         },
         { props: { id: "b", name: "b" }, type: SurveyNodeType.Text },

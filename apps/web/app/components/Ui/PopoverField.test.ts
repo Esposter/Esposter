@@ -3,13 +3,14 @@ import UiPopoverField from "@/components/Ui/PopoverField.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("uiPopoverField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
 
-    const callerLabelledBy = crypto.randomUUID();
+    const callerLabelledBy = v7();
     const label = "label";
     const placeholder = "placeholder";
     const value = "value";

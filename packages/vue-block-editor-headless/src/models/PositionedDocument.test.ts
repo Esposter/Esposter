@@ -13,12 +13,13 @@ import { TextSize } from "#src/models/TextSize";
 import { POSITIONED_FREE_ARROW, POSITIONED_RECTANGLE } from "#src/services/positionedConstants.test";
 import { applyPositionedEdit } from "#src/services/positionedEdit.test";
 import { JsonPatchOperationType } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("positionedDocumentSchema", () => {
   const POSITIONED_STROKE: StrokeElement = {
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     points: [
       { x: 0, y: 0 },
       { x: 50, y: 50 },
@@ -31,7 +32,7 @@ describe("positionedDocumentSchema", () => {
   test("a document of typed elements parses back unchanged", () => {
     expect.hasAssertions();
 
-    const stickyNoteId = crypto.randomUUID();
+    const stickyNoteId = v7();
     const stickyNote: StickyNoteElement = {
       color: "",
       dashPattern: DashPattern.Solid,

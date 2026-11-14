@@ -8,6 +8,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { bucketMock, reserveStorageBytesMock } = vi.hoisted(() => ({
@@ -33,8 +34,8 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 });
 
 describe(generateReservedResourceAssetSasEntities, () => {
-  const userId = crypto.randomUUID();
-  const resourceId = crypto.randomUUID();
+  const userId = v7();
+  const resourceId = v7();
   // The file's bytes and the address they hash to. A held address is trusted only as far as the bytes under it hash to it
   const bytes = new Uint8Array(1);
   const hash = createHash("sha256").update(bytes).digest("hex");

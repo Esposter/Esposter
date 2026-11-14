@@ -12,6 +12,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, onTestFinished, test } from "vitest";
 
 const getNodeTitle = (nodeId: string) => nodeId;
@@ -57,7 +58,7 @@ describe("pageBuilderEmailBar", () => {
   test("a message that names a node selects it", async () => {
     expect.hasAssertions();
 
-    const nodeId = crypto.randomUUID();
+    const nodeId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const component = await mountBar([{ message, nodeId, severity: EditorFindingSeverity.Error }]);
     await takeOne(component.get('[role="dialog"]').findAll("button"), 0).trigger("click");

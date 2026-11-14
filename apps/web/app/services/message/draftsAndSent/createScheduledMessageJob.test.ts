@@ -2,6 +2,7 @@ import type { ScheduledMessageJobInMessageWithRoom } from "#shared/models/db/mes
 
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 export const createScheduledMessageJob = (
@@ -13,14 +14,14 @@ export const createScheduledMessageJob = (
     completedAt: null,
     createdAt: new Date(0),
     deletedAt: null,
-    id: crypto.randomUUID(),
+    id: v7(),
     payload: { message: "message", replyToId: null, type: ScheduledMessageJobType.ScheduledMessage },
     processingStartedAt: null,
     room,
     roomId: room.id,
     runAt: new Date(0),
     updatedAt: new Date(0),
-    userId: crypto.randomUUID(),
+    userId: v7(),
     ...overrides,
   };
 };

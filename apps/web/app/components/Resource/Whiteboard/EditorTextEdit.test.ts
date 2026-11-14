@@ -4,6 +4,7 @@ import { WHITEBOARD_PROCESS } from "@/services/whiteboard/constants.test";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import { HorizontalAlignment, PositionedElementType, TextSize } from "vue-block-editor-headless";
 
@@ -35,7 +36,7 @@ describe("resourceWhiteboardEditorTextEdit", () => {
     const textBox = {
       color: "",
       horizontalAlignment: HorizontalAlignment.Left,
-      id: crypto.randomUUID(),
+      id: v7(),
       isWrapped: false,
       text: "",
       textSize: TextSize.Small,

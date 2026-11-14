@@ -6,11 +6,12 @@ import { useDataStore } from "@/store/message/data";
 import { usePinStore } from "@/store/message/pin";
 import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(usePinStore, () => {
-  const roomId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const roomId = v7();
+  const userId = v7();
   const message = "message";
   const createMessage = () => createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
 
@@ -39,7 +40,7 @@ describe(usePinStore, () => {
   test("pins a message in a room the reader is not currently in", async () => {
     expect.hasAssertions();
 
-    const otherRoomId = crypto.randomUUID();
+    const otherRoomId = v7();
     const dataStore = useDataStore();
     const { getSlice: getDataSlice } = dataStore;
     const pinStore = usePinStore();

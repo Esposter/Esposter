@@ -9,6 +9,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("pageBuilderEmailStylePanel", () => {
@@ -31,7 +32,7 @@ describe("pageBuilderEmailStylePanel", () => {
               type: MjmlNodeType.Column,
             },
           ],
-          id: crypto.randomUUID(),
+          id: v7(),
         },
         type: MjmlNodeType.Section,
       },
@@ -95,7 +96,7 @@ describe("pageBuilderEmailStylePanel", () => {
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },

@@ -5,11 +5,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 describe("resourceRelatedResources", () => {
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
+  const id = v7();
   const references = { consumers: [], dependencies: [], missingDependencyCount: 0 };
   const mountRelatedResources = () => mountSuspended(ResourceRelatedResources, { props: { id } });
 

@@ -9,6 +9,7 @@ import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
 import { noop } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 type ReadPostsQuery = NonNullable<z.input<typeof readPostsInputSchema>>;
@@ -21,7 +22,7 @@ const createPagedRead = () => {
 
 describe(usePagedPostRead, () => {
   const { trpcMsw } = setupMswTrpc();
-  const userId = crypto.randomUUID();
+  const userId = v7();
 
   test("reads the first page with the query it is given", async () => {
     expect.hasAssertions();

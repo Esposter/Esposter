@@ -9,6 +9,7 @@ import {
 } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyCheckboxNodeType } from "#src/services/surveyCheckboxNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createCheckboxNode = (props: Partial<SurveyCheckboxNode["props"]>): SurveyCheckboxNode => ({
@@ -18,7 +19,7 @@ const createCheckboxNode = (props: Partial<SurveyCheckboxNode["props"]>): Survey
       { text: "", value: "a" },
       { text: "", value: "b" },
     ],
-    id: crypto.randomUUID(),
+    id: v7(),
     ...props,
   },
   type: SurveyNodeType.Checkbox,

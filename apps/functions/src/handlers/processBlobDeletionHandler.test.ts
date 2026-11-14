@@ -16,6 +16,7 @@ import {
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -57,7 +58,7 @@ describe(processBlobDeletionHandler, () => {
   const prefix = "a";
   const prefixedBlobName = `${prefix}/${blobName}`;
   const content = "";
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const countedBytes = 1;
   const seedBlob = async (name: string) => {
     const bucket = getBucket(StorageBucket.MessageAssets);

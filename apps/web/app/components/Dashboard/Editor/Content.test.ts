@@ -28,11 +28,12 @@ import { ResourceType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("dashboardEditorContent", () => {
   const { trpcMsw } = setupMswTrpc();
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const gridWidth = 970;
   const menuLabel = '[aria-label="Visual actions"]';
   const createResource = (contentVersion = 0) =>

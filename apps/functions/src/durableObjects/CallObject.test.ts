@@ -1,6 +1,7 @@
 import type { CallParticipant } from "@esposter/db-schema";
 
 import { CLOUDFLARE_ACCOUNT_ID, PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { CallObject } from "#src/durableObjects/CallObject";
@@ -13,21 +14,21 @@ import {
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
 
 const createParticipant = (): CallParticipant => ({
-  id: crypto.randomUUID(),
+  id: v7(),
   image: null,
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,
   name: "name",
-  userId: crypto.randomUUID(),
+  userId: v7(),
 });
 
 const respondWith = (data: unknown) => new Response(JSON.stringify({ data }));
 
 describe(CallObject, () => {
-  const callSessionId = crypto.randomUUID();
-  const credentials = { apiToken: crypto.randomUUID(), appId: crypto.randomUUID() };
-  const meetingId = crypto.randomUUID();
+  const callSessionId = v7();
+  const credentials = { apiToken: v7(), appId: v7() };
+  const meetingId = v7();
   const environment = { CORE: {} } as unknown as Cloudflare.Env;
 
   const createCallObject = (state: MockObjectState) =>
@@ -163,9 +164,9 @@ describe(CallObject, () => {
     const response = await callObject.fetch(
       new Request("http://localhost", {
         headers: {
-          [SOCKET_IDENTITY_HEADER.deviceId]: crypto.randomUUID(),
-          [SOCKET_IDENTITY_HEADER.sessionId]: crypto.randomUUID(),
-          [SOCKET_IDENTITY_HEADER.userId]: crypto.randomUUID(),
+          [SOCKET_IDENTITY_HEADER.deviceId]: v7(),
+          [SOCKET_IDENTITY_HEADER.sessionId]: v7(),
+          [SOCKET_IDENTITY_HEADER.userId]: v7(),
           Upgrade: "websocket",
         },
       }),

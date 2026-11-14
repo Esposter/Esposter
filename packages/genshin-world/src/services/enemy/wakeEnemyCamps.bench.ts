@@ -8,6 +8,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 import { wakeEnemyCamps } from "#src/services/enemy/wakeEnemyCamps";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
+import { v7 } from "uuid";
 import { describe, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
@@ -22,7 +23,7 @@ describe(wakeEnemyCamps, () => {
     const enemies: Enemy[] = [];
     let campId = "";
     for (let index = 0; index < count; index += 1) {
-      if (index % BENCH_CAMP_SIZE === 0) campId = crypto.randomUUID();
+      if (index % BENCH_CAMP_SIZE === 0) campId = v7();
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, campId);
       const isEngagedCamp = Math.floor(index / BENCH_CAMP_SIZE) % BENCH_ENGAGED_CAMP_INTERVAL === 0;
       if (isEngagedCamp) setEnemyState(enemy, index % BENCH_CAMP_SIZE === 0 ? EnemyState.Chase : EnemyState.Alert);

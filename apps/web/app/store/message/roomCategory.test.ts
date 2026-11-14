@@ -4,12 +4,13 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomCategoryStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const id = crypto.randomUUID();
-  const otherId = crypto.randomUUID();
+  const id = v7();
+  const otherId = v7();
   const name = "name";
   const updatedName = "updatedName";
   const rejectedName = "rejectedName";
@@ -83,7 +84,7 @@ describe(useRoomCategoryStore, () => {
   test("restores only the positions the rejected reorder moved", async () => {
     expect.hasAssertions();
 
-    const thirdId = crypto.randomUUID();
+    const thirdId = v7();
     const roomCategoryStore = useRoomCategoryStore();
     const { roomCategories } = storeToRefs(roomCategoryStore);
     const { reorderRoomCategories } = roomCategoryStore;

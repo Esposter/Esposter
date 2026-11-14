@@ -3,6 +3,7 @@ import type { H3Event } from "nuxt/server";
 import callWebhook from "#server/api/webhooks/realtimekit.post";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createRealtimeKitWebhookSigner } from "#server/services/realtimeKit/createRealtimeKitWebhookSigner.test";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 const { callObject, findCallSession, findSession } = vi.hoisted(() => ({
@@ -33,10 +34,10 @@ const createEvent = (body: ArrayBuffer, signature: string) =>
   }) as unknown as H3Event;
 
 describe("api/webhooks/realtimekit", () => {
-  const callSessionId = crypto.randomUUID();
-  const meetingId = crypto.randomUUID();
-  const sessionId = crypto.randomUUID();
-  const userId = crypto.randomUUID();
+  const callSessionId = v7();
+  const meetingId = v7();
+  const sessionId = v7();
+  const userId = v7();
   let signer: Awaited<ReturnType<typeof createRealtimeKitWebhookSigner>>;
 
   beforeAll(async () => {

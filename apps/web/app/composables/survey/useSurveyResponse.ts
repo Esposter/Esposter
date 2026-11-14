@@ -4,6 +4,7 @@ import type { SurveyAnswers } from "vue-survey-engine-headless";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { getResultAsync } from "@esposter/shared";
+import { v7 } from "uuid";
 import { surveyAnswerValueSchema } from "vue-survey-engine-headless";
 import { z } from "zod";
 
@@ -17,7 +18,7 @@ export const useSurveyResponse = (resourceId: string, participantToken: string) 
   const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(resourceId, participantToken), "");
   // A response's id is its seed, so a shuffled choice list keeps one order across visits: the id of the stored
   // Response when there is one, else a new id that the first save creates the row under
-  const seed = surveyResponseId.value || crypto.randomUUID();
+  const seed = surveyResponseId.value || v7();
   let surveyResponse: SurveyResponseInResource | undefined;
   const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.

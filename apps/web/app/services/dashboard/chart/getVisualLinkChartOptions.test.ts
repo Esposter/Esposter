@@ -4,10 +4,11 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
 import { ID_SEPARATOR } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(getVisualLinkChartOptions, () => {
-  const id = crypto.randomUUID();
+  const id = v7();
   const xColumn = "xColumn";
   const createBoundVisual = (visualXColumn = xColumn, type = VisualType.Area) =>
     new Visual({

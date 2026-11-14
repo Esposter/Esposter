@@ -5,10 +5,11 @@ import { surveyDocumentSchema } from "#src/services/surveyDocumentSchema";
 import { surveyNodeSchema } from "#src/services/surveyNodeSchema";
 import { surveyNodeTypeDefinitionMap } from "#src/services/surveyNodeTypeDefinitionMap";
 import { MAX_SURVEY_EXPRESSION_LENGTH } from "survey-expression";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 // A minimal node of a type: its definition's default props, its slots empty, and a fresh id
-const createNode = (type: SurveyNodeType, id = crypto.randomUUID()): unknown => {
+const createNode = (type: SurveyNodeType, id = v7()): unknown => {
   const definition = surveyNodeTypeDefinitionMap[type];
   const slots = Object.fromEntries(Object.keys(definition.slots).map((slot) => [slot, []]));
   return { props: { ...definition.createDefaultProps(), ...slots, id }, type };

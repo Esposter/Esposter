@@ -4,6 +4,7 @@ import type { Device } from "#shared/models/auth/Device";
 import OtherSaveNotice from "@/components/Resource/OtherSaveNotice.vue";
 import { useResourceStore } from "@/store/resource";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe("otherSaveNotice", () => {
@@ -13,7 +14,7 @@ describe("otherSaveNotice", () => {
     expect.hasAssertions();
 
     const apiKeyName = "Assistant";
-    const device: Device = { sessionId: crypto.randomUUID(), userId: crypto.randomUUID() };
+    const device: Device = { sessionId: v7(), userId: v7() };
     const resourceStore = useResourceStore();
     resourceStore.heldSave = { apiKeyName, contentVersion: 1, device };
     const component = await mountSuspended(OtherSaveNotice);

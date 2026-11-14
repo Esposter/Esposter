@@ -8,13 +8,14 @@ import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCClientError } from "@trpc/client";
 import { flushPromises } from "@vue/test-utils";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 describe(useReadData, () => {
   const message = "";
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const session = ref<null | { user: { id: string } }>(null);
   let wrapper: undefined | VueWrapper;
 

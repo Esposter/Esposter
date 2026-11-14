@@ -5,6 +5,7 @@ import { WHITEBOARD_ARROW, WHITEBOARD_PROCESS } from "@/services/whiteboard/cons
 import { MINIMUM_ELEMENT_SIZE } from "@/services/whiteboard/gesture/constants";
 import { getScaleOperations } from "@/services/whiteboard/gesture/getScaleOperations";
 import { applyPatches } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { ArrowheadKind, PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
 
@@ -18,13 +19,13 @@ const createShape = (id: string, x: number, y: number, width: number, height: nu
 });
 
 describe(getScaleOperations, () => {
-  const FIRST_ID = crypto.randomUUID();
-  const SECOND_ID = crypto.randomUUID();
-  const THIRD_ID = crypto.randomUUID();
-  const SMALL_ID = crypto.randomUUID();
-  const LARGE_ID = crypto.randomUUID();
-  const ARROW_ID = crypto.randomUUID();
-  const STROKE_ID = crypto.randomUUID();
+  const FIRST_ID = v7();
+  const SECOND_ID = v7();
+  const THIRD_ID = v7();
+  const SMALL_ID = v7();
+  const LARGE_ID = v7();
+  const ARROW_ID = v7();
+  const STROKE_ID = v7();
 
   test("dragging a corner of several shapes scales each of them", () => {
     expect.hasAssertions();

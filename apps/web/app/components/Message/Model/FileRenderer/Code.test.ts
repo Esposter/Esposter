@@ -11,6 +11,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { EditorView } from "codemirror";
+import { v7 } from "uuid";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { Transition } from "vue";
 
@@ -33,7 +34,7 @@ describe("messageModelFileRendererCode", () => {
   const scrollTop = 40;
   const text = "attachment";
   const url = "";
-  const file = new FileEntity({ filename: "filename", id: crypto.randomUUID(), mimetype: MimeType.PlainText, size: 1 });
+  const file = new FileEntity({ filename: "filename", id: v7(), mimetype: MimeType.PlainText, size: 1 });
   const props = { file, isPreview: false, language: languageName, url };
   const mountCode = (propsOverride?: Partial<typeof props>) =>
     mountSuspended(MessageModelFileRendererCode, { attachTo: document.body, props: { ...props, ...propsOverride } });

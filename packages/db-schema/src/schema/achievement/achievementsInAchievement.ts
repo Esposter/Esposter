@@ -4,13 +4,14 @@ import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { sqliteTable } from "#src/sqliteTable";
 import { text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
+import { v7 } from "uuid";
 
 export const achievementsInAchievement = sqliteTable(
   "achievements",
   {
     id: text()
       .primaryKey()
-      .$defaultFn(() => crypto.randomUUID()),
+      .$defaultFn(() => v7()),
     name: createEnumColumn(AchievementName).notNull().unique(),
   },
   { schema: achievementSchema },

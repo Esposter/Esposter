@@ -5,11 +5,12 @@ import { createSurveyRatingAnswerSchema } from "#src/services/runner/answer/crea
 import { SURVEY_OUT_OF_RANGE_MESSAGE } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyRatingNodeType } from "#src/services/surveyRatingNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(createSurveyRatingAnswerSchema, () => {
   const node: SurveyRatingNode = {
-    props: { ...surveyRatingNodeType.createDefaultProps(), id: crypto.randomUUID(), rateCount: 3 },
+    props: { ...surveyRatingNodeType.createDefaultProps(), id: v7(), rateCount: 3 },
     type: SurveyNodeType.Rating,
   };
 

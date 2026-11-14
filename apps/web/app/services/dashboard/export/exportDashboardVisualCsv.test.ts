@@ -10,6 +10,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useAlertStore } from "@/store/alert";
 import { downloadFile } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
@@ -21,7 +22,7 @@ describe(exportDashboardVisualCsv, () => {
   const categoryColumn = "team";
   const responseColumn = "response";
   const scoreColumn = "score";
-  const reference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+  const reference = { id: v7(), type: DatasetProviderType.Sheet };
   const dataset: Dataset = {
     columns: [
       { name: categoryColumn, type: ColumnType.String },

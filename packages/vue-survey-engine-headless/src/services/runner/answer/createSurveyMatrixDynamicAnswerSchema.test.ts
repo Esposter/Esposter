@@ -10,6 +10,7 @@ import {
 } from "#src/services/runner/constants";
 import { getSurveyFirstMessage } from "#src/services/runner/getSurveyFirstMessage";
 import { surveyMatrixDynamicNodeType } from "#src/services/surveyMatrixDynamicNodeType";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createMatrixDynamicNode = (): SurveyMatrixDynamicNode => ({
@@ -19,7 +20,7 @@ const createMatrixDynamicNode = (): SurveyMatrixDynamicNode => ({
       { cellType: SurveyMatrixCellType.Text, choices: [], isRequired: true, name: "a", title: "" },
       { cellType: SurveyMatrixCellType.Boolean, choices: [], isRequired: false, name: "b", title: "" },
     ],
-    id: crypto.randomUUID(),
+    id: v7(),
     maxRowCount: 2,
     minRowCount: 1,
   },

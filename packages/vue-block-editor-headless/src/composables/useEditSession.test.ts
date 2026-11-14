@@ -2,6 +2,7 @@ import type { EditSessionSelection } from "#src/models/EditSessionSelection";
 
 import { useEditSession } from "#src/composables/useEditSession";
 import { createHistory, pushHistory } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import { ref } from "vue";
 
@@ -13,8 +14,8 @@ const getPointer = (index: number) => `/items/${index}`;
 const createDocument = (...ids: string[]): TestDocument => ({ items: ids.map((id) => ({ id })) });
 
 describe(useEditSession, () => {
-  const TEST_ID = crypto.randomUUID();
-  const TEST_OTHER_ID = crypto.randomUUID();
+  const TEST_ID = v7();
+  const TEST_OTHER_ID = v7();
   const TEST_LABEL = "a";
   const TEST_LIMIT = 1;
   const selection: EditSessionSelection<TestDocument> = {

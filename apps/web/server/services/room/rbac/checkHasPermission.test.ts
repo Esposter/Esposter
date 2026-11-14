@@ -3,6 +3,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { checkHasPermission } from "@esposter/db";
 import { RoomPermission } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(checkHasPermission, () => {
@@ -26,12 +27,7 @@ describe(checkHasPermission, () => {
     expect.hasAssertions();
 
     const owner = getMockSession().user;
-    const hasReadMessages = await checkHasPermission(
-      getMockContext().db,
-      owner.id,
-      crypto.randomUUID(),
-      RoomPermission.ReadMessages,
-    );
+    const hasReadMessages = await checkHasPermission(getMockContext().db, owner.id, v7(), RoomPermission.ReadMessages);
 
     expect(hasReadMessages).toBe(false);
   });

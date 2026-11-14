@@ -5,6 +5,7 @@ import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { TEST_CONTEXT, TEST_LABEL, TEST_SURVEY_ID } from "#shared/services/pageBuilder/constants.test";
 import { noop } from "@esposter/shared";
 import { MjmlNodeType } from "mjml-blocks";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 describe(compileEmailDocument, () => {
@@ -20,16 +21,16 @@ describe(compileEmailDocument, () => {
                 props: {
                   children: [
                     {
-                      props: { content: TEST_LABEL, id: crypto.randomUUID(), padding: "1px 2px 3px 4px 5px" },
+                      props: { content: TEST_LABEL, id: v7(), padding: "1px 2px 3px 4px 5px" },
                       type: MjmlNodeType.Button,
                     },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },
@@ -62,17 +63,17 @@ describe(compileEmailDocument, () => {
                           content: [{ content: [{ text: "{{P&L}}", type: "text" }], type: "paragraph" }],
                           type: "doc",
                         },
-                        id: crypto.randomUUID(),
+                        id: v7(),
                       },
                       type: MjmlNodeType.Text,
                     },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },
@@ -107,17 +108,17 @@ describe(compileEmailDocument, () => {
                           content: [{ content: [{ text: TEST_LABEL, type: "text" }], type: "paragraph" }],
                           type: "doc",
                         },
-                        id: crypto.randomUUID(),
+                        id: v7(),
                       },
                       type: MjmlNodeType.Text,
                     },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },
@@ -145,17 +146,14 @@ describe(compileEmailDocument, () => {
               {
                 props: {
                   children: [
-                    {
-                      props: { id: crypto.randomUUID(), label: "", surveyId: TEST_SURVEY_ID },
-                      type: EmailNodeType.SurveyInvite,
-                    },
+                    { props: { id: v7(), label: "", surveyId: TEST_SURVEY_ID }, type: EmailNodeType.SurveyInvite },
                   ],
-                  id: crypto.randomUUID(),
+                  id: v7(),
                 },
                 type: MjmlNodeType.Column,
               },
             ],
-            id: crypto.randomUUID(),
+            id: v7(),
           },
           type: MjmlNodeType.Section,
         },

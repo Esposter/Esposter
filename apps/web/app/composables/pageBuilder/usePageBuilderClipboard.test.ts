@@ -15,6 +15,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
@@ -59,7 +60,7 @@ const createClipboard = (
 };
 
 const openResource = (content: WebpageDocument["content"]) => {
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
   return resourceId;
@@ -161,7 +162,7 @@ describe(usePageBuilderClipboard, () => {
     expect.hasAssertions();
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
-    const otherNodeId = crypto.randomUUID();
+    const otherNodeId = v7();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const resourceId = openResource([createTextNode(TEST_ROOT_TEXT_ID), createTextNode(otherNodeId)]);

@@ -9,15 +9,16 @@ import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 // The counter carries stored bytes and nothing else, so every case here is about which of the two signals —
 // Storage saying a blob landed, or a deletion saying it is gone — moved it, and by how much.
 describe(releaseStorageLedgerEntries, () => {
   let db: Database;
-  const userId = crypto.randomUUID();
+  const userId = v7();
   const containerName = StorageBucket.ResourceAssets;
-  const resourceId = crypto.randomUUID();
+  const resourceId = v7();
   const blobName = `${resourceId}/blobName`;
   const declaredBytes = 3;
   const actualBytes = 1;

@@ -1,5 +1,6 @@
 import { createWhiteboardElement } from "@/services/whiteboard/createWhiteboardElement";
 import { WHITEBOARD_STICKY_NOTE_FILL } from "@/services/whiteboard/palette/constants";
+import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 import {
   CornerStyle,
@@ -12,7 +13,7 @@ import {
 } from "vue-block-editor-headless";
 
 describe(createWhiteboardElement, () => {
-  const ELEMENT_ID = crypto.randomUUID();
+  const ELEMENT_ID = v7();
   const BOUNDS = { height: 80, width: 120, x: 10, y: 20 };
 
   test("a new shape starts with no fill", () => {

@@ -16,6 +16,7 @@ import {
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
@@ -58,11 +59,11 @@ describe(RoomObject, () => {
   };
   const userNamespace = { get: getUserStub, idFromName: (userId: string) => userId };
 
-  const userId = crypto.randomUUID();
-  const otherUserId = crypto.randomUUID();
-  const offlineUserId = crypto.randomUUID();
-  const deviceId = crypto.randomUUID();
-  const otherDeviceId = crypto.randomUUID();
+  const userId = v7();
+  const otherUserId = v7();
+  const offlineUserId = v7();
+  const deviceId = v7();
+  const otherDeviceId = v7();
   const actor = { deviceId, userId };
   const otherActor = { deviceId: otherDeviceId, userId: otherUserId };
   const searchAll = { filters: [], limit: 10, offset: 0 };
@@ -142,14 +143,14 @@ describe(RoomObject, () => {
   test("a webhook message keeps the image its app user had when it sent", async () => {
     expect.hasAssertions();
 
-    const appUserId = crypto.randomUUID();
+    const appUserId = v7();
     await mockDatabase.db
       .insert(appUsersInMessage)
       .values({ id: appUserId, image: "https://example.com/hook.png", name: "hook" });
     const { object } = createRoomObject();
     const message = await object.createWebhookMessage({
       appUserId,
-      deliveryId: crypto.randomUUID(),
+      deliveryId: v7(),
       message: "from a hook",
       senderName: "hook",
     });
@@ -201,7 +202,7 @@ describe(RoomObject, () => {
       headers: {
         Upgrade: "websocket",
         [SOCKET_IDENTITY_HEADER.deviceId]: deviceId,
-        [SOCKET_IDENTITY_HEADER.sessionId]: crypto.randomUUID(),
+        [SOCKET_IDENTITY_HEADER.sessionId]: v7(),
         [SOCKET_IDENTITY_HEADER.userId]: userId,
       },
     });
@@ -242,7 +243,7 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const message = await sendMessage(object, "hello");
-    const emojiTag = crypto.randomUUID();
+    const emojiTag = v7();
     const reaction = { emojiTag, messageId: message.id };
 
     object.addReaction(reaction, actor);
@@ -262,7 +263,7 @@ describe(RoomObject, () => {
     expect.hasAssertions();
 
     const { object } = createRoomObject();
-    const optionId = crypto.randomUUID();
+    const optionId = v7();
     const poll = await object.createMessage(
       {
         message: JSON.stringify({ options: [{ id: optionId, label: "label" }], question: "question", votes: {} }),
@@ -289,11 +290,11 @@ describe(RoomObject, () => {
 
     const { object, state } = createRoomObject();
     const due = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "due", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "due", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
     const later = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "later", runAt: new Date(ROOM_ACTIVITY_DELAY_MS * 2) },
+      { id: v7(), message: "later", runAt: new Date(ROOM_ACTIVITY_DELAY_MS * 2) },
       actor,
     );
     expect(await state.ctx.storage.getAlarm()).toBe(due.runAt.getTime());
@@ -315,7 +316,7 @@ describe(RoomObject, () => {
     const { object } = createRoomObject();
     const root = await sendMessage(object, "root", otherActor);
     const reply = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
 
@@ -337,7 +338,7 @@ describe(RoomObject, () => {
     const { object } = createRoomObject();
     const root = await sendMessage(object, "root", otherActor);
     const reply = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
 
@@ -357,7 +358,7 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const scheduledMessage = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "left", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "left", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
     await mockDatabase.db
@@ -377,7 +378,7 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const scheduledMessage = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "timed out", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "timed out", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       actor,
     );
     await mockDatabase.db
@@ -398,7 +399,7 @@ describe(RoomObject, () => {
     // The room's owner holds every permission, so the sender is the other member, who holds only the @everyone role
     const { object } = createRoomObject();
     const scheduledMessage = await object.createScheduledMessage(
-      { id: crypto.randomUUID(), message: "no permission", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      { id: v7(), message: "no permission", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
       otherActor,
     );
     await mockDatabase.db.delete(roomRolesInMessage).where(eq(roomRolesInMessage.roomId, roomId));

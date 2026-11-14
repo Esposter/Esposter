@@ -6,6 +6,7 @@ import { authMocks, createMockSession, insertMockSession } from "#server/auth.te
 import { createMockDb as baseCreateMockDb, emptyD1Database } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { describe } from "vitest";
 
 // The identity every test reads to learn who it is acting as. One session for the whole run, unlike the ones a
@@ -28,11 +29,11 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         .insert(usersInAuth)
         .values({
           createdAt,
-          email: crypto.randomUUID(),
+          email: v7(),
           emailVerified: true,
-          id: crypto.randomUUID(),
-          image: crypto.randomUUID(),
-          name: crypto.randomUUID(),
+          id: v7(),
+          image: v7(),
+          name: v7(),
           updatedAt: createdAt,
         })
         .returning(),

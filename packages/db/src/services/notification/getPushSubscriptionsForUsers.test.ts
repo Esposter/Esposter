@@ -4,15 +4,16 @@ import { createUser } from "#src/services/message/createUser.test";
 import { getPushSubscriptionsForUsers } from "#src/services/notification/getPushSubscriptionsForUsers";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInNotification, sessionsInAuth, usersInAuth } from "@esposter/db-schema";
+import { v7 } from "uuid";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
 
 describe(getPushSubscriptionsForUsers, () => {
   let db: Database;
   const name = "name";
-  const userId = crypto.randomUUID();
-  const otherUserId = crypto.randomUUID();
-  const actingSessionId = crypto.randomUUID();
-  const otherSessionId = crypto.randomUUID();
+  const userId = v7();
+  const otherUserId = v7();
+  const actingSessionId = v7();
+  const otherSessionId = v7();
 
   beforeAll(async () => {
     db = (await createMockDb()).db;
@@ -63,7 +64,7 @@ describe(getPushSubscriptionsForUsers, () => {
   test("reads the subscriptions of a room too large for one statement", async () => {
     expect.hasAssertions();
 
-    const roomUserIds = [...Array.from({ length: 65_535 }, () => crypto.randomUUID()), userId];
+    const roomUserIds = [...Array.from({ length: 65_535 }, () => v7()), userId];
     const readPushSubscriptions = await getPushSubscriptionsForUsers(db, roomUserIds);
 
     expect(readPushSubscriptions.map(({ endpoint }) => endpoint).toSorted()).toStrictEqual(

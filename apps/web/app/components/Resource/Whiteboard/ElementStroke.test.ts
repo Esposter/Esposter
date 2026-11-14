@@ -4,6 +4,7 @@ import type { StrokeElement } from "vue-block-editor-headless";
 import ResourceWhiteboardElementStroke from "@/components/Resource/Whiteboard/ElementStroke.vue";
 import { mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
+import { v7 } from "uuid";
 import { beforeEach, describe, expect, test } from "vitest";
 import { PositionedElementType, StrokeWidth } from "vue-block-editor-headless";
 
@@ -15,7 +16,7 @@ describe("resourceWhiteboardElementStroke", () => {
   // A stroke with a quick turn at its middle point, which a polyline would draw as a corner
   const stroke: StrokeElement = {
     color: "",
-    id: crypto.randomUUID(),
+    id: v7(),
     points: [
       { x: 0, y: 0 },
       { x: 100, y: 0 },
