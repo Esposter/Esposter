@@ -101,9 +101,9 @@ An effect that a compensating cleanup would otherwise leave behind SHALL complet
 - **WHEN** the rollback runs
 - **THEN** no activity entry remains for the removed resource
 
-### Requirement: A post-write effect whose loss breaks a promise is published as a durable event
+### Requirement: A post-write effect whose loss breaks a promise is published as a queued job
 
-A post-write effect whose loss would break a promise to a user SHALL be published as an event that is retried until it completes, and a publish that never reaches the event system SHALL be logged and not retried.
+A post-write effect whose loss would break a promise to a user SHALL be published as a queued job that is retried until it completes, and a publish the queue rejects SHALL be logged and not retried.
 
 #### Scenario: A file attachment is deleted
 
@@ -113,7 +113,7 @@ A post-write effect whose loss would break a promise to a user SHALL be publishe
 
 #### Scenario: The publish itself fails
 
-- **GIVEN** the event system does not accept the publish
+- **GIVEN** the queue does not accept the publish
 - **WHEN** the failure happens
 - **THEN** the failure is logged
 - **AND** nothing is retried
