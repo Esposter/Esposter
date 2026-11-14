@@ -17,7 +17,6 @@ import {
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { count } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -40,9 +39,6 @@ describe("achievementRouter", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    // The message a test sends to earn an achievement lands in Azure Table, so it is cleaned here like every
-    // Other row the test wrote
-    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievementsInAchievement);
     userObjectCalls.length = 0;
