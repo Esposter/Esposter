@@ -27,7 +27,7 @@ Every resource whose containing resource is declared sets the `parent` Pulumi op
 - A local `const` within a file is fine when it is the **source of truth** for that name and reused more than once in
   the same file. `prodR2EsposterMessageAssets.ts` builds `bucketName` once with `getCloudflareResourceName` and uses it as the Pulumi resource name and the bucket's `name`. Don't introduce a local const that merely duplicates a name owned by another resource file.
 - **Named constants only for cross-file reuse** — create a constant file only when the value is referenced in ≥2
-  resource files. `CloudflareAccountId` is the pattern: every resource file reads it from `src/cloudflare/constants/`.
+  resource files. `QueueConsumerRetryDelay` is the pattern: every resource file that needs it reads it from `src/cloudflare/constants/`.
 - **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names,
   parents and protection are per-environment), but any value identical across stacks — the account id, the location hint, a queue consumer's retry delay — is imported from one shared constant in `src/cloudflare/constants/` rather than duplicated per stack.
 - **A value the infra shares with app code interpolates the same constant that code uses.** A queue's name is built by `getCloudflareResourceName`, the same function the functions Worker's batch handler uses to name the queue it consumes, so renaming one cannot leave the infra and the code it feeds silently disagreeing.

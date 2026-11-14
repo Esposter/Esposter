@@ -33,7 +33,7 @@ One private package, one `prod` stack, `src/` split by provider (`src/cloudflare
 ## Pointing at Another Resource
 
 - **A resource with a containing resource sets `parent` to it** — a queue consumer to its queue, an R2 bucket's lifecycle and event notification to the bucket, a zone's DNS records, ruleset and Workers custom domains to the zone. A queue, dead-letter queue, D1 database, R2 bucket or zone is account-scoped and takes no parent (`references/resource-references.md`).
-- **Prefer a resource output over a repeated identifier literal**; a named constant is earned at two resource files, as the account id is (`apps/infra/src/cloudflare/constants/CloudflareAccountId.ts`).
+- **Prefer a resource output over a repeated identifier literal**; a named constant is earned at two resource files, as the queue consumer retry delay is (`apps/infra/src/cloudflare/constants/QueueConsumerRetryDelay.ts`).
 - **`resource.name` and `resource.id` are `Output<string>`** — a plain backtick interpolation and a computed object key both produce `"[object Object]"` silently, so a template literal takes `pulumi.interpolate` and a key takes a plain-string source of truth.
 
 ## Provider Imports (namespace, not named)
