@@ -18,8 +18,8 @@ flowchart LR
   route_login["/login"]
   route_messages["/messages"]
   route_messages_id_["/messages/[id]"]
-  route_messages_id_rowKey_["/messages/[id]/[rowKey]"]
-  route_messages_id_thread_rowKey_["/messages/[id]/thread/[rowKey]"]
+  route_messages_id_messageId_["/messages/[id]/[messageId]"]
+  route_messages_id_thread_messageId_["/messages/[id]/thread/[messageId]"]
   route_messages_draftsandsent["/messages/draftsandsent"]
   route_messages_friends["/messages/friends"]
   route_messages_invite_code_["/messages/invite/[code]"]
@@ -52,7 +52,7 @@ flowchart LR
   shell --> route_login
   shell --> route_messages
   shell --> route_messages_id_
-  shell --> route_messages_id_thread_rowKey_
+  shell --> route_messages_id_thread_messageId_
   shell --> route_privacy_policy
   shell --> route_resource_explorer
   shell --> route_resource_explorer_all
@@ -78,29 +78,29 @@ flowchart LR
   route_messages_id_ --> route_messages
   route_messages_id_ --> route_messages_draftsandsent
   route_messages_id_ --> route_messages_friends
-  route_messages_id_ --> route_messages_id_rowKey_
-  route_messages_id_ --> route_messages_id_thread_rowKey_
+  route_messages_id_ --> route_messages_id_messageId_
+  route_messages_id_ --> route_messages_id_thread_messageId_
   route_messages_id_ --> route_messages_invite_code_
-  route_messages_id_rowKey_ --> route_login
-  route_messages_id_rowKey_ --> route_messages
-  route_messages_id_rowKey_ --> route_messages_draftsandsent
-  route_messages_id_rowKey_ --> route_messages_friends
-  route_messages_id_rowKey_ --> route_messages_id_
-  route_messages_id_rowKey_ --> route_messages_id_thread_rowKey_
-  route_messages_id_rowKey_ --> route_messages_invite_code_
-  route_messages_id_thread_rowKey_ --> route_login
-  route_messages_id_thread_rowKey_ --> route_messages
-  route_messages_id_thread_rowKey_ --> route_messages_draftsandsent
-  route_messages_id_thread_rowKey_ --> route_messages_friends
-  route_messages_id_thread_rowKey_ --> route_messages_id_
-  route_messages_id_thread_rowKey_ --> route_messages_id_rowKey_
-  route_messages_id_thread_rowKey_ --> route_messages_invite_code_
+  route_messages_id_messageId_ --> route_login
+  route_messages_id_messageId_ --> route_messages
+  route_messages_id_messageId_ --> route_messages_draftsandsent
+  route_messages_id_messageId_ --> route_messages_friends
+  route_messages_id_messageId_ --> route_messages_id_
+  route_messages_id_messageId_ --> route_messages_id_thread_messageId_
+  route_messages_id_messageId_ --> route_messages_invite_code_
+  route_messages_id_thread_messageId_ --> route_login
+  route_messages_id_thread_messageId_ --> route_messages
+  route_messages_id_thread_messageId_ --> route_messages_draftsandsent
+  route_messages_id_thread_messageId_ --> route_messages_friends
+  route_messages_id_thread_messageId_ --> route_messages_id_
+  route_messages_id_thread_messageId_ --> route_messages_id_messageId_
+  route_messages_id_thread_messageId_ --> route_messages_invite_code_
   route_messages_draftsandsent --> route_login
   route_messages_draftsandsent --> route_messages
   route_messages_draftsandsent --> route_messages_friends
   route_messages_draftsandsent --> route_messages_id_
-  route_messages_draftsandsent --> route_messages_id_rowKey_
-  route_messages_draftsandsent --> route_messages_id_thread_rowKey_
+  route_messages_draftsandsent --> route_messages_id_messageId_
+  route_messages_draftsandsent --> route_messages_id_thread_messageId_
   route_messages_draftsandsent --> route_messages_invite_code_
   route_messages_friends --> route_login
   route_messages_friends --> route_messages
