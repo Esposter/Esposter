@@ -1,4 +1,16 @@
-import type { ReconcileTodoRemindersInput, SentMessageCursor, UserEvent, UserObjectRpc } from "@esposter/db-schema";
+import type {
+  FriendInSocial,
+  FriendRequestInSocial,
+  FriendRequestInSocialWithRelations,
+  PublicUser,
+  ReconcileTodoRemindersInput,
+  SentMessageCursor,
+  StorageUsage,
+  UserAchievementInAchievementWithRelations,
+  UserEvent,
+  UserObjectRpc,
+  UserToRoomInMessage,
+} from "@esposter/db-schema";
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
 import userMigrations from "#src/durableObjects/user/migrations/migrations";
@@ -8,6 +20,7 @@ import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { TODO_REMINDER_RETRY_DELAY_MS } from "#src/services/todoReminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
+import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
@@ -148,6 +161,51 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.db
       .delete(sentMessagesInUser)
       .where(and(eq(sentMessagesInUser.roomId, input.roomId), eq(sentMessagesInUser.messageId, input.messageId)));
+  }
+
+  // The person's own events, each to every tab they have open. A save leaves out the tabs of the session that made it,
+  // since that session already shows the change
+  async acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void> {
+    this.broadcast({ data: input, type: "acceptFriendRequest" });
+  }
+
+  async declineFriendRequest(input: Pick<FriendRequestInSocial, "receiverId" | "senderId">): Promise<void> {
+    this.broadcast({ data: input, type: "declineFriendRequest" });
+  }
+
+  async deleteFriend(input: Pick<FriendInSocial, "receiverId" | "senderId">): Promise<void> {
+    this.broadcast({ data: input, type: "deleteFriend" });
+  }
+
+  async replaceSession(sessionId: string): Promise<void> {
+    this.broadcast({ data: { sessionId }, type: "replaceSession" });
+  }
+
+  async saveResourceContent(
+    content: { apiKeyName: string; contentVersion: number; id: string },
+    sessionId: string,
+  ): Promise<void> {
+    this.broadcast({ data: content, type: "saveResourceContent" }, { excludeTag: `session:${sessionId}` });
+  }
+
+  async sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void> {
+    this.broadcast({ data: friendRequest, type: "sendFriendRequest" });
+  }
+
+  async updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {
+    this.broadcast({ data: userAchievements, type: "updateAchievement" });
+  }
+
+  async updateUsage(storageUsage: StorageUsage): Promise<void> {
+    this.broadcast({ data: storageUsage, type: "updateUsage" });
+  }
+
+  async updateUserToRoom(userToRoom: UserToRoomInMessage): Promise<void> {
+    this.broadcast({ data: userToRoom, type: "updateUserToRoom" });
+  }
+
+  async upsertStatus(status: Parameters<UserObjectRpc["upsertStatus"]>[0]): Promise<void> {
+    await setUserStatusInRooms(status);
   }
 
   // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on

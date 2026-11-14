@@ -1,14 +1,21 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { Database, PublishEvent, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
+import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { PublishEventType, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import {
+  StorageBucket,
+  StorageTier,
+  StorageTierQuotaMap,
+  storageLedgerInStorage,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { createHash } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -26,11 +33,8 @@ vi.mock(import("#src/services/storage/getBucket"), async () => {
   return { ...actual, getBucket: vi.fn(actual.getBucket) };
 });
 
-// The meter lives in the app process, so publishing is the only thing this handler can do about it — which
-// Makes the event it publishes the assertable half: it has to be the owner whose counter moved
-const { publishMock } = vi.hoisted(() => ({ publishMock: vi.fn<(event: PublishEvent) => Promise<void>>() }));
-
-vi.mock(import("#src/services/server/publishToServer"), () => ({ publishToServer: publishMock }));
+// The meter lives in the app process, so the figure reaches it through the owner's User object
+vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 
 const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
 const readResourceAssetNames = async () => readBlobNames(StorageBucket.ResourceAssets);
@@ -56,6 +60,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   });
 
   afterEach(async () => {
+    userObjectCalls.length = 0;
     vi.restoreAllMocks();
     await clearMockBuckets();
     await mockDb.delete(storageLedgerInStorage);
@@ -88,7 +93,13 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(blobName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
+    expect(userObjectCalls).toStrictEqual([
+      {
+        args: [{ bytesUsed: contentLength, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
+        method: "updateUsage",
+        userId,
+      },
+    ]);
   });
 
   // A message attachment is named by its room and its id, with the filename after the separator.
@@ -102,7 +113,13 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageContainerName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
+    expect(userObjectCalls).toStrictEqual([
+      {
+        args: [{ bytesUsed: contentLength, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
+        method: "updateUsage",
+        userId,
+      },
+    ]);
     expect(getBucket).not.toHaveBeenCalled();
   });
 
@@ -115,10 +132,11 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     const message = createObjectCreatedMessage(blobName);
     await reconcileStorageLedgerEntryHandler(message);
     vi.clearAllMocks();
+    userObjectCalls.length = 0;
     await reconcileStorageLedgerEntryHandler(message);
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(publishMock).not.toHaveBeenCalled();
+    expect(userObjectCalls).toStrictEqual([]);
   });
 
   test("ignores a bucket no upload reserves against", async () => {

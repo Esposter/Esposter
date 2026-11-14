@@ -1,16 +1,18 @@
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { BlobDeletionQueueMessage, Database, PublishEvent } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, Database } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
   MAX_CONCURRENT_BLOB_DELETIONS,
   StorageBucket,
-  PublishEventType,
+  StorageTier,
+  StorageTierQuotaMap,
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
@@ -32,11 +34,8 @@ vi.mock(import("#src/services/storage/getBucket"), async () => {
   return { ...actual, getBucket: vi.fn(actual.getBucket) };
 });
 
-// Released bytes are published to the owner's meter, which lives in the app process — so the event published
-// Is the only observable this handler has for the half of a deletion the owner actually watches
-const { publishMock } = vi.hoisted(() => ({ publishMock: vi.fn<(event: PublishEvent) => Promise<void>>() }));
-
-vi.mock(import("#src/services/server/publishToServer"), () => ({ publishToServer: publishMock }));
+// The owner's meter lives in the app process, so the figure reaches it through the owner's User object
+vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 
 const readContainer = () => readBlobNames(StorageBucket.MessageAssets);
 
@@ -88,6 +87,7 @@ describe(processBlobDeletionHandler, () => {
   });
 
   afterEach(async () => {
+    userObjectCalls.length = 0;
     vi.restoreAllMocks();
     await clearMockBuckets();
     await mockDb.delete(storageLedgerInStorage);
@@ -158,17 +158,23 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(createEvent([blobName]));
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
-    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
+    expect(userObjectCalls).toStrictEqual([
+      {
+        args: [{ bytesUsed: 0, quotaBytes: StorageTierQuotaMap[StorageTier.Free], tier: StorageTier.Free }],
+        method: "updateUsage",
+        userId,
+      },
+    ]);
   });
 
   // A deletion whose blobs were never charged to anyone releases nothing, so there is no meter to tell
-  test("publishes nothing when the deletion frees no accounted bytes", async () => {
+  test("updates no meter when the deletion frees no accounted bytes", async () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);
     await processBlobDeletionHandler(createEvent([blobName]));
 
-    expect(publishMock).not.toHaveBeenCalled();
+    expect(userObjectCalls).toStrictEqual([]);
   });
 
   test("processBlobDeletionHandler is idempotent", async () => {
