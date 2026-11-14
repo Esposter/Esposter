@@ -3,6 +3,7 @@ import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { RoomEvent } from "#src/models/realtime/RoomEvent";
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { RoomReaction } from "#src/models/realtime/RoomReaction";
+import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 
 // Who a write is done as. The device, when named, is the one whose own socket is not sent the write's echo
@@ -109,4 +110,6 @@ export interface RoomObjectRpc {
   setMemberStatus(status: UserStatusInMessage): void;
   // A room event the caller raised from D1's own changes, sent to the sockets a tag names, or to every socket
   broadcastEvent(event: RoomEvent, options?: { excludeTag?: string; tag?: string }): void;
+  // A room-list event the room's own write raised, sent to each member online in the room through that member's object
+  notifyOnlineMembers(event: UserEvent): Promise<void>;
 }

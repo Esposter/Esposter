@@ -1,4 +1,4 @@
-import type { UserStatusInMessage } from "@esposter/db-schema";
+import type { UserEvent, UserStatusInMessage } from "@esposter/db-schema";
 import type {
   CreateRoomMessageInput,
   CreateWebhookRoomMessageInput,
@@ -542,6 +542,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   broadcastEvent(event: RoomEvent, options: { excludeTag?: string; tag?: string } = {}): void {
     this.broadcast(event, options);
+  }
+
+  // The members attached here are the ones a room-list event reaches, so a member who has left is not sent the event
+  async notifyOnlineMembers(event: UserEvent): Promise<void> {
+    const onlineMembers = this.db.select().from(onlineMembersInRoom).all();
+    const results = await Promise.allSettled(
+      onlineMembers.map(({ userId }) => this.getUser(userId).broadcastEvent(event)),
+    );
+    for (const result of results) if (result.status === "rejected") console.error(result.reason);
   }
 
   // A message is written and broadcast in one synchronous turn, and marks the room active for the fan-out it owes

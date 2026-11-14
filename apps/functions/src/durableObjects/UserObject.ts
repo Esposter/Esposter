@@ -79,6 +79,11 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.armAlarm();
   }
 
+  // A room-list event sent to every tab the person has open, whichever room's write or D1 change raised it
+  async broadcastEvent(event: UserEvent): Promise<void> {
+    this.broadcast(event);
+  }
+
   // A revoked session's sockets close here and no other session's do. Each close runs the base's own close hook, so the
   // presence it ends is reported like any other close
   async closeSession(sessionId: string): Promise<void> {

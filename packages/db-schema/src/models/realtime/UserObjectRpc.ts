@@ -8,12 +8,15 @@ import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/Recon
 import type { SentMessageCursor } from "#src/models/realtime/SentMessageCursor";
 import type { StorageTier } from "#src/models/user/StorageTier";
 import type { UserAchievementInAchievementWithRelations } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
+import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
 
 // The RPC surface of a User object, the one contract its class in the functions Worker and the web Worker's callers share.
 // A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
+  // A room-list event, sent to every tab the person has open
+  broadcastEvent(event: UserEvent): Promise<void>;
   acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void>;
   addScheduledMessage(scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }): Promise<void>;
   addSentMessage(sentMessage: { createdAt: Date; messageId: number; roomId: string }): Promise<void>;

@@ -28,7 +28,12 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE } from "#src/services/room/constants";
 
 type UserStub = Record<
-  "addScheduledMessage" | "addSentMessage" | "removeScheduledMessage" | "removeSentMessage" | "roomActivity",
+  | "addScheduledMessage"
+  | "addSentMessage"
+  | "broadcastEvent"
+  | "removeScheduledMessage"
+  | "removeSentMessage"
+  | "roomActivity",
   Mock
 >;
 
@@ -43,6 +48,7 @@ describe(RoomObject, () => {
     const stub: UserStub = {
       addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
       addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
+      broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
       removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
       removeSentMessage: vi.fn<UserObjectRpc["removeSentMessage"]>(),
       roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
@@ -429,6 +435,18 @@ describe(RoomObject, () => {
       .from(roomsInMessage)
       .where(eq(roomsInMessage.id, roomId));
     expect(room?.updatedAt).toStrictEqual(last.createdAt);
+  });
+
+  test("a room-list event reaches only the members online here, each through its own object", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    object.attachMember(userId, createStatus(userId, true));
+    const leaveEvent = { data: { roomId, userId: otherUserId }, type: "leaveRoom" } as const;
+    await object.notifyOnlineMembers(leaveEvent);
+
+    expect(getUserStub(userId).broadcastEvent).toHaveBeenCalledExactlyOnceWith(leaveEvent);
+    expect(userStubs.has(otherUserId)).toBe(false);
   });
 
   test("erasing a person's messages blanks what they said and leaves the rest, and their export pages by id", async () => {

@@ -40,18 +40,21 @@ const deleteRoomEmojiEventSchema = z.object({
   data: selectRoomEmojiInMessageSchema.pick({ id: true, roomId: true }),
   type: z.literal("deleteRoomEmoji"),
 });
+// A role's permission bitfield is a bigint, which JSON cannot carry, so a role event names it by its decimal digits
+const roleEventSchema = selectRoomRoleInMessageSchema.extend({
+  permissions: z.string().regex(MEMBER_PERMISSION_BIGINT_REGEX),
+});
 const assignRoleEventSchema = z.object({
-  data: z.object({ ...selectRoomRoleInMessageSchema.shape, ...userIdSchema.shape }),
+  data: z.object({ ...roleEventSchema.shape, ...userIdSchema.shape }),
   type: z.literal("assignRole"),
 });
-const createRoleEventSchema = z.object({ data: selectRoomRoleInMessageSchema, type: z.literal("createRole") });
+const createRoleEventSchema = z.object({ data: roleEventSchema, type: z.literal("createRole") });
 const deleteRoleEventSchema = z.object({
   data: selectRoomRoleInMessageSchema.pick({ id: true, roomId: true }),
   type: z.literal("deleteRole"),
 });
 const revokeRoleEventSchema = z.object({ data: revokeRoleInputSchema, type: z.literal("revokeRole") });
-const updateRoleEventSchema = z.object({ data: selectRoomRoleInMessageSchema, type: z.literal("updateRole") });
-// A permission bitfield is a bigint, which JSON cannot carry, so it rides as its decimal digits
+const updateRoleEventSchema = z.object({ data: roleEventSchema, type: z.literal("updateRole") });
 const updateMemberPermissionOverrideEventSchema = z.object({
   data: z.object({
     allow: z.string().regex(MEMBER_PERMISSION_BIGINT_REGEX),
