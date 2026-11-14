@@ -1,6 +1,6 @@
 # sql-highlight
 
-`apps/web/server/services/db/highlightSql.ts` colours a Postgres query for the dev query log. It is written in-house rather than taken from the npm package `sql-highlight` (see Upstream below), and it stays in `apps/web` because one server caller uses it and `@esposter/shared` ships to the browser. It is written for Postgres, which is the only dialect Drizzle emits here, so the upstream's MySQL and SQL Server habits (backtick identifiers, `#` comments, backslash escapes in strings) are not carried over.
+`apps/web/server/services/db/highlightSql.ts` colours a SQLite query for the dev query log. It is written in-house rather than taken from the npm package `sql-highlight` (see Upstream below), and it stays in `apps/web` because one server caller uses it and `@esposter/shared` ships to the browser. It is written for SQLite, which is the only dialect Drizzle emits here, so the upstream's MySQL and SQL Server habits (backtick identifiers, `#` comments, backslash escapes in strings) are not carried over.
 
 ## How a query is painted
 
@@ -19,7 +19,7 @@ flowchart TD
 ```
 
 - **A keyword is matched only at the start of a word**, because the word alternative consumes a whole identifier first. So `index` is not painted for `in`, and a keyword inside a string or a double-quoted identifier is never reached, since the string or identifier alternative takes the whole token first.
-- **Quotes are Postgres's.** A single-quoted string ends at its closing quote, with `''` as the only escape, and a backslash is an ordinary character. A double-quoted identifier works the same way.
+- **Quotes are SQLite's.** A single-quoted string ends at its closing quote, with `''` as the only escape, and a backslash is an ordinary character. A double-quoted identifier works the same way.
 - **A function is a word followed by an opening bracket.** A keyword followed by one (`values (`, `in (`) is still a keyword, since the keyword alternative is tried first.
 - **The output is always the input.** Text that is not a token passes through untouched, so stripping the colour gives the query back exactly.
 
@@ -51,21 +51,21 @@ Each `scriptcoded/sql-highlight` issue, open and closed, was read through its co
 | [#5](https://github.com/scriptcoded/sql-highlight/issues/5)     | False positive — API shape          | the export is `highlightSql`, the one function the logger uses                                                                                                                          |
 | [#6](https://github.com/scriptcoded/sql-highlight/issues/6)     | Out of scope                        | owner: this page; no caller needs a custom highlighter                                                                                                                                  |
 | [#7](https://github.com/scriptcoded/sql-highlight/issues/7)     | Out of scope                        | owner: this page; colours are `styleText` names and the terminal's theme decides them                                                                                                   |
-| [#8](https://github.com/scriptcoded/sql-highlight/issues/8)     | Fixed upstream, pinned              | LIMIT is in `POSTGRES_KEYWORDS`                                                                                                                                                         |
+| [#8](https://github.com/scriptcoded/sql-highlight/issues/8)     | Fixed upstream, pinned              | LIMIT is in the keyword list                                                                                                                                                            |
 | [#9](https://github.com/scriptcoded/sql-highlight/issues/9)     | Out of scope                        | owner: this page; the log shows the query as written, with no text transform                                                                                                            |
 | [#10](https://github.com/scriptcoded/sql-highlight/issues/10)   | Fixed upstream, pinned              | "with colour stripped, a Drizzle select is the input exactly" keeps `= true`                                                                                                            |
 | [#11](https://github.com/scriptcoded/sql-highlight/issues/11)   | Fixed upstream, pinned              | the colour-stripped equality test for a Drizzle select keeps the quoted address whole                                                                                                   |
 | [#13](https://github.com/scriptcoded/sql-highlight/issues/13)   | Fixed upstream, pinned              | "#13 reads a decimal number as one number"                                                                                                                                              |
 | [#14](https://github.com/scriptcoded/sql-highlight/issues/14)   | Fixed upstream, pinned              | the colour-stripped equality test: words at either end are kept                                                                                                                         |
-| [#17](https://github.com/scriptcoded/sql-highlight/issues/17)   | Fixed upstream, pinned              | WITH is in `POSTGRES_KEYWORDS`                                                                                                                                                          |
-| [#19](https://github.com/scriptcoded/sql-highlight/issues/19)   | Fixed upstream, pinned              | END is in `POSTGRES_KEYWORDS`; the `!=` operator is left plain                                                                                                                          |
+| [#17](https://github.com/scriptcoded/sql-highlight/issues/17)   | Fixed upstream, pinned              | WITH is in the keyword list                                                                                                                                                             |
+| [#19](https://github.com/scriptcoded/sql-highlight/issues/19)   | Fixed upstream, pinned              | END is in the keyword list; the `!=` operator is left plain                                                                                                                             |
 | [#26](https://github.com/scriptcoded/sql-highlight/issues/26)   | Fixed upstream, pinned              | "#26 paints OVERLAPS as a keyword"                                                                                                                                                      |
 | [#31](https://github.com/scriptcoded/sql-highlight/issues/31)   | Out of scope                        | owner: this page; the highlighter is server-side, and the browser never loads it                                                                                                        |
 | [#35](https://github.com/scriptcoded/sql-highlight/issues/35)   | Fixed upstream, pinned              | "#35 keywords are matched case-insensitively"                                                                                                                                           |
 | [#60](https://github.com/scriptcoded/sql-highlight/issues/60)   | Fixed upstream, pinned              | "#60 keeps keywords after a schema-qualified name"                                                                                                                                      |
 | [#90](https://github.com/scriptcoded/sql-highlight/issues/90)   | Out of scope                        | owner: this page; there is no HTML output                                                                                                                                               |
 | [#106](https://github.com/scriptcoded/sql-highlight/issues/106) | Out of scope                        | owner: this page; the highlighter runs in Node, and its number pattern uses no lookbehind                                                                                               |
-| [#133](https://github.com/scriptcoded/sql-highlight/issues/133) | In scope — defect                   | "#133 reads # as an operator, since Postgres has no # comment"; upstream paints `# 3 from t` as a comment. Comments themselves are tested in "comments are painted in the muted style"  |
+| [#133](https://github.com/scriptcoded/sql-highlight/issues/133) | In scope — defect                   | "#133 reads # as an operator, since SQLite has no # comment"; upstream paints `# 3 from t` as a comment. Comments themselves are tested in "comments are painted in the muted style"    |
 | [#140](https://github.com/scriptcoded/sql-highlight/issues/140) | False positive — GitHub-owned       | the contributors list is GitHub's own, not the package's                                                                                                                                |
 | [#147](https://github.com/scriptcoded/sql-highlight/issues/147) | In scope — feature                  | double-quoted identifiers have their own token kind, tested with #4                                                                                                                     |
 | [#149](https://github.com/scriptcoded/sql-highlight/issues/149) | In scope — defect                   | "#149 reads a minus after an operand as an operator, not as the sign of a number"; upstream paints `-1` as one number. Exponents and decimals are pinned by #13                         |
@@ -82,12 +82,12 @@ Each `scriptcoded/sql-highlight` issue, open and closed, was read through its co
 | Path                                               | Role                                                 |
 | :------------------------------------------------- | :--------------------------------------------------- |
 | `apps/web/server/services/db/highlightSql.ts`      | The tokenizer and `highlightSql`                     |
-| `apps/web/server/services/db/constants.ts`         | `POSTGRES_KEYWORDS` and the colour map               |
+| `apps/web/server/services/db/constants.ts`         | the keyword list and the colour map                  |
 | `apps/web/server/db/logger.ts`                     | The Drizzle logger that passes each query through it |
 | `apps/web/server/services/db/highlightSql.test.ts` | The suite, with the regression tests named by issue  |
 
 ## Sources
 
 - The upstream repository and its issue tracker, [sql-highlight](https://github.com/scriptcoded/sql-highlight), read at the 6.1.0 source.
-- The Postgres keyword list, [Appendix C. SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html), for what counts as a keyword.
+- The SQLite keyword list, [SQL keywords](https://www.sqlite.org/lang_keywords.html), for what counts as a keyword.
 - Node's [`util.styleText`](https://nodejs.org/api/util.html#utilstyletextformat-text-options), for the colour rules and the terminal check.
