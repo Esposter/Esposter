@@ -1,8 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const queueName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.Queue,
+  toKebabCase(AzureFunction.ProcessWebhook),
+);
+
 export const devQEsposterProcessWebhook: cloudflare.Queue = new cloudflare.Queue(
-  "queue-dev-process-webhook",
-  { accountId: CloudflareAccountId, queueName: "dev-process-webhook" },
+  queueName,
+  { accountId: CloudflareAccountId, queueName: queueName },
   { protect: true },
 );

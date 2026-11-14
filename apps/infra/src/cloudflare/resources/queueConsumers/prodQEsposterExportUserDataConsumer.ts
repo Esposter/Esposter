@@ -1,17 +1,35 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import CloudflareWorkerName from "#src/cloudflare/constants/CloudflareWorkerName";
 import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
 import { prodDlqEsposterExportUserData } from "#src/cloudflare/resources/queues/prodDlqEsposterExportUserData";
 import { prodQEsposterExportUserData } from "#src/cloudflare/resources/queues/prodQEsposterExportUserData";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  CloudflareWorkerPurpose,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const queueName = getCloudflareResourceName(
+  CloudflareEnvironment.Production,
+  CloudflareAssetType.Queue,
+  toKebabCase(AzureFunction.ExportUserData),
+);
+const scriptName = getCloudflareResourceName(
+  CloudflareEnvironment.Production,
+  CloudflareAssetType.Worker,
+  CloudflareWorkerPurpose.Functions,
+);
+
 export const prodQEsposterExportUserDataConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
-  "queueConsumer-export-user-data",
+  `${queueName}-consumer`,
   {
     accountId: CloudflareAccountId,
     deadLetterQueue: prodDlqEsposterExportUserData.queueName,
     queueId: prodQEsposterExportUserData.queueId,
-    scriptName: CloudflareWorkerName.esposterFunctions,
+    scriptName,
     settings: QueueConsumerRetry.idempotent,
     type: "worker",
   },

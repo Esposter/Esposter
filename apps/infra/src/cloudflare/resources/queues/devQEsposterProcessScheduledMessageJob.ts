@@ -1,8 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const queueName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.Queue,
+  toKebabCase(AzureFunction.ProcessScheduledMessageJob),
+);
+
 export const devQEsposterProcessScheduledMessageJob: cloudflare.Queue = new cloudflare.Queue(
-  "queue-dev-process-scheduled-message-job",
-  { accountId: CloudflareAccountId, queueName: "dev-process-scheduled-message-job" },
+  queueName,
+  { accountId: CloudflareAccountId, queueName: queueName },
   { protect: true },
 );

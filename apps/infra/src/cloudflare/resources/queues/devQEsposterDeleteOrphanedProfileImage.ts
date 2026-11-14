@@ -1,8 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const queueName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.Queue,
+  toKebabCase(AzureFunction.DeleteOrphanedProfileImage),
+);
+
 export const devQEsposterDeleteOrphanedProfileImage: cloudflare.Queue = new cloudflare.Queue(
-  "queue-dev-delete-orphaned-profile-image",
-  { accountId: CloudflareAccountId, queueName: "dev-delete-orphaned-profile-image" },
+  queueName,
+  { accountId: CloudflareAccountId, queueName: queueName },
   { protect: true },
 );

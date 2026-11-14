@@ -1,9 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
+import {
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  StorageBucket,
+} from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const bucketName = getCloudflareResourceName(
+  CloudflareEnvironment.Production,
+  CloudflareAssetType.R2Bucket,
+  StorageBucket.PublicDungeonsAssets,
+);
+
 export const prodR2EsposterPublicDungeonsAssets: cloudflare.R2Bucket = new cloudflare.R2Bucket(
-  "r2Bucket-public-dungeons-assets",
-  { accountId: CloudflareAccountId, location: CloudflareLocationHint, name: "public-dungeons-assets" },
+  bucketName,
+  { accountId: CloudflareAccountId, location: CloudflareLocationHint, name: bucketName },
   { protect: true },
 );

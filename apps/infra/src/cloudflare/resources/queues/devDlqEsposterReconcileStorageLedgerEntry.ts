@@ -1,8 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const deadLetterQueueName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.DeadLetterQueue,
+  toKebabCase(AzureFunction.ReconcileStorageLedgerEntry),
+);
+
 export const devDlqEsposterReconcileStorageLedgerEntry: cloudflare.Queue = new cloudflare.Queue(
-  "queue-dev-reconcile-storage-ledger-entry-dlq",
-  { accountId: CloudflareAccountId, queueName: "dev-reconcile-storage-ledger-entry-dlq" },
+  deadLetterQueueName,
+  { accountId: CloudflareAccountId, queueName: deadLetterQueueName },
   { protect: true },
 );

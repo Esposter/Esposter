@@ -1,17 +1,35 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import CloudflareWorkerName from "#src/cloudflare/constants/CloudflareWorkerName";
 import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
 import { devDlqEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/devDlqEsposterProcessBlobDeletion";
 import { devQEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/devQEsposterProcessBlobDeletion";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  CloudflareWorkerPurpose,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const queueName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.Queue,
+  toKebabCase(AzureFunction.ProcessBlobDeletion),
+);
+const scriptName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.Worker,
+  CloudflareWorkerPurpose.Functions,
+);
+
 export const devQEsposterProcessBlobDeletionConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
-  "queueConsumer-dev-process-blob-deletion",
+  `${queueName}-consumer`,
   {
     accountId: CloudflareAccountId,
     deadLetterQueue: devDlqEsposterProcessBlobDeletion.queueName,
     queueId: devQEsposterProcessBlobDeletion.queueId,
-    scriptName: CloudflareWorkerName.esposterFunctionsDev,
+    scriptName,
     settings: QueueConsumerRetry.idempotent,
     type: "worker",
   },

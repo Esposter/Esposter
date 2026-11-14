@@ -1,8 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
+import {
+  AzureFunction,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+} from "@esposter/db-schema";
+import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const deadLetterQueueName = getCloudflareResourceName(
+  CloudflareEnvironment.Production,
+  CloudflareAssetType.DeadLetterQueue,
+  toKebabCase(AzureFunction.ProcessBlobDeletion),
+);
+
 export const prodDlqEsposterProcessBlobDeletion: cloudflare.Queue = new cloudflare.Queue(
-  "queue-process-blob-deletion-dlq",
-  { accountId: CloudflareAccountId, queueName: "process-blob-deletion-dlq" },
+  deadLetterQueueName,
+  { accountId: CloudflareAccountId, queueName: deadLetterQueueName },
   { protect: true },
 );

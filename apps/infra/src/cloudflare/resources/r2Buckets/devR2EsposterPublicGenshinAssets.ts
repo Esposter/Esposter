@@ -1,9 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
+import {
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  StorageBucket,
+} from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
+const bucketName = getCloudflareResourceName(
+  CloudflareEnvironment.Development,
+  CloudflareAssetType.R2Bucket,
+  StorageBucket.PublicGenshinAssets,
+);
+
 export const devR2EsposterPublicGenshinAssets: cloudflare.R2Bucket = new cloudflare.R2Bucket(
-  "r2Bucket-dev-public-genshin-assets",
-  { accountId: CloudflareAccountId, location: CloudflareLocationHint, name: "dev-public-genshin-assets" },
+  bucketName,
+  { accountId: CloudflareAccountId, location: CloudflareLocationHint, name: bucketName },
   { protect: true },
 );

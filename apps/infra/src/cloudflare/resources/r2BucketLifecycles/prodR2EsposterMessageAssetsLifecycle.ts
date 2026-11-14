@@ -1,10 +1,22 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import { prodR2EsposterMessageAssets } from "#src/cloudflare/resources/r2Buckets/prodR2EsposterMessageAssets";
+import {
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  StorageBucket,
+} from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
+
+const bucketName = getCloudflareResourceName(
+  CloudflareEnvironment.Production,
+  CloudflareAssetType.R2Bucket,
+  StorageBucket.MessageAssets,
+);
 
 // Azure's Cool tier at thirty days. R2 has no Cold tier, so the ninety-day step Azure takes has no equivalent here.
 export const prodR2EsposterMessageAssetsLifecycle: cloudflare.R2BucketLifecycle = new cloudflare.R2BucketLifecycle(
-  "r2BucketLifecycle-message-assets",
+  `${bucketName}-lifecycle`,
   {
     accountId: CloudflareAccountId,
     bucketName: prodR2EsposterMessageAssets.name,
