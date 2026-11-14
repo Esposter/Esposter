@@ -2,6 +2,7 @@
 import { useAchievementStore } from "@/store/achievement";
 
 await useAchievementSubscribables();
+await useUserSocket();
 
 const { $trpc } = useNuxtApp();
 const achievementStore = useAchievementStore();
