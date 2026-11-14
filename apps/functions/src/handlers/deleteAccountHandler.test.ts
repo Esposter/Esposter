@@ -42,7 +42,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
-vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
   const { deleteAccountBlobDirectories } = await importOriginal();
   return {

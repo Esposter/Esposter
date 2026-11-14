@@ -26,8 +26,8 @@ const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs
 
 export const nitro: NuxtConfig["nitro"] = {
   // The Worker's own wrangler configuration, written beside the build. The top level is prod, which a local run and an
-  // Unset CLOUDFLARE_ENV use; the env blocks are what CI deploys, `dev` or `prod` by its branch. The Durable Object is
-  // The app's stateful half, which the Worker forwards tRPC to, and the Scheduler is the functions Worker's
+  // Unset CLOUDFLARE_ENV use; the env blocks are what CI deploys, `dev` or `prod` by its branch. The app's stateful half is
+  // the functions Worker's Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,
     nodeCompat: true,
@@ -37,7 +37,6 @@ export const nitro: NuxtConfig["nitro"] = {
         dev: getEnvironmentWrangler(CloudflareEnvironment.Development),
         prod: getEnvironmentWrangler(CloudflareEnvironment.Production),
       },
-      migrations: [{ new_sqlite_classes: ["$DurableObject"], tag: "v1" }],
       ...getEnvironmentWrangler(CloudflareEnvironment.Production),
     },
   },

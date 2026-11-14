@@ -52,7 +52,6 @@
       "durable_objects": {
         "bindings": [
           { "name": "SCHEDULER", "class_name": "Scheduler" },
-          { "name": "SERVER", "class_name": "$DurableObject", "script_name": "prod-wkr-esposter-web" },
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
           { "name": "USER", "class_name": "UserObject" },
@@ -103,7 +102,6 @@
       "durable_objects": {
         "bindings": [
           { "name": "SCHEDULER", "class_name": "Scheduler" },
-          { "name": "SERVER", "class_name": "$DurableObject", "script_name": "dev-wkr-esposter-web" },
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
           { "name": "USER", "class_name": "UserObject" },

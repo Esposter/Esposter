@@ -41,7 +41,6 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     ],
     durable_objects: {
       bindings: [
-        { class_name: "$DurableObject", name: "$DurableObject" },
         { class_name: "Scheduler", name: "SCHEDULER", script_name: functionsWorkerName },
         { class_name: "CallObject", name: "CALL", script_name: functionsWorkerName },
         { class_name: "RoomObject", name: "ROOM", script_name: functionsWorkerName },

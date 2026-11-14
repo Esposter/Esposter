@@ -31,7 +31,6 @@ declare global {
       RESOURCE_ASSETS: R2Bucket;
       ROOM: DurableObjectNamespace<RoomObject>;
       SCHEDULER: DurableObjectNamespace<Rpc.DurableObjectBranded & SchedulerObject>;
-      SERVER: DurableObjectNamespace;
       USER: DurableObjectNamespace<UserObject>;
       USER_ASSETS: R2Bucket;
     }

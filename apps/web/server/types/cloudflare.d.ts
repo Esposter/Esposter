@@ -17,7 +17,6 @@ type BucketBindings = { [Bucket in StorageBucket as ScreamingSnakeCase<Bucket>]:
 type QueueBindings = { [Job in AzureFunction as `${ScreamingSnakeCase<KebabCase<Job>>}_QUEUE`]: Queue };
 
 interface Bindings extends BucketBindings, QueueBindings {
-  $DurableObject: DurableObjectNamespace;
   ASSETS: Fetcher;
   CALL: DurableObjectNamespace<Rpc.DurableObjectBranded & CallObjectRpc>;
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
