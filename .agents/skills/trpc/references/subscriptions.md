@@ -10,7 +10,7 @@ A client receives a frame through a handler registered on `useConnectionStore` (
 
 ## Whose socket hears a write
 
-A write's event goes to every socket its object holds except the socket of the device or session that made the write: a room write names its device, a call write its session, and `excludeTag` skips that socket (`getSendOptions` in `apps/functions/src/durableObjects/RoomObject.ts`). A person's `UserEvent` reaches every session the person holds, unless the object names one to skip.
+A write's event goes to every socket its object holds except the socket of the device or session that made the write: a room write names its device, a call write its session, and `excludeTag` skips that socket (`getSendOptions` in `apps/realtime/src/durableObjects/RoomObject.ts`). A person's `UserEvent` reaches every session the person holds, unless the object names one to skip.
 
 | Does the write's own socket hear the event?       | Store update after the mutation                                                               |
 | ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
@@ -21,7 +21,7 @@ Decide the side once for each event, then keep to it: the same row is never upda
 
 ## Open the socket before the read it must not miss
 
-A read whose answer a change could overtake waits for its socket to settle, then reads. `openCall` returns a promise that settles once the call socket's first attempt opens or closes, so a read made after it misses no change (`apps/web/app/store/realtime/connection.ts`). A room socket opens with `after` set to the last message id the page holds, and the room object replays every message sent after that id before it goes live, so a reconnect misses nothing (`apps/functions/src/durableObjects/RoomObject.ts`).
+A read whose answer a change could overtake waits for its socket to settle, then reads. `openCall` returns a promise that settles once the call socket's first attempt opens or closes, so a read made after it misses no change (`apps/web/app/store/realtime/connection.ts`). A room socket opens with `after` set to the last message id the page holds, and the room object replays every message sent after that id before it goes live, so a reconnect misses nothing (`apps/realtime/src/durableObjects/RoomObject.ts`).
 
 ## Room streams are socket routes, not procedures
 

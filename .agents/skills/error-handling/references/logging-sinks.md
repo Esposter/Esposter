@@ -2,7 +2,7 @@
 
 Read when writing an err handler, logging a failure, or writing a notice for an expected degradation. The one-line rules are in `SKILL.md`; this page is the sinks and the one place `console.warn` stays.
 
-- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`; `console.warn` handed to any handler slot is a `no-restricted-syntax` error. The console is the sink for every err handler, including a queue consumer's: a Worker has no logger beyond it, and `handleQueueBatch` (`apps/functions/src/services/queue/handleQueueBatch.ts`) logs each failed message with `console.error`. **The ban is on `console.warn` as an
+- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`; `console.warn` handed to any handler slot is a `no-restricted-syntax` error. The console is the sink for every err handler, including a queue consumer's: a Worker has no logger beyond it, and `handleQueueBatch` (`apps/jobs/src/services/queue/handleQueueBatch.ts`) logs each failed message with `console.error`. **The ban is on `console.warn` as an
   err handler** — a failure downgraded to a warning is a failure nobody reads. A notice that no chain produced keeps
   it: a browser without autoplay or background processors, an anonymous request on a local production build with no
   address to key a limiter on — each is an expected degradation on a path that has not failed, and `console.error`

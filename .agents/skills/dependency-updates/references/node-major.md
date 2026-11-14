@@ -4,7 +4,7 @@ Read when a new node major ships, when `pnpm outdated:dependencies` lists the no
 
 ## The target
 
-Every environment that runs this repo's node runs the pin's major. The Workers are not one of them: they run on the Workers runtime, whose Node API surface is set by the `compatibility_date` and the `nodejs_compat` flag in `apps/functions/wrangler.jsonc`, so no node major is pinned there.
+Every environment that runs this repo's node runs the pin's major. The Workers are not one of them: they run on the Workers runtime, whose Node API surface is set by the `compatibility_date` and the `nodejs_compat` flag in `apps/realtime/wrangler.jsonc` and `apps/jobs/wrangler.jsonc`, so no node major is pinned there.
 
 ## The hold
 

@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-It provides server-side helpers over D1 and R2, for the server environment only: the R2 blob reads, writes and copies, and the message, moderation and RBAC services over D1. The message, moderation, notification, resource and RBAC services built on them are shared by the app and the functions Worker.
+It provides server-side helpers over D1 and R2, for the server environment only: the R2 blob reads, writes and copies, and the message, moderation and RBAC services over D1. The message, moderation, notification, resource and RBAC services built on them are shared by the app, the realtime Worker and the jobs Worker.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 

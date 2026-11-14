@@ -55,7 +55,7 @@ Asset type (`CloudflareAssetType`):
 | D1 database       | `prod-d1-esposter-core`                                                  | `dev-d1-esposter-core`             |
 | Queue             | `prod-q-esposter-delete-account`                                         | `dev-q-esposter-process-webhook`   |
 | Dead-letter queue | `prod-dlq-esposter-delete-account`                                       | `dev-dlq-esposter-process-webhook` |
-| Worker            | `prod-wkr-esposter-web`                                                  | `dev-wkr-esposter-functions`       |
+| Worker            | `prod-wkr-esposter-web`                                                  | `dev-wkr-esposter-jobs`            |
 | RealtimeKit app   | `prod-rtk-esposter-calls`                                                | `dev-rtk-esposter-calls`           |
 | API token         | `tok-esposter-infra`, `tok-esposter-r2`, `prod-tok-esposter-realtimekit` | `dev-tok-esposter-realtimekit`     |
 

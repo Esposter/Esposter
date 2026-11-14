@@ -49,7 +49,7 @@ stateDiagram-v2
 | `apps/web/app/components/Ui/List/Row.vue`                             | The `leading` slot, beside the row's button                                     |
 | `apps/web/app/components/Resource/TodoList/Calendar.vue`              | Completed todos struck through on their due date                                |
 | `apps/web/server/services/resource/todoList/scheduleTodoReminders.ts` | Enqueues nothing for a completed todo                                           |
-| `apps/functions/src/services/todoReminder/sendTodoReminder.ts`        | Drops a reminder whose todo was completed, deleted or re-dated after it was set |
+| `apps/realtime/src/services/todoReminder/sendTodoReminder.ts`         | Drops a reminder whose todo was completed, deleted or re-dated after it was set |
 
 ## Sources
 

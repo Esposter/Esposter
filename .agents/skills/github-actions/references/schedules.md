@@ -12,4 +12,4 @@ separates those.
 
 The expression is quoted, because an unquoted one is a YAML scalar whose leading digits and `*`s read as luck
 rather than as a decision, and it is UTC — the only zone GitHub reads. A comment gives the cadence and why that
-cadence, never the local time it lands at, which daylight saving invalidates twice a year. A Cron Trigger (`crons` in `apps/functions/wrangler.jsonc`) reads the same five fields in UTC, so an expression copies across unchanged.
+cadence, never the local time it lands at, which daylight saving invalidates twice a year. A Cron Trigger (`crons` in `apps/jobs/wrangler.jsonc`) reads the same five fields in UTC, so an expression copies across unchanged.

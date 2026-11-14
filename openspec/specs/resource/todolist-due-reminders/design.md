@@ -42,11 +42,11 @@ One table, in the owner's User object's SQLite: `todoRemindersInUser`, one row p
 | `apps/web/server/services/resource/ResourceAfterSaveContentMap.ts`    | Registers the diff as TodoList's after-save hook                                                              |
 | `apps/web/server/services/resource/runAfterSaveResourceContent.ts`    | Fires the registered hook, fire-and-forget                                                                    |
 | `apps/web/server/services/resource/saveResourceContent.ts`            | The one content write that runs the hook                                                                      |
-| `apps/functions/src/durableObjects/UserObject.ts`                     | `reconcileTodoReminders` writes and cancels the rows; `alarm()` sends each due one                            |
-| `apps/functions/src/durableObjects/user/schema.ts`                    | The `todoRemindersInUser` table, keyed by resource and item, indexed by `dueAt`                               |
-| `apps/functions/src/services/todoReminder/sendTodoReminder.ts`        | Re-reads the stored content, verifies the item and publishes the notification, driven by `UserObject.alarm()` |
-| `apps/functions/src/services/todoReminder/constants.ts`               | `TODO_REMINDER_RETRY_DELAY_MS`, the wait before a failed send is retried                                      |
-| `apps/functions/src/services/notification/resolveNotification.ts`     | Turns the published reminder into its copy, deep link and recipient                                           |
+| `apps/realtime/src/durableObjects/UserObject.ts`                      | `reconcileTodoReminders` writes and cancels the rows; `alarm()` sends each due one                            |
+| `packages/db-schema/src/objects/user/schema.ts`                       | The `todoRemindersInUser` table, keyed by resource and item, indexed by `dueAt`                               |
+| `apps/realtime/src/services/todoReminder/sendTodoReminder.ts`         | Re-reads the stored content, verifies the item and publishes the notification, driven by `UserObject.alarm()` |
+| `apps/realtime/src/services/reminder/constants.ts`                    | `REMINDER_RETRY_DELAY_MS`, the wait before a failed send is retried                                           |
+| `apps/jobs/src/services/notification/resolveNotification.ts`          | Turns the published reminder into its copy, deep link and recipient                                           |
 
 ## Notes
 

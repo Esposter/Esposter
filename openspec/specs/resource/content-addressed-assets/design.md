@@ -87,8 +87,8 @@ A reserve names the old content's assets and the new content's together, so a wr
 | `apps/web/server/services/resource/touchResourceAssetBlob.ts`                   | the touch: rewrites the object under its own name, restarting its upload time        |
 | `packages/db/src/services/storage/findMismatchedResourceAssetHash.ts`           | the streamed hash check and the removal of mismatched bytes, shared by both paths    |
 | `apps/web/shared/models/resource/ResourceFileSasEntity.ts`                      | the write target, with `isHeld`                                                      |
-| `apps/functions/src/handlers/reconcileStorageLedgerEntryHandler.ts`             | the object-create handler                                                            |
-| `apps/functions/src/services/storage/verifyResourceAssetBlob.ts`                | the object-create check, logging what the shared hash check removes                  |
+| `apps/jobs/src/handlers/reconcileStorageLedgerEntryHandler.ts`                  | the object-create handler                                                            |
+| `apps/jobs/src/services/storage/verifyResourceAssetBlob.ts`                     | the object-create check, logging what the shared hash check removes                  |
 | `packages/db-schema/src/schema/resource/resourceVersionAssetsInResource.ts`     | the version reference table                                                          |
 | `packages/db-schema/src/schema/resource/resourceWorkingAssetsInResource.ts`     | the working-copy reference table                                                     |
 | `apps/web/server/services/resource/saveResourceContent.ts`                      | the one content writer: reserves, prunes and releases its assets                     |

@@ -48,16 +48,16 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Key files
 
-| File                                                            | Role                                                                        |
-| --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `packages/db/src/services/resource/purgeResource.ts`            | The shared, retry-ordered purge protocol                                    |
-| `packages/db-schema/src/services/resource/constants.ts`         | `RECYCLE_BIN_RETENTION_MS`                                                  |
-| `server/trpc/routers/resource.ts`                               | Bin/restore/purge + the `where` predicate                                   |
-| `server/trpc/procedure/resource/getOwnerProcedure.ts`           | Soft-delete guard + `isDeletedOnly` mode                                    |
-| `apps/functions/src/services/resource/purgeExpiredResources.ts` | The nightly purge past `RECYCLE_BIN_RETENTION_MS`, driven by a Cron Trigger |
-| `app/pages/resource-explorer/recycle-bin.vue`                   | The bin page                                                                |
-| `app/components/Resource/RecycleBin/Index.vue`                  | The bin's table, its toolbar and menus                                      |
-| `app/composables/resource/list/useReadResourcesPage.ts`         | The paged reader it shares with `/all`                                      |
+| File                                                       | Role                                                                        |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `packages/db/src/services/resource/purgeResource.ts`       | The shared, retry-ordered purge protocol                                    |
+| `packages/db-schema/src/services/resource/constants.ts`    | `RECYCLE_BIN_RETENTION_MS`                                                  |
+| `server/trpc/routers/resource.ts`                          | Bin/restore/purge + the `where` predicate                                   |
+| `server/trpc/procedure/resource/getOwnerProcedure.ts`      | Soft-delete guard + `isDeletedOnly` mode                                    |
+| `apps/jobs/src/services/resource/purgeExpiredResources.ts` | The nightly purge past `RECYCLE_BIN_RETENTION_MS`, driven by a Cron Trigger |
+| `app/pages/resource-explorer/recycle-bin.vue`              | The bin page                                                                |
+| `app/components/Resource/RecycleBin/Index.vue`             | The bin's table, its toolbar and menus                                      |
+| `app/composables/resource/list/useReadResourcesPage.ts`    | The paged reader it shares with `/all`                                      |
 
 ## Notes
 

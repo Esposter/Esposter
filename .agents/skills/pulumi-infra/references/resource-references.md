@@ -30,7 +30,7 @@ Every resource whose containing resource is declared sets the `parent` Pulumi op
   resource files. `QueueConsumerRetryDelay` is the pattern: every resource file that needs it reads it from `src/cloudflare/constants/`.
 - **Per-stack files, shared environment-independent values** — dev and prod each keep their own resource file (names,
   parents and protection are per-environment), but any value identical across stacks — the account id, the location hint, a queue consumer's retry delay — is imported from one shared constant in `src/cloudflare/constants/` rather than duplicated per stack.
-- **A value the infra shares with app code interpolates the same constant that code uses.** A queue's name is built by `getCloudflareResourceName`, the same function the functions Worker's batch handler uses to name the queue it consumes, so renaming one cannot leave the infra and the code it feeds silently disagreeing.
+- **A value the infra shares with app code interpolates the same constant that code uses.** A queue's name is built by `getCloudflareResourceName`, the same function the jobs Worker's batch handler uses to name the queue it consumes, so renaming one cannot leave the infra and the code it feeds silently disagreeing.
 - **Mixing resource outputs and enum literals in one file is fine** — use a resource output (`.name`, `.id`) when
   Pulumi declares the referenced resource, and the plain enum/constant when it does not. The two forms sitting side
   by side in one `rules` array is correct, not an inconsistency; don't "fix" one to match the other.

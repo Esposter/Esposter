@@ -9,7 +9,7 @@ flowchart TD
   save["saveResourceContent, a game's save procedure"] --> write["writeJsonBlob<br/>async zstd on the libuv threadpool"]
   write --> blob[("a zstd frame, Content-Encoding zstd")]
   write --> charge["Owner charge<br/>the stored length"]
-  blob --> server["readJsonBlob<br/>web Worker and functions Worker"]
+  blob --> server["readJsonBlob<br/>web, realtime and jobs Workers"]
   blob --> browser["browser read through a presigned URL<br/>the network stack decodes zstd"]
   server --> json["the JSON bytes"]
   browser --> json
@@ -64,7 +64,7 @@ A save gains one compression, and every server read gains one decompression. Nei
 | `apps/web/server/services/resource/saveResourceContent.ts`           | writes a resource's content, charges the stored length                  |
 | `apps/web/server/services/resource/readSerializedResourceContent.ts` | the web server's content reads                                          |
 | `apps/web/server/services/resource/readResourceContentDelta.ts`      | the delta commit's dictionary                                           |
-| `apps/functions/src/services/todoReminder/sendTodoReminder.ts`       | the reminder's re-check of a TodoList's content                         |
+| `apps/realtime/src/services/todoReminder/sendTodoReminder.ts`        | the reminder's re-check of a TodoList's content                         |
 | `apps/web/server/trpc/procedure/blobState/`                          | every game's save and load                                              |
 
 ## Sources

@@ -32,11 +32,11 @@ Every Cloudflare resource name is built by `getCloudflareResourceName` and `getC
 
 ### First deploy
 
-The web and functions Workers must exist before a Workers custom domain or a queue consumer can name them, so the first apply is three steps. Queue consumers and Workers custom domains are the two resource types excluded from the first two:
+The web and jobs Workers must exist before a Workers custom domain or a queue consumer can name them, so the first apply is three steps. Queue consumers and Workers custom domains are the two resource types excluded from the first two:
 
 1. `pnpm infra:up` with `--exclude` on the queue consumers and the custom domains. Pulumi creates the zone, its DNS records and ruleset, the R2 buckets, D1 databases, queues, dead-letter queues, bucket notifications and the billing alert.
-2. Wrangler deploys both Workers, `pnpm -C apps/web deploy:worker` and `pnpm -C apps/functions deploy:worker`, which the deploy job runs on `main` and `ai/queue`.
-3. `pnpm infra:up` again without `--exclude`. Pulumi creates the queue consumers, now that the functions Worker exists, and the custom domains, now that the web Worker does.
+2. Wrangler deploys the three Workers in that order, `pnpm -C apps/realtime deploy:worker`, `pnpm -C apps/jobs deploy:worker` and `pnpm -C apps/web deploy:worker`, which the deploy job runs on `main` and `ai/queue`.
+3. `pnpm infra:up` again without `--exclude`. Pulumi creates the queue consumers, now that the jobs Worker exists, and the custom domains, now that the web Worker does.
 
 Step 1 excludes by URN type, so the exclusion holds for every instance of the type: `--exclude "**cloudflare:index/queueConsumer:QueueConsumer**" --exclude "**cloudflare:index/workersCustomDomain:WorkersCustomDomain**"`.
 

@@ -12,11 +12,11 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). `apps/i
 - `workersCustomDomains/` — `esposter.com` to the prod web Worker, the develop hostname to the dev one.
 - `realtimeKitApps/` — the RealtimeKit app, if the provider declares one; otherwise the app is created once by its API and its id is a secret.
 
-The Workers themselves are not Pulumi resources: Nitro writes the web Worker's `wrangler.json` and the functions Worker has its own, both naming the binding ids Pulumi exports. The secrets (R2 API token, VAPID keys, auth secrets, RealtimeKit key) live in the `esposter-infra/prod` ESC environment, and CI writes them with `wrangler secret put` at deploy.
+The Workers themselves are not Pulumi resources: Nitro writes the web Worker's `wrangler.json` and the realtime and jobs Workers each have their own, all naming the binding ids Pulumi exports. The secrets (R2 API token, VAPID keys, auth secrets, RealtimeKit key) live in the `esposter-infra/prod` ESC environment, and CI writes them with `wrangler secret put` at deploy.
 
 ## Deploy
 
-A `deploy` job in CI runs on `main` after the checks pass, builds the app and runs `wrangler deploy` for the web and functions Workers, then applies pending D1 migrations with `wrangler d1 migrations apply`. `ai/queue` deploys the dev Workers the same way. The job's Cloudflare token is a GitHub secret declared in `src/github/secrets`.
+A `deploy` job in CI runs on `main` after the checks pass, builds the app and runs `wrangler deploy` for the realtime, jobs and web Workers, in that order, then applies pending D1 migrations with `wrangler d1 migrations apply`. `ai/queue` deploys the dev Workers the same way. The job's Cloudflare token is a GitHub secret declared in `src/github/secrets`.
 
 ## Key files
 

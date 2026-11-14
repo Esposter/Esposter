@@ -143,7 +143,7 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)              |
 | `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)               |
 | `apps/web/server/services/message/call/`                         | guards, the call object accessor and the summary writer        |
-| `apps/functions/src/durableObjects/CallObject.ts`                | the call's state, its sockets and its RealtimeKit participants |
+| `apps/realtime/src/durableObjects/CallObject.ts`                 | the call's state, its sockets and its RealtimeKit participants |
 | `apps/web/server/api/webhooks/realtimekit.post.ts`               | webhook backup for join/leave                                  |
 | `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                    |
 | `apps/web/app/store/message/room/realtime.ts`                    | RealtimeKit meeting bridge                                     |

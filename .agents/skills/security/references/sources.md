@@ -71,7 +71,7 @@ The index is https://cheatsheetseries.owasp.org/Glossary.html. These are the pag
   - https://cheatsheetseries.owasp.org/cheatsheets/Error_Handling_Cheat_Sheet.html
 - Runtime and platform:
   - https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html
-  - https://cheatsheetseries.owasp.org/cheatsheets/Serverless_FaaS_Security_Cheat_Sheet.html — `apps/functions`
+  - https://cheatsheetseries.owasp.org/cheatsheets/Serverless_FaaS_Security_Cheat_Sheet.html — `apps/realtime` and `apps/jobs`
   - https://cheatsheetseries.owasp.org/cheatsheets/Secure_Cloud_Architecture_Cheat_Sheet.html
   - https://cheatsheetseries.owasp.org/cheatsheets/Infrastructure_as_Code_Security_Cheat_Sheet.html — `apps/infra`
 - Supply chain and CI:

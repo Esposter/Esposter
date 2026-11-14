@@ -6,7 +6,7 @@ A Worker's configuration is declared in the repository, not set in the Cloudflar
 
 Each Worker's configuration has three sources, classified by the kind of value:
 
-- **Plain values** that the environment's name fixes. The web Worker's come from `apps/web/configuration/wrangler.ts`, which writes one wrangler block per environment, and the functions Worker's are in its `wrangler.jsonc`.
+- **Plain values** that the environment's name fixes. The web Worker's come from `apps/web/configuration/wrangler.ts`, which writes one wrangler block per environment, and the realtime and jobs Workers' are each in their own `wrangler.jsonc`.
 - **Binding ids.** A D1 database's id is not a setting read from the environment. `CloudflareCoreDatabaseIdMap` commits each environment's id, and the wrangler blocks and the migrations read it from there.
 - **Secrets.** Each secret is a schema key marked as a secret. `.github/worker-secrets.json` lists them per Worker, and the values are read from the Pulumi ESC environment `esposter-infra/prod` under `pulumiConfig.esposter-infra:<environment>_<NAME>`, so development and production values sit side by side in one environment. The deploy job writes them with `wrangler secret bulk` after the Worker deploys.
 
@@ -31,6 +31,7 @@ No secret value is in the code, in a wrangler configuration or in a stack file. 
 | File                                                                        | Role                                                                   |
 | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
 | `apps/web/configuration/wrangler.ts`                                        | The web Worker's wrangler block per environment, its vars and bindings |
-| `apps/functions/wrangler.jsonc`                                             | The functions Worker's configuration                                   |
+| `apps/jobs/wrangler.jsonc`                                                  | The jobs Worker's configuration                                        |
+| `apps/realtime/wrangler.jsonc`                                              | The realtime Worker's configuration                                    |
 | `.github/worker-secrets.json`                                               | The secret names each Worker takes                                     |
 | `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | Each environment's `core` database id                                  |

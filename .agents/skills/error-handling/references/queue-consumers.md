@@ -1,8 +1,8 @@
 # Queue consumers: logging, retry and dead-letter replay
 
-Read when writing or changing a queue consumer's job handler in the functions Worker, its dead-letter replay, or a handler that enumerates its own work from a query. The `console.*` sink is `references/logging-sinks.md`; this page covers the two phases and what a replay must do.
+Read when writing or changing a queue consumer's job handler in the jobs Worker, its dead-letter replay, or a handler that enumerates its own work from a query. The `console.*` sink is `references/logging-sinks.md`; this page covers the two phases and what a replay must do.
 
-A job handler takes its message body and nothing else: `QueueJobHandlerMap` maps each `QueueJob` to a `(body: unknown) => Promise<void>`. `handleQueueBatch` (`apps/functions/src/services/queue/handleQueueBatch.ts`) is the one place a batch's messages are settled, through `getResultAsync`: a handler that resolves acknowledges its message, and one that throws retries it. The failure is logged there with `console.error`, so a handler logs only what it knows and never rethrows what the batch handler already settles.
+A job handler takes its message body and nothing else: `QueueJobHandlerMap` maps each `QueueJob` to a `(body: unknown) => Promise<void>`. `handleQueueBatch` (`apps/jobs/src/services/queue/handleQueueBatch.ts`) is the one place a batch's messages are settled, through `getResultAsync`: a handler that resolves acknowledges its message, and one that throws retries it. The failure is logged there with `console.error`, so a handler logs only what it knows and never rethrows what the batch handler already settles.
 
 Which steps may fail the caller is the repo-wide **persist then notify** standard (`openspec/specs/architecture/persist-then-notify/design.md`) — guards and the primary write are fatal, everything after the notify is best-effort. In `apps/web/server` that tail is lint-enforced (the `persist-then-notify` oxlint plugin errors on an unwrapped `await` after an `emit`), so don't re-prescribe it here — this page covers only what the linter can't: a queue adds one mechanic on top — queue delivery is at-least-once, so here a throw is a _retry request_, and the two phases differ in whether a failure throws at all.
 
@@ -31,7 +31,7 @@ When retries are exhausted, the message goes to its job's dead-letter queue, aft
 
 - **Validates before sending again.** A payload that fails its schema can never succeed — quarantine it at once instead of spending the attempt budget on it.
 - **Carries the attempt count in the body.** A re-sent message is a new message whose attempts restart at zero, so a counter kept only on the message restarts at zero every cycle and loops forever. The count is the `attempt` field of the shared queue envelope (`queueMessageEnvelopeSchema`, `packages/db-schema/src/models/queue/QueueMessageEnvelope.ts`), which every job's message schema spreads and which defaults to 0.
-- **Quarantines past the cap** — a payload that has exhausted its attempts, or whose delivery reaches the dead-letter consumer's retry count, is written once as its raw body to R2's quarantine prefix, and `console.error` names it on the delivery that wrote it. Never re-send a poison payload to a queue a consumer reads. The replay is `apps/functions/src/services/queue/handleDeadLetterMessage.ts`.
+- **Quarantines past the cap** — a payload that has exhausted its attempts, or whose delivery reaches the dead-letter consumer's retry count, is written once as its raw body to R2's quarantine prefix, and `console.error` names it on the delivery that wrote it. Never re-send a poison payload to a queue a consumer reads. The replay is `apps/jobs/src/services/queue/handleDeadLetterMessage.ts`.
 
 ## A handler that enumerates its own work bounds it in time and in width
 

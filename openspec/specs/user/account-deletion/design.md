@@ -29,7 +29,7 @@ The confirmation lives in `apps/web/app/components/User/DeleteAccountCard/Index.
 
 ## The sweep
 
-The functions Worker's queue consumer for the `DeleteAccount` job passes the message to `deleteAccountHandler`, which runs the steps below in this order. A step that throws fails the job, and the queue retries it.
+The jobs Worker's queue consumer for the `DeleteAccount` job passes the message to `deleteAccountHandler`, which runs the steps below in this order. A step that throws fails the job, and the queue retries it.
 
 ```mermaid
 flowchart TD
@@ -93,27 +93,27 @@ Every step treats an already-gone target as done. A missing object's delete coun
 
 ## Key files
 
-| Path                                                                 | Role                                                             |
-| :------------------------------------------------------------------- | :--------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/user.ts`                               | The `deleteAccount` mutation                                     |
-| `apps/web/server/services/user/deleteAccountSessions.ts`             | Ends the account's sessions and closes their sockets             |
-| `apps/web/app/components/User/DeleteAccountCard/Index.vue`           | The Delete account card and its typed confirmation               |
-| `apps/web/app/components/Ui/ConfirmDialog.vue`                       | The confirmation dialog that gates on the typed name             |
-| `apps/web/app/services/user/settings/AccountDeletionKeptItems.ts`    | The kept list the confirmation names                             |
-| `packages/db-schema/src/schema/auth/usersInAuth.ts`                  | The `deletionRequestedAt` marker                                 |
-| `packages/db-schema/src/schema/auth/accountsInAuth.ts`               | The `accounts` foreign key, cascading                            |
-| `packages/db-schema/src/models/queue/DeleteAccountQueueMessage.ts`   | The job's message, parsed on receipt                             |
-| `packages/db-schema/src/services/queue/QueueJobMaxRetriesMap.ts`     | The retry count per job, `DeleteAccount` among them              |
-| `apps/functions/src/handlers/deleteAccountHandler.ts`                | The sweep, in order                                              |
-| `apps/functions/src/services/account/`                               | One service per step                                             |
-| `apps/functions/src/services/account/clearAccountModerationActor.ts` | Blanks the moderator id on the account's moderation log rows     |
-| `apps/functions/src/handlers/deleteOrphanedProfileImageHandler.ts`   | Removes a profile image that lands after the sweep               |
-| `apps/functions/src/durableObjects/RoomObject.ts`                    | The room object: `deleteAll`, `deleteUserReactions`, the erasure |
-| `packages/db/src/services/storage/listChargedBlobsByUser.ts`         | Reads the account's storage ledger rows                          |
-| `packages/db/src/services/storage/deleteStorageBlobs.ts`             | Removes charged objects and releases their charge                |
-| `packages/db/src/services/storage/deleteUserDirectories.ts`          | The `{userId}/` prefix sweep                                     |
-| `packages/db/src/services/storage/deleteBlobs.ts`                    | Removes named objects, counting a missing one as done            |
-| `packages/db/src/services/resource/purgeResource.ts`                 | The purge each owned resource goes through                       |
-| `packages/shared/src/services/message/emoji/checkIsOnlyReactor.ts`   | The reaction rule, shared with the emoji router                  |
-| `packages/shared/src/services/message/emoji/getUpdatedUserIds.ts`    | The reaction rule, shared with the emoji router                  |
-| `apps/web/server/trpc/routers/message/emoji.ts`                      | The emoji router, which applies the same reaction rule           |
+| Path                                                               | Role                                                             |
+| :----------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/user.ts`                             | The `deleteAccount` mutation                                     |
+| `apps/web/server/services/user/deleteAccountSessions.ts`           | Ends the account's sessions and closes their sockets             |
+| `apps/web/app/components/User/DeleteAccountCard/Index.vue`         | The Delete account card and its typed confirmation               |
+| `apps/web/app/components/Ui/ConfirmDialog.vue`                     | The confirmation dialog that gates on the typed name             |
+| `apps/web/app/services/user/settings/AccountDeletionKeptItems.ts`  | The kept list the confirmation names                             |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                | The `deletionRequestedAt` marker                                 |
+| `packages/db-schema/src/schema/auth/accountsInAuth.ts`             | The `accounts` foreign key, cascading                            |
+| `packages/db-schema/src/models/queue/DeleteAccountQueueMessage.ts` | The job's message, parsed on receipt                             |
+| `packages/db-schema/src/services/queue/QueueJobMaxRetriesMap.ts`   | The retry count per job, `DeleteAccount` among them              |
+| `apps/jobs/src/handlers/deleteAccountHandler.ts`                   | The sweep, in order                                              |
+| `apps/jobs/src/services/account/`                                  | One service per step                                             |
+| `apps/jobs/src/services/account/clearAccountModerationActor.ts`    | Blanks the moderator id on the account's moderation log rows     |
+| `apps/jobs/src/handlers/deleteOrphanedProfileImageHandler.ts`      | Removes a profile image that lands after the sweep               |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                   | The room object: `deleteAll`, `deleteUserReactions`, the erasure |
+| `packages/db/src/services/storage/listChargedBlobsByUser.ts`       | Reads the account's storage ledger rows                          |
+| `packages/db/src/services/storage/deleteStorageBlobs.ts`           | Removes charged objects and releases their charge                |
+| `packages/db/src/services/storage/deleteUserDirectories.ts`        | The `{userId}/` prefix sweep                                     |
+| `packages/db/src/services/storage/deleteBlobs.ts`                  | Removes named objects, counting a missing one as done            |
+| `packages/db/src/services/resource/purgeResource.ts`               | The purge each owned resource goes through                       |
+| `packages/shared/src/services/message/emoji/checkIsOnlyReactor.ts` | The reaction rule, shared with the emoji router                  |
+| `packages/shared/src/services/message/emoji/getUpdatedUserIds.ts`  | The reaction rule, shared with the emoji router                  |
+| `apps/web/server/trpc/routers/message/emoji.ts`                    | The emoji router, which applies the same reaction rule           |

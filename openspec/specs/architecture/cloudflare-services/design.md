@@ -1,21 +1,22 @@
 # Cloudflare Services
 
-Which Cloudflare services the app runs on, what each one owns, and which package reaches it. The app is one stateless web Worker, one functions Worker that owns the queues and the live objects, D1 for every relational row, R2 for every file, and Durable Objects for the state that is live: a room, a call and a person.
+Which Cloudflare services the app runs on, what each one owns, and which package reaches it. The app is one stateless web Worker, one realtime Worker that holds the live objects, one jobs Worker that consumes the queues, D1 for every relational row, R2 for every file, and Durable Objects for the state that is live: a room, a call and a person.
 
 ## Service map
 
-| Service                   | What it stores or does                                                                                                              | Primary access point                                     |
-| :------------------------ | :---------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
-| **Workers**, web          | Serves SSR, tRPC over HTTP, the webhooks and the MCP route from any isolate. Holds no state between requests                        | `apps/web/configuration/nitro.ts`                        |
-| **Workers Static Assets** | Serves the built client bundle without invoking the Worker                                                                          | the web build's output                                   |
-| **Workers**, functions    | Consumes the queues, runs the nightly purge on a Cron Trigger, and exports the three realtime objects                               | `apps/functions/src/worker.ts`                           |
-| **D1**                    | The `core` database: every relational table, and the typed tables for the moderation, resource activity, survey and program rows    | `apps/web/server/db/index.ts`                            |
-| **R2**                    | One bucket per storage container: profile images, message attachments, resource content and snapshots, save files, public game data | `packages/db-schema/src/models/storage/StorageBucket.ts` |
-| **Durable Objects**       | `RoomObject`, `CallObject` and `UserObject`: one per room, call and person, each holding its live state and its sockets             | `apps/functions/src/durableObjects/`                     |
-| **Queues**                | One queue and one dead-letter queue per job, fed by the web Worker, the objects and R2's object-create notifications                | `packages/db-schema/src/models/queue/QueueJob.ts`        |
-| **Cron Triggers**         | The nightly purge of deleted resources                                                                                              | `apps/functions/wrangler.jsonc`                          |
-| **RealtimeKit**           | Audio and video for calls: the SFU, TURN and signalling, with participant webhooks back to the web Worker                           | the [calls](../../esbabbler/calls/README.md) pages       |
-| **Miniflare**             | The D1, R2 and Queues bindings in tests, with no account needed                                                                     | `packages/db-mock/src/createMockDb.ts`                   |
+| Service                   | What it stores or does                                                                                                                                   | Primary access point                                     |
+| :------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------- |
+| **Workers**, web          | Serves SSR, tRPC over HTTP, the webhooks and the MCP route from any isolate. Holds no state between requests                                             | `apps/web/configuration/nitro.ts`                        |
+| **Workers Static Assets** | Serves the built client bundle without invoking the Worker                                                                                               | the web build's output                                   |
+| **Workers**, realtime     | Exports the three realtime objects and nothing else                                                                                                      | `apps/realtime/src/worker.ts`                            |
+| **Workers**, jobs         | Consumes the queues and runs the nightly purge on a Cron Trigger                                                                                         | `apps/jobs/src/worker.ts`                                |
+| **D1**                    | The `core` database: every relational table, and the typed tables for the moderation, resource activity, survey and program rows                         | `apps/web/server/db/index.ts`                            |
+| **R2**                    | One bucket per storage container: profile images, message attachments, resource content and snapshots, save files, public game data                      | `packages/db-schema/src/models/storage/StorageBucket.ts` |
+| **Durable Objects**       | `RoomObject`, `CallObject` and `UserObject`, exported by the realtime Worker: one per room, call and person, each holding its live state and its sockets | `apps/realtime/src/durableObjects/`                      |
+| **Queues**                | One queue and one dead-letter queue per job, fed by the web Worker, the objects and R2's object-create notifications, and consumed by the jobs Worker    | `packages/db-schema/src/models/queue/QueueJob.ts`        |
+| **Cron Triggers**         | The nightly purge of deleted resources, on the jobs Worker                                                                                               | `apps/jobs/wrangler.jsonc`                               |
+| **RealtimeKit**           | Audio and video for calls: the SFU, TURN and signalling, with participant webhooks back to the web Worker                                                | the [calls](../../esbabbler/calls/README.md) pages       |
+| **Miniflare**             | The D1, R2 and Queues bindings in tests, with no account needed                                                                                          | `packages/db-mock/src/createMockDb.ts`                   |
 
 Every binding comes from `cloudflare:workers`'s `env`, read once per Worker and passed to the code that uses it as a parameter. No binding is a module-scope client, so a test passes Miniflare's.
 
@@ -33,7 +34,7 @@ A new feature picks D1 when it holds relational or queryable data. It picks an o
 
 ## Live state
 
-Three Durable Objects hold live state, and each owns the sockets viewing it:
+Three Durable Objects, exported by the realtime Worker, hold live state, and each owns the sockets viewing it:
 
 | Object       | One per      | Owns                                                                                                                 | Its sockets                                |
 | :----------- | :----------- | :------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- |
@@ -78,14 +79,14 @@ The message, its reactions and its search row are one SQLite transaction inside 
 
 ## Background work
 
-Work that need not block a request is a job on a queue. Each job has its own queue and dead-letter queue, named from its value in `QueueJob`, so one job's retries and failures never touch another's. The functions Worker's queue handler dispatches each batch to the handler for its queue. A message is acknowledged when its handler resolves; a handler that throws is retried up to the job's retry count, then its message goes to the job's dead-letter queue.
+Work that need not block a request is a job on a queue. Each job has its own queue and dead-letter queue, named from its value in `QueueJob`, so one job's retries and failures never touch another's. The jobs Worker's queue handler dispatches each batch to the handler for its queue. A message is acknowledged when its handler resolves; a handler that throws is retried up to the job's retry count, then its message goes to the job's dead-letter queue.
 
-A dead letter recovers by itself, and the functions Worker's dead-letter consumer is the same dispatch: each message is handled alone. Its body is parsed by its job's schema, and a body that fails it, a delivery that reaches `DEAD_LETTER_CONSUMER_MAX_RETRIES`, or a body whose `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`, is written once as its raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket and logged. Any other dead letter is republished to its job's queue with `attempt` raised. Every queue message carries `attempt` in its own body, through one shared envelope that defaults it to 0, so the count survives each round trip. The cap is counted per message, so a poison message never holds back the transient failures beside it. The last delivery is quarantined rather than republished, so it always lands in R2; only a quarantine write that fails on that delivery is dropped, since the dead-letter consumer has no dead-letter queue of its own. A quarantined message is read by hand, and nothing alerts on it.
+A dead letter recovers by itself, and the jobs Worker's dead-letter consumer is the same dispatch: each message is handled alone. Its body is parsed by its job's schema, and a body that fails it, a delivery that reaches `DEAD_LETTER_CONSUMER_MAX_RETRIES`, or a body whose `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`, is written once as its raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket and logged. Any other dead letter is republished to its job's queue with `attempt` raised. Every queue message carries `attempt` in its own body, through one shared envelope that defaults it to 0, so the count survives each round trip. The cap is counted per message, so a poison message never holds back the transient failures beside it. The last delivery is quarantined rather than republished, so it always lands in R2; only a quarantine write that fails on that delivery is dropped, since the dead-letter consumer has no dead-letter queue of its own. A quarantined message is read by hand, and nothing alerts on it.
 
 ```mermaid
 flowchart TD
   P["producer: web Worker, object alarm, or R2 object-create notification"] --> Q["the job's queue"]
-  Q --> H["consumer in the functions Worker"]
+  Q --> H["consumer in the jobs Worker"]
   H -->|"throws past its retry count"| DL["the job's dead-letter queue"]
   DL --> R["dead-letter replay, one message at a time"]
   R -->|"under the attempt cap: republished with attempt raised"| Q
@@ -97,7 +98,7 @@ flowchart TD
 
 Delayed work is an alarm, not a queue delay. A queue holds a message for at most a day, and a scheduled message or a TodoList reminder has no upper bound, so each is a row in its owner's storage: the room's for a scheduled message, the person's for a reminder. The owner's one alarm is set to its earliest due row, runs every row that is due, and re-arms for the next. A queue consumer that changes live state calls the owner's RPC method directly; it never sends a message to an intermediary that then calls the object.
 
-The nightly purge of deleted resources is the one timed job that is not a queue job. It runs on a Cron Trigger of the functions Worker.
+The nightly purge of deleted resources is the one timed job that is not a queue job. It runs on a Cron Trigger of the jobs Worker.
 
 ## Search
 
@@ -119,28 +120,30 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 
 ## Key files
 
-| File                                                                        | Role                                                                |
-| :-------------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| `apps/web/configuration/nitro.ts`                                           | the web Worker's Nitro build                                        |
-| `apps/web/configuration/wrangler.ts`                                        | the web Worker's wrangler configuration, from its bindings          |
-| `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                          |
-| `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                        |
-| `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object          |
-| `apps/functions/src/worker.ts`                                              | the functions Worker: queue handler, Cron Trigger, exported objects |
-| `apps/functions/src/durableObjects/RealtimeObject.ts`                       | the socket behaviour the three objects share                        |
-| `apps/functions/src/durableObjects/RoomObject.ts`                           | a room's messages, search, scheduled messages and online members    |
-| `apps/functions/src/durableObjects/CallObject.ts`                           | a call's participants, knockers and admissions                      |
-| `apps/functions/src/durableObjects/UserObject.ts`                           | a person's sockets, indexes, reminders and online status            |
-| `apps/functions/src/handlers/`                                              | the handler each queue job runs                                     |
-| `apps/functions/wrangler.jsonc`                                             | the functions Worker's bindings, queues and Cron Trigger            |
-| `packages/db-schema/src/models/queue/QueueJob.ts`                           | the job names, one queue each                                       |
-| `packages/db-schema/src/models/storage/StorageBucket.ts`                    | the bucket names, one R2 bucket each                                |
-| `packages/db-schema/src/models/realtime/`                                   | the `RoomEvent`, `CallEvent` and `UserEvent` unions                 |
-| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                   |
-| `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                            |
-| `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares                |
-| `.github/workflows/CI.yaml`                                                 | the checks                                                          |
-| `.github/workflows/Deploy.yaml`                                             | the deploy that runs on `main` and `ai/queue`                       |
+| File                                                                        | Role                                                             |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------- |
+| `apps/web/configuration/nitro.ts`                                           | the web Worker's Nitro build                                     |
+| `apps/web/configuration/wrangler.ts`                                        | the web Worker's wrangler configuration, from its bindings       |
+| `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                       |
+| `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                     |
+| `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object       |
+| `apps/realtime/src/worker.ts`                                               | the realtime Worker: exports the three objects, nothing else     |
+| `apps/jobs/src/worker.ts`                                                   | the jobs Worker: queue handler and Cron Trigger                  |
+| `apps/realtime/src/durableObjects/RealtimeObject.ts`                        | the socket behaviour the three objects share                     |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                            | a room's messages, search, scheduled messages and online members |
+| `apps/realtime/src/durableObjects/CallObject.ts`                            | a call's participants, knockers and admissions                   |
+| `apps/realtime/src/durableObjects/UserObject.ts`                            | a person's sockets, indexes, reminders and online status         |
+| `apps/jobs/src/handlers/`                                                   | the handler each queue job runs                                  |
+| `apps/realtime/wrangler.jsonc`                                              | the realtime Worker's bindings and object classes                |
+| `apps/jobs/wrangler.jsonc`                                                  | the jobs Worker's bindings, queues and Cron Trigger              |
+| `packages/db-schema/src/models/queue/QueueJob.ts`                           | the job names, one queue each                                    |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`                    | the bucket names, one R2 bucket each                             |
+| `packages/db-schema/src/models/realtime/`                                   | the `RoomEvent`, `CallEvent` and `UserEvent` unions              |
+| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                |
+| `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                         |
+| `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares             |
+| `.github/workflows/CI.yaml`                                                 | the checks                                                       |
+| `.github/workflows/Deploy.yaml`                                             | the deploy that runs on `main` and `ai/queue`                    |
 
 ## Sources
 

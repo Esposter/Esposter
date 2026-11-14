@@ -1,6 +1,6 @@
 # Notifications
 
-Everything that tells a person something happened is one thing here: a typed message, published through `publishNotification`, delivered by the `ProcessNotification` queue's consumer in the functions Worker, and fanned out to the surfaces its type declares. A chat message, a thread reply, a friend request, a `/remind` reminder, a todo that came due and a resource operation all travel that one path — so "is this a notification?" has exactly one answer, and a new one cannot accidentally pick a different pipeline.
+Everything that tells a person something happened is one thing here: a typed message, published through `publishNotification`, delivered by the `ProcessNotification` queue's consumer in the jobs Worker, and fanned out to the surfaces its type declares. A chat message, a thread reply, a friend request, a `/remind` reminder, a todo that came due and a resource operation all travel that one path — so "is this a notification?" has exactly one answer, and a new one cannot accidentally pick a different pipeline.
 
 The publisher states **what happened and who it concerns**. Everything about how it renders and where it lands is resolved at delivery, off the request path the person is waiting on.
 
@@ -10,7 +10,7 @@ The publisher states **what happened and who it concerns**. Everything about how
 flowchart TD
   SRC["Any mutation"] --> PUB["publishNotification<br/>one typed message, one queue"]
   PUB --> Q["ProcessNotification queue"]
-  Q --> FN["functions Worker<br/>queue consumer"]
+  Q --> FN["jobs Worker<br/>queue consumer"]
   FN --> RES["resolveNotification<br/>copy, deep link, recipient user ids"]
   RES --> POL{"AppNotificationTypeChannelMap[type]"}
   POL -->|Bell| ROW["insert notifications rows in D1<br/>+ retention trim"]
@@ -80,9 +80,9 @@ There is no new queue, no new consumer and no new delivery path. The bell's type
 | `packages/db-schema/src/models/queue/NotificationQueueMessage.ts`               | the one envelope, discriminated by type              |
 | `packages/db-schema/src/services/notification/AppNotificationTypeChannelMap.ts` | which surfaces each type reaches                     |
 | `packages/db-schema/src/schema/notification/notificationsInNotification.ts`     | the persisted bell row, in D1                        |
-| `apps/functions/src/handlers/processNotificationHandler.ts`                     | the queue handler that delivers one notification     |
-| `apps/functions/src/services/notification/resolveNotification.ts`               | copy, deep link and recipients per type              |
-| `apps/functions/src/services/notification/sendNotification.ts`                  | the fan-out — bell rows, then devices                |
+| `apps/jobs/src/handlers/processNotificationHandler.ts`                          | the queue handler that delivers one notification     |
+| `apps/jobs/src/services/notification/resolveNotification.ts`                    | copy, deep link and recipients per type              |
+| `apps/jobs/src/services/notification/sendNotification.ts`                       | the fan-out — bell rows, then devices                |
 | `packages/db/src/services/notification/getMessageRecipientUserIds.ts`           | a message's recipients, thread followers included    |
 | `packages/db/src/services/notification/getPushSubscriptionsForUsers.ts`         | the one device lookup, minus the originating session |
 | `apps/web/app/plugins/pushNotification.client.ts`                               | the tab end of the service worker's postMessage      |

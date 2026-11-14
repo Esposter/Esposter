@@ -40,7 +40,7 @@ In room contexts, a `displayName` wins over the account name ([display names](..
 | File                                                             | Role                                                                                    |
 | :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
 | `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` enum                                                      |
-| `apps/functions/src/services/user/setUserConnectedInRooms.ts`    | the connected flag, written on the first socket and the last close, then each room told |
+| `apps/realtime/src/services/user/setUserConnectedInRooms.ts`     | the connected flag, written on the first socket and the last close, then each room told |
 | `apps/web/server/trpc/routers/user.ts`                           | `upsertStatus`, `readStatuses`, `updateUser`                                            |
 | `apps/web/app/components/User/ProfileCard/`                      | editable profile card (global surface)                                                  |
 | `apps/web/app/components/Message/Model/User/ProfileCard/`        | in-room profile card (mutual rooms, member actions)                                     |

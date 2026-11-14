@@ -42,13 +42,13 @@ SpacetimeDB and Zero evaluate each subscribed query on the server and push the r
 
 ## Key files
 
-| File                                               | Role after the change                                                  |
-| :------------------------------------------------- | :--------------------------------------------------------------------- |
-| `apps/web/shared/models/realtime/`                 | the topic names, shared by queries, mutations and the client           |
-| `apps/web/server/trpc/middleware/`                 | publishes a mutation's topics after it resolves                        |
-| `apps/web/app/composables/realtime/`               | watches the topics of mounted queries and refetches on invalidation    |
-| `apps/functions/src/durableObjects/TopicObject.ts` | one per topic: its subscribers and the coalesced fan-out               |
-| `apps/functions/src/durableObjects/UserObject.ts`  | each socket's watched topics, subscribing and unsubscribing its topics |
+| File                                              | Role after the change                                                  |
+| :------------------------------------------------ | :--------------------------------------------------------------------- |
+| `apps/web/shared/models/realtime/`                | the topic names, shared by queries, mutations and the client           |
+| `apps/web/server/trpc/middleware/`                | publishes a mutation's topics after it resolves                        |
+| `apps/web/app/composables/realtime/`              | watches the topics of mounted queries and refetches on invalidation    |
+| `apps/realtime/src/durableObjects/TopicObject.ts` | one per topic: its subscribers and the coalesced fan-out               |
+| `apps/realtime/src/durableObjects/UserObject.ts`  | each socket's watched topics, subscribing and unsubscribing its topics |
 
 ## Sources
 

@@ -36,5 +36,5 @@ flowchart LR
 
 ## Notes
 
-- The record reads `dist/`, so it is checked after the packages and the two apps are built, as the size tests were. A built package with no `dist` fails the read rather than dropping out of the record.
-- A change that moves a bundle regenerates the record in the same commit: `vp run build:packages`, then `pnpm -C apps/functions build` and `pnpm -C apps/infra build`, then `pnpm bundle-sizes:gen`. The `build` skill's `references/dist-size.md` says what to read before a size is accepted.
+- The record reads `dist/`, so it is checked after the packages and the infra app are built, as the size tests were. A built package with no `dist` fails the read rather than dropping out of the record.
+- A change that moves a bundle regenerates the record in the same commit: `vp run build:packages`, then `pnpm -C apps/infra build`, then `pnpm bundle-sizes:gen`. The `build` skill's `references/dist-size.md` says what to read before a size is accepted.

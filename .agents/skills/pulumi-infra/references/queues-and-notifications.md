@@ -4,15 +4,15 @@ Read when a job's messages reach its dead-letter queue, a consumer or an R2 noti
 
 ## One queue and dead-letter queue per job, one consumer per queue
 
-Each `QueueJob` has a queue (`cloudflare.Queue`, `prod-q-esposter-<job>`) and a dead-letter queue beside it (`prod-dlq-esposter-<job>`), declared under `src/cloudflare/resources/queues/`. The queue's consumer (`cloudflare.QueueConsumer`, logical name `<queue>-consumer`, under `queueConsumers/`) names the functions Worker's script as `scriptName`, the queue as `queueId` and the dead-letter queue as `deadLetterQueue`.
+Each `QueueJob` has a queue (`cloudflare.Queue`, `prod-q-esposter-<job>`) and a dead-letter queue beside it (`prod-dlq-esposter-<job>`), declared under `src/cloudflare/resources/queues/`. The queue's consumer (`cloudflare.QueueConsumer`, logical name `<queue>-consumer`, under `queueConsumers/`) names the jobs Worker's script as `scriptName`, the queue as `queueId` and the dead-letter queue as `deadLetterQueue`.
 
 Its retries are two settings. `maxRetries` is the job's entry in `QueueJobMaxRetriesMap`, the number of redeliveries before the message goes to the dead-letter queue, and `retryDelay` is `QueueConsumerRetryDelay`, the wait before each one. A job whose entry is `0` (`ProcessWebhook`) goes to its dead-letter queue on its first failure.
 
-The consumer waits for the functions Worker's first deploy, and so do the Workers custom domains for the web Worker (`apps/infra/docs/stacks.md`, "First deploy").
+The consumer waits for the jobs Worker's first deploy, and so do the Workers custom domains for the web Worker (`apps/infra/docs/stacks.md`, "First deploy").
 
 ## A batch's queue must name a job or its dead-letter queue
 
-`getQueueMessageHandler` (`apps/functions/src/services/queue/getQueueMessageHandler.ts`) finds a batch's job by building each job's queue name, and each job's dead-letter queue name, in this environment's spelling and comparing them with the batch's `queue`. A queue name is handled by its job's handler; a dead-letter queue name by the dead-letter replay for its job. A batch that names neither throws, so its messages retry and then dead-letter. A consumer delivering to a queue no job names reads as deployed while nothing runs.
+`getQueueMessageHandler` (`apps/jobs/src/services/queue/getQueueMessageHandler.ts`) finds a batch's job by building each job's queue name, and each job's dead-letter queue name, in this environment's spelling and comparing them with the batch's `queue`. A queue name is handled by its job's handler; a dead-letter queue name by the dead-letter replay for its job. A batch that names neither throws, so its messages retry and then dead-letter. A consumer delivering to a queue no job names reads as deployed while nothing runs.
 
 ## Each message is acknowledged or retried alone
 
@@ -20,11 +20,11 @@ A message is acknowledged when its job's handler resolves and retried when it th
 
 ## Dead letters are replayed, then quarantined
 
-Each job's dead-letter queue has its own consumer, `cloudflare.QueueConsumer` with logical name `<dead-letter-queue>-consumer` under `queueConsumers/`, `queueId` the dead-letter queue, `scriptName` the functions Worker and no `deadLetterQueue`. Its `maxRetries` is `DEAD_LETTER_CONSUMER_MAX_RETRIES` from `@esposter/db-schema`, which the replay reads too, and its `retryDelay` is `QueueConsumerRetryDelay`. A dead-letter queue has no dead-letter queue of its own, which is why the replay never leaves the last delivery to the queue.
+Each job's dead-letter queue has its own consumer, `cloudflare.QueueConsumer` with logical name `<dead-letter-queue>-consumer` under `queueConsumers/`, `queueId` the dead-letter queue, `scriptName` the jobs Worker and no `deadLetterQueue`. Its `maxRetries` is `DEAD_LETTER_CONSUMER_MAX_RETRIES` from `@esposter/db-schema`, which the replay reads too, and its `retryDelay` is `QueueConsumerRetryDelay`. A dead-letter queue has no dead-letter queue of its own, which is why the replay never leaves the last delivery to the queue.
 
-The functions Worker's replay (`apps/functions/src/services/queue/handleDeadLetterMessage.ts`) handles each message alone. It quarantines when the body fails its job's schema, when the delivery reaches `DEAD_LETTER_CONSUMER_MAX_RETRIES`, or when the body's `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`. Quarantine is written create-only as the raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket, and logged once with `console.error`. Any other dead letter is republished to its job's queue with `attempt` raised. Only a quarantine write that fails on the final delivery drops a message. Nothing alerts off the quarantine (observability is off, `openspec/specs/infra/observability/design.md`), so read its prefix by hand when a job fails repeatedly.
+The jobs Worker's replay (`apps/jobs/src/services/queue/handleDeadLetterMessage.ts`) handles each message alone. It quarantines when the body fails its job's schema, when the delivery reaches `DEAD_LETTER_CONSUMER_MAX_RETRIES`, or when the body's `attempt` has reached `MAX_DEAD_LETTER_ATTEMPTS`. Quarantine is written create-only as the raw body to `quarantine/<queue>/<id>.json` in the private `user-assets` bucket, and logged once with `console.error`. Any other dead letter is republished to its job's queue with `attempt` raised. Only a quarantine write that fails on the final delivery drops a message. Nothing alerts off the quarantine (observability is off, `openspec/specs/infra/observability/design.md`), so read its prefix by hand when a job fails repeatedly.
 
-Pulumi owns every queue consumer, as it does for the job queues. `apps/functions/wrangler.jsonc` declares only the producers, one per job's queue, since the replay republishes through the functions Worker's bindings. `apps/functions/src/wrangler.test.ts` checks those producers by queue name.
+Pulumi owns every queue consumer, as it does for the job queues. `apps/jobs/wrangler.jsonc` declares only the producers, one per job's queue, since the replay republishes through the jobs Worker's bindings. `apps/jobs/src/wrangler.test.ts` checks those producers by queue name.
 
 ## R2 notifications send bucket events to a queue
 

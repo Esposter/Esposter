@@ -1,6 +1,6 @@
 ---
 name: drizzle
-description: Apply when writing or modifying DB schema files in packages/db-schema, the Durable Object schemas in apps/functions, or tRPC routers. Esposter's Drizzle ORM conventions for D1 and the object SQLite — how a table, a relation and a query are written, how its names are derived, and how a migration is produced.
+description: Apply when writing or modifying DB schema files in packages/db-schema, the Durable Object schemas in packages/db-schema/src/objects, or tRPC routers. Esposter's Drizzle ORM conventions for D1 and the object SQLite — how a table, a relation and a query are written, how its names are derived, and how a migration is produced.
 ---
 
 # Drizzle ORM Conventions
@@ -37,7 +37,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - **A JSON text array is read with `json_each`**, since SQLite has no array type and no array operator (`references/json-arrays.md`).
 - **Message search is FTS5 in external-content mode** over the room's integer `id` rowid, kept in step by triggers in the same migration (`references/fts5.md`).
 - **A bitfield that outgrows a JS number is stored as decimal TEXT** — `createBitfieldColumn()` stores it and reads it back as a `bigint` (`references/table-definition.md`).
-- **An object's own schema is a SQLite schema in its folder**, with its own migrations folder (`references/durable-object-schemas.md`).
+- **An object's own schema is a SQLite schema in its folder, `packages/db-schema/src/objects/<object>/`**, with its own migrations folder, generated from its own `drizzle.<object>.config.ts` (`references/durable-object-schemas.md`).
 
 ## Column Names
 

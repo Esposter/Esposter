@@ -2,7 +2,8 @@
 
 | Unit                         | Swept                  | Notes                                            |
 | ---------------------------- | ---------------------- | ------------------------------------------------ |
-| `apps/functions`             | 2026-10-29 · Haiku 5.5 |                                                  |
+| `apps/jobs`                  | 2026-10-29 · Haiku 5.5 |                                                  |
+| `apps/realtime`              | 2026-10-29 · Haiku 5.5 |                                                  |
 | `db`, `db-schema`, `db-mock` | 2026-10-29 · Haiku 5.5 |                                                  |
 | `shared`, `shared-node`      | 2026-10-05 · Opus 5.5  |                                                  |
 | `parse-tmx`                  | 2026-10-05 · Opus 5.5  |                                                  |

@@ -9,4 +9,4 @@
 | `apps/web/app/components`                                   | 2026-10-05 · Opus 5.5 |       |
 | `apps/web/app` — `composables`, `services`, `store`, `util` | 2026-10-05 · Opus 5.5 |       |
 | `apps/web/server`                                           | 2026-10-05 · Opus 5.5 |       |
-| `apps/functions`, the remaining `packages`                  | 2026-10-05 · Opus 5.5 |       |
+| `apps/jobs`, `apps/realtime`, the remaining `packages`      | 2026-10-05 · Opus 5.5 |       |

@@ -25,13 +25,13 @@ The dotted edges are the ones a hostile client controls, and nothing downstream 
 
 ## Key files
 
-Paths relative to `apps/web`; `packages/` and `apps/functions/` ones to the repo root.
+Paths relative to `apps/web`; `packages/` and `apps/realtime/` ones to the repo root.
 
-| File                                                                      | Role                                            |
-| ------------------------------------------------------------------------- | ----------------------------------------------- |
-| `server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching every call in the room       |
-| `server/services/message/call/checkIsCallConnectionAdmitted.ts`           | the door every call connection is asked again   |
-| `apps/functions/src/services/realtimeKit/removeRealtimeKitParticipant.ts` | a participant the server removes at RealtimeKit |
-| `packages/db-schema/src/models/message/UserMessageType.ts`                | the message types a member may post             |
-| `server/services/request/getIpAddress.ts`                                 | the anonymous caller's address                  |
-| `server/services/app/getCommitCount.ts`                                   | a third-party read answered once per process    |
+| File                                                                     | Role                                            |
+| ------------------------------------------------------------------------ | ----------------------------------------------- |
+| `server/services/message/call/evictRoomCallParticipants.ts`              | a removal reaching every call in the room       |
+| `server/services/message/call/checkIsCallConnectionAdmitted.ts`          | the door every call connection is asked again   |
+| `apps/realtime/src/services/realtimeKit/removeRealtimeKitParticipant.ts` | a participant the server removes at RealtimeKit |
+| `packages/db-schema/src/models/message/UserMessageType.ts`               | the message types a member may post             |
+| `server/services/request/getIpAddress.ts`                                | the anonymous caller's address                  |
+| `server/services/app/getCommitCount.ts`                                  | a third-party read answered once per process    |

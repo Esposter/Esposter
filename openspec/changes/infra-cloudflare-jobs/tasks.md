@@ -2,7 +2,7 @@
 
 ## 1.
 
-- [ ] 1.1 Rename `AzureFunction` to `QueueJob`, send each job to its queue, and consume them in the functions Worker. Verified by each handler's tests through the queue dispatcher.
+- [x] 1.1 Rename `AzureFunction` to `QueueJob`, send each job to its queue, and consume them in the jobs Worker. Verified by each handler's tests through the queue dispatcher.
 - [x] 1.2 Feed the reconcile and orphaned-image jobs from R2 notifications, and run the purge on a Cron Trigger. Verified by their handlers' tests.
 
 ## 2.

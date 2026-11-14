@@ -23,4 +23,4 @@
 
 ## 5.
 
-- [ ] 5.1 Split `apps/functions` into `apps/realtime` (the three objects) and `apps/jobs` (queue consumers and the cron), rename the packages, the Worker purposes, the wrangler configs, the Pulumi consumers and every path that names them. Verified by each Worker's wrangler test.
+- [x] 5.1 Split the Worker that held the objects, queues and cron into `apps/realtime` (the three objects) and `apps/jobs` (queue consumers and the cron), rename the packages, the Worker purposes, the wrangler configs, the Pulumi consumers and every path that names them. Verified by each Worker's wrangler test.

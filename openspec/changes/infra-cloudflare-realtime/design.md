@@ -10,7 +10,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). The app
 | `CallObject` | call session | the participant, knocker and admitted maps, the call's start time, the RealtimeKit participant map and the per-participant preset queue, all in its storage | everyone joined to or knocking on the call |
 | `UserObject` | user         | the person's sockets across devices, their sent-message index, their reminders and TodoList reminders, their online status                                  | every signed-in tab of the person          |
 
-Everything relational — users, rooms, members, roles, resources, friends — stays in D1. The objects are classes exported by the functions Worker, which also consumes the queues and runs the cron; the web Worker binds them by `script_name`. The web Worker holds no state at all: SSR, tRPC queries and mutations, webhooks and the MCP route run in any isolate.
+Everything relational — users, rooms, members, roles, resources, friends — stays in D1. The objects are classes exported by the realtime Worker, which exports nothing else. The jobs Worker consumes the queues and runs the cron, and the web and jobs Workers bind the objects by `script_name`. The web Worker holds no state at all: SSR, tRPC queries and mutations, webhooks and the MCP route run in any isolate.
 
 A room's messages leave D1 because they are the one data set that grows without bound and is read almost only within its room: each room gets its own ten gigabytes, its own row allowance at the cheaper object storage rate, and reads with no network hop from the code that broadcasts them. A message, its reactions and its search row are written in one synchronous SQLite transaction inside the object, so they can never disagree.
 
@@ -83,7 +83,7 @@ The [cutover](../infra-cloudflare-cutover/design.md) re-keys existing rows: each
 
 ## Two Workers by job, named for it
 
-`apps/functions` is an Azure name for what becomes two jobs, so it splits and renames once the objects land: `apps/realtime` (`@esposter/realtime`, Worker purpose `realtime`) exports `RoomObject`, `CallObject` and `UserObject` and nothing else, and `apps/jobs` (`@esposter/jobs`, Worker purpose `jobs`) consumes the queues and runs the nightly purge, reaching live state through the realtime Worker's bindings. Each deploys on its own. Deploying a Worker restarts the objects it exports, which drops every socket they hold, so the objects live in the one Worker that changes only when they do: a web release or a job fix never disconnects anyone. The Worker is named for what its objects are for — live state and the sockets that carry it — and its objects keep the `Object` suffix so `RoomObject` never reads as the D1 `Room` row. Rejected: one Worker for both, which ties every socket's lifetime to every queue consumer's deploy; the objects inside the web Worker, which drops every socket on every release; `durable-objects` as the name, which names the mechanism rather than the job.
+The Worker was named for Azure's functions and covered two jobs, so it split once the objects landed: `apps/realtime` (`@esposter/realtime`, Worker purpose `realtime`) exports `RoomObject`, `CallObject` and `UserObject` and nothing else, and `apps/jobs` (`@esposter/jobs`, Worker purpose `jobs`) consumes the queues and runs the nightly purge, reaching live state through the realtime Worker's bindings. Each deploys on its own. Deploying a Worker restarts the objects it exports, which drops every socket they hold, so the objects live in the one Worker that changes only when they do: a web release or a job fix never disconnects anyone. The realtime Worker is named for what its objects are for — live state and the sockets that carry it — and its objects keep the `Object` suffix so `RoomObject` never reads as the D1 `Room` row. Rejected: one Worker for both, which ties every socket's lifetime to every queue consumer's deploy; the objects inside the web Worker, which drops every socket on every release; `durable-objects` as the name, which names the mechanism rather than the job.
 
 ## Rejected
 
@@ -97,10 +97,10 @@ The [cutover](../infra-cloudflare-cutover/design.md) re-keys existing rows: each
 
 | File                                                  | Role after the change                                              |
 | :---------------------------------------------------- | :----------------------------------------------------------------- |
-| `apps/functions/src/durableObjects/RoomObject.ts`     | messages, reactions, search, scheduled messages, room sockets      |
-| `apps/functions/src/durableObjects/CallObject.ts`     | call participants and knockers, call sockets                       |
-| `apps/functions/src/durableObjects/UserObject.ts`     | a person's sockets, sent and scheduled index, reminders            |
-| `apps/functions/src/durableObjects/Scheduler.ts`      | deleted                                                            |
+| `apps/realtime/src/durableObjects/RoomObject.ts`      | messages, reactions, search, scheduled messages, room sockets      |
+| `apps/realtime/src/durableObjects/CallObject.ts`      | call participants and knockers, call sockets                       |
+| `apps/realtime/src/durableObjects/UserObject.ts`      | a person's sockets, sent and scheduled index, reminders            |
+| `apps/realtime/src/durableObjects/Scheduler.ts`       | deleted                                                            |
 | `apps/web/server/middleware/trpcDurableObject.ts`     | deleted                                                            |
 | `apps/web/server/routes/_internal/publish.post.ts`    | deleted                                                            |
 | `apps/web/server/routes/ws/`                          | authenticate and forward the three socket kinds                    |

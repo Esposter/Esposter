@@ -15,13 +15,13 @@ Every credential the program uses is in Pulumi ESC, environment `esposter-infra/
 
 CI's `.github/workflows/Deploy.yaml` deploys only `ai/queue` and `main`, so until 9.3 the develop estate is deployed from `ai/cloudflare` by hand, in the workflow's order, in a fresh worktree:
 
-1. Build the two Workers' dependencies: `pnpm --filter "@esposter/web^..." --filter "@esposter/functions^..." build`.
+1. Build the three Workers' dependencies: `pnpm --filter "@esposter/web^..." --filter "@esposter/realtime^..." --filter "@esposter/jobs^..." build`.
 2. Export `CLOUDFLARE_ENV=dev`, `CLOUDFLARE_ENVIRONMENT=dev`, `BASE_URL=https://dev.esposter.com`, `PUBLIC_ASSETS_BASE_URL=https://assets.dev.esposter.com`, the API token above, and each name in `.github/worker-secrets.json`'s `build` list from ESC key `pulumiConfig.esposter-infra:dev_<name>`.
 3. `pnpm --filter @esposter/db-schema db:migrate`.
-4. `pnpm -C apps/functions build && pnpm -C apps/functions deploy:worker`, then upload the `functions` list's secrets with `wrangler secret bulk <file>` from `apps/functions`. The file is written from ESC by a script and deleted right after.
+4. `pnpm -C apps/realtime build && pnpm -C apps/realtime deploy:worker`, then upload the `realtime` list's secrets with `wrangler secret bulk <file>` from `apps/realtime`; then `pnpm -C apps/jobs build && pnpm -C apps/jobs deploy:worker`, then the `jobs` list's secrets the same way from `apps/jobs`. The file is written from ESC by a script and deleted right after.
 5. `pnpm -C apps/web build && pnpm -C apps/web deploy:worker`, then the `web` list's secrets the same way from `apps/web`.
 
-The functions Worker is deployed to dev with its secrets. The web Worker builds, and its upload was refused for one reason: `rate-limiter-flexible` starts a timer at module scope, which task 3.3 removes. Once the web Worker uploads, run the second targeted `pulumi up` of task 7.1: the queue consumers and the dev custom domains, never the `esposter.com` Workers domain, and never an untargeted `up`, because the `prod` stack still holds the live Azure estate. Then the owner points the dev OAuth apps at the table under 7.1 and checks `dev.esposter.com` by hand.
+The split into the realtime and jobs Workers is in this change, and neither is deployed under its own name yet. The web Worker builds, and its upload was refused for one reason: `rate-limiter-flexible` starts a timer at module scope, which task 3.3 removes. Once the web Worker uploads, run the second targeted `pulumi up` of task 7.1: the queue consumers and the dev custom domains, never the `esposter.com` Workers domain, and never an untargeted `up`, because the `prod` stack still holds the live Azure estate. Then the owner points the dev OAuth apps at the table under 7.1 and checks `dev.esposter.com` by hand.
 
 ## Where the work stands
 
@@ -67,7 +67,7 @@ In flight when the lead handed off; each one pushes to `ai/cloudflare` when it f
 ## Next, in order
 
 1. Finish whatever above did not land, then the develop deploy and the second `pulumi up` (7.1).
-2. Split `apps/functions` into "apps/realtime" and "apps/jobs" (2.7) before live queries (2.8), so the topic object is built on the final layout.
+2. The split into `apps/realtime` and `apps/jobs` (2.7) lands with this change, so the topic object is built on the final layout before live queries (2.8).
 3. Live queries (2.8), with every deleted EventEmitter as the inventory of hand-built liveness to fold into topics.
 4. 3.4, 3.6, 5.2 and 6.1, then the docs leftovers:
    - `SCORE.md` and `CONTRIBUTING.md`.
@@ -101,7 +101,7 @@ When it lands, it commits by pathspec, then runs `git pull --rebase origin ai/cl
 
 Each item names its next step.
 
-- The web Worker builds again. Next is the develop deploy above. The functions Worker is deployed, and rate limiting is on the binding, so nothing is known to block the web upload.
+- The web Worker builds again. Next is the develop deploy above. The realtime and jobs Workers are split but not yet deployed under their names, and rate limiting is on the binding, so nothing is known to block the web upload.
 - Cutover: the re-key, the room import and the drop of the D1 message tables have landed.
   - A real run needs a reader for the old estate's pending scheduled messages and reminders, because their D1 table is gone.
   - Its known gaps: a delta does not delete messages the source no longer lists; verify does not round-trip sample text; the old ids' version is unverified.

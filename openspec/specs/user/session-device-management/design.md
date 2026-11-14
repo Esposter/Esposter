@@ -78,7 +78,7 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 | `apps/web/server/services/auth/readSession.ts`                                  | the server's session read, forwarding its cookie             |
 | `apps/web/server/middleware/session.ts`                                         | a page's session read ahead of its render                    |
 | `apps/web/server/models/session/SessionSummary.ts`                              | what a row is allowed to say — no address                    |
-| `apps/functions/src/durableObjects/UserObject.ts`                               | `closeSession`, the best-effort close of a session's sockets |
+| `apps/realtime/src/durableObjects/UserObject.ts`                                | `closeSession`, the best-effort close of a session's sockets |
 | `apps/web/server/services/realtime/forwardSocket.ts`                            | the socket upgrade the Worker forwards to the user object    |
 | `apps/web/app/components/User/SessionsCard/`                                    | the card, its row, and the two confirm dialogs               |
 | `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label              |

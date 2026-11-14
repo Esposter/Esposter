@@ -93,6 +93,6 @@ Each one is named where it is decided and says which operation it affects. Items
 | `packages/db/src/services/storage/`                      | The object helpers, including the prefix delete                                    |
 | `packages/db/src/services/resource/purgeResource.ts`     | The one existing whole-owner sweep, for resources                                  |
 | `apps/web/server/services/room/deleteRoom.ts`            | The room deletion an owner's departure runs                                        |
-| `apps/functions/src/durableObjects/RoomObject.ts`        | The per-user delete, erase and export inside one room, and the room's own deletion |
-| `apps/functions/src/durableObjects/UserObject.ts`        | The sent-message index a deletion removes its entries from                         |
-| `apps/functions/src/handlers/deleteAccountHandler.ts`    | The sweep that removes these stores, in order                                      |
+| `apps/realtime/src/durableObjects/RoomObject.ts`         | The per-user delete, erase and export inside one room, and the room's own deletion |
+| `apps/realtime/src/durableObjects/UserObject.ts`         | The sent-message index a deletion removes its entries from                         |
+| `apps/jobs/src/handlers/deleteAccountHandler.ts`         | The sweep that removes these stores, in order                                      |

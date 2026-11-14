@@ -18,7 +18,7 @@ sequenceDiagram
   participant Route as web Worker route, POST /api/webhooks/:id/:token
   participant D1 as D1 core
   participant Q as ProcessWebhook queue
-  participant F as functions Worker consumer
+  participant F as jobs Worker consumer
   participant R as RoomObject
   participant N as ProcessNotification queue
   participant Client as Room viewers
@@ -66,7 +66,7 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 ## Key files
 
-Paths are relative to `apps/web`, except those under `apps/functions/` and `packages/`, which are relative to the repository root.
+Paths are relative to `apps/web`, except those under `apps/jobs/`, `apps/realtime/` and `packages/`, which are relative to the repository root.
 
 | File                                                                | Role                                                                                |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -76,8 +76,8 @@ Paths are relative to `apps/web`, except those under `apps/functions/` and `pack
 | `packages/db-schema/src/models/message/WebhookMessageEntity.ts`     | message entity carrying `appUser` in place of `userId`                              |
 | `server/trpc/routers/webhook.ts`                                    | create, read, update, regenerate, delete, and identity lookup                       |
 | `server/api/webhooks/[id]/[token].post.ts`                          | the public url — rate limits, token and payload checks, then the ProcessWebhook job |
-| `apps/functions/src/handlers/processWebhookHandler.ts`              | the ProcessWebhook job — message creation on the room, push notification job        |
-| `apps/functions/src/durableObjects/RoomObject.ts`                   | the webhook payload as a `MessageType.Webhook` message                              |
+| `apps/jobs/src/handlers/processWebhookHandler.ts`                   | the ProcessWebhook job — message creation on the room, push notification job        |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                    | the webhook payload as a `MessageType.Webhook` message                              |
 | `app/store/message/room/webhook.ts`                                 | client store for the settings tab                                                   |
 | `app/store/message/user/appUser.ts`                                 | cache of bot identities for the message list                                        |
 | `app/composables/message/room/useCreator.ts`                        | resolves a message's author, app user or user                                       |

@@ -2,7 +2,8 @@
 
 | Unit                                                 | Swept                   | Notes                                                              |
 | ---------------------------------------------------- | ----------------------- | ------------------------------------------------------------------ |
-| `apps/functions`                                     | 2026-10-29 · Haiku 5.5  | every `mockDb` stays — hoisted factory, see the README             |
+| `apps/jobs`                                          | 2026-10-29 · Haiku 5.5  | every `mockDb` stays — hoisted factory, see the README             |
+| `apps/realtime`                                      | 2026-10-29 · Haiku 5.5  | every `mockDb` stays — hoisted factory, see the README             |
 | `db`, `db-schema`, `db-mock`                         | 2026-10-29 · Haiku 5.5  |                                                                    |
 | `shared`, `shared-node`                              | 2026-10-25 · Haiku 5.5  |                                                                    |
 | `parse-tmx`                                          | 2026-10-25 · Haiku 5.5  |                                                                    |

@@ -50,8 +50,8 @@ Scheduled messages are held in two places, and the reminders in a third:
 | File                                                                                 | Role                                                                  |
 | :----------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
 | `apps/web/server/trpc/routers/message/scheduledMessage.ts`                           | scheduled messages: create, edit, send, delete, list one room's       |
-| `apps/functions/src/durableObjects/RoomObject.ts`                                    | holds, sends and drops a room's scheduled messages                    |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                                     | holds, sends and drops a room's scheduled messages                    |
 | `apps/web/server/trpc/routers/message/scheduledMessageJob.ts`                        | the Scheduled tab's rows and reminders: schedule, cancel, list, count |
 | `apps/web/server/services/message/scheduledMessageJob/readMyScheduledMessageJobs.ts` | the merged, joined read behind the Scheduled tab                      |
-| `apps/functions/src/durableObjects/UserObject.ts`                                    | holds a person's reminders, sends them from its alarm, re-arms it     |
-| `apps/functions/src/durableObjects/user/schema.ts`                                   | the `remindersInUser` and `scheduledMessagesInUser` tables            |
+| `apps/realtime/src/durableObjects/UserObject.ts`                                     | holds a person's reminders, sends them from its alarm, re-arms it     |
+| `packages/db-schema/src/objects/user/schema.ts`                                      | the `remindersInUser` and `scheduledMessagesInUser` tables            |

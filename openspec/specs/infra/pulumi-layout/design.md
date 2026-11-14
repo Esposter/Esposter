@@ -18,24 +18,24 @@ What each folder under `src/cloudflare/resources/` holds:
 | Folder                               | Resources                                                                                            |
 | :----------------------------------- | :--------------------------------------------------------------------------------------------------- |
 | `zones/`, `dnsRecords/`, `rulesets/` | The `esposter.com` zone, its apex and `www` records, and the redirect ruleset                        |
-| `workersCustomDomains/`              | The custom domains of the web Worker and the functions Worker                                        |
+| `workersCustomDomains/`              | The custom domains of the web Worker                                                                 |
 | `d1Databases/`                       | The `core` database, one per environment                                                             |
 | `r2Buckets/`                         | One bucket per storage bucket name, per environment, the `public-` buckets served on a custom domain |
 | `r2BucketLifecycles/`                | The message-assets rule moving objects to Infrequent Access after thirty days                        |
 | `r2BucketEventNotifications/`        | The object-create notifications that send bucket writes to a queue                                   |
 | `queues/`                            | One queue and one dead-letter queue per job, per environment                                         |
-| `queueConsumers/`                    | Each queue's consumer, which is the functions Worker                                                 |
+| `queueConsumers/`                    | Each queue's consumer, which is the jobs Worker                                                      |
 
-The Workers' code is not in this list. Nitro writes the web Worker's configuration file and the functions Worker has its own, and both name the binding ids the program exports.
+The Workers' code is not in this list. Nitro writes the web Worker's configuration file, the realtime and jobs Workers have their own, and each names the binding ids the program exports.
 
 ## Order of the first apply
 
-A queue consumer names the functions Worker, and a custom domain names a Worker, so neither can be declared until its Worker exists. The first apply runs in three steps:
+A queue consumer names the jobs Worker, and a custom domain names a Worker, so neither can be declared until its Worker exists. The first apply runs in three steps:
 
 ```mermaid
 flowchart TD
   A["Pulumi apply, queue consumers and custom domains excluded"] --> B["zone, records, buckets, databases, queues and notifications exist"]
-  B --> C["Wrangler deploys the web Worker and the functions Worker"]
+  B --> C["Wrangler deploys the web, realtime and jobs Workers"]
   C --> D["Pulumi apply again, nothing excluded"]
   D --> E["queue consumers and custom domains exist"]
 ```

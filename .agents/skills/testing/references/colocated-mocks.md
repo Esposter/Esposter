@@ -61,7 +61,7 @@ const bar = await getFoo(BarType.Baz);
 
 ## `db` mock exception — getter pattern stays inline
 
-A Functions handler suite's `db` mock cannot be centralized; it needs a getter so each test's `beforeAll`-initialized `mockDb` is lazily evaluated per-access:
+A handler suite's `db` mock in the jobs or realtime Worker cannot be centralized; it needs a getter so each test's `beforeAll`-initialized `mockDb` is lazily evaluated per-access:
 
 ```ts
 // Must stay inline in each test file — not extractable to a shared mock file

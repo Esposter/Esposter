@@ -9,14 +9,14 @@ flowchart TD
   B["Browser"] -->|"static asset"| ASSETS["Workers Static Assets"]
   B -->|"pages, /api/trpc"| W["web Worker, stateless<br/>(Nitro cloudflare_module, SSR, tRPC)"]
   B -->|"/ws/user, /ws/room/:id, /ws/call/:id"| W
-  W -->|"session + membership checked, upgrade forwarded"| OBJ["RoomObject · CallObject · UserObject<br/>one per room, call, person"]
+  W -->|"session + membership checked, upgrade forwarded"| OBJ["realtime Worker<br/>RoomObject · CallObject · UserObject<br/>one per room, call, person"]
   W -->|"RPC: createMessage, joinCall, …"| OBJ
   W --> D1[("D1: core")]
   OBJ -->|"room messages, reactions, search"| OSQL[("each object's own SQLite")]
   OBJ --> D1
   OBJ -->|"alarm: scheduled message, reminder"| OBJ
   W -->|"send job"| Q["Queues, one per job"]
-  Q --> F["functions Worker<br/>queue consumers, Cron Trigger, exports the objects"]
+  Q --> F["jobs Worker<br/>queue consumers, Cron Trigger"]
   F -->|"RPC on the owning object"| OBJ
   F --> D1
   B -->|"presigned PUT"| R2[("R2 buckets")]
@@ -41,10 +41,10 @@ The order that matters is the live path. The web Worker authorises against D1 an
 | Azure AI Search `messages-index`             | FTS5 in each room's object, written in the message's transaction | [realtime](../infra-cloudflare-realtime/design.md) |
 | PGlite in tests, `azure-mock`                | Miniflare's D1, R2 and Queues                                    | [database](../infra-cloudflare-database/design.md) |
 | Azure Blob Storage                           | R2, one bucket per container                                     | [storage](../infra-cloudflare-storage/design.md)   |
-| Event Grid custom topic + Functions          | one Queue per job, the functions Worker consuming them           | [jobs](../infra-cloudflare-jobs/design.md)         |
+| Event Grid custom topic + Functions          | one Queue per job, the jobs Worker consuming them                | [jobs](../infra-cloudflare-jobs/design.md)         |
 | Event Grid storage system topic              | R2 event notifications to a Queue                                | [jobs](../infra-cloudflare-jobs/design.md)         |
 | Service Bus delayed messages                 | an alarm on the room's or person's object                        | [realtime](../infra-cloudflare-realtime/design.md) |
-| Functions timer trigger                      | a Cron Trigger on the functions Worker                           | [jobs](../infra-cloudflare-jobs/design.md)         |
+| Functions timer trigger                      | a Cron Trigger on the jobs Worker                                | [jobs](../infra-cloudflare-jobs/design.md)         |
 | Web PubSub hubs                              | typed events over each object's hibernating WebSockets           | [realtime](../infra-cloudflare-realtime/design.md) |
 | Event Grid dead-letter container and replay  | each Queue's dead-letter queue                                   | [jobs](../infra-cloudflare-jobs/design.md)         |
 | LiveKit server, monitor and Redis on Railway | RealtimeKit                                                      | [calls](../infra-cloudflare-calls/design.md)       |
@@ -55,7 +55,7 @@ The order that matters is the live path. The web Worker authorises against D1 an
 
 **Live state lives in one object per room, call and person.** A room's object owns its messages, reactions, search and the sockets viewing it; a call's object its participants; a person's object their sockets and personal events. Live updates are typed events over hibernating WebSockets, so an idle socket costs no duration. Rejected: running the whole Nitro app in one global object to keep the in-process EventEmitters — one thread and one location for every socket, unable to hibernate, every event filtered by every subscription in memory. The [realtime](../infra-cloudflare-realtime/design.md) design holds the rest.
 
-**Every row moves to D1, Postgres is retired.** D1 is SQLite in the same account, reached by a binding with no connection to pool, billed inside the paid plan. One database, `core`, holds the relational schema and the data Azure Table holds today as typed tables, so a message and its room are joined, foreign-keyed and written in one batch. Rejected: Postgres on PlanetScale behind Hyperdrive, which keeps the schema but adds a second vendor, a connection pool and a per-request driver; Cloudflare also states that Drizzle with the `postgres` driver is not supported over Hyperdrive, so the driver would change anyway. Rejected: the Durable Object's own SQLite as the database, which makes every reader — the functions Worker, every SSR request — a client of one object, and caps the whole store at one object's storage.
+**Every row moves to D1, Postgres is retired.** D1 is SQLite in the same account, reached by a binding with no connection to pool, billed inside the paid plan. One database, `core`, holds the relational schema and the data Azure Table holds today as typed tables, so a message and its room are joined, foreign-keyed and written in one batch. Rejected: Postgres on PlanetScale behind Hyperdrive, which keeps the schema but adds a second vendor, a connection pool and a per-request driver; Cloudflare also states that Drizzle with the `postgres` driver is not supported over Hyperdrive, so the driver would change anyway. Rejected: the Durable Object's own SQLite as the database, which makes every reader — the jobs Worker, every SSR request — a client of one object, and caps the whole store at one object's storage.
 
 **D1 has no interactive transaction, so a transaction becomes a batch or a constraint.** `db.batch([...])` runs its statements atomically; a transaction that reads and then decides becomes a single conditional statement (`INSERT ... ON CONFLICT`, `UPDATE ... WHERE` with a returning clause) or a unique constraint that makes the losing write fail. The [database part](../infra-cloudflare-database/design.md) lists every transaction and its replacement.
 
@@ -75,7 +75,7 @@ The order that matters is the live path. The web Worker authorises against D1 an
 
 ## Conventions every part follows
 
-- **Bindings are read from `cloudflare:workers`'s `env`**, typed once in the web app's server and once in the functions Worker; no binding name is a string in a service.
+- **Bindings are read from `cloudflare:workers`'s `env`**, typed once in the web app's server, once in the realtime Worker and once in the jobs Worker; no binding name is a string in a service.
 - **A binding is a parameter, never a module-scope client.** A service takes the `D1Database`, `R2Bucket` or `Queue` it uses, so a test passes Miniflare's.
 - **The Azure names go with the services.** `AzureContainer`, `AzureTable`, `AzureFunction` and every `azure` folder are renamed to what they now name (`StorageBucket`, `StreamTable`, `QueueJob`), in the same change that moves their service, never aliased ([no compatibility debt](../../../.agents/skills/no-compatibility-debt/SKILL.md)).
 - **`@esposter/azure` and `azure-mock` are deleted** with their last importer; Miniflare is the one test double for every binding.
@@ -121,7 +121,8 @@ The cutover is the last part and runs after the branch is merged.
 | `packages/db/src/services/azure/table/getTableClient.ts`          | replaced by typed tables in `core`                            |
 | `packages/db/src/services/azure/container/generateWriteSasUrl.ts` | replaced by the presigned R2 PUT                              |
 | `packages/db-schema/src/models/azure/function/AzureFunction.ts`   | renamed to the queue job enum                                 |
-| `apps/functions/package.json`                                     | the functions Worker                                          |
+| `apps/realtime/package.json`                                      | the realtime Worker                                           |
+| `apps/jobs/package.json`                                          | the jobs Worker                                               |
 | `apps/web/server/api/webhooks/livekit.post.ts`                    | replaced by the RealtimeKit webhook                           |
 | `apps/infra/src/index.ts`                                         | the Cloudflare provider folder beside GitHub                  |
 | `packages/db-mock/src/createMockDb.ts`                            | the Miniflare D1 test database                                |

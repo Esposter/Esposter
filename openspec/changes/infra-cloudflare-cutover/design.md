@@ -24,7 +24,7 @@ flowchart TD
     Z["Cloudflare zone in Pulumi, every Namecheap record copied, DNS-only"] --> NS["owner switches nameservers at Namecheap"]
     NS --> NSV{"every record resolves as before?"}
     NSV -->|"no"| Z
-    NSV -->|"yes"| RES["pulumi up: buckets, databases, queues; deploy both Workers on next.esposter.com"]
+    NSV -->|"yes"| RES["pulumi up: buckets, databases, queues; deploy all three Workers on next.esposter.com"]
     RES --> REH["full rehearsal on the develop estate"]
     REH --> REHV{"verify passes, timings recorded?"}
     REHV -->|"no"| REH
@@ -48,13 +48,13 @@ Every write is frozen from the start of the delta copy until the switch, so no r
 
 **The zone first, long before anything else.** A Cloudflare zone for `esposter.com` is declared in `apps/infra/src/cloudflare` with every record Namecheap serves today — the apex and `www` pointing at Railway, mail (MX, SPF, DKIM, DMARC), every verification TXT, CAA — all DNS-only, so traffic takes exactly the path it takes now. The owner reads the current record list from Namecheap's Advanced DNS page, turns off DNSSEC there if it is on, and changes the nameservers to the pair Cloudflare assigns: those are the only steps at Namecheap. Then every record is resolved through public resolvers and compared with Namecheap's answers before anything else proceeds. TTLs drop to sixty seconds a day before the cutover.
 
-**Resources and a staging hostname.** `pulumi up` creates the buckets, databases, queues and notifications. Both Workers deploy with `next.esposter.com` as the web Worker's custom domain, so the new estate can be exercised on its real platform before it holds real data, and again after the copy, while the apex still points at Railway.
+**Resources and a staging hostname.** `pulumi up` creates the buckets, databases, queues and notifications. All three Workers deploy with `next.esposter.com` as the web Worker's custom domain, so the new estate can be exercised on its real platform before it holds real data, and again after the copy, while the apex still points at Railway.
 
 **The rehearsal.** The whole sequence — snapshot, pre-copy, freeze, delta, reschedule, verify, smoke — runs against the develop estate (Railway's develop environment and the Azure dev resources) into fresh dev Cloudflare resources, as many times as it takes to pass cleanly. It must not reuse a database a smoke test wrote messages into: the room import numbers messages in the archive's order, and a message written into an object before the import would take a number the import does not expect. It records the freeze-to-verified duration, which sets the production maintenance window, and it proves the copy on real data shapes before production data is touched.
 
 **The snapshot.** Before production is copied, Postgres is dumped (`pg_dump --format=custom`) and every stream table exported as JSON lines, both written to a private `cutover-archive` R2 bucket and kept until teardown. Railway's own point-in-time recovery bucket and Azure's seven-day blob soft delete stay as they are underneath it.
 
-**The cutover route.** The room import, the room summary and the reschedule are served by three temporary routes on the functions Worker (`apps/functions/src/services/cutover/handleCutoverRequest.ts`), each answering 401 without `CUTOVER_SECRET` in the `x-cutover-secret` header. The secret travels only in that header, is compared in constant time, and is never in a URL or a message body. The routes and the command are deleted at teardown.
+**The cutover route.** The room import, the room summary and the reschedule are served by three temporary routes on the jobs Worker (`apps/jobs/src/services/cutover/handleCutoverRequest.ts`), each answering 401 without `CUTOVER_SECRET` in the `x-cutover-secret` header. The secret travels only in that header, is compared in constant time, and is never in a URL or a message body. The routes and the command are deleted at teardown.
 
 ## The copy
 
@@ -68,7 +68,7 @@ One committed command, `pnpm -C scripts cutover <step> --environment <develop|pr
 - **`copy-core`** — the whole of Postgres, run only inside the freeze: each table in foreign-key order, rows read in primary-key order and transformed by the column's type in the D1 schema (timestamps to epoch milliseconds, booleans to integers, JSON to text, uuids to text), every old UUID in a text value replaced through the id map, and written through D1's HTTP API in batched, parameter-bound inserts — no value is ever spliced into SQL text. Rows are upserted by primary key, and then the rows the source no longer holds are deleted, children first: clearing a table would cascade through the foreign keys into the typed Azure rows that reference it.
 - **`copy-tables [--delta]`** — the room import first, then each typed table. The room import is described under Messages below. Each Azure Table entity maps to its typed row: a reverse-ticked row key becomes its `createdAt`, the partition key its foreign key, and a table with no timestamp of its own takes the entity's own time, or the time it is first seen. Each typed row takes its new id from the id map keyed by `(Azure table, partition key, row key)`, which the map loads at the start and appends to as it assigns, so a re-run and the delta reuse the same ids, and a reference to another entity is remapped through the map. The delta copies entities whose Azure `Timestamp` is after the pre-copy started, then compares the key sets of both sides and deletes what Azure no longer has (see the gaps below for messages).
 - **`rewrite-urls`** — rewrites every stored absolute Azure blob URL (the columns the storage part lists) to its public asset URL.
-- **`reschedule`** — inside the freeze, reads the old estate's pending message reminders from Postgres's `message.scheduledMessageJobs` (neither completed nor cancelled) and asks the functions Worker, through the cutover route, to arm each on its owner's object, together with every copied TodoList reminder that is due, and reports how many of each it armed. A reminder whose room or owner is gone is dropped, as the cascade would have dropped it.
+- **`reschedule`** — inside the freeze, reads the old estate's pending message reminders from Postgres's `message.scheduledMessageJobs` (neither completed nor cancelled) and asks the jobs Worker, through the cutover route, to arm each on its owner's object, together with every copied TodoList reminder that is due, and reports how many of each it armed. A reminder whose room or owner is gone is dropped, as the cascade would have dropped it.
 - **`verify`** — the counts and the keys, with nothing written:
   - per core table, every row is read from both sides through the same transform and compared by its new key, so a row that copied wrong names its key;
   - every text value of every core table is tested for an old UUID the map names, which the copy's rewrite would have replaced;
@@ -107,7 +107,7 @@ Incoming webhooks also change host, from an Azure Function URL to `esposter.com/
 
 ## Teardown
 
-Once the window closes: the Railway services are deleted, the one step done in a dashboard; the Azure resource files are deleted from `apps/infra/src/azure` with `protect` removed in the same change, and `pulumi up` deletes them; the `cutover-archive` bucket, which holds the old tokens and the id map, and the cutover command are deleted; the temporary routes are deleted from the functions Worker; `openspec/specs/architecture/cloudflare-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
+Once the window closes: the Railway services are deleted, the one step done in a dashboard; the Azure resource files are deleted from `apps/infra/src/azure` with `protect` removed in the same change, and `pulumi up` deletes them; the `cutover-archive` bucket, which holds the old tokens and the id map, and the cutover command are deleted; the temporary routes are deleted from the jobs Worker; `openspec/specs/architecture/cloudflare-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
 
 ## Key files
 
@@ -115,7 +115,7 @@ Once the window closes: the Railway services are deleted, the one step done in a
 | :---------------------------------------------------------- | :---------------------------------------- |
 | `apps/infra/src/azure/resources`                            | deleted at teardown                       |
 | `apps/infra/src/index.ts`                                   | exports the zone and its records          |
-| `apps/functions/src/services/cutover`                       | the temporary routes, deleted at teardown |
+| `apps/jobs/src/services/cutover`                            | the temporary routes, deleted at teardown |
 | `scripts/src/services/cutover`                              | the copy's services, deleted at teardown  |
 | `scripts/package.json`                                      | the `cutover` script while it exists      |
 | `openspec/specs/architecture/cloudflare-services/design.md` | rewritten for Cloudflare                  |

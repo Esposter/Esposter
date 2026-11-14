@@ -86,12 +86,12 @@ A failed build marks the row failed with its reason and leaves the object to the
 
 ## Key files
 
-| Path                                                      | Role                                                        |
-| :-------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/db-schema/src/schema/user/dataExportsInUser.ts` | The export row: status, object key, ready and expiry times  |
-| `apps/web/server/trpc/routers/user.ts`                    | Request, status and link procedures                         |
-| `apps/web/server/services/user/getDataExportLink.ts`      | The short-lived read link, owner-only and expiry-checked    |
-| `apps/functions/src/handlers/exportUserDataHandler.ts`    | The streamed archive build, run by the job's queue consumer |
-| `apps/infra/src/cloudflare/resources/r2Buckets/`          | The private user-assets bucket                              |
-| `apps/infra/src/cloudflare/resources/r2BucketLifecycles/` | The lifecycle rules on the buckets                          |
-| `apps/web/app/pages/user/settings.vue`                    | The Download my data flow                                   |
+| Path                                                      | Role                                                                |
+| :-------------------------------------------------------- | :------------------------------------------------------------------ |
+| `packages/db-schema/src/schema/user/dataExportsInUser.ts` | The export row: status, object key, ready and expiry times          |
+| `apps/web/server/trpc/routers/user.ts`                    | Request, status and link procedures                                 |
+| `apps/web/server/services/user/getDataExportLink.ts`      | The short-lived read link, owner-only and expiry-checked            |
+| `apps/jobs/src/handlers/exportUserDataHandler.ts`         | The streamed archive build, run by the jobs Worker's queue consumer |
+| `apps/infra/src/cloudflare/resources/r2Buckets/`          | The private user-assets bucket                                      |
+| `apps/infra/src/cloudflare/resources/r2BucketLifecycles/` | The lifecycle rules on the buckets                                  |
+| `apps/web/app/pages/user/settings.vue`                    | The Download my data flow                                           |

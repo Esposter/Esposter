@@ -11,7 +11,8 @@ Where work is placed and how it is shaped — a fact resolved once at the consum
 | `server/services/resource`, `room`, `role`, `user`                             | 2026-10-29 · Haiku 5.5 |       |
 | `server/services` — the rest                                                   | 2026-10-29 · Haiku 5.5 |       |
 | `server/api`, `server/plugins`                                                 | 2026-10-14 · Haiku 5.5 |       |
-| `apps/functions`                                                               | 2026-10-14 · Haiku 5.5 |       |
+| `apps/jobs`                                                                    | 2026-10-14 · Haiku 5.5 |       |
+| `apps/realtime`                                                                | 2026-10-14 · Haiku 5.5 |       |
 | `packages/db`, `packages/db-schema/src/services`                               | 2026-10-14 · Haiku 5.5 |       |
 | `packages/keyframe-store`                                                      | 2026-10-14 · Haiku 5.5 |       |
 | `scripts/src/services/sweeps`                                                  | 2026-10-14 · Haiku 5.5 |       |

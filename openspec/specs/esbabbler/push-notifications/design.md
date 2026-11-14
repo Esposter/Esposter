@@ -63,5 +63,5 @@ A reply deep-links to the thread root rather than to itself: the thread is where
 | `packages/db/src/services/notification/getMessageRecipientUserIds.ts`     | the room's recipients, thread followers unioned in  |
 | `packages/db/src/services/notification/getThreadFollowerUserIds.ts`       | the thread half of that union                       |
 | `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts` | broadcasts held to the sender's `MentionEveryone`   |
-| `apps/functions/src/services/notification/resolveNotification.ts`         | the message case — body, deep link, recipients      |
+| `apps/jobs/src/services/notification/resolveNotification.ts`              | the message case — body, deep link, recipients      |
 | `apps/web/server/services/message/createUserMessage.ts`                   | publishes one notification per send, reply included |

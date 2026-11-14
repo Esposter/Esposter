@@ -97,5 +97,5 @@ Miniflare's D1 and R2 honour the condition, so a guarded statement is testable a
 | `apps/web/server/services/storage/reserveStorageBytes.ts`         | the quota gate: one guarded batch that takes every reservation or none                   |
 | `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts` | the ledger's claim: the counter update applies only while the ledger row holds its state |
 | `packages/db/src/services/storage/checkIsNewerSequencer.ts`       | the ordering check the storage ledger makes before it applies a blob event               |
-| `apps/functions/src/durableObjects/RoomObject.ts`                 | a room's reads and writes, serialized in the object's synchronous transaction            |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                  | a room's reads and writes, serialized in the object's synchronous transaction            |
 | `apps/web/server/services/blobState/writeBlobState.ts`            | a save blob's write, conditional on the object's `etag` through R2's `onlyIf`            |
