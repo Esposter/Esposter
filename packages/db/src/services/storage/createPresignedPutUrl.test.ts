@@ -1,9 +1,18 @@
 import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutUrl";
 
 describe(createPresignedPutUrl, () => {
+  // Frozen so two urls signed in one test share a date, leaving the content type as the only input that can differ
+  beforeEach(() => {
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   const credentials = {
     accessKeyId: "accessKeyId",
     // Lowercase, as a host is: a URL's origin lowercases its host, so a mixed-case account id is never the origin
@@ -39,5 +48,15 @@ describe(createPresignedPutUrl, () => {
     );
 
     expect(url.pathname).toBe("/dev-r2-esposter-message-assets/key");
+  });
+
+  // The content type is in the signature, so a PUT of any other type is one the url's signature does not cover
+  test("signs the content type it is given, so a url signed for one type carries another signature for a different one", async () => {
+    expect.hasAssertions();
+
+    const pngUrl = new URL(await createPresignedPutUrl(credentials, StorageBucket.MessageAssets, "key", "image/png"));
+    const jpegUrl = new URL(await createPresignedPutUrl(credentials, StorageBucket.MessageAssets, "key", "image/jpeg"));
+
+    expect(jpegUrl.searchParams.get("X-Amz-Signature")).not.toBe(pngUrl.searchParams.get("X-Amz-Signature"));
   });
 });
