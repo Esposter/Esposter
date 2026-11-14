@@ -360,7 +360,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     meeting.participants.joined.on("participantLeft", detachRemoteParticipant);
     // The picks are applied while the microphone and camera are still off, so nothing is captured on the default first
     for (const kind of VoiceDeviceKinds)
-      await syncDeviceToMeeting(kind, voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]]);
+      syncDeviceToMeeting(kind, voiceDeviceSettingsStore[VoiceDeviceSettingsKeyMap[kind]]);
     if (isMicrophoneEnabled) await meeting.self.enableAudio();
   };
   const disconnect = async () => {

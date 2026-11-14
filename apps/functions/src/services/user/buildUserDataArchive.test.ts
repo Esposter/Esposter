@@ -295,13 +295,13 @@ describe(buildUserDataArchive, () => {
       { message, type: MessageType.Message },
       { userId: otherUserId },
     );
-    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
-    await roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
+    roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
+    roomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
     const otherReactedMessage = await roomObject.createMessage(
       { message: otherMessage, type: MessageType.Message },
       { userId: otherUserId },
     );
-    await roomObject.addReaction({ emojiTag, messageId: otherReactedMessage.id }, { userId: otherUserId });
+    roomObject.addReaction({ emojiTag, messageId: otherReactedMessage.id }, { userId: otherUserId });
 
     // A request the person sent, one they received, and a friendship with a fourth account
     const sentRequest = takeOne(
