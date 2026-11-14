@@ -5,10 +5,8 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
-import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
-import { createCallParticipant } from "#server/services/message/call/createCallParticipant";
+import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
-import { createParticipant } from "#server/services/message/call/createParticipant";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
@@ -27,6 +25,10 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
+vi.mock("#server/services/message/call/getCallObject", () => ({
+  getCallObject: vi.fn<(callSessionId: string) => unknown>(),
+}));
+
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("moderationRouter", () => {
@@ -64,7 +66,6 @@ describe("moderationRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    callSessionParticipantMap.clear();
   });
 
   test.each([AdminActionType.CreateBan, AdminActionType.SoftBan] as const)(
@@ -420,10 +421,13 @@ describe("moderationRouter", () => {
 
     const member = await createMember();
     const callSessionId = await createCallSessionId(mockContext.db, roomId, member.id);
-    createCallParticipant(callSessionId, createParticipant({ id: crypto.randomUUID() }, member));
+    const evictUser = vi.fn<(input: { callSessionId: string; userId: string }) => Promise<unknown[]>>(() =>
+      Promise.resolve([]),
+    );
+    vi.mocked(getCallObject).mockReturnValueOnce({ evictUser } as unknown as ReturnType<typeof getCallObject>);
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
 
-    expect(callSessionParticipantMap.has(callSessionId)).toBe(false);
+    expect(evictUser).toHaveBeenCalledExactlyOnceWith({ callSessionId, userId: member.id });
   });
 
   test("subscription emits the action to the targeted user", async () => {

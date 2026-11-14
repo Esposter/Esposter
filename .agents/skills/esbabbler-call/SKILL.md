@@ -5,11 +5,11 @@ description: Apply when working on calls (store/message/room/call/, realtime.ts,
 
 # Esbabbler Calls — Implementation
 
-Calls build on `callSessionsInMessage` (Postgres) + ephemeral in-memory maps. The session persists; participants do not.
+Calls build on `callSessionsInMessage` (D1) + each call's `CallObject`, a Durable Object that holds the call's participants, knockers and admissions in its own SQLite. The session row persists; participants do too, while the call is live.
 
 ## Key entities
 
-A call is one persistent `callSessionsInMessage` row whose `id` is the join code, plus in-memory participant, admission, start-time and knocker maps lost on restart (`references/session-lifecycle.md`).
+A call is one persistent `callSessionsInMessage` row whose `id` is the join code and whose object is named by that id, holding the participant, knocker and admission tables and the call's start time (`references/session-lifecycle.md`).
 
 ## Random id terminology
 
