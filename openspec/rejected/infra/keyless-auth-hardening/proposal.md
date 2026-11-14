@@ -2,7 +2,7 @@
 
 ## Why
 
-Moving the app off key-based Azure auth onto a service principal, so storage shared-key, blob public access and Search and Event Grid local auth could be switched off estate-wide.
+Moving the app off key-based auth onto a service principal, so storage shared-key, blob public access and the local auth of its search and messaging services could be switched off estate-wide.
 
 ## What Changes
 

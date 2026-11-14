@@ -2,7 +2,7 @@
 
 ## Why
 
-Putting Azure Front Door or another CDN in front of the Blob account that serves the game's data, so its immutable objects are cached at the edge instead of read from storage.
+Putting a CDN in front of the R2 bucket that serves the game's data, so its immutable objects are cached at the edge instead of read from storage.
 
 ## What Changes
 

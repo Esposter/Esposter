@@ -1,9 +1,7 @@
 # CDN in front of Railway
 
-The app is served straight from Railway, and Railway bills every byte it sends out. A CDN in front of it would proxy `esposter.com`, cache the build assets at its edge and send them from there, so most of the egress would leave Railway's bill.
+A CDN in front of the app would proxy `esposter.com`, cache the build assets at its edge and send them from there, so most of the app's egress would never reach its host.
 
-**Why not:** A CDN is a second service to run. It takes over the domain's DNS, TLS and cache rules, and each of those is a place where the app and the proxy can disagree about what is served. The egress it would save is a small fraction of the Railway bill, and most of that saving comes from the app compressing its own assets, which needs no second service ([compression](../../../specs/architecture/compression/design.md)). Hosting cost is cut inside Railway and inside this repository, never by adding a service. Every added service is one more thing to maintain and one more source of churn.
+The [Cloudflare program](../../../changes/infra-cloudflare-program/design.md) leaves Railway, the host this record's cost reasoning was argued from, so that reasoning no longer holds. The rest of the reasoning still does.
 
-## Sources
-
-- [Railway pricing](https://railway.com/pricing) — egress is billed per gigabyte on every plan.
+**Why not:** A CDN is a second service to run. It takes over the domain's DNS, TLS and cache rules, and each of those is a place where the app and the proxy can disagree about what is served. Most of the egress such a CDN would save comes from the app compressing its own assets, which needs no second service ([compression](../../../specs/architecture/compression/design.md)). Hosting cost is cut inside the host and inside this repository, never by adding a service. Every added service is one more thing to maintain and one more source of churn.

@@ -2,7 +2,7 @@
 
 ## Why
 
-Keeping the game's generated tables and words in the app's own public assets, so they ship in the build and the deploy image and are served through Railway, rather than published to Blob storage.
+Keeping the game's generated tables and words in the app's own public assets, so they ship in the build and are served with the client bundle, rather than published to R2 storage.
 
 ## What Changes
 

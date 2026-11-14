@@ -2,7 +2,7 @@
 
 ## Why
 
-Putting Cloudflare or another CDN between visitors and the Railway-hosted app to cut egress and serve cached assets from the edge.
+Putting a CDN between visitors and the app to cut egress and serve cached assets from the edge.
 
 ## What Changes
 
