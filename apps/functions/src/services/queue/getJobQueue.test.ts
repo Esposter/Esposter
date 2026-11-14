@@ -7,16 +7,32 @@ import { describe } from "vitest";
 // inside the Worker, so a test reads what a publisher sent without a Workers runtime
 export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
 
-export class MockJobQueue {
+// The producer binding's own `Queue` interface, so the double is what `getJobQueue` returns. Nothing is ever backed up
+// here, so every backlog it reports is empty
+export class MockJobQueue implements Queue {
   readonly job: QueueJob;
+  readonly #backlog = { backlogBytes: 0, backlogCount: 0 };
 
   constructor(job: QueueJob) {
     this.job = job;
   }
 
-  send(body: unknown): Promise<unknown> {
+  metrics(): Promise<QueueMetrics> {
+    return Promise.resolve(this.#backlog);
+  }
+
+  send(body: unknown): Promise<QueueSendResponse> {
+    this.#record(body);
+    return Promise.resolve({ metadata: { metrics: this.#backlog } });
+  }
+
+  sendBatch(messages: Iterable<MessageSendRequest>): Promise<QueueSendBatchResponse> {
+    for (const { body } of messages) this.#record(body);
+    return Promise.resolve({ metadata: { metrics: this.#backlog } });
+  }
+
+  #record(body: unknown) {
     getOrCreate(MockJobQueueDatabase, this.job, () => []).push(body);
-    return Promise.resolve();
   }
 }
 
