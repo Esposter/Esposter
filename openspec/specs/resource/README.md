@@ -6,7 +6,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 
 ## Key concepts
 
-- **Resource** — one Postgres identity row + one content blob in Azure Blob + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
+- **Resource** — one D1 identity row + one content object in R2 + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
 - **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats), **FileAssets** (hosted binary assets under `{id}/files/…` — see [resource file assets](resource-file-assets/design.md)).
 - **Explorer** — the Azure-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](explorer/design.md).
 - **Blade** — one panel of a resource page, addressed by route segment (`/resource-explorer/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
@@ -22,7 +22,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Share to esbabbler](share-to-esbabbler/design.md) — Share command posting a published resource's public link into a room you pick
 - [Notifications bell](notifications/design.md) — session-scoped operation-outcome toasts + the dock's notifications panel
 - [TodoList agent follow-ups](todolist-agent-follow-ups/design.md) — Claude Code sessions write the follow-ups they leave into the list and drain them until none is left, through the follow-ups plugin and the MCP endpoint
-- [TodoList due reminders](todolist-due-reminders/design.md) — web-push when a TodoList item comes due, over the scheduled-job + push subsystems
+- [TodoList due reminders](todolist-due-reminders/design.md) — web-push when a TodoList item comes due, from an alarm on the owner's user object through the notification pipeline
 - [TodoList completion](todolist-completion/design.md) — a checkbox on every row, a collapsible Completed section, and delete from the row's context menu
 - [TodoList importance](todolist-importance/design.md) — a star on every row, and a Sort menu that orders the view but never the list
 - [TodoList manual order](todolist-manual-order/design.md) — open todos dragged or Alt+arrowed into the reader's own order
@@ -35,10 +35,10 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Global search relevance](global-search-relevance/design.md) — a full-text index (FTS5) and `bm25` ranking, so a word of a name or a tag finds its resource
 - [Favorites & recents](favorites-and-recents/design.md) — server-side stars and server-side opens, as Home tabs and as full list routes
 - [Resource tags](tags/design.md) — name:value pairs in Essentials, edited in place, filterable on `/all`
-- [Recycle bin](recycle-bin/design.md) — soft delete with restore, permanent purge, and a timer sweep past `RECYCLE_BIN_RETENTION_MS`
+- [Recycle bin](recycle-bin/design.md) — soft delete with restore, permanent purge, and a nightly purge past `RECYCLE_BIN_RETENTION_MS`
 - [Delete-time reference warning](delete-reference-warning/design.md) — a delete confirmation naming the other resources that use what is being deleted
 - [Resource references](resource-references/design.md) — the Overview's Related resources card: what uses a resource and what it uses, each a link
-- [Activity log](activity-log/design.md) — the per-resource audit trail blade, in Azure Table Storage
+- [Activity log](activity-log/design.md) — the per-resource audit trail blade, in D1
 - [Resource snapshots](resource-snapshots/design.md) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Resource version store](resource-version-store/design.md) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version
 - [Content-addressed assets](content-addressed-assets/design.md) — uploaded files addressed by the hash of their bytes, so a publish, a revision and the working copy share one file and nothing is copied when a page is published
@@ -80,7 +80,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard card and table visuals](dashboard-card-and-table-visuals/design.md) — a card's one aggregated number and a table of exact values beside the charts, over the same binding
 - [Dashboard export](dashboard-export/design.md) — the dashboard page as a PNG and each visual's drawn rows as CSV, read from the published snapshot for a viewer
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
-- [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the `AZURE_MAX_PAGE_SIZE` row cap
+- [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the dataset row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](email-preview-text/design.md) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy
@@ -95,7 +95,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard layout](dashboard-layout/design.md) — the visuals and the inspector around the grid, with the grid kept as the canvas
 - [Editor compact chrome](editor-compact-chrome/design.md) — one grouped, searchable palette for the survey and the page builder, a whiteboard panel that floats over the canvas, a readable survey canvas and a toolbar that folds
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
-- [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
+- [Storage quotas](storage-quotas/design.md) — per-user object allowance held at presigned-URL issuance and charged by R2's object-create event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
 - [Page builder canvas](page-builder/canvas/design.md) — the frame a page is drawn in at its device widths, with its overlays and the pointer, keyboard and layers paths that move its nodes
 - [Page builder style panel](page-builder/style-panel/design.md) — each node's styles kept per breakpoint and state, emitted as its own rules and edited through the library's controls
@@ -109,19 +109,19 @@ Designs not yet built are under [proposals](../../changes/). Ideas we chose not 
 ## Shipped log
 
 One line per program of work; the feature pages above carry the detail. The fact worth keeping at this level is
-what the whole program cost: one Azure Table for the activity blade, one Service Bus queue for reminders, one
-Event Grid subscription on a system topic that already existed, and a handful of Postgres migrations — no new
-Azure service at any point.
+what the whole program cost: one D1 table for the activity blade, one alarm on each person's user object for
+reminders, one R2 event notification into a queue for storage reconciliation, and a handful of D1 migrations — no
+new service of its own at any point.
 
-- **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
+- **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `resource-assets` bucket replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its full-text ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it, and one Export CSV over every dataset provider.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.
-- **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new Azure service and no model inside the app.
+- **TodoList agent follow-ups** — Claude Code sessions capture the follow-ups they leave into the TodoList and drain them, over one MCP endpoint any procedure opts into and an API key table in `auth`; no new service and no model inside the app.
 - **[Webpage social preview](webpage-social-preview/design.md)** — the Webpage's Settings blade sets the description and share image its published page unfurls with, over the site's own.
-- **Resource services** — storage quotas charged by Storage's own `BlobCreated` event, TodoList due reminders on the scheduled-job stack, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
+- **Resource services** — storage quotas charged by R2's object-create event through a queue, TodoList due reminders as alarms on each person's user object, the notifications bell, and version history re-based onto content-addressed keyframes and deltas in a workspace package of its own.
 - **Content-addressed assets** — uploaded files addressed by the hash of their bytes, reference rows written from a scan of each version, and one release for every path that can unreference a file.
 - **[Whiteboard](whiteboard/design.md)** — the freeform canvas, drawn on the headless editor core's positioned elements with no third-party dependency and one enum migration, shipped without its read-only published view.
 - **Flowchart retirement** — the Flowchart type, its Vue Flow dependency and every stored flowchart removed in one release, once the whiteboard covered its feature check. Stored flowcharts were deleted, not converted.

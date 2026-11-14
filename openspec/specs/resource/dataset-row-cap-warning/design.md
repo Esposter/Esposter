@@ -23,7 +23,7 @@ flowchart TD
 
 ### The providers
 
-- **Sheet** parses the whole stored content before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
+- **Sheet** parses the whole content blob before slicing to the cap, so `totalRows` costs nothing — it is already holding every row.
 - **SurveyResponses** and **ProgramStatus** cannot count for free: a total means counting every matching row. They therefore **only pay when they have to, and never more than a bounded count**. A read that proved itself complete answers for itself (`totalRows = rows.length`) — the survey read fetches one row past the cap so a response set holding exactly the cap never pays for a count — and only a read known to be truncated runs a count over the matching rows, bounded at `DATASET_MAX_COUNTED_ROWS` so a huge table cannot stall the read just to render a banner number. A count that hit the bound is a floor: `getDatasetTruncation` marks it `isCountCapped`, and every surface renders it as "M+" via `formatTruncationCount` rather than as an exact total.
 
 ### The consumers
@@ -48,7 +48,7 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 | `app/components/Dataset/TruncationFootnote.vue`                         | footnote form (Dashboard visual)                    |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`              | the pre-export confirm                              |
 | `apps/web/server/services/db/readCappedCount.ts`                        | bounded row count every provider total runs through |
-| `server/services/dataset/sheet/readSheetDataset.ts`                     | free total from the parsed content                  |
+| `server/services/dataset/sheet/readSheetDataset.ts`                     | free total from the parsed blob                     |
 | `server/services/dataset/surveyResponses/readSurveyResponsesDataset.ts` | count only once a read is known to have capped      |
 
 ## Notes
