@@ -1,5 +1,4 @@
-import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { ownedBy } from "#server/services/db/ownedBy";
@@ -12,7 +11,7 @@ import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { DatabaseEntityType, roomsInMessage, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 
-export const deleteRoom = async (db: Context["db"], { user }: GetSessionPayload, id: string) => {
+export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user">, id: string) => {
   const deletedRooms = await db
     .delete(roomsInMessage)
     .where(ownedBy(roomsInMessage, id, user.id))

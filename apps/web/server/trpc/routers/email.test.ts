@@ -144,9 +144,8 @@ describe("emailRouter", () => {
       root: { props: {} },
     });
 
-    await expect(
-      transformPublishedEmail({ ...getMockContext(), getSessionPayload: getMockSession() }, newResource, invalidEmail),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+    await expect(transformPublishedEmail({ ...getMockContext(), ...getMockSession() }, newResource, invalidEmail))
+      .rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Invalid operation: Update, name: Resource, ValidationError: 
        Line undefined of undefined (mj-button) — Attribute padding has invalid value: 1px 2px 3px 4px 5px for type Unit, only accepts (px, %) units and 1 to 4 value(s)]
     `);

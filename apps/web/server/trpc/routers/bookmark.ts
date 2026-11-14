@@ -14,11 +14,11 @@ import { and, eq, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
   readBookmarks: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
-    getTopic(TopicKind.Bookmark, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.Bookmark, ctx.user.id),
   ]).query<PageLink[]>(async ({ ctx }) => {
     const userBookmarks = await ctx.db.query.bookmarksInApp.findMany({
       orderBy: { createdAt: "asc" },
-      where: { userId: { eq: ctx.getSessionPayload.user.id } },
+      where: { userId: { eq: ctx.user.id } },
     });
     // A bookmark of a resource's page carries its type as the place's mark; any other page has none
     return userBookmarks.map(({ path, resourceType, title }): PageLink =>
@@ -26,9 +26,9 @@ export const bookmarkRouter = router({
     );
   }),
   toggleBookmark: getTopicsProcedure(standardAuthedProcedure.input(toggleBookmarkInputSchema), ({ ctx }) => [
-    getTopic(TopicKind.Bookmark, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.Bookmark, ctx.user.id),
   ]).mutation<boolean>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
     // Was bookmarked, so the toggle can never race with itself
     const deletedBookmarks = await ctx.db

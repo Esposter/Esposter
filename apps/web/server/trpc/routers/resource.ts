@@ -110,7 +110,7 @@ export const resourceRouter = router({
           scope: McpScope.Resources,
         },
       }),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
   deleteResources: getTopicsProcedure(
     standardAuthedProcedure
@@ -124,7 +124,7 @@ export const resourceRouter = router({
       }),
     ({ ctx, input: { ids } }) => [
       ...ids.map((id) => getTopic(TopicKind.Resource, id)),
-      ...getResourceListTopics(ctx.getSessionPayload.user.id),
+      ...getResourceListTopics(ctx.user.id),
     ],
   )
     // Owner-scoped where so callers can only ever soft-delete their own rows
@@ -132,13 +132,13 @@ export const resourceRouter = router({
       const deletedResources = await softDeleteResources(
         ctx.db,
         and(
-          eq(resourcesInResource.userId, ctx.getSessionPayload.user.id),
+          eq(resourcesInResource.userId, ctx.user.id),
           inJsonArray(resourcesInResource.id, ids),
           isNull(resourcesInResource.deletedAt),
         ),
       );
       if (deletedResources.length > 0)
-        await publishResourceOperation(ctx.getSessionPayload, {
+        await publishResourceOperation(ctx, {
           path: RoutePath.ResourceExplorerRecycleBin,
           title: ResourceOperationTitleMap[ResourceOperationType.Deleted](
             takeOne(deletedResources).name,
@@ -155,7 +155,7 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     }),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).mutation<ResourceInResource>(async ({ ctx }) => {
     const { name, tags, type } = ctx.resource;
     const newResource = await createResourceRow(
@@ -175,20 +175,14 @@ export const resourceRouter = router({
       // The blob is written on first save, so missing content just means there is nothing to copy yet
       if (content === undefined) return;
 
-      const clonedContent = await cloneContentAssets(
-        ctx.db,
-        ctx.getSessionPayload.user.id,
-        content,
-        ctx.resource.id,
-        newResource.id,
-      );
+      const clonedContent = await cloneContentAssets(ctx.db, ctx.user.id, content, ctx.resource.id, newResource.id);
       // The one content-write path, so the copy fires the same after-save hook the editor's save does — a
       // Duplicated TodoList's future due dates get their reminders scheduled rather than silently lost.
       // No activityType: createResourceRow has already opened the copy's trail with its Duplicated entry, and
       // A ContentSaved beside it would claim the owner edited a copy they have not opened yet
       await saveResourceContent(ctx, { content: clonedContent, resource: newResource });
     });
-    await publishResourceOperation(ctx.getSessionPayload, {
+    await publishResourceOperation(ctx, {
       path: RoutePath.Resource(newResource.id),
       title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
     });
@@ -206,7 +200,7 @@ export const resourceRouter = router({
     // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
     // It is the one delete whose owner is here to be told. See openspec/specs/resource/storage-quotas/design.md
     await emitStorageUsage(ctx.db, ctx.resource.userId);
-    await publishResourceOperation(ctx.getSessionPayload, {
+    await publishResourceOperation(ctx, {
       path: RoutePath.ResourceExplorerRecycleBin,
       title: ResourceOperationTitleMap[ResourceOperationType.Purged](ctx.resource.name),
     });
@@ -249,35 +243,35 @@ export const resourceRouter = router({
     if (!readFindings)
       throw getInvalidOperationError(Operation.Read, ctx.resource.type, "the type declares no critique");
 
-    const findings = await readFindings(ctx.db, ctx.getSessionPayload.user.id, ctx.resource.id);
+    const findings = await readFindings(ctx.db, ctx.user.id, ctx.resource.id);
     return { contentVersion: ctx.resource.contentVersion, findings };
   }),
   readDeletedResources: getTopicsProcedure(standardAuthedProcedure.input(readDeletedResourcesInputSchema), ({ ctx }) =>
-    getResourceListTopics(ctx.getSessionPayload.user.id),
+    getResourceListTopics(ctx.user.id),
   ).query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const where = getResourcesWhere(ctx.db, userId, {}, true);
     const orderBy =
       sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resourcesInResource.deletedAt)];
     return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
   }),
   readDeletedResourcesCount: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getResourceListTopics(ctx.getSessionPayload.user.id),
+    getResourceListTopics(ctx.user.id),
   ).query<number>(
     async ({ ctx }) =>
       takeOne(
         await ctx.db
           .select({ count: count() })
           .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}, true)),
+          .where(getResourcesWhere(ctx.db, ctx.user.id, {}, true)),
       ).count,
   ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows
-  readFavorites: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getResourceListTopics(ctx.getSessionPayload.user.id),
-  ).query<ResourceListItem[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
+  readFavorites: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => getResourceListTopics(ctx.user.id)).query<
+    ResourceListItem[]
+  >(({ ctx }) => {
+    const userId = ctx.user.id;
     return ctx.db
       .select(resourceListSelection)
       .from(resourcesInResource)
@@ -308,7 +302,7 @@ export const resourceRouter = router({
   // What a delete leaves dangling, named in its confirmation
   readResourceConsumers: getTopicsProcedure(
     standardAuthedProcedure.input(readResourceConsumersInputSchema),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).query<LinkedResource[]>(({ ctx, input: { ids } }) => readResourceConsumers(ctx, ids)),
   readResourceContent: getTopicsProcedure(
     getOwnerProcedure(undefined, readResourceContentInputSchema, "id").meta({
@@ -349,10 +343,7 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     }),
-    ({ ctx, input: { id } }) => [
-      getTopic(TopicKind.Resource, id),
-      ...getResourceListTopics(ctx.getSessionPayload.user.id),
-    ],
+    ({ ctx, input: { id } }) => [getTopic(TopicKind.Resource, id), ...getResourceListTopics(ctx.user.id)],
   ).query<ResourceReferences>(async ({ ctx }) => {
     const [consumers, dependencyReferences] = await Promise.all([
       readResourceConsumers(ctx, [ctx.resource.id]),
@@ -370,20 +361,20 @@ export const resourceRouter = router({
           scope: McpScope.Resources,
         },
       }),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) =>
-    readResourceList(ctx.db, ctx.getSessionPayload.user.id, filter, sortBy, limit, offset),
+    readResourceList(ctx.db, ctx.user.id, filter, sortBy, limit, offset),
   ),
   readResourcesCount: getTopicsProcedure(
     standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).query<number>(
     async ({ ctx, input }) =>
       takeOne(
         await ctx.db
           .select({ count: count() })
           .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
+          .where(getResourcesWhere(ctx.db, ctx.user.id, input)),
       ).count,
   ),
   // The Tags list. Tag names live inside one JSON column rather than their own table, so the breakdown is a
@@ -391,18 +382,18 @@ export const resourceRouter = router({
   // Sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
   // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
   readResourceTagCounts: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getResourceListTopics(ctx.getSessionPayload.user.id),
-  ).query<ResourceTagCount[]>(({ ctx }) => readResourceTagCounts(ctx.db, ctx.getSessionPayload.user.id)),
+    getResourceListTopics(ctx.user.id),
+  ).query<ResourceTagCount[]>(({ ctx }) => readResourceTagCounts(ctx.db, ctx.user.id)),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
   // The affordance for setting it
   readResourceTypeCounts: getTopicsProcedure(
     standardAuthedProcedure.input(resourceFilterInputSchema.omit({ types: true }).prefault({})),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).query<ResourceTypeCount[]>(({ ctx, input }) =>
     ctx.db
       .select({ count: count(), type: resourcesInResource.type })
       .from(resourcesInResource)
-      .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input))
+      .where(getResourcesWhere(ctx.db, ctx.user.id, input))
       .groupBy(resourcesInResource.type)
       .orderBy(desc(count())),
   ),
@@ -441,9 +432,9 @@ export const resourceRouter = router({
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
   recordAccess: getTopicsProcedure(getOwnerProcedure(undefined, resourceIdInputSchema, "id"), ({ ctx }) =>
-    getResourceListTopics(ctx.getSessionPayload.user.id),
+    getResourceListTopics(ctx.user.id),
   ).mutation<void>(async ({ ctx, input: { id } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     await ctx.db
       .insert(resourceAccessesInResource)
       .values({ resourceId: id, userId })
@@ -466,10 +457,10 @@ export const resourceRouter = router({
       }),
     ({ ctx, input: { ids } }) => [
       ...ids.map((id) => getTopic(TopicKind.Resource, id)),
-      ...getResourceListTopics(ctx.getSessionPayload.user.id),
+      ...getResourceListTopics(ctx.user.id),
     ],
   ).mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const restoredResources = await ctx.db
       .update(resourcesInResource)
       .set({ deletedAt: null })
@@ -489,7 +480,7 @@ export const resourceRouter = router({
       });
     const firstRestoredResource = restoredResources[0];
     if (firstRestoredResource)
-      await publishResourceOperation(ctx.getSessionPayload, {
+      await publishResourceOperation(ctx, {
         path:
           restoredResources.length === 1 ? RoutePath.Resource(firstRestoredResource.id) : RoutePath.ResourceExplorerAll,
         title: ResourceOperationTitleMap[ResourceOperationType.Restored](
@@ -569,7 +560,7 @@ export const resourceRouter = router({
     getOwnerProcedure(undefined, resourceIdInputSchema, "id"),
     getChangedResourceTopics,
   ).mutation<boolean>(async ({ ctx, input: { id } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports
     // Whether the star was set, so the toggle can never race with itself
     const deletedFavorites = await ctx.db

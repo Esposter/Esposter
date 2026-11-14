@@ -25,7 +25,7 @@ export const achievementRouter = router({
   readAchievementMap: standardAuthedProcedure
     .meta({ staticReason: "The user object pushes each unlock to its owner's sockets as a typed event" })
     .query<AchievementDefinitionViewMap>(async ({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({
         where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
         with: UserAchievementInAchievementRelations,
@@ -96,7 +96,7 @@ export const achievementRouter = router({
         .innerJoin(usersInAuth, eq(usersInAuth.id, userAchievementsInAchievement.userId))
         .where(isNotNull(userAchievementsInAchievement.unlockedAt))
         .groupBy(usersInAuth.id);
-      return buildPointsLeaderboard(userTotals, ctx.getSessionPayload?.user.id);
+      return buildPointsLeaderboard(userTotals, ctx.user?.id);
     }),
   readUserAchievements: standardRateLimitedProcedure
     .meta({
@@ -105,7 +105,7 @@ export const achievementRouter = router({
     })
     .input(readUserAchievementsInputSchema)
     .query<UserAchievementInAchievementWithRelations[]>(({ ctx, input }) => {
-      const userId = ctx.getSessionPayload?.user.id;
+      const userId = ctx.user?.id;
       const targetUserId = input ?? userId;
       if (!targetUserId) throw new TRPCError({ code: "UNAUTHORIZED" });
       // The endpoint is deliberately public (openspec/specs/user/public-profile/design.md), so anyone may ask

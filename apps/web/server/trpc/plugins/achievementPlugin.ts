@@ -15,7 +15,7 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
   const result = await next();
   if (!result.ok || type !== "mutation") return result;
 
-  const userId = ctx.getSessionPayload.user.id;
+  const userId = ctx.user.id;
 
   await getResultAsync(async () => {
     const rawInput = await getRawInput();

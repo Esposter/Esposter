@@ -19,7 +19,7 @@ describe(updateResourceContent, () => {
 
   beforeAll(() => {
     caller = getCaller();
-    ctx = { ...getMockContext(), getSessionPayload: getMockSession() };
+    ctx = { ...getMockContext(), ...getMockSession() };
   });
 
   // The row handed in is the one read before the owner's save landed, so the update's own save is the stale one

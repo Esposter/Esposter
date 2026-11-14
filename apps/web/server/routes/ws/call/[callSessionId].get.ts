@@ -10,12 +10,12 @@ import { createError, defineEventHandler, getQuery } from "nuxt/server";
 
 // A call's socket, for a connection the call admits: the call object holds it with everyone joined to or knocking on the call
 export default defineEventHandler(async (event) => {
-  const sessionPayload = await readSession(event.req.headers);
-  if (!sessionPayload) throw createError({ statusCode: 401 });
+  const authSession = await readSession(event.req.headers);
+  if (!authSession) throw createError({ statusCode: 401 });
 
   const callSessionId = readSocketValue(callSessionIdSchema.shape.callSessionId, event.context.params?.callSessionId);
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));
-  const { session, user } = sessionPayload;
+  const { session, user } = authSession;
   const isAdmitted = await checkIsCallConnectionAdmitted(db, callSessionId, user.id);
   if (!isAdmitted) throw createError({ statusCode: 403 });
 

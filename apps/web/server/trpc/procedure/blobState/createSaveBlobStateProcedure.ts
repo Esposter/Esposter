@@ -18,14 +18,9 @@ export const createSaveBlobStateProcedure = <TData, TDataInput>(
   topicKind: TopicKind,
 ) =>
   getTopicsProcedure(standardAuthedProcedure.input(inputSchema), ({ ctx }) => [
-    getTopic(topicKind, ctx.getSessionPayload.user.id),
+    getTopic(topicKind, ctx.user.id),
   ]).mutation<{ etag: string }>(async ({ ctx, input }) => {
     const bucket = getBucket(container);
-    const etag = await writeBlobState(
-      bucket,
-      getSaveBlobName(ctx.getSessionPayload.user.id),
-      JSON.stringify(input.data),
-      input.etag,
-    );
+    const etag = await writeBlobState(bucket, getSaveBlobName(ctx.user.id), JSON.stringify(input.data), input.etag);
     return { etag };
   });

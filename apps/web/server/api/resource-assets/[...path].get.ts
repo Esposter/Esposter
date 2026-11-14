@@ -29,11 +29,11 @@ export default defineEventHandler(async (event) => {
   if (!resourceAssetPath) throw createError({ status: 400 });
   const { blobName } = resourceAssetPath;
 
-  const getSessionPayload = await readSession(event.req.headers);
+  const authSession = await readSession(event.req.headers);
   if (IS_PRODUCTION) {
     // Its own binding, because one published page issues a request per embedded asset and that spend must not come
     // Out of the caller's API budget (see openspec/specs/architecture/rate-limiting/design.md)
-    const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.req.headers, getRequestIP(event) ?? "");
+    const rateLimiterKey = authSession?.user.id ?? getIpAddress(event.req.headers, getRequestIP(event) ?? "");
     if (!rateLimiterKey) console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
     else if (!(await env.RATE_LIMITER_ASSET.limit({ key: rateLimiterKey })).success) throw createError({ status: 429 });
   }
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
   // Published views render in a sandboxed srcdoc iframe whose opaque origin sends no cookies with asset requests, so an
   // Owner's own render inside that iframe is refused the same way; only a direct request for the asset url reaches the
   // Owner fallback. That is what unpublish revoking anonymous access costs, and the point of the control
-  const userId = getSessionPayload?.user.id;
+  const userId = authSession?.user.id;
   const resourceAccess = await readResourceAccess(db, resourceAssetPath.resourceId, userId);
   if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, resourceAccess)))
     throw createError({ status: userId ? 404 : 401 });

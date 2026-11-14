@@ -9,5 +9,4 @@ export const readOwnedResource = (
   id: ResourceInResource["id"],
   type: ResourceType | undefined,
   isDeletedOnly = false,
-): Promise<ResourceInResource | undefined> =>
-  findOwnedResource(ctx.db, ctx.getSessionPayload.user.id, id, type, isDeletedOnly);
+): Promise<ResourceInResource | undefined> => findOwnedResource(ctx.db, ctx.user.id, id, type, isDeletedOnly);

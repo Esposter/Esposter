@@ -1,5 +1,5 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   ApiKeyPermissions,
@@ -73,9 +73,7 @@ import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // The session's own user, whose profile, settings and call backgrounds the procedures below read or change
-const userTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.User, ctx.getSessionPayload.user.id),
-];
+const userTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [getTopic(TopicKind.User, ctx.user.id)];
 
 export const userRouter = router({
   // Made here rather than by the plugin's own client call, which may not set a key's permissions: the server is the one
@@ -89,11 +87,7 @@ export const userRouter = router({
     .input(createApiKeyInputSchema)
     .mutation<string>(async ({ ctx, input: { mcpScopes, name } }) => {
       const { key } = await auth.api.createApiKey({
-        body: {
-          name,
-          permissions: { mcp: mcpScopes } satisfies ApiKeyPermissions,
-          userId: ctx.getSessionPayload.user.id,
-        },
+        body: { name, permissions: { mcp: mcpScopes } satisfies ApiKeyPermissions, userId: ctx.user.id },
       });
       return key;
     }),
@@ -103,7 +97,7 @@ export const userRouter = router({
   deleteAccount: standardAuthedProcedure
     .meta({ staticReason: "Ends the owner's sessions, so no reader is left signed in to refetch the change" })
     .mutation<void>(async ({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
       const data: DeleteAccountQueueMessage = { userId };
       // Fatal, unlike the best-effort publishes after a write: this message is the only thing that starts the sweep, so a
@@ -117,7 +111,7 @@ export const userRouter = router({
     standardAuthedProcedure.input(callBackgroundSlotSchema),
     userTopics,
   ).mutation<void>(async ({ ctx, input: { slot } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // Published as a bounded prefix rather than as the name itself, because a slot's name is fixed: a replace
     // And a delete address the same blob, so a redelivered delete would take the replacement with it. The
     // Bound is the instant the delete was decided, so a slot re-uploaded after it keeps its new image and the
@@ -150,7 +144,7 @@ export const userRouter = router({
       return createPresignedPutUrl(
         getStorageCredentials(),
         StorageBucket.UserAssets,
-        getCallBackgroundBlobName(ctx.getSessionPayload.user.id, slot),
+        getCallBackgroundBlobName(ctx.user.id, slot),
         mimetype,
       );
     }),
@@ -161,9 +155,7 @@ export const userRouter = router({
     .input(generateDataExportLinkInputSchema)
     .mutation<string>(async ({ ctx, input }) => {
       const dataExport = await requireEntity(
-        ctx.db.query.dataExportsInUser.findFirst({
-          where: { id: { eq: input }, userId: { eq: ctx.getSessionPayload.user.id } },
-        }),
+        ctx.db.query.dataExportsInUser.findFirst({ where: { id: { eq: input }, userId: { eq: ctx.user.id } } }),
         DatabaseEntityType.DataExport,
         input,
       );
@@ -175,13 +167,13 @@ export const userRouter = router({
         "A presigned upload url: the image changes when the client saves it through updateUser, which publishes the topic",
     })
     .mutation<{ publicUrl: string; sasUrl: string }>(async ({ ctx }) => {
-      const blobName = getUserProfileImageBlobName(ctx.getSessionPayload.user.id);
+      const blobName = getUserProfileImageBlobName(ctx.user.id);
       const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
       return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
     }),
   readCallBackgrounds: getTopicsProcedure(standardAuthedProcedure, userTopics).query<CallBackground[]>(
     async ({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       const bucket = getBucket(StorageBucket.UserAssets);
       const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
       // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
@@ -211,7 +203,7 @@ export const userRouter = router({
       else
         return ctx.db.query.dataExportsInUser.findFirst({
           orderBy: { requestedAt: "desc" },
-          where: { userId: { eq: ctx.getSessionPayload.user.id } },
+          where: { userId: { eq: ctx.user.id } },
         });
     },
   ),
@@ -256,7 +248,7 @@ export const userRouter = router({
   readUserSettings: getTopicsProcedure(standardAuthedProcedure, userTopics).query<UserSettingsInMessage>(
     async ({ ctx }) => {
       const foundUserSettings = await ctx.db.query.userSettingsInMessage.findFirst({
-        where: { userId: { eq: ctx.getSessionPayload.user.id } },
+        where: { userId: { eq: ctx.user.id } },
       });
       if (foundUserSettings) return foundUserSettings;
       // No row yet — return the defaults without persisting; the first update upserts the row
@@ -274,7 +266,7 @@ export const userRouter = router({
           pushToTalkReleaseDelayMs: DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
           speakerVolumePercentage: DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
           updatedAt: new Date(),
-          userId: ctx.getSessionPayload.user.id,
+          userId: ctx.user.id,
           virtualBackground: "",
           voiceInputMode: VoiceInputMode.VoiceActivity,
         } satisfies UserSettingsInMessage;
@@ -285,7 +277,7 @@ export const userRouter = router({
   // The retry queues a new export rather than returning one that nothing will build
   requestDataExport: getTopicsProcedure(standardAuthedProcedure, userTopics).mutation<DataExportInUser>(
     async ({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       const [insertedDataExport] = await ctx.db
         .insert(dataExportsInUser)
         .values({ status: DataExportStatus.Queued, userId })
@@ -310,12 +302,10 @@ export const userRouter = router({
     getTopic(TopicKind.Feed, "posts"),
   ]).mutation<UserInAuth>(async ({ ctx, input }) =>
     requireMutation(
-      (
-        await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.getSessionPayload.user.id)).returning()
-      )[0],
+      (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
       Operation.Update,
       DatabaseEntityType.User,
-      ctx.getSessionPayload.user.id,
+      ctx.user.id,
     ),
   ),
   updateUserSettings: getTopicsProcedure(
@@ -326,7 +316,7 @@ export const userRouter = router({
       (
         await ctx.db
           .insert(userSettingsInMessage)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .values({ ...input, userId: ctx.user.id })
           .onConflictDoUpdate({ set: input, target: userSettingsInMessage.userId })
           .returning()
       )[0],
@@ -343,7 +333,7 @@ export const userRouter = router({
         (
           await ctx.db
             .insert(userStatusesInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
+            .values({ ...input, userId: ctx.user.id })
             .onConflictDoUpdate({ set: input, target: userStatusesInMessage.userId })
             .returning()
         )[0],
@@ -353,7 +343,7 @@ export const userRouter = router({
       );
 
       const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
-      await callUserObjects([ctx.getSessionPayload.user.id], (userObject) => userObject.upsertStatus(detectedStatus));
+      await callUserObjects([ctx.user.id], (userObject) => userObject.upsertStatus(detectedStatus));
       return detectedStatus;
     }),
 });

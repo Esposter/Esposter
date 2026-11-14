@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -229,7 +229,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const savingPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
+    const savingPayload: AuthSession = { session: createMockSession(authMocks.user.id), user: authMocks.user };
     const deviceId = v7();
     replayMockSession(savingPayload);
     const tabCaller = createCallerFactory(dashboardRouter)({

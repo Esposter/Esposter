@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
 import type { NotificationInNotification, relations, Topic } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
@@ -24,8 +24,8 @@ import { Operation, takeOne } from "@esposter/shared";
 import { count, eq } from "drizzle-orm";
 
 // The notifications a user holds, and the unread count the bell shows of them, are one topic for the user
-const notificationTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.Notification, ctx.getSessionPayload.user.id),
+const notificationTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
+  getTopic(TopicKind.Notification, ctx.user.id),
 ];
 
 export const notificationRouter = router({
@@ -37,7 +37,7 @@ export const notificationRouter = router({
       (
         await ctx.db
           .delete(notificationsInNotification)
-          .where(ownedBy(notificationsInNotification, input, ctx.getSessionPayload.user.id))
+          .where(ownedBy(notificationsInNotification, input, ctx.user.id))
           .returning()
       )[0],
       Operation.Delete,
@@ -47,16 +47,14 @@ export const notificationRouter = router({
   ),
   deleteNotifications: getTopicsProcedure(standardAuthedProcedure, notificationTopics).mutation<void>(
     async ({ ctx }) => {
-      await ctx.db
-        .delete(notificationsInNotification)
-        .where(eq(notificationsInNotification.userId, ctx.getSessionPayload.user.id));
+      await ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id));
     },
   ),
   readNotifications: getTopicsProcedure(
     standardAuthedProcedure.input(readNotificationsInputSchema),
     notificationTopics,
   ).query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const where: RelationsFilter<(typeof relations)["notificationsInNotification"], typeof relations> = {
       userId: { eq: userId },
     };
@@ -81,7 +79,7 @@ export const notificationRouter = router({
       await ctx.db
         .update(notificationsInNotification)
         .set({ isRead: true })
-        .where(getUnreadNotificationsWhere(ctx.getSessionPayload.user.id));
+        .where(getUnreadNotificationsWhere(ctx.user.id));
     },
   ),
 });

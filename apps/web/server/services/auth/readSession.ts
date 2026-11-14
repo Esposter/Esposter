@@ -8,10 +8,10 @@ import { auth } from "#server/auth";
 export const readSession = async (headers: Headers, responseHeaders?: Headers) => {
   if (!responseHeaders) return auth.api.getSession({ headers, query: { disableRefresh: true } });
 
-  const { headers: sessionHeaders, response: getSessionPayload } = await auth.api.getSession({
+  const { headers: sessionHeaders, response: authSession } = await auth.api.getSession({
     headers,
     returnHeaders: true,
   });
   for (const cookie of sessionHeaders.getSetCookie()) responseHeaders.append("Set-Cookie", cookie);
-  return getSessionPayload;
+  return authSession;
 };

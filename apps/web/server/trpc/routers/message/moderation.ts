@@ -68,7 +68,7 @@ export const moderationRouter = router({
     getPermissionsProcedure(RoomPermission.KickMembers, createModerationNoteInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<ModerationNoteInMessage>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     await assertIsManageable(ctx.db, actorUserId, targetUserId, roomId);
     return takeOne(
       await ctx.db.insert(moderationNotesInMessage).values({ actorUserId, note, roomId, targetUserId }).returning(),
@@ -104,7 +104,7 @@ export const moderationRouter = router({
     .concat(moderationLogPlugin)
     .mutation<void>(async ({ ctx, input }) => {
       const { roomId, targetUserId } = input;
-      const actorUserId = ctx.getSessionPayload.user.id;
+      const actorUserId = ctx.user.id;
       // Moderating yourself is not a hierarchy question, so the comparison never reaches it — an owner
       // Outranks themselves under every rule the comparison knows, and would be able to ban themselves out of
       // The room they own
@@ -121,7 +121,7 @@ export const moderationRouter = router({
       ]);
       if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      const sessionId = ctx.getSessionPayload.session.id;
+      const sessionId = ctx.session.id;
       // Being removed from a room, for good or for a while, takes the member out of its calls too. Best-effort
       // Behind the removal, which has already committed: a failed eviction costs one connection that outlives it,
       // Where rethrowing would fail a mutation whose effect already landed
@@ -290,7 +290,7 @@ export const moderationRouter = router({
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).query<CursorPaginationData<ModerationNoteInRoom>>(
     async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-      await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+      await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
 
       const sortBy: SortItem<keyof ModerationNoteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
       const wheres: (SQL | undefined)[] = [
@@ -325,7 +325,7 @@ export const moderationRouter = router({
     getPermissionsProcedure(RoomPermission.KickMembers, readModerationNotesCountInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).query<number>(async ({ ctx, input: { roomId, targetUserId } }) => {
-    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
+    await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
     return readModerationNotesCount(ctx.db, roomId, targetUserId);
   }),
 });

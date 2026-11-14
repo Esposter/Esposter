@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Session, User } from "better-auth";
 
 import { authMocks, createMockSession, insertMockSession } from "#server/auth.test";
@@ -11,7 +11,7 @@ import { describe } from "vitest";
 
 // The identity every test reads to learn who it is acting as. One session for the whole run, unlike the ones a
 // Request is handed, so a test comparing what it read against what it passed is comparing the same device
-const defaultGetSessionPayload: GetSessionPayload = {
+const defaultAuthSession: AuthSession = {
   get session() {
     defaultSession ??= createMockSession(authMocks.user.id);
     return defaultSession;
@@ -38,10 +38,10 @@ export const mockSessionOnce = async (db: Context["db"], mockUser?: User) => {
         })
         .returning(),
     );
-  const getSessionPayload = { session: createMockSession(user.id), user } as const satisfies GetSessionPayload;
-  await insertMockSession(getSessionPayload);
-  authMocks.getSession.mockResolvedValueOnce(getSessionPayload);
-  return getSessionPayload;
+  const authSession = { session: createMockSession(user.id), user } as const satisfies AuthSession;
+  await insertMockSession(authSession);
+  authMocks.getSession.mockResolvedValueOnce(authSession);
+  return authSession;
 };
 
 // A second user for the test to act on rather than act as — the session `mockSessionOnce` queues for it is
@@ -52,8 +52,8 @@ export const createMockUser = async (db: Context["db"]) => {
   return user;
 };
 
-export const replayMockSession = (getSessionPayload: GetSessionPayload) => {
-  authMocks.getSession.mockResolvedValueOnce(getSessionPayload);
+export const replayMockSession = (authSession: AuthSession) => {
+  authMocks.getSession.mockResolvedValueOnce(authSession);
 };
 
 // `better-auth` answers null when no session exists, which is what an unauthenticated request looks like
@@ -65,7 +65,7 @@ export const mockNoSessionOnce = () => {
 // Identity again. Reading who you are is `getMockSession`, which consumes nothing
 export const consumeMockSessionOnce = () => authMocks.getSession();
 
-export const getMockSession = () => defaultGetSessionPayload;
+export const getMockSession = () => defaultAuthSession;
 
 export const getMockRevokeSession = () => authMocks.revokeSession;
 

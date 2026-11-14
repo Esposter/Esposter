@@ -13,7 +13,7 @@ export const storageRouter = router({
       staticReason: "The user object pushes the usage to the owner's sockets as a typed event whenever it changes",
     })
     .query<StorageUsage>(async ({ ctx }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       const { storageBytesUsed, storageTier } = await requireEntity(
         ctx.db.query.usersInAuth.findFirst({
           columns: { storageBytesUsed: true, storageTier: true },

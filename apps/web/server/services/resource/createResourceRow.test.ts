@@ -25,7 +25,7 @@ describe(createResourceRow, () => {
                 },
               },
       },
-      getSessionPayload: { user: { id: userId } },
+      user: { id: userId },
     }) as unknown as AuthedContext;
 
   beforeEach(() => {

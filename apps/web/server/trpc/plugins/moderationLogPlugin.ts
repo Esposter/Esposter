@@ -19,13 +19,7 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
   const { roomId, targetUserId, type } = parsedInput.data;
   const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : null;
   await getResultAsync(async () =>
-    writeModerationLogEntry(ctx.db, {
-      actorUserId: ctx.getSessionPayload.user.id,
-      durationMs,
-      roomId,
-      targetUserId,
-      type,
-    }),
+    writeModerationLogEntry(ctx.db, { actorUserId: ctx.user.id, durationMs, roomId, targetUserId, type }),
   ).match(noop, (error) => {
     console.error(`Failed to write moderation log entry for path "${path}" and room "${roomId}":`, error);
   });

@@ -11,5 +11,5 @@ export const readLiveOwnedResourceSummaries = (ctx: AuthedContext, where: Resour
     columns: { id: true, name: true, type: true },
     limit: MAX_READ_LIMIT,
     orderBy: { name: "asc" },
-    where: { ...where, deletedAt: { isNull: true }, userId: { eq: ctx.getSessionPayload.user.id } },
+    where: { ...where, deletedAt: { isNull: true }, userId: { eq: ctx.user.id } },
   });

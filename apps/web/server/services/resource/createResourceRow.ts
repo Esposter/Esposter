@@ -17,7 +17,7 @@ export const createResourceRow = async (
   values: { name: ResourceInResource["name"]; tags?: ResourceTags; type: ResourceType },
   activityType: ResourceActivityType.Created | ResourceActivityType.Duplicated = ResourceActivityType.Created,
 ): Promise<ResourceInResource> => {
-  const userId = ctx.getSessionPayload.user.id;
+  const userId = ctx.user.id;
   const newResource = requireMutation(
     (
       await ctx.db

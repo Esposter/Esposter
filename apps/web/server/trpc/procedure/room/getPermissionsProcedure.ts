@@ -17,7 +17,7 @@ export const getPermissionsProcedure = <T extends z.ZodType>(
 ) =>
   AuthedProcedureMap[rateLimiterType].input(schema).use(async ({ ctx, input, next }) => {
     const roomId = requireUuid(input[roomIdKey], DatabaseEntityType.Room);
-    const isPermitted = await checkHasPermission(ctx.db, ctx.getSessionPayload.user.id, roomId, permission);
+    const isPermitted = await checkHasPermission(ctx.db, ctx.user.id, roomId, permission);
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
     return next();
   });

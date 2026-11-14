@@ -1,4 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { Session, User } from "better-auth";
 
-export type AuthedContext = Context & { getSessionPayload: GetSessionPayload };
+// A procedure's context past the authed middleware, where the caller is known
+export type AuthedContext = Context & { session: Session; user: User };

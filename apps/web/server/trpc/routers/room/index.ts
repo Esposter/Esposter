@@ -87,9 +87,9 @@ import { v7 } from "uuid";
 
 export const baseRoomRouter = router({
   createRoom: getTopicsProcedure(getProfanityFilterProcedure(createRoomInputSchema, ["name"]), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // The id is named up front, since the membership and the @everyone role both belong to the room being created
     const roomId = v7();
     const [newRoomRows] = await ctx.db.batch([
@@ -112,8 +112,8 @@ export const baseRoomRouter = router({
   }),
   deleteRoom: getTopicsProcedure(
     standardAuthedProcedure.input(deleteRoomInputSchema).use(assertIsRoomMiddleware),
-    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.getSessionPayload.user.id)],
-  ).mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
+    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.user.id)],
+  ).mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx, input)),
   generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId")
     .meta({
       staticReason:
@@ -128,9 +128,9 @@ export const baseRoomRouter = router({
     }),
   joinRoom: getTopicsProcedure(standardAuthedProcedure.input(joinRoomInputSchema), ({ ctx, output }) => {
     const roomId = selectRoomInMessageSchema.pick({ id: true }).parse(output).id;
-    return [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(ctx.getSessionPayload.user.id)];
+    return [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(ctx.user.id)];
   }).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const invite = await requireEntity(
       ctx.db.query.invitesInMessage.findFirst({ where: { id: { eq: input } } }),
       DatabaseEntityType.Invite,
@@ -236,15 +236,15 @@ export const baseRoomRouter = router({
   }),
   leaveRoom: getTopicsProcedure(
     standardAuthedProcedure.input(leaveRoomInputSchema).use(assertIsRoomMiddleware),
-    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.getSessionPayload.user.id)],
+    ({ ctx, input }) => [getTopic(TopicKind.Room, input), ...getRoomListTopics(ctx.user.id)],
   ).mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
       columns: { id: true },
       where: { id: { eq: input }, userId: { eq: userId } },
     });
 
-    if (ownedRoom) return (await deleteRoom(ctx.db, ctx.getSessionPayload, input)).id;
+    if (ownedRoom) return (await deleteRoom(ctx, input)).id;
 
     const userToRoom = requireMutation(
       (await ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(input, userId)).returning())[0],
@@ -331,7 +331,7 @@ export const baseRoomRouter = router({
   ),
   readMutualRooms: getTopicsProcedure(standardAuthedProcedure.input(userIdSchema), ({ ctx, input }) => [
     ...getRoomListTopics(input.userId),
-    ...getRoomListTopics(ctx.getSessionPayload.user.id),
+    ...getRoomListTopics(ctx.user.id),
   ]).query<RoomInMessage[]>(({ ctx, input }) => {
     const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
     const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
@@ -340,10 +340,7 @@ export const baseRoomRouter = router({
       .from(roomsInMessage)
       .innerJoin(
         usersToRoomsInMessage1,
-        and(
-          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
-          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-        ),
+        and(eq(usersToRoomsInMessage1.roomId, roomsInMessage.id), eq(usersToRoomsInMessage1.userId, ctx.user.id)),
       )
       .innerJoin(
         usersToRoomsInMessage2,
@@ -354,7 +351,7 @@ export const baseRoomRouter = router({
       .limit(MAX_READ_LIMIT);
   }),
   readRoom: getTopicsProcedure(standardAuthedProcedure.input(readRoomInputSchema), ({ ctx, input }) =>
-    input === undefined ? getRoomListTopics(ctx.getSessionPayload.user.id) : [getTopic(TopicKind.Room, input)],
+    input === undefined ? getRoomListTopics(ctx.user.id) : [getTopic(TopicKind.Room, input)],
   ).query<RoomInMessage | undefined>(async ({ ctx, input }) => {
     if (input) {
       const room = ctx.db.query.roomsInMessage.findFirst({
@@ -369,7 +366,7 @@ export const baseRoomRouter = router({
                   .where(
                     andFilter(
                       eqFilter(usersToRoomsInMessage.roomId, roomTable.id),
-                      eqFilter(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+                      eqFilter(usersToRoomsInMessage.userId, ctx.user.id),
                     ),
                   ),
               ),
@@ -386,26 +383,21 @@ export const baseRoomRouter = router({
           .select(getColumns(roomsInMessage))
           .from(roomsInMessage)
           .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
-          .where(
-            and(
-              eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
-              eq(roomsInMessage.type, RoomType.Room),
-            ),
-          )
+          .where(and(eq(usersToRoomsInMessage.userId, ctx.user.id), eq(roomsInMessage.type, RoomType.Room)))
           .orderBy(desc(roomsInMessage.updatedAt))
           .limit(1)
       )[0];
   }),
   readRooms: getTopicsProcedure(getMemberProcedure(readRoomsInputSchema, "roomId"), ({ ctx, input: { roomId } }) => [
     ...(roomId === undefined ? [] : [getTopic(TopicKind.Room, roomId)]),
-    ...getRoomListTopics(ctx.getSessionPayload.user.id),
+    ...getRoomListTopics(ctx.user.id),
   ]).query<CursorPaginationData<RoomInMessage & { displayName: string }>>(
     async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-        eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+        eq(usersToRoomsInMessage.userId, ctx.user.id),
       );
-      const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.getSessionPayload.user.id);
+      const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.user.id);
       const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
       const roomColumns = getColumns(roomsInMessage);
       const sortableColumns = { ...roomColumns, displayName };
@@ -488,9 +480,10 @@ export const baseRoomRouter = router({
     // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
     // Rename. Best-effort behind the update, which has already landed
     if (updatedRoom.name !== previousRoom?.name)
-      await createSystemRoomMessage(id, ctx.getSessionPayload.user.id, updatedRoom.name, {
-        type: MessageType.EditRoom,
-      }).match(noop, console.error);
+      await createSystemRoomMessage(id, ctx.user.id, updatedRoom.name, { type: MessageType.EditRoom }).match(
+        noop,
+        console.error,
+      );
     // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
     // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
     // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a

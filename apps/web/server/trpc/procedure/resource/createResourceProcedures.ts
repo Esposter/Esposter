@@ -133,7 +133,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
   };
   const baseProcedures = {
     createResource: getTopicsProcedure(standardAuthedProcedure.input(createResourceInputSchema), ({ ctx }) =>
-      getResourceListTopics(ctx.getSessionPayload.user.id),
+      getResourceListTopics(ctx.user.id),
     ).mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, { ...input, type })),
     // The blobs and the type's table partitions survive until purge — destroying them here would
     // Make restore hand back an empty resource
@@ -147,7 +147,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         DatabaseEntityType.Resource,
         id,
       );
-      await publishResourceOperation(ctx.getSessionPayload, {
+      await publishResourceOperation(ctx, {
         path: RoutePath.ResourceExplorerRecycleBin,
         title: ResourceOperationTitleMap[ResourceOperationType.Deleted](deletedResource.name, 1),
       });
@@ -169,7 +169,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       .query<string>(({ ctx, input: { id, size } }) =>
         generateReservedWriteSasUrl(
           ctx.db,
-          ctx.getSessionPayload.user.id,
+          ctx.user.id,
           StorageBucket.ResourceAssets,
           getStagingContentBlobName(id),
           size,
@@ -181,7 +181,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       getResourceTopics,
     ).query<ResourceContent<TType> | undefined>(({ input: { id } }) => readContent(id)),
     readResources: getTopicsProcedure(standardAuthedProcedure.input(readResourcesInputSchema), ({ ctx }) =>
-      getResourceListTopics(ctx.getSessionPayload.user.id),
+      getResourceListTopics(ctx.user.id),
     ).query<OffsetPaginationData<ResourceWithPublication>>(
       async ({ ctx, input: { isPublished, limit, offset, sortBy } }) => {
         const resultResources = await ctx.db.query.resourcesInResource.findMany({
@@ -198,7 +198,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
                 ? EmptyFilter
                 : (resource) => getPublicationWhere(ctx.db, resource.id, isPublished),
             type: { eq: type },
-            userId: { eq: ctx.getSessionPayload.user.id },
+            userId: { eq: ctx.user.id },
           },
           with: { publication: true },
         });
@@ -267,7 +267,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id")
       .meta({ staticReason: "The upload addresses of a file, which no reader shows until the file is saved" })
       .query<ResourceFileSasEntity[]>(({ ctx, input: { files, id } }) =>
-        generateReservedResourceAssetSasEntities(ctx.db, ctx.getSessionPayload.user.id, id, files),
+        generateReservedResourceAssetSasEntities(ctx.db, ctx.user.id, id, files),
       ),
   };
   const publishProcedures = {
@@ -344,7 +344,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         publishVersion: publication.publishVersion,
         resourceId: id,
       });
-      await publishResourceOperation(ctx.getSessionPayload, {
+      await publishResourceOperation(ctx, {
         path: RoutePath.Resource(id),
         title: ResourceOperationTitleMap[ResourceOperationType.Published](
           ctx.resource.name,
@@ -433,7 +433,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         activityType: ResourceActivityType.Unpublished,
         resourceId: id,
       });
-      await publishResourceOperation(ctx.getSessionPayload, {
+      await publishResourceOperation(ctx, {
         path: RoutePath.Resource(id),
         title: ResourceOperationTitleMap[ResourceOperationType.Unpublished](ctx.resource.name),
       });

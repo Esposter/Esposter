@@ -1,8 +1,8 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Topic } from "@esposter/db-schema";
 import type { TRPCProcedureBuilder } from "@trpc/server";
+import type { User } from "better-auth";
 import type { Overwrite, Simplify } from "@trpc/server/unstable-core-do-not-import";
 
 import { publishTopics } from "#server/services/realtime/publishTopics";
@@ -21,7 +21,7 @@ export interface TopicsOptions<TContextOverrides, TInput> {
 // Does. A mutation's topics are published once it resolves, never for one that failed, and best-effort: the write has
 // Committed, so a failed publish costs readers one refresh, never the mutation
 export const getTopicsProcedure = <
-  TContextOverrides extends { getSessionPayload: GetSessionPayload | null },
+  TContextOverrides extends { user: null | User },
   TInputIn,
   TInputOut,
   TOutputIn,

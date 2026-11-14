@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 import type { ScheduledReminder, Topic } from "@esposter/db-schema";
@@ -21,8 +21,8 @@ import { v7 } from "uuid";
 
 // The person's scheduled items, reminders and scheduled messages alike, which only their own writes change. No object
 // Pushes them as events, so readers learn of a change through this topic
-const getScheduledMessageTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.ScheduledMessage, ctx.getSessionPayload.user.id),
+const getScheduledMessageTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
+  getTopic(TopicKind.ScheduledMessage, ctx.user.id),
 ];
 
 // The Scheduled tab's rows are held by their owners: a reminder in the person's object, a scheduled message in its room's.
@@ -34,23 +34,20 @@ export const scheduledMessageJobRouter = router({
     standardAuthedProcedure.input(scheduledMessageIdentityInputSchema),
     getScheduledMessageTopics,
   ).mutation<void>(async ({ ctx, input: { id, roomId } }) => {
-    if (await useUserObject(ctx.getSessionPayload.user.id).removeReminder(id)) return;
+    if (await useUserObject(ctx.user.id).removeReminder(id)) return;
 
-    const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(
-      id,
-      getRoomActor(ctx.getSessionPayload, ctx.headers),
-    );
+    const isDeleted = await useRoomObject(roomId).deleteScheduledMessage(id, getRoomActor(ctx));
     if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, id);
   }),
   readMyScheduledMessageJobs: getTopicsProcedure(
     standardAuthedProcedure.input(readMyScheduledMessagesInputSchema),
     getScheduledMessageTopics,
   ).query<BasePaginationData<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
-    readMyScheduledMessageJobs(ctx.db, ctx.getSessionPayload.user.id, input),
+    readMyScheduledMessageJobs(ctx.db, ctx.user.id, input),
   ),
   readMyScheduledMessageJobsCount: getTopicsProcedure(standardAuthedProcedure, getScheduledMessageTopics).query<number>(
     async ({ ctx }) => {
-      const userObject = useUserObject(ctx.getSessionPayload.user.id);
+      const userObject = useUserObject(ctx.user.id);
       const [scheduledMessages, reminders] = await Promise.all([
         userObject.readScheduledMessages(),
         userObject.readReminders(),
@@ -65,7 +62,7 @@ export const scheduledMessageJobRouter = router({
     getScheduledMessageTopics,
   ).mutation<ScheduledReminder>(async ({ ctx, input }) => {
     const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };
-    await useUserObject(ctx.getSessionPayload.user.id).addReminder(reminder);
+    await useUserObject(ctx.user.id).addReminder(reminder);
     return reminder;
   }),
 });

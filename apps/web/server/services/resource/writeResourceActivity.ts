@@ -10,7 +10,7 @@ import { and, eq, gt, isNull } from "drizzle-orm";
 // The context's user, and the key an agent came through or null for the owner's own hand
 export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest }: WriteResourceActivityInput) =>
   getResultAsync(async () => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const apiKeyId = ctx.apiKey?.id ?? null;
     if (rest.activityType === ResourceActivityType.ContentSaved) {
       // Coalesce on existence rather than on a read of the latest entry, so two saves racing inside the window both

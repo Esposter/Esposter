@@ -33,7 +33,7 @@ describe(writeSnapshotVersion, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ctx = { ...mockContext, ...getMockSession() };
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
     mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
@@ -43,7 +43,7 @@ describe(writeSnapshotVersion, () => {
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name: "name", type: ResourceType.Webpage, userId: ctx.getSessionPayload.user.id })
+        .values({ name: "name", type: ResourceType.Webpage, userId: ctx.user.id })
         .returning(),
     );
   });

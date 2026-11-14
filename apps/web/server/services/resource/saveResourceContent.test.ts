@@ -97,7 +97,7 @@ describe(saveResourceContent, () => {
     const program = takeOne(
       await ctx.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Program, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Program, userId: ctx.user.id })
         .returning(),
     );
     await ctx.db
@@ -109,7 +109,7 @@ describe(saveResourceContent, () => {
     (
       await mockContext.db.query.usersInAuth.findFirst({
         columns: { storageBytesUsed: true },
-        where: { id: { eq: ctx.getSessionPayload.user.id } },
+        where: { id: { eq: ctx.user.id } },
       })
     )?.storageBytesUsed;
   const getStoredContentBytes = async () => (await bucket.head(getContentBlobName(resource.id)))?.size;
@@ -163,7 +163,7 @@ describe(saveResourceContent, () => {
     takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Webpage, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Webpage, userId: ctx.user.id })
         .returning(),
     );
   const uploadAssetBlob = async (resourceId: ResourceInResource["id"], hash: string) => {
@@ -181,7 +181,7 @@ describe(saveResourceContent, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ctx = { ...mockContext, ...getMockSession() };
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
     mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
@@ -191,7 +191,7 @@ describe(saveResourceContent, () => {
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.TodoList, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.TodoList, userId: ctx.user.id })
         .returning(),
     );
   });
@@ -489,7 +489,7 @@ describe(saveResourceContent, () => {
     const dashboard = takeOne(
       await ctx.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Dashboard, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Dashboard, userId: ctx.user.id })
         .returning(),
     );
 
@@ -548,7 +548,7 @@ describe(saveResourceContent, () => {
     const whiteboard = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Whiteboard, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Whiteboard, userId: ctx.user.id })
         .returning(),
     );
 

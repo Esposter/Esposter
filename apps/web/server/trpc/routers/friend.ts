@@ -24,12 +24,9 @@ import { and, eq, isNull, ne, or } from "drizzle-orm";
 export const friendRouter = router({
   deleteFriend: getTopicsProcedure(
     standardAuthedProcedure.input(friendUserIdInputSchema),
-    ({ ctx, input: friendId }) => [
-      getTopic(TopicKind.Friend, ctx.getSessionPayload.user.id),
-      getTopic(TopicKind.Friend, friendId),
-    ],
+    ({ ctx, input: friendId }) => [getTopic(TopicKind.Friend, ctx.user.id), getTopic(TopicKind.Friend, friendId)],
   ).mutation<void>(async ({ ctx, input: friendId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     if (userId === friendId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Friend, userId);
 
     const friendshipId = getFriendshipId(userId, friendId);
@@ -45,9 +42,9 @@ export const friendRouter = router({
     );
   }),
   readFriends: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
-    getTopic(TopicKind.Friend, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.Friend, ctx.user.id),
   ]).query<PublicUser[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     return ctx.db
       .select(getPublicUserColumns(usersInAuth))
       .from(friendsInSocial)
@@ -66,7 +63,7 @@ export const friendRouter = router({
     })
     .input(searchUsersInputSchema)
     .query<PublicUser[]>(({ ctx, input: name }) => {
-      const userId = ctx.getSessionPayload.user.id;
+      const userId = ctx.user.id;
       const blockedSubquery = ctx.db
         .select({ id: blocksInSocial.blockedId })
         .from(blocksInSocial)

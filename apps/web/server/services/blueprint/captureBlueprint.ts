@@ -29,9 +29,7 @@ export const captureBlueprint = async (
   const ownedResources = await ctx.db
     .select()
     .from(resourcesInResource)
-    .where(
-      and(inJsonArray(resourcesInResource.id, ids), eq(resourcesInResource.userId, ctx.getSessionPayload.user.id)),
-    );
+    .where(and(inJsonArray(resourcesInResource.id, ids), eq(resourcesInResource.userId, ctx.user.id)));
   // Every id must be the caller's own resource — otherwise capture would read content across accounts
   if (ownedResources.length !== ids.length) throw new TRPCError({ code: "UNAUTHORIZED" });
   // A binned resource is still the caller's own, so it is bad input rather than an authorization failure:

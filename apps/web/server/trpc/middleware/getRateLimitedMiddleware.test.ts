@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 
 import { authMocks } from "#server/auth.test";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
-import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPayload";
+import { getAgentSession } from "#server/services/auth/getAgentSession";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc";
 import { createMockContext, getMockSession, mockNoSessionOnce } from "#server/trpc/context.test";
 import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimitedMiddleware";
@@ -100,7 +100,7 @@ describe(getRateLimitedMiddleware, () => {
       .mockResolvedValue({ success: true });
     env.RATE_LIMITER_STANDARD = { limit };
 
-    await createTestCaller({ ...mockContext, getSessionPayload: getAgentSessionPayload(user, "") }).ping();
+    await createTestCaller({ ...mockContext, session: getAgentSession(user, ""), user }).ping();
 
     expect(limit).toHaveBeenCalledExactlyOnceWith({ key: user.id });
     expect(authMocks.getSession).not.toHaveBeenCalled();

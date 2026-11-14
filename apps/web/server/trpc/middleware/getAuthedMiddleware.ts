@@ -4,7 +4,7 @@ import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimited
 import { TRPCError } from "@trpc/server";
 
 export const getAuthedMiddleware = (rateLimiterType: RateLimiterType) =>
-  getRateLimitedMiddleware(rateLimiterType).unstable_pipe(({ ctx: { getSessionPayload }, next }) => {
-    if (!getSessionPayload) throw new TRPCError({ code: "UNAUTHORIZED" });
-    return next({ ctx: { getSessionPayload } });
+  getRateLimitedMiddleware(rateLimiterType).unstable_pipe(({ ctx: { session, user }, next }) => {
+    if (!session || !user) throw new TRPCError({ code: "UNAUTHORIZED" });
+    return next({ ctx: { session, user } });
   });

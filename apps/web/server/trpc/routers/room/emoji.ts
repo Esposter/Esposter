@@ -94,7 +94,7 @@ export const emojiRouter = router({
       roomEmojiContext,
     );
     const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(roomId, { data: roomEmojiWithSasUrl, type: "createRoomEmoji" }, actor);
     return roomEmojiWithSasUrl;
   }),
@@ -113,7 +113,7 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRoomEmoji" }, actor);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
@@ -186,7 +186,7 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(roomId, { data: updatedRoomEmoji, type: "updateRoomEmoji" }, actor);
     return updatedRoomEmoji;
   }),

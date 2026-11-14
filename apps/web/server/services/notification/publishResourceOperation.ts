@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { AppNotificationType, publishNotification, QueueJob } from "@esposter/db-schema";
@@ -11,7 +11,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // ([persist then notify](openspec/specs/architecture/persist-then-notify/design.md)):
 // A failed publish costs one notification, never the operation that already landed.
 export const publishResourceOperation = async (
-  { session, user }: GetSessionPayload,
+  { session, user }: Pick<AuthedContext, "session" | "user">,
   { path, title }: { path: string; title: string },
 ): Promise<void> => {
   await getResultAsync(() =>

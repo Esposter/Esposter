@@ -1,6 +1,6 @@
 import type { auth as realAuth } from "#server/auth";
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { ApiKeyPermissions } from "@esposter/db-schema";
 import type { Session, User } from "better-auth";
 
@@ -37,7 +37,7 @@ const user: User = {
 // Test — leaves it unset and gets sessions that exist only as objects, which is all it reads
 const state: { insert?: Context["db"]["insert"] } = {};
 
-export const insertMockSession = async ({ session, user: sessionUser }: GetSessionPayload) => {
+export const insertMockSession = async ({ session, user: sessionUser }: AuthSession) => {
   if (!state.insert) return;
   await state
     .insert(sessionsInAuth)
@@ -59,10 +59,10 @@ export const authMocks = {
   // Async like the real thing, and awaited by its one caller, `readSession`, which is what lets every session a request
   // Is handed be a row as well as an object — `pushSubscriptions.sessionId` references one. A fresh session per call is
   // Deliberate: a suite driving two requests is driving two devices, and several rely on that
-  getSession: vi.fn<() => Promise<GetSessionPayload | null>>(async () => {
-    const getSessionPayload = { session: createMockSession(user.id), user } as const satisfies GetSessionPayload;
-    await insertMockSession(getSessionPayload);
-    return getSessionPayload;
+  getSession: vi.fn<() => Promise<AuthSession | null>>(async () => {
+    const authSession = { session: createMockSession(user.id), user } as const satisfies AuthSession;
+    await insertMockSession(authSession);
+    return authSession;
   }),
   // The session-management endpoints read the session table directly but revoke through better-auth, so its
   // Two revoke methods are stubbed here alongside getSession
@@ -81,8 +81,8 @@ export const auth = {
     createApiKey: authMocks.createApiKey,
     // Answered in the shape the caller asks for: a read that forwards the extended cookie asks for the headers too
     getSession: async (input?: { returnHeaders?: boolean }) => {
-      const getSessionPayload = await authMocks.getSession();
-      return input?.returnHeaders ? { headers: new Headers(), response: getSessionPayload } : getSessionPayload;
+      const authSession = await authMocks.getSession();
+      return input?.returnHeaders ? { headers: new Headers(), response: authSession } : authSession;
     },
     revokeOtherSessions: authMocks.revokeOtherSessions,
     revokeSession: authMocks.revokeSession,

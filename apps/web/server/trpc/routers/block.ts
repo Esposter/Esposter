@@ -25,15 +25,15 @@ export const blockRouter = router({
   createBlock: getTopicsProcedure(
     standardAuthedProcedure.input(friendUserIdInputSchema),
     ({ ctx, input: targetUserId }) => [
-      getTopic(TopicKind.Block, ctx.getSessionPayload.user.id),
+      getTopic(TopicKind.Block, ctx.user.id),
       getTopic(TopicKind.Feed, "posts"),
-      getTopic(TopicKind.Friend, ctx.getSessionPayload.user.id),
+      getTopic(TopicKind.Friend, ctx.user.id),
       getTopic(TopicKind.Friend, targetUserId),
-      getTopic(TopicKind.FriendRequest, ctx.getSessionPayload.user.id),
+      getTopic(TopicKind.FriendRequest, ctx.user.id),
       getTopic(TopicKind.FriendRequest, targetUserId),
     ],
   ).mutation<PublicUser>(async ({ ctx, input: targetUserId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     if (userId === targetUserId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Block, userId);
 
     const blockedUser = await requireEntity(
@@ -50,10 +50,10 @@ export const blockRouter = router({
     return blockedUser;
   }),
   deleteBlock: getTopicsProcedure(standardAuthedProcedure.input(friendUserIdInputSchema), ({ ctx }) => [
-    getTopic(TopicKind.Block, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.Block, ctx.user.id),
     getTopic(TopicKind.Feed, "posts"),
   ]).mutation<PublicUser["id"]>(async ({ ctx, input: blockedUserId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     if (userId === blockedUserId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Block, userId);
 
     requireMutation(
@@ -71,9 +71,9 @@ export const blockRouter = router({
     return blockedUserId;
   }),
   readBlockedUsers: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
-    getTopic(TopicKind.Block, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.Block, ctx.user.id),
   ]).query<PublicUser[]>(async ({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const blockedRows = await ctx.db.query.blocksInSocial.findMany({
       where: { blockerId: { eq: userId } },
       with: BlockInSocialRelations,

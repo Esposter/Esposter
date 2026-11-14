@@ -20,7 +20,7 @@ export const emojiRouter = router({
       requireEntity(
         useRoomObject(input.roomId).addReaction(
           { emojiTag: input.emojiTag, messageId: input.messageId },
-          getRoomActor(ctx.getSessionPayload, ctx.headers),
+          getRoomActor(ctx),
         ),
         DatabaseEntityType.Message,
         JSON.stringify(input),
@@ -34,7 +34,7 @@ export const emojiRouter = router({
     .mutation<void>(async ({ ctx, input }) => {
       const isRemoved = await useRoomObject(input.roomId).removeReaction(
         { emojiTag: input.emojiTag, messageId: input.messageId },
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
+        getRoomActor(ctx),
       );
       if (!isRemoved) throw getNotFoundError(DatabaseEntityType.Reaction, JSON.stringify(input));
     }),

@@ -49,7 +49,7 @@ export const webhookRouter = router({
     // Only while it holds fewer webhooks than the cap, so a full room refuses the pair and writes neither of them
     const appUserId = v7();
     const webhookId = v7();
-    const creatorId = ctx.getSessionPayload.user.id;
+    const creatorId = ctx.user.id;
     // Only the hash is stored. The credential leaves in this response alone, and no later read can return it again
     const token = generateSecretToken();
     const tokenHash = await hashSecretToken(token);

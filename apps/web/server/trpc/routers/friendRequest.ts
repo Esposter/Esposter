@@ -37,11 +37,11 @@ export const friendRequestRouter = router({
   acceptFriendRequest: getTopicsProcedure(
     standardAuthedProcedure.input(friendUserIdInputSchema),
     ({ ctx, input: senderId }) => [
-      ...getPairTopics(TopicKind.Friend, senderId, ctx.getSessionPayload.user.id),
-      ...getPairTopics(TopicKind.FriendRequest, senderId, ctx.getSessionPayload.user.id),
+      ...getPairTopics(TopicKind.Friend, senderId, ctx.user.id),
+      ...getPairTopics(TopicKind.FriendRequest, senderId, ctx.user.id),
     ],
   ).mutation<PublicUser>(async ({ ctx, input: senderId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const friendshipId = getFriendshipId(senderId, userId);
     // The sender is both the emit payload and the return value, so nothing fallible sits between the write and
     // The emit
@@ -73,9 +73,9 @@ export const friendRequestRouter = router({
   }),
   declineFriendRequest: getTopicsProcedure(
     standardAuthedProcedure.input(friendUserIdInputSchema),
-    ({ ctx, input: senderId }) => getPairTopics(TopicKind.FriendRequest, senderId, ctx.getSessionPayload.user.id),
+    ({ ctx, input: senderId }) => getPairTopics(TopicKind.FriendRequest, senderId, ctx.user.id),
   ).mutation<void>(async ({ ctx, input: senderId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     if (userId === senderId) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, userId);
 
     const friendshipId = getFriendshipId(senderId, userId);
@@ -96,9 +96,9 @@ export const friendRequestRouter = router({
     );
   }),
   readFriendRequests: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [
-    getTopic(TopicKind.FriendRequest, ctx.getSessionPayload.user.id),
+    getTopic(TopicKind.FriendRequest, ctx.user.id),
   ]).query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     return ctx.db.query.friendRequestsInSocial.findMany({
       where: { OR: [{ receiverId: { eq: userId } }, { senderId: { eq: userId } }] },
       with: FriendRequestInSocialRelations,
@@ -106,9 +106,9 @@ export const friendRequestRouter = router({
   }),
   sendFriendRequest: getTopicsProcedure(
     standardAuthedProcedure.input(friendUserIdInputSchema),
-    ({ ctx, input: receiverId }) => getPairTopics(TopicKind.FriendRequest, receiverId, ctx.getSessionPayload.user.id),
+    ({ ctx, input: receiverId }) => getPairTopics(TopicKind.FriendRequest, receiverId, ctx.user.id),
   ).mutation<FriendRequestInSocialWithRelations>(async ({ ctx, input: receiverId }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
     const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
     const friendshipId = getFriendshipId(userId, receiverId);

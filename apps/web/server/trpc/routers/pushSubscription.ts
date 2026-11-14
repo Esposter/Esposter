@@ -23,7 +23,7 @@ export const pushSubscriptionRouter = router({
           keys: { auth, p256dh },
         },
       }) => {
-        const { session, user } = ctx.getSessionPayload;
+        const { session, user } = ctx;
         const expiresAt = expirationTime ? new Date(expirationTime) : null;
         return requireMutation(
           (
@@ -62,7 +62,7 @@ export const pushSubscriptionRouter = router({
             .where(
               and(
                 eq(pushSubscriptionsInNotification.endpoint, input),
-                eq(pushSubscriptionsInNotification.userId, ctx.getSessionPayload.user.id),
+                eq(pushSubscriptionsInNotification.userId, ctx.user.id),
               ),
             )
             .returning()

@@ -52,7 +52,7 @@ export const inviteRouter = router({
     ),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<InviteInMessageWithCreator>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
     // Nobody can use
     const { isInvitePaused } = await requireEntity(
@@ -123,7 +123,7 @@ export const inviteRouter = router({
   // The landing page reads the invite by its token and whether the caller is a member, which joining and leaving
   // Both change. The invite's id is its bearer secret, so no topic names it
   readInvite: getTopicsProcedure(standardAuthedProcedure.input(readInviteInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
     const invite = await ctx.db.query.invitesInMessage.findFirst({
       where: { id: { eq: input } },
@@ -136,7 +136,7 @@ export const inviteRouter = router({
     // Reads the room without its memberships
     const [membership, memberCount] = await Promise.all([
       ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
+        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.user.id } },
       }),
       ctx.db.$count(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, invite.roomId)),
     ]);
@@ -145,9 +145,7 @@ export const inviteRouter = router({
   readMyInvite: getTopicsProcedure(
     getMemberProcedure(roomIdSchema, "roomId").use(assertIsRoomMiddleware),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<InviteInMessage | undefined>(({ ctx, input: { roomId } }) =>
-    readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
-  ),
+  ).query<InviteInMessage | undefined>(({ ctx, input: { roomId } }) => readMyInvite(ctx.db, ctx.user.id, roomId)),
   readRoomInvites: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
@@ -175,7 +173,7 @@ export const inviteRouter = router({
     // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
     // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
     // For a control over other people's links
-    const { user } = ctx.getSessionPayload;
+    const { user } = ctx;
     const isInviteManager = await checkHasPermission(ctx.db, user.id, roomId, RoomPermission.ManageRoom);
     const wheres = [eq(invitesInMessage.id, id), eq(invitesInMessage.roomId, roomId)];
     if (!isInviteManager) wheres.push(eq(invitesInMessage.userId, user.id));

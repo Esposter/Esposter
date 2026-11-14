@@ -1,5 +1,5 @@
 import { auth } from "#server/auth";
-import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPayload";
+import { getAgentSession } from "#server/services/auth/getAgentSession";
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
 import { getIpAddress } from "#server/services/request/getIpAddress";
@@ -51,11 +51,7 @@ export default defineEventHandler(async (event) => {
   // The scopes are read off the verified key, never off the request, and a key holding none reaches no tool
   const server = createMcpServer(
     trpcRouter,
-    {
-      ...ctx,
-      apiKey: { id: apiKey.id, name: apiKey.name ?? "" },
-      getSessionPayload: getAgentSessionPayload(user, apiKey.id),
-    },
+    { ...ctx, apiKey: { id: apiKey.id, name: apiKey.name ?? "" }, session: getAgentSession(user, apiKey.id), user },
     getApiKeyScopes(apiKey.permissions),
   );
   const transport = new WebStandardStreamableHTTPServerTransport({ enableJsonResponse: true });

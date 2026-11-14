@@ -36,7 +36,7 @@ export const likeRouter = router({
       ctx.db.batch([
         ctx.db
           .insert(likesInPost)
-          .values({ ...input, userId: ctx.getSessionPayload.user.id })
+          .values({ ...input, userId: ctx.user.id })
           .returning(),
         ctx.db
           .update(postsInPost)
@@ -63,7 +63,7 @@ export const likeRouter = router({
   deleteLike: getTopicsProcedure(standardAuthedProcedure.input(deleteLikeInputSchema), ({ input }) =>
     getLikeTopics(input),
   ).mutation<LikeInPost>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const post = await requireEntity(readLikedPost(ctx.db, input), DatabaseEntityType.Post, input);
     const existingLike = requireMutation(
       await readLike(ctx.db, input, userId),
@@ -105,7 +105,7 @@ export const likeRouter = router({
   updateLike: getTopicsProcedure(standardAuthedProcedure.input(updateLikeInputSchema), ({ input }) =>
     getLikeTopics(input.postId),
   ).mutation<LikeInPost>(async ({ ctx, input: { postId, value } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const [post, existingLike] = await Promise.all([readLikedPost(ctx.db, postId), readLike(ctx.db, postId, userId)]);
     if (!post) throw getNotFoundError(DatabaseEntityType.Post, postId);
     else if (!existingLike) throw getNotFoundError(DatabaseEntityType.Like, postId);

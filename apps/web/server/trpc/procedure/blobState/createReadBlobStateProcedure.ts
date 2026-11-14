@@ -19,12 +19,12 @@ export const createReadBlobStateProcedure = <TData, TInit>(
   schema: z.ZodType<TInit>,
   topicKind: TopicKind,
 ) =>
-  getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [getTopic(topicKind, ctx.getSessionPayload.user.id)]).query<{
+  getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => [getTopic(topicKind, ctx.user.id)]).query<{
     data: TData;
     etag?: string;
   }>(async ({ ctx }) => {
     const bucket = getBucket(container);
-    const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
+    const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.user.id));
     if (!json) return { data: new Model(), etag };
 
     const parsedSave = schema.safeParse(jsonDateParse(json.toString()));

@@ -30,7 +30,7 @@ describe(deleteCreatedResources, () => {
     takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.Webpage, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.Webpage, userId: ctx.user.id })
         .returning(),
     );
   const createActivity = async (resourceId: string) => {
@@ -48,7 +48,7 @@ describe(deleteCreatedResources, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ctx = { ...mockContext, ...getMockSession() };
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
   });
 

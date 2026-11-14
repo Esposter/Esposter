@@ -12,14 +12,16 @@ describe(assertIsMember, () => {
 
     const roomId = getRoomId();
 
-    await expect(assertIsMember(getMockContext().db, getMockSession(), [roomId, roomId])).resolves.toBeUndefined();
+    await expect(
+      assertIsMember({ db: getMockContext().db, user: getMockSession().user }, [roomId, roomId]),
+    ).resolves.toBeUndefined();
   });
 
   test("rejects a room the caller is not in beside one they are", async () => {
     expect.hasAssertions();
 
     await expect(
-      assertIsMember(getMockContext().db, getMockSession(), [getRoomId(), v7()]),
+      assertIsMember({ db: getMockContext().db, user: getMockSession().user }, [getRoomId(), v7()]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

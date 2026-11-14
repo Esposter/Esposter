@@ -55,10 +55,9 @@ export const directMessageRouter = router({
   createDirectMessage: getTopicsProcedure(
     standardAuthedProcedure.input(createDirectMessageInputSchema),
     // The caller's room list gains the direct message, and so does each room list of the users it names
-    ({ ctx, input }) =>
-      [...new Set([ctx.getSessionPayload.user.id, ...input])].flatMap((userId) => getRoomListTopics(userId)),
+    ({ ctx, input }) => [...new Set([ctx.user.id, ...input])].flatMap((userId) => getRoomListTopics(userId)),
   ).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const allUserIds = [...new Set([userId, ...input])];
     const targetUserIds = allUserIds.filter((id) => id !== userId);
     if (targetUserIds.length === 0)
@@ -122,7 +121,7 @@ export const directMessageRouter = router({
       ...userIds.flatMap((userId) => getRoomListTopics(userId)),
     ],
   ).mutation<PublicUser[]>(async ({ ctx, input: { roomId, userIds } }) => {
-    const actorUser = ctx.getSessionPayload.user;
+    const actorUser = ctx.user;
     await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
     const participantIds = await readDirectMessageParticipantIds(ctx.db, roomId);
     const addedUsers: PublicUser[] = [];
@@ -173,7 +172,7 @@ export const directMessageRouter = router({
     getMemberProcedure(deleteDirectMessageParticipantInputSchema, "roomId"),
     ({ input: { roomId, userId } }) => [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(userId)],
   ).mutation<PublicUser>(async ({ ctx, input: { roomId, userId } }) => {
-    const actorUser = ctx.getSessionPayload.user;
+    const actorUser = ctx.user;
     await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
     const room = await ctx.db.query.roomsInMessage.findFirst({
       columns: { userId: true },
@@ -230,14 +229,14 @@ export const directMessageRouter = router({
     return targetUser;
   }),
   hideDirectMessage: getTopicsProcedure(standardAuthedProcedure.input(hideDirectMessageInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).mutation<void>(async ({ ctx, input }) => {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
+    await assertIsMember(ctx, input);
     await assertIsRoom(ctx.db, input, RoomType.DirectMessage);
     await ctx.db
       .update(usersToRoomsInMessage)
       .set({ isHidden: true })
-      .where(getRoomMembershipWhere(input, ctx.getSessionPayload.user.id));
+      .where(getRoomMembershipWhere(input, ctx.user.id));
   }),
   readDirectMessageParticipants: getTopicsProcedure(standardAuthedProcedure.input(roomIdsInputSchema), ({ input }) =>
     input.map((roomId) => getTopic(TopicKind.Room, roomId)),
@@ -261,16 +260,11 @@ export const directMessageRouter = router({
         usersToRoomsInMessage2,
         and(
           eq(usersToRoomsInMessage2.roomId, usersToRoomsInMessage1.roomId),
-          ne(usersToRoomsInMessage2.userId, ctx.getSessionPayload.user.id),
+          ne(usersToRoomsInMessage2.userId, ctx.user.id),
         ),
       )
       .innerJoin(usersInAuth2, eq(usersInAuth2.id, usersToRoomsInMessage2.userId))
-      .where(
-        and(
-          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-          inJsonArray(usersToRoomsInMessage1.roomId, roomIds),
-        ),
-      )
+      .where(and(eq(usersToRoomsInMessage1.userId, ctx.user.id), inJsonArray(usersToRoomsInMessage1.roomId, roomIds)))
       .orderBy(asc(participantDisplayName), asc(usersInAuth2.id));
     const roomIdParticipantsMap = new Map<string, DirectMessageParticipants["participants"]>();
     for (const { displayName, roomId, user } of rows)
@@ -278,11 +272,11 @@ export const directMessageRouter = router({
     return Array.from(roomIdParticipantsMap, ([roomId, participants]) => ({ participants, roomId }));
   }),
   readDirectMessages: getTopicsProcedure(standardAuthedProcedure.input(readDirectMessagesInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).query<CursorPaginationData<RoomInMessage>>(({ ctx, input: { cursor, limit, sortBy } }) => {
     const innerJoinCondition = and(
       eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+      eq(usersToRoomsInMessage.userId, ctx.user.id),
       eq(usersToRoomsInMessage.isHidden, false),
     );
     const wheres: (SQL | undefined)[] = [eq(roomsInMessage.type, RoomType.DirectMessage)];

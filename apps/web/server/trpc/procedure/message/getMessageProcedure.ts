@@ -40,11 +40,11 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<RoomMessage, "id"> 
     const hasManageMessages =
       permission === MessageOperationPermission.AnyMember
         ? false
-        : await checkHasPermission(ctx.db, ctx.getSessionPayload.user.id, input.roomId, RoomPermission.ManageMessages);
+        : await checkHasPermission(ctx.db, ctx.user.id, input.roomId, RoomPermission.ManageMessages);
     if (
       !checkIsMessageOperationPermitted(permission, {
         hasManageMessages,
-        isAuthor: checkIsMessageAuthor(message, ctx.getSessionPayload.user.id),
+        isAuthor: checkIsMessageAuthor(message, ctx.user.id),
       })
     )
       throw new TRPCError({ code: "UNAUTHORIZED" });

@@ -56,7 +56,7 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, assignRoleInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { roleId, roomId, userId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await Promise.all([
       requireEntity(
         ctx.db.query.roomRolesInMessage.findFirst({ where: { id: { eq: roleId }, roomId: { eq: roomId } } }),
@@ -77,7 +77,7 @@ export const roleRouter = router({
       .onConflictDoNothing()
       .returning();
     if (userToRoomRole) {
-      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+      const actor = getRoomActor(ctx);
       const roleData = getRoleEventData(role);
       await broadcastRoomEvent(roomId, { data: { ...roleData, userId }, type: "assignRole" }, actor);
     }
@@ -87,7 +87,7 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, createRoleInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     const { isOwner, topPosition: actorTopPosition } = await getRoomMemberAuthority(ctx.db, actorUserId, roomId);
 
     if (!checkIsManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -101,7 +101,7 @@ export const roleRouter = router({
       JSON.stringify({ name, roomId }),
     );
 
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     const roleData = getRoleEventData(newRole);
     await broadcastRoomEvent(roomId, { data: roleData, type: "createRole" }, actor);
     return newRole;
@@ -110,12 +110,12 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, deleteMemberPermissionOverrideInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<void>(async ({ ctx, input: { roomId, userId } }) => {
-    await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, userId, roomId);
+    await assertIsManageable(ctx.db, ctx.user.id, userId, roomId);
     // An end state, like revokeRole: a member with no override is the answer whether or not one was there to remove
     await ctx.db
       .delete(roomMemberPermissionsInMessage)
       .where(and(eq(roomMemberPermissionsInMessage.roomId, roomId), eq(roomMemberPermissionsInMessage.userId, userId)));
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(
       roomId,
       { data: { allow: "0", deny: "0", roomId, userId }, type: "updateMemberPermissionOverride" },
@@ -126,7 +126,7 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, deleteRoleInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, id, roomId);
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id);
@@ -147,7 +147,7 @@ export const roleRouter = router({
       "NOT_FOUND",
     );
 
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRole" }, actor);
     return deletedRole;
   }),
@@ -174,7 +174,7 @@ export const roleRouter = router({
     standardAuthedProcedure.input(readMyPermissionsInputSchema),
     ({ input: { roomIds } }) => roomIds.map((roomId) => getTopic(TopicKind.Room, roomId)),
   ).query<MyRoomPermissions[]>(async ({ ctx, input: { roomIds } }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const [rooms, permissionsMap, topRolePositionMap] = await Promise.all([
       ctx.db.query.roomsInMessage.findMany({ columns: { id: true, userId: true }, where: { id: { in: roomIds } } }),
       getPermissions(ctx.db, userId, roomIds),
@@ -190,7 +190,7 @@ export const roleRouter = router({
   readRoles: getTopicsProcedure(standardAuthedProcedure.input(readRolesInputSchema), ({ input: { roomIds } }) =>
     roomIds.map((roomId) => getTopic(TopicKind.Room, roomId)),
   ).query<RoomRoleInMessage[]>(async ({ ctx, input: { roomIds } }) => {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
+    await assertIsMember(ctx, roomIds);
     return ctx.db.query.roomRolesInMessage.findMany({
       orderBy: { position: "desc" },
       where: { roomId: { in: roomIds } },
@@ -200,7 +200,7 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, revokeRoleInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<void>(async ({ ctx, input: { roleId, roomId, userId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, roleId, roomId);
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
@@ -217,14 +217,14 @@ export const roleRouter = router({
           eq(usersToRoomRolesInMessage.roleId, roleId),
         ),
       );
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(roomId, { data: { roleId, roomId, userId }, type: "revokeRole" }, actor);
   }),
   updateRole: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoles, updateRoleInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { id, roomId, ...rest } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, id, roomId);
 
     const { isOwner, topPosition: actorTopPosition } = actorAuthority;
@@ -249,7 +249,7 @@ export const roleRouter = router({
       id,
       "NOT_FOUND",
     );
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     const roleData = getRoleEventData(updatedRole);
     await broadcastRoomEvent(roomId, { data: roleData, type: "updateRole" }, actor);
     return updatedRole;
@@ -258,7 +258,7 @@ export const roleRouter = router({
     getPermissionsProcedure(RoomPermission.ManageRoles, upsertMemberPermissionOverrideInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<MemberPermissionOverride>(async ({ ctx, input: { allow, deny, inherit, roomId, userId } }) => {
-    const actorUserId = ctx.getSessionPayload.user.id;
+    const actorUserId = ctx.user.id;
     // A bit set in both would be a state nothing designed, and the Administrator bit is answered from the roles
     // Alone, so neither may be written as an override
     const overriddenPermissions = allow | deny;
@@ -277,7 +277,7 @@ export const roleRouter = router({
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, allow, isOwner);
     const override = await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     await broadcastRoomEvent(
       roomId,
       {

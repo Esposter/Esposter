@@ -53,7 +53,7 @@ describe(takeResourceRevision, () => {
     (
       await mockContext.db.query.usersInAuth.findFirst({
         columns: { storageBytesUsed: true },
-        where: { id: { eq: ctx.getSessionPayload.user.id } },
+        where: { id: { eq: ctx.user.id } },
       })
     )?.storageBytesUsed;
   const readResourceVersion = (version: number) =>
@@ -63,7 +63,7 @@ describe(takeResourceRevision, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ctx = { ...mockContext, ...getMockSession() };
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
     mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
@@ -73,7 +73,7 @@ describe(takeResourceRevision, () => {
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
-        .values({ name, type: ResourceType.TodoList, userId: ctx.getSessionPayload.user.id })
+        .values({ name, type: ResourceType.TodoList, userId: ctx.user.id })
         .returning(),
     );
   });

@@ -1,6 +1,6 @@
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
@@ -37,8 +37,8 @@ vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
 
 describe(createUserMessage, () => {
   let mockContext: Context;
-  let rootAuthor: GetSessionPayload;
-  let replier: GetSessionPayload;
+  let rootAuthor: AuthSession;
+  let replier: AuthSession;
   const name = "name";
   const message = "message";
   const rootId = 1;

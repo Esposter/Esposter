@@ -17,7 +17,7 @@ import { and, eq, max, sql } from "drizzle-orm";
 export const categoryRouter = router({
   // A category groups the caller's own room list, so each one is a change to that list
   createRoomCategory: getTopicsProcedure(standardAuthedProcedure.input(createRoomCategoryInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
     // Append below the user's existing drag-assigned order — the column default 0 would tie with
     // Whatever category the user dragged to the top and jump the new category above it
@@ -25,13 +25,13 @@ export const categoryRouter = router({
       await ctx.db
         .select({ maxPosition: max(roomCategoriesInMessage.position) })
         .from(roomCategoriesInMessage)
-        .where(eq(roomCategoriesInMessage.userId, ctx.getSessionPayload.user.id)),
+        .where(eq(roomCategoriesInMessage.userId, ctx.user.id)),
     );
     return requireRoomCategory(
       (
         await ctx.db
           .insert(roomCategoriesInMessage)
-          .values({ ...input, position: (maxPosition ?? -1) + 1, userId: ctx.getSessionPayload.user.id })
+          .values({ ...input, position: (maxPosition ?? -1) + 1, userId: ctx.user.id })
           .returning()
       )[0],
       Operation.Create,
@@ -39,13 +39,13 @@ export const categoryRouter = router({
     );
   }),
   deleteRoomCategory: getTopicsProcedure(standardAuthedProcedure.input(deleteRoomCategoryInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).mutation<RoomCategoryInMessage>(async ({ ctx, input }) =>
     requireRoomCategory(
       (
         await ctx.db
           .delete(roomCategoriesInMessage)
-          .where(ownedBy(roomCategoriesInMessage, input, ctx.getSessionPayload.user.id))
+          .where(ownedBy(roomCategoriesInMessage, input, ctx.user.id))
           .returning()
       )[0],
       Operation.Delete,
@@ -53,20 +53,20 @@ export const categoryRouter = router({
       "NOT_FOUND",
     ),
   ),
-  readRoomCategories: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
-  ).query<RoomCategoryInMessage[]>(({ ctx }) =>
+  readRoomCategories: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) => getRoomListTopics(ctx.user.id)).query<
+    RoomCategoryInMessage[]
+  >(({ ctx }) =>
     ctx.db.query.roomCategoriesInMessage.findMany({
       // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
       orderBy: (category, { asc }) => [asc(category.position), asc(category.name)],
-      where: { userId: { eq: ctx.getSessionPayload.user.id } },
+      where: { userId: { eq: ctx.user.id } },
     }),
   ),
   reorderRoomCategories: getTopicsProcedure(
     standardAuthedProcedure.input(reorderRoomCategoriesInputSchema),
-    ({ ctx }) => getRoomListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getRoomListTopics(ctx.user.id),
   ).mutation<RoomCategoryInMessage[]>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // The whole drag is one JSON array bound twice, so the statement's parameters do not grow with the list: each
     // Category takes its position from the array row that names its id
     const reorderJson = JSON.stringify(input.map(({ id, position }) => ({ id, position })));
@@ -101,14 +101,14 @@ export const categoryRouter = router({
     return input.map(({ id }) => requireRoomCategory(idRoomCategoryMap.get(id), Operation.Update, id, "NOT_FOUND"));
   }),
   updateRoomCategory: getTopicsProcedure(standardAuthedProcedure.input(updateRoomCategoryInputSchema), ({ ctx }) =>
-    getRoomListTopics(ctx.getSessionPayload.user.id),
+    getRoomListTopics(ctx.user.id),
   ).mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) =>
     requireRoomCategory(
       (
         await ctx.db
           .update(roomCategoriesInMessage)
           .set(rest)
-          .where(ownedBy(roomCategoriesInMessage, id, ctx.getSessionPayload.user.id))
+          .where(ownedBy(roomCategoriesInMessage, id, ctx.user.id))
           .returning()
       )[0],
       Operation.Update,

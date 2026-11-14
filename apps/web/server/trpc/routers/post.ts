@@ -80,7 +80,7 @@ export const postRouter = router({
           createdAt,
           depth: parentPost.depth + 1,
           ranking: getPostRanking(0, createdAt),
-          userId: ctx.getSessionPayload.user.id,
+          userId: ctx.user.id,
         })
         .returning({ id: postsInPost.id }),
       // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
@@ -99,12 +99,7 @@ export const postRouter = router({
 
     return {
       ancestorIds,
-      comment: await readPostWithRelations(
-        ctx.db,
-        newComment.id,
-        DerivedDatabaseEntityType.Comment,
-        ctx.getSessionPayload.user.id,
-      ),
+      comment: await readPostWithRelations(ctx.db, newComment.id, DerivedDatabaseEntityType.Comment, ctx.user.id),
     };
   }),
   createPost: getTopicsProcedure(getProfanityFilterProcedure(createPostInputSchema, ["title", "description"]), () => [
@@ -115,7 +110,7 @@ export const postRouter = router({
       (
         await ctx.db
           .insert(postsInPost)
-          .values({ ...input, createdAt, ranking: getPostRanking(0, createdAt), userId: ctx.getSessionPayload.user.id })
+          .values({ ...input, createdAt, ranking: getPostRanking(0, createdAt), userId: ctx.user.id })
           .returning({ id: postsInPost.id })
       )[0],
       Operation.Create,
@@ -123,12 +118,12 @@ export const postRouter = router({
       JSON.stringify(input),
     );
 
-    return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.user.id);
   }),
   deleteComment: getTopicsProcedure(standardAuthedProcedure.input(deleteCommentInputSchema), ({ input, output }) =>
     getPostTopics(input, ...getAncestorIds(output)),
   ).mutation<DeletedComment>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     const ownedComment = and(ownedBy(postsInPost, input, userId), isNotNull(postsInPost.parentId));
     // The ancestors are what the counters move, and they never change, so they are read ahead of the batch
     const { ancestorIds } = requireMutation(
@@ -171,7 +166,7 @@ export const postRouter = router({
       (
         await ctx.db
           .delete(postsInPost)
-          .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+          .where(and(ownedBy(postsInPost, input, ctx.user.id), isNull(postsInPost.parentId)))
           .returning()
       )[0],
       Operation.Delete,
@@ -184,7 +179,7 @@ export const postRouter = router({
   ])
     // The procedure is rate-limited, so a session may be absent — no viewer means no like lookup at all
     .query<PostInPostWithRelations>(({ ctx, input }) =>
-      readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
+      readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.user?.id),
     ),
   // The counts the server keeps on each post, read in one statement for the posts a client has marked as changed. The
   // Server adjusts a count in the same batch as the write that changes it, so only this read says what it is now
@@ -199,7 +194,7 @@ export const postRouter = router({
   readPosts: getTopicsProcedure(standardRateLimitedProcedure.input(readPostsInputSchema), () => [feedPostsTopic]).query<
     CursorPaginationData<PostInPostWithRelations>
   >(async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
-    const userId = ctx.getSessionPayload?.user.id;
+    const userId = ctx.user?.id;
     const where: RelationsFilter<(typeof relations)["postsInPost"], typeof relations> = parentId
       ? { parentId: { eq: parentId } }
       : { parentId: { isNull: true } };
@@ -238,7 +233,7 @@ export const postRouter = router({
         await ctx.db
           .update(postsInPost)
           .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
+          .where(and(ownedBy(postsInPost, id, ctx.user.id), isNotNull(postsInPost.parentId)))
           .returning({ id: postsInPost.id })
       )[0],
       Operation.Update,
@@ -246,12 +241,7 @@ export const postRouter = router({
       id,
     );
 
-    return readPostWithRelations(
-      ctx.db,
-      updatedComment.id,
-      DerivedDatabaseEntityType.Comment,
-      ctx.getSessionPayload.user.id,
-    );
+    return readPostWithRelations(ctx.db, updatedComment.id, DerivedDatabaseEntityType.Comment, ctx.user.id);
   }),
   updatePost: getTopicsProcedure(
     getProfanityFilterProcedure(updatePostInputSchema, ["title", "description"]),
@@ -262,7 +252,7 @@ export const postRouter = router({
         await ctx.db
           .update(postsInPost)
           .set(rest)
-          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+          .where(and(ownedBy(postsInPost, id, ctx.user.id), isNull(postsInPost.parentId)))
           .returning({ id: postsInPost.id })
       )[0],
       Operation.Update,
@@ -270,6 +260,6 @@ export const postRouter = router({
       id,
     );
 
-    return readPostWithRelations(ctx.db, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+    return readPostWithRelations(ctx.db, updatedPost.id, DatabaseEntityType.Post, ctx.user.id);
   }),
 });

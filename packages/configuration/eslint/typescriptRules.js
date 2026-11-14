@@ -36,14 +36,6 @@ export default {
       selector: "TSEnumMember[id.type='Identifier'][id.name=/^[a-z]|_|^[A-Z][A-Z0-9]+$/]",
     },
     {
-      // The caller's device is one function, and this literal is how a second spelling of it starts: the pair is
-      // What every event emitter takes to skip the client that caused the event, so it is written in one place.
-      message:
-        "Use `getDevice(getSessionPayload)` (server/services/auth/getDevice) rather than spelling the device literal.",
-      selector:
-        "ObjectExpression[properties.length=2][properties.0.key.name='sessionId'][properties.0.value.property.name='id'][properties.0.value.object.property.name='session'][properties.0.value.object.object.property.name='getSessionPayload'][properties.1.key.name='userId'][properties.1.value.property.name='id'][properties.1.value.object.property.name='user'][properties.1.value.object.object.property.name='getSessionPayload']",
-    },
-    {
       // The `InMessage` suffix names the schema a message table sits in, and the table's own name is
       // Already the plural — so a relation key or a local spelled `bansInMessages` has pluralised the schema, and
       // Reads as bans across messages. The suffix is dropped from a variable (`const ban`) or kept whole as the

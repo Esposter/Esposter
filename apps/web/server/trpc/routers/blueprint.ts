@@ -29,7 +29,7 @@ export const blueprintRouter = router({
           scope: McpScope.Resources,
         },
       }),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
   deployBlueprint: getTopicsProcedure(
     getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id").meta({
@@ -39,7 +39,7 @@ export const blueprintRouter = router({
         scope: McpScope.Resources,
       },
     }),
-    ({ ctx }) => getResourceListTopics(ctx.getSessionPayload.user.id),
+    ({ ctx }) => getResourceListTopics(ctx.user.id),
   ).mutation<BlueprintDeployment[]>(async ({ ctx, input: { parameterValues } }) => {
     const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
     if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");

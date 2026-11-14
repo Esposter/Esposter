@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { RoomMessage, ScheduledRoomMessage, Topic } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -23,8 +23,8 @@ import { v7 } from "uuid";
 
 // The sender's own scheduled messages, which only their own writes change. No object pushes them as events, so readers
 // Learn of a change through this topic
-const getScheduledMessageTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.ScheduledMessage, ctx.getSessionPayload.user.id),
+const getScheduledMessageTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
+  getTopic(TopicKind.ScheduledMessage, ctx.user.id),
 ];
 
 // A scheduled message is held by its room's object, which sends it when it comes due and applies the sender's rules
@@ -34,28 +34,23 @@ export const scheduledMessageRouter = router({
     getMemberProcedure(createScheduledMessageInputSchema, "roomId"),
     getScheduledMessageTopics,
   ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
-    await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+    await assertCanCreateMessage(ctx.db, ctx.user.id, input.roomId, input.message);
     return useRoomObject(input.roomId).createScheduledMessage(
       { id: v7(), message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
-      getRoomActor(ctx.getSessionPayload, ctx.headers),
+      getRoomActor(ctx),
     );
   }),
   deleteScheduledMessage: getTopicsProcedure(
     getMemberProcedure(deleteScheduledMessageInputSchema, "roomId"),
     getScheduledMessageTopics,
   ).mutation<void>(async ({ ctx, input }) => {
-    const isDeleted = await useRoomObject(input.roomId).deleteScheduledMessage(
-      input.id,
-      getRoomActor(ctx.getSessionPayload, ctx.headers),
-    );
+    const isDeleted = await useRoomObject(input.roomId).deleteScheduledMessage(input.id, getRoomActor(ctx));
     if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
   }),
   readScheduledMessages: getTopicsProcedure(
     getMemberProcedure(readScheduledMessagesInputSchema, "roomId"),
     getScheduledMessageTopics,
-  ).query<ScheduledRoomMessage[]>(({ ctx, input }) =>
-    useRoomObject(input.roomId).readScheduledMessages(ctx.getSessionPayload.user.id),
-  ),
+  ).query<ScheduledRoomMessage[]>(({ ctx, input }) => useRoomObject(input.roomId).readScheduledMessages(ctx.user.id)),
   // The claim is the object's delete, so a message the object is already sending cannot be sent a second time from here.
   // Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse would burn
   // The scheduled message without ever sending it
@@ -63,7 +58,7 @@ export const scheduledMessageRouter = router({
     getMemberProcedure(sendScheduledMessageNowInputSchema, "roomId"),
     getScheduledMessageTopics,
   ).mutation<RoomMessage>(async ({ ctx, input }) => {
-    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const actor = getRoomActor(ctx);
     const roomObject = useRoomObject(input.roomId);
     const scheduledMessage = (await roomObject.readScheduledMessages(actor.userId)).find(({ id }) => id === input.id);
     if (!scheduledMessage) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
@@ -114,11 +109,11 @@ export const scheduledMessageRouter = router({
     getMemberProcedure(updateScheduledMessageInputSchema, "roomId"),
     getScheduledMessageTopics,
   ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
-    await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+    await assertCanCreateMessage(ctx.db, ctx.user.id, input.roomId, input.message);
     return requireEntity(
       useRoomObject(input.roomId).updateScheduledMessage(
         { id: input.id, message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
+        getRoomActor(ctx),
       ),
       DatabaseEntityType.ScheduledMessageJob,
       input.id,

@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { relations, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
@@ -21,8 +21,8 @@ import { DatabaseEntityType, searchHistoriesInMessage, TopicKind } from "@espost
 import { Operation } from "@esposter/shared";
 
 // A user's searches, across every room, are one topic: the history a room shows is read from it
-const getSearchHistoryTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.SearchHistory, ctx.getSessionPayload.user.id),
+const getSearchHistoryTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
+  getTopic(TopicKind.SearchHistory, ctx.user.id),
 ];
 
 export const searchHistoryRouter = router({
@@ -30,7 +30,7 @@ export const searchHistoryRouter = router({
     getMemberProcedure(createSearchHistoryInputSchema, "roomId"),
     getSearchHistoryTopics,
   ).mutation<SearchHistoryInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
+    const userId = ctx.user.id;
     // An identical search is recorded once, so running one again, from Enter or from the history, adds no second row
     const existingSearchHistory = await ctx.db.query.searchHistoriesInMessage.findFirst({
       where: {
@@ -62,7 +62,7 @@ export const searchHistoryRouter = router({
       (
         await ctx.db
           .delete(searchHistoriesInMessage)
-          .where(ownedBy(searchHistoriesInMessage, input, ctx.getSessionPayload.user.id))
+          .where(ownedBy(searchHistoriesInMessage, input, ctx.user.id))
           .returning()
       )[0],
       Operation.Delete,
@@ -78,7 +78,7 @@ export const searchHistoryRouter = router({
     // Says which room's searches may be read, never whose
     const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
       roomId: { eq: roomId },
-      userId: { eq: ctx.getSessionPayload.user.id },
+      userId: { eq: ctx.user.id },
     };
     if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
     const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
@@ -97,7 +97,7 @@ export const searchHistoryRouter = router({
         await ctx.db
           .update(searchHistoriesInMessage)
           .set({ query })
-          .where(ownedBy(searchHistoriesInMessage, id, ctx.getSessionPayload.user.id))
+          .where(ownedBy(searchHistoriesInMessage, id, ctx.user.id))
           .returning()
       )[0],
       Operation.Update,

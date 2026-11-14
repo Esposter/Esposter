@@ -1,4 +1,4 @@
-import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
+import type { User } from "better-auth";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
@@ -85,8 +85,8 @@ import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 // The member's own thread follows, which only their own follows and unfollows change
-const getThreadFollowTopics = ({ ctx }: { ctx: { getSessionPayload: GetSessionPayload } }): Topic[] => [
-  getTopic(TopicKind.ThreadFollow, ctx.getSessionPayload.user.id),
+const getThreadFollowTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
+  getTopic(TopicKind.ThreadFollow, ctx.user.id),
 ];
 
 export const baseMessageRouter = router({
@@ -94,14 +94,14 @@ export const baseMessageRouter = router({
   createMessage: getMemberProcedure(zonedCreateMessageInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the new message to its sockets as a typed event" })
     .mutation<RoomMessage>(({ ctx, input: { timeZone: _timeZone, ...input } }) =>
-      createUserMessage(ctx.db, getRoomActor(ctx.getSessionPayload, ctx.headers), input),
+      createUserMessage(ctx.db, getRoomActor(ctx), input),
     ),
   // oxlint-disable-next-line trpc-procedure/require-query-verb -- typing earns no achievement, and a mutation runs the achievement plugin on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
     .meta({ staticReason: "The room object pushes who is typing to its sockets as a typed event" })
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(async ({ ctx, input: { roomId } }) => {
-      const { user } = ctx.getSessionPayload;
+      const { user } = ctx;
       // Who is typing, and the name the room knows them by, are the server's to say, never the input's: a member
       // Naming another would show them typing, and a member naming themselves could wear any name
       const userToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
@@ -110,7 +110,7 @@ export const baseMessageRouter = router({
       });
       await useRoomObject(roomId).broadcastEvent(
         { data: { roomId, userId: user.id, username: userToRoom?.displayName || user.name }, type: "createTyping" },
-        getRoomEventOptions(getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        getRoomEventOptions(getRoomActor(ctx)),
       );
     }),
   // Removing one file rewrites the whole files array inside the room's object, which applies the removal to the version
@@ -121,10 +121,7 @@ export const baseMessageRouter = router({
       if (ctx.message.isForward || ctx.message.files.length === 0)
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Message, JSON.stringify({ fileId, id }));
 
-      const deletedFile = await useRoomObject(roomId).deleteFile(
-        { fileId, id },
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
-      );
+      const deletedFile = await useRoomObject(roomId).deleteFile({ fileId, id }, getRoomActor(ctx));
       if (!deletedFile) throw getNotFoundError(DatabaseEntityType.File, fileId);
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
       await publishBlobDeletion(
@@ -139,7 +136,7 @@ export const baseMessageRouter = router({
     })
     .mutation<void>(async ({ ctx, input }) => {
       await requireEntity(
-        useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
@@ -149,7 +146,7 @@ export const baseMessageRouter = router({
     .mutation<void>(async ({ ctx, input }) => {
       // The object returns the message as it was before the delete, so the blobs its files named can be removed
       const deletedMessage = await requireEntity(
-        useRoomObject(input.roomId).deleteMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        useRoomObject(input.roomId).deleteMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
@@ -165,8 +162,7 @@ export const baseMessageRouter = router({
     .meta({ staticReason: "It removes blobs no message names, so no reader shows what it deletes" })
     .mutation<void>(async ({ ctx, input: { files, roomId } }) => {
       for (const { id, token } of files)
-        if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
-          throw new TRPCError({ code: "UNAUTHORIZED" });
+        if (!checkIsUploadFileTokenValid(ctx.user.id, roomId, id, token)) throw new TRPCError({ code: "UNAUTHORIZED" });
 
       await publishBlobDeletion(StorageBucket.MessageAssets, getFilesBlobNames(roomId, files)).match(
         noop,
@@ -178,13 +174,13 @@ export const baseMessageRouter = router({
     getThreadFollowTopics,
   ).mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
     // The bell is the member's own decision, so it clears any unfollow they recorded earlier
-    await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id }, true);
+    await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id }, true);
   }),
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId")
     .meta({ staticReason: "The room objects push the forwarded messages to their sockets as typed events" })
     .mutation<void>(async ({ ctx, input: { id, message, roomId, roomIds } }) => {
-      await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
-      const userId = ctx.getSessionPayload.user.id;
+      await assertIsMember(ctx, roomIds);
+      const userId = ctx.user.id;
       const [source] = await useRoomObject(roomId).readMessagesByIds([id]);
       if (!source) throw getNotFoundError(DatabaseEntityType.Message, JSON.stringify({ id, roomId }));
 
@@ -281,30 +277,23 @@ export const baseMessageRouter = router({
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
       // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
       // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
-      const fileSasEntities = await generateReservedMessageFileSasEntities(
-        ctx.db,
-        ctx.getSessionPayload.user.id,
-        roomId,
-        files,
-      );
+      const fileSasEntities = await generateReservedMessageFileSasEntities(ctx.db, ctx.user.id, roomId, files);
       // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
       return fileSasEntities.map((fileSasEntity) =>
-        Object.assign(fileSasEntity, {
-          token: createUploadFileToken(ctx.getSessionPayload.user.id, roomId, fileSasEntity.id),
-        }),
+        Object.assign(fileSasEntity, { token: createUploadFileToken(ctx.user.id, roomId, fileSasEntity.id) }),
       );
     }),
   pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the pin to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input }) => {
       await requireEntity(
-        useRoomObject(input.roomId).pinMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        useRoomObject(input.roomId).pinMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
       // The pin line is worded by the message it points at rather than by text of its own, and it is best-effort
       // Like every other system message — a failure leaves the pin in place without its line, never costs the pin
-      await createSystemRoomMessage(input.roomId, ctx.getSessionPayload.user.id, "", {
+      await createSystemRoomMessage(input.roomId, ctx.user.id, "", {
         replyToId: input.id,
         type: MessageType.PinMessage,
       }).match(noop, console.error);
@@ -317,7 +306,7 @@ export const baseMessageRouter = router({
     getMemberProcedure(roomIdSchema, "roomId"),
     getThreadFollowTopics,
   ).query<ReadFollowedThreadsResult>(async ({ ctx, input: { roomId } }) => {
-    const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.getSessionPayload.user.id);
+    const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.user.id);
     if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
     // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
     const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
@@ -340,9 +329,7 @@ export const baseMessageRouter = router({
       staticReason:
         "Each message is read from its room's object, which pushes message changes to its sockets as typed events",
     })
-    .query<ReadMySentMessagesResult>(({ ctx, input }) =>
-      readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id),
-    ),
+    .query<ReadMySentMessagesResult>(({ ctx, input }) => readMySentMessages(input, ctx.db, ctx.user.id)),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes the thread's messages to its sockets as typed events" })
     .query<RoomMessage[]>(({ input: { roomId, threadRootId } }) => useRoomObject(roomId).readThread(threadRootId)),
@@ -352,20 +339,20 @@ export const baseMessageRouter = router({
       const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
       if (!inFilterRoomIds.every((value) => typeof value === "string"))
         throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Message, JSON.stringify(inFilterRoomIds));
-      else if (inFilterRoomIds.length > 0) await assertIsMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
+      else if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
       return searchMessages(input);
     }),
   unfollowThread: getTopicsProcedure(
     getMemberProcedure(unfollowThreadInputSchema, "roomId"),
     getThreadFollowTopics,
   ).mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
-    await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id });
+    await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.user.id });
   }),
   unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
     .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input }) => {
       await requireEntity(
-        useRoomObject(input.roomId).unpinMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        useRoomObject(input.roomId).unpinMessage(input.id, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
@@ -378,7 +365,7 @@ export const baseMessageRouter = router({
       await requireEntity(
         useRoomObject(input.roomId).updateMessage(
           { id: input.id, mentions: getMentionIds(input.message), message: input.message },
-          getRoomActor(ctx.getSessionPayload, ctx.headers),
+          getRoomActor(ctx),
         ),
         DatabaseEntityType.Message,
         JSON.stringify(input),
@@ -392,7 +379,7 @@ export const baseMessageRouter = router({
     .mutation<void>(async ({ ctx, input }) => {
       const votedMessage = await useRoomObject(input.roomId).votePoll(
         { id: input.id, optionId: input.optionId || undefined },
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
+        getRoomActor(ctx),
       );
       if (!votedMessage)
         throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify(input));
