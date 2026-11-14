@@ -10,6 +10,7 @@ import { readMyInvite } from "#server/services/message/readMyInvite";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -24,6 +25,7 @@ import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
 import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
 import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { checkHasPermission } from "@esposter/db";
 import {
@@ -35,6 +37,7 @@ import {
   roomIdSchema,
   RoomPermission,
   roomsInMessage,
+  TopicKind,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -44,6 +47,7 @@ import { and, eq, exists, getColumns, sql } from "drizzle-orm";
 export const inviteRouter = router({
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(assertIsRoomMiddleware)
+    .meta({ topics: getProcedureTopics(createInviteInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
     .mutation<InviteInMessageWithCreator>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
       const userId = ctx.getSessionPayload.user.id;
       // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
@@ -115,6 +119,14 @@ export const inviteRouter = router({
     }),
   readInvite: standardAuthedProcedure
     .input(readInviteInputSchema)
+    .meta({
+      // The landing page reads the invite by its token and whether the caller is a member, which joining and leaving
+      // Both change
+      topics: getProcedureTopics(readInviteInputSchema, (inviteId, { userId }) => [
+        getTopic(TopicKind.Invite, inviteId),
+        ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
+      ]),
+    })
     .query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
       const invite = await ctx.db.query.invitesInMessage.findFirst({
         where: { id: { eq: input } },
@@ -135,31 +147,40 @@ export const inviteRouter = router({
     }),
   readMyInvite: getMemberProcedure(roomIdSchema, "roomId")
     .use(assertIsRoomMiddleware)
+    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
     .query<InviteInMessage | undefined>(({ ctx, input: { roomId } }) =>
       readMyInvite(ctx.db, ctx.getSessionPayload.user.id, roomId),
     ),
-  readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
-    CursorPaginationData<InviteInMessageWithCreator>
-  >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof InviteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
-    const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
-    if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
+  readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId")
+    .meta({
+      topics: getProcedureTopics(readRoomInvitesInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]),
+    })
+    .query<CursorPaginationData<InviteInMessageWithCreator>>(async ({ ctx, input: { cursor, limit, roomId } }) => {
+      const sortBy: SortItem<keyof InviteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
+      const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
+      if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 
-    const invites = await ctx.db
-      .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(usersInAuth) })
-      .from(invitesInMessage)
-      .innerJoin(usersInAuth, eq(invitesInMessage.userId, usersInAuth.id))
-      .where(and(...wheres))
-      .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
-      .limit(limit + 1);
-    // Expiry and exhaustion are decided by `checkIsInviteUsable` rather than by a second copy of it in SQL, so
-    // The page is cut over every row and only then filtered: a batch of lapsed links narrows what this page shows
-    // Without ending the walk, and the cursor still names the oldest row read rather than the oldest usable one
-    const { hasMore, items, nextCursor } = getCursorPaginationData(invites, limit, sortBy);
-    return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
-  }),
-  revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { id, roomId } }) => {
+      const invites = await ctx.db
+        .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(usersInAuth) })
+        .from(invitesInMessage)
+        .innerJoin(usersInAuth, eq(invitesInMessage.userId, usersInAuth.id))
+        .where(and(...wheres))
+        .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
+        .limit(limit + 1);
+      // Expiry and exhaustion are decided by `checkIsInviteUsable` rather than by a second copy of it in SQL, so
+      // The page is cut over every row and only then filtered: a batch of lapsed links narrows what this page shows
+      // Without ending the walk, and the cursor still names the oldest row read rather than the oldest usable one
+      const { hasMore, items, nextCursor } = getCursorPaginationData(invites, limit, sortBy);
+      return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
+    }),
+  revokeInvite: getMemberProcedure(revokeInviteInputSchema, "roomId")
+    .meta({
+      topics: getProcedureTopics(revokeInviteInputSchema, ({ id, roomId }) => [
+        getTopic(TopicKind.Room, roomId),
+        getTopic(TopicKind.Invite, id),
+      ]),
+    })
+    .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
       // A member revokes their own link; revoking anybody's is `ManageRoom`, not `ManageInvites`. The default
       // Role carries `ManageInvites` so that every member can mint a link at all, which makes it the wrong gate
       // For a control over other people's links
@@ -179,6 +200,5 @@ export const inviteRouter = router({
         DatabaseEntityType.Invite,
         id,
       );
-    },
-  ),
+    }),
 });

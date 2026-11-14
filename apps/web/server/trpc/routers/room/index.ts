@@ -13,6 +13,7 @@ import { getCursorPaginationData } from "#server/services/pagination/cursor/getC
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
+import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
@@ -50,6 +51,7 @@ import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput"
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
@@ -65,7 +67,9 @@ import {
   roomRolesInMessage,
   roomsInMessage,
   RoomType,
+  selectRoomInMessageSchema,
   StorageBucket,
+  TopicKind,
   updateRoomInputSchema,
   userIdSchema,
   usersInAuth,
@@ -81,8 +85,9 @@ import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 
 export const baseRoomRouter = router({
-  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(
-    async ({ ctx, input }) => {
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"])
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]) })
+    .mutation<RoomInMessage>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       // The id is named up front, since the membership and the @everyone role both belong to the room being created
       const roomId = v7();
@@ -103,130 +108,155 @@ export const baseRoomRouter = router({
           }),
       ]);
       return requireMutation(newRoomRows[0], Operation.Create, DatabaseEntityType.Room, JSON.stringify(input));
-    },
-  ),
+    }),
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
     .use(assertIsRoomMiddleware)
-    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
-  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId").mutation<{
-    publicUrl: string;
-    sasUrl: string;
-  }>(async ({ input: { roomId } }) => {
-    // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
-    // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
-    const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${v7()}`;
-    const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
-    return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
-  }),
-  joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const userId = ctx.getSessionPayload.user.id;
-    const invite = await requireEntity(
-      ctx.db.query.invitesInMessage.findFirst({ where: { id: { eq: input } } }),
-      DatabaseEntityType.Invite,
-      input,
-    );
-    // Expired and exhausted invites get the same error as unknown tokens
-    if (!checkIsInviteUsable(invite)) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-    await assertIsRoom(ctx.db, invite.roomId);
-
-    const { isInvitePaused } = await requireEntity(
-      ctx.db.query.roomsInMessage.findFirst({
-        columns: { isInvitePaused: true },
-        where: { id: { eq: invite.roomId } },
-      }),
-      DatabaseEntityType.Room,
-      invite.roomId,
-    );
-    // A paused room answers a live link exactly as it answers an unknown one
-    if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-    const ban = await ctx.db.query.bansInMessage.findFirst({
-      columns: { userId: true },
-      where: { deletedAt: { isNull: true }, roomId: { eq: invite.roomId }, userId: { eq: userId } },
-    });
-    if (ban) throw getForbiddenError("You are banned from this room");
-
-    const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
-    const existingUserToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
-      columns: { roomId: true },
-      where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
-    });
-    if (existingUserToRoom)
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
-
-    // The membership and the use it consumes are one batch, and each is selected only while the link is still usable,
-    // The room still open and the user unbanned, so a change landing after the reads above refuses both. A second
-    // Join of the same user collides on the membership's key and refuses the batch the same way
-    const isStillJoinable = and(
-      eq(invitesInMessage.id, input),
-      or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
-      or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
-      sql`exists ${ctx.db
-        .select({ _: sql`1` })
-        .from(roomsInMessage)
-        .where(and(eq(roomsInMessage.id, invite.roomId), eq(roomsInMessage.isInvitePaused, false)))}`,
-      notExists(
-        ctx.db
-          .select({ _: sql`1` })
-          .from(bansInMessage)
-          .where(
-            and(
-              eq(bansInMessage.roomId, invite.roomId),
-              eq(bansInMessage.userId, userId),
-              isNull(bansInMessage.deletedAt),
-            ),
-          ),
-      ),
-    );
-    const [joinedRows] = await getResultAsync(() =>
-      ctx.db.batch([
-        ctx.db
-          .insert(usersToRoomsInMessage)
-          .select(
-            ctx.db
-              .select({
-                ...getInsertSelectMetadata(usersToRoomsInMessage),
-                roomId: invitesInMessage.roomId,
-                userId: sql`${userId}`.as("userId"),
-              })
-              .from(invitesInMessage)
-              .where(isStillJoinable),
-          )
-          .returning(),
-        ctx.db
-          .update(invitesInMessage)
-          .set({ uses: sql`${invitesInMessage.uses} + 1` })
-          .where(isStillJoinable),
+    .meta({
+      topics: getProcedureTopics(deleteRoomInputSchema, (roomId, { userId }) => [
+        getTopic(TopicKind.Room, roomId),
+        ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
       ]),
-    ).match(
-      (results) => results,
-      (error) => {
-        if (checkIsUniqueViolation(error))
-          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
-        throw error;
-      },
-    );
-    if (!joinedRows[0]) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-    const { room, roomId, user } = await requireEntity(
-      ctx.db.query.usersToRoomsInMessage.findFirst({
-        where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
-        with: UserToRoomInMessageRelations,
+    })
+    .mutation<RoomInMessage>(({ ctx, input }) => deleteRoom(ctx.db, ctx.getSessionPayload, input)),
+  generateProfileImageUploadUrl: getPermissionsProcedure(RoomPermission.ManageRoom, roomIdSchema, "roomId")
+    .meta({
+      staticReason:
+        "Answers a presigned upload url for a blob no reader shows until updateRoom saves it as the room's image",
+    })
+    .mutation<{ publicUrl: string; sasUrl: string }>(async ({ input: { roomId } }) => {
+      // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
+      // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
+      const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${v7()}`;
+      const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
+      return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
+    }),
+  joinRoom: standardAuthedProcedure
+    .input(joinRoomInputSchema)
+    .meta({
+      topics: getProcedureTopics(joinRoomInputSchema, (inviteId, { output, userId }) => {
+        const roomId = selectRoomInMessageSchema.pick({ id: true }).parse(output).id;
+        return [
+          getTopic(TopicKind.Invite, inviteId),
+          getTopic(TopicKind.Room, roomId),
+          ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
+        ];
       }),
-      DatabaseEntityType.UserToRoom,
-      userToRoomContext,
-    );
+    })
+    .mutation<RoomInMessage>(async ({ ctx, input }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const invite = await requireEntity(
+        ctx.db.query.invitesInMessage.findFirst({ where: { id: { eq: input } } }),
+        DatabaseEntityType.Invite,
+        input,
+      );
+      // Expired and exhausted invites get the same error as unknown tokens
+      if (!checkIsInviteUsable(invite)) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
-    await announceRoomMembersJoined(ctx.db, roomId, [user]);
-    await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`).match(noop, console.error);
+      await assertIsRoom(ctx.db, invite.roomId);
 
-    return room;
-  }),
+      const { isInvitePaused } = await requireEntity(
+        ctx.db.query.roomsInMessage.findFirst({
+          columns: { isInvitePaused: true },
+          where: { id: { eq: invite.roomId } },
+        }),
+        DatabaseEntityType.Room,
+        invite.roomId,
+      );
+      // A paused room answers a live link exactly as it answers an unknown one
+      if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
+
+      const ban = await ctx.db.query.bansInMessage.findFirst({
+        columns: { userId: true },
+        where: { deletedAt: { isNull: true }, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+      });
+      if (ban) throw getForbiddenError("You are banned from this room");
+
+      const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
+      const existingUserToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
+        columns: { roomId: true },
+        where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
+      });
+      if (existingUserToRoom)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
+
+      // The membership and the use it consumes are one batch, and each is selected only while the link is still usable,
+      // The room still open and the user unbanned, so a change landing after the reads above refuses both. A second
+      // Join of the same user collides on the membership's key and refuses the batch the same way
+      const isStillJoinable = and(
+        eq(invitesInMessage.id, input),
+        or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
+        or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
+        sql`exists ${ctx.db
+          .select({ _: sql`1` })
+          .from(roomsInMessage)
+          .where(and(eq(roomsInMessage.id, invite.roomId), eq(roomsInMessage.isInvitePaused, false)))}`,
+        notExists(
+          ctx.db
+            .select({ _: sql`1` })
+            .from(bansInMessage)
+            .where(
+              and(
+                eq(bansInMessage.roomId, invite.roomId),
+                eq(bansInMessage.userId, userId),
+                isNull(bansInMessage.deletedAt),
+              ),
+            ),
+        ),
+      );
+      const [joinedRows] = await getResultAsync(() =>
+        ctx.db.batch([
+          ctx.db
+            .insert(usersToRoomsInMessage)
+            .select(
+              ctx.db
+                .select({
+                  ...getInsertSelectMetadata(usersToRoomsInMessage),
+                  roomId: invitesInMessage.roomId,
+                  userId: sql`${userId}`.as("userId"),
+                })
+                .from(invitesInMessage)
+                .where(isStillJoinable),
+            )
+            .returning(),
+          ctx.db
+            .update(invitesInMessage)
+            .set({ uses: sql`${invitesInMessage.uses} + 1` })
+            .where(isStillJoinable),
+        ]),
+      ).match(
+        (results) => results,
+        (error) => {
+          if (checkIsUniqueViolation(error))
+            throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
+          throw error;
+        },
+      );
+      if (!joinedRows[0]) throw getNotFoundError(DatabaseEntityType.Invite, input);
+
+      const { room, roomId, user } = await requireEntity(
+        ctx.db.query.usersToRoomsInMessage.findFirst({
+          where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
+          with: UserToRoomInMessageRelations,
+        }),
+        DatabaseEntityType.UserToRoom,
+        userToRoomContext,
+      );
+
+      await announceRoomMembersJoined(ctx.db, roomId, [user]);
+      await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`).match(noop, console.error);
+
+      return room;
+    }),
   leaveRoom: standardAuthedProcedure
     .input(leaveRoomInputSchema)
     .use(assertIsRoomMiddleware)
+    .meta({
+      topics: getProcedureTopics(leaveRoomInputSchema, (roomId, { userId }) => [
+        getTopic(TopicKind.Room, roomId),
+        ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
+      ]),
+    })
     .mutation<RoomInMessage["id"]>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       const ownedRoom = await ctx.db.query.roomsInMessage.findFirst({
@@ -260,8 +290,9 @@ export const baseRoomRouter = router({
 
       return userToRoom.roomId;
     }),
-  readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
-    ({ ctx, input: { roomId } }) => {
+  readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId")
+    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
+    .query<MemberCountByTopRole[]>(({ ctx, input: { roomId } }) => {
       // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
       // Member's assigned roles are ranked from the highest, and only the first of each member's is kept
       const rankedRoles = ctx.db
@@ -285,10 +316,10 @@ export const baseRoomRouter = router({
         .from(rankedRoles)
         .where(eq(rankedRoles.rank, 1))
         .groupBy(rankedRoles.roleId);
-    },
-  ),
-  readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<MemberInRoom>>(
-    async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
+    }),
+  readMembers: getMemberProcedure(readMembersInputSchema, "roomId")
+    .meta({ topics: getProcedureTopics(readMembersInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
+    .query<CursorPaginationData<MemberInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
       // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
       // Agree with the name the row renders
       const displayName = getDisplayNameExpression(usersToRoomsInMessage, usersInAuth);
@@ -306,40 +337,55 @@ export const baseRoomRouter = router({
         .orderBy(...parseSortByToSql(sortableColumns, sortBy))
         .limit(limit + 1);
       return getCursorPaginationData(members, limit, sortBy);
-    },
-  ),
-  readMembersCount: getMemberProcedure(roomIdSchema, "roomId").query<number>(
-    async ({ ctx, input: { roomId } }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(usersToRoomsInMessage)
-          .where(eq(usersToRoomsInMessage.roomId, roomId)),
-      ).count,
-  ),
-  readMutualRooms: standardAuthedProcedure.input(userIdSchema).query<RoomInMessage[]>(({ ctx, input }) => {
-    const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
-    const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
-    return ctx.db
-      .select(getColumns(roomsInMessage))
-      .from(roomsInMessage)
-      .innerJoin(
-        usersToRoomsInMessage1,
-        and(
-          eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
-          eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-        ),
-      )
-      .innerJoin(
-        usersToRoomsInMessage2,
-        and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
-      )
-      .where(eq(roomsInMessage.type, RoomType.Room))
-      .orderBy(desc(roomsInMessage.updatedAt))
-      .limit(MAX_READ_LIMIT);
-  }),
+    }),
+  readMembersCount: getMemberProcedure(roomIdSchema, "roomId")
+    .meta({ topics: getProcedureTopics(roomIdSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
+    .query<number>(
+      async ({ ctx, input: { roomId } }) =>
+        takeOne(
+          await ctx.db
+            .select({ count: count() })
+            .from(usersToRoomsInMessage)
+            .where(eq(usersToRoomsInMessage.roomId, roomId)),
+        ).count,
+    ),
+  readMutualRooms: standardAuthedProcedure
+    .input(userIdSchema)
+    .meta({
+      topics: getProcedureTopics(userIdSchema, (input, { userId }) => [
+        getTopic(TopicKind.RoomList, input.userId),
+        ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
+      ]),
+    })
+    .query<RoomInMessage[]>(({ ctx, input }) => {
+      const usersToRoomsInMessage1 = alias(usersToRoomsInMessage, "usersToRoomsInMessage1");
+      const usersToRoomsInMessage2 = alias(usersToRoomsInMessage, "usersToRoomsInMessage2");
+      return ctx.db
+        .select(getColumns(roomsInMessage))
+        .from(roomsInMessage)
+        .innerJoin(
+          usersToRoomsInMessage1,
+          and(
+            eq(usersToRoomsInMessage1.roomId, roomsInMessage.id),
+            eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
+          ),
+        )
+        .innerJoin(
+          usersToRoomsInMessage2,
+          and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
+        )
+        .where(eq(roomsInMessage.type, RoomType.Room))
+        .orderBy(desc(roomsInMessage.updatedAt))
+        .limit(MAX_READ_LIMIT);
+    }),
   readRoom: standardAuthedProcedure
     .input(readRoomInputSchema)
+    .meta({
+      topics: getProcedureTopics(readRoomInputSchema, (roomId, { userId }) => {
+        if (roomId !== undefined) return [getTopic(TopicKind.Room, roomId)];
+        return userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)];
+      }),
+    })
     .query<RoomInMessage | undefined>(async ({ ctx, input }) => {
       if (input) {
         const room = ctx.db.query.roomsInMessage.findFirst({
@@ -381,58 +427,69 @@ export const baseRoomRouter = router({
             .limit(1)
         )[0];
     }),
-  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId").query<
-    CursorPaginationData<RoomInMessage & { displayName: string }>
-  >(async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
-    const innerJoinCondition = and(
-      eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
-      eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
-    );
-    const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.getSessionPayload.user.id);
-    const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
-    const roomColumns = getColumns(roomsInMessage);
-    const sortableColumns = { ...roomColumns, displayName };
-    let room: (RoomInMessage & { displayName: string }) | undefined;
+  readRooms: getMemberProcedure(readRoomsInputSchema, "roomId")
+    .meta({
+      topics: getProcedureTopics(readRoomsInputSchema, ({ roomId }, { userId }) => [
+        ...(roomId === undefined ? [] : [getTopic(TopicKind.Room, roomId)]),
+        ...(userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)]),
+      ]),
+    })
+    .query<CursorPaginationData<RoomInMessage & { displayName: string }>>(
+      async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
+        const innerJoinCondition = and(
+          eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
+          eq(usersToRoomsInMessage.userId, ctx.getSessionPayload.user.id),
+        );
+        const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.getSessionPayload.user.id);
+        const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
+        const roomColumns = getColumns(roomsInMessage);
+        const sortableColumns = { ...roomColumns, displayName };
+        let room: (RoomInMessage & { displayName: string }) | undefined;
 
-    if (roomId) {
-      const routeRoom = (
-        await ctx.db
+        if (roomId) {
+          const routeRoom = (
+            await ctx.db
+              .select({ ...roomColumns, displayName })
+              .from(roomsInMessage)
+              .innerJoin(usersToRoomsInMessage, innerJoinCondition)
+              .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
+              .where(eq(roomsInMessage.id, roomId))
+          )[0];
+          if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
+          if (routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage))
+            room = routeRoom;
+        }
+
+        const wheres: (SQL | undefined)[] = [
+          inArray(
+            roomsInMessage.type,
+            includeDirectMessages ? [RoomType.Room, RoomType.DirectMessage] : [RoomType.Room],
+          ),
+        ];
+        if (includeDirectMessages)
+          wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
+        if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
+        if (filter?.name) wheres.push(containsLike(displayName, filter.name));
+        if (room) wheres.push(ne(roomsInMessage.id, room.id));
+
+        const rooms = await ctx.db
           .select({ ...roomColumns, displayName })
           .from(roomsInMessage)
           .innerJoin(usersToRoomsInMessage, innerJoinCondition)
           .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
-          .where(eq(roomsInMessage.id, roomId))
-      )[0];
-      if (!routeRoom) throw getNotFoundError(DatabaseEntityType.Room, roomId);
-      if (routeRoom.type === RoomType.Room || (includeDirectMessages && routeRoom.type === RoomType.DirectMessage))
-        room = routeRoom;
-    }
-
-    const wheres: (SQL | undefined)[] = [
-      inArray(roomsInMessage.type, includeDirectMessages ? [RoomType.Room, RoomType.DirectMessage] : [RoomType.Room]),
-    ];
-    if (includeDirectMessages)
-      wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
-    if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
-    if (filter?.name) wheres.push(containsLike(displayName, filter.name));
-    if (room) wheres.push(ne(roomsInMessage.id, room.id));
-
-    const rooms = await ctx.db
-      .select({ ...roomColumns, displayName })
-      .from(roomsInMessage)
-      .innerJoin(usersToRoomsInMessage, innerJoinCondition)
-      .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
-      .where(and(...wheres))
-      .orderBy(...parseSortByToSql(sortableColumns, sortBy))
-      .limit(limit + 1);
-    const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
-    if (room) cursorPaginationData.items.push(room);
-    return cursorPaginationData;
-  }),
+          .where(and(...wheres))
+          .orderBy(...parseSortByToSql(sortableColumns, sortBy))
+          .limit(limit + 1);
+        const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
+        if (room) cursorPaginationData.items.push(room);
+        return cursorPaginationData;
+      },
+    ),
   // A row comes back for every id that has an account, a user who has left the room included, so a message whose author
   // Has left is still named. `isMember` tells the two apart, and a user with no membership is named by their account
-  readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId").query<UserInRoom[]>(
-    ({ ctx, input: { roomId, userIds } }) =>
+  readUsersByIds: getMemberProcedure(readUsersByIdsInputSchema, "roomId")
+    .meta({ topics: getProcedureTopics(readUsersByIdsInputSchema, ({ roomId }) => [getTopic(TopicKind.Room, roomId)]) })
+    .query<UserInRoom[]>(({ ctx, input: { roomId, userIds } }) =>
       ctx.db
         .select({
           ...getPublicUserColumns(usersInAuth),
@@ -442,54 +499,56 @@ export const baseRoomRouter = router({
         .from(usersInAuth)
         .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
         .where(inJsonArray(usersInAuth.id, userIds)),
-  ),
+    ),
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),
     ["name"],
-  ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
-    const { image } = rest;
-    // The previous row is read in the batch ahead of the update, so the sweep below knows which version the room is
-    // Dropping and the rename line knows whether the name moved. Both statements are one batch, so two admins renaming
-    // It at once cannot both read the old name: the second one's read lands after the first one's write
-    const [previousRoomRows, updatedRoomRows] = await ctx.db.batch([
-      ctx.db
-        .select({ image: roomsInMessage.image, name: roomsInMessage.name })
-        .from(roomsInMessage)
-        .where(eq(roomsInMessage.id, id)),
-      ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning(),
-    ]);
-    const previousRoom = previousRoomRows[0];
-    const updatedRoom = requireMutation(updatedRoomRows[0], Operation.Update, DatabaseEntityType.Room, id);
-    const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
-    await notifyOnlineRoomMembers(id, { data: { id, ...rest }, type: "updateRoom" });
-    // The rename line is the server's to write, like every other line in the room's voice, so no member can post
-    // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
-    // Rename. Best-effort behind the update, which has already landed
-    if (updatedRoom.name !== previousRoom?.name)
-      await createSystemRoomMessage(id, ctx.getSessionPayload.user.id, updatedRoom.name, {
-        type: MessageType.EditRoom,
-      }).match(noop, console.error);
-    // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
-    // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
-    // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
-    // Dropped publish orphans a public blob, never the room update
-    if (image !== undefined && image !== previousImage)
-      await publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {
-        const bucket = getBucket(StorageBucket.PublicUserAssets);
-        // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
-        // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
-        // Uploaded in between — so the row value being replaced is exactly the value that can name the other
-        // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
-        // To repair it. A version replaced within the window is therefore left for the next image change (or the
-        // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
-        const blobNames = await listRoomProfileImageBlobNames(bucket, id, {
-          createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
-        });
-        return blobNames.filter((blobName) => getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) !== image);
-      }).match(noop, console.error);
+  )
+    .meta({ topics: getProcedureTopics(updateRoomInputSchema, ({ id }) => [getTopic(TopicKind.Room, id)]) })
+    .mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
+      const { image } = rest;
+      // The previous row is read in the batch ahead of the update, so the sweep below knows which version the room is
+      // Dropping and the rename line knows whether the name moved. Both statements are one batch, so two admins renaming
+      // It at once cannot both read the old name: the second one's read lands after the first one's write
+      const [previousRoomRows, updatedRoomRows] = await ctx.db.batch([
+        ctx.db
+          .select({ image: roomsInMessage.image, name: roomsInMessage.name })
+          .from(roomsInMessage)
+          .where(eq(roomsInMessage.id, id)),
+        ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning(),
+      ]);
+      const previousRoom = previousRoomRows[0];
+      const updatedRoom = requireMutation(updatedRoomRows[0], Operation.Update, DatabaseEntityType.Room, id);
+      const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
+      await notifyOnlineRoomMembers(id, { data: { id, ...rest }, type: "updateRoom" });
+      // The rename line is the server's to write, like every other line in the room's voice, so no member can post
+      // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
+      // Rename. Best-effort behind the update, which has already landed
+      if (updatedRoom.name !== previousRoom?.name)
+        await createSystemRoomMessage(id, ctx.getSessionPayload.user.id, updatedRoom.name, {
+          type: MessageType.EditRoom,
+        }).match(noop, console.error);
+      // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
+      // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
+      // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
+      // Dropped publish orphans a public blob, never the room update
+      if (image !== undefined && image !== previousImage)
+        await publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {
+          const bucket = getBucket(StorageBucket.PublicUserAssets);
+          // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
+          // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
+          // Uploaded in between — so the row value being replaced is exactly the value that can name the other
+          // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
+          // To repair it. A version replaced within the window is therefore left for the next image change (or the
+          // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
+          const blobNames = await listRoomProfileImageBlobNames(bucket, id, {
+            createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
+          });
+          return blobNames.filter((blobName) => getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) !== image);
+        }).match(noop, console.error);
 
-    return updatedRoom;
-  }),
+      return updatedRoom;
+    }),
 });
 
 export const roomRouter = mergeRouters(

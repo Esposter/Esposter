@@ -8,13 +8,19 @@ import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/Cr
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
-import { roomCategoriesInMessage } from "@esposter/db-schema";
+import { getTopic } from "#shared/services/realtime/getTopic";
+import { roomCategoriesInMessage, TopicKind } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { and, eq, max, sql } from "drizzle-orm";
+
+// A category groups the caller's own room list, so each one is a change to that list
+const roomListTopics = ({ userId }: { userId?: string }) =>
+  userId === undefined ? [] : [getTopic(TopicKind.RoomList, userId)];
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
     .input(createRoomCategoryInputSchema)
+    .meta({ topics: roomListTopics })
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) => {
       // Append below the user's existing drag-assigned order — the column default 0 would tie with
       // Whatever category the user dragged to the top and jump the new category above it
@@ -37,6 +43,7 @@ export const categoryRouter = router({
     }),
   deleteRoomCategory: standardAuthedProcedure
     .input(deleteRoomCategoryInputSchema)
+    .meta({ topics: roomListTopics })
     .mutation<RoomCategoryInMessage>(async ({ ctx, input }) =>
       requireRoomCategory(
         (
@@ -50,15 +57,18 @@ export const categoryRouter = router({
         "NOT_FOUND",
       ),
     ),
-  readRoomCategories: standardAuthedProcedure.query<RoomCategoryInMessage[]>(({ ctx }) =>
-    ctx.db.query.roomCategoriesInMessage.findMany({
-      // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
-      orderBy: (category, { asc }) => [asc(category.position), asc(category.name)],
-      where: { userId: { eq: ctx.getSessionPayload.user.id } },
-    }),
-  ),
+  readRoomCategories: standardAuthedProcedure
+    .meta({ topics: roomListTopics })
+    .query<RoomCategoryInMessage[]>(({ ctx }) =>
+      ctx.db.query.roomCategoriesInMessage.findMany({
+        // Drag-reorder assigns positions, so position must take precedence over the name tiebreaker
+        orderBy: (category, { asc }) => [asc(category.position), asc(category.name)],
+        where: { userId: { eq: ctx.getSessionPayload.user.id } },
+      }),
+    ),
   reorderRoomCategories: standardAuthedProcedure
     .input(reorderRoomCategoriesInputSchema)
+    .meta({ topics: roomListTopics })
     .mutation<RoomCategoryInMessage[]>(async ({ ctx, input }) => {
       const userId = ctx.getSessionPayload.user.id;
       // The whole drag is one JSON array bound twice, so the statement's parameters do not grow with the list: each
@@ -96,6 +106,7 @@ export const categoryRouter = router({
     }),
   updateRoomCategory: standardAuthedProcedure
     .input(updateRoomCategoryInputSchema)
+    .meta({ topics: roomListTopics })
     .mutation<RoomCategoryInMessage>(async ({ ctx, input: { id, ...rest } }) =>
       requireRoomCategory(
         (
