@@ -1,4 +1,5 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
+
 import { useThreadStore } from "@/store/message/thread";
 
 export const useOpenThread = () => {

@@ -1,8 +1,9 @@
 // @vitest-environment nuxt
+import type { UpdateRoomInput } from "@esposter/db-schema";
+
 import MessageModelRoomSettingsTypeOverviewIndex from "@/components/Message/Model/Room/Settings/Type/Overview/Index.vue";
 import MessageModelRoomSettingsTypeOverviewSlowmodeField from "@/components/Message/Model/Room/Settings/Type/Overview/SlowmodeField.vue";
 import MessageModelRoomSettingsTypeOverviewTopicField from "@/components/Message/Model/Room/Settings/Type/Overview/TopicField.vue";
-import type { UpdateRoomInput } from "@esposter/db-schema";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomStore } from "@/store/message/room";

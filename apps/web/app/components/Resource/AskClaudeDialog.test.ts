@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
-import ResourceAskClaudeDialog from "@/components/Resource/AskClaudeDialog.vue";
-import { McpScope } from "@esposter/db-schema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import ResourceAskClaudeDialog from "@/components/Resource/AskClaudeDialog.vue";
 import { apiKeyList } from "@/services/auth/authClient.test";
 import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
+import { McpScope } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, describe, expect, test, vi } from "vitest";

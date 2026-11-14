@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SerializableValue } from "@esposter/db-schema";
+
 const emit = defineEmits<{ select: [value: SerializableValue] }>();
 // A search filter cannot name a day that has not happened
 const today = Temporal.Now.plainDateISO();

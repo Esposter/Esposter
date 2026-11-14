@@ -1,5 +1,5 @@
-import { useConnectionStore } from "@/store/realtime/connection";
 import { useEmojiStore } from "@/store/message/emoji";
+import { useConnectionStore } from "@/store/realtime/connection";
 
 export const useEmojiEvents = () => {
   const emojiStore = useEmojiStore();

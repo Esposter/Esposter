@@ -5,6 +5,7 @@ import { getStyledApexOptions } from "@/services/styled/getStyledApexOptions";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { clonePlainDeep } from "@esposter/shared";
 import ApexCharts from "apexcharts";
+
 // The features the dashboard's chart options name, registered before this chart is drawn, since each is opt-in since v7
 import "apexcharts/features/context-menu";
 import "apexcharts/features/history";

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import type { CreateApiKeyInput, McpScope } from "@esposter/db-schema";
-import { API_KEY_NAME_MAX_LENGTH, McpScopes } from "@esposter/db-schema";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { McpScopeTitleMap } from "@/services/auth/McpScopeTitleMap";
 import { UiRules } from "@/services/ui/UiRules";
+import { API_KEY_NAME_MAX_LENGTH, McpScopes } from "@esposter/db-schema";
 
 interface Props {
   // Answers with the whole key, which the server keeps only hashed

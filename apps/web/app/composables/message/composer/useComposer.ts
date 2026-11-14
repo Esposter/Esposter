@@ -1,5 +1,5 @@
-import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
+import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Editor } from "@tiptap/core";
 
 import { MentionExtension } from "@/services/message/MentionExtension";

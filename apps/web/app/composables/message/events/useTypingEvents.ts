@@ -1,6 +1,6 @@
-import { useConnectionStore } from "@/store/realtime/connection";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
+import { useConnectionStore } from "@/store/realtime/connection";
 
 export const useTypingEvents = () => {
   const dataStore = useDataStore();

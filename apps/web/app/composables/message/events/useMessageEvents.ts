@@ -1,5 +1,5 @@
-import { useConnectionStore } from "@/store/realtime/connection";
 import { useDataStore } from "@/store/message/data";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useMessageEvents = () => {

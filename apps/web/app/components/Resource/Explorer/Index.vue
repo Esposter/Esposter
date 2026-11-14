@@ -9,7 +9,7 @@ interface Props {
 }
 // The resource itself is threaded because the page's own guard is what makes it non-optional; everything else
 // The blade shows or does — the publication, the loading flag, every write — comes from the resource store
-const { resource } = defineProps<Props>();
+defineProps<Props>();
 // Version history is a panel over whichever blade is open rather than a blade of its own, because the page
 // Header is the one surface every type has — Sheet and TodoList have no editor to hang it off. Its state
 // Is the route's, so the back button and a shared link both land on it. See openspec/specs/resource/resource-snapshots/design.md

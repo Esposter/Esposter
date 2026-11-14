@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { CallParticipant } from "@esposter/db-schema";
 import type { UiListItem } from "@/models/ui/UiListItem";
+import type { CallParticipant } from "@esposter/db-schema";
+
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useCallStore } from "@/store/message/room/call";
 

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { RoomReaction } from "@esposter/db-schema";
 import type { UiListItem } from "@/models/ui/UiListItem";
+import type { RoomReaction } from "@esposter/db-schema";
 
 interface Props {
   emojis: RoomReaction[];

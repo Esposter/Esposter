@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { McpScope } from "@esposter/db-schema";
+
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { McpScopeTitleMap } from "@/services/auth/McpScopeTitleMap";
 

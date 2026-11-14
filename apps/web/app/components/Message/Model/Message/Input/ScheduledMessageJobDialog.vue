@@ -29,14 +29,14 @@ const scheduleJob = async () => {
   if (!roomId) return true;
 
   const outcome = await executeMutation(
-    () =>
+    async () =>
       isReminder.value
-        ? $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
+        ? await $trpc.message.scheduledMessageJob.scheduleReminder.mutate({
             roomId,
             runAt: scheduledAt.value,
             text: text.value,
           })
-        : $trpc.message.scheduledMessage.createScheduledMessage.mutate({
+        : await $trpc.message.scheduledMessage.createScheduledMessage.mutate({
             message: marked.parse(text.value, { async: false }),
             replyToId: null,
             roomId,

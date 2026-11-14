@@ -3,8 +3,8 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
-import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
 import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
+import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
 import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";

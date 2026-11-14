@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RoomReaction } from "@esposter/db-schema";
+
 import { getReactorNames } from "@/services/message/emoji/getReactorNames";
 import { useUserStore } from "@/store/message/user";
 
