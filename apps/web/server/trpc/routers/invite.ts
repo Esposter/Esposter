@@ -23,7 +23,7 @@ import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInpu
 import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
 import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createId } from "#shared/util/math/random/createId";
 import { checkHasPermission } from "@esposter/db";
@@ -143,7 +143,7 @@ export const inviteRouter = router({
   readRoomInvites: getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId").query<
     CursorPaginationData<InviteInMessageWithCreator>
   >(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    const sortBy: SortItem<keyof InviteInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
+    const sortBy: SortItem<keyof InviteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
     if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
 

@@ -1,11 +1,11 @@
 import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { roomIdSchema, selectBanInMessageSchema, selectUserInAuthSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const readBansInputSchema = z.object({
   ...roomIdSchema.shape,
-  ...createCursorPaginationParamsSchema(selectBanInMessageSchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).omit({
+  ...createCursorPaginationParamsSchema(selectBanInMessageSchema.keyof(), [ID_DESCENDING_SORT_ITEM]).omit({
     sortBy: true,
   }).shape,
   // The banned user's name, matching what `readMembers` takes. The reason is deliberately not searched: it is free

@@ -2,20 +2,17 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { PostInPost } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { PostSortType } from "@/models/post/PostSortType";
 
-// Every sort carries the unique id as tiebreaker so cursor pagination never skips tied rows
+// Every sort ends on the unique id so cursor pagination never skips tied rows, and the creation sorts are the id alone
 export const PostSortTypeSortByMap = {
   [PostSortType.Hot]: [
     { key: "ranking", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },
   ],
-  [PostSortType.New]: [CREATED_AT_DESCENDING_SORT_ITEM, { key: "id", order: SortOrder.Desc }],
-  [PostSortType.Old]: [
-    { key: "createdAt", order: SortOrder.Asc },
-    { key: "id", order: SortOrder.Asc },
-  ],
+  [PostSortType.New]: [ID_DESCENDING_SORT_ITEM],
+  [PostSortType.Old]: [{ key: "id", order: SortOrder.Asc }],
   [PostSortType.Top]: [
     { key: "likeCount", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },

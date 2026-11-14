@@ -85,7 +85,7 @@ import { updateResourceContentInputSchema } from "#shared/models/db/resource/Upd
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { inJsonArray, purgeResource } from "@esposter/db";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
@@ -202,10 +202,7 @@ export const resourceRouter = router({
       },
     })
     .query<CursorPaginationData<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
-      const sortBy: SortItem<keyof ResourceActivityInResource>[] = [
-        CREATED_AT_DESCENDING_SORT_ITEM,
-        ID_DESCENDING_SORT_ITEM,
-      ];
+      const sortBy: SortItem<keyof ResourceActivityInResource>[] = [ID_DESCENDING_SORT_ITEM];
       const wheres: (SQL | undefined)[] = [eq(resourceActivitiesInResource.resourceId, id)];
       if (cursor) wheres.push(getCursorWhere(resourceActivitiesInResource, cursor, sortBy));
       const activities = await ctx.db

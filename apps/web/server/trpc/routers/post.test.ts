@@ -37,14 +37,8 @@ describe("postRouter", () => {
     { key: "likeCount", order: SortOrder.Desc },
     { key: "id", order: SortOrder.Desc },
   ];
-  const NEW_SORT_BY: SortItem<keyof PostInPost>[] = [
-    { key: "createdAt", order: SortOrder.Desc },
-    { key: "id", order: SortOrder.Desc },
-  ];
-  const OLD_SORT_BY: SortItem<keyof PostInPost>[] = [
-    { key: "createdAt", order: SortOrder.Asc },
-    { key: "id", order: SortOrder.Asc },
-  ];
+  const NEW_SORT_BY: SortItem<keyof PostInPost>[] = [{ key: "id", order: SortOrder.Desc }];
+  const OLD_SORT_BY: SortItem<keyof PostInPost>[] = [{ key: "id", order: SortOrder.Asc }];
   const updatedDescription = "updatedDescription";
   const value = 1;
 

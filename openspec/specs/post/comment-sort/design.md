@@ -9,7 +9,7 @@ A post's comments have a **Sort by** select above them, with four orders: Hot (t
 - **The root branch remounts.** A branch reads its first page in setup, and a branch that is already mounted does not run setup again. The post page keys the root branch by the sort, so the root remounts and reads under the new order.
 - **Expansion lives in the store.** Which replies are open is a set of comment ids in the store, not a flag on each card. A remounted card therefore comes back open and mounts its branch, which reads its own first page under the current sort.
 - **Per visit, not persisted.** Opening a post starts the sort at Hot and closes every reply. The sort is not written to storage, so a reload also starts at Hot.
-- **Old pages from the top of the thread.** The cursor compares compound keys lexicographically in either direction, so Old's ascending `(createdAt, id)` pages reach every reply once.
+- **Old pages from the top of the thread.** The cursor compares compound keys lexicographically in either direction, so Old's ascending `id` pages reach every reply once, since the id is the whole sort.
 
 ```mermaid
 flowchart LR

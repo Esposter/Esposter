@@ -29,11 +29,11 @@ export const CREATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.createdAt,
   order: SortOrder.Desc,
 } as const satisfies SortItem<typeof ItemMetadataPropertyNames.createdAt>;
-// The tie-break under the same timestamp, so two rows created in one millisecond still have one place in a page
+// The sort of every creation-ordered cursor. An id is a UUIDv7, unique and time-ordered, so it orders rows by creation on its own
 export const ID_DESCENDING_SORT_ITEM = { key: "id", order: SortOrder.Desc } as const satisfies SortItem<"id">;
-// A room's messages are paged newest-first on when they were created, then on id. A cursor over them is the values of
-// This sort, so a page can name a message and read on from it in either direction
-export const MESSAGE_SORT_BY = [CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM];
+// A room's messages are paged newest-first on id, which is creation order. A cursor over them is the values of this
+// Sort, so a page can name a message and read on from it in either direction
+export const MESSAGE_SORT_BY = [ID_DESCENDING_SORT_ITEM];
 // Most-recently-touched first, the default every paginated read of a mutable entity opens on.
 export const UPDATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.updatedAt,

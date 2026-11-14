@@ -39,7 +39,7 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
-import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 
 import { checkHasPermission } from "@esposter/db";
 import {
@@ -204,7 +204,7 @@ export const moderationRouter = router({
   readBans: getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId").query<
     CursorPaginationData<BanInRoom>
   >(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
-    const sortBy: SortItem<keyof BanInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM];
+    const sortBy: SortItem<keyof BanInMessage>[] = [ID_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
     // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
@@ -242,7 +242,7 @@ export const moderationRouter = router({
   readModerationLog: getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId").query<
     CursorPaginationData<ModerationLogInRoom>
   >(async ({ ctx, input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-    const sortBy: SortItem<keyof ModerationLogInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM];
+    const sortBy: SortItem<keyof ModerationLogInMessage>[] = [ID_DESCENDING_SORT_ITEM];
     const wheres: (SQL | undefined)[] = [eq(moderationLogsInMessage.roomId, roomId)];
     if (actorUserId) wheres.push(eq(moderationLogsInMessage.actorUserId, actorUserId));
     if (targetUserId) wheres.push(eq(moderationLogsInMessage.targetUserId, targetUserId));
@@ -277,10 +277,7 @@ export const moderationRouter = router({
     async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
       await assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId);
 
-      const sortBy: SortItem<keyof ModerationNoteInMessage>[] = [
-        CREATED_AT_DESCENDING_SORT_ITEM,
-        ID_DESCENDING_SORT_ITEM,
-      ];
+      const sortBy: SortItem<keyof ModerationNoteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
       const wheres: (SQL | undefined)[] = [
         eq(moderationNotesInMessage.roomId, roomId),
         eq(moderationNotesInMessage.targetUserId, targetUserId),

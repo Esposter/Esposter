@@ -53,15 +53,15 @@ describe(getCursorWhere, () => {
     expect.hasAssertions();
 
     const sortBy: SortItem<keyof UserInAuth>[] = [
-      { key: "createdAt", order: SortOrder.Desc },
+      { key: "updatedAt", order: SortOrder.Desc },
       { key: "id", order: SortOrder.Desc },
     ];
     const serializedCursors = serialize(user, sortBy);
 
     expect(getCursorWhere(usersInAuth, serializedCursors, sortBy)).toStrictEqual(
       or(
-        and(lt(usersInAuth.createdAt, user.createdAt)),
-        and(eq(usersInAuth.createdAt, user.createdAt), lt(usersInAuth.id, user.id)),
+        and(lt(usersInAuth.updatedAt, user.updatedAt)),
+        and(eq(usersInAuth.updatedAt, user.updatedAt), lt(usersInAuth.id, user.id)),
       ),
     );
   });
