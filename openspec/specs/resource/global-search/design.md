@@ -44,7 +44,7 @@ With a query set the scope shows three groups plus a last row:
 
 ## Relevance
 
-`readResources` matches a resource by its name or by one of its tags, and ranks the matches by the ladder that [global search relevance](../global-search-relevance/design.md) owns. The search value is escaped and bound through the query builder throughout, and `getResourcesWhere` stays the single filter source so `readResourcesCount` never drifts from the list. Typo tolerance is covered there too; Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md).
+`readResources` matches a resource by its name or by one of its tags, and ranks the matches by the ladder that [global search relevance](../global-search-relevance/design.md) owns. The search value is escaped and bound through the query builder throughout, and `getResourcesWhere` stays the single filter source so `readResourcesCount` never drifts from the list. Matching is by whole word there, so typo tolerance is given up, and a separate hosted search service stays [deferred](../../../deferred/resource/azure-ai-search/design.md).
 
 ## Key files
 

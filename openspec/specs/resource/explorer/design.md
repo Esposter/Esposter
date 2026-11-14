@@ -127,7 +127,7 @@ Every resource follows one lifecycle regardless of type — the type only decide
 ```mermaid
 stateDiagram-v2
   [*] --> Creating: Home/gallery → create form
-  Creating --> Draft: createResource (row only, no blob yet)
+  Creating --> Draft: createResource (row only, no content object yet)
   Draft --> Draft: edit blade → saveResourceContent (contentVersion++)
   Draft --> Draft: rename → updateResource
   Draft --> Published: publishResource (Publishable types) — a published version
@@ -136,16 +136,16 @@ stateDiagram-v2
   Draft --> Deleted: deleteResource (deletedAt set)
   Published --> Deleted: deleteResource (deletedAt set, publication dropped)
   Deleted --> Draft: restoreResources
-  Deleted --> [*]: purgeResource (blob dir, partitions, row)
+  Deleted --> [*]: purgeResource (object prefix, rows, row)
 ```
 
-**Create → first write.** `createResource` writes only the Postgres identity row; the content blob does not exist until the first `saveResourceContent` inside an editor blade — no half-written blob to reconcile.
+**Create → first write.** `createResource` writes only the D1 identity row; the content object does not exist until the first `saveResourceContent` inside an editor blade — no half-written object to reconcile.
 
-**Update = one write path.** Settings and Data are separate blades but one content blob with one `contentVersion` — never two write paths for one artifact. Optimistic concurrency: a stale `contentVersion` rejects the save.
+**Update = one write path.** Settings and Data are separate blades but one content object with one `contentVersion` — never two write paths for one artifact. Optimistic concurrency: a stale `contentVersion` rejects the save.
 
-**Linking to other resources** is the dataset capability ([datasets](../../architecture/dataset/design.md)), not a resource-to-resource foreign key: a consumer holds a `DatasetReference` (`{ type, id }`) and either copies (Sheet import — one-time row copy) or references (Dashboard visual / Email merge fields — re-resolved on load via `dataset.readDataset`). Every such reference is also indexed by the role it plays, so finding a resource's consumers is one indexed read rather than a read of every blob ([resource links](../../architecture/resource-links/design.md)).
+**Linking to other resources** is the dataset capability ([datasets](../../architecture/dataset/design.md)), not a resource-to-resource foreign key: a consumer holds a `DatasetReference` (`{ type, id }`) and either copies (Sheet import — one-time row copy) or references (Dashboard visual / Email merge fields — re-resolved on load via `dataset.readDataset`). Every such reference is also indexed by the role it plays, so finding a resource's consumers is one indexed read rather than a read of every stored object ([resource links](../../architecture/resource-links/design.md)).
 
-**Delete.** `deleteResource` is a soft delete — identical for every type: it stamps `deletedAt` and drops the `resource_publications` row, while the `{id}/` blob directory and the type's table partitions survive so a restore can hand the whole resource back. `purgeResource` is what destroys them, from the bin or from the timer past `RECYCLE_BIN_RETENTION_MS` ([recycle bin](../recycle-bin/design.md)). Because links are bare `DatasetReference` ids (not FKs), deleting a source leaves consumers' stored references dangling. The consumer re-resolves on load and shows a source that is gone as one to rebind or restore ([datasets](../../architecture/dataset/design.md)), and nothing is cascaded into the consumers' content ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)). Published snapshots are unaffected (they baked data in at publish time).
+**Delete.** `deleteResource` is a soft delete — identical for every type: it stamps `deletedAt` and drops the `resource_publications` row, while the `{id}/` object prefix and the type's rows survive so a restore can hand the whole resource back. `purgeResource` is what destroys them, from the bin or from the nightly purge past `RECYCLE_BIN_RETENTION_MS` ([recycle bin](../recycle-bin/design.md)). Because links are bare `DatasetReference` ids (not FKs), deleting a source leaves consumers' stored references dangling. The consumer re-resolves on load and shows a source that is gone as one to rebind or restore ([datasets](../../architecture/dataset/design.md)), and nothing is cascaded into the consumers' content ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)). Published snapshots are unaffected (they baked data in at publish time).
 
 ## Key files
 

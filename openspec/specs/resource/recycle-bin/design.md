@@ -1,12 +1,12 @@
 # Recycle Bin
 
-Deleting a resource marks it rather than destroying it. `/resource-explorer/recycle-bin` lists what you deleted, restores it, or destroys it for good, and a timer sweeps anything older than `RECYCLE_BIN_RETENTION_MS`.
+Deleting a resource marks it rather than destroying it. `/resource-explorer/recycle-bin` lists what you deleted, restores it, or destroys it for good, and the nightly purge sweeps anything older than `RECYCLE_BIN_RETENTION_MS`.
 
 ## How it works
 
 A Sheet or a Survey can hold hours of work behind a single Delete button. A confirmation makes that click deliberate, but deliberate and correct are different things, and an undo window costs one column. Delete still asks first, as [every delete does](../../architecture/destructive-confirmation/design.md), naming any other resource that uses what is going ([delete-time reference warning](../delete-reference-warning/design.md)), and the bin is what makes a wrong answer cheap.
 
-Deleting sets `deletedAt` and drops the publication row. The content blob and the `{id}/` directory survive untouched; that is precisely what makes restore possible. Every read already funnels through `getResourcesWhere`, so excluding the bin is one predicate, and `getOwnerProcedure` rejects soft-deleted ids so a binned resource's page 404s. Restore and purge need the opposite, so both take the guard's `isDeletedOnly` mode.
+Deleting sets `deletedAt` and drops the publication row. The content object and the `{id}/` prefix survive untouched; that is precisely what makes restore possible. Every read already funnels through `getResourcesWhere`, so excluding the bin is one predicate, and `getOwnerProcedure` rejects soft-deleted ids so a binned resource's page 404s. Restore and purge need the opposite, so both take the guard's `isDeletedOnly` mode.
 
 Publication removal is deliberate: **restore returns a Draft**. Silently resurrecting a public URL because someone undid a delete would be surprising in the worst direction, so the notification says "restored as a draft" rather than letting the owner discover it later.
 
@@ -16,23 +16,23 @@ stateDiagram-v2
   state "Soft-deleted" as Bin
   Live --> Bin: deleteResource / deleteResources
   Bin --> Live: restoreResources (returns as Draft — re-publish is manual)
-  Bin --> [*]: purgeResource (blob dir → table partitions → row)
-  Bin --> [*]: PurgeDeletedResources timer (deletedAt < now − 30d)
+  Bin --> [*]: purgeResource (object prefix → row)
+  Bin --> [*]: PurgeDeletedResources Cron Trigger (deletedAt < now − 30d)
 ```
 
 ### The purge protocol
 
-`purgeResource` in `@esposter/db` is shared by the procedure and the timer, and its ordering is the whole design: **blob directory, then dependent Azure Table partitions, then the Postgres row last**.
+`purgeResource` in `@esposter/db` is shared by the procedure and the nightly purge, and its ordering is the whole design: **object prefix, then the D1 row last**. The row's delete cascades to the rows that belong to it, so the activity trail and the other dependent rows go with it in that one statement.
 
-The row is the durable marker. A partial failure leaves it behind, so the next pass re-drives the whole sequence from the top; blob and table deletes treat already-gone as success, which is what makes replaying safe. Delete the row first and a failure halfway through orphans a blob directory nobody will ever look for again.
+The row is the durable marker. A partial failure leaves it behind, so the next pass re-drives the whole sequence from the top; object deletes treat already-gone as success, which is what makes replaying safe. Delete the row first and a failure halfway through orphans an object prefix nobody will ever look for again.
 
-The timer purges per resource rather than as one batch, so one poisoned resource cannot block the sweep — its row survives and the next tick retries it, while everything else is already gone. That is also why its per-resource failures log instead of rethrowing: a rethrow would strand the resources this pass already purged behind a retry of the whole batch.
+The nightly purge runs per resource rather than as one batch, so one poisoned resource cannot block the sweep — its row survives and the next night retries it, while everything else is already gone. That is also why its per-resource failures log instead of rethrowing: a rethrow would strand the resources this pass already purged behind a retry of the whole batch.
 
 ## Data model
 
 `resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `createMetadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
-`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the purge timer can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
+`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the nightly purge can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
 
 The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has no page to open onto: its two answers, Restore and Delete forever, are the row's overflow menu and its context menu. Delete forever asks for the resource's name in a `UiConfirmDialog` first.
 
@@ -44,20 +44,20 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 | `resource.readDeletedResources`                      | authed                  | pagination | The caller's own bin list                                                    |
 | `resource.readDeletedResourcesCount`                 | authed                  | none       | The caller's own bin total                                                   |
 | `resource.restoreResources`                          | owner-scoped where      | `{ ids }`  | Clear `deletedAt` on the owner's binned rows, append a `Restored` entry each |
-| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete blob dir, activity, then the row                                 |
+| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete the object prefix, then the row                                  |
 
 ## Key files
 
-| File                                                    | Role                                        |
-| ------------------------------------------------------- | ------------------------------------------- |
-| `packages/db/src/services/resource/purgeResource.ts`    | The shared, retry-ordered purge protocol    |
-| `packages/db-schema/src/services/resource/constants.ts` | `RECYCLE_BIN_RETENTION_MS`                  |
-| `server/trpc/routers/resource.ts`                       | Bin/restore/purge + the `where` predicate   |
-| `server/trpc/procedure/resource/getOwnerProcedure.ts`   | Soft-delete guard + `isDeletedOnly` mode    |
-| `apps/functions/src/functions/purgeDeletedResources.ts` | Daily sweep past `RECYCLE_BIN_RETENTION_MS` |
-| `app/pages/resource-explorer/recycle-bin.vue`           | The bin page                                |
-| `app/components/Resource/RecycleBin/Index.vue`          | The bin's table, its toolbar and menus      |
-| `app/composables/resource/list/useReadResourcesPage.ts` | The paged reader it shares with `/all`      |
+| File                                                            | Role                                                                        |
+| --------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `packages/db/src/services/resource/purgeResource.ts`            | The shared, retry-ordered purge protocol                                    |
+| `packages/db-schema/src/services/resource/constants.ts`         | `RECYCLE_BIN_RETENTION_MS`                                                  |
+| `server/trpc/routers/resource.ts`                               | Bin/restore/purge + the `where` predicate                                   |
+| `server/trpc/procedure/resource/getOwnerProcedure.ts`           | Soft-delete guard + `isDeletedOnly` mode                                    |
+| `apps/functions/src/services/resource/purgeExpiredResources.ts` | The nightly purge past `RECYCLE_BIN_RETENTION_MS`, driven by a Cron Trigger |
+| `app/pages/resource-explorer/recycle-bin.vue`                   | The bin page                                                                |
+| `app/components/Resource/RecycleBin/Index.vue`                  | The bin's table, its toolbar and menus                                      |
+| `app/composables/resource/list/useReadResourcesPage.ts`         | The paged reader it shares with `/all`                                      |
 
 ## Notes
 
@@ -65,4 +65,4 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 - Purge is the only destroy that is real. The bin reads through the same [`useReadResourcesPage`](../list-filters-and-views/design.md) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - A dataset reference to a binned source reads as a missing one, exactly as after a purge, and its consumer says so where the reference is picked ([datasets](../../architecture/dataset/design.md)). A restore heals it, because nothing rewrote the consumer's content in the meantime ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)).
 - Names are not unique, so a restore can never conflict.
-- The [activity log](../activity-log/design.md) partition survives the bin window, and its sweep runs at purge time — that page says how.
+- The [activity log](../activity-log/design.md) rows survive the bin window, and they go with the resource row at purge time — that page says how.

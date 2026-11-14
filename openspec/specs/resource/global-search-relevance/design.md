@@ -31,9 +31,9 @@ The index is one FTS5 virtual table beside `resources`, kept by three triggers i
 - `tags` is the stored JSON flattened to `key value` pairs with `json_each`, so a tag's key and its value are both words.
 - An insert adds the row, an update of `name` or `tags` deletes and re-adds it, and a delete removes it.
 
-drizzle-kit does not see virtual tables, so the table is declared in the migration only. The messages index is the same arrangement.
+drizzle-kit does not see virtual tables, so the table is declared in the migration only. The message search in each room's object is the same arrangement, over that room's messages.
 
-Matching is by word, not by substring. A fragment inside a word does not match, and a misspelled word matches nothing. The trigram similarity that gave typo tolerance on Postgres does not carry over: FTS5 has no similarity function, and D1 loads no extensions. Typo tolerance is therefore given up, not emulated.
+Matching is by word, not by substring. A fragment inside a word does not match, and a misspelled word matches nothing. FTS5 has no similarity function and D1 loads no extensions, so typo tolerance is given up, not emulated.
 
 The index is keyed by `id`, not by `rowid`, so a rename, a tag edit or a hard delete finds its row by scanning the index. Each such write costs in proportion to the index, not the row. Mapping the resource's `rowid` onto the index would make those writes direct; it is the fix if write cost shows up.
 
@@ -53,6 +53,6 @@ The index is keyed by `id`, not by `rowid`, so a rename, a tag edit or a hard de
 
 ## Notes
 
-- Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md). Nothing at this scale needs it, and the full-text index is the cheap part of what it would buy.
+- A separate hosted search service stays [deferred](../../../deferred/resource/azure-ai-search/design.md). Nothing at this scale needs it, and the full-text index is the cheap part of what it would buy.
 - A tag filter is an exact key and value match, a different read from search. The [tags](../tags/design.md) design owns it.
 - Searching content is a different feature with a different index.

@@ -4,7 +4,7 @@ Two sets answer "take me back to what I was working on": **Favorites**, the reso
 
 ## How it works
 
-Both are relationship tables in Postgres, keyed on `(userId, resourceId)` and cascading on both sides.
+Both are relationship tables in D1, keyed on `(userId, resourceId)` and cascading on both sides.
 
 Both are server-side rather than per-device. A star that vanishes on another machine reads as data loss, and a recent list is no different once it is a list route with a visible `Last accessed` column: a column that disagrees between two browsers is indefensible in a way a quietly-different card is not.
 
