@@ -1,39 +1,41 @@
 # Messaging
 
-Messages are high-volume, append-heavy, and time-ordered, so they live in Azure Table Storage rather than Postgres. Everything relational around them (rooms, membership, roles) stays in Postgres.
+Messages are high-volume, append-heavy, and time-ordered, so each room's object holds them in its own SQLite rather than in D1. Everything relational around them (rooms, membership, roles) stays in D1.
 
 ## How it works
 
-Messages are stored in `AzureTable.Messages` with `partitionKey = roomId` and `rowKey = reverseTickedTimestamp` — a reverse-ticked timestamp is `MAX_TICKS - now`, so lexicographic row order is newest-first, which matches how a chat list paginates. `AzureTable.MessagesAscending` is a companion index table keyed by the original timestamp so messages can be read in both directions (thread view, jump-to-message). `AzureTable.MessagesMetadata` holds per-message companion data.
+A message is one row in `messagesInRoom`, the room object's table (`apps/functions/src/durableObjects/room/schema.ts`). Its `id` is an integer that only grows within its room, so id order is send order: a page without a cursor reads newest first (`desc(id)`), and a page past a cursor reads oldest first (`asc(id)`), which is how a jump to an older message reads its newer side. The message's files, link preview, mentions and reply target are columns on that same row, so there is no companion table to keep in step. Reactions live in `messageEmojisInRoom` and scheduled messages in `scheduledMessagesInRoom`, in the same object.
 
-Sending a message flows through one server service, `createUserMessage`, which writes storage, notifies live subscribers, and kicks off push delivery:
+Sending a message flows through one server service, `createUserMessage`, which claims the slowmode clock in D1, writes the message to the room's object, and publishes its notification:
 
 ```mermaid
 sequenceDiagram
     participant C as Composer (RichTextEditor)
     participant T as message.createMessage (tRPC)
-    participant O as Room object (Durable Object)
-    participant EG as Azure Event Grid
-    participant F as ProcessNotification (Azure Function)
+    participant D as D1
+    participant O as Room object (RoomObject)
+    participant Q as ProcessNotification queue
+    participant F as ProcessNotification consumer
 
     C->>T: createMessage({ roomId, message, timeZone })
-    T->>T: assertCanCreateMessage, then advance the slowmode clock
-    T->>O: write the message; the object's socket delivers it to connected members
-    T->>EG: publishNotification — one typed event, unconditionally
-    EG->>F: event delivered
+    T->>D: assertCanCreateMessage, then claim the slowmode clock
+    T->>O: createMessage — write the row and broadcast it to the room's sockets
+    T->>Q: publishNotification — one typed event, unconditionally
+    Q->>F: delivered
     F->>F: resolve recipients, then web-push to each subscription
-    T->>T: roomEventEmitter.emit("updateRoom") — bumps room.updatedAt
 ```
 
-Real-time delivery is owned by [Cloudflare services](../../architecture/cloudflare-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. Clients get a scoped access URL via `generateWebPubSubClientAccessUrl`, and a member who leaves or is removed is taken out of the room's group, device by device ([azure services](../../architecture/azure-services/design.md)).
+The send does not write the room's `updatedAt`. The room object marks the room active, and its alarm writes `updatedAt` in D1 once per window and tells each member online, so the room moves to the top of their list.
+
+Real-time delivery is owned by [Cloudflare services](../../architecture/cloudflare-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. A client opens its room's socket at `/ws/room/:roomId`, which the web Worker authorises against D1 before it forwards the upgrade to the room object. A member who leaves or is removed is taken off the room's online list, and every socket of theirs is closed there (`removeMember`).
 
 Push notification filtering and delivery detail lives in [push notifications](../push-notifications/design.md).
 
-## Conditional writes
+## Serialized writes
 
-A message is stored as one blob, so a procedure that changes part of it writes the whole entity back — the read-modify-write hazard of [Conditional Writes](../../architecture/conditional-writes/design.md), where the later of two concurrent writes erases the earlier with nothing surfaced. Poll voting is where that is routine rather than rare: every member of the room writes into the same poll body.
+A write that depends on what it read runs inside its room's object in one synchronous turn, so no other write lands between its read and its write. [Conditional Writes](../../architecture/conditional-writes/design.md) is the rule for the D1 rows that have no such owner, and poll voting is where a message needs it most: every member of the room writes into the same poll body.
 
-`getMessageProcedure` therefore reads through `getEntityWithEtag` and carries the version it saw on the procedure context as `messageEtag`, alongside `messageClient` and `messageEntity`. The read already happens, so the version costs no extra round trip and any message procedure can make its write conditional. `votePoll` hands it to the shared conditional-write helper as the version its write was computed against, so the write lands only if nothing else has written since.
+`getMessageProcedure` reads the message from its room's object and hands the procedure the copy the object held when it was read. A vote is not written from that copy: `votePoll` sends only the option id to the object, which applies it to the poll body the object holds at that moment.
 
 ```mermaid
 sequenceDiagram
@@ -48,11 +50,11 @@ sequenceDiagram
 
 A vote is one call to the room object, which applies it to the stored poll inside its single-threaded write, so two votes on one poll never race and no version check or retry runs.
 
-The stored poll body is parsed and re-serialized through `pollMessageContentSchema` (`shared/models/message/poll/`) — the one schema that owns a poll's shape, and the same one `MessageModelMessageTypePoll` reads it back with. A vote sends only the option id, so nothing else in the body may change across it: a narrower server-side copy of that schema strips every field it does not name, and the first vote on a poll would take its option labels with it.
+`applyPollVote` (`apps/functions/src/services/room/applyPollVote.ts`) reads the stored body, checks that it is a poll with options and votes, and changes only the voter's entry in `votes`. Every other field is written back exactly as it was read, so a vote never rewrites the question or the option labels. The client parses the same body with `pollMessageContentSchema` (`apps/web/shared/models/message/poll/`), the one schema that owns a poll's shape, to render it and to create one.
 
 ## Message types
 
-`MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageTypeEntityMap` (type → entity class), `MessageComponentMap` (type → Vue rendering component), and `MessageTypeOperationPermissionMap` (type → the operations it supports and who may perform each).
+`MessageType` (in `@esposter/db-schema`) discriminates rendering and behaviour: `Message`, `Poll`, `Call` (call started / call-end duration system message), `EditRoom`, `PinMessage`, `System` (join/leave), and `Webhook`. Adding a type requires updating `MessageComponentMap` (type → Vue rendering component) and `MessageTypeOperationPermissionMap` (type → the operations it supports and who may perform each).
 
 **A member posts only `Message` and `Poll`** (`userMessageTypeSchema` on the create input). The other standard types are drawn in the room's own voice, so a member able to post one could announce a join, a call or a rename that never happened; the server writes each of them itself, the rename line included (`updateRoom`). Those server-written lines carry member names verbatim rather than through the sanitizer, so any surface that renders a message as markup does so only for the `Message` and `Webhook` bodies, which the Zod boundary sanitized — the reply preview shows every other type as text.
 
@@ -64,40 +66,40 @@ All three composer suggestion popovers — mentions, emoji and [slash commands](
 
 ## Procedures
 
-The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. A delete only stamps `deletedAt`, so the procedure reads its message through `readLiveMessageWithEtag`, which answers a deleted one as absent — as `forwardMessage` and `readThread` do — and nothing can edit, pin, vote on or forward a message its author removed. Highlights:
+The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`, and `scheduledMessageJob` nested under it. Every row marked _author_ below is a `getMessageProcedure` built on the operation it guards, so its real answer comes from `MessageTypeOperationPermissionMap` as described above — author or `ManageMessages` on a `Message`/`Poll`, `ManageMessages` on a `Webhook`, refused outright on the server-written types. A delete only stamps `deletedAt`, and the room object's reads answer a deleted message as absent, as `forwardMessage` and `readThread` do, so nothing can edit, pin, vote on or forward a message its author removed. Highlights:
 
-| Procedure                         | Auth   | Purpose                                                                                                                                                        |
-| --------------------------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `createMessage`                   | member | Write message, emit, trigger push                                                                                                                              |
-| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                            |
-| `forwardMessage`                  | member | Forward into another room                                                                                                                                      |
-| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                               |
-| `votePoll`                        | member | Cast/withdraw a poll vote in the room object's serialized write                                                                                                |
-| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                |
-| `searchMessages`                  | member | Filtered search, fanned out to each named room's object and merged                                                                                             |
-| `readMySentMessages`              | authed | Cross-room sent list from the user object's sent index, read per room                                                                                          |
-| Socket events, not subscriptions  | member | The room object's `RoomEvent` frames                                                                                                                           |
-| `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
-| `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                            |
+| Procedure                         | Auth   | Purpose                                                                                                                                                                                                 |
+| --------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createMessage`                   | member | Claim the slowmode clock, write the message to the room's object, publish its notification                                                                                                              |
+| `updateMessage` / `deleteMessage` | author | Edit/delete own messages (message-scoped procedure)                                                                                                                                                     |
+| `forwardMessage`                  | member | Forward into another room                                                                                                                                                                               |
+| `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                                                                        |
+| `votePoll`                        | member | Cast/withdraw a poll vote in the room object's serialized write                                                                                                                                         |
+| `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                                                         |
+| `searchMessages`                  | member | Filtered search, fanned out to each named room's object and merged                                                                                                                                      |
+| `readMySentMessages`              | authed | Cross-room sent list from the user object's sent index, read per room                                                                                                                                   |
+| Socket events, not subscriptions  | member | The room object's `RoomEvent` frames                                                                                                                                                                    |
+| `createTyping`                    | member | Typing indicator, broadcast as a `createTyping` room event — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
+| `generate*FileSas*`               | member | Presigned R2 upload and download URLs (the procedure names keep the `Sas` form)                                                                                                                         |
 
 ## Key files
 
-| File                                                                    | Role                                              |
-| ----------------------------------------------------------------------- | ------------------------------------------------- |
-| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                 |
-| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: object write, EventGrid publish    |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`               | Table name enum (Messages, MessagesAscending, …)  |
-| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                        |
-| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom |
-| `apps/web/server/services/message/events/`                              | `messageEventEmitter` and friends                 |
+| File                                                                    | Role                                                                           |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                                              |
+| `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: slowmode claim, object write, ProcessNotification publish       |
+| `apps/functions/src/durableObjects/room/schema.ts`                      | The room object's tables: messages, reactions, scheduled messages              |
+| `apps/functions/src/durableObjects/RoomObject.ts`                       | The room object: message writes and reads, votes, and the broadcast to sockets |
+| `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                                                     |
+| `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom                              |
+| `apps/functions/src/services/room/applyPollVote.ts`                     | The vote applied to a stored poll body                                         |
 
 ## Notes
 
 - Never bypass `createUserMessage` when adding a message-producing path — timeout, `SendMessages`, read-only, slowmode, and word-filter checks happen there and in the member procedures. `forwardMessage` is the one exception: it fans out over N rooms with a per-room `assertCanCreateMessage` and cloned files, so it reproduces the pipeline instead of calling it. Any _new_ path goes through `createUserMessage`.
-- **Send order is fixed on every send path**, following [persist then notify](../../architecture/persist-then-notify/design.md): `assertCanCreateMessage` → advance the slowmode clock (`updateUserToRoom`) → Table write → `messageEventEmitter.emit` → best-effort side effects. The clock advances _before_ the write because it is the value the next send is checked against — a send that skips it keeps comparing against a stale `lastMessageAt` and slowmode silently never applies, so it fails closed on a failed write rather than open on a failed update. The same stamp moves `lastReadAt`, since a sender has read their own room.
+- **Send order is fixed on every send path**, following [persist then notify](../../architecture/persist-then-notify/design.md): `assertCanCreateMessage` → claim the slowmode clock (`createUserMessage`'s guarded D1 update, or `updateUserToRoom` on a forward) → the room object's write and broadcast → best-effort side effects (mention counts, thread follows, the notification publish). The clock advances _before_ the write because it is the value the next send is checked against — a send that skips it keeps comparing against a stale `lastMessageAt` and slowmode silently never applies, so it fails closed on a failed write rather than open on a failed update. The same stamp moves `lastReadAt`, since a sender has read their own room.
 - **`lastMessageAt` is server-only.** It is the slowmode clock and nothing else: `updateUserToRoom`'s input carries `lastReadAt` — the read marker the room list's unread dot and Mark Unread From Here move, which a member who has never read the room counts from joining it — so a client can never reset the clock its next send is checked against. Only a send path writes `lastMessageAt`.
-- Azure Table has no joins: anything that must be queried relationally (e.g. who to notify) is resolved against Postgres at send time.
-- **Single owner per store transition.** The subscription handler owns every remote-visible state change: `onCreateMessage`/`onUpdateMessage`/`onDeleteMessage` write the message list through `storeCreateMessage`/`storeUpdateMessage`/`storeDeleteMessage`, and the same rule holds across the room, userToRoom, emoji, pin, call, and member stores. A caller-side store mutation is kept only when it is a genuine optimistic update with revert (the [client data](../../architecture/client-data/design.md) `applyOptimistic` rule) or when the emit excludes the actor's own device (`getRoomEventSubscription`, `checkIsSameDevice`) so the subscription can never reach the caller. No store applies a plain, non-optimistic mutation that a caller-reaching subscription would double-apply.
-- **Idempotent by composite key.** Because the subscription echoes back to the sender for `isSendToSelf` sends (forward, pin) and on transport reconnect, `storeCreateMessage` dedups on `[partitionKey, rowKey]` via `createOperationData`, and update/delete handlers are set/filter operations that re-apply cleanly. Re-emitting an already-applied event is a no-op — locked in by `store/message/data.test.ts` and `services/shared/createOperationData.test.ts`.
-- **Ascending reads re-project onto the index order.** `readMessages({ order: Asc })` reads oldest-first ids from `MessagesAscending`, then re-orders the joined `Messages` rows onto that sequence rather than trusting the Messages table's newest-first scan order — otherwise an ascending page comes back reversed.
-- **An ascending page skips an index row the join cannot match, and always advances its cursor.** `createMessage` writes `MessagesAscending` first (so a rejection always means nothing is readable, which is what every caller's rollback assumes), and the two tables cannot be written atomically — so the index can briefly name a message the join does not find. **The page must not hold its cursor on that row.** Two reasons, either one sufficient: a soft delete produces the identical shape (`deleteMessage` stamps `deletedAt`, which the join filters, and leaves the index row), so an unmatched row says nothing about whether an entity is coming; and every caller advances only by `nextCursor` while `hasMore` is set — `onCreateMessage`'s catch-up loop and the newer-messages waypoint both re-issue on the returned cursor — so echoing the incoming cursor is a hot loop, not a wait. The cost is paid on the write side instead: `createMessage` deletes the index row when the entity write fails, bounding the unmatched window to one in-flight write. A page landing inside that window skips the message; the sender's own `onCreateMessage` subscription delivers it, and `storeCreateMessage` dedupes by composite key. **That fallback is why `onCreateMessage` attaches its emitter listener before it starts the catch-up, not after**: `on` queues what it receives until the loop consumes it, so a message committed while the catch-up is still paging is held rather than missed — attached afterwards, the one delivery path for a skipped message is the one thing not listening while the skip happens. The overlap can deliver a message twice, which the composite-key dedupe already absorbs.
+- **The room object has no joins.** Its SQLite holds the room's messages and nothing relational, so anything that must be joined (membership, who to notify) is read from D1, and the recipients are resolved at delivery by ProcessNotification.
+- **Single owner per store transition.** The room-event handler (`useMessageEvents`) owns every remote-visible state change: its `createMessage`, `updateMessage` and `deleteMessage` handlers write the message list through `storeCreateMessage`/`storeUpdateMessage`/`storeDeleteMessage`, and the same rule holds across the room, userToRoom, emoji, pin, call, and member stores. A caller-side store mutation is kept only when it is a genuine optimistic update with revert (the [client data](../../architecture/client-data/design.md) `applyOptimistic` rule) or when the broadcast excludes the actor's own device (the object's `excludeTag` for `device:<deviceId>`), so the socket can never reach the caller. No store applies a plain, non-optimistic mutation that a caller-reaching socket event would double-apply.
+- **Idempotent by id.** A sender's other tabs hear their own send, and a reconnect replays the messages after the last id it heard, so `storeCreateMessage` dedups on the message `id` via `createOperationData`, and update/delete handlers are set/filter operations that re-apply cleanly. Re-emitting an already-applied event is a no-op — locked in by `store/message/data.test.ts` and `services/shared/createOperationData.test.ts`.
+- **Ascending reads are one range read.** `readMessages` with a cursor reads the messages past it oldest first in a single query over the room's ids, so an ascending page comes back in send order without a second read to put it right.

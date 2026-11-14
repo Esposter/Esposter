@@ -1,6 +1,6 @@
 ## Purpose
 
-How messages are stored in Azure Table Storage, sent through tRPC, and fanned out in real time. The spec covers the send path, what members may post, the operations each message type allows, poll votes, and reading message history.
+How messages are stored in their room's object, sent through tRPC, and fanned out in real time over its sockets. The spec covers the send path, what members may post, the operations each message type allows, poll votes, and reading message history.
 
 ## Requirements
 
@@ -96,13 +96,6 @@ A poll vote SHALL be stored without overwriting a vote another member recorded a
 - **WHEN** both votes are stored
 - **THEN** both votes are counted
 
-#### Scenario: a vote keeps colliding with other writes
-
-- **GIVEN** a vote that cannot be stored after repeated attempts
-- **WHEN** the voter casts it
-- **THEN** the vote is refused with a conflict
-- **AND** the voter is asked to send the vote again
-
 ### Requirement: A poll vote changes only the voter's choice
 
 A vote SHALL leave the poll's question and option labels unchanged.
@@ -123,18 +116,12 @@ A history page SHALL list each message at most once, in the order the reader ask
 - **WHEN** a reader requests the history oldest first
 - **THEN** the messages are listed oldest first
 
-#### Scenario: a message not yet readable is skipped and still arrives live
+#### Scenario: a message not yet stored is skipped and still arrives live
 
 - **GIVEN** a message being sent while a history page is read
-- **WHEN** the page is read before that message is readable
-- **THEN** the page skips it
+- **WHEN** the page is read before that message is stored
+- **THEN** the page does not list it
 - **AND** the sender's live view still shows the message
-
-#### Scenario: a skipped message does not hold the reader's page
-
-- **GIVEN** a history page whose next entry cannot yet be read
-- **WHEN** the reader continues paging
-- **THEN** the reader moves past that entry rather than requesting the same page again
 
 #### Scenario: a message delivered twice is shown once
 

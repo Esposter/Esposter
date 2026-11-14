@@ -1,6 +1,6 @@
 # Threads
 
-A thread is a root message plus every message whose `replyRowKey` points at it. Opening one puts it in the right drawer as a live pane with its own composer, so a conversation about a message is read and replied to in one place instead of being scrolled back to in the room.
+A thread is a root message plus every message whose `replyToId` points at it. Opening one puts it in the right drawer as a live pane with its own composer, so a conversation about a message is read and replied to in one place instead of being scrolled back to in the room.
 
 **A thread has no table of its own.** Its identity is the pair `(roomId, threadRootId)` — the room it lives in and the id of the message it hangs off — and that pair is what everything thread-scoped keys by: a [follow](../thread-follows/design.md), a composer's draft, a call session. Nothing needs creating before a thread exists; the first reply makes one.
 
@@ -12,13 +12,13 @@ The pane is then a live view rather than the snapshot that read returned: the th
 
 ```mermaid
 flowchart TD
-  V["View Thread / Followed Threads / thread route"] --> U["useOpenThread(roomId, rootRowKey)"]
+  V["View Thread / Followed Threads / thread route"] --> U["useOpenThread(roomId, threadRootId)"]
   U --> O["thread store openThread — the read handed in"]
   O --> D["right drawer opens on RightDrawer.Thread"]
   O --> R["message.readThread — root plus replies"]
   R --> RM["useReadMessageMetadata(roomId, replies)"]
   O --> F["readFollowedThreads — the menu's notification state"]
-  C["thread composer — useComposer's sendComposerMessage(editor, target)"] --> M["message.createMessage with replyRowKey = root"]
+  C["thread composer — useComposer's sendComposerMessage(editor, target)"] --> M["message.createMessage with replyToId = root"]
   M --> B["optimistic bubble — room list"]
   M --> HK["MessageHookMap Create / Update / Delete"]
   HK --> P["thread pane — replies belonging to the open root"]
@@ -29,7 +29,7 @@ flowchart TD
 
 The pane's composer is the room composer's equal in everything a reply needs: rich text, mentions, emoji, pasted and dropped attachments, and a draft. It differs in what belongs to a room rather than to a conversation — slash commands and the poll and scheduled-message dialogs stay in the room composer, each being a room-level composition with its own dialog state.
 
-Both composers are on screen at once, which is the whole reason composer state is keyed by a **composer target** (`{ roomId, threadRootRowKey }`) rather than by room. The editor's text, its pending attachments and the send-lifecycle hooks all partition on it — the room's own composer keys by its bare room id, so a room draft has one key whichever composer is on screen beside it. The blobs an attachment writes stay the room's wherever it was attached, so every server call still names `target.roomId`; only the local partition is per composer.
+Both composers are on screen at once, which is the whole reason composer state is keyed by a **composer target** (`{ roomId, threadRootId }`) rather than by room. The editor's text, its pending attachments and the send-lifecycle hooks all partition on it — the room's own composer keys by its bare room id, so a room draft has one key whichever composer is on screen beside it. The blobs an attachment writes stay the room's wherever it was attached, so every server call still names `target.roomId`; only the local partition is per composer.
 
 A file dropped anywhere in the pane attaches to the reply, and one dropped elsewhere to the room's message. That is resolved from the drop's own element by the single document-level drop zone — a second zone nested inside the first would fire for the same drop and upload it twice.
 
@@ -51,9 +51,9 @@ The pane's overflow menu is where everything that acts on the thread as a whole 
 
 ### A call in a thread
 
-A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootId` is `0` for the room's own call and holds the root message's id for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the LiveKit room, the participant maps, the subscriptions and the knock lobby are the room call's code unchanged; see [calls](../calls/README.md).
+A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootId` is `0` for the room's own call and holds the root message's id for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the RealtimeKit meeting, the call object's participant and knocker maps and its sockets, and the knock lobby are the room call's code unchanged; see [calls](../calls/README.md).
 
-The start and summary lines a call writes go into the thread rather than the room, through the same `replyRowKey` the rest of the thread is made of.
+The start and summary lines a call writes go into the thread rather than the room, through the same `replyToId` the rest of the thread is made of.
 
 ### Split view and the thread route
 

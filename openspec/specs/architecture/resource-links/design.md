@@ -41,17 +41,19 @@ flowchart TD
   SAVE["saveResourceContent"] --> PROJECT["project the parsed content's links"]
   PROJECT --> SAME{"same set as stored?"}
   SAME -->|"yes"| PLAIN["save with no link write"]
-  SAME -->|"no"| TX["transaction: bump contentVersion,<br/>clear the source's links, write the blob"]
-  TX -->|"version check lost"| ROLLBACK["rollback restores the winner's links"]
-  TX -->|"failed after the blob write"| CLEAR["clear again outside the transaction"]
-  TX -->|"committed"| LOCK["lock the row at the version this save set"]
-  LOCK -->|"superseded by a newer save"| SKIP["write nothing"]
-  LOCK -->|"still current"| WRITE["write the projected links"]
+  SAME -->|"no"| BUMP["guarded UPDATE: bump contentVersion"]
+  BUMP -->|"version check lost"| STALE["refused as stale, links untouched"]
+  BUMP -->|"won"| CLEAR["clear the source's links at the new version"]
+  CLEAR --> BLOB["write the content blob to R2"]
+  BLOB -->|"failed"| BACK["put the version back, clear the links again"]
+  BLOB -->|"landed"| WRITE["one D1 batch: clear, then insert the projected links, both guarded on the version"]
+  WRITE -->|"a newer save has taken the version"| SKIP["the batch writes nothing"]
+  WRITE -->|"failed"| LOST["clear the links, the content no longer backs them"]
 ```
 
 - **Compared before written.** The stored set is one indexed read, and an unchanged set — most autosaves — writes nothing. A set an earlier failure cleared differs from the content's, so the next save that lands writes it again.
-- **Cleared inside the transaction**, so a save that loses the version check rolls its clear back and the winner's links stand.
-- **Written after the commit, under a lock on the row at the version this save established**, so a save that committed first cannot overwrite a later one's links, and one committing meanwhile waits rather than interleaving.
+- **Cleared only once the version is won**, so a save that loses the version check clears nothing, and the winner's links stand.
+- **Written after the blob lands, as one D1 batch guarded on the version this save established**, so a save that committed first cannot overwrite a later one's links. The clear and the insert share the guard, so a superseded save writes neither.
 
 ## Reading it in reverse
 
