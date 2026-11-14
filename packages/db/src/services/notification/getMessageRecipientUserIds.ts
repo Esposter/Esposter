@@ -1,4 +1,4 @@
-import type { Database, MessageEntity } from "@esposter/db-schema";
+import type { Database, ThreadFollowInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { getMentionNotificationConditions } from "#src/services/message/mention/getMentionNotificationConditions";
@@ -14,16 +14,16 @@ export const getMessageRecipientUserIds = async (
   db: Database,
   {
     message,
-    partitionKey,
-    threadRootRowKey,
+    roomId,
+    threadRootId,
     userId,
-  }: Pick<MessageEntity, "message" | "partitionKey" | "userId"> & { threadRootRowKey?: "" | MessageEntity["rowKey"] },
+  }: { message: string; roomId: string; threadRootId?: ThreadFollowInMessage["threadRootId"] | null; userId?: string },
 ): Promise<string[]> => {
-  const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, partitionKey)];
+  const andWheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
   if (userId) andWheres.push(ne(usersToRoomsInMessage.userId, userId));
 
-  const classifiedMentions = await getSenderClassifiedMentions(db, partitionKey, userId, message);
-  const mentionConditions = await getMentionNotificationConditions(db, partitionKey, classifiedMentions);
+  const classifiedMentions = await getSenderClassifiedMentions(db, roomId, userId, message);
+  const mentionConditions = await getMentionNotificationConditions(db, roomId, classifiedMentions);
   andWheres.push(or(eq(usersToRoomsInMessage.notificationType, NotificationType.All), ...mentionConditions));
   const roomRecipients = await db
     .selectDistinct({ userId: usersToRoomsInMessage.userId })
@@ -32,12 +32,8 @@ export const getMessageRecipientUserIds = async (
     .leftJoin(userStatusesInMessage, eq(userStatusesInMessage.userId, usersToRoomsInMessage.userId))
     .where(and(...andWheres));
   const recipientUserIds = new Set(roomRecipients.map((roomRecipient) => roomRecipient.userId));
-  if (threadRootRowKey)
-    for (const followerUserId of await getThreadFollowerUserIds(db, {
-      roomId: partitionKey,
-      senderUserId: userId,
-      threadRootRowKey,
-    }))
+  if (threadRootId !== undefined && threadRootId !== null)
+    for (const followerUserId of await getThreadFollowerUserIds(db, { roomId, senderUserId: userId, threadRootId }))
       recipientUserIds.add(followerUserId);
   return [...recipientUserIds];
 };

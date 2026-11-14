@@ -1,6 +1,5 @@
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { messagesInMessage } from "#src/schema/message/messagesInMessage";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { sqliteTable } from "#src/sqliteTable";
 import { integer, primaryKey, text } from "drizzle-orm/sqlite-core";
@@ -16,17 +15,16 @@ export const threadFollowsInMessage = sqliteTable(
     roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    threadRootId: text()
-      .notNull()
-      .references(() => messagesInMessage.id, { onDelete: "cascade" }),
+    // The thread's root message, by the integer id its room's object numbers it with. The message is stored in that
+    // object rather than in this database, so this is a number the object hands out and not a foreign key
+    threadRootId: integer().notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ roomId, threadRootId, userId }) => [
-      primaryKey({ columns: [userId, roomId, threadRootId] }),
-    ],
+    // A thread's followers are read by (roomId, threadRootId), so the key leads with them
+    extraConfig: ({ roomId, threadRootId, userId }) => [primaryKey({ columns: [roomId, threadRootId, userId] })],
     schema: messageSchema,
   },
 );

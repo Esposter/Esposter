@@ -5,7 +5,6 @@ import { createUser } from "#src/services/message/createUser.test";
 import { getMessageRecipientUserIds } from "#src/services/notification/getMessageRecipientUserIds";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  getReverseTickedTimestamp,
   NotificationType,
   RoomPermission,
   roomRolesInMessage,
@@ -26,7 +25,7 @@ describe(getMessageRecipientUserIds, () => {
   const name = "name";
   const roomId = crypto.randomUUID();
   const roleId = crypto.randomUUID();
-  const threadRootRowKey = getReverseTickedTimestamp();
+  const threadRootId = 1;
   const allOnlineUserId = crypto.randomUUID();
   const allOfflineUserId = crypto.randomUUID();
   const allNullStatusUserId = crypto.randomUUID();
@@ -34,7 +33,7 @@ describe(getMessageRecipientUserIds, () => {
   const directMessageOfflineUserId = crypto.randomUUID();
   const neverUserId = crypto.randomUUID();
   const senderUserId = crypto.randomUUID();
-  const sender = { partitionKey: roomId, userId: senderUserId };
+  const sender = { roomId, userId: senderUserId };
   const userIds = [
     allOnlineUserId,
     allOfflineUserId,
@@ -75,11 +74,11 @@ describe(getMessageRecipientUserIds, () => {
     ]);
     await db.insert(threadFollowsInMessage).values([
       // Follows the thread but is muted at room level, so the follow never overrides the mute
-      { roomId, threadRootRowKey, userId: neverUserId },
+      { roomId, threadRootId, userId: neverUserId },
       // Follows the thread on a DirectMessage preference — reached only because the reply is in their thread
-      { roomId, threadRootRowKey, userId: directMessageOfflineUserId },
+      { roomId, threadRootId, userId: directMessageOfflineUserId },
       // The replier follows their own thread, and is never notified of their own reply
-      { roomId, threadRootRowKey, userId: senderUserId },
+      { roomId, threadRootId, userId: senderUserId },
     ]);
   });
 
@@ -98,7 +97,7 @@ describe(getMessageRecipientUserIds, () => {
   test("no userId notifies every All member without excluding a sender (webhook message)", async () => {
     expect.hasAssertions();
 
-    const recipientUserIds = await getMessageRecipientUserIds(db, { message: "", partitionKey: roomId });
+    const recipientUserIds = await getMessageRecipientUserIds(db, { message: "", roomId });
 
     expect(recipientUserIds.toSorted()).toStrictEqual([...allUserIds, senderUserId].toSorted());
   });
@@ -132,7 +131,7 @@ describe(getMessageRecipientUserIds, () => {
 
     const recipientUserIds = await getMessageRecipientUserIds(db, {
       message: createMention(MENTION_EVERYONE_ID),
-      partitionKey: roomId,
+      roomId,
       userId: allOfflineUserId,
     });
 
@@ -153,7 +152,7 @@ describe(getMessageRecipientUserIds, () => {
   test("a reply adds the thread's followers to the room's own recipients", async () => {
     expect.hasAssertions();
 
-    const recipientUserIds = await getMessageRecipientUserIds(db, { ...sender, message: "", threadRootRowKey });
+    const recipientUserIds = await getMessageRecipientUserIds(db, { ...sender, message: "", threadRootId });
 
     // The muted follower and the replier stay out; the DirectMessage follower is reached only by the follow
     expect(recipientUserIds.toSorted()).toStrictEqual([...allUserIds, directMessageOfflineUserId].toSorted());

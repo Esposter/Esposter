@@ -11,14 +11,14 @@ export const getThreadFollowerUserIds = async (
   {
     roomId,
     senderUserId,
-    threadRootRowKey,
-  }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey"> & { senderUserId?: string },
+    threadRootId,
+  }: Pick<ThreadFollowInMessage, "roomId" | "threadRootId"> & { senderUserId?: string },
 ): Promise<string[]> => {
   const wheres = [
     // An unfollowed row records the member's decision to stop hearing about this thread, so it is not a follower
     eq(threadFollowsInMessage.isUnfollowed, false),
     eq(threadFollowsInMessage.roomId, roomId),
-    eq(threadFollowsInMessage.threadRootRowKey, threadRootRowKey),
+    eq(threadFollowsInMessage.threadRootId, threadRootId),
     ne(usersToRoomsInMessage.notificationType, NotificationType.Never),
   ];
   if (senderUserId) wheres.push(ne(threadFollowsInMessage.userId, senderUserId));

@@ -10,9 +10,9 @@ import { threadFollowsInMessage } from "@esposter/db-schema";
 // The return type is spelled for the reason `upsertThreadFollow`'s is
 export const createThreadFollow = (
   db: Database,
-  { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
+  { roomId, threadRootId, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootId" | "userId">,
   isSelfInitiated: boolean,
 ): PromiseLike<unknown> =>
   isSelfInitiated
-    ? upsertThreadFollow(db, { roomId, threadRootRowKey, userId }, false)
-    : db.insert(threadFollowsInMessage).values({ roomId, threadRootRowKey, userId }).onConflictDoNothing();
+    ? upsertThreadFollow(db, { roomId, threadRootId, userId }, false)
+    : db.insert(threadFollowsInMessage).values({ roomId, threadRootId, userId }).onConflictDoNothing();

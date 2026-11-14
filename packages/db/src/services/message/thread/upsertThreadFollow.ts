@@ -8,10 +8,10 @@ import { threadFollowsInMessage } from "@esposter/db-schema";
 // Left inferred, the declaration fails with TS2883 (microsoft/TypeScript#64599)
 export const upsertThreadFollow = (
   db: Database,
-  { roomId, threadRootRowKey, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootRowKey" | "userId">,
+  { roomId, threadRootId, userId }: Pick<ThreadFollowInMessage, "roomId" | "threadRootId" | "userId">,
   isUnfollowed: boolean,
 ): PromiseLike<unknown> =>
   db
     .insert(threadFollowsInMessage)
-    .values({ isUnfollowed, roomId, threadRootRowKey, userId })
+    .values({ isUnfollowed, roomId, threadRootId, userId })
     .onConflictDoUpdate({ set: { isUnfollowed }, target: THREAD_FOLLOW_CONFLICT_TARGET });
