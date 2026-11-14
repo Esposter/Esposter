@@ -22,7 +22,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 Install the package and its Azure peer packages as dev dependencies:
 
 ```bash
-pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/search-documents @azure/service-bus @azure/storage-blob @azure/storage-queue
+pnpm i -D azure-mock @azure/core-http-compat @azure/core-rest-pipeline @azure/data-tables @azure/eventgrid @azure/search-documents @azure/storage-blob @azure/storage-queue
 ```
 
 ### Usage
@@ -49,7 +49,6 @@ Replace each real Azure client with its mock equivalent. Make the replacement in
 | `MockEventGridPublisherClient` | `EventGridPublisherClient` | In-memory EventGrid publisher                                                              |
 | `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                                                              |
 | `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index                                                            |
-| `MockServiceBusSender`         | `ServiceBusSender`         | In-memory Azure Service Bus                                                                |
 | `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                                                              |
 | `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory group membership: `group().addUser` and `removeUser`; `sendToAll` reaches nobody |
 

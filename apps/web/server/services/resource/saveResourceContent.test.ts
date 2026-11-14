@@ -4,6 +4,7 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
@@ -26,8 +27,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
-  StorageBucket,
-  AzureQueue,
+  AzureFunction,
   AzureTable,
   getResourceFileBlobName,
   ResourceActivityType,
@@ -38,11 +38,12 @@ import {
   resourceWorkingAssetsInResource,
   SnapshotChannel,
   SnapshotReason,
+  StorageBucket,
   storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
@@ -139,8 +140,8 @@ describe(saveResourceContent, () => {
   const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
   const createReminder = (resourceId: ResourceInResource["id"]) => ({
-    body: { dueAt, itemId: item.id, resourceId },
-    scheduledEnqueueTimeUtc: dueAt,
+    job: { payload: { dueAt, itemId: item.id, resourceId }, queueJob: AzureFunction.SendTodoReminder },
+    runAt: dueAt.getTime(),
   });
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
@@ -189,7 +190,7 @@ describe(saveResourceContent, () => {
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
-    MockServiceBusDatabase.clear();
+    scheduledJobMap.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
@@ -280,7 +281,7 @@ describe(saveResourceContent, () => {
     // Names the resource alone: the content is re-read by whoever hears it
     expect(saveEvent).toStrictEqual({ apiKeyName: "", contentVersion: savedResource.contentVersion, id: resource.id });
     expect(readActivityTypes()).toStrictEqual([ResourceActivityType.ContentSaved]);
-    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
   });
 
   // Every save rewrites the same blob name and raises its own `BlobCreated` behind it, which settles that name
@@ -348,7 +349,7 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     // The second write repeats an unchanged due date, so it schedules nothing on top of the first
-    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
   });
 
   // `content` arrives as `unknown`, so a caller that never parsed it — blueprint deploy reads every manifest
@@ -375,7 +376,7 @@ describe(saveResourceContent, () => {
     await saveResourceContent(ctx, { content: unrevivedContent, resource });
     await waitForSynchronizedFunctions();
 
-    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([createReminder(resource.id)]);
+    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
   });
 
   // The blob is not transactional, so a transaction failing after the upload cannot be rolled back to match it:

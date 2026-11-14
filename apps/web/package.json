@@ -44,7 +44,6 @@
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
-    "@azure/service-bus": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/web-pubsub": "catalog:",
     "@azure/web-pubsub-client": "catalog:",

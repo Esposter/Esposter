@@ -19,7 +19,6 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 | Export                | Returns                                                           |
 | --------------------- | ----------------------------------------------------------------- |
 | `getContainerClient`  | A `ContainerClient`, container created and its properties synced  |
-| `getServiceBusSender` | A cached `ServiceBusSender` for an `AzureQueue`                   |
 | `getTableClient`      | A `TableClient` typed by `AzureTableEntityMap`, table provisioned |
 
 - **Server-only**: Do not import this package in browser code.

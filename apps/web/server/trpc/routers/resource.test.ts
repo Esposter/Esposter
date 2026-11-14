@@ -10,6 +10,7 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
@@ -44,8 +45,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  StorageBucket,
-  AzureQueue,
+  AzureFunction,
   AzureTable,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
@@ -55,6 +55,7 @@ import {
   ResourceType,
   SnapshotChannel,
   SnapshotReason,
+  StorageBucket,
 } from "@esposter/db-schema";
 import {
   InvalidOperationError,
@@ -64,7 +65,7 @@ import {
   takeOne,
   waitForSynchronizedFunctions,
 } from "@esposter/shared";
-import { MockContainerDatabase, MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { createHash } from "node:crypto";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -154,7 +155,7 @@ describe("resourceRouter", () => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
-    MockServiceBusDatabase.clear();
+    scheduledJobMap.clear();
     MockTableDatabase.clear();
   });
 
@@ -831,9 +832,15 @@ describe("resourceRouter", () => {
     await waitForSynchronizedFunctions();
     const reminder = { dueAt, itemId: item.id };
 
-    expect(MockServiceBusDatabase.get(AzureQueue.TodoReminders)).toStrictEqual([
-      { body: { ...reminder, resourceId: todoListResource.id }, scheduledEnqueueTimeUtc: dueAt },
-      { body: { ...reminder, resourceId: duplicatedResource.id }, scheduledEnqueueTimeUtc: dueAt },
+    expect([...scheduledJobMap.values()]).toStrictEqual([
+      {
+        job: { payload: { ...reminder, resourceId: todoListResource.id }, queueJob: AzureFunction.SendTodoReminder },
+        runAt: dueAt.getTime(),
+      },
+      {
+        job: { payload: { ...reminder, resourceId: duplicatedResource.id }, queueJob: AzureFunction.SendTodoReminder },
+        runAt: dueAt.getTime(),
+      },
     ]);
   });
 

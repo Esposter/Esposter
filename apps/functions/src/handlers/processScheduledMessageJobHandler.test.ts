@@ -1,4 +1,4 @@
-import type { Database, ScheduledMessageJobPayload } from "@esposter/db-schema";
+import type { Database, ScheduledJob, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
@@ -8,7 +8,6 @@ import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureFunction,
-  AzureQueue,
   AzureTable,
   DatabaseEntityType,
   getReverseTickedTimestamp,
@@ -24,8 +23,10 @@ import {
   WordFilterAction,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockServiceBusDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({ schedule: vi.fn<(runAt: number, job: ScheduledJob) => Promise<void>>() }));
 
 let mockDb: Database;
 
@@ -48,10 +49,7 @@ vi.mock(
   import("#src/services/azure/eventGridPublisherClient"),
   () => import("#src/services/azure/eventGridPublisherClient.test"),
 );
-vi.mock(
-  import("#src/services/azure/getServiceBusSender"),
-  () => import("#src/services/azure/getServiceBusSender.test"),
-);
+vi.mock(import("#src/services/scheduler/getScheduler"), () => ({ getScheduler: () => ({ schedule: mocks.schedule }) }));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 vi.mock(
   import("#src/services/azure/getWebPubSubServiceClient"),
@@ -125,7 +123,7 @@ describe(processScheduledMessageJobHandler, () => {
     await mockDb.delete(scheduledMessageJobsInMessage);
     await mockDb.delete(roomFiltersInMessage);
     await mockDb.delete(threadFollowsInMessage);
-    MockServiceBusDatabase.clear();
+    mocks.schedule.mockClear();
     MockTableDatabase.clear();
     vi.restoreAllMocks();
   });
@@ -140,7 +138,7 @@ describe(processScheduledMessageJobHandler, () => {
     await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
 
     expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
-    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(mocks.schedule).not.toHaveBeenCalled();
   });
 
   test("skips when job already completed", async () => {
@@ -152,7 +150,7 @@ describe(processScheduledMessageJobHandler, () => {
     const skippedJob = await getJob(job.id);
 
     expect(skippedJob?.processingStartedAt).toBeNull();
-    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(mocks.schedule).not.toHaveBeenCalled();
   });
 
   test("skips when job cancelled", async () => {
@@ -164,7 +162,7 @@ describe(processScheduledMessageJobHandler, () => {
     const skippedJob = await getJob(job.id);
 
     expect(skippedJob?.processingStartedAt).toBeNull();
-    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toBeUndefined();
+    expect(mocks.schedule).not.toHaveBeenCalled();
   });
 
   // The claim is authoritative, but a claimed job must be skipped by the head read — everything between the two
@@ -193,9 +191,10 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(requeuedJob?.completedAt).toBeNull();
     expect(requeuedJob?.processingStartedAt).toBeNull();
-    expect(MockServiceBusDatabase.get(AzureQueue.ScheduledMessageJobs)).toStrictEqual([
-      { body: { id: job.id }, scheduledEnqueueTimeUtc: job.runAt },
-    ]);
+    expect(mocks.schedule).toHaveBeenCalledExactlyOnceWith(job.runAt.getTime(), {
+      payload: { id: job.id },
+      queueJob: AzureFunction.ProcessScheduledMessageJob,
+    });
   });
 
   test("records processing start and processes reminder job", async () => {

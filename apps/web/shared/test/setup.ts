@@ -61,13 +61,13 @@ vi.mock(
 );
 
 vi.mock(
-  import("#server/composables/azure/serviceBus/useServiceBusSender"),
-  () => import("#server/composables/azure/serviceBus/useServiceBusSender.test"),
+  import("#server/composables/azure/table/useTableClient"),
+  () => import("#server/composables/azure/table/useTableClient.test"),
 );
 
 vi.mock(
-  import("#server/composables/azure/table/useTableClient"),
-  () => import("#server/composables/azure/table/useTableClient.test"),
+  import("#server/composables/scheduler/useScheduler"),
+  () => import("#server/composables/scheduler/useScheduler.test"),
 );
 
 vi.mock(

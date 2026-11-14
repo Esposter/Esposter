@@ -10,7 +10,6 @@
     "blob-storage",
     "eventgrid",
     "mock",
-    "service-bus",
     "testing",
     "web-pubsub"
   ],
@@ -69,7 +68,6 @@
     "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
-    "@azure/service-bus": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:"
   },

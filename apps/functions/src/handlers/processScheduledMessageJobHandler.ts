@@ -1,17 +1,16 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
-import { getServiceBusSender } from "#src/services/azure/getServiceBusSender";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
+import { getScheduler } from "#src/services/scheduler/getScheduler";
 import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
-import { createReplyThreadFollows, enqueueScheduledMessageJob } from "@esposter/db";
+import { createReplyThreadFollows } from "@esposter/db";
 import {
   AppNotificationType,
   AzureFunction,
-  AzureQueue,
   AzureTable,
   MessageType,
   publishNotification,
@@ -52,7 +51,10 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         now: new Date().toISOString(),
         runAt: job.runAt.toISOString(),
       });
-      await enqueueScheduledMessageJob(getServiceBusSender(AzureQueue.ScheduledMessageJobs), job.id, job.runAt);
+      await getScheduler(job.id).schedule(job.runAt.getTime(), {
+        payload: { id: job.id },
+        queueJob: AzureFunction.ProcessScheduledMessageJob,
+      });
       return;
     }
     // Parsed BEFORE the claim, and it is the last thing that may fail before it: a payload the current schema

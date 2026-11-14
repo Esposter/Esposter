@@ -7,12 +7,13 @@ import { createUserMessage } from "#server/services/message/createUserMessage";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { activeScheduledMessageJobWhere } from "#server/services/message/scheduledMessageJob/activeScheduledMessageJobWhere";
 import { cancelScheduledMessageJob } from "#server/services/message/scheduledMessageJob/cancelScheduledMessageJob";
-import { enqueueScheduledMessageJob } from "#server/services/message/scheduledMessageJob/enqueueScheduledMessageJob";
 import { getActiveScheduledMessageJobsWhere } from "#server/services/message/scheduledMessageJob/getActiveScheduledMessageJobsWhere";
 import { getCancellableScheduledMessageWhere } from "#server/services/message/scheduledMessageJob/getCancellableScheduledMessageWhere";
 import { getScheduledMessageJobValues } from "#server/services/message/scheduledMessageJob/getScheduledMessageJobValues";
 import { insertScheduledMessageJob } from "#server/services/message/scheduledMessageJob/insertScheduledMessageJob";
 import { requireScheduledMessageJob } from "#server/services/message/scheduledMessageJob/requireScheduledMessageJob";
+import { scheduleScheduledMessageJob } from "#server/services/message/scheduledMessageJob/scheduleScheduledMessageJob";
+import { unscheduleScheduledMessageJob } from "#server/services/message/scheduledMessageJob/unscheduleScheduledMessageJob";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { router } from "#server/trpc";
@@ -39,16 +40,18 @@ import { and, asc, count, eq } from "drizzle-orm";
 export const scheduledMessageJobRouter = router({
   cancelScheduledMessageJob: standardAuthedProcedure
     .input(cancelScheduledMessageJobInputSchema)
-    .mutation<ScheduledMessageJobInMessage>(({ ctx, input }) =>
-      cancelScheduledMessageJob(
+    .mutation<ScheduledMessageJobInMessage>(async ({ ctx, input }) => {
+      const scheduledMessageJob = await cancelScheduledMessageJob(
         ctx.db,
         and(
           ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id),
           activeScheduledMessageJobWhere,
         ),
         input.id,
-      ),
-    ),
+      );
+      await unscheduleScheduledMessageJob(input.id);
+      return scheduledMessageJob;
+    }),
   readMyScheduledMessageJobs: standardAuthedProcedure
     .input(readMyScheduledMessageJobsInputSchema)
     .query<OffsetPaginationData<ScheduledMessageJobInMessageWithRoom>>(async ({ ctx, input: { limit, offset } }) => {
@@ -103,7 +106,8 @@ export const scheduledMessageJobRouter = router({
           JSON.stringify(input),
         );
       });
-      await enqueueScheduledMessageJob(scheduledMessageJob);
+      await unscheduleScheduledMessageJob(input.id);
+      await scheduleScheduledMessageJob(scheduledMessageJob);
       return scheduledMessageJob;
     },
   ),
@@ -115,7 +119,7 @@ export const scheduledMessageJobRouter = router({
         getScheduledMessageJobValues(input, ctx.getSessionPayload.user.id),
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(scheduledMessageJob);
+      await scheduleScheduledMessageJob(scheduledMessageJob);
       return scheduledMessageJob;
     },
   ),
@@ -131,7 +135,7 @@ export const scheduledMessageJobRouter = router({
         },
         JSON.stringify(input),
       );
-      await enqueueScheduledMessageJob(scheduledMessageJob);
+      await scheduleScheduledMessageJob(scheduledMessageJob);
       return scheduledMessageJob;
     },
   ),
@@ -164,10 +168,11 @@ export const scheduledMessageJobRouter = router({
       // Delivery handler has already stamped, so a handler that wins the gap leaves nothing to cancel here and
       // The caller is told NOT_FOUND rather than both paths posting the same message
       await cancelScheduledMessageJob(ctx.db, where, input.id);
+      await unscheduleScheduledMessageJob(input.id);
       // A send that fails past the guards — a transient Table write, a serialization error — must not burn the
       // Job: lifting the claim leaves the message scheduled, so the caller's error means "not sent", never "lost".
-      // The delivery may have already been consumed and skipped on the tombstone, so the job is re-enqueued with
-      // It; a delivery that is still pending just makes two, and the handler's single-shot claim sends once
+      // The alarm was cleared with the claim, so a failure schedules the job again or it never fires; a send that lands
+      // Needs no alarm at all
       return getResultAsync(() =>
         createUserMessage(ctx.db, ctx.getSessionPayload, {
           files: [],
@@ -187,7 +192,7 @@ export const scheduledMessageJobRouter = router({
             .update(scheduledMessageJobsInMessage)
             .set({ cancelledAt: null })
             .where(ownedBy(scheduledMessageJobsInMessage, input.id, ctx.getSessionPayload.user.id));
-          await enqueueScheduledMessageJob(scheduledMessageJob);
+          await scheduleScheduledMessageJob(scheduledMessageJob);
           throw error;
         },
       );
