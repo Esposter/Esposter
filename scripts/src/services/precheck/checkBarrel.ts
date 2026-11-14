@@ -1,5 +1,5 @@
-import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
 import type { BarrelLines } from "#src/models/precheck/BarrelLines";
+import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
 import type { ExportsGeneration } from "@esposter/configuration";
 
 import { SOURCE_DIRECTORY_NAME } from "#src/services/precheck/constants";
