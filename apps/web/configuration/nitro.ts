@@ -62,6 +62,8 @@ export const nitro: NuxtConfig["nitro"] = {
       }
     },
   },
+  // The Workers runtime has no Temporal yet, and server modules read it as they load, so it is installed before the entry
+  polyfills: ["temporal-polyfill/global"],
   preset: "cloudflare_module",
   // A package polyfill is served from its own install under `/polyfills/`, so its version is the lockfile's
   publicAssets: [
