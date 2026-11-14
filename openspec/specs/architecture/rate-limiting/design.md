@@ -1,6 +1,6 @@
 # Rate Limiting
 
-When a feature page calls a procedure "rate-limited", this is the mechanism it means. Every budget in the app is a [`rate-limiter-flexible`](https://github.com/animir/node-rate-limiter-flexible) `RateLimiterDrizzleNonAtomic` whose store is the app's own Postgres database — the `rateLimiterFlexible` table in `@esposter/db-schema`, a key plus a point count and an expiry. Because the counters live in the database rather than in process memory, one budget is shared across every running instance: scaling out adds throughput, not allowance.
+When a feature page calls a procedure "rate-limited", this is the mechanism it means. Every budget in the app is a [`rate-limiter-flexible`](https://github.com/animir/node-rate-limiter-flexible) `RateLimiterDrizzleNonAtomic` whose store is the app's own D1 database — the `rateLimiterFlexible` table in `@esposter/db-schema`, a key plus a point count and an expiry. Because the counters live in the database rather than in process memory, one budget is shared across every running instance: scaling out adds throughput, not allowance.
 
 A limiter is defined by two configured numbers — how many points a key may spend (`points`) and the window it spends them in (`duration`, in seconds) — a mandatory `keyPrefix` naming its keyspace, and optionally a `blockDuration` that locks a key out for a further period once it overspends. Each limiter lives in its own file under `server/services/rateLimiter/`.
 
@@ -31,7 +31,7 @@ flowchart TD
   webhookRoute -->|"then consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
   mcpRoute["POST /api/mcp"] -->|"consume(address), first"| addressLimiter
   assetRoute["GET /api/resource-assets/{path}"] -->|"consume(user id or IP)"| assetLimiter["assetRateLimiter"]
-  procedureLimiter --> table[("rateLimiterFlexible table — Postgres")]
+  procedureLimiter --> table[("rateLimiterFlexible table in D1")]
   webhookLimiter --> table
   addressLimiter --> table
   assetLimiter --> table

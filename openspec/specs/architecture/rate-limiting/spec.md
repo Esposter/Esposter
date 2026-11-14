@@ -1,6 +1,6 @@
 ## Purpose
 
-The shared Postgres-backed point budgets behind every "rate-limited" procedure, plus the two request budgets that sit outside them.
+The shared D1-backed point budgets behind every "rate-limited" procedure, plus the two request budgets that sit outside them.
 
 ## Requirements
 
