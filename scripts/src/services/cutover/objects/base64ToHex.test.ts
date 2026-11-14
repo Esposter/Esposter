@@ -5,12 +5,12 @@ describe(base64ToHex, () => {
   test("reads a base64 digest as its hex bytes", () => {
     expect.hasAssertions();
 
-    expect(base64ToHex("AQID")).toStrictEqual("010203");
+    expect(base64ToHex("AQID")).toBe("010203");
   });
 
   test("keeps the high bit of a byte", () => {
     expect.hasAssertions();
 
-    expect(base64ToHex("/w==")).toStrictEqual("ff");
+    expect(base64ToHex("/w==")).toBe("ff");
   });
 });

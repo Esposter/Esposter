@@ -1,12 +1,12 @@
-import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { CutoverEnvironmentVariables } from "#src/models/cutover/CutoverEnvironmentVariables";
+import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { CloudflareEnvironment } from "@esposter/db-schema";
 
 import { createD1HttpExecutor } from "#src/services/cutover/cloudflare/d1/createD1HttpExecutor";
 import { CLOUDFLARE_ACCOUNT_ID, CloudflareCoreDatabaseIdMap } from "@esposter/db-schema";
 
-// The `core` database of the Cloudflare environment, the only Cloudflare database the cutover writes, reached with the
-// token read from the environment
+// The `core` database of the Cloudflare environment, the only Cloudflare database the cutover writes.
+// It is reached with the token read from the environment
 export const createCoreExecutor = (
   cloudflareEnvironment: CloudflareEnvironment,
   variables: CutoverEnvironmentVariables,

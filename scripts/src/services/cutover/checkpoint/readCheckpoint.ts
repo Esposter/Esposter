@@ -6,7 +6,7 @@ import { getCheckpointKey } from "#src/services/cutover/checkpoint/getCheckpoint
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 
 // A unit's checkpoint, or undefined when none is kept yet. The stored JSON is validated by the schema, so a damaged one fails
-// here rather than being read as progress
+// A damaged one fails here rather than being read as progress
 export const readCheckpoint = async (
   client: R2Client,
   archiveBucket: string,

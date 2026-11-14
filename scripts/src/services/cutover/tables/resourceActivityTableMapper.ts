@@ -1,8 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { resourceActivitiesInResource, ResourceActivityType } from "@esposter/db-schema";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -23,9 +23,9 @@ const legacyResourceActivitySchema = z.object({
 // Postgres row's, so each is written with its new id
 export const resourceActivityTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.ResourceActivity,
-  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(resourceActivitiesInResource)}" GROUP BY "resourceId"`,
   coreTable: getTableName(resourceActivitiesInResource),
-  map: (entity, { idMap, parents, timestamp }) => {
+  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(resourceActivitiesInResource)}" GROUP BY "resourceId"`,
+  toRow: (entity, { idMap, parents, timestamp }) => {
     const activity = legacyResourceActivitySchema.parse(entity);
     const resourceId = idMap.rewrite(activity.partitionKey);
     if (!parents.resourceIds.has(resourceId)) return undefined;

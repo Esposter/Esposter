@@ -1,7 +1,6 @@
+import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { AZURE_SELF_DESTRUCT_TIMER } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
-
-import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 
 describe(getReverseTickedMilliseconds, () => {
   const epochMilliseconds = 1700000000123;

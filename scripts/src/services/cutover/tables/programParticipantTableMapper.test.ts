@@ -1,11 +1,30 @@
 import type { LegacyEntity } from "#src/models/cutover/LegacyEntity";
 import type { TableParents } from "#src/models/cutover/TableParents";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { POSTGRES_ID_MAP_SCOPE } from "#src/services/cutover/constants";
 import { createIdMap } from "#src/services/cutover/tables/createIdMap";
 import { programParticipantTableMapper } from "#src/services/cutover/tables/programParticipantTableMapper";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { describe, expect, test } from "vitest";
+
+// The archive in memory, which the id map reads and writes as its segments
+const createArchive = () => {
+  const segments = new Map<string, string>();
+  return {
+    getText: (_bucket: string, key: string) => Promise.resolve(segments.get(key)),
+    putText: (_bucket: string, key: string, text: string) => {
+      segments.set(key, text);
+      return Promise.resolve();
+    },
+  };
+};
+const createParents = (resourceId: string): TableParents => ({
+  apiKeyIds: new Set(),
+  appUserIds: new Set(),
+  resourceIds: new Set([resourceId]),
+  roomIds: new Set(),
+  userIds: new Set(),
+});
 
 describe("programParticipantTableMapper", () => {
   const ARCHIVE_BUCKET = "cutover-archive";
@@ -20,33 +39,15 @@ describe("programParticipantTableMapper", () => {
     token: OLD_TOKEN,
   };
 
-  // The archive in memory, which the id map reads and writes as its segments
-  const createArchive = () => {
-    const segments = new Map<string, string>();
-    return {
-      getText: async (_bucket: string, key: string) => segments.get(key),
-      putText: async (_bucket: string, key: string, text: string) => {
-        segments.set(key, text);
-      },
-    };
-  };
-  const createParents = (resourceId: string): TableParents => ({
-    apiKeyIds: new Set(),
-    appUserIds: new Set(),
-    resourceIds: new Set([resourceId]),
-    roomIds: new Set(),
-    userIds: new Set(),
-  });
-
   test("replaces an old token with the hash of a token nobody receives, so no readable credential reaches D1", async () => {
     expect.hasAssertions();
 
     const archive = createArchive();
     const idMap = await createIdMap(archive, ARCHIVE_BUCKET, [LegacyAzureTable.ProgramParticipants]);
     const { id: resourceId } = idMap.assignOldId(RESOURCE_OLD_ID, timestamp);
-    const row = programParticipantTableMapper.map(entity, { idMap, parents: createParents(resourceId), timestamp });
+    const row = programParticipantTableMapper.toRow(entity, { idMap, parents: createParents(resourceId), timestamp });
 
-    expect(row?.tokenHash).toMatch(/^[0-9a-f]{64}$/);
+    expect(row?.tokenHash).toMatch(/^[0-9a-f]{64}$/u);
     expect(JSON.stringify(row)).not.toContain(OLD_TOKEN);
   });
 
@@ -56,7 +57,7 @@ describe("programParticipantTableMapper", () => {
     const archive = createArchive();
     const firstIdMap = await createIdMap(archive, ARCHIVE_BUCKET, [LegacyAzureTable.ProgramParticipants]);
     const { id: resourceId } = firstIdMap.assignOldId(RESOURCE_OLD_ID, timestamp);
-    const firstRow = programParticipantTableMapper.map(entity, {
+    const firstRow = programParticipantTableMapper.toRow(entity, {
       idMap: firstIdMap,
       parents: createParents(resourceId),
       timestamp,
@@ -65,7 +66,7 @@ describe("programParticipantTableMapper", () => {
     await firstIdMap.flush(LegacyAzureTable.ProgramParticipants);
 
     const rerunIdMap = await createIdMap(archive, ARCHIVE_BUCKET, [LegacyAzureTable.ProgramParticipants]);
-    const rerunRow = programParticipantTableMapper.map(entity, {
+    const rerunRow = programParticipantTableMapper.toRow(entity, {
       idMap: rerunIdMap,
       parents: createParents(resourceId),
       timestamp,

@@ -2,8 +2,9 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Parents before children, so every row's foreign key exists by the time the row is written. A table that references
-// itself is ready once its other parents are, and a cycle has no such order: it is refused rather than broken by a guess
+// Parents before children, so every row's foreign key exists by the time the row is written.
+// A table that references itself is ready once its other parents are, and a cycle has no such order.
+// It is refused rather than broken by a guess
 export const orderCoreTables = (tables: CoreTable[]): CoreTable[] => {
   const remaining = new Map(tables.map((table) => [table.name, table]));
   const ordered: CoreTable[] = [];

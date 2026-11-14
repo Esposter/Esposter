@@ -3,9 +3,8 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const BLOB_HOST_SUFFIX = ".blob.core.windows.net";
 
-// Rewrites an absolute Azure blob URL to the public asset route for its container's bucket, and returns undefined for any
-// other string, which stays as it is. A blob URL naming a container that is not a bucket is refused, since it has no
-// bucket to point at
+// Rewrites an absolute Azure blob URL to the public asset route for its container's bucket, and returns undefined for any other string, which stays as it is.
+// A blob URL naming a container that is not a bucket is refused, since it has no bucket to point at
 export const rewriteBlobUrl = (value: string, publicAssetsBaseUrl: string): string | undefined => {
   if (!URL.canParse(value)) return undefined;
   const url = new URL(value);

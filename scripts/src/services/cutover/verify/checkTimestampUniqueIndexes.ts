@@ -1,8 +1,8 @@
 import type { CoreTable } from "#src/models/cutover/CoreTable";
+import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
-import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 
 type SourceClient = ReturnType<typeof createSourceClient>;
 
@@ -13,6 +13,7 @@ export const checkTimestampUniqueIndexes = async (source: SourceClient, table: C
     const expressions = group.map(({ dataType, name }) =>
       dataType === "object date" ? `date_trunc('milliseconds', ${quoteIdentifier(name)})` : quoteIdentifier(name),
     );
+    // oxlint-disable-next-line no-await-in-loop -- stop at the first: a group whose rows collide throws before the groups behind it are queried
     const [result] = await source.unsafe<{ duplicates: string }[]>(
       `SELECT count(*) AS duplicates FROM (SELECT 1 FROM ${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)} GROUP BY ${expressions.join(", ")} HAVING count(*) > 1) AS duplicated`,
     );

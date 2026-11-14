@@ -1,6 +1,5 @@
 import type { SubCommandsDef } from "citty";
 
-import { createBlobServiceClient } from "#src/services/cutover/azure/createBlobServiceClient";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { environmentArgs } from "#src/services/cutover/commands/environmentArgs";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
@@ -9,6 +8,7 @@ import { getR2BucketName } from "#src/services/cutover/getR2BucketName";
 import { loadIdMap } from "#src/services/cutover/ids/loadIdMap";
 import { copyBucketObjects } from "#src/services/cutover/objects/copyBucketObjects";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
+import { BlobServiceClient } from "@azure/storage-blob";
 import { defineCommand } from "citty";
 
 export const copyObjectsCommand: SubCommandsDef[string] = defineCommand({
@@ -29,7 +29,7 @@ export const copyObjectsCommand: SubCommandsDef[string] = defineCommand({
   run: async ({ args }) => {
     const variables = readCutoverEnvironment();
     const client = createR2Client();
-    const azure = createBlobServiceClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
+    const azure = BlobServiceClient.fromConnectionString(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
     const archiveBucket = getCutoverArchiveBucketName(args.environment);
     const idMap = await loadIdMap(client, archiveBucket);
     for (const bucket of getCopyBuckets()) {

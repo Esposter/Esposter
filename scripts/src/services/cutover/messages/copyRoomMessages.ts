@@ -6,21 +6,21 @@ import type { LegacyMessageEmoji } from "#src/models/cutover/LegacyMessageEmoji"
 import type { R2Client } from "#src/models/cutover/R2Client";
 import type { TableParents } from "#src/models/cutover/TableParents";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { legacyMessageSchema } from "#src/models/cutover/LegacyMessage";
 import { legacyMessageEmojiSchema } from "#src/models/cutover/LegacyMessageEmoji";
-import { createTableClient } from "#src/services/cutover/azure/createTableClient";
 import { callFunctionsRoute } from "#src/services/cutover/callFunctionsRoute";
 import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint";
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
-import { ROOM_IMPORT_PATH, MESSAGE_NUMBER_SCOPE } from "#src/services/cutover/constants";
-import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
+import { MESSAGE_NUMBER_SCOPE, ROOM_IMPORT_PATH } from "#src/services/cutover/constants";
 import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
 import { readScheduledRoomMessages } from "#src/services/cutover/messages/readScheduledRoomMessages";
+import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
+import { TableClient } from "@azure/data-tables";
 import { roomImportSchema } from "@esposter/db-schema";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export interface CopyRoomMessagesOptions {
@@ -36,16 +36,15 @@ export interface CopyRoomMessagesOptions {
 }
 
 interface CopyRoomOptions {
-  filter: string | undefined;
+  filter?: string;
   roomId: string;
   roomOldId: string;
 }
 
-// Imports the messages, reactions and pending scheduled messages of every room into the room's own object, through the functions Worker's
-// cutover route. A room's messages are numbered in createdAt order, and each number is kept in the id map before the import writes it, so a
-// re-run or the delta writes the same numbers. The full copy runs while the app is live and records when it began; the delta imports the
-// rooms' changed rows, and every write is an upsert, so a re-run writes the same rows again rather than adding to them. A delta does not
-// remove a message Azure no longer lists: no route deletes a message from an object yet
+// Imports the messages, reactions and pending scheduled messages of every room into the room's own object, through the functions Worker's cutover route.
+// A room's messages are numbered in createdAt order, and each number is kept in the id map before the import writes it, so a re-run or the delta writes the same numbers.
+// The full copy runs while the app is live and records when it began; the delta imports the rooms' changed rows, and every write is an upsert, so a re-run writes the same rows again rather than adding to them.
+// A delta does not remove a message Azure no longer lists: no route deletes a message from an object yet
 export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promise<void> => {
   const { archiveBucket, client, connectionString, delta, functionsUrl, idMap, parents, secret } = options;
   const unit = `${COPY_TABLES_UNIT_PREFIX}/${LegacyAzureTable.Messages}`;
@@ -58,23 +57,23 @@ export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promis
   const copyRoom = async ({ filter, roomId, roomOldId }: CopyRoomOptions): Promise<void> => {
     const roomFilter =
       filter === undefined ? `PartitionKey eq '${roomOldId}'` : `PartitionKey eq '${roomOldId}' and ${filter}`;
-    const messages: { message: LegacyMessage; timestamp: Date | undefined }[] = [];
+    const messages: { message: LegacyMessage; timestamp?: Date }[] = [];
     for await (const { entity, timestamp } of listMapperEntities(
-      createTableClient(connectionString, LegacyAzureTable.Messages),
+      TableClient.fromConnectionString(connectionString, LegacyAzureTable.Messages),
       LegacyAzureTable.Messages,
       { filter: roomFilter },
     ))
       messages.push({ message: legacyMessageSchema.parse(entity), timestamp });
     const emojis: LegacyMessageEmoji[] = [];
     for await (const { entity } of listMapperEntities(
-      createTableClient(connectionString, LegacyAzureTable.MessagesMetadata),
+      TableClient.fromConnectionString(connectionString, LegacyAzureTable.MessagesMetadata),
       LegacyAzureTable.MessagesMetadata,
       { filter: roomFilter },
     ))
       emojis.push(legacyMessageEmojiSchema.parse(entity));
 
-    // The numbers are kept before anything reads them: the scheduled messages' replies find their roots among them, and the room object is
-    // written with them, so a re-run finds the same numbers
+    // The numbers are kept before anything reads them: the scheduled messages' replies resolve their roots among them, and the room object is written with them.
+    // So a re-run gets the same numbers
     idMap.numberMessages(
       roomId,
       messages.map(({ message }) => ({

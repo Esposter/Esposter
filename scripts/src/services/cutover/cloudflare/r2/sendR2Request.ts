@@ -1,8 +1,10 @@
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import type { R2Transport } from "#src/models/cloudflare/R2Transport";
+import type { Operation } from "@esposter/shared";
 
-// Sends one signed request. A request that cannot reach R2 throws naming the object it was for, so a failure among the
-// copies that run together says which one it was
+import { getResultAsync, InvalidOperationError } from "@esposter/shared";
+
+// Sends one signed request. A request that cannot reach R2 throws naming the object it was for.
+// A failure among the copies that run together then says which one it was
 export const sendR2Request = (
   transport: R2Transport,
   operation: Operation,

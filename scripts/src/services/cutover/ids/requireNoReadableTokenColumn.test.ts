@@ -24,7 +24,9 @@ describe(requireNoReadableTokenColumn, () => {
 
     const table = createCoreTable([TOKEN_COLUMN]);
 
-    expect(() => requireNoReadableTokenColumn(table)).toThrowErrorMatchingInlineSnapshot(
+    expect(() => {
+      requireNoReadableTokenColumn(table);
+    }).toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: Invalid operation: Read, name: message_webhooks, keeps the readable token column, which the copy must not write]`,
     );
   });
@@ -34,6 +36,8 @@ describe(requireNoReadableTokenColumn, () => {
 
     const table = createCoreTable([TOKEN_HASH_COLUMN]);
 
-    expect(() => requireNoReadableTokenColumn(table)).not.toThrow();
+    expect(() => {
+      requireNoReadableTokenColumn(table);
+    }).not.toThrow();
   });
 });

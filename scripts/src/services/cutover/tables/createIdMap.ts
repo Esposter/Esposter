@@ -1,8 +1,8 @@
 import type { IdMap } from "#src/models/cutover/IdMap";
-import type { IdMapScope } from "#src/models/cutover/IdMapScope";
 import type { AzureIdMapEntry, InviteCodeEntry, OldIdMapEntry } from "#src/models/cutover/IdMapEntry";
-import type { R2Client } from "#src/models/cutover/R2Client";
+import type { IdMapScope } from "#src/models/cutover/IdMapScope";
 import type { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
+import type { R2Client } from "#src/models/cutover/R2Client";
 
 import {
   azureIdMapEntrySchema,
@@ -65,9 +65,9 @@ const loadSegmentStore = async <T>(
   };
 };
 
-// Loads every scope the archive holds into the map they make. A row given no id yet gets a UUIDv7 built from its own createdAt, a credential
-// row gets the hash of a fresh token for its old one, and an invite a fresh code, so no id, token or code is ever derived from the row. Every
-// new entry waits in memory until `flush`, which the copy does before it writes the rows that carry those ids
+// Loads every scope the archive holds into the map they make.
+// A row given no id yet gets a UUIDv7 built from its own createdAt, a credential row gets the hash of a fresh token for its old one, and an invite a fresh code, so no id, token or code is ever derived from the row.
+// Every new entry waits in memory until `flush`, which the copy does before it writes the rows that carry those ids
 export const createIdMap = async (
   client: ArchiveClient,
   archiveBucket: string,
@@ -76,29 +76,33 @@ export const createIdMap = async (
   const oldIdStore = await loadSegmentStore(client, archiveBucket, POSTGRES_ID_MAP_SCOPE, oldIdMapEntrySchema);
   const inviteStore = await loadSegmentStore(client, archiveBucket, INVITE_CODE_SCOPE, inviteCodeEntrySchema);
   const numberStore = await loadSegmentStore(client, archiveBucket, MESSAGE_NUMBER_SCOPE, messageNumberEntrySchema);
-  const azureStores = new Map<LegacyAzureTable, SegmentStore<AzureIdMapEntry>>();
-  for (const azureTable of azureTables)
-    // oxlint-disable-next-line no-await-in-loop -- each table's segments load on their own, one table after another
-    azureStores.set(azureTable, await loadSegmentStore(client, archiveBucket, azureTable, azureIdMapEntrySchema));
+  const azureStores = new Map<LegacyAzureTable, SegmentStore<AzureIdMapEntry>>(
+    await Promise.all(
+      azureTables.map(
+        async (azureTable) =>
+          [azureTable, await loadSegmentStore(client, archiveBucket, azureTable, azureIdMapEntrySchema)] as const,
+      ),
+    ),
+  );
 
-  const oldEntryByOldId = new Map<string, OldIdMapEntry>(oldIdStore.entries.map((entry) => [entry.oldId, entry]));
-  const newIdByOldId = new Map<string, string>(oldIdStore.entries.map((entry) => [entry.oldId, entry.id]));
-  const inviteEntryByOldCode = new Map<string, InviteCodeEntry>(
+  const oldIdMapEntryMap = new Map<string, OldIdMapEntry>(oldIdStore.entries.map((entry) => [entry.oldId, entry]));
+  const oldIdNewIdMap = new Map<string, string>(oldIdStore.entries.map((entry) => [entry.oldId, entry.id]));
+  const inviteCodeEntryMap = new Map<string, InviteCodeEntry>(
     inviteStore.entries.map((entry) => [entry.oldCode, entry]),
   );
-  const azureEntryByKey = new Map<string, AzureIdMapEntry>();
-  const tokenHashByOldToken = new Map<string, string>();
+  const keyAzureEntryMap = new Map<string, AzureIdMapEntry>();
+  const oldTokenTokenHashMap = new Map<string, string>();
   for (const { oldToken, tokenHash } of oldIdStore.entries)
-    if (oldToken && tokenHash) tokenHashByOldToken.set(oldToken, tokenHash);
+    if (oldToken && tokenHash) oldTokenTokenHashMap.set(oldToken, tokenHash);
   for (const [azureTable, store] of azureStores)
     for (const entry of store.entries) {
-      azureEntryByKey.set(getIdMapKey(azureTable, entry.partitionKey, entry.rowKey), entry);
-      if (entry.oldToken && entry.tokenHash) tokenHashByOldToken.set(entry.oldToken, entry.tokenHash);
+      keyAzureEntryMap.set(getIdMapKey(azureTable, entry.partitionKey, entry.rowKey), entry);
+      if (entry.oldToken && entry.tokenHash) oldTokenTokenHashMap.set(entry.oldToken, entry.tokenHash);
     }
-  const numbersByRoom = new Map<string, Map<string, number>>();
+  const roomNumbersMap = new Map<string, Map<string, number>>();
   const getRoomNumbers = (roomId: string): Map<string, number> => {
-    const numbers = numbersByRoom.get(roomId) ?? new Map<string, number>();
-    numbersByRoom.set(roomId, numbers);
+    const numbers = roomNumbersMap.get(roomId) ?? new Map<string, number>();
+    roomNumbersMap.set(roomId, numbers);
     return numbers;
   };
   for (const { number, roomId, rowKey } of numberStore.entries) getRoomNumbers(roomId).set(rowKey, number);
@@ -111,8 +115,8 @@ export const createIdMap = async (
   // A row that holds a token is given the hash of a fresh one, kept for the old token so every reference to it is found again
   const getIssuedFields = (oldToken: string | undefined): { oldToken?: string; tokenHash?: string } => {
     if (oldToken === undefined) return {};
-    const tokenHash = tokenHashByOldToken.get(oldToken) ?? issueTokenHash();
-    tokenHashByOldToken.set(oldToken, tokenHash);
+    const tokenHash = oldTokenTokenHashMap.get(oldToken) ?? issueTokenHash();
+    oldTokenTokenHashMap.set(oldToken, tokenHash);
     return { oldToken, tokenHash };
   };
 
@@ -120,8 +124,8 @@ export const createIdMap = async (
     assign: (azureTable, partitionKey, rowKey, createdAt, oldToken) => {
       const store = getAzureStore(azureTable);
       const key = getIdMapKey(azureTable, partitionKey, rowKey);
-      const existing = azureEntryByKey.get(key);
-      if (existing) return existing;
+      const existingEntry = keyAzureEntryMap.get(key);
+      if (existingEntry) return existingEntry;
 
       const entry: AzureIdMapEntry = {
         id: getCreatedAtUuidV7(createdAt),
@@ -129,26 +133,26 @@ export const createIdMap = async (
         rowKey,
         ...getIssuedFields(oldToken),
       };
-      azureEntryByKey.set(key, entry);
+      keyAzureEntryMap.set(key, entry);
       store.add(entry);
       return entry;
     },
     assignInviteCode: (oldCode) => {
-      const existing = inviteEntryByOldCode.get(oldCode);
-      if (existing) return existing;
+      const existingInvite = inviteCodeEntryMap.get(oldCode);
+      if (existingInvite) return existingInvite;
 
       const entry: InviteCodeEntry = { code: generateSecretToken(), oldCode };
-      inviteEntryByOldCode.set(oldCode, entry);
+      inviteCodeEntryMap.set(oldCode, entry);
       inviteStore.add(entry);
       return entry;
     },
     assignOldId: (oldId, createdAt, oldToken) => {
-      const existing = oldEntryByOldId.get(oldId);
-      if (existing) return existing;
+      const existingOldEntry = oldIdMapEntryMap.get(oldId);
+      if (existingOldEntry) return existingOldEntry;
 
       const entry: OldIdMapEntry = { id: getCreatedAtUuidV7(createdAt), oldId, ...getIssuedFields(oldToken) };
-      oldEntryByOldId.set(oldId, entry);
-      newIdByOldId.set(oldId, entry.id);
+      oldIdMapEntryMap.set(oldId, entry);
+      oldIdNewIdMap.set(oldId, entry.id);
       oldIdStore.add(entry);
       return entry;
     },
@@ -158,9 +162,9 @@ export const createIdMap = async (
       if (scope === MESSAGE_NUMBER_SCOPE) return numberStore.flush();
       return getAzureStore(scope).flush();
     },
-    getMessageNumber: (roomId, rowKey) => numbersByRoom.get(roomId)?.get(rowKey),
-    inviteCodeOf: (oldCode) => inviteEntryByOldCode.get(oldCode)?.code,
-    newIdOf: (oldId) => oldEntryByOldId.get(oldId)?.id,
+    getMessageNumber: (roomId, rowKey) => roomNumbersMap.get(roomId)?.get(rowKey),
+    inviteCodeOf: (oldCode) => inviteCodeEntryMap.get(oldCode)?.code,
+    newIdOf: (oldId) => oldIdMapEntryMap.get(oldId)?.id,
     numberMessages: (roomId, messages) => {
       const numbers = getRoomNumbers(roomId);
       for (const { number, rowKey } of assignMessageNumbers(messages, numbers)) {
@@ -168,8 +172,8 @@ export const createIdMap = async (
         numberStore.add({ number, roomId, rowKey });
       }
     },
-    oldIds: () => [...oldEntryByOldId.keys()],
-    reissuedTokenHashOf: (oldToken) => tokenHashByOldToken.get(oldToken),
-    rewrite: (text) => rewriteOldIds(text, newIdByOldId),
+    oldIds: () => [...oldIdMapEntryMap.keys()],
+    reissuedTokenHashOf: (oldToken) => oldTokenTokenHashMap.get(oldToken),
+    rewrite: (text) => rewriteOldIds(text, oldIdNewIdMap),
   };
 };

@@ -3,8 +3,8 @@ export interface PgDumpConnection {
   environment: Record<string, string>;
 }
 
-// The dump's connection, with the password passed through the environment: a command line is visible to every process on
-// the machine, and the password is the one value here no log may hold
+// The dump's connection, with the password passed through the environment.
+// A command line is visible to every process on the machine, and the password is the one value here no log may hold
 export const getPgDumpConnection = (databaseUrl: string): PgDumpConnection => {
   const url = new URL(databaseUrl);
   const environment: Record<string, string> = {};

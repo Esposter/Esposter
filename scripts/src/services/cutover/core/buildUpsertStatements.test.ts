@@ -20,7 +20,7 @@ describe(buildUpsertStatements, () => {
   test("keeps each statement under the bound parameter limit and binds every value", () => {
     expect.hasAssertions();
 
-    const rows = Array.from({ length: 120 }, (_, index) => [`id-${index}`, `name-${index}`]);
+    const rows = Array.from({ length: 120 }, (_value, index) => [`id-${index}`, `name-${index}`]);
     const statements = buildUpsertStatements(table, rows);
 
     expect(statements.map(({ params }) => params.length)).toStrictEqual([100, 100, 40]);

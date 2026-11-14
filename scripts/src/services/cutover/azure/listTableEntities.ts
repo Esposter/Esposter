@@ -9,14 +9,12 @@ interface ListTableEntitiesOptions {
   select?: string[];
 }
 
-// Every entity of a table, page by page, as the service returns it: the system properties and the typed values Azure
-// decoded, untouched. The copy decides what each one means
+// Every entity of a table, page by page, as the service returns it: the system properties and the typed values Azure decoded, untouched.
+// The copy decides what each one means
 export const listTableEntities = async function* (
   tableClient: TableClient,
   options: ListTableEntitiesOptions = {},
 ): AsyncGenerator<Record<string, unknown>, void> {
-  for await (const page of tableClient
-    .listEntities<Record<string, unknown>>({ queryOptions: options })
-    .byPage({ maxPageSize: AZURE_PAGE_SIZE }))
+  for await (const page of tableClient.listEntities({ queryOptions: options }).byPage({ maxPageSize: AZURE_PAGE_SIZE }))
     yield* page;
 };

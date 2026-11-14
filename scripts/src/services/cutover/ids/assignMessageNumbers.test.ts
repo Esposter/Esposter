@@ -1,6 +1,5 @@
-import { describe, expect, test } from "vitest";
-
 import { assignMessageNumbers } from "#src/services/cutover/ids/assignMessageNumbers";
+import { describe, expect, test } from "vitest";
 
 describe(assignMessageNumbers, () => {
   const earlier = new Date(1700000000000);
@@ -25,19 +24,19 @@ describe(assignMessageNumbers, () => {
   test("keeps the numbers a room already has and numbers only what is new after its highest", () => {
     expect.hasAssertions();
 
-    const numberByRowKey = new Map([["b", 1]]);
+    const rowKeyNumberMap = new Map([["b", 1]]);
     const messages = [
       { createdAt: earlier, rowKey: "b" },
       { createdAt: later, rowKey: "d" },
     ];
 
-    expect(assignMessageNumbers(messages, numberByRowKey)).toStrictEqual([{ number: 2, rowKey: "d" }]);
+    expect(assignMessageNumbers(messages, rowKeyNumberMap)).toStrictEqual([{ number: 2, rowKey: "d" }]);
   });
 
   test("gives nothing new on a re-run, so an import that repeats writes the same numbers", () => {
     expect.hasAssertions();
 
-    const numberByRowKey = new Map([
+    const rowKeyNumberMap = new Map([
       ["b", 1],
       ["c", 2],
     ]);
@@ -46,6 +45,6 @@ describe(assignMessageNumbers, () => {
       { createdAt: earlier, rowKey: "c" },
     ];
 
-    expect(assignMessageNumbers(messages, numberByRowKey)).toStrictEqual([]);
+    expect(assignMessageNumbers(messages, rowKeyNumberMap)).toStrictEqual([]);
   });
 });

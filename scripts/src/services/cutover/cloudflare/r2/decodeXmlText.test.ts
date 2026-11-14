@@ -5,18 +5,18 @@ describe(decodeXmlText, () => {
   test("decodes the predefined entities and numeric references", () => {
     expect.hasAssertions();
 
-    expect(decodeXmlText("&quot;a&amp;b&lt;c&gt;&apos;&#65;&#x42;")).toStrictEqual(`"a&b<c>'AB`);
+    expect(decodeXmlText("&quot;a&amp;b&lt;c&gt;&apos;&#65;&#x42;")).toBe(`"a&b<c>'AB`);
   });
 
   test("reads an escaped ampersand once", () => {
     expect.hasAssertions();
 
-    expect(decodeXmlText("&amp;lt;")).toStrictEqual("&lt;");
+    expect(decodeXmlText("&amp;lt;")).toBe("&lt;");
   });
 
   test("leaves an entity it does not know as written", () => {
     expect.hasAssertions();
 
-    expect(decodeXmlText("&nbsp;")).toStrictEqual("&nbsp;");
+    expect(decodeXmlText("&nbsp;")).toBe("&nbsp;");
   });
 });

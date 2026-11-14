@@ -8,11 +8,14 @@ import { getTableConfig, SQLiteTable } from "drizzle-orm/sqlite-core";
 
 const toCoreColumn = ({ dataType, name, notNull }: CoreColumn): CoreColumn => ({ dataType, name, notNull });
 
-// Every table of the D1 schema, read from the generated registry. Its SQLite name is `<schema>_<table>`, and the Postgres
-// table it is copied from is `"<schema>"."<table>"`, so the split happens here, once
+// The members of the schema registry that are SQLite tables, which the type guard narrows the registry to
+type SchemaTable = Extract<(typeof schema)[keyof typeof schema], SQLiteTable>;
+
+// Every table of the D1 schema, read from the generated registry. Its SQLite name is `<schema>_<table>`.
+// The Postgres table it is copied from is `"<schema>"."<table>"`, so the split happens here, once
 export const getCoreTables = (): CoreTable[] =>
   Object.values(schema)
-    .filter((value): value is SQLiteTable => is(value, SQLiteTable))
+    .filter((value): value is SchemaTable => is(value, SQLiteTable))
     .map((table) => {
       const tableConfiguration = getTableConfig(table);
       const { name } = tableConfiguration;
@@ -21,7 +24,7 @@ export const getCoreTables = (): CoreTable[] =>
         throw new InvalidOperationError(Operation.Read, name, "has no schema prefix to copy from");
       const primaryKeyColumns = (
         tableConfiguration.primaryKeys[0]?.columns ?? tableConfiguration.columns.filter(({ primary }) => primary)
-      ).map(toCoreColumn);
+      ).map((column) => toCoreColumn(column));
       if (primaryKeyColumns.length === 0)
         throw new InvalidOperationError(Operation.Read, name, "has no primary key to order its rows by");
       // Postgres keeps microseconds and D1 milliseconds, so a unique key over a timestamp is the one that can collide
@@ -36,7 +39,7 @@ export const getCoreTables = (): CoreTable[] =>
         .map((group) => group.flatMap((column) => (is(column, Column) ? [toCoreColumn(column)] : [])))
         .filter((group) => group.some(({ dataType }) => dataType === "object date"));
       return {
-        columns: tableConfiguration.columns.map(toCoreColumn),
+        columns: tableConfiguration.columns.map((column) => toCoreColumn(column)),
         foreignTableNames: tableConfiguration.foreignKeys.map(
           (foreignKey) => getTableConfig(foreignKey.reference().foreignTable).name,
         ),

@@ -3,6 +3,8 @@ import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { D1Statement } from "#src/models/cutover/D1Statement";
 
 import { d1ApiResponseSchema } from "#src/models/cutover/D1ApiResponse";
+import { CUTOVER_REQUEST_TIMEOUT_MS } from "#src/services/cutover/constants";
+import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 const CLOUDFLARE_API_ORIGIN = "https://api.cloudflare.com/client/v4";
@@ -14,10 +16,11 @@ export const createD1HttpExecutor = (target: CloudflareDatabaseTarget): D1Execut
 
   const send = async (body: object) => {
     const response = await getResultAsync(() =>
-      fetch(url, {
+      fetchResponse(url, {
         body: JSON.stringify(body),
         headers: { Authorization: `Bearer ${target.token}`, "Content-Type": "application/json" },
         method: "POST",
+        timeoutMs: CUTOVER_REQUEST_TIMEOUT_MS,
       }),
     ).match(
       (value) => value,
@@ -25,7 +28,7 @@ export const createD1HttpExecutor = (target: CloudflareDatabaseTarget): D1Execut
         throw error;
       },
     );
-    const parsed = d1ApiResponseSchema.parse(
+    const parsedResponse = d1ApiResponseSchema.parse(
       await getResultAsync(async () => response.json()).match(
         (value) => value,
         (error) => {
@@ -33,13 +36,13 @@ export const createD1HttpExecutor = (target: CloudflareDatabaseTarget): D1Execut
         },
       ),
     );
-    if (!parsed.success || parsed.result === null)
+    if (!parsedResponse.success || parsedResponse.result === null)
       throw new InvalidOperationError(
         Operation.Update,
         target.databaseId,
-        `D1 refused the request: ${parsed.errors.map(({ message }) => message).join("; ")}`,
+        `D1 refused the request: ${parsedResponse.errors.map(({ message }) => message).join("; ")}`,
       );
-    return parsed.result;
+    return parsedResponse.result;
   };
 
   return {

@@ -26,6 +26,8 @@ describe(rewriteBlobUrl, () => {
 
     expect(() =>
       rewriteBlobUrl("https://prodstesposter001.blob.core.windows.net/deadletter/key.json", PUBLIC_ASSETS_BASE_URL),
-    ).toThrowError(/is not a container with a bucket/u);
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: deadletter, is not a container with a bucket, so its URL has no target]`,
+    );
   });
 });

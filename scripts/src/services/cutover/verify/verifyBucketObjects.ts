@@ -3,26 +3,26 @@ import type { R2Object } from "#src/models/cutover/R2Object";
 import type { VerifyBucketObjectsOptions } from "#src/models/cutover/VerifyBucketObjectsOptions";
 import type { ContainerClient } from "@azure/storage-blob";
 
+import { downloadBlobBody } from "#src/services/cutover/azure/downloadBlobBody";
 import { listContainerBlobs } from "#src/services/cutover/azure/listContainerBlobs";
 import { readBlobMd5 } from "#src/services/cutover/azure/readBlobMd5";
-import { downloadBlobBody } from "#src/services/cutover/azure/downloadBlobBody";
 import { COPY_CONCURRENCY, MD5_ALGORITHM } from "#src/services/cutover/constants";
 import { base64ToHex } from "#src/services/cutover/objects/base64ToHex";
-import { isTextualBlob } from "#src/services/cutover/objects/isTextualBlob";
+import { checkIsTextualBlob } from "#src/services/cutover/objects/checkIsTextualBlob";
 import { readBlobText } from "#src/services/cutover/objects/readBlobText";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Buffer } from "node:buffer";
 import { createHash } from "node:crypto";
 
-// The MD5 an object holds: a textual blob's bytes with its ids rewritten, which the copy wrote; any other blob's own digest, or one hashed
-// from its bytes when Azure stored none
+// The MD5 an object holds: a textual blob's bytes with its ids rewritten, which the copy wrote.
+// Any other blob's own digest, or one hashed from its bytes when Azure stored none
 const readExpectedMd5 = async (
   containerClient: ContainerClient,
   blob: BlobEntry,
   rewrite: (text: string) => string,
 ): Promise<string> => {
-  if (isTextualBlob(blob)) {
+  if (checkIsTextualBlob(blob)) {
     const text = await readBlobText(await downloadBlobBody(containerClient, blob.name));
     return createHash(MD5_ALGORITHM)
       .update(Buffer.from(rewrite(text), "utf8"))
@@ -31,8 +31,8 @@ const readExpectedMd5 = async (
   return blob.md5 === undefined ? readBlobMd5(containerClient, blob.name) : base64ToHex(blob.md5);
 };
 
-// Checks a bucket against its container: no key names an old id, the same number of objects and bytes, then each blob's object by its new
-// key, its size and its MD5. The first difference fails the step, naming its key
+// Checks a bucket against its container: no key names an old id, the same number of objects and bytes, then each blob's object by its new key, its size and its MD5.
+// The first difference fails the step, naming its key
 export const verifyBucketObjects = async (options: VerifyBucketObjectsOptions): Promise<void> => {
   const { azure, bucket, client, idMap, r2Bucket } = options;
   const containerClient = azure.getContainerClient(bucket);

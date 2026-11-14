@@ -9,8 +9,8 @@ import { snapshotCommand } from "#src/services/cutover/commands/snapshotCommand"
 import { verifyCommand } from "#src/services/cutover/commands/verifyCommand";
 import { defineCommand } from "citty";
 
-// `pnpm -C scripts cutover <step> --environment <develop|production>` — the Railway, Azure and Namecheap data move. Temporary:
-// the command is deleted at teardown (openspec/changes/infra-cloudflare-cutover/design.md)
+// `pnpm -C scripts cutover <step> --environment <develop|production>` — the Railway, Azure and Namecheap data move. Temporary.
+// The command is deleted at teardown (openspec/changes/infra-cloudflare-cutover/design.md)
 export const cutoverCommand = defineCommand({
   meta: {
     description:

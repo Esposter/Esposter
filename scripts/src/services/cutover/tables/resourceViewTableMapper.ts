@@ -1,7 +1,7 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
-import { resourceViewsInResource } from "@esposter/db-schema";
 import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
+import { resourceViewsInResource } from "@esposter/db-schema";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -11,9 +11,9 @@ const legacyResourceViewSchema = z.object({ count: z.number(), partitionKey: z.s
 // The ResourceViews table: one row per resource per UTC day, so the unique key over (resource, day) holds one id per bucket
 export const resourceViewTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.ResourceViews,
-  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(resourceViewsInResource)}" GROUP BY "resourceId"`,
   coreTable: getTableName(resourceViewsInResource),
-  map: (entity, { idMap, parents, timestamp }) => {
+  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(resourceViewsInResource)}" GROUP BY "resourceId"`,
+  toRow: (entity, { idMap, parents, timestamp }) => {
     const view = legacyResourceViewSchema.parse(entity);
     const resourceId = idMap.rewrite(view.partitionKey);
     if (!parents.resourceIds.has(resourceId)) return undefined;

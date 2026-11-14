@@ -1,11 +1,12 @@
 import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { R2Client } from "#src/models/cutover/R2Client";
+import type { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 
+import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
-import { encodeJsonLines } from "#src/services/cutover/snapshot/encodeJsonLines";
-import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
+import { encodeJsonLines } from "#src/services/cutover/snapshot/encodeJsonLines";
 
 type SourceClient = ReturnType<typeof createSourceClient>;
 
@@ -19,7 +20,7 @@ export const exportPostgresJsonLines = async (
 ): Promise<void> => {
   const rows = readKeysetRows({
     columns: table.columns,
-    dialect: "postgres",
+    dialect: SqlDialect.Postgres,
     keyColumns: table.primaryKeyColumns,
     qualifiedTableName: `${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
     readPage: async ({ params, sql }) => source.unsafe<Record<string, unknown>[]>(sql, params),

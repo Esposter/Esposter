@@ -3,9 +3,9 @@ import type { CoreColumn } from "#src/models/cutover/CoreColumn";
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
 import { describe, expect, test } from "vitest";
 
-describe(toD1Value, () => {
-  const createColumn = (dataType: string, notNull = true): CoreColumn => ({ dataType, name: "value", notNull });
+const createColumn = (dataType: string, notNull = true): CoreColumn => ({ dataType, name: "value", notNull });
 
+describe(toD1Value, () => {
   test("stores a timestamp as epoch milliseconds", () => {
     expect.hasAssertions();
 
@@ -30,6 +30,8 @@ describe(toD1Value, () => {
     expect.hasAssertions();
 
     expect(toD1Value(createColumn("custom"), "7")).toBe(7);
-    expect(() => toD1Value(createColumn("custom"), "9007199254740993")).toThrowError(/cannot store exactly/u);
+    expect(() => toD1Value(createColumn("custom"), "9007199254740993")).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Update, name: value, holds an integer D1 cannot store exactly]`,
+    );
   });
 });

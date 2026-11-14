@@ -3,17 +3,17 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { describe, expect, test } from "vitest";
 
-describe(orderCoreTables, () => {
-  const createTable = (name: string, foreignTableNames: string[] = []): CoreTable => ({
-    columns: [],
-    foreignTableNames,
-    name,
-    pgSchema: "schema",
-    pgTable: name,
-    primaryKeyColumns: [],
-    timestampUniqueColumnGroups: [],
-  });
+const createTable = (name: string, foreignTableNames: string[] = []): CoreTable => ({
+  columns: [],
+  foreignTableNames,
+  name,
+  pgSchema: "schema",
+  pgTable: name,
+  primaryKeyColumns: [],
+  timestampUniqueColumnGroups: [],
+});
 
+describe(orderCoreTables, () => {
   test("puts every parent before the tables that reference it", () => {
     expect.hasAssertions();
 
@@ -29,6 +29,10 @@ describe(orderCoreTables, () => {
   test("refuses a cycle rather than picking an order that breaks a foreign key", () => {
     expect.hasAssertions();
 
-    expect(() => orderCoreTables([createTable("a", ["b"]), createTable("b", ["a"])])).toThrowError(/cycle/u);
+    expect(() =>
+      orderCoreTables([createTable("a", ["b"]), createTable("b", ["a"])]),
+    ).toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Read, name: a, b, reference each other in a cycle, so no copy order satisfies every foreign key]`,
+    );
   });
 });

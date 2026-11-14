@@ -6,8 +6,8 @@ import type { ContainerClient } from "@azure/storage-blob";
 import { checkIsSameObject } from "#src/services/cutover/objects/checkIsSameObject";
 import { copyBlobToBucket } from "#src/services/cutover/objects/copyBlobToBucket";
 
-// Copies a blob under its new key, unless its object is already stored with the same bytes. Resolves to whether it copied. A textual blob
-// whose ids were rewritten is stored with a different MD5 than Azure's, so it is copied again on a re-run, which writes the same bytes
+// Copies a blob under its new key, unless its object is already stored with the same bytes. Resolves to whether it copied.
+// A textual blob whose ids were rewritten is stored with a different MD5 than Azure's, so it is copied again on a re-run, which writes the same bytes
 export const copyBlobIfChanged = async (
   client: R2Client,
   containerClient: ContainerClient,

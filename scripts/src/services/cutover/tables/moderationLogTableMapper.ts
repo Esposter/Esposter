@@ -1,8 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { AdminActionType, moderationLogsInMessage } from "@esposter/db-schema";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -16,13 +16,13 @@ const legacyModerationLogSchema = z.object({
   type: z.enum(AdminActionType),
 });
 
-// The ModerationLog table: one row per action, partitioned by room and read newest-first. Every id it holds is a Postgres row's, so each
-// is written with its new id
+// The ModerationLog table: one row per action, partitioned by room and read newest-first.
+// Every id it holds is a Postgres row's, so each is written with its new id
 export const moderationLogTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.ModerationLog,
-  countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationLogsInMessage)}" GROUP BY "roomId"`,
   coreTable: getTableName(moderationLogsInMessage),
-  map: (entity, { idMap, parents, timestamp }) => {
+  countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationLogsInMessage)}" GROUP BY "roomId"`,
+  toRow: (entity, { idMap, parents, timestamp }) => {
     const log = legacyModerationLogSchema.parse(entity);
     const roomId = idMap.rewrite(log.partitionKey);
     const targetUserId = idMap.rewrite(log.targetUserId);

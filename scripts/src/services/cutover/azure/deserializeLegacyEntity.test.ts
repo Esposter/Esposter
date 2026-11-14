@@ -1,8 +1,10 @@
-import { deserializeLegacyEntity } from "#src/services/cutover/azure/deserializeLegacyEntity";
 import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
+import { deserializeLegacyEntity } from "#src/services/cutover/azure/deserializeLegacyEntity";
 import { describe, expect, test } from "vitest";
 
 describe(deserializeLegacyEntity, () => {
+  const epoch = new Date(0);
+
   test("parses a legacy JSON property back and splits the system properties off", () => {
     expect.hasAssertions();
 
@@ -12,10 +14,10 @@ describe(deserializeLegacyEntity, () => {
       message: "[1,2]",
       partitionKey: "room",
       rowKey: "row",
-      timestamp: "2026-11-14T00:00:00.000Z",
+      timestamp: epoch.toISOString(),
     });
 
     expect(entity).toStrictEqual({ files: [{ id: "a" }], message: "[1,2]", partitionKey: "room", rowKey: "row" });
-    expect(timestamp).toStrictEqual(new Date("2026-11-14T00:00:00.000Z"));
+    expect(timestamp).toStrictEqual(epoch);
   });
 });

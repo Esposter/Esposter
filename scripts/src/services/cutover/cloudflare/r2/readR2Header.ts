@@ -1,4 +1,6 @@
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import type { Operation } from "@esposter/shared";
+
+import { InvalidOperationError } from "@esposter/shared";
 
 // A header the answer must carry: an answer without it is a malformed one, so it throws rather than reading as a zero
 export const readR2Header = (response: Response, header: string, operation: Operation, name: string): string => {

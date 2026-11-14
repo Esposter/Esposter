@@ -1,18 +1,19 @@
+/* oxlint-disable no-await-in-loop -- stop at the first: buckets run one after another so a failure names the bucket it stopped in, as copy-objects does */
 import type { CutoverEnvironment } from "#src/models/cutover/CutoverEnvironment";
 
-import { createBlobServiceClient } from "#src/services/cutover/azure/createBlobServiceClient";
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
+import { COPY_CONCURRENCY } from "#src/services/cutover/constants";
+import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
+import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
-import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
-import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { getR2BucketName } from "#src/services/cutover/getR2BucketName";
 import { loadIdMap } from "#src/services/cutover/ids/loadIdMap";
+import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
 import { requireEnvironmentVariable } from "#src/services/cutover/requireEnvironmentVariable";
-import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { readTableParents } from "#src/services/cutover/tables/readTableParents";
 import { checkTimestampUniqueIndexes } from "#src/services/cutover/verify/checkTimestampUniqueIndexes";
 import { verifyBucketObjects } from "#src/services/cutover/verify/verifyBucketObjects";
@@ -22,6 +23,8 @@ import { verifyOldIds } from "#src/services/cutover/verify/verifyOldIds";
 import { verifyRoomMessages } from "#src/services/cutover/verify/verifyRoomMessages";
 import { verifyStorageLedger } from "#src/services/cutover/verify/verifyStorageLedger";
 import { verifyTypedTables } from "#src/services/cutover/verify/verifyTypedTables";
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
+import { BlobServiceClient } from "@azure/storage-blob";
 
 // Checks the copy against the source and fails on the first difference, naming its key. Nothing is written
 export const runVerify = async (environment: CutoverEnvironment): Promise<void> => {
@@ -31,10 +34,10 @@ export const runVerify = async (environment: CutoverEnvironment): Promise<void> 
   const executor = createCoreExecutor(cloudflareEnvironment, variables);
   const client = createR2Client();
   const idMap = await loadIdMap(client, getCutoverArchiveBucketName(environment));
-  for (const table of orderCoreTables(getCoreTables())) {
+  await forEachConcurrently(orderCoreTables(getCoreTables()), COPY_CONCURRENCY, async (table) => {
     await checkTimestampUniqueIndexes(source, table);
     console.info(`${table.name}: ${await verifyCoreTable(source, executor, table, idMap)} rows match`);
-  }
+  });
   await source.end();
   await verifyOldIds(executor, idMap);
   await verifyForeignKeys(executor);
@@ -46,7 +49,7 @@ export const runVerify = async (environment: CutoverEnvironment): Promise<void> 
     parents: await readTableParents(executor),
     secret: requireEnvironmentVariable("CUTOVER_SECRET"),
   });
-  const azure = createBlobServiceClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
+  const azure = BlobServiceClient.fromConnectionString(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
   const objectSizes = new Map<string, number>();
   for (const bucket of getCopyBuckets()) {
     const r2Bucket = getR2BucketName(environment, bucket);

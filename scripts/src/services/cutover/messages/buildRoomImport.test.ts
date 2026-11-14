@@ -1,14 +1,15 @@
 import type { LegacyMessage } from "#src/models/cutover/LegacyMessage";
 import type { TableParents } from "#src/models/cutover/TableParents";
 
-import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
 import { rewriteOldIds } from "#src/services/cutover/ids/rewriteOldIds";
+import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
 import { AZURE_SELF_DESTRUCT_TIMER, MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+const getRowKey = (epochMilliseconds: number): string =>
+  (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(epochMilliseconds) * 1000000n).toString();
+
 describe(buildRoomImport, () => {
-  const getRowKey = (epochMilliseconds: number): string =>
-    (BigInt(AZURE_SELF_DESTRUCT_TIMER) - BigInt(epochMilliseconds) * 1000000n).toString();
   const epochMilliseconds = 1700000000000;
   const ROOT_ROW_KEY = getRowKey(epochMilliseconds);
   const REPLY_ROW_KEY = getRowKey(epochMilliseconds + 1000);
@@ -30,11 +31,11 @@ describe(buildRoomImport, () => {
     type: MessageType.Message,
     ...overrides,
   });
-  const numberByRowKey = new Map([
-    [ROOT_ROW_KEY, 1],
+  const rowKeyNumberMap = new Map([
     [REPLY_ROW_KEY, 2],
+    [ROOT_ROW_KEY, 1],
   ]);
-  const getNumber = (rowKey: string) => numberByRowKey.get(rowKey);
+  const getNumber = (rowKey: string) => rowKeyNumberMap.get(rowKey);
 
   test("names a reply and a reaction by the number of the message they point at", () => {
     expect.hasAssertions();
@@ -110,7 +111,9 @@ describe(buildRoomImport, () => {
       scheduledMessages: [],
     });
 
-    expect(roomImport.messages).toMatchObject([{ id: 2, replyToId: null }]);
+    expect(roomImport.messages.map(({ id, replyToId }) => ({ id, replyToId }))).toStrictEqual([
+      { id: 2, replyToId: null },
+    ]);
   });
 
   test("rewrites every old id in a message's text and mentions through the id map", () => {
@@ -122,7 +125,7 @@ describe(buildRoomImport, () => {
       idMap,
       messages: [
         {
-          message: createMessage({ message: `hi ${USER_OLD_ID}`, mentions: [USER_OLD_ID], userId: USER_OLD_ID }),
+          message: createMessage({ mentions: [USER_OLD_ID], message: `hi ${USER_OLD_ID}`, userId: USER_OLD_ID }),
           timestamp: undefined,
         },
       ],
@@ -130,6 +133,8 @@ describe(buildRoomImport, () => {
       scheduledMessages: [],
     });
 
-    expect(roomImport.messages[0]).toMatchObject({ message: `hi ${USER_NEW_ID}`, mentions: [USER_NEW_ID] });
+    expect(roomImport.messages.map(({ mentions, message }) => ({ mentions, message }))).toStrictEqual([
+      { mentions: [USER_NEW_ID], message: `hi ${USER_NEW_ID}` },
+    ]);
   });
 });

@@ -1,8 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { requireReissuedTokenHash } from "#src/services/cutover/ids/requireReissuedTokenHash";
 import { programParticipantsInResource } from "@esposter/db-schema";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -15,14 +15,14 @@ const legacyProgramParticipantSchema = z.object({
   token: z.string(),
 });
 
-// The ProgramParticipants table: partitioned by the program's resource, and its time is the write's own timestamp. The token is the
-// bearer credential a survey write accepts, so the row keeps only the hash of a token nobody receives: the owner regenerates the link after
-// the cutover. A survey response that names the old token is written with that same hash
+// The ProgramParticipants table: partitioned by the program's resource, and its time is the write's own timestamp.
+// The token is the bearer credential a survey write accepts, so the row keeps only the hash of a token nobody receives: the owner regenerates the link after the cutover.
+// A survey response that names the old token is written with that same hash
 export const programParticipantTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.ProgramParticipants,
-  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(programParticipantsInResource)}" GROUP BY "resourceId"`,
   coreTable: getTableName(programParticipantsInResource),
-  map: (entity, { idMap, parents, timestamp }) => {
+  countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(programParticipantsInResource)}" GROUP BY "resourceId"`,
+  toRow: (entity, { idMap, parents, timestamp }) => {
     const participant = legacyProgramParticipantSchema.parse(entity);
     const resourceId = idMap.rewrite(participant.partitionKey);
     if (!parents.resourceIds.has(resourceId)) return undefined;

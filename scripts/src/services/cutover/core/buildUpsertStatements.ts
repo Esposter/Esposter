@@ -5,8 +5,8 @@ import type { D1Value } from "#src/services/cutover/core/toD1Value";
 import { D1_STATEMENT_BYTE_LIMIT, D1_STATEMENT_PARAMETER_LIMIT } from "#src/services/cutover/constants";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 
-// Inserts rows as upserts keyed by the primary key. An upsert, not a delete and insert, because D1 cascades a delete into
-// every row that references it, and the typed Azure rows reference the Postgres ones they are copied beside
+// Inserts rows as upserts keyed by the primary key.
+// An upsert, not a delete and insert: D1 cascades a delete into every row that references it. The typed Azure rows reference the Postgres ones they are copied beside.
 export const buildUpsertStatements = (table: CoreTable, rows: D1Value[][]): D1Statement[] => {
   const columnNames = table.columns.map(({ name }) => quoteIdentifier(name));
   const keyNames = table.primaryKeyColumns.map(({ name }) => quoteIdentifier(name));

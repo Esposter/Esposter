@@ -3,12 +3,14 @@ export const CUTOVER_ARCHIVE_PURPOSE = "cutover-archive";
 // Every checkpoint and snapshot object sits under one prefix, so the archive lists as its steps read
 export const ARCHIVE_CHECKPOINT_PREFIX = "checkpoints";
 export const ARCHIVE_SNAPSHOT_PREFIX = "snapshots";
-// Live copies run this many objects or entities at a time: enough to hide a round trip, few enough to stay inside a
-// container's throttle and a Worker-free machine's memory
+// Live copies run this many objects or entities at a time, enough to hide a round trip.
+// It is few enough to stay inside a container's throttle and a Worker-free machine's memory
 export const COPY_CONCURRENCY = 16;
 // A D1 statement takes at most this many bound parameters and this many bytes of SQL and values
 export const D1_STATEMENT_PARAMETER_LIMIT = 100;
 export const D1_STATEMENT_BYTE_LIMIT = 100 * 1024;
+// A request to the Cloudflare API or the functions Worker, bounded longer than a script's own fetch since a batch or a route can run for minutes
+export const CUTOVER_REQUEST_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // A batch request carries this many statements, all applied in one transaction
 export const D1_BATCH_STATEMENT_COUNT = 20;
 export const DEFER_FOREIGN_KEYS_STATEMENT = "PRAGMA defer_foreign_keys = true";
@@ -18,11 +20,11 @@ export const INVITE_CODE_SCOPE = "inviteCodes";
 export const MESSAGE_NUMBER_SCOPE = "messageNumbers";
 export const KEYSET_PAGE_SIZE = 1000;
 export const AZURE_PAGE_SIZE = 1000;
-// A multipart part is buffered in memory before it is sent, so it is sized for that, and every part but the last is at
-// least R2's five mebibyte minimum
+// A multipart part is buffered in memory before it is sent, so it is sized for that.
+// Every part but the last is at least R2's five mebibyte minimum
 export const R2_MULTIPART_PART_BYTES = 64 * 1024 * 1024;
-// The temporary internal routes on the functions Worker the cutover calls, and the header their secret travels in. The functions Worker
-// names the same paths; all of them are deleted at teardown
+// The temporary internal routes on the functions Worker the cutover calls, and the header their secret travels in.
+// The functions Worker names the same paths; all of them are deleted at teardown
 export const RESCHEDULE_PATH = "/_internal/cutover/reschedule";
 export const ROOM_IMPORT_PATH = "/_internal/cutover/room-import";
 export const ROOM_SUMMARY_PATH = "/_internal/cutover/room-summary";

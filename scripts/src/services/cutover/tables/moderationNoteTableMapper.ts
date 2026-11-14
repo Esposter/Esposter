@@ -1,8 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { moderationNotesInMessage } from "@esposter/db-schema";
-import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -15,13 +15,13 @@ const legacyModerationNoteSchema = z.object({
   targetUserId: z.string(),
 });
 
-// The ModerationNotes table: one row per note, partitioned by room and read newest-first. Every id it holds is a Postgres row's, so each
-// is written with its new id
+// The ModerationNotes table: one row per note, partitioned by room and read newest-first.
+// Every id it holds is a Postgres row's, so each is written with its new id
 export const moderationNoteTableMapper: TableMapper = {
   azureTable: LegacyAzureTable.ModerationNotes,
-  countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationNotesInMessage)}" GROUP BY "roomId"`,
   coreTable: getTableName(moderationNotesInMessage),
-  map: (entity, { idMap, parents, timestamp }) => {
+  countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationNotesInMessage)}" GROUP BY "roomId"`,
+  toRow: (entity, { idMap, parents, timestamp }) => {
     const note = legacyModerationNoteSchema.parse(entity);
     const roomId = idMap.rewrite(note.partitionKey);
     const targetUserId = idMap.rewrite(note.targetUserId);

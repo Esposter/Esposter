@@ -13,15 +13,15 @@ export interface RoomImportSource {
   // The number a message was given in its room, by its row key, or undefined when it has none
   getNumber: (rowKey: string) => number | undefined;
   idMap: Pick<IdMap, "rewrite">;
-  messages: { message: LegacyMessage; timestamp: Date | undefined }[];
+  messages: { message: LegacyMessage; timestamp?: Date }[];
   parents: TableParents;
   scheduledMessages: RoomImport["scheduledMessages"];
 }
 
-// A room's messages, reactions and pending scheduled messages as the room object imports them. A message is written under the number
-// its row key was given, and a reply, a reaction or a scheduled reply names its message by that number. A reply whose root was never
-// numbered is a plain message, as the schema says. A message whose sender is gone keeps its row with no author, as the schema has it, so
-// the replies to it keep their root
+// A room's messages, reactions and pending scheduled messages as the room object imports them.
+// A message is written under the number its row key was given, and a reply, a reaction or a scheduled reply names its message by that number.
+// A reply whose root was never numbered is a plain message, as the schema says.
+// A message whose sender is gone keeps its row with no author, as the schema has it, so the replies to it keep their root
 export const buildRoomImport = ({
   emojis,
   getNumber,

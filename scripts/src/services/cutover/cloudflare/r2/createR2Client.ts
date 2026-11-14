@@ -1,5 +1,8 @@
+import type { R2Transport } from "#src/models/cloudflare/R2Transport";
 import type { R2Client } from "#src/models/cutover/R2Client";
+import type { R2ListPage } from "#src/models/cutover/R2ListPage";
 
+import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
 import { buildR2Url } from "#src/services/cutover/cloudflare/r2/buildR2Url";
 import { checkR2Response } from "#src/services/cutover/cloudflare/r2/checkR2Response";
 import {
@@ -11,17 +14,34 @@ import { parseR2ListObjectsXml } from "#src/services/cutover/cloudflare/r2/parse
 import { readR2Header } from "#src/services/cutover/cloudflare/r2/readR2Header";
 import { sendR2Request } from "#src/services/cutover/cloudflare/r2/sendR2Request";
 import { uploadR2Multipart } from "#src/services/cutover/cloudflare/r2/uploadR2Multipart";
-import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
 import { FETCH_TIMEOUT_MS } from "#src/services/shared/constants";
 import { Operation } from "@esposter/shared";
 
-// R2's S3 API, each request signed with the account's keys. A request that gets an answer is checked for its status, and
-// one that gets none throws naming its object
+// One page of a bucket's listing, asked for with the token the page before it answered, or with none for the first page
+const readR2ListPage = async (
+  transport: R2Transport,
+  endpoint: string,
+  bucket: string,
+  continuationToken: string,
+): Promise<R2ListPage> => {
+  const query: Record<string, string> =
+    continuationToken === "" ? { "list-type": "2" } : { "continuation-token": continuationToken, "list-type": "2" };
+  const url = buildR2Url(endpoint, bucket, "", query);
+  const response = await sendR2Request(transport, Operation.Read, bucket, url, {
+    method: "GET",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  await checkR2Response(response, Operation.Read, bucket);
+  return parseR2ListObjectsXml(await response.text());
+};
+
+// R2's S3 API, each request signed with the account's keys.
+// A request that gets an answer is checked for its status, and one that gets none throws naming its object
 export const createR2Client = (): R2Client => {
   const transport = createR2Transport();
   const endpoint = transport.endpoint;
-  // A streamed body can be sent once, and a request that gets a 5xx is sent again unless it has no retries. A streamed PUT
-  // never retries: the step fails and a re-run redoes it, skipping what is already stored
+  // A streamed body can be sent once, and a request that gets a 5xx is sent again unless it has no retries.
+  // A streamed PUT never retries: the step fails and a re-run redoes it, skipping what is already stored
   const streamTransport = createR2Transport({ retries: 0 });
 
   return {
@@ -63,17 +83,8 @@ export const createR2Client = (): R2Client => {
     async *listObjects(bucket) {
       let continuationToken = "";
       do {
-        const query =
-          continuationToken === ""
-            ? { "list-type": "2" }
-            : { "continuation-token": continuationToken, "list-type": "2" };
-        const url = buildR2Url(endpoint, bucket, "", query);
-        const response = await sendR2Request(transport, Operation.Read, bucket, url, {
-          method: "GET",
-          signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
-        });
-        await checkR2Response(response, Operation.Read, bucket);
-        const page = parseR2ListObjectsXml(await response.text());
+        // oxlint-disable-next-line no-await-in-loop -- pagination: each page is asked for with the token the one before answered
+        const page = await readR2ListPage(transport, endpoint, bucket, continuationToken);
         yield* page.objects;
         continuationToken = page.nextContinuationToken;
       } while (continuationToken !== "");

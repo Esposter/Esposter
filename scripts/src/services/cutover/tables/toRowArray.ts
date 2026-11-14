@@ -3,8 +3,8 @@ import type { D1Value } from "#src/services/cutover/core/toD1Value";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A mapped row in the table's column order, which the upsert takes by position. A column the mapper left out is refused rather
-// than written as a default
+// A mapped row in the table's column order, which the upsert takes by position.
+// A column the mapper left out is refused rather than written as a default
 export const toRowArray = (table: CoreTable, values: Record<string, D1Value>): D1Value[] =>
   table.columns.map(({ name }) => {
     const value = values[name];

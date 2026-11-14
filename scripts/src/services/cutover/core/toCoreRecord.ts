@@ -3,26 +3,26 @@ import type { IdMap } from "#src/models/cutover/IdMap";
 import type { D1Value } from "#src/services/cutover/core/toD1Value";
 
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
-import { inviteTableName, tokenColumnsByTableName } from "#src/services/cutover/ids/credentialColumns";
+import { inviteTableName, tableNameTokenColumnsMap } from "#src/services/cutover/ids/credentialColumns";
 import { requireNoReadableTokenColumn } from "#src/services/cutover/ids/requireNoReadableTokenColumn";
 import { requireReissuedTokenHash } from "#src/services/cutover/ids/requireReissuedTokenHash";
-import { isOldId } from "#src/services/cutover/ids/rewriteOldIds";
+import { checkIsOldId } from "#src/services/cutover/ids/rewriteOldIds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// The D1 values of one Postgres row, by column name: each through the copy's transform, every old UUID in it replaced by its new id, every
-// bearer token replaced by the hash it was re-issued as, and an invite's code by the one it was re-issued as. A row whose id was never given
-// a new one is refused, since writing it under its old id would leave its references pointing at nothing the copy wrote
+// The D1 values of one Postgres row, by column name: each through the copy's transform, and each old UUID in it replaced by its new id.
+// Every bearer token is replaced by the hash it was re-issued as, and an invite's code by the one it was re-issued as.
+// A row whose id was never given a new one is refused, since writing it under its old id would leave its references pointing at nothing the copy wrote
 export const toCoreRecord = (table: CoreTable, row: Record<string, unknown>, idMap: IdMap): Record<string, D1Value> => {
   requireNoReadableTokenColumn(table);
   const oldId = row.id;
-  if (typeof oldId === "string" && isOldId(oldId) && idMap.newIdOf(oldId) === undefined)
+  if (typeof oldId === "string" && checkIsOldId(oldId) && idMap.newIdOf(oldId) === undefined)
     throw new InvalidOperationError(
       Operation.Read,
       table.name,
       `has the row ${oldId} with no new id: assign-ids must run first`,
     );
 
-  const tokenColumns = tokenColumnsByTableName.get(table.name) ?? [];
+  const tokenColumns = tableNameTokenColumnsMap.get(table.name) ?? [];
   const record: Record<string, D1Value> = {};
   for (const column of table.columns) {
     const tokenColumn = tokenColumns.find(({ column: name }) => name === column.name);

@@ -1,4 +1,3 @@
-import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import type { R2Transport } from "#src/models/cloudflare/R2Transport";
 
 import { buildR2Url } from "#src/services/cutover/cloudflare/r2/buildR2Url";
@@ -8,10 +7,11 @@ import { sendR2Request } from "#src/services/cutover/cloudflare/r2/sendR2Request
 import { uploadR2Part } from "#src/services/cutover/cloudflare/r2/uploadR2Part";
 import { R2_MULTIPART_PART_BYTES } from "#src/services/cutover/constants";
 import { FETCH_TIMEOUT_MS } from "#src/services/shared/constants";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 
-// An object of unknown length, sent in parts of at least R2_MULTIPART_PART_BYTES, each held in memory until it is sent. A
-// failure aborts the upload, so no part is left stored and billed. An abort that fails too is logged, and the error that
-// caused the abort is what the caller sees
+// An object of unknown length, sent in parts of at least R2_MULTIPART_PART_BYTES, each held in memory until it is sent.
+// A failure aborts the upload, so no part is left stored and billed. An abort that fails too is logged.
+// The error that caused the abort is what the caller sees
 export const uploadR2Multipart = async (
   transport: R2Transport,
   endpoint: string,
@@ -20,12 +20,12 @@ export const uploadR2Multipart = async (
   chunks: AsyncIterable<Uint8Array>,
 ): Promise<void> => {
   const createUrl = buildR2Url(endpoint, bucket, key, { uploads: "" });
-  const created = await sendR2Request(transport, Operation.Create, key, createUrl, {
+  const createResponse = await sendR2Request(transport, Operation.Create, key, createUrl, {
     method: "POST",
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
-  await checkR2Response(created, Operation.Create, key);
-  const uploadId = readXmlElement(await created.text(), "UploadId");
+  await checkR2Response(createResponse, Operation.Create, key);
+  const uploadId = readXmlElement(await createResponse.text(), "UploadId");
   if (uploadId === "") throw new InvalidOperationError(Operation.Create, key, "was given no upload id");
 
   await getResultAsync(async () => {

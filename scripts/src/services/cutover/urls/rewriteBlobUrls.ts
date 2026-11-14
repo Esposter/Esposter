@@ -7,20 +7,30 @@ import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { writeStatements } from "#src/services/cutover/core/writeStatements";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { rewriteBlobUrl } from "#src/services/cutover/urls/rewriteBlobUrl";
+import { z } from "zod";
 
 const BLOB_HOST_PATTERN = "%.blob.core.windows.net/%";
+const d1KeyValueSchema = z.union([z.string(), z.number(), z.null()]);
 
-// Rewrites every stored absolute Azure blob URL in an `image` column (a user's, a room's, a webhook app user's) to its
-// public asset URL. Idempotent: a row already rewritten no longer matches the pattern
+// Rewrites every stored absolute Azure blob URL in an `image` column (a user's, a room's, a webhook app user's) to its public asset URL.
+// Idempotent: a row already rewritten no longer matches the pattern
 export const rewriteBlobUrls = async (executor: D1Executor, publicAssetsBaseUrl: string): Promise<number> => {
   const tables = orderCoreTables(getCoreTables()).filter((table) => table.columns.some(({ name }) => name === "image"));
   let rewritten = 0;
-  for (const table of tables) {
-    const updates = await getUpdates(executor, table, publicAssetsBaseUrl);
-    rewritten += updates.length;
-    await writeStatements(executor, updates);
-  }
+  for (const table of tables)
+    // oxlint-disable-next-line no-await-in-loop -- committed prefix: a table is rewritten before the next is read, so a failure stops the tables behind it and a re-run reaches only the rows still holding a blob URL
+    rewritten += await rewriteTableBlobUrls(executor, table, publicAssetsBaseUrl);
   return rewritten;
+};
+
+const rewriteTableBlobUrls = async (
+  executor: D1Executor,
+  table: CoreTable,
+  publicAssetsBaseUrl: string,
+): Promise<number> => {
+  const updates = await getUpdates(executor, table, publicAssetsBaseUrl);
+  await writeStatements(executor, updates);
+  return updates.length;
 };
 
 const getUpdates = async (
@@ -39,7 +49,7 @@ const getUpdates = async (
     if (next === undefined || next === image) return [];
     return [
       {
-        params: [next, ...table.primaryKeyColumns.map(({ name }) => row[name] ?? null)],
+        params: [next, ...table.primaryKeyColumns.map(({ name }) => d1KeyValueSchema.parse(row[name] ?? null))],
         sql: `UPDATE ${quoteIdentifier(table.name)} SET ${quoteIdentifier("image")} = ? WHERE ${table.primaryKeyColumns
           .map(({ name }) => `${quoteIdentifier(name)} = ?`)
           .join(" AND ")}`,

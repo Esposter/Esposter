@@ -7,9 +7,9 @@ import { buildUpsertStatements } from "#src/services/cutover/core/buildUpsertSta
 import { writeStatements } from "#src/services/cutover/core/writeStatements";
 import { toRowArray } from "#src/services/cutover/tables/toRowArray";
 
-// Upserts the row of every entity, a page at a time. Each page's new ids are flushed to the archive before its rows are written, so
-// a row is never written under an id a re-run could not find. Returns how many rows were written and how many entities were left
-// out because a parent is gone
+// Upserts the row of every entity, a page at a time.
+// Each page's new ids are flushed to the archive before its rows are written, so a row is never written under an id a re-run could not locate.
+// Returns how many rows were written and how many entities were left out because a parent is gone
 export const copyMapperRows = async (options: MapperRowsOptions): Promise<{ copied: number; skipped: number }> => {
   const { coreTable, entities, executor, idMap, mapper, parents } = options;
   let copied = 0;
@@ -19,7 +19,7 @@ export const copyMapperRows = async (options: MapperRowsOptions): Promise<{ copi
   const writePage = async (): Promise<void> => {
     const rows: D1Value[][] = [];
     for (const { entity, timestamp } of page) {
-      const values = mapper.map(entity, { idMap, parents, timestamp });
+      const values = mapper.toRow(entity, { idMap, parents, timestamp });
       if (values) rows.push(toRowArray(coreTable, values));
       else skipped += 1;
     }

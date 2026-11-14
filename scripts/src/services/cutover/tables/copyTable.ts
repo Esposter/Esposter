@@ -1,26 +1,27 @@
 import type { CopyTableOptions } from "#src/models/cutover/CopyTableOptions";
 import type { CutoverCheckpoint } from "#src/models/cutover/CutoverCheckpoint";
 
-import { createTableClient } from "#src/services/cutover/azure/createTableClient";
 import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint";
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
 import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
-import { copyMapperRows } from "#src/services/cutover/tables/copyMapperRows";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
+import { copyMapperRows } from "#src/services/cutover/tables/copyMapperRows";
 import { deleteStaleMapperRows } from "#src/services/cutover/tables/deleteStaleMapperRows";
 import { getMapperCoreTable } from "#src/services/cutover/tables/getMapperCoreTable";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
+import { TableClient } from "@azure/data-tables";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// One Azure Table into its typed table. The full copy runs while the app is live and records when it began. The delta copies what
-// changed since then and removes the rows Azure no longer lists. Both are re-runnable: an entity keeps the id the id map gave it,
-// so a re-run upserts the same rows
+// One Azure Table into its typed table.
+// The full copy runs while the app is live and records when it began.
+// The delta copies what changed since then and removes the rows Azure no longer lists.
+// Both are re-runnable: an entity keeps the id the id map gave it, so a re-run upserts the same rows
 export const copyTable = async (options: CopyTableOptions): Promise<void> => {
   const { archiveBucket, client, connectionString, delta, executor, idMap, mapper, parents } = options;
   const unit = `${COPY_TABLES_UNIT_PREFIX}/${mapper.azureTable}`;
   const checkpoint: CutoverCheckpoint = (await readCheckpoint(client, archiveBucket, unit)) ?? {};
   const coreTable = getMapperCoreTable(mapper.coreTable);
-  const tableClient = createTableClient(connectionString, mapper.azureTable);
+  const tableClient = TableClient.fromConnectionString(connectionString, mapper.azureTable);
   const rowsOptions = { coreTable, executor, idMap, mapper, parents };
 
   if (!delta) {

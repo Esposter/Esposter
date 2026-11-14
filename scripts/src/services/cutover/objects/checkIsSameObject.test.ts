@@ -11,30 +11,30 @@ describe(checkIsSameObject, () => {
   test("is true for an object with the blob's size and MD5", () => {
     expect.hasAssertions();
 
-    expect(checkIsSameObject(blob, stored)).toStrictEqual(true);
+    expect(checkIsSameObject(blob, stored)).toBe(true);
   });
 
   test("is false when no object is stored", () => {
     expect.hasAssertions();
 
-    expect(checkIsSameObject(blob, undefined)).toStrictEqual(false);
+    expect(checkIsSameObject(blob, undefined)).toBe(false);
   });
 
   test("is false for a blob Azure stored no MD5 for", () => {
     expect.hasAssertions();
 
-    expect(checkIsSameObject({ ...blob, md5: undefined }, stored)).toStrictEqual(false);
+    expect(checkIsSameObject({ ...blob, md5: undefined }, stored)).toBe(false);
   });
 
   test("is false when the sizes differ", () => {
     expect.hasAssertions();
 
-    expect(checkIsSameObject(blob, { ...stored, size: 4 })).toStrictEqual(false);
+    expect(checkIsSameObject(blob, { ...stored, size: 4 })).toBe(false);
   });
 
   test("is false when the MD5 differs", () => {
     expect.hasAssertions();
 
-    expect(checkIsSameObject(blob, { ...stored, etag: "010204" })).toStrictEqual(false);
+    expect(checkIsSameObject(blob, { ...stored, etag: "010204" })).toBe(false);
   });
 });

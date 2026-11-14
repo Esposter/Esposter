@@ -1,4 +1,5 @@
-import { CUTOVER_SECRET_HEADER } from "#src/services/cutover/constants";
+import { CUTOVER_REQUEST_TIMEOUT_MS, CUTOVER_SECRET_HEADER } from "#src/services/cutover/constants";
+import { fetchResponse } from "#src/services/shared/fetchResponse";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
 // Calls one of the functions Worker's temporary cutover routes. The secret travels in a header and never in the URL or a message body
@@ -9,13 +10,14 @@ export const callFunctionsRoute = async (
   body?: unknown,
 ): Promise<unknown> => {
   const response = await getResultAsync(() =>
-    fetch(new URL(path, functionsUrl), {
+    fetchResponse(new URL(path, functionsUrl).href, {
       body: body === undefined ? undefined : JSON.stringify(body),
       headers: {
         [CUTOVER_SECRET_HEADER]: secret,
         ...(body === undefined ? {} : { "content-type": "application/json" }),
       },
       method: "POST",
+      timeoutMs: CUTOVER_REQUEST_TIMEOUT_MS,
     }),
   ).match(
     (value) => value,

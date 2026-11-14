@@ -11,9 +11,9 @@ import { copyBlobIfChanged } from "#src/services/cutover/objects/copyBlobIfChang
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// Copies one container into its R2 bucket. The full copy runs while the app is live and records when it began. The delta
-// runs in the freeze: it copies what changed since then and deletes what Azure no longer lists. Both skip an object already
-// stored with the same MD5, so a re-run redoes only what is not yet there
+// Copies one container into its R2 bucket. The full copy runs while the app is live and records when it began.
+// The delta runs in the freeze: it copies what changed since then and deletes what Azure no longer lists.
+// Both skip an object already stored with the same MD5, so a re-run redoes only what is not yet there
 export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Promise<BucketCopyCounts> => {
   const { archiveBucket, azure, bucket, client, delta, idMap, r2Bucket } = options;
   const unit = `${COPY_OBJECTS_UNIT_PREFIX}/${bucket}`;
