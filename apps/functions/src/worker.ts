@@ -15,8 +15,9 @@ export { CallObject } from "#src/durableObjects/CallObject";
 export { RoomObject } from "#src/durableObjects/RoomObject";
 export { UserObject } from "#src/durableObjects/UserObject";
 
-// The functions Worker: a queue consumer for every job and for each job's dead-letter queue, and the nightly purge on its
-// Cron Trigger. Its one HTTP route is the cutover's temporary reschedule, which is deleted at teardown
+// The functions Worker: a queue consumer for every job and for each job's dead-letter queue, and the nightly purge on
+// its Cron Trigger. Its only HTTP routes are the cutover's three temporary internal routes (the reschedule, and the
+// import and summary of a room's copied history), all deleted at teardown
 // (openspec/changes/infra-cloudflare-cutover/design.md)
 export default {
   fetch: (request, env) => handleCutoverRequest(request, env),
