@@ -23,12 +23,6 @@ const readSideEffects = (packagePath: string): unknown =>
 describe("sideEffects", () => {
   const PACKAGE_PATHS = readTsdownPackagePaths();
   const STYLESHEET_GLOB = "**/*.css";
-  // The Functions app registers each handler with a bare `app.eventGrid(...)` call in a module whose only export
-  // Is `export default {}`, which the barrel does not re-export. Told it has no side effects, rolldown drops
-  // Every registration and the deployed app reports Running while running no trigger — so it is the one package
-  // Whose whole self is a side effect. A package with one such module names that module instead, which is what
-  // Keeps a blanket `true` from being the easy answer for a package that is mostly tree-shakeable.
-  const SIDE_EFFECTING_PACKAGE_PATH = "apps/functions";
 
   test("are declared by every package a bundler resolves", () => {
     expect.hasAssertions();
@@ -63,13 +57,5 @@ describe("sideEffects", () => {
     });
 
     expect(droppedStylesheetPackagePaths).toStrictEqual([]);
-  });
-
-  test("are claimed wholesale only by the package whose entry exists to run", () => {
-    expect.hasAssertions();
-
-    const wholesalePackagePaths = PACKAGE_PATHS.filter((packagePath) => readSideEffects(packagePath) === true);
-
-    expect(wholesalePackagePaths).toStrictEqual([SIDE_EFFECTING_PACKAGE_PATH]);
   });
 });

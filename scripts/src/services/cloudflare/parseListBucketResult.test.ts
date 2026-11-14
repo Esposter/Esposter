@@ -1,11 +1,11 @@
 import { parseListBucketResult } from "#src/services/cloudflare/parseListBucketResult";
 import { describe, expect, test } from "vitest";
 
-const LAST_MODIFIED = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString();
-const TRUNCATED_LISTING = `<?xml version="1.0" encoding="UTF-8"?>
+describe(parseListBucketResult, () => {
+  const LAST_MODIFIED = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds")).toISOString();
+  const TRUNCATED_LISTING = `<?xml version="1.0" encoding="UTF-8"?>
 <ListBucketResult><IsTruncated>true</IsTruncated><NextContinuationToken>token-2</NextContinuationToken><Contents><Key>object/a&amp;b.json</Key><LastModified>${LAST_MODIFIED}</LastModified></Contents></ListBucketResult>`;
 
-describe(parseListBucketResult, () => {
   test("reads each key and the instant it was written, decoding the entities a key carries", () => {
     expect.hasAssertions();
 
