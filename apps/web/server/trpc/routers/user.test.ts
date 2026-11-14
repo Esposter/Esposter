@@ -39,7 +39,6 @@ import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
@@ -133,7 +132,6 @@ describe("userRouter", () => {
     getMockRevokeSession().mockReset();
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
-    MockTableDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
     userObjectCalls.length = 0;
