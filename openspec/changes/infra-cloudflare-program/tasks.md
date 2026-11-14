@@ -67,3 +67,10 @@
 
 - [ ] 8.1 Sweep every spec, skill, ledger and README for the retired platform: delete pages describing retired mechanisms, merge duplicates, give the `drizzle` skill its D1 rules (batches, guarded writes, FTS5, `json_each`, the hundred-parameter cap), and replace the root README's Railway and Postgres badges with Cloudflare's. Verified by no mention of Azure, Railway, LiveKit, Postgres or Web PubSub outside the cutover and the archive.
 - [ ] 8.2 Rename any package, folder or identifier still named for the retired platform. Verified by the same search.
+
+## 9. Finish, in this order
+
+- [ ] 9.1 Everything above lands, the develop estate on `dev.esposter.com` is checked by hand, and CI's tests, typecheck and lint are green on `ai/cloudflare`. Verified by one green CI run on the branch.
+- [ ] 9.2 A review pass over the whole branch (the `code-review` skill, both lanes), its findings fixed on the branch. Verified by the pass ending with nothing left to fix.
+- [ ] 9.3 Rebase `ai/cloudflare` onto `ai/queue` and land it there, then run the production cutover (7.4). Verified by the cutover's checks.
+- [ ] 9.4 Tear down the old estate: the Railway services deleted through the Railway CLI, the Azure resources removed through Pulumi, then the owner cancels the Railway plan and unpublishes the retired npm packages. Verified by no Railway service or Azure resource remaining.
