@@ -29,6 +29,9 @@ const knipConfiguration: KnipConfig = {
         "app/components/**/*.vue",
         "scripts/*/index.ts",
         "server/development/*.ts",
+        // The bindings' declaration is ambient for the server program and named from inside the browser programs'
+        // `declare module "cloudflare:workers"`, which knip does not read
+        "server/types/cloudflare.d.ts",
         "server/services/devSession/postDevSession.ts",
         "service-worker/sw.ts",
       ],

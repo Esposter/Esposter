@@ -56,8 +56,7 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
-    "tsdown": "catalog:",
-    "type-fest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@esposter/db-schema": "workspace:*",
