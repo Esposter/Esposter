@@ -1,6 +1,6 @@
 ## Purpose
 
-The standard for product persistence and surface — one Postgres table, one blob container, one procedure factory, opt-in capabilities.
+The standard for product persistence and surface — one D1 table, one R2 bucket, one procedure factory, opt-in capabilities.
 
 ## Requirements
 

@@ -10,9 +10,9 @@ What content alone cannot answer is the reverse — which resources point at thi
 
 | Column     | Type                          | Notes                                                                                 |
 | ---------- | ----------------------------- | ------------------------------------------------------------------------------------- |
-| `sourceId` | uuid, FK → resources, cascade | the resource whose content holds the reference; its rows go with it when it is purged |
-| `type`     | `ResourceLinkType` pg enum    | the role: what the target is used as                                                  |
-| `targetId` | uuid, no reference            | the resource referred to                                                              |
+| `sourceId` | text, FK → resources, cascade | the resource whose content holds the reference; its rows go with it when it is purged |
+| `type`     | `ResourceLinkType` text enum  | the role: what the target is used as                                                  |
+| `targetId` | text, no reference            | the resource referred to                                                              |
 
 The primary key is `(sourceId, type, targetId)`, and `resourceLinks_target_index` on `(targetId, type)` is the reverse lookup.
 
@@ -26,7 +26,7 @@ A field that holds another resource's id is written as `createResourceLinkSchema
 
 - `DatasetReference.id` is a `Dataset` link, which covers a Dashboard visual's binding, an Email's merge source and a Program's audience at once.
 - A Program's `emailId` and `surveyId` are `Email` and `Survey` links, each `.or(z.literal(""))` so the empty sentinel stays its absence.
-- An empty id is dropped before the write, never sent to the uuid column.
+- An empty id is dropped before the write, never sent to the id column.
 
 `createGetResourceLinkTargets` reads a schema's links once: it converts the schema with `z.toJSONSchema`, stamping each registered field's role onto its JSON node, and marks every node a link can be reached from. A schema that declares none returns nothing, so its type never reads or writes a link. What it returns walks one parsed value along the schema as the value goes — into properties, array items, record values, union variants and references — entering only the nodes a link is reachable from. Walking as the value goes, rather than along paths fixed in advance, is what finds a link inside a recursive shape at whatever depth the value nests it, and the pruning is what keeps a large document whose links sit in one corner from being read whole. `ResourceTypeGetLinkTargetsMap` holds one per type that declares a link.
 

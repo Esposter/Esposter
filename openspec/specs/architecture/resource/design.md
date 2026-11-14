@@ -1,20 +1,20 @@
 # Resources
 
-The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a whiteboard. One Postgres table, one blob container, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
+The standard for product persistence and product surface. **Everything is a resource**: a file, a survey, a todo list, a dashboard, an email, a webpage, a whiteboard. One D1 table, one R2 bucket, one procedure factory, one explorer UI. Cross-cutting behaviors (publishing, dataset serving, asset hosting, import/export) are opt-in **capabilities**, never baked into the core.
 
 ## Anatomy
 
-A resource is three things: an identity row (Postgres), a content blob (Azure Blob), and a definition (shared code).
+A resource is three things: an identity row (D1), a content blob (R2), and a definition (shared code).
 
 ```mermaid
 flowchart LR
-  subgraph pg [Postgres — identity and lifecycle]
+  subgraph d1 [D1 — identity and lifecycle]
     ROW["resources row<br/>id · type · name · userId · contentVersion"]
-    PUBROW["resource_publications row<br/>exists iff published"]
+    PUBROW["resourcePublications row<br/>exists iff published"]
     ROW -. "1:0..1, Publishable only" .-> PUBROW
   end
 
-  subgraph blob ["Azure Blob resource-assets — every path under {id}/"]
+  subgraph blob ["R2 resource-assets bucket — every path under {id}/"]
     CONTENT["content.json<br/>the working copy"]
     PUB["objects/{hash}<br/>every retained version"]
     FILES["files/…<br/>binary assets, FileAssets only"]
@@ -34,26 +34,26 @@ flowchart LR
 
 Drizzle table `resources` (`packages/db-schema/src/schema/resource/resourcesInResource.ts`) — pure identity + content lifecycle:
 
-| Column           | Type                   | Notes                                                                                |
-| ---------------- | ---------------------- | ------------------------------------------------------------------------------------ |
-| `id`             | uuid PK                | becomes the blob path prefix                                                         |
-| `type`           | `ResourceType` pg enum | one value per type in `ResourceDefinitionMap`                                        |
-| `name`           | text + length check    | `createNameSchema` pattern; a full-text index backs ranked search                    |
-| `tags`           | jsonb, not null, `{}`  | free-form key/value labels; a GIN index backs the `tags @> input` containment filter |
-| `userId`         | FK → users, cascade    | owner; resources are single-owner                                                    |
-| `contentVersion` | integer                | optimistic concurrency on content saves                                              |
+| Column           | Type                      | Notes                                                                                              |
+| ---------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
+| `id`             | UUIDv7 PK                 | becomes the blob path prefix                                                                       |
+| `type`           | `ResourceType` text enum  | one value per type in `ResourceDefinitionMap`                                                      |
+| `name`           | text + length check       | `createNameSchema` pattern; ranked search reads the FTS5 index the triggers keep beside the table  |
+| `tags`           | JSON text, not null, `{}` | free-form key/value labels, indexed beside the name; a tag filter reads its pairs with `json_each` |
+| `userId`         | FK → users, cascade       | owner; resources are single-owner                                                                  |
+| `contentVersion` | integer                   | optimistic concurrency on content saves                                                            |
 
-Publish state is **normalized into its own table**, `resource_publications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
+Publish state is **normalized into its own table**, `resourcePublications` — a row exists iff the resource is currently published. Publishing is a capability, not a base attribute, so publish columns do not belong on every resource row:
 
 | Column           | Type                             | Notes                                            |
 | ---------------- | -------------------------------- | ------------------------------------------------ |
-| `resourceId`     | uuid PK, FK → resources, cascade | one publication per resource                     |
+| `resourceId`     | text PK, FK → resources, cascade | one publication per resource                     |
 | `publishVersion` | integer, default 1               | the published channel's version row that is live |
 | `publishedAt`    | timestamp, default now           | when the current publish happened                |
 
 Every cross-resource reference a resource's content holds is indexed in `resourceLinks` — one row per source, role and target, written by the save that writes the content — so which resources point at one is a single lookup ([resource links](../resource-links/design.md)).
 
-Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
+Content blobs live in one bucket, `StorageBucket.ResourceAssets` (the `resource-assets` R2 bucket), keyed by id only (type lives in the row; ids are UUIDs — a type prefix would duplicate authoritative data into path strings):
 
 ```text
 {id}/content.json                      working copy (JSON as a zstd frame, validated by the type's content schema)
@@ -61,7 +61,7 @@ Content blobs live in one container, `AzureContainer.ResourceAssets`, keyed by i
 {id}/files/{sha256}                    binary assets, content-addressed (FileAssets types only)
 ```
 
-Ownership is enforced through the Postgres row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](../../resource/recycle-bin/design.md)).
+Ownership is enforced through the D1 row, never inferred from the blob path. Deleting a resource is soft — identically for every type: it stamps `deletedAt` and drops the publication row, leaving the `{id}/` blob directory intact so a restore can hand the content back. Purging is what deletes the directory and then the row ([recycle bin](../../resource/recycle-bin/design.md)).
 
 Each type owns one content schema (Zod, interface-first, one function per file) in `apps/web/shared/models/`. A content schema always produces an **object** (never a bare string/array) so future fields extend without a blob-shape break. A field holding another resource's id is declared with `createResourceLinkSchema(ResourceLinkType.X)`, never a bare `z.uuidv4()` — the declaration is what the [resource-link index](../resource-links/design.md) reads, so a reference written any other way is one nothing can find.
 
@@ -131,7 +131,7 @@ Component wiring cannot live in shared code, so the client keeps one thin satell
 
 ## Procedures
 
-One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and container come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `checkHasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
+One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/resource/createResourceProcedures.ts`), spread into each type's router. Content schema and bucket come from `ResourceDefinitionMap[type]` — callers never pass them. Publish procedures are spread **conditionally with a conditional return type** (guarded by `checkHasCapability(type, "publishable")` at runtime), so a non-publishable type's router has no publish endpoints at the type level — a compile error on the client `$trpc` type, a 404 on the wire. The options argument itself is a conditional tuple: publish hooks are only accepted when `TType extends PublishableResourceType`.
 
 | Procedure                                     | Auth                                      | Purpose                                                                                      |
 | --------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -143,7 +143,7 @@ One factory, `createResourceProcedures(type, options?)` (`server/trpc/procedure/
 | the `saveResourceContent` UserEvent           | owner                                     | each save's `{ apiKeyName, contentVersion, id }`, sent to every tab but the saving session's |
 | the publish set                               | see [publishing](../publishing/design.md) | Publishable types only                                                                       |
 
-`updateResource` replaces the whole `tags` record rather than merging it (Azure's own tag update semantics), and only a changed `name` writes a `Renamed` [activity](../../resource/activity-log/design.md) entry — a tags-only edit is not a rename, so it leaves no trail entry. Both editable fields are optional (at least one is required) so a caller writes only the field it owns: a rename and a tag edit are independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name back whenever the two overlap.
+`updateResource` replaces the whole `tags` record rather than merging it, and only a changed `name` writes a `Renamed` [activity](../../resource/activity-log/design.md) entry — a tags-only edit is not a rename, so it leaves no trail entry. Both editable fields are optional (at least one is required) so a caller writes only the field it owns: a rename and a tag edit are independent writes to one row, and a tag edit that had to restate the name would put the pre-rename name back whenever the two overlap.
 
 `saveResourceContent` bumps `contentVersion` and writes the blob in one transaction — the version check is part of the `UPDATE`'s `WHERE`, so concurrent saves cannot both pass and silently lose a write, and a failed blob upload rolls the version back.
 
@@ -157,7 +157,7 @@ The type's after-save hook is registered in `ResourceAfterSaveContentMap`, keyed
 
 The factory also accepts an optional publish-time content-transform hook, `transformPublishedContent` — see [publishing](../publishing/design.md). What a type declares **live** rather than frozen is not a hook but a declaration the snapshot mechanism owns — see [resource snapshots](../../resource/resource-snapshots/design.md).
 
-`resource.readResource` answers with the row plus its `publication` (the `resource_publications` row, or `null` when there is none) — see [publishing](../publishing/design.md).
+`resource.readResource` answers with the row plus its `publication` (the `resourcePublications` row, or `null` when there is none) — see [publishing](../publishing/design.md).
 
 Ownership middleware: `getOwnerProcedure(type, schema, resourceIdKey, isDeletedOnly = false)` in `server/trpc/procedure/resource/`, querying `resources` and exposing `ctx.resource`; a typeless overload (`type: undefined`) backs the cross-type `resource.readResource`. `isDeletedOnly` inverts which rows resolve, so the [recycle bin](../../resource/recycle-bin/design.md)'s `purgeResource` reaches only soft-deleted resources and every other procedure only live ones. The batch `restoreResources`, like `deleteResources`, scopes its own where to the owner and the bin instead.
 
@@ -204,17 +204,17 @@ sequenceDiagram
 
 ## Key files
 
-| File                                                                               | Role                                       |
-| ---------------------------------------------------------------------------------- | ------------------------------------------ |
-| `packages/db-schema/src/schema/resource/resourcesInResource.ts`                    | identity table                             |
-| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts`         | publish state table                        |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`                       | type definitions + capability declarations |
-| `apps/web/shared/models/resource/CapabilityResourceType.ts`                        | derived capability unions                  |
-| `packages/db-schema/src/services/azure/container/getResourceFilesDirectoryName.ts` | the `{id}/files` path convention           |
-| `apps/web/shared/services/resource/checkHasCapability.ts`                          | runtime capability guard                   |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`              | the procedure factory                      |
-| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`                     | ownership middleware                       |
-| `apps/web/app/store/resource/index.ts`                                             | the open resource — state and every write  |
-| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`                     | type-specific blades                       |
-| `apps/web/app/services/resource/ViewComponentMap.ts`                               | public view renderers (Publishable)        |
-| `apps/web/app/services/resource/PortableFormatMap.ts`                              | import/export formats (Portable)           |
+| File                                                                       | Role                                       |
+| -------------------------------------------------------------------------- | ------------------------------------------ |
+| `packages/db-schema/src/schema/resource/resourcesInResource.ts`            | identity table                             |
+| `packages/db-schema/src/schema/resource/resourcePublicationsInResource.ts` | publish state table                        |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | type definitions + capability declarations |
+| `apps/web/shared/models/resource/CapabilityResourceType.ts`                | derived capability unions                  |
+| `packages/db-schema/src/services/storage/getResourceFilesDirectoryName.ts` | the `{id}/files` path convention           |
+| `apps/web/shared/services/resource/checkHasCapability.ts`                  | runtime capability guard                   |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | the procedure factory                      |
+| `apps/web/server/trpc/procedure/resource/getOwnerProcedure.ts`             | ownership middleware                       |
+| `apps/web/app/store/resource/index.ts`                                     | the open resource — state and every write  |
+| `apps/web/app/services/resource/ResourceBladeDefinitionMap.ts`             | type-specific blades                       |
+| `apps/web/app/services/resource/ViewComponentMap.ts`                       | public view renderers (Publishable)        |
+| `apps/web/app/services/resource/PortableFormatMap.ts`                      | import/export formats (Portable)           |
