@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "main": "src/worker.ts",
+  "account_id": "33d16cc4281c2845398ddb2fbd29829b",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat"],
   "rules": [{ "type": "Text", "globs": ["**/*.sql"], "fallthrough": true }],

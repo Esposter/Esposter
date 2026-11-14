@@ -1,6 +1,7 @@
 import type { CloudflareCredentials } from "#src/models/realtimeKit/CloudflareCredentials";
 
 import { CLOUDFLARE_API_ORIGIN, JSON_CONTENT_TYPE, REQUEST_TIMEOUT_MS } from "#src/services/realtimeKit/constants";
+import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
@@ -18,10 +19,10 @@ const METHOD_OPERATION_MAP: Record<RequestMethod, Operation> = {
 // Caller reads, so a reply that is not what it reads fails the step. A refusal names the request and its status, never
 // Its body, since a body can echo a token
 export const requestCloudflare = async <Schema extends z.ZodType>(
-  { accountId, apiToken }: CloudflareCredentials,
+  { apiToken }: CloudflareCredentials,
   { body, method, path, schema }: { body?: unknown; method: RequestMethod; path: string; schema: Schema },
 ): Promise<z.output<Schema>> => {
-  const response = await fetch(`${CLOUDFLARE_API_ORIGIN}/accounts/${accountId}${path}`, {
+  const response = await fetch(`${CLOUDFLARE_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}${path}`, {
     body: body === undefined ? undefined : JSON.stringify(body),
     headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": JSON_CONTENT_TYPE },
     method,

@@ -1,6 +1,6 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import { devR2EsposterMessageAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterMessageAssets";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   getCloudflareResourceName,
@@ -18,7 +18,7 @@ const bucketName = getCloudflareResourceName(
 export const devR2EsposterMessageAssetsLifecycle: cloudflare.R2BucketLifecycle = new cloudflare.R2BucketLifecycle(
   `${bucketName}-lifecycle`,
   {
-    accountId: CloudflareAccountId,
+    accountId: CLOUDFLARE_ACCOUNT_ID,
     bucketName: devR2EsposterMessageAssets.name,
     rules: [
       {

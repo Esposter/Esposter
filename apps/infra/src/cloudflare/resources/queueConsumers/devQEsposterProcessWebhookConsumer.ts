@@ -1,8 +1,8 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterProcessWebhook } from "#src/cloudflare/resources/queues/devDlqEsposterProcessWebhook";
 import { devQEsposterProcessWebhook } from "#src/cloudflare/resources/queues/devQEsposterProcessWebhook";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
@@ -26,7 +26,7 @@ const scriptName = getCloudflareResourceName(
 export const devQEsposterProcessWebhookConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
-    accountId: CloudflareAccountId,
+    accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: devDlqEsposterProcessWebhook.queueName,
     queueId: devQEsposterProcessWebhook.queueId,
     scriptName,

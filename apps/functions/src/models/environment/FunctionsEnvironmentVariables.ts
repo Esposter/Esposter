@@ -6,7 +6,6 @@ import { z } from "zod";
 // RealtimeKit is optional — a deployment without it runs calls with no media server — so its variables may be absent
 export interface FunctionsEnvironmentVariables {
   BASE_URL: string;
-  CLOUDFLARE_ACCOUNT_ID?: string;
   // The environment this Worker runs in, which names its queues: the dispatcher finds a batch's job by it
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   REALTIMEKIT_API_TOKEN?: string;
@@ -17,7 +16,6 @@ export interface FunctionsEnvironmentVariables {
 
 export const functionsEnvironmentVariablesSchema = z.object({
   BASE_URL: z.url(),
-  CLOUDFLARE_ACCOUNT_ID: z.string().min(1).optional(),
   CLOUDFLARE_ENVIRONMENT: z.enum(CloudflareEnvironment),
   REALTIMEKIT_API_TOKEN: z.string().min(1).optional().meta({ secret: true }),
   REALTIMEKIT_APP_ID: z.string().min(1).optional().meta({ secret: true }),

@@ -1,5 +1,10 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
+import {
+  CLOUDFLARE_ACCOUNT_ID,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  QueueJob,
+} from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
@@ -10,6 +15,6 @@ const queueName = getCloudflareResourceName(
 
 export const devQEsposterExportUserData: cloudflare.Queue = new cloudflare.Queue(
   queueName,
-  { accountId: CloudflareAccountId, queueName },
+  { accountId: CLOUDFLARE_ACCOUNT_ID, queueName },
   { protect: true },
 );

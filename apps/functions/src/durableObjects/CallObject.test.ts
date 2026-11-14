@@ -1,6 +1,6 @@
 import type { CallParticipant } from "@esposter/db-schema";
 
-import { PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
+import { CLOUDFLARE_ACCOUNT_ID, PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { CallObject } from "#src/durableObjects/CallObject";
@@ -26,7 +26,7 @@ const respondWith = (data: unknown) => new Response(JSON.stringify({ data }));
 
 describe(CallObject, () => {
   const callSessionId = crypto.randomUUID();
-  const credentials = { accountId: crypto.randomUUID(), apiToken: crypto.randomUUID(), appId: crypto.randomUUID() };
+  const credentials = { apiToken: crypto.randomUUID(), appId: crypto.randomUUID() };
   const meetingId = crypto.randomUUID();
   const environment = { CORE: {} } as unknown as Cloudflare.Env;
 
@@ -46,7 +46,6 @@ describe(CallObject, () => {
 
   // RealtimeKit answers an added participant with a token, and every other call with no data
   const stubRealtimeKit = () => {
-    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", credentials.accountId);
     vi.stubEnv("REALTIMEKIT_API_TOKEN", credentials.apiToken);
     vi.stubEnv("REALTIMEKIT_APP_ID", credentials.appId);
     const fetchMock = vi.fn<(input: string) => Promise<Response>>((input) =>
@@ -60,7 +59,6 @@ describe(CallObject, () => {
 
   beforeEach(() => {
     // RealtimeKit is off unless a test stubs it on, whatever the shell running the suite exports
-    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", undefined);
     vi.stubEnv("REALTIMEKIT_API_TOKEN", undefined);
     vi.stubEnv("REALTIMEKIT_APP_ID", undefined);
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -202,7 +200,7 @@ describe(CallObject, () => {
       userId: participant.userId,
     });
 
-    const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${credentials.accountId}/realtime/kit/${credentials.appId}`;
+    const appUrl = `${REALTIMEKIT_API_ORIGIN}/accounts/${CLOUDFLARE_ACCOUNT_ID}/realtime/kit/${credentials.appId}`;
     const meetingUrl = `${appUrl}/meetings/${meetingId}`;
     expect(fetchMock.mock.calls.map(([input]) => input)).toStrictEqual([
       `${meetingUrl}/participants`,

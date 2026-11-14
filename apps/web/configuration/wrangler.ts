@@ -1,11 +1,12 @@
 import { CloudflareAssetType } from "../../../packages/db-schema/src/models/cloudflare/CloudflareAssetType.ts";
-import { CloudflareCoreDatabaseIdMap } from "../../../packages/db-schema/src/models/cloudflare/CloudflareCoreDatabaseIdMap.ts";
 import { CloudflareDatabaseRole } from "../../../packages/db-schema/src/models/cloudflare/CloudflareDatabaseRole.ts";
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { CloudflareWorkerPurpose } from "../../../packages/db-schema/src/models/cloudflare/CloudflareWorkerPurpose.ts";
 import { QueueJob } from "../../../packages/db-schema/src/models/queue/QueueJob.ts";
 import { QueueJobBindingNameMap } from "../../../packages/db-schema/src/models/queue/QueueJobBindingName.ts";
 import { StorageBucket } from "../../../packages/db-schema/src/models/storage/StorageBucket.ts";
+import { CloudflareCoreDatabaseIdMap } from "../../../packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts";
+import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
 import { getCloudflareResourceName } from "../../../packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts";
 import { Environment } from "../shared/models/environment/Environment.ts";
 
@@ -25,6 +26,7 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     CloudflareWorkerPurpose.Functions,
   );
   return {
+    account_id: CLOUDFLARE_ACCOUNT_ID,
     name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, CloudflareWorkerPurpose.Web),
     d1_databases: [
       {
@@ -61,7 +63,6 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
       // The auth origin is the app's own origin, so better-auth reads the same address the app is served from
       BASE_URL: process.env.BASE_URL,
       BETTER_AUTH_URL: process.env.BASE_URL,
-      CLOUDFLARE_ACCOUNT_ID: process.env.CLOUDFLARE_ACCOUNT_ID,
       CLOUDFLARE_ENVIRONMENT: environment,
       PUBLIC_ASSETS_BASE_URL: process.env.PUBLIC_ASSETS_BASE_URL,
     },

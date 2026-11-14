@@ -1,8 +1,8 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterProcessScheduledMessageJob } from "#src/cloudflare/resources/queues/devDlqEsposterProcessScheduledMessageJob";
 import { devQEsposterProcessScheduledMessageJob } from "#src/cloudflare/resources/queues/devQEsposterProcessScheduledMessageJob";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
@@ -26,7 +26,7 @@ const scriptName = getCloudflareResourceName(
 export const devQEsposterProcessScheduledMessageJobConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
-    accountId: CloudflareAccountId,
+    accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: devDlqEsposterProcessScheduledMessageJob.queueName,
     queueId: devQEsposterProcessScheduledMessageJob.queueId,
     scriptName,

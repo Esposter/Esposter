@@ -8,6 +8,7 @@ import { getEscKey } from "#src/services/realtimeKit/getEscKey";
 import { getRealtimeKitPresetBody } from "#src/services/realtimeKit/getRealtimeKitPresetBody";
 import { requestCloudflare } from "#src/services/realtimeKit/requestCloudflare";
 import { setEscValue } from "#src/services/realtimeKit/setEscValue";
+import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
@@ -60,7 +61,7 @@ export const applyRealtimeKitActions = async (
               {
                 effect: "allow",
                 permission_groups: [{ id: permissionGroupId }],
-                resources: { [`com.cloudflare.api.account.${credentials.accountId}`]: "*" },
+                resources: { [`com.cloudflare.api.account.${CLOUDFLARE_ACCOUNT_ID}`]: "*" },
               },
             ],
           },

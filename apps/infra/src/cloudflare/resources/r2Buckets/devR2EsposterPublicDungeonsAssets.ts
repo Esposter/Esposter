@@ -1,6 +1,6 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   getCloudflareResourceName,
@@ -16,6 +16,6 @@ const bucketName = getCloudflareResourceName(
 
 export const devR2EsposterPublicDungeonsAssets: cloudflare.R2Bucket = new cloudflare.R2Bucket(
   bucketName,
-  { accountId: CloudflareAccountId, location: CloudflareLocationHint, name: bucketName },
+  { accountId: CLOUDFLARE_ACCOUNT_ID, location: CloudflareLocationHint, name: bucketName },
   { protect: true },
 );

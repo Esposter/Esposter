@@ -1,7 +1,7 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import { devQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/devQEsposterReconcileStorageLedgerEntry";
 import { devR2EsposterMessageAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterMessageAssets";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   getCloudflareResourceName,
@@ -20,7 +20,7 @@ export const devR2EsposterMessageAssetsEventNotification: cloudflare.R2BucketEve
   new cloudflare.R2BucketEventNotification(
     `${bucketName}-event-notification`,
     {
-      accountId: CloudflareAccountId,
+      accountId: CLOUDFLARE_ACCOUNT_ID,
       bucketName: devR2EsposterMessageAssets.name,
       queueId: devQEsposterReconcileStorageLedgerEntry.queueId,
       rules: [{ actions: ["PutObject", "CopyObject"] }],

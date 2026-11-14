@@ -1,8 +1,8 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodDlqEsposterDeleteOrphanedProfileImage";
 import { prodQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodQEsposterDeleteOrphanedProfileImage";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
@@ -26,7 +26,7 @@ const scriptName = getCloudflareResourceName(
 export const prodQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
-    accountId: CloudflareAccountId,
+    accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterDeleteOrphanedProfileImage.queueName,
     queueId: prodQEsposterDeleteOrphanedProfileImage.queueId,
     scriptName,

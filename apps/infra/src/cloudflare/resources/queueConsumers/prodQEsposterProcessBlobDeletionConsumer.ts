@@ -1,8 +1,8 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/prodDlqEsposterProcessBlobDeletion";
 import { prodQEsposterProcessBlobDeletion } from "#src/cloudflare/resources/queues/prodQEsposterProcessBlobDeletion";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
@@ -26,7 +26,7 @@ const scriptName = getCloudflareResourceName(
 export const prodQEsposterProcessBlobDeletionConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(
   `${queueName}-consumer`,
   {
-    accountId: CloudflareAccountId,
+    accountId: CLOUDFLARE_ACCOUNT_ID,
     deadLetterQueue: prodDlqEsposterProcessBlobDeletion.queueName,
     queueId: prodQEsposterProcessBlobDeletion.queueId,
     scriptName,

@@ -1,7 +1,7 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import { devQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/devQEsposterDeleteOrphanedProfileImage";
 import { devR2EsposterPublicUserAssets } from "#src/cloudflare/resources/r2Buckets/devR2EsposterPublicUserAssets";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareEnvironment,
   getCloudflareResourceName,
@@ -20,7 +20,7 @@ export const devR2EsposterPublicUserAssetsEventNotification: cloudflare.R2Bucket
   new cloudflare.R2BucketEventNotification(
     `${bucketName}-event-notification`,
     {
-      accountId: CloudflareAccountId,
+      accountId: CLOUDFLARE_ACCOUNT_ID,
       bucketName: devR2EsposterPublicUserAssets.name,
       queueId: devQEsposterDeleteOrphanedProfileImage.queueId,
       rules: [{ actions: ["PutObject", "CopyObject"] }],

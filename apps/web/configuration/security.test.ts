@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
+import { CLOUDFLARE_ACCOUNT_ID } from "@esposter/db-schema";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 import { NUXT_IMAGE_ERROR_HANDLER } from "./constants.ts";
@@ -29,7 +30,6 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.stubEnv("PUBLIC_ASSETS_BASE_URL", "https://assets.esposter.com");
-    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", "account");
     vi.resetModules();
     const { security } = await import("./security.ts");
 
@@ -41,7 +41,7 @@ describe("security", () => {
         "data:",
         "blob:",
         "https://assets.esposter.com",
-        "https://account.r2.cloudflarestorage.com",
+        `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
       ]),
@@ -49,7 +49,7 @@ describe("security", () => {
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
       expect.arrayContaining([
         "'self'",
-        "https://account.r2.cloudflarestorage.com",
+        `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
         "https://assets.esposter.com",
         "blob:",
       ]),
@@ -60,7 +60,6 @@ describe("security", () => {
     expect.hasAssertions();
 
     vi.stubEnv("PUBLIC_ASSETS_BASE_URL", undefined);
-    vi.stubEnv("CLOUDFLARE_ACCOUNT_ID", undefined);
     vi.resetModules();
     const { security } = await import("./security.ts");
 
@@ -70,10 +69,15 @@ describe("security", () => {
       "'self'",
       "data:",
       "blob:",
+      `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
       "https://*.realtime.cloudflare.com",
       "wss://*.realtime.cloudflare.com",
     ]);
-    expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
+    expect(contentSecurityPolicy?.["media-src"]).toStrictEqual([
+      "'self'",
+      `https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      "blob:",
+    ]);
   });
 
   // The page blocks an inline handler its policy does not list, so the one NuxtImg renders is allowed by the hash of its

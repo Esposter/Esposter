@@ -1,6 +1,6 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
 import CloudflareLocationHint from "#src/cloudflare/constants/CloudflareLocationHint";
 import {
+  CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
   CloudflareDatabaseRole,
   CloudflareEnvironment,
@@ -16,6 +16,6 @@ const databaseName = getCloudflareResourceName(
 
 export const prodD1EsposterCore: cloudflare.D1Database = new cloudflare.D1Database(
   databaseName,
-  { accountId: CloudflareAccountId, name: databaseName, primaryLocationHint: CloudflareLocationHint },
+  { accountId: CLOUDFLARE_ACCOUNT_ID, name: databaseName, primaryLocationHint: CloudflareLocationHint },
   { protect: true },
 );

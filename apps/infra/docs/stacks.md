@@ -22,11 +22,10 @@ pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:<NAME> <value> --
 
 ## Cloudflare
 
-The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account id and the billing alert's address are plain values in the same environment; the zone is declared by the program, so no zone id is set:
+The Cloudflare provider reads its API token from `cloudflare:apiToken`, the one key outside the `esposter-infra:` namespace. The token is also written to the `CLOUDFLARE_API_TOKEN` Actions secret the deploy job uses. The account id is committed as `CLOUDFLARE_ACCOUNT_ID` in `packages/db-schema/src/services/cloudflare/constants.ts`, since it is not a secret. The billing alert's address is a plain value in the same environment; the zone is declared by the program, so no zone id is set:
 
 ```sh
 pulumi env set esposter-infra/prod pulumiConfig.cloudflare:apiToken <token> --secret
-pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareAccountId <account-id>
 ```
 
 Every Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.

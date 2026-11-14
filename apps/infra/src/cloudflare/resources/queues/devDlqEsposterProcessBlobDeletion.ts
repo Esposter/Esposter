@@ -1,5 +1,10 @@
-import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
+import {
+  CLOUDFLARE_ACCOUNT_ID,
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  QueueJob,
+} from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const deadLetterQueueName = getCloudflareResourceName(
@@ -10,6 +15,6 @@ const deadLetterQueueName = getCloudflareResourceName(
 
 export const devDlqEsposterProcessBlobDeletion: cloudflare.Queue = new cloudflare.Queue(
   deadLetterQueueName,
-  { accountId: CloudflareAccountId, queueName: deadLetterQueueName },
+  { accountId: CLOUDFLARE_ACCOUNT_ID, queueName: deadLetterQueueName },
   { protect: true },
 );

@@ -4,9 +4,8 @@ import type { RealtimeKitCredentials } from "#src/models/realtimeKit/RealtimeKit
 // every entry point asks this first, and asking it in one place keeps a token from being minted for a meeting the
 // REST client was never configured to create
 export const getRealtimeKitCredentials = (): RealtimeKitCredentials | undefined => {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.REALTIMEKIT_API_TOKEN;
   const appId = process.env.REALTIMEKIT_APP_ID;
-  if (!accountId || !apiToken || !appId) return undefined;
-  else return { accountId, apiToken, appId };
+  if (!apiToken || !appId) return undefined;
+  else return { apiToken, appId };
 };

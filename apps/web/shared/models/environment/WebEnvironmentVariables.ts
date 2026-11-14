@@ -12,7 +12,6 @@ export interface WebEnvironmentVariables {
   BASE_URL: string;
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
-  CLOUDFLARE_ACCOUNT_ID: string;
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   FACEBOOK_CLIENT_ID: string;
   FACEBOOK_CLIENT_SECRET: string;
@@ -33,7 +32,6 @@ export const webEnvironmentVariablesSchema = z.object({
   BASE_URL: z.url(),
   BETTER_AUTH_SECRET: z.string().min(1).meta({ secret: true }),
   BETTER_AUTH_URL: z.url(),
-  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
   CLOUDFLARE_ENVIRONMENT: z.enum(CloudflareEnvironment),
   FACEBOOK_CLIENT_ID: z.string().min(1).meta({ secret: true }),
   FACEBOOK_CLIENT_SECRET: z.string().min(1).meta({ secret: true }),

@@ -203,7 +203,6 @@ jobs:
       # origins are each environment's hostnames, as the naming conventions give them
       BASE_URL: ${{ fromJSON('{"ai/queue":"https://dev.esposter.com","main":"https://esposter.com"}')[github.ref_name] }}
       PUBLIC_ASSETS_BASE_URL: ${{ fromJSON('{"ai/queue":"https://assets.dev.esposter.com","main":"https://assets.esposter.com"}')[github.ref_name] }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - name: 📥 Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -242,7 +241,6 @@ jobs:
 
       - name: 🚀 Deploy the web Worker
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: pnpm -C apps/web deploy:worker
 
@@ -258,7 +256,6 @@ jobs:
 
       - name: 🚀 Deploy the functions Worker
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: pnpm -C apps/functions deploy:worker
 
@@ -273,7 +270,6 @@ jobs:
 
       - name: 🗄️ Apply the D1 migrations
         env:
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ENVIRONMENT: ${{ env.CLOUDFLARE_ENV }}
         run: pnpm --filter @esposter/db-schema db:migrate
