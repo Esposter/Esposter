@@ -3,11 +3,11 @@ import type { Context } from "#server/trpc/context";
 import { authMocks } from "#server/auth.test";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getAgentSessionPayload } from "#server/services/auth/getAgentSessionPayload";
-import { RateLimiterMap } from "#server/services/rateLimiter/RateLimiterMap";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc";
 import { createMockContext, getMockSession, mockNoSessionOnce } from "#server/trpc/context.test";
 import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimitedMiddleware";
 import { noop } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 // The middleware only enforces in production, a module-level fact, so it is stubbed rather than simulated
@@ -35,30 +35,59 @@ describe(getRateLimitedMiddleware, () => {
     vi.restoreAllMocks();
   });
 
-  test("consumes a point for an authed caller with no resolvable address", async () => {
+  test("refuses an authed caller whose key the binding has spent", async () => {
     expect.hasAssertions();
 
-    const consume = vi
-      .spyOn(RateLimiterMap[RateLimiterType.Standard], "consume")
-      .mockResolvedValue({ msBeforeNext: 0, remainingPoints: 1 } as Awaited<
-        ReturnType<(typeof RateLimiterMap)[RateLimiterType.Standard]["consume"]>
-      >);
+    const limit = vi
+      .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
+      .mockResolvedValue({ success: false });
+    env.RATE_LIMITER_STANDARD = { limit };
 
-    await caller.ping();
+    await expect(caller.ping()).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: TOO_MANY_REQUESTS]`);
 
-    expect(consume).toHaveBeenCalledExactlyOnceWith(getMockSession().user.id);
+    expect(limit).toHaveBeenCalledExactlyOnceWith({ key: getMockSession().user.id });
+  });
+
+  test("passes an authed caller whose key the binding still has budget for", async () => {
+    expect.hasAssertions();
+
+    const limit = vi
+      .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
+      .mockResolvedValue({ success: true });
+    env.RATE_LIMITER_STANDARD = { limit };
+
+    await expect(caller.ping()).resolves.toBe(true);
+
+    expect(limit).toHaveBeenCalledExactlyOnceWith({ key: getMockSession().user.id });
+  });
+
+  test("keys an anonymous caller on its procedure path and address", async () => {
+    expect.hasAssertions();
+
+    const limit = vi
+      .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
+      .mockResolvedValue({ success: true });
+    env.RATE_LIMITER_STANDARD = { limit };
+    mockNoSessionOnce();
+
+    await expect(createTestCaller({ ...mockContext, ipAddress: "203.0.113.5" }).ping()).resolves.toBe(true);
+
+    expect(limit).toHaveBeenCalledExactlyOnceWith({ key: "ping|203.0.113.5" });
   });
 
   test("bypasses an anonymous caller with no resolvable address", async () => {
     expect.hasAssertions();
 
-    const consume = vi.spyOn(RateLimiterMap[RateLimiterType.Standard], "consume");
+    const limit = vi
+      .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
+      .mockResolvedValue({ success: false });
+    env.RATE_LIMITER_STANDARD = { limit };
     vi.spyOn(console, "warn").mockImplementation(noop);
     mockNoSessionOnce();
 
     await caller.ping();
 
-    expect(consume).not.toHaveBeenCalled();
+    expect(limit).not.toHaveBeenCalled();
   });
 
   // The MCP route authenticates an API key's owner itself, and the cookie a command-line client sends is none
@@ -66,15 +95,14 @@ describe(getRateLimitedMiddleware, () => {
     expect.hasAssertions();
 
     const { user } = getMockSession();
-    const consume = vi
-      .spyOn(RateLimiterMap[RateLimiterType.Standard], "consume")
-      .mockResolvedValue({ msBeforeNext: 0, remainingPoints: 1 } as Awaited<
-        ReturnType<(typeof RateLimiterMap)[RateLimiterType.Standard]["consume"]>
-      >);
+    const limit = vi
+      .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
+      .mockResolvedValue({ success: true });
+    env.RATE_LIMITER_STANDARD = { limit };
 
     await createTestCaller({ ...mockContext, getSessionPayload: getAgentSessionPayload(user, "") }).ping();
 
-    expect(consume).toHaveBeenCalledExactlyOnceWith(user.id);
+    expect(limit).toHaveBeenCalledExactlyOnceWith({ key: user.id });
     expect(authMocks.getSession).not.toHaveBeenCalled();
   });
 });

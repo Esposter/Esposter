@@ -35,7 +35,7 @@ A transaction that awaits a non-database call between statements (a blob write, 
 
 ## Postgres-only queries
 
-`ilike` becomes `like`, which is case-insensitive for ASCII in SQLite; `pg_trgm` similarity on resource search becomes FTS5 over the searched columns in `core`, ranked by `bm25`. `sql` fragments using `now()`, `interval`, `::` casts, `array_agg`, `jsonb_*` or `RETURNING` with Postgres-only syntax are rewritten to SQLite's equivalents. The rate limiter's `rate-limiter-flexible` Drizzle store is created with the SQLite table.
+`ilike` becomes `like`, which is case-insensitive for ASCII in SQLite; `pg_trgm` similarity on resource search becomes FTS5 over the searched columns in `core`, ranked by `bm25`. `sql` fragments using `now()`, `interval`, `::` casts, `array_agg`, `jsonb_*` or `RETURNING` with Postgres-only syntax are rewritten to SQLite's equivalents. The rate limiter's counter table is dropped with no replacement in `core`: its budgets are Workers rate limit bindings (`openspec/specs/architecture/rate-limiting/design.md`).
 
 ## The former Azure Table data
 
@@ -61,6 +61,5 @@ Rejected: a second `streams` database holding Azure Table's model as generic row
 | `packages/db/src/services/azure/search/getSearchClient.ts`     | replaced by FTS5 queries                   |
 | `apps/web/server/db/index.ts`                                  | Drizzle over the `core` binding            |
 | `apps/web/server/services/message/searchMessages.ts`           | reads `messages_search`                    |
-| `apps/web/server/services/rateLimiter/createRateLimiter.ts`    | the SQLite rate limiter table              |
 | `packages/db-mock/src/createMockDb.ts`                         | Miniflare's D1 with both migration folders |
 | `packages/azure-mock/package.json`                             | deleted                                    |

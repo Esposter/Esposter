@@ -40,7 +40,7 @@ Several hundred test files, concentrated in `app` but present in every package t
 
 ## Security — 9 / 10
 
-Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via `RateLimiterDrizzleNonAtomic` — NonAtomic is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security-module`'s own `rateLimiter` is disabled in favour of these app-level limiters.
+Zod `.safeParse()` on all tRPC inputs and webhook handlers. `better-auth` with Drizzle adapter and OAuth (Facebook, GitHub, Google). Drizzle parameterized queries prevent SQL injection. Tiered rate limiting via Workers Rate Limiting bindings, one per limiter — approximate per Cloudflare location, which is deliberate, as rate limiting is not a hard security boundary here; `nuxt-security-module`'s own `rateLimiter` is disabled in favour of these app-level limiters.
 
 **Accepted trade-offs:**
 

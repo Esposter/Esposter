@@ -1,10 +1,8 @@
-import type { RateLimiterDrizzleNonAtomic } from "rate-limiter-flexible";
-
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
-import { slowRateLimiter } from "#server/services/rateLimiter/slowRateLimiter";
-import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
+import { RateLimiterBinding } from "@esposter/db-schema";
 
+// The binding each procedure budget is served by. Keyed by the enum, so a new budget fails to compile until it has one
 export const RateLimiterMap = {
-  [RateLimiterType.Slow]: slowRateLimiter,
-  [RateLimiterType.Standard]: standardRateLimiter,
-} as const satisfies Record<RateLimiterType, RateLimiterDrizzleNonAtomic>;
+  [RateLimiterType.Slow]: RateLimiterBinding.Slow,
+  [RateLimiterType.Standard]: RateLimiterBinding.Standard,
+} as const satisfies Record<RateLimiterType, RateLimiterBinding>;

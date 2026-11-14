@@ -24,8 +24,8 @@ sequenceDiagram
   participant Client as Room viewers
 
   Ext->>Route: POST the payload to the secret url
-  Route->>Route: addressRateLimiter.consume on the address — 429 when over budget
-  Route->>Route: webhookRateLimiter.consume on the webhook id — 429 when over budget
+  Route->>Route: RATE_LIMITER_ADDRESS on the address — 429 when over budget
+  Route->>Route: RATE_LIMITER_WEBHOOK on the webhook id — 429 when over budget
   Route->>D1: find the active webhook matching id and token — 404 otherwise
   Route->>Route: parse the body against webhookPayloadSchema — 400 otherwise
   Route->>Q: send the payload and the webhook

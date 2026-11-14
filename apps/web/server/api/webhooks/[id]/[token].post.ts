@@ -1,11 +1,10 @@
 import { db } from "#server/db";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
 import { consumeAddressRateLimit } from "#server/services/rateLimiter/consumeAddressRateLimit";
-import { webhookRateLimiter } from "#server/services/rateLimiter/webhookRateLimiter";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { QueueJob, selectWebhookInMessageSchema, webhookPayloadSchema } from "@esposter/db-schema";
 import { getResult, getResultAsync, hashSecretToken, secretTokenSchema } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { defineEventHandler, getRequestIP, getRouterParams } from "nuxt/server";
 import { v7 } from "uuid";
 
@@ -23,8 +22,13 @@ export default defineEventHandler(async (event) => {
   return getResultAsync(async () => {
     // The address is spent first: an id matching no webhook would otherwise draw a fresh budget of its own, and nothing
     // Would cap the route across ids
-    await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""));
-    await webhookRateLimiter.consume(id);
+    const isWithinBudget =
+      (await consumeAddressRateLimit(getIpAddress(event.req.headers, getRequestIP(event) ?? ""))) &&
+      (await env.RATE_LIMITER_WEBHOOK.limit({ key: id })).success;
+    if (!isWithinBudget) {
+      event.res.status = 429;
+      return { message: "Rate limit exceeded." };
+    }
     // The row is found by its id and the hash of the credential presented, so one lookup answers both. An unknown id,
     // A deactivated webhook and a wrong credential are the same 404, and a sender cannot tell them apart
     const tokenHash = await hashSecretToken(token);
@@ -59,14 +63,9 @@ export default defineEventHandler(async (event) => {
   }).match(
     (data) => data,
     (error) => {
-      if (checkIsRateLimitExceeded(error)) {
-        event.res.status = 429;
-        return { message: "Rate limit exceeded." };
-      } else {
-        console.error(String(error).replaceAll(token, "[token]"));
-        event.res.status = 500;
-        return { message: "An internal server error occurred." };
-      }
+      console.error(String(error).replaceAll(token, "[token]"));
+      event.res.status = 500;
+      return { message: "An internal server error occurred." };
     },
   );
 });

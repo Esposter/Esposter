@@ -32,7 +32,7 @@ sequenceDiagram
 
   S->>R: POST, Authorization: Bearer key
   R->>R: any Origin header → 403
-  R->>R: addressRateLimiter.consume on the address — before any key is looked up
+  R->>R: RATE_LIMITER_ADDRESS on the address — before any key is looked up
   alt over the address budget
     R-->>S: 429
   end

@@ -27,7 +27,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 
 - [ ] 3.1 Finish the transactions-to-batches conversion in the resource, storage and router files, including the snapshot lease row that replaces `pg_advisory_xact_lock` and R2 multipart for the user-data archive. Verified by the guarded-write tests.
 - [ ] 3.2 Point `apps/web/server/trpc/context.ts` and the functions Worker's `db.ts` at the D1 binding, and delete the `postgres` driver from every manifest but the cutover's. Verified by the context test.
-- [ ] 3.3 Replace `rate-limiter-flexible` with the Workers Rate Limiting binding declared in the web Worker's wrangler config. Verified by the rate-limit middleware test.
+- [x] 3.3 Replace `rate-limiter-flexible` with the Workers Rate Limiting binding declared in the web Worker's wrangler config. Verified by the rate-limit middleware test.
 - [ ] 3.4 A batch update or delete that matches no row throws `NotFoundError` from `meta.changes`, as the Azure 404 did. Verified by a not-found test per writer.
 - [ ] 3.5 Move `apps/web/scripts/phaser/filePack/createFilePack.ts` and `getGenshinGameDataBaseUrl.ts` to R2, delete `packages/db/src/services/azure/container/getContainerClient.ts`, the generic streams layer, `packages/azure`, the `STREAMS` binding and every `@azure/*` dependency outside the cutover tool. Verified by no `@azure/` import outside `scripts/src/services/cutover`.
 - [ ] 3.6 Regenerate one fresh `core` migration with `db:gen`, then `registry:gen` and the schema snapshot. Verified by the migration applying on Miniflare.

@@ -2,8 +2,9 @@ import type { H3Event } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/[id]/[token].post";
 import { generateSecretToken, hashSecretToken, takeOne } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { v7 } from "uuid";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 interface LookupQuery {
   where: { id: { eq: string }; isActive: { eq: boolean }; tokenHash: { eq: string } };
@@ -24,10 +25,7 @@ const { findFirst, send } = vi.hoisted(() => ({
 vi.mock(import("#server/db"), () => ({ db: { query: { webhooksInMessage: { findFirst } } } }));
 vi.mock(import("#server/services/queue/getJobQueue"), () => ({ getJobQueue: () => ({ send }) }));
 vi.mock(import("#server/services/rateLimiter/consumeAddressRateLimit"), () => ({
-  consumeAddressRateLimit: () => Promise.resolve(),
-}));
-vi.mock(import("#server/services/rateLimiter/webhookRateLimiter"), () => ({
-  webhookRateLimiter: { consume: () => Promise.resolve() },
+  consumeAddressRateLimit: () => Promise.resolve(true),
 }));
 
 const createEvent = (id: string, token: string) =>
@@ -55,6 +53,11 @@ describe("api/webhooks/[id]/[token]", () => {
   const roomId = v7();
   const userId = v7();
   const storedToken = generateSecretToken();
+
+  beforeAll(() => {
+    // The webhook's own budget is within it for every test here, so the route reaches the lookup
+    env.RATE_LIMITER_WEBHOOK = { limit: () => Promise.resolve({ success: true }) };
+  });
 
   afterEach(() => {
     vi.clearAllMocks();

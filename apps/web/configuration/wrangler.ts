@@ -2,12 +2,18 @@ import { CloudflareAssetType } from "../../../packages/db-schema/src/models/clou
 import { CloudflareDatabaseRole } from "../../../packages/db-schema/src/models/cloudflare/CloudflareDatabaseRole.ts";
 import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { CloudflareWorkerPurpose } from "../../../packages/db-schema/src/models/cloudflare/CloudflareWorkerPurpose.ts";
+import { RateLimiterBinding } from "../../../packages/db-schema/src/models/cloudflare/RateLimiterBinding.ts";
 import { QueueJob } from "../../../packages/db-schema/src/models/queue/QueueJob.ts";
 import { QueueJobBindingNameMap } from "../../../packages/db-schema/src/models/queue/QueueJobBindingName.ts";
 import { StorageBucket } from "../../../packages/db-schema/src/models/storage/StorageBucket.ts";
 import { CloudflareCoreDatabaseIdMap } from "../../../packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts";
-import { CLOUDFLARE_ACCOUNT_ID } from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
+import {
+  CLOUDFLARE_ACCOUNT_ID,
+  RATE_LIMITER_DURATION_SECONDS,
+} from "../../../packages/db-schema/src/services/cloudflare/constants.ts";
 import { getCloudflareResourceName } from "../../../packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts";
+import { RateLimiterNamespaceIdMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterNamespaceIdMap.ts";
+import { RateLimiterPointsMap } from "../../../packages/db-schema/src/services/cloudflare/RateLimiterPointsMap.ts";
 import { Environment } from "../shared/models/environment/Environment.ts";
 
 // A binding's name is its resource's name in SCREAMING_SNAKE, so each bucket is bound by it
@@ -67,6 +73,12 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     r2_buckets: Object.values(StorageBucket).map((bucket) => ({
       binding: toBindingName(bucket),
       bucket_name: getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket),
+    })),
+    // One binding per limiter, each in its own namespace, so a limiter's counts never reach another's
+    ratelimits: Object.values(RateLimiterBinding).map((binding) => ({
+      name: binding,
+      namespace_id: RateLimiterNamespaceIdMap[environment][binding],
+      simple: { limit: RateLimiterPointsMap[binding], period: RATE_LIMITER_DURATION_SECONDS },
     })),
     vars: {
       APP_ENV: isDevelopment ? Environment.Development : Environment.Production,

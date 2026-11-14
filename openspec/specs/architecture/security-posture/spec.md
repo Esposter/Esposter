@@ -103,13 +103,13 @@ Rich text SHALL be sanitised where it enters the app, so that every stored messa
 
 ### Requirement: Requests are rate limited by one shared mechanism
 
-Requests SHALL be rate limited by the application's one shared rate limiter, with no second limiter answering the same question.
+Requests SHALL be rate limited by the application's Workers rate limit bindings, one per limiter, with no second limiter answering the same question (`openspec/specs/architecture/rate-limiting/design.md`).
 
 #### Scenario: A client sends too many requests
 
-- **GIVEN** a client that has exceeded the shared limit
+- **GIVEN** a client that has exceeded the limit of the binding that counts its requests
 - **WHEN** it sends another request
-- **THEN** the shared rate limiter refuses the request
+- **THEN** that binding refuses the request
 
 ### Requirement: An oversized request body is refused
 

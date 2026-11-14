@@ -1,7 +1,5 @@
 import { db } from "#server/db";
 import { readSession } from "#server/services/auth/readSession";
-import { assetRateLimiter } from "#server/services/rateLimiter/assetRateLimiter";
-import { checkIsRateLimitExceeded } from "#server/services/rateLimiter/checkIsRateLimitExceeded";
 import { RATE_LIMITER_BYPASS_LOG_MESSAGE } from "#server/services/rateLimiter/constants";
 import { getIpAddress } from "#server/services/request/getIpAddress";
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
@@ -16,7 +14,7 @@ import { parseResourceAssetPath } from "#shared/services/resource/parseResourceA
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { createPresignedGetUrl } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { env } from "cloudflare:workers";
 import { createError, defineEventHandler, getRequestIP, sendRedirect } from "nuxt/server";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller
@@ -33,15 +31,11 @@ export default defineEventHandler(async (event) => {
 
   const getSessionPayload = await readSession(event.req.headers);
   if (IS_PRODUCTION) {
-    // Its own limiter, because one published page issues a request per embedded asset and that spend must not
-    // Come out of the caller's API budget (see assetRateLimiter)
+    // Its own binding, because one published page issues a request per embedded asset and that spend must not come
+    // out of the caller's API budget (see openspec/specs/architecture/rate-limiting/design.md)
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.req.headers, getRequestIP(event) ?? "");
-    if (rateLimiterKey)
-      await getResultAsync(() => assetRateLimiter.consume(rateLimiterKey)).match(noop, (error) => {
-        if (checkIsRateLimitExceeded(error)) throw createError({ status: 429 });
-        throw error;
-      });
-    else console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
+    if (!rateLimiterKey) console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
+    else if (!(await env.RATE_LIMITER_ASSET.limit({ key: rateLimiterKey })).success) throw createError({ status: 429 });
   }
   // A stranger is refused as unauthenticated whatever the asset is, so a working-only image and a missing one look the
   // Same to them. A signed-in caller who may not read it gets a 404.

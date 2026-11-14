@@ -1,6 +1,10 @@
 import type { schema } from "@esposter/db-schema";
-import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
-import { API_KEY_NAME_MAX_LENGTH } from "@esposter/db-schema";
+import {
+  API_KEY_NAME_MAX_LENGTH,
+  RATE_LIMITER_DURATION_SECONDS,
+  RateLimiterBinding,
+  RateLimiterPointsMap,
+} from "@esposter/db-schema";
 import { apiKey } from "@better-auth/api-key";
 
 // The keys an agent authenticates with at the MCP endpoint. Shared with the adapter's test so better-auth's schema
@@ -14,8 +18,8 @@ export const apiKeyPlugin = apiKey({
   // Default of ten a day
   rateLimit: {
     enabled: true,
-    maxRequests: standardRateLimiter.points,
-    timeWindow: Temporal.Duration.from({ seconds: standardRateLimiter.duration }).total("milliseconds"),
+    maxRequests: RateLimiterPointsMap[RateLimiterBinding.Standard],
+    timeWindow: Temporal.Duration.from({ seconds: RATE_LIMITER_DURATION_SECONDS }).total("milliseconds"),
   },
   // A key is told apart from the owner's others only by its name in the settings list
   requireName: true,

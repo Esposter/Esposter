@@ -1,7 +1,6 @@
 import { achievementsInAchievement } from "#src/schema/achievement/achievementsInAchievement";
 import { userAchievementsInAchievement } from "#src/schema/achievement/userAchievementsInAchievement";
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
-import { rateLimiterFlexibleInApp } from "#src/schema/app/rateLimiterFlexibleInApp";
 import { accountsInAuth } from "#src/schema/auth/accountsInAuth";
 import { apiKeysInAuth } from "#src/schema/auth/apiKeysInAuth";
 import { sessionsInAuth } from "#src/schema/auth/sessionsInAuth";
@@ -69,7 +68,6 @@ export const schema = {
   postsInPost,
   programParticipantsInResource,
   pushSubscriptionsInNotification,
-  rateLimiterFlexibleInApp,
   resourceAccessesInResource,
   resourceActivitiesInResource,
   resourceFavoritesInResource,

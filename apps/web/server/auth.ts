@@ -2,7 +2,6 @@ import { db } from "#server/db";
 import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
-import { standardRateLimiter } from "#server/services/rateLimiter/standardRateLimiter";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
 import { betterAuth } from "better-auth";
 import { v7 } from "uuid";
@@ -46,7 +45,9 @@ export const auth = betterAuth({
   },
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
   plugins: [apiKeyPlugin],
-  rateLimit: { max: standardRateLimiter.points, window: standardRateLimiter.duration },
+  // Off: better-auth's limiter keeps its counts in each isolate's memory. The auth route budgets these endpoints through a binding
+  // instead (`server/api/auth/[...].ts`)
+  rateLimit: { enabled: false },
   socialProviders: {
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET },
     github: { clientId: process.env.GITHUB_CLIENT_ID, clientSecret: process.env.GITHUB_CLIENT_SECRET },
