@@ -26,7 +26,6 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -55,7 +54,6 @@ describe("datasetRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    MockTableDatabase.clear();
   });
 
   const setupSurvey = () => createPublishedSurvey(surveyCaller, name, { document, settings: {} });
@@ -83,12 +81,12 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1, b: true, c: "" },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -109,12 +107,12 @@ describe("datasetRouter", () => {
     await Promise.all(
       Array.from({ length: AZURE_MAX_PAGE_SIZE + 1 }, () =>
         surveyCaller.createSurveyResponse({
+          id: crypto.randomUUID(),
           isDraft: false,
           model: { a: 1 },
           pageNo: 0,
           participantToken: "",
-          partitionKey: newSurvey.id,
-          rowKey: crypto.randomUUID(),
+          resourceId: newSurvey.id,
         }),
       ),
     );
@@ -143,12 +141,12 @@ describe("datasetRouter", () => {
     const newSurvey = await setupSurvey();
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -170,12 +168,12 @@ describe("datasetRouter", () => {
     });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { c: ["red", 2] },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 
@@ -189,12 +187,12 @@ describe("datasetRouter", () => {
     const newSurvey = await createPublishedSurvey(surveyCaller, name, { document: questionDocument, settings: {} });
     vi.useFakeTimers({ now: 0 });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { submittedAt: "answer" },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const dataset = await caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses });
 

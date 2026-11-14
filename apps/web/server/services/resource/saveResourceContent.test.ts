@@ -29,8 +29,8 @@ import { deleteDirectory, getContentBlobName, reconcileStorageLedgerEntry } from
 import { createMockBucket } from "@esposter/db-mock";
 import {
   QueueJob,
-  StreamTable,
   getResourceFileBlobName,
+  resourceActivitiesInResource,
   ResourceActivityType,
   resourceLinksInResource,
   ResourceLinkType,
@@ -44,7 +44,6 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
@@ -69,11 +68,6 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry
 // And the type's registered after-save hook — is asserted here once. TodoList is the representative type: it is
 // The one with a registered after-save hook
-const readActivityTypes = () =>
-  Array.from(
-    MockTableDatabase.get(StreamTable.ResourceActivity)?.values() ?? [],
-    ({ activityType }) => activityType as ResourceActivityType,
-  );
 // Each page names an image by the url of its own blob, so the content and the blobs are built from one resource id
 const createWebpageContent = (resourceId: ResourceInResource["id"], hashes: string[]) =>
   new WebpageEditor({
@@ -84,6 +78,13 @@ describe(saveResourceContent, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
+  const readActivityTypes = async () =>
+    (
+      await mockContext.db
+        .select({ activityType: resourceActivitiesInResource.activityType })
+        .from(resourceActivitiesInResource)
+        .where(eq(resourceActivitiesInResource.resourceId, resource.id))
+    ).map(({ activityType }) => activityType);
   let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
   let dispose: () => Promise<void>;
   const name = "name";
@@ -197,7 +198,6 @@ describe(saveResourceContent, () => {
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     scheduledJobMap.clear();
-    MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
     // Content, which now charges the counter
@@ -286,7 +286,7 @@ describe(saveResourceContent, () => {
     // The event carries the version the update returned, so a subscriber's next save is not rejected as stale, and
     // Names the resource alone: the content is re-read by whoever hears it
     expect(saveEvent).toStrictEqual({ apiKeyName: "", contentVersion: savedResource.contentVersion, id: resource.id });
-    expect(readActivityTypes()).toStrictEqual([ResourceActivityType.ContentSaved]);
+    await expect(readActivityTypes()).resolves.toStrictEqual([ResourceActivityType.ContentSaved]);
     expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
   });
 
@@ -508,7 +508,7 @@ describe(saveResourceContent, () => {
     await saveResourceContent(ctx, { content, resource });
     await waitForSynchronizedFunctions();
 
-    expect(readActivityTypes()).toStrictEqual([]);
+    await expect(readActivityTypes()).resolves.toStrictEqual([]);
   });
 
   test("references the assets the content embeds and drops the ones a later save no longer embeds", async () => {

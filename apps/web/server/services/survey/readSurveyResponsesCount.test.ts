@@ -1,36 +1,56 @@
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import type { MockDatabase } from "@esposter/db-mock";
+
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
-import { createEntity } from "@esposter/db";
-import { StreamTable, SurveyResponseEntity } from "@esposter/db-schema";
-import { MockTableDatabase } from "azure-mock";
-import { afterEach, describe, expect, test } from "vitest";
+import { createMockDb } from "@esposter/db-mock";
+import { ResourceType, resourcesInResource, surveyResponsesInResource, usersInAuth } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
+import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
-// Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can
-// Affordably create, so the ceiling is proven directly against the table
+// Router-level counting is covered in survey.test.ts; the cap needs more rows than callers can afford to create, so the
+// Ceiling is proven directly against the table
 describe(readSurveyResponsesCount, () => {
+  const email = "email";
+  const name = "name";
   const surveyId = crypto.randomUUID();
-  const createSurveyResponses = async (count: number) => {
-    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
-    await Promise.all(
-      Array.from({ length: count }, () =>
-        createEntity(
-          surveyResponseClient,
-          new SurveyResponseEntity({ partitionKey: surveyId, rowKey: crypto.randomUUID() }),
-        ),
-      ),
-    );
-  };
+  const userId = crypto.randomUUID();
+  let mockDatabase: MockDatabase;
 
-  afterEach(() => {
-    MockTableDatabase.clear();
+  // Rows go in batches of ten, since a D1 statement binds at most a hundred parameters and each row binds nine
+  const createSurveyResponses = (count: number) =>
+    Promise.all(
+      chunk(
+        Array.from({ length: count }, () => ({
+          isDraft: false,
+          model: {},
+          modelVersion: 0,
+          pageNo: 0,
+          participantToken: "",
+          resourceId: surveyId,
+        })),
+        10,
+      ).map((batch) => mockDatabase.db.insert(surveyResponsesInResource).values(batch)),
+    );
+
+  beforeAll(async () => {
+    mockDatabase = await createMockDb();
+    await mockDatabase.db.insert(usersInAuth).values({ email, emailVerified: false, id: userId, name });
+    await mockDatabase.db.insert(resourcesInResource).values({ id: surveyId, name, type: ResourceType.Survey, userId });
+  });
+
+  afterEach(async () => {
+    await mockDatabase.db.delete(surveyResponsesInResource);
+  });
+
+  afterAll(async () => {
+    await mockDatabase.db.delete(usersInAuth);
   });
 
   test("counts survey responses", async () => {
     expect.hasAssertions();
 
     await createSurveyResponses(1);
-    const responseCount = await readSurveyResponsesCount(surveyId);
+    const responseCount = await readSurveyResponsesCount(mockDatabase.db, surveyId);
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
@@ -41,7 +61,7 @@ describe(readSurveyResponsesCount, () => {
     expect.hasAssertions();
 
     await createSurveyResponses(DATASET_MAX_COUNTED_ROWS);
-    const responseCount = await readSurveyResponsesCount(surveyId);
+    const responseCount = await readSurveyResponsesCount(mockDatabase.db, surveyId);
 
     // Exactly-at-cap is still an exact count — only beyond-cap renders the "10000+" form
     expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: false });
@@ -51,7 +71,7 @@ describe(readSurveyResponsesCount, () => {
     expect.hasAssertions();
 
     await createSurveyResponses(DATASET_MAX_COUNTED_ROWS + 1);
-    const responseCount = await readSurveyResponsesCount(surveyId);
+    const responseCount = await readSurveyResponsesCount(mockDatabase.db, surveyId);
 
     expect(responseCount).toStrictEqual({ count: DATASET_MAX_COUNTED_ROWS, isCapped: true });
   });

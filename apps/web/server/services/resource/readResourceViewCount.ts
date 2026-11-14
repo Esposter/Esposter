@@ -1,18 +1,15 @@
+import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import { getPartitionClauses, getTopNEntities } from "@esposter/db";
-import { StreamTable, ResourceViewEntity } from "@esposter/db-schema";
+import { resourceViewsInResource } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { eq, sql } from "drizzle-orm";
 
-// Sums the day buckets over a capped scan — magnitudes matter more than precision here
-export const readResourceViewCount = async (resourceId: ResourceInResource["id"]): Promise<number> => {
-  const resourceViewClient = useStreamTableClient(StreamTable.ResourceViews);
-  const resourceViews = await getTopNEntities(
-    resourceViewClient,
-    AZURE_MAX_PAGE_SIZE,
-    ResourceViewEntity,
-    getPartitionClauses(resourceId),
-  );
-  return resourceViews.reduce((total, { count }) => total + count, 0);
-};
+// The views across every day the resource has been counted on
+export const readResourceViewCount = async (db: Context["db"], resourceId: ResourceInResource["id"]): Promise<number> =>
+  takeOne(
+    await db
+      .select({ total: sql<number>`coalesce(sum(${resourceViewsInResource.count}), 0)` })
+      .from(resourceViewsInResource)
+      .where(eq(resourceViewsInResource.resourceId, resourceId)),
+  ).total;

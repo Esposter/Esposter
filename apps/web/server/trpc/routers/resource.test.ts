@@ -49,10 +49,11 @@ import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   QueueJob,
-  StreamTable,
+  apiKeysInAuth,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
   ResourceActivityType,
+  resourceActivitiesInResource,
   resourceLinksInResource,
   ResourceLinkType,
   ResourceType,
@@ -68,7 +69,7 @@ import {
   takeOne,
   waitForSynchronizedFunctions,
 } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
+import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -128,6 +129,11 @@ describe("resourceRouter", () => {
       })
     )?.storageBytesUsed;
 
+  const readResourceActivities = (resourceId: string) =>
+    mockContext.db
+      .select()
+      .from(resourceActivitiesInResource)
+      .where(eq(resourceActivitiesInResource.resourceId, resourceId));
   // The version rides the row, so only a test writing a second time has to say which version it is claiming
   const saveWebpageContent = (webpageResource: ResourceInResource, content: WebpageEditor, contentVersionOffset = 0) =>
     webpageCaller.saveResourceContent({
@@ -163,7 +169,6 @@ describe("resourceRouter", () => {
     vi.useRealTimers();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     scheduledJobMap.clear();
-    MockTableDatabase.clear();
   });
 
   test("reads a single resource by id", async () => {
@@ -1121,8 +1126,8 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
-    // The rowKey is the write's own reverse-ticked timestamp, so the pinned clock has to move between the
-    // Mutations for their entries to land on distinct keys instead of colliding in the partition
+    // The clock moves between the mutations so each entry is stamped at its own time, and the trail reads in the
+    // Order they happened
     vi.advanceTimersByTime(1);
     await saveWebpageContent(webpageResource, webpageEditor);
     await waitForSynchronizedFunctions();
@@ -1294,22 +1299,22 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
-    // Drained before the purge, so the sweep is proved against a partition that has a row in it
+    // Drained before the purge, so the sweep is proved against a trail that has a row in it
     await waitForSynchronizedFunctions();
     await caller.deleteResources({ ids: [dashboardResource.id] });
+    const activityBeforePurge = await readResourceActivities(dashboardResource.id);
     await caller.purgeResource({ id: dashboardResource.id });
     const deletedCount = await caller.readDeletedResourcesCount();
-    // The row is gone, so the blade can no longer resolve it — the partition is swept at purge time,
+    // The row is gone, so the blade can no longer resolve it — its trail goes with the row's cascade at purge time,
     // Read straight from the table because no procedure can reach a purged resource any more
-    const activityEntities = [...(MockTableDatabase.get(StreamTable.ResourceActivity)?.values() ?? [])];
+    const activityAfterPurge = await readResourceActivities(dashboardResource.id);
 
+    expect(activityBeforePurge).not.toStrictEqual([]);
     expect(deletedCount).toBe(0);
-    expect(activityEntities).toStrictEqual([]);
+    expect(activityAfterPurge).toStrictEqual([]);
   });
 
-  // Ordering is Azure's own partitionKey+rowKey contract, which MockTableClient does not reproduce
-  // (it yields insertion order), so these assert the trail's contents and its reverse-ticked keys
-  // Rather than the delivered order.
+  // The trail's order is pinned by the newest-first test below, so these compare its contents as a set
   test("records an activity trail", async () => {
     expect.hasAssertions();
 
@@ -1333,7 +1338,7 @@ describe("resourceRouter", () => {
     expect(renamedActivity?.newName).toBe(updatedName);
   });
 
-  test("writes a descending rowKey per activity so a partition scan reads newest-first", async () => {
+  test("reads the activity trail newest-first", async () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
@@ -1341,11 +1346,11 @@ describe("resourceRouter", () => {
     await dashboardCaller.updateResource({ id: dashboardResource.id, name: updatedName });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: dashboardResource.id });
-    const createdActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Created);
-    const renamedActivity = items.find(({ activityType }) => activityType === ResourceActivityType.Renamed);
 
-    // Reverse-ticked: the later event carries the smaller key, so ascending rowKey is newest-first
-    expect(renamedActivity?.rowKey.localeCompare(createdActivity?.rowKey ?? "")).toBeLessThan(0);
+    expect(items.map(({ activityType }) => activityType)).toStrictEqual([
+      ResourceActivityType.Renamed,
+      ResourceActivityType.Created,
+    ]);
   });
 
   // A tag edit carries nothing but the tags, so it can neither trip the rename trail nor overwrite the name a
@@ -1392,9 +1397,13 @@ describe("resourceRouter", () => {
   test("records an agent's content save apart from the owner's, naming its key", async () => {
     expect.hasAssertions();
 
-    const apiKey = { id: crypto.randomUUID(), name };
-    const agentWebpageCaller = createCallerFactory(webpageRouter)({ ...mockContext, apiKey });
     const webpageResource = await webpageCaller.createResource({ name });
+    const apiKey = { id: crypto.randomUUID(), name };
+    // The trail names its key through a foreign key, so the key has to exist before the agent writes through it
+    await mockContext.db
+      .insert(apiKeysInAuth)
+      .values({ id: apiKey.id, key: name, name, referenceId: webpageResource.userId });
+    const agentWebpageCaller = createCallerFactory(webpageRouter)({ ...mockContext, apiKey });
     vi.advanceTimersByTime(1);
     await saveWebpageContent(webpageResource, webpageEditor);
     // Drained before the clock moves, so the next save's coalescing scan sees this entry
@@ -1414,7 +1423,7 @@ describe("resourceRouter", () => {
         .map(({ apiKeyId, apiKeyName }) => ({ apiKeyId, apiKeyName })),
     ).toStrictEqual([
       { apiKeyId: apiKey.id, apiKeyName: name },
-      { apiKeyId: "", apiKeyName: "" },
+      { apiKeyId: null, apiKeyName: "" },
     ]);
   });
 

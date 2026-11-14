@@ -5,7 +5,6 @@ import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipW
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { roomsInMessage, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(executeAutomodAction, () => {
@@ -24,7 +23,6 @@ describe(executeAutomodAction, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
 

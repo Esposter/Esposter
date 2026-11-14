@@ -1,29 +1,22 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getBucket } from "#server/services/storage/getBucket";
-import { deleteDirectory, deleteTablePartitionEntities } from "@esposter/db";
-import { StorageBucket, StreamTable, resourcesInResource } from "@esposter/db-schema";
+import { deleteDirectory } from "@esposter/db";
+import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
 
 // The compensating cleanup every create rolls back through. A resource that never became durable must leave
-// Nothing behind, and everything it can leave is reached by its own id: the blobs under its directory, and the
-// Activity trail createResourceRow opens at insert time, which nothing else reclaims once the row gating reads of
-// It is gone. Blobs and trail first, the row last as the durable marker, and both halves guarded — neither may
-// Take the row delete or the original error down with it, which would tell the caller a cleanup step failed
-// Instead of why the create did
+// Nothing behind: its blobs under its directory first, and then the row, whose delete cascades to the activity trail
+// createResourceRow opened. The blobs are guarded so a failed cleanup cannot take the row delete or the original error
+// Down with it, which would tell the caller a cleanup step failed instead of why the create did
 export const deleteCreatedResources = async (ctx: AuthedContext, ids: ResourceInResource["id"][]): Promise<void> => {
   if (ids.length === 0) return;
 
   await getResultAsync(async () => {
     const bucket = getBucket(StorageBucket.ResourceAssets);
     await Promise.all(ids.map((id) => deleteDirectory(bucket, id)));
-  }).match(noop, console.error);
-  await getResultAsync(async () => {
-    const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
-    await Promise.all(ids.map((id) => deleteTablePartitionEntities(resourceActivityClient, id)));
   }).match(noop, console.error);
   await ctx.db.delete(resourcesInResource).where(inArray(resourcesInResource.id, ids));
 };

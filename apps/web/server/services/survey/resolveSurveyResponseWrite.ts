@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { CreateSurveyResponseInput } from "#shared/models/db/survey/CreateSurveyResponseInput";
-import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseInResource } from "@esposter/db-schema";
 
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { CLOSED_SURVEY_ERROR_REASON } from "#server/services/survey/constants";
@@ -9,7 +9,7 @@ import { readSurveySettings } from "#server/services/survey/readSurveySettings";
 import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyResponseModeValidatorMap";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
-import { AzureEntityType, DatabaseEntityType, ResourceType, SnapshotChannel } from "@esposter/db-schema";
+import { DatabaseEntityType, ResourceType, SnapshotChannel } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { SurveyAnswerValidationMode, validateSurveyAnswers } from "vue-survey-engine-headless";
 
@@ -19,16 +19,16 @@ import { SurveyAnswerValidationMode, validateSurveyAnswers } from "vue-survey-en
 export const resolveSurveyResponseWrite = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-  participantToken: SurveyResponseEntity["participantToken"],
+  participantToken: SurveyResponseInResource["participantToken"],
   { isDraft, model }: Pick<CreateSurveyResponseInput, "isDraft" | "model">,
-): Promise<SurveyResponseEntity["participantToken"]> => {
+): Promise<SurveyResponseInResource["participantToken"]> => {
   const survey = await readLiveSurvey(db, surveyId);
 
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
   if (!isAcceptingResponses)
     throw getInvalidOperationError(
       Operation.Create,
-      AzureEntityType.SurveyResponse,
+      DatabaseEntityType.SurveyResponse,
       CLOSED_SURVEY_ERROR_REASON,
       "CONFLICT",
     );
@@ -52,7 +52,7 @@ export const resolveSurveyResponseWrite = async (
   if (issue)
     throw getInvalidOperationError(
       Operation.Create,
-      AzureEntityType.SurveyResponse,
+      DatabaseEntityType.SurveyResponse,
       `Answer to "${issue.name}": ${issue.message}`,
     );
   return resolvedParticipantToken;

@@ -9,9 +9,9 @@ import {
 } from "vue-survey-engine-headless";
 import { z } from "zod";
 
-// A respondent's answers, as either response write takes them. Each answer is one the survey's answer types can hold, and the
-// Whole record is bounded by what its one stored JSON string property holds: the one anonymous write path in the platform
-// Otherwise takes whatever a request body carries, and the Table rejects it only after the write is attempted
+// A respondent's answers, as either response write takes them. Each answer is one the survey's answer types can hold, and
+// the whole record is bounded in size: the one anonymous write path in the platform otherwise takes whatever a request
+// body carries
 export const surveyResponseModelSchema = createRecordSchema(
   z.string().min(1).max(MAX_SURVEY_QUESTION_NAME_LENGTH),
   surveyAnswerValueSchema,

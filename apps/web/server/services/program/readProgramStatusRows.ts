@@ -17,7 +17,7 @@ export const readProgramStatusRows = async (
   // A deleted or unbound survey leaves the participants readable with nothing responded — the same
   // Fail-soft posture as every dangling reference. Neither read needs the other, so they overlap
   const [participants, content] = await Promise.all([
-    readProgramParticipantEntities(programId),
+    readProgramParticipantEntities(db, programId),
     readResourceContent(programResourceSchema, programId),
   ]);
   const respondedTokens = new Set<string>();
@@ -40,7 +40,7 @@ export const readProgramStatusRows = async (
       })
     : undefined;
   if (survey) {
-    const { hasMore, surveyResponses } = await readSurveyResponseEntities(survey.id);
+    const { hasMore, surveyResponses } = await readSurveyResponseEntities(db, survey.id);
     isRespondedPartial = hasMore;
     for (const { participantToken } of surveyResponses) if (participantToken) respondedTokens.add(participantToken);
   }

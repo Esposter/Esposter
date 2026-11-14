@@ -25,9 +25,8 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { AzureEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
+import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterAll, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
@@ -72,7 +71,6 @@ describe("surveyFunnel", () => {
 
   afterAll(async () => {
     await deleteDirectory(bucket);
-    MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await dispose();
   });
@@ -117,36 +115,36 @@ describe("surveyFunnel", () => {
 
     // 5. The respondents — one answers, one token is reused for a resume, one forgery is rejected
     const firstResponse = await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
       participantToken: firstParticipant.token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: survey.id,
     });
     const secondResponse = await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
       participantToken: secondParticipant.token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: survey.id,
     });
 
     await expect(
       surveyCaller.createSurveyResponse({
+        id: crypto.randomUUID(),
         isDraft: false,
         model: { a: 1 },
         pageNo: 0,
         participantToken: crypto.randomUUID(),
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
+        resourceId: survey.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
         new InvalidOperationError(
           Operation.Create,
-          AzureEntityType.SurveyResponse,
+          DatabaseEntityType.SurveyResponse,
           INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
         ).message
       }]`,
@@ -168,7 +166,7 @@ describe("surveyFunnel", () => {
     });
 
     // The owner removes one response as a test submission, then closes the survey
-    await surveyCaller.deleteSurveyResponse({ id: survey.id, rowKey: secondResponse.rowKey });
+    await surveyCaller.deleteSurveyResponse({ id: survey.id, responseId: secondResponse.id });
     const { rows: moderatedStatusRows } = await programCaller.readProgramStatus({ id: program.id });
 
     expect(moderatedStatusRows.map(({ isResponded }) => isResponded)).toStrictEqual([true, false, false]);
@@ -185,17 +183,18 @@ describe("surveyFunnel", () => {
     // Closing takes effect without re-publishing, so the participant URL stays alive and says so
     await expect(
       surveyCaller.updateSurveyResponse({
+        id: firstResponse.id,
         isDraft: false,
         model: { a: 1 },
         modelVersion: firstResponse.modelVersion,
         pageNo: 0,
         participantToken: firstParticipant.token,
-        partitionKey: survey.id,
-        rowKey: firstResponse.rowKey,
+        resourceId: firstResponse.resourceId,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${
-        new InvalidOperationError(Operation.Create, AzureEntityType.SurveyResponse, CLOSED_SURVEY_ERROR_REASON).message
+        new InvalidOperationError(Operation.Create, DatabaseEntityType.SurveyResponse, CLOSED_SURVEY_ERROR_REASON)
+          .message
       }]`,
     );
 

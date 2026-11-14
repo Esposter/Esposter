@@ -5,7 +5,6 @@ import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks, createMockSession } from "#server/auth.test";
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
@@ -28,25 +27,20 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import type { Clause } from "@esposter/db-schema";
-import { deleteDirectory, getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
+import { deleteDirectory, getContentBlobName, readJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   StorageBucket,
   QueueJob,
-  StreamTable,
   DatabaseEntityType,
   getResourceFilesDirectoryName,
   resourcesInResource,
+  resourceViewsInResource,
   ResourceType,
-  ResourceViewEntity,
   storageLedgerInStorage,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { MockTableClient, MockTableDatabase } from "azure-mock";
+import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -76,6 +70,9 @@ describe(createResourceProcedures, () => {
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
+  const readResourceViews = (resourceId: string) =>
+    mockContext.db.select().from(resourceViewsInResource).where(eq(resourceViewsInResource.resourceId, resourceId));
+
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
     mockBuckets[StorageBucket.ResourceAssets] = bucket;
@@ -98,8 +95,7 @@ describe(createResourceProcedures, () => {
     vi.useRealTimers();
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
-    MockTableDatabase.clear();
-    // Cascade removes any resourcePublications rows too
+    // Cascade removes any resourcePublications, activity and view rows too
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     vi.restoreAllMocks();
@@ -704,11 +700,10 @@ describe(createResourceProcedures, () => {
     const dashboard = new Dashboard();
     await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    // The table client is constructed per call, so the failure is injected on the prototype.
-    // The counter inserts the day's first view and merges every one after it — never upserts, because
-    // Two concurrent first views would both merge count: 1 and drop an increment
-    vi.spyOn(MockTableClient.prototype, "createEntity").mockRejectedValue(new Error(" "));
-    vi.spyOn(MockTableClient.prototype, "updateEntity").mockRejectedValue(new Error(" "));
+    // The counter's write is the one a failing database would reject, so the failure is injected on the insert
+    vi.spyOn(mockContext.db, "insert").mockImplementation(() => {
+      throw new Error(" ");
+    });
     vi.spyOn(console, "error").mockImplementation(noop);
     const { content } = await dashboardCaller.readPublishedResourceContent(newResource.id);
     await waitForSynchronizedFunctions();
@@ -727,17 +722,14 @@ describe(createResourceProcedures, () => {
     await dashboardCaller.readPublishedResourceContent(newResource.id);
     // Drained here so the view write can never land after the purge sweep below
     await waitForSynchronizedFunctions();
+    const viewsBeforePurge = await readResourceViews(newResource.id);
     // Delete is soft, so view history survives the Recycle bin window — purge is what sweeps it
     await dashboardCaller.deleteResource({ id: newResource.id });
     await resourceCaller.purgeResource({ id: newResource.id });
-    // The resource row is gone, so the cleared partition can only be observed against the table
-    const clauses: Clause<ResourceViewEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: newResource.id },
-    ];
-    const resourceViewClient = useStreamTableClient(StreamTable.ResourceViews);
-    const resourceViews = await getTopNEntities(resourceViewClient, AZURE_MAX_PAGE_SIZE, ResourceViewEntity, clauses);
 
-    expect(resourceViews).toStrictEqual([]);
+    expect(viewsBeforePurge).not.toStrictEqual([]);
+    // The resource row is gone, so its cascade is the only thing that can have cleared the counts
+    await expect(readResourceViews(newResource.id)).resolves.toStrictEqual([]);
   });
 
   test("generates upload file sas entities", async () => {

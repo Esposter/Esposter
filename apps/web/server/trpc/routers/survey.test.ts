@@ -18,16 +18,15 @@ import { surveyRouter } from "#server/trpc/routers/survey";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import {
-  AzureEntityType,
-  StreamTable,
   DatabaseEntityType,
   ResourceType,
   SnapshotChannel,
+  surveyResponsesInResource,
   SurveyResponseMode,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockTableClient, MockTableDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
+import { eq } from "drizzle-orm";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 import {
   createSurveyDocument,
   MAX_SURVEY_ANSWER_LENGTH,
@@ -66,28 +65,28 @@ describe("surveyRouter", () => {
   const keyValue = "keyValue";
   const invalidParticipantTokenErrorMessage = new InvalidOperationError(
     Operation.Create,
-    AzureEntityType.SurveyResponse,
+    DatabaseEntityType.SurveyResponse,
     INVALID_PARTICIPANT_TOKEN_ERROR_REASON,
   ).message;
   const closedSurveyErrorMessage = new InvalidOperationError(
     Operation.Create,
-    AzureEntityType.SurveyResponse,
+    DatabaseEntityType.SurveyResponse,
     CLOSED_SURVEY_ERROR_REASON,
   ).message;
   // Settings are live working state rather than snapshot state, so most tests reach the behaviour they are after
   // By writing content at a known version — the version is what the caller varies, never the envelope
   const saveSurveyContent = (id: string, contentVersion: number, content: SurveyResource) =>
     caller.saveResourceContent({ content, contentVersion, id });
-  // A response is always the same envelope — one answer under a fresh row key — and the token is the only part
+  // A response is always the same envelope — one answer under a fresh id — and the token is the only part
   // An Anonymous survey leaves empty, so it defaults to what the mode that does not use it sends
-  const createSurveyResponse = (partitionKey: string, answer: number, participantToken = "") =>
+  const createSurveyResponse = (resourceId: string, answer: number, participantToken = "") =>
     caller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: answer },
       pageNo: 0,
       participantToken,
-      partitionKey,
-      rowKey: crypto.randomUUID(),
+      resourceId,
     });
   // An edit addresses the response it is editing, so the row identifies itself rather than being restated
   const updateSurveyResponse = (
@@ -96,13 +95,13 @@ describe("surveyRouter", () => {
     participantToken = "",
   ) =>
     caller.updateSurveyResponse({
+      id: surveyResponse.id,
       isDraft: false,
       model: { a: answer },
       modelVersion: surveyResponse.modelVersion,
       pageNo: 0,
       participantToken,
-      partitionKey: surveyResponse.partitionKey,
-      rowKey: surveyResponse.rowKey,
+      resourceId: surveyResponse.resourceId,
     });
   // The answers the response tests write are one number, to the question named "a"
   const numberDocument = createPageDocument([
@@ -131,11 +130,6 @@ describe("surveyRouter", () => {
     programCaller = createCallerFactory(programRouter)(mockContext);
     resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
-  });
-
-  afterEach(() => {
-    MockTableDatabase.clear();
-    vi.restoreAllMocks();
   });
 
   test("saves and reads content", async () => {
@@ -192,21 +186,23 @@ describe("surveyRouter", () => {
     `);
   });
 
-  test("clears its response partition when the resource is purged", async () => {
+  test("clears its responses when the resource is purged", async () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
     await createSurveyResponse(newResource.id, 0);
 
+    const isSurveyResponse = eq(surveyResponsesInResource.resourceId, newResource.id);
+
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
     await caller.deleteResource({ id: newResource.id });
 
-    expect(MockTableDatabase.get(StreamTable.SurveyResponses)?.size).toBe(1);
+    expect(await mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).toBe(1);
 
     // Respondents' answers are the survey's own data, so purge destroys them instead of orphaning forever
     await resourceCaller.purgeResource({ id: newResource.id });
 
-    expect(MockTableDatabase.get(StreamTable.SurveyResponses)?.size).toBe(0);
+    expect(await mockContext.db.$count(surveyResponsesInResource, isSurveyResponse)).toBe(0);
   });
 
   test("hides unpublished surveys from respondents", async () => {
@@ -236,9 +232,9 @@ describe("surveyRouter", () => {
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     const surveyResponse = await caller.readSurveyResponse({
+      id: newSurveyResponse.id,
       participantToken: "",
-      partitionKey: newSurveyResponse.partitionKey,
-      rowKey: newSurveyResponse.rowKey,
+      resourceId: newResource.id,
     });
 
     expect(surveyResponse).toStrictEqual(newSurveyResponse);
@@ -252,11 +248,7 @@ describe("surveyRouter", () => {
     await caller.deleteResource({ id: newResource.id });
 
     await expect(
-      caller.readSurveyResponse({
-        participantToken: "",
-        partitionKey: newSurveyResponse.partitionKey,
-        rowKey: newSurveyResponse.rowKey,
-      }),
+      caller.readSurveyResponse({ id: newSurveyResponse.id, participantToken: "", resourceId: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
@@ -273,12 +265,12 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.createSurveyResponse({
+        id: crypto.randomUUID(),
         isDraft: false,
         model: { a: largeAnswer, b: largeAnswer, c: largeAnswer, d: largeAnswer },
         pageNo: 0,
         participantToken: "",
-        partitionKey: newResource.id,
-        rowKey: crypto.randomUUID(),
+        resourceId: newResource.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: [
@@ -312,16 +304,16 @@ describe("surveyRouter", () => {
 
     await expect(
       caller.updateSurveyResponse({
+        id: newSurveyResponse.id,
         isDraft: false,
         model: newSurveyResponse.model,
         modelVersion: newSurveyResponse.modelVersion,
         pageNo: 0,
         participantToken: "",
-        partitionKey: newSurveyResponse.partitionKey,
-        rowKey: newSurveyResponse.rowKey,
+        resourceId: newResource.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.SurveyResponse, "duplicate model").message}]`,
     );
   });
 
@@ -330,22 +322,22 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 0 },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newResource.id,
     });
     // Same answers, later page — a real progress write, so it is not a duplicate and the resume position advances
     const updatedSurveyResponse = await caller.updateSurveyResponse({
+      id: newSurveyResponse.id,
       isDraft: false,
       model: { a: 0 },
       modelVersion: newSurveyResponse.modelVersion,
       pageNo: 1,
       participantToken: "",
-      partitionKey: newSurveyResponse.partitionKey,
-      rowKey: newSurveyResponse.rowKey,
+      resourceId: newSurveyResponse.resourceId,
     });
 
     expect(updatedSurveyResponse.pageNo).toBe(1);
@@ -356,74 +348,50 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await caller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 0 },
       pageNo: 2,
       participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newResource.id,
     });
 
     // Navigating back and re-saving unchanged answers must not regress the stored resume page
     await expect(
       caller.updateSurveyResponse({
+        id: newSurveyResponse.id,
         isDraft: false,
         model: { a: 0 },
         modelVersion: newSurveyResponse.modelVersion,
         pageNo: 1,
         participantToken: "",
-        partitionKey: newSurveyResponse.partitionKey,
-        rowKey: newSurveyResponse.rowKey,
+        resourceId: newSurveyResponse.resourceId,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, AzureEntityType.SurveyResponse, "duplicate model").message}]`,
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.SurveyResponse, "duplicate model").message}]`,
     );
   });
 
-  // Two saves computed from the same version, the first held open until the second has landed — the interleaving a
-  // Deployment produces on its own. The first's etag is then stale, so it re-reads and fails the version check against
-  // What the second wrote instead of landing its own answer on top of it
-  test("rejects a save that a concurrent save overtook", async () => {
+  // Two saves computed from the same version race for it. The one that writes second matches no row and is refused
+  // rather than written over the other, so exactly one lands, and the stored response is the one that landed
+  test("refuses a save computed from the version a concurrent save overtook", async () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
-    const { updateEntity } = MockTableClient.prototype;
-    const { promise: isFirstWriting, resolve: resolveFirstWriting } = Promise.withResolvers<string>();
-    const { promise: isSecondWritten, resolve: resolveSecondWritten } = Promise.withResolvers<string>();
-    let isFirstWrite = true;
-    vi.spyOn(MockTableClient.prototype, "updateEntity").mockImplementation(async function (
-      this: MockTableClient,
-      ...args: Parameters<MockTableClient["updateEntity"]>
-    ) {
-      if (isFirstWrite) {
-        isFirstWrite = false;
-        resolveFirstWriting("");
-        await isSecondWritten;
-      }
-      return updateEntity.apply(this, args);
+    const settledSaves = await Promise.allSettled([
+      updateSurveyResponse(newSurveyResponse, 1),
+      updateSurveyResponse(newSurveyResponse, 2),
+    ]);
+    const landedSaves = settledSaves.filter((settledSave) => settledSave.status === "fulfilled");
+    const storedSurveyResponse = await caller.readSurveyResponse({
+      id: newSurveyResponse.id,
+      participantToken: "",
+      resourceId: newResource.id,
     });
-    const firstSave = updateSurveyResponse(newSurveyResponse, 1);
-    await isFirstWriting;
-    await updateSurveyResponse(newSurveyResponse, 2);
-    resolveSecondWritten("");
 
-    await expect(firstSave).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${
-        new InvalidOperationError(
-          Operation.Update,
-          AzureEntityType.SurveyResponse,
-          "cannot update survey response model with old model version",
-        ).message
-      }]`,
-    );
-    await expect(
-      caller.readSurveyResponse({
-        participantToken: "",
-        partitionKey: newSurveyResponse.partitionKey,
-        rowKey: newSurveyResponse.rowKey,
-      }),
-    ).resolves.toHaveProperty("model", { a: 2 });
+    expect(landedSaves).toHaveLength(1);
+    expect(storedSurveyResponse).toStrictEqual(takeOne(landedSaves).value);
   });
 
   test("fails update survey response with old model version", async () => {
@@ -437,7 +405,7 @@ describe("surveyRouter", () => {
       `[TRPCError: ${
         new InvalidOperationError(
           Operation.Update,
-          AzureEntityType.SurveyResponse,
+          DatabaseEntityType.SurveyResponse,
           "cannot update survey response model with old model version",
         ).message
       }]`,
@@ -586,9 +554,9 @@ describe("surveyRouter", () => {
     await saveSurveyContent(survey.id, survey.contentVersion + 1, { document, settings });
     const anonymousSurveyResponse = await createSurveyResponse(survey.id, 1);
     const existingSurveyResponse = await caller.readSurveyResponse({
+      id: newSurveyResponse.id,
       participantToken: "",
-      partitionKey: survey.id,
-      rowKey: newSurveyResponse.rowKey,
+      resourceId: survey.id,
     });
 
     expect(anonymousSurveyResponse.participantToken).toBe("");
@@ -712,30 +680,26 @@ describe("surveyRouter", () => {
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await createSurveyResponse(newResource.id, 1);
-    await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
+    await caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
     await expect(
-      caller.readSurveyResponse({
-        participantToken: "",
-        partitionKey: newResource.id,
-        rowKey: newSurveyResponse.rowKey,
-      }),
+      caller.readSurveyResponse({ id: newSurveyResponse.id, participantToken: "", resourceId: newResource.id }),
     ).resolves.toBeUndefined();
   });
 
-  test("fails delete survey response with non-existent row key", async () => {
+  test("fails delete survey response with non-existent response id", async () => {
     expect.hasAssertions();
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
-    await caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey });
+    await caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id });
 
     await expect(
-      caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey }),
+      caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.SurveyResponse, JSON.stringify({ partitionKey: newResource.id, rowKey: newSurveyResponse.rowKey })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.SurveyResponse, newSurveyResponse.id).message}]`,
     );
   });
 
@@ -747,7 +711,7 @@ describe("surveyRouter", () => {
     await mockSessionOnce(mockContext.db);
 
     await expect(
-      caller.deleteSurveyResponse({ id: newResource.id, rowKey: newSurveyResponse.rowKey }),
+      caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -758,11 +722,11 @@ describe("surveyRouter", () => {
     const otherResource = await caller.createResource({ name });
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
 
-    // The partition key is derived from the owner-checked id, so another survey's id cannot reach this row
+    // The response is looked up under the owner-checked survey id, so another survey's id cannot reach this row
     await expect(
-      caller.deleteSurveyResponse({ id: otherResource.id, rowKey: newSurveyResponse.rowKey }),
+      caller.deleteSurveyResponse({ id: otherResource.id, responseId: newSurveyResponse.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(AzureEntityType.SurveyResponse, JSON.stringify({ partitionKey: otherResource.id, rowKey: newSurveyResponse.rowKey })).message}]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.SurveyResponse, newSurveyResponse.id).message}]`,
     );
   });
 
@@ -785,29 +749,29 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const draftSurveyResponse = await caller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: true,
       model: { a: 0 },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newResource.id,
     });
     const draftCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
     expect(draftCount).toStrictEqual({ count: 0, isCapped: false });
 
     await caller.updateSurveyResponse({
+      id: draftSurveyResponse.id,
       isDraft: false,
       model: draftSurveyResponse.model,
       modelVersion: draftSurveyResponse.modelVersion,
       pageNo: 0,
       participantToken: "",
-      partitionKey: draftSurveyResponse.partitionKey,
-      rowKey: draftSurveyResponse.rowKey,
+      resourceId: draftSurveyResponse.resourceId,
     });
     const { rows } = await caller.readSurveyResponseRecords({ id: newResource.id });
 
-    expect(rows.map(({ rowKey }) => rowKey)).toStrictEqual([draftSurveyResponse.rowKey]);
+    expect(rows.map(({ responseId }) => responseId)).toStrictEqual([draftSurveyResponse.id]);
   });
 
   test("keeps a submitted response submitted when a later save says draft", async () => {
@@ -816,13 +780,13 @@ describe("surveyRouter", () => {
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
     await caller.updateSurveyResponse({
+      id: newSurveyResponse.id,
       isDraft: true,
       model: { a: 1 },
       modelVersion: newSurveyResponse.modelVersion,
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurveyResponse.partitionKey,
-      rowKey: newSurveyResponse.rowKey,
+      resourceId: newSurveyResponse.resourceId,
     });
     const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
@@ -838,18 +802,18 @@ describe("surveyRouter", () => {
     );
     const ratingErrorMessage = new InvalidOperationError(
       Operation.Create,
-      AzureEntityType.SurveyResponse,
+      DatabaseEntityType.SurveyResponse,
       `Answer to "rating": ${SURVEY_OUT_OF_RANGE_MESSAGE}`,
     ).message;
 
     await expect(
       caller.createSurveyResponse({
+        id: crypto.randomUUID(),
         isDraft: false,
         model: { rating: 9 },
         pageNo: 0,
         participantToken: "",
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
+        resourceId: survey.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${ratingErrorMessage}]`);
   });
@@ -863,28 +827,28 @@ describe("surveyRouter", () => {
     );
     const requiredErrorMessage = new InvalidOperationError(
       Operation.Create,
-      AzureEntityType.SurveyResponse,
+      DatabaseEntityType.SurveyResponse,
       `Answer to "a": ${SURVEY_REQUIRED_MESSAGE}`,
     ).message;
 
     await expect(
       caller.createSurveyResponse({
+        id: crypto.randomUUID(),
         isDraft: true,
         model: {},
         pageNo: 0,
         participantToken: "",
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
+        resourceId: survey.id,
       }),
     ).resolves.toHaveProperty("isDraft", true);
     await expect(
       caller.createSurveyResponse({
+        id: crypto.randomUUID(),
         isDraft: false,
         model: {},
         pageNo: 0,
         participantToken: "",
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
+        resourceId: survey.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${requiredErrorMessage}]`);
   });

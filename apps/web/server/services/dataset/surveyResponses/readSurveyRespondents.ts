@@ -3,7 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 // An Identified survey's respondents, keyed by the token they answered with. The identifier is the
 // Participant's publicId, the non-secret one the Program's status dataset publishes too — never keyValue, which is the
@@ -14,10 +14,12 @@ export const readSurveyRespondents = async (
   survey: Pick<ResourceInResource, "id" | "userId">,
 ): Promise<{ isPartial: boolean; respondentIds: Map<string, string> }> => {
   const programIds = await readBoundProgramIds(db, survey);
-  const participantLists = await Promise.all(programIds.map((programId) => readProgramParticipantEntities(programId)));
+  const participantLists = await Promise.all(
+    programIds.map((programId) => readProgramParticipantEntities(db, programId)),
+  );
   const participants = participantLists.flat();
   return {
-    isPartial: participantLists.some((list) => list.length >= AZURE_MAX_PAGE_SIZE),
+    isPartial: participantLists.some((list) => list.length >= MAX_READ_LIMIT),
     respondentIds: new Map(participants.map(({ publicId, token }) => [token, publicId])),
   };
 };

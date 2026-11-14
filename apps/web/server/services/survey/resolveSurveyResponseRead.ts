@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseInResource } from "@esposter/db-schema";
 
 import { readLiveSurvey } from "#server/services/survey/readLiveSurvey";
 import { readSurveySettings } from "#server/services/survey/readSurveySettings";
@@ -12,8 +12,8 @@ import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyRe
 export const resolveSurveyResponseRead = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-  participantToken: SurveyResponseEntity["participantToken"],
-): Promise<SurveyResponseEntity["participantToken"]> => {
+  participantToken: SurveyResponseInResource["participantToken"],
+): Promise<SurveyResponseInResource["participantToken"]> => {
   await readLiveSurvey(db, surveyId);
 
   const { responseMode } = await readSurveySettings(surveyId);

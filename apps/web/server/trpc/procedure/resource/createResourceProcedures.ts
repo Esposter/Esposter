@@ -375,7 +375,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         const content = await readPublishedContent(ctx.db, resource, resource.publication.publishVersion);
         // Counted after the read is guaranteed to succeed, so a 404 never lands in the buckets.
         // Best-effort: a failed increment loses one view, never the page.
-        getSynchronizedFunction(incrementResourceViewCount)(input);
+        getSynchronizedFunction(incrementResourceViewCount)(ctx.db, input);
         return { content, name: resource.name };
       }),
     // An owner-only read of a retained snapshot, backing the view route's `version` query param. Anonymous
@@ -392,7 +392,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       ctx.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: ctx.resource.id } } }),
     ),
     readResourceViewCount: getOwnerProcedure(type, resourceIdInputSchema, "id").query<number>(({ ctx }) =>
-      readResourceViewCount(ctx.resource.id),
+      readResourceViewCount(ctx.db, ctx.resource.id),
     ),
     unpublishResource: getOwnerProcedure(type, resourceIdInputSchema, "id").mutation<ResourceInResource>(
       async ({ ctx }) => {

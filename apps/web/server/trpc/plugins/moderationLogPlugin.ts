@@ -1,9 +1,8 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { executeAdminActionInputSchema } from "#shared/models/db/moderation/ExecuteAdminActionInput";
 import { writeModerationLogEntry } from "@esposter/db";
-import { AdminActionType, StreamTable } from "@esposter/db-schema";
+import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { initTRPC } from "@trpc/server";
 
@@ -18,9 +17,9 @@ export const moderationLogPlugin = t.procedure.use(async ({ ctx, getRawInput, ne
   if (!parsedInput.success) return result;
 
   const { roomId, targetUserId, type } = parsedInput.data;
-  const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : undefined;
+  const durationMs = parsedInput.data.type === AdminActionType.TimeoutUser ? parsedInput.data.durationMs : null;
   await getResultAsync(async () =>
-    writeModerationLogEntry(useStreamTableClient(StreamTable.ModerationLog), {
+    writeModerationLogEntry(ctx.db, {
       actorUserId: ctx.getSessionPayload.user.id,
       durationMs,
       roomId,

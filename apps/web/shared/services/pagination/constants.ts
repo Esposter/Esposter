@@ -39,3 +39,5 @@ export const UPDATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.updatedAt,
   order: SortOrder.Desc,
 } as const satisfies SortItem<typeof ItemMetadataPropertyNames.updatedAt>;
+// The row id breaks a tie in newest-first order, so rows created in the same millisecond still page without a skip
+export const ID_DESCENDING_SORT_ITEM = { key: "id", order: SortOrder.Desc } as const satisfies SortItem<"id">;

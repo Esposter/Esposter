@@ -50,7 +50,7 @@ export const readProgramInvites = async (
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Resource, "the email has no link to the survey");
   const [audienceDataset, participants, statusRows] = await Promise.all([
     readProgramAudienceDataset(ctx, audience),
-    readProgramParticipantEntities(program.id),
+    readProgramParticipantEntities(ctx.db, program.id),
     readProgramStatusRows(ctx.db, program),
   ]);
   const respondedKeyValues = new Set(

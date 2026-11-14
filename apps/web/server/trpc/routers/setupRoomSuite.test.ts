@@ -8,7 +8,6 @@ import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { roomsInMessage } from "@esposter/db-schema";
-import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, beforeEach, describe } from "vitest";
 
 // Room-suite fixture: owns the mock context, room/role callers, a fresh room per test, and the
@@ -31,8 +30,8 @@ export const setupRoomSuite = () => {
     roomId = room.id;
   });
 
+  // Deleting the room cascades to its moderation log and notes, so the rows a test wrote die with it
   afterEach(async () => {
-    MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
 

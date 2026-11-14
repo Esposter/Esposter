@@ -15,9 +15,15 @@ import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { listBlobNames } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { StorageBucket, StreamTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
+import {
+  StorageBucket,
+  ResourceType,
+  resourceActivitiesInResource,
+  resourceViewsInResource,
+  storageLedgerInStorage,
+} from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
+import { eq } from "drizzle-orm";
 import { MjmlNodeType } from "mjml-blocks";
 import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -201,18 +207,24 @@ describe("emailRouter", () => {
     const storageBytesUsedWhilePublished = await readStorageBytesUsed(newResource.userId);
     const readResourceBlobNames = () => listBlobNames(bucket, `${newResource.id}/`);
     const storedBlobNamesBeforePurge = await readResourceBlobNames();
-    // The partitions and ledger rows keyed by this email, each read before the purge so it is proved populated
-    const readPartitionEntities = (tableName: StreamTable) =>
-      [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter(
-        ({ partitionKey }) => partitionKey === newResource.id,
-      );
+    // The rows keyed by this email, each read before the purge so it is proved populated
+    const readResourceActivities = () =>
+      getMockContext()
+        .db.select()
+        .from(resourceActivitiesInResource)
+        .where(eq(resourceActivitiesInResource.resourceId, newResource.id));
+    const readResourceViews = () =>
+      getMockContext()
+        .db.select()
+        .from(resourceViewsInResource)
+        .where(eq(resourceViewsInResource.resourceId, newResource.id));
     const readLedgerEntries = async () =>
       (await getMockContext().db.select().from(storageLedgerInStorage)).filter(({ blobName }) =>
         blobName.startsWith(`${newResource.id}/`),
       );
-    await incrementResourceViewCount(newResource.id);
-    const activityBeforePurge = readPartitionEntities(StreamTable.ResourceActivity);
-    const viewsBeforePurge = readPartitionEntities(StreamTable.ResourceViews);
+    await incrementResourceViewCount(getMockContext().db, newResource.id);
+    const activityBeforePurge = await readResourceActivities();
+    const viewsBeforePurge = await readResourceViews();
     const ledgerBeforePurge = await readLedgerEntries();
     // Deleting is soft, so the purge is what removes the directory and gives its bytes back
     await caller.deleteResource({ id: newResource.id });
@@ -226,8 +238,9 @@ describe("emailRouter", () => {
     expect(viewsBeforePurge).not.toStrictEqual([]);
     expect(ledgerBeforePurge).not.toStrictEqual([]);
     await expect(readResourceBlobNames()).resolves.toStrictEqual([]);
-    expect(readPartitionEntities(StreamTable.ResourceActivity)).toStrictEqual([]);
-    expect(readPartitionEntities(StreamTable.ResourceViews)).toStrictEqual([]);
+    // The resource row's delete cascades to both
+    await expect(readResourceActivities()).resolves.toStrictEqual([]);
+    await expect(readResourceViews()).resolves.toStrictEqual([]);
     await expect(readLedgerEntries()).resolves.toStrictEqual([]);
     await expect(readStorageBytesUsed(newResource.userId)).resolves.toBe(storageBytesUsedBeforePublish);
   });

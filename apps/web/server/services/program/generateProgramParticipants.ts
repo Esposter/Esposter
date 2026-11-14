@@ -3,34 +3,21 @@ import type { GeneratedProgramParticipants } from "#shared/models/resource/progr
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
-import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
+import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readOwnedResource } from "#server/services/resource/readOwnedResource";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
-import { checkIsStreamTableError, createEntity, getEntity, serializeEntity } from "@esposter/db";
-import { StreamTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
-import { chunk, getResultAsync } from "@esposter/shared";
+import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
+import { and, eq, inArray } from "drizzle-orm";
 
-// A create whose row already exists is the one rejection this path expects — it means a concurrent run
-// Claimed the recipient first. Every other failure is a real fault and propagates, so a transient storage
-// Error is never mistaken for a collision and degraded into a per-row storm that fails anyway
-const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
-  getResultAsync(create).match(
-    () => true,
-    (error) => {
-      if (checkIsStreamTableError(error, "exists")) return false;
-      throw error;
-    },
-  );
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing
 // Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.
-// The guarantee is the storage key, not this read-then-write — see ProgramParticipantEntity
+// The guarantee is the unique constraint on the program and the key, not this read-then-write
 export const generateProgramParticipants = async (
   ctx: AuthedContext,
   programId: ResourceInResource["id"],
@@ -50,13 +37,12 @@ export const generateProgramParticipants = async (
   if (!survey || !columns.some(({ name }) => name === keyColumn)) throw getDanglingProgramBindingError();
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
-  const existingParticipants = await readProgramParticipantEntities(programId);
-  const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
+  const existingParticipants = await readProgramParticipantEntities(ctx.db, programId);
   const keyValueParticipantMap = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
   );
   // One token per distinct key value — the same recipient twice in the audience is one participant
-  const newParticipants: ProgramParticipantEntity[] = [];
+  const newParticipants: (typeof programParticipantsInResource.$inferInsert)[] = [];
   const newKeyValues = new Set<string>();
   for (const row of rows) {
     const keyValue = row[keyColumn];
@@ -64,46 +50,39 @@ export const generateProgramParticipants = async (
       continue;
 
     newKeyValues.add(keyValue);
-    newParticipants.push(
-      new ProgramParticipantEntity({
-        keyValue,
-        partitionKey: programId,
-        publicId: crypto.randomUUID(),
-        rowKey: getProgramParticipantId(keyValue),
-        token: crypto.randomUUID(),
-      }),
-    );
+    newParticipants.push({
+      keyValue,
+      publicId: crypto.randomUUID(),
+      resourceId: programId,
+      token: crypto.randomUUID(),
+    });
   }
-  // Every participant of a program shares its partition, so the inserts ride one transaction per batch
-  // Instead of a round trip each — an audience at the read cap costs ten calls rather than a thousand,
-  // And this is a single mutation request the owner waits on. No batch reads what another wrote, so they overlap
+  // The batches are independent, so they overlap. A participant another run claimed first conflicts and comes back
+  // unreturned, and its token is the one a link may already carry, so this run adopts it and drops the token it minted
   const batchParticipants = await Promise.all(
-    chunk(newParticipants, AZURE_MAX_BATCH_SIZE).map(async (batch): Promise<ProgramParticipant[]> => {
-      const isBatchCreated = await checkIsCreated(() =>
-        programParticipantClient.submitTransaction(
-          batch.map((participant) => ["create", serializeEntity(participant)]),
-        ),
-      );
-      if (isBatchCreated) return batch.map(({ keyValue, token }) => ({ keyValue, token }));
-      // A transaction is all-or-nothing, so one recipient a concurrent run already claimed rolls back the
-      // Whole batch — replay it insert by insert, which lands everyone this run is still the first to reach
-      const replayedParticipants = await Promise.all(
-        batch.map(async (participant) => {
-          const { keyValue, rowKey, token } = participant;
-          const isCreated = await checkIsCreated(() => createEntity(programParticipantClient, participant));
-          if (isCreated) return { keyValue, token };
-          // Someone else got there first, so their token is the one that may already be sitting in an inbox —
-          // This run adopts it and drops the token it just minted, which was never stored and never sent
-          const existingParticipant = await getEntity(
-            programParticipantClient,
-            ProgramParticipantEntity,
-            programId,
-            rowKey,
-          );
-          return existingParticipant ? { keyValue, token: existingParticipant.token } : undefined;
-        }),
-      );
-      return replayedParticipants.filter((participant) => participant !== undefined);
+    chunk(newParticipants, PROGRAM_PARTICIPANT_BATCH_SIZE).map(async (batch): Promise<ProgramParticipant[]> => {
+      const insertedParticipants = await ctx.db
+        .insert(programParticipantsInResource)
+        .values(batch)
+        .onConflictDoNothing()
+        .returning({ keyValue: programParticipantsInResource.keyValue, token: programParticipantsInResource.token });
+      const insertedKeyValues = new Set(insertedParticipants.map(({ keyValue }) => keyValue));
+      const claimedKeyValues = batch
+        .map(({ keyValue }) => keyValue)
+        .filter((keyValue) => !insertedKeyValues.has(keyValue));
+      const claimedParticipants =
+        claimedKeyValues.length === 0
+          ? []
+          : await ctx.db
+              .select({ keyValue: programParticipantsInResource.keyValue, token: programParticipantsInResource.token })
+              .from(programParticipantsInResource)
+              .where(
+                and(
+                  eq(programParticipantsInResource.resourceId, programId),
+                  inArray(programParticipantsInResource.keyValue, claimedKeyValues),
+                ),
+              );
+      return [...insertedParticipants, ...claimedParticipants];
     }),
   );
   for (const participant of batchParticipants.flat()) keyValueParticipantMap.set(participant.keyValue, participant);

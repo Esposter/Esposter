@@ -1,8 +1,8 @@
-import { moderationNoteEntitySchema, roomIdSchema } from "@esposter/db-schema";
+import { roomIdSchema, selectUserInAuthSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
 export const readModerationNotesCountInputSchema = z.object({
   ...roomIdSchema.shape,
-  ...moderationNoteEntitySchema.pick({ targetUserId: true }).shape,
+  targetUserId: selectUserInAuthSchema.shape.id,
 });
 export type ReadModerationNotesCountInput = z.infer<typeof readModerationNotesCountInputSchema>;

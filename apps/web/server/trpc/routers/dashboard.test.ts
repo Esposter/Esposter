@@ -13,8 +13,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 
 // The dashboard-specific wiring, and the transformPublishedContent dataset-snapshot baking.
@@ -27,10 +26,6 @@ describe("dashboardRouter", () => {
   beforeAll(() => {
     caller = getCaller();
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
-  });
-
-  afterEach(() => {
-    MockTableDatabase.clear();
   });
 
   // The snapshot is a public read, so it carries the columns the chart draws and none of the others the source holds —
@@ -47,12 +42,12 @@ describe("dashboardRouter", () => {
       settings: {},
     });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { [name]: 1, [unreadName]: unreadName },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const newResource = await caller.createResource({ name });
     const dashboard = new Dashboard({
@@ -85,12 +80,12 @@ describe("dashboardRouter", () => {
       settings: {},
     });
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { [name]: 1 },
       pageNo: 0,
       participantToken: "",
-      partitionKey: newSurvey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: newSurvey.id,
     });
     const newResource = await caller.createResource({ name });
     const dashboard = new Dashboard({

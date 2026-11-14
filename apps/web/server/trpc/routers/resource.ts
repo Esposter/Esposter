@@ -1,4 +1,5 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
@@ -12,14 +13,14 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
-import type { Clause } from "@esposter/azure";
-import type { ResourceInResource } from "@esposter/db-schema";
+import type { ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
+import type { SQL } from "drizzle-orm";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
-import { readCursorPaginationDataStreamTable } from "#server/services/pagination/cursor/readCursorPaginationDataStreamTable";
+import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
+import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
@@ -74,18 +75,15 @@ import { updateResourceContentInputSchema } from "#shared/models/db/resource/Upd
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { purgeResource } from "@esposter/db";
 import {
   StorageBucket,
-  StreamTable,
   DatabaseEntityType,
-  getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,
   resourceAccessesInResource,
-  ResourceActivityEntity,
+  resourceActivitiesInResource,
   ResourceActivityType,
   resourceFavoritesInResource,
   resourcesInResource,
@@ -186,11 +184,8 @@ export const resourceRouter = router({
     .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
     .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
       const bucket = getBucket(StorageBucket.ResourceAssets);
-      // Purge is the only place these partitions are destroyed, since delete is soft
-      const tableClients = await Promise.all(
-        getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useStreamTableClient(tableName)),
-      );
-      await purgeResource(ctx.db, bucket, tableClients, id);
+      // Purge is the only place a resource is destroyed, since delete is soft. Its trail and counters go with the row
+      await purgeResource(ctx.db, bucket, id);
       // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
       // It is the one delete whose owner is here to be told. See openspec/specs/resource/storage-quotas/design.md
       await emitStorageUsage(ctx.db, ctx.resource.userId);
@@ -208,17 +203,20 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     })
-    .query<CursorPaginationData<ResourceActivityEntity>>(async ({ input: { cursor, id, limit } }) => {
-      const clauses: Clause<ResourceActivityEntity>[] = [
-        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
+    .query<CursorPaginationData<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
+      const sortBy: SortItem<keyof ResourceActivityInResource>[] = [
+        CREATED_AT_DESCENDING_SORT_ITEM,
+        ID_DESCENDING_SORT_ITEM,
       ];
-      const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
-      return readCursorPaginationDataStreamTable(resourceActivityClient, ResourceActivityEntity, {
-        clauses,
-        cursor,
-        limit,
-        sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
-      });
+      const wheres: (SQL | undefined)[] = [eq(resourceActivitiesInResource.resourceId, id)];
+      if (cursor) wheres.push(getCursorWhere(resourceActivitiesInResource, cursor, sortBy));
+      const activities = await ctx.db
+        .select()
+        .from(resourceActivitiesInResource)
+        .where(and(...wheres))
+        .orderBy(...parseSortByToSql(resourceActivitiesInResource, sortBy))
+        .limit(limit + 1);
+      return getCursorPaginationData(activities, limit, sortBy);
     }),
   // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type that declares
   // No critique is refused by name, so an empty list is never read as a clean page

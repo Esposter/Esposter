@@ -5,7 +5,7 @@ import { readProgramParticipantEntitiesCount } from "#server/services/program/re
 import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { getUtcDateString } from "#shared/util/date/getUtcDateString";
-import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import { MAX_READ_LIMIT } from "@esposter/shared";
 
 // A dataset flows into dashboards and a dashboard is publishable, so its snapshot is a public read.
 // The participant column is therefore their non-secret publicId — never keyValue, which is the
@@ -16,7 +16,7 @@ export const readProgramStatusDataset: DatasetProvider["read"] = async (db, prog
   const { isRespondedPartial, rows: statusRows } = await readProgramStatusRows(db, program);
   // A read that fit under the cap answers for itself; only a read that filled it pays for the count
   const totalRows =
-    statusRows.length < AZURE_MAX_PAGE_SIZE ? statusRows.length : await readProgramParticipantEntitiesCount(id);
+    statusRows.length < MAX_READ_LIMIT ? statusRows.length : await readProgramParticipantEntitiesCount(db, id);
   return {
     columns: [
       { name: ProgramStatusDatasetColumnName.Participant, type: ColumnType.String },

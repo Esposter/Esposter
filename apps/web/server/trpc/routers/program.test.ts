@@ -5,10 +5,8 @@ import type { ProgramResource } from "#shared/models/resource/program/ProgramRes
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
-import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
@@ -28,34 +26,22 @@ import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInvit
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import type { Clause } from "@esposter/db-schema";
-import { createEntity, getTopNEntities } from "@esposter/db";
 import {
-  AzureEntityType,
-  StreamTable,
   DatabaseEntityType,
-  ProgramParticipantEntity,
+  programParticipantsInResource,
   ResourceType,
-  SurveyResponseEntity,
+  surveyResponsesInResource,
   SurveyResponseMode,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
 import { z } from "zod";
 
-// The stored partition is what proves a concurrent or purged run left exactly the rows it should have
-const readStoredParticipants = async (programId: string) => {
-  const clauses: Clause<ProgramParticipantEntity>[] = [
-    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: programId },
-  ];
-  const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
-  return getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, clauses);
-};
+// The stored rows are what prove a concurrent or purged run left exactly the rows it should have
+const readStoredParticipants = (db: Context["db"], programId: string) =>
+  db.query.programParticipantsInResource.findMany({ where: { resourceId: { eq: programId } } });
 
 const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
   items.toSorted((firstItem, secondItem) => firstItem.keyValue.localeCompare(secondItem.keyValue));
@@ -79,7 +65,7 @@ describe("programRouter", () => {
   const keyValue = "keyValue";
   const danglingProgramBindingErrorMessage = new InvalidOperationError(
     Operation.Create,
-    AzureEntityType.ProgramParticipant,
+    DatabaseEntityType.ProgramParticipant,
     DANGLING_PROGRAM_BINDING_REASON,
   ).message;
   // Every participant test starts from the same pair — an Identified survey and a program bound to it plus an
@@ -104,10 +90,6 @@ describe("programRouter", () => {
     resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
-  });
-
-  afterEach(() => {
-    MockTableDatabase.clear();
   });
 
   test("saves and reads content", async () => {
@@ -188,7 +170,7 @@ describe("programRouter", () => {
 
     expect(concurrentParticipants).toStrictEqual(participants);
 
-    const storedParticipants = await readStoredParticipants(program.id);
+    const storedParticipants = await readStoredParticipants(mockContext.db, program.id);
 
     expect(storedParticipants).toHaveLength(participants.length);
   });
@@ -269,12 +251,12 @@ describe("programRouter", () => {
     assert.exists(respondedParticipant);
     assert.exists(unrespondedParticipant);
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
       participantToken: respondedParticipant.token,
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: survey.id,
     });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
@@ -308,12 +290,12 @@ describe("programRouter", () => {
     await caller.generateProgramParticipants({ id: program.id });
     // A response carrying no token carries nobody, so it is simply not a participant row
     await surveyCaller.createSurveyResponse({
+      id: crypto.randomUUID(),
       isDraft: false,
       model: { a: 1 },
       pageNo: 0,
       participantToken: "",
-      partitionKey: survey.id,
-      rowKey: crypto.randomUUID(),
+      resourceId: survey.id,
     });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
@@ -336,26 +318,12 @@ describe("programRouter", () => {
     });
     // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
     const token = crypto.randomUUID();
-    const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
-    await createEntity(
-      programParticipantClient,
-      new ProgramParticipantEntity({
-        keyValue,
-        partitionKey: program.id,
-        publicId: crypto.randomUUID(),
-        rowKey: getProgramParticipantId(keyValue),
-        token,
-      }),
-    );
-    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
-    await createEntity(
-      surveyResponseClient,
-      new SurveyResponseEntity({
-        participantToken: token,
-        partitionKey: foreignSurvey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    );
+    await mockContext.db
+      .insert(programParticipantsInResource)
+      .values({ keyValue, publicId: crypto.randomUUID(), resourceId: program.id, token });
+    await mockContext.db
+      .insert(surveyResponsesInResource)
+      .values({ participantToken: token, resourceId: foreignSurvey.id });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
@@ -366,15 +334,9 @@ describe("programRouter", () => {
 
     const { program, survey } = await setupIdentifiedProgram([" "]);
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
-    await createEntity(
-      surveyResponseClient,
-      new SurveyResponseEntity({
-        participantToken: takeOne(participants).token,
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    );
+    await mockContext.db
+      .insert(surveyResponsesInResource)
+      .values({ participantToken: takeOne(participants).token, resourceId: survey.id });
     await surveyCaller.deleteResource({ id: survey.id });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
@@ -426,8 +388,8 @@ describe("programRouter", () => {
     // Delete is soft, so the partition survives the Recycle bin window — purge is what sweeps it
     await caller.deleteResource({ id: program.id });
     await resourceCaller.purgeResource({ id: program.id });
-    // The program row is gone, so the partition can only be observed against the table itself
-    const remainingParticipants = await readStoredParticipants(program.id);
+    // The program row is gone, so its participants can only be observed in the table itself
+    const remainingParticipants = await readStoredParticipants(mockContext.db, program.id);
 
     expect(remainingParticipants).toStrictEqual([]);
   });
@@ -528,15 +490,9 @@ describe("programRouter", () => {
     const responderToken = takeOne(
       participants.filter(({ keyValue: participantKeyValue }) => participantKeyValue === "a"),
     ).token;
-    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
-    await createEntity(
-      surveyResponseClient,
-      new SurveyResponseEntity({
-        participantToken: responderToken,
-        partitionKey: survey.id,
-        rowKey: crypto.randomUUID(),
-      }),
-    );
+    await mockContext.db
+      .insert(surveyResponsesInResource)
+      .values({ participantToken: responderToken, resourceId: survey.id });
     const { invites } = await caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.Awaiting });
 
     expect(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))).toStrictEqual(

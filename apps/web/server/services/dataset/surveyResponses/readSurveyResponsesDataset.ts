@@ -20,7 +20,7 @@ const reserveColumnName = (name: string, questionNames: Set<string>) => {
 // The submission time leads, and the respondent follows it when the survey is Identified, ahead of the questions
 export const readSurveyResponsesDataset: DatasetProvider["read"] = async (db, survey) => {
   const [{ columns: questionColumns, surveyResponses, totalRows }, { responseMode }] = await Promise.all([
-    readSurveyResponseDatasetSource(survey.id),
+    readSurveyResponseDatasetSource(db, survey.id),
     readSurveySettings(survey.id),
   ]);
   const isIdentified = responseMode === SurveyResponseMode.Identified;

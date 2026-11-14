@@ -1,5 +1,6 @@
+import type { Context } from "#server/trpc/context";
 import type { DatasetColumn } from "#shared/models/dataset/DatasetColumn";
-import type { ResourceInResource, SurveyResponseEntity } from "@esposter/db-schema";
+import type { ResourceInResource, SurveyResponseInResource } from "@esposter/db-schema";
 
 import { getSurveyDocumentDatasetColumns } from "#server/services/dataset/surveyResponses/getSurveyDocumentDatasetColumns";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -11,15 +12,16 @@ import { surveyResourceSchema } from "#shared/models/resource/survey/SurveyResou
 // The same snapshot — two independent reads could interleave a submit or a delete and drift apart.
 // It carries the uncapped total too, so neither surface can show a truncated table without saying so
 export const readSurveyResponseDatasetSource = async (
+  db: Context["db"],
   surveyId: ResourceInResource["id"],
-): Promise<{ columns: DatasetColumn[]; surveyResponses: SurveyResponseEntity[]; totalRows: number }> => {
+): Promise<{ columns: DatasetColumn[]; surveyResponses: SurveyResponseInResource[]; totalRows: number }> => {
   // The blob is written on first save, so a freshly created survey serves an empty dataset
   const content = await readResourceContent(surveyResourceSchema, surveyId);
   const columns = content ? getSurveyDocumentDatasetColumns(content.document) : [];
-  const { hasMore, surveyResponses } = await readSurveyResponseEntities(surveyId);
+  const { hasMore, surveyResponses } = await readSurveyResponseEntities(db, surveyId);
   // Counting is a bounded partition scan, so only a read that saw rows past the cap pays for it —
   // The one case where the caller needs to know what it is missing. `isCapped` is dropped here because
   // The truncation helper re-derives it from the total against the same ceiling
-  const totalRows = hasMore ? (await readSurveyResponsesCount(surveyId)).count : surveyResponses.length;
+  const totalRows = hasMore ? (await readSurveyResponsesCount(db, surveyId)).count : surveyResponses.length;
   return { columns, surveyResponses, totalRows };
 };
