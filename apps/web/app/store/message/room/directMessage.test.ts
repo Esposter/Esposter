@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
 import { useSession } from "@/services/auth/authClient.test";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
-import { createMessageEntity, MessageType, RoomType } from "@esposter/db-schema";
+import { MessageType, RoomType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test, vi } from "vitest";
 
@@ -105,12 +106,10 @@ describe(useDirectMessageStore, () => {
     trpcMsw.room.directMessage.createDirectMessage.mutation(() => friendDirectMessage);
     trpcMsw.message.createMessage.mutation(({ input }) => {
       sentMessages.push(input);
-      return createMessageEntity({
-        message: input.message,
-        roomId: input.roomId,
-        type: MessageType.Message,
-        userId: sender.id,
-      });
+      return createOptimisticMessage(
+        { message: input.message, roomId: input.roomId, type: MessageType.Message },
+        sender.id,
+      );
     });
     const directMessageStore = useDirectMessageStore();
     const { directMessages } = storeToRefs(directMessageStore);
@@ -122,7 +121,7 @@ describe(useDirectMessageStore, () => {
       {
         files: [],
         message: inviteLink,
-        replyRowKey: "",
+        replyToId: null,
         roomId: friendDirectMessage.id,
         timeZone: Temporal.Now.timeZoneId(),
         type: MessageType.Message,

@@ -1,12 +1,13 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
-import { createMessageEntity, MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -51,13 +52,10 @@ describe(useFileStore, () => {
     const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
-      createMessageEntity({
-        files: [plainTextFile],
-        message: filename,
-        roomId,
-        type: MessageType.Message,
-        userId: crypto.randomUUID(),
-      }),
+      createOptimisticMessage(
+        { files: [plainTextFile], message: filename, roomId, type: MessageType.Message },
+        crypto.randomUUID(),
+      ),
     );
     // Inside the margin, so the very next sweep must replace it rather than wait for it to actually die.
     fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS / 2, url: staleUrl });
@@ -92,7 +90,7 @@ describe(useFileStore, () => {
       size: 1,
     }));
     getSlice(roomId).items.value.push(
-      createMessageEntity({ files, message: filename, roomId, type: MessageType.Message, userId: crypto.randomUUID() }),
+      createOptimisticMessage({ files, message: filename, roomId, type: MessageType.Message }, crypto.randomUUID()),
     );
     for (const { id } of files) fileUrlMap.value.set(id, { expiresAt: Date.now(), url: freshUrl });
 
@@ -109,13 +107,15 @@ describe(useFileStore, () => {
     const { getViewableFiles } = fileStore;
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
-      createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.Png, size: 1 }],
-        message: filename,
-        roomId,
-        type: MessageType.Message,
-        userId: crypto.randomUUID(),
-      }),
+      createOptimisticMessage(
+        {
+          files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.Png, size: 1 }],
+          message: filename,
+          roomId,
+          type: MessageType.Message,
+        },
+        crypto.randomUUID(),
+      ),
     );
 
     expect(getViewableFiles(roomId)).toStrictEqual([]);
@@ -133,13 +133,10 @@ describe(useFileStore, () => {
     const file = { filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.Png, size: 1 };
     activeRoomId.value = otherRoomId;
     threadMessages.value = [
-      createMessageEntity({
-        files: [file],
-        message: filename,
-        roomId: otherRoomId,
-        type: MessageType.Message,
-        userId: crypto.randomUUID(),
-      }),
+      createOptimisticMessage(
+        { files: [file], message: filename, roomId: otherRoomId, type: MessageType.Message },
+        crypto.randomUUID(),
+      ),
     ];
     trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
 
@@ -175,7 +172,7 @@ describe(useFileStore, () => {
       size: 1,
     }));
     getSlice(roomId).items.value.push(
-      createMessageEntity({ files, message: filename, roomId, type: MessageType.Message, userId: crypto.randomUUID() }),
+      createOptimisticMessage({ files, message: filename, roomId, type: MessageType.Message }, crypto.randomUUID()),
     );
     for (const { id } of files)
       fileUrlMap.value.set(id, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS / 2, url: staleUrl });
@@ -200,13 +197,10 @@ describe(useFileStore, () => {
     });
     useFileStore();
     await MessageHookMap[Operation.Create].run(
-      createMessageEntity({
-        files: [plainTextFile],
-        message: filename,
-        roomId: otherRoomId,
-        type: MessageType.Message,
-        userId: crypto.randomUUID(),
-      }),
+      createOptimisticMessage(
+        { files: [plainTextFile], message: filename, roomId: otherRoomId, type: MessageType.Message },
+        crypto.randomUUID(),
+      ),
     );
 
     expect(queriedRoomIds).toContain(otherRoomId);
@@ -221,13 +215,10 @@ describe(useFileStore, () => {
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
-    const message = createMessageEntity({
-      files: [plainTextFile],
-      message: filename,
-      roomId,
-      type: MessageType.Message,
-      userId: crypto.randomUUID(),
-    });
+    const message = createOptimisticMessage(
+      { files: [plainTextFile], message: filename, roomId, type: MessageType.Message },
+      crypto.randomUUID(),
+    );
     getSlice(roomId).items.value.push(message);
     fileUrlMap.value.set(fileId, { expiresAt: Date.now(), url: freshUrl });
     setCurrentRoomId(otherRoomId);

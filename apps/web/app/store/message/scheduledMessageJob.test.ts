@@ -1,9 +1,10 @@
 // @vitest-environment nuxt
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createScheduledMessageJob } from "@/services/message/draftsAndSent/createScheduledMessageJob.test";
 import { createRoom } from "@/services/message/room/createRoom.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { describe, expect, test } from "vitest";
 
@@ -75,7 +76,7 @@ describe(useScheduledMessageJobStore, () => {
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     trpcMsw.message.scheduledMessageJob.sendScheduledMessageNow.mutation(() =>
-      createMessageEntity({ roomId: room.id, type: MessageType.Message, userId }),
+      createOptimisticMessage({ roomId: room.id, type: MessageType.Message }, userId),
     );
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);

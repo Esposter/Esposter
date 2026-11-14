@@ -7,16 +7,16 @@ export const useScrollToMessage = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const scrollStore = useScrollStore();
-  const { setActiveRowKey } = scrollStore;
+  const { setActiveMessageId } = scrollStore;
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
-  return async (roomId: string, rowKey: string) => {
-    if (roomId !== currentRoomId.value || !items.value.some((message) => message.rowKey === rowKey)) {
-      await navigateTo(RoutePath.MessagesMessage(roomId, rowKey));
+  return async (roomId: string, messageId: string) => {
+    if (roomId !== currentRoomId.value || !items.value.some((message) => message.id === messageId)) {
+      await navigateTo(RoutePath.MessagesMessage(roomId, messageId));
       return;
     }
 
-    setActiveRowKey(rowKey);
-    window.document.getElementById(rowKey)?.scrollIntoView({ block: "center" });
+    setActiveMessageId(messageId);
+    window.document.getElementById(messageId)?.scrollIntoView({ block: "center" });
   };
 };

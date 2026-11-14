@@ -28,13 +28,13 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   // Is what puts it in the thread rather than merely in the room — where the room composer replies to whatever
   // The user last picked Reply on, if anything
   const sendComposerMessage = async (editor: Editor, composerTarget: ComposerTarget) => {
-    const { roomId, threadRootRowKey } = composerTarget;
+    const { roomId, threadRootId } = composerTarget;
     if (!roomId || !checkIsInputValid(composerTarget, editor, true)) return;
 
     const input: StandardCreateMessageInput = {
       files: getComposerFiles(composerTarget),
       message: getComposerInput(composerTarget),
-      replyRowKey: threadRootRowKey || replyStore.rowKey,
+      replyToId: threadRootId || replyStore.replyToId,
       roomId,
       type: MessageType.Message,
     };
@@ -43,7 +43,7 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
   // A thread pane's composer edits its thread's replies, and the room's composer the room's messages
   const keyboardExtension = await useKeyboardShortcutsExtension(
     (editor) => sendComposerMessage(editor, toValue(target)),
-    () => (toValue(target).threadRootRowKey ? threadMessages.value : items.value),
+    () => (toValue(target).threadRootId ? threadMessages.value : items.value),
   );
   const codeBlockExtension = useCodeBlockExtension();
   const emojiExtension = useEmojiExtension();

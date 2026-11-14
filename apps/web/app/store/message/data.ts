@@ -3,20 +3,21 @@ import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessage
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { Typing } from "#shared/models/message/Typing";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
+import type { MessageInMessage, StandardCreateMessageInput } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
-import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { MessageHook } from "@/models/message/MessageHook";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
+import { AzureEntityType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -26,12 +27,12 @@ export const useDataStore = defineStore("message/data", () => {
   const roomStore = useRoomStore();
   const threadFollowStore = useThreadFollowStore();
   const { storeFollowThread } = threadFollowStore;
-  const { getSlice, items, ...restData } = useCursorPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
   // `items` is the reading view — the room on screen. Every write names the room it is for, which a message
-  // Always carries as its partition key: a subscription echo, a rejected edit's rollback and an attachment
+  // Always carries as its `roomId`: a subscription echo, a rejected edit's rollback and an attachment
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
-  const getRoomOperationData = (roomId: MessageEntity["partitionKey"]) =>
-    createOperationData(getSlice(roomId).items, CompositeAzureKeyPath, AzureEntityType.Message);
+  const getRoomOperationData = (roomId: MessageInMessage["roomId"]) =>
+    createOperationData(getSlice(roomId).items, ["id"], AzureEntityType.Message);
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
   // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
@@ -59,7 +60,7 @@ export const useDataStore = defineStore("message/data", () => {
     input: StandardCreateMessageInput,
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
     // Whose attachments this send took, so the commit and the rollback reach the composer that is holding them
-    target: ComposerTarget = { roomId: input.roomId, threadRootRowKey: "" },
+    target: ComposerTarget = { roomId: input.roomId, threadRootId: "" },
   ) => {
     if (!session.value.data) return false;
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
@@ -70,9 +71,10 @@ export const useDataStore = defineStore("message/data", () => {
     // Referenced by two messages, and deleting either one reclaims a blob the other still renders
     const sentInput = input.files ? { ...input, files: [...input.files] } : input;
     const sentFileIds = sentInput.files?.map(({ id }) => id) ?? [];
-    const newMessage = reactive(
-      createMessageEntity({ ...sentInput, isLoading: true, userId: session.value.data.user.id }),
-    );
+    const newMessage: ClientMessage = reactive({
+      ...createOptimisticMessage(sentInput, session.value.data.user.id),
+      isLoading: true,
+    });
     // A rejected Create hook (e.g. the attachment URL fetch) strands the optimistic loading bubble in the list,
     // So roll the entity back out before surfacing the failure — nothing has reached the server yet. Through the
     // Delete hooks, not a bare list removal: the Create hooks that just ran wrote a download-url entry per
@@ -101,8 +103,8 @@ export const useDataStore = defineStore("message/data", () => {
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
         // Added here is best-effort, never a rollback — the message already exists on the server
-        const { replyRowKey } = input;
-        if (replyRowKey) storeFollowThread(input.roomId, replyRowKey);
+        const { replyToId } = input;
+        if (replyToId) storeFollowThread(input.roomId, replyToId);
         return true;
       },
       async (error) => {
@@ -125,14 +127,14 @@ export const useDataStore = defineStore("message/data", () => {
     );
   };
   const updateMessage = async (input: UpdateMessageInput) => {
-    const { items: roomItems } = getSlice(input.partitionKey);
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.partitionKey);
+    const { items: roomItems } = getSlice(input.roomId);
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
     await executeMutation(() => $trpc.message.updateMessage.mutate(input), {
       // Apply only the raw reactive field change — the subscription echo re-runs MessageHookMap on success,
       // So calling storeUpdateMessage here would double-fire the update hooks. Read as the write is sent, so a
       // Rejected edit restores the body the edit ahead of it stored rather than the one on screen at the click
       applyOptimistic: () => {
-        const previousMessage = roomItems.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, input))?.message;
+        const previousMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], input))?.message;
         baseStoreUpdateMessage(input);
         return () => {
           if (previousMessage !== undefined) baseStoreUpdateMessage({ ...input, message: previousMessage });
@@ -140,29 +142,29 @@ export const useDataStore = defineStore("message/data", () => {
       },
       // `deleteFile` writes through this same executor, so the key is what stops an edit queueing behind an
       // Unrelated attachment removal
-      key: input.rowKey,
+      key: input.id,
     });
   };
-  const deleteFile = async ({ id, ...compositeKey }: DeleteFileInput) => {
-    const { items: roomItems } = getSlice(compositeKey.partitionKey);
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(compositeKey.partitionKey);
-    const message = roomItems.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, compositeKey));
+  const deleteFile = async ({ fileId, ...messageKey }: DeleteFileInput) => {
+    const { items: roomItems } = getSlice(messageKey.roomId);
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(messageKey.roomId);
+    const message = roomItems.value.find(getEntityIdEqualComparator(["id"], messageKey));
     if (!message) return;
 
-    await executeMutation(() => $trpc.message.deleteFile.mutate({ id, ...compositeKey }), {
+    await executeMutation(() => $trpc.message.deleteFile.mutate({ fileId, ...messageKey }), {
       // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. Read as the
       // Write is sent, and unwound one attachment at a time
       applyOptimistic: () => {
-        const deletedFile = message.files.find((file) => file.id === id);
-        baseStoreUpdateMessage({ ...compositeKey, files: message.files.filter((file) => file.id !== id) });
+        const deletedFile = message.files.find((file) => file.id === fileId);
+        baseStoreUpdateMessage({ ...messageKey, files: message.files.filter((file) => file.id !== fileId) });
         return () => {
           if (!deletedFile) return;
 
-          baseStoreUpdateMessage({ ...compositeKey, files: [...message.files, deletedFile] });
+          baseStoreUpdateMessage({ ...messageKey, files: [...message.files, deletedFile] });
         };
       },
       // Keyed per file so concurrent deletions never swallow each other's rollbacks
-      key: id,
+      key: fileId,
     });
   };
   // The sender's own message is pushed first (our list is reversed — most recent at the front) so the bubble
@@ -170,8 +172,8 @@ export const useDataStore = defineStore("message/data", () => {
   // Urls over the network, and running it before the push would gate the "optimistic" render behind a round trip.
   // A message arriving from anyone else has no bubble to keep responsive and nothing to roll back, so it waits for
   // Its urls — pushing it first renders every incoming attachment as a broken image until the fetch lands
-  const storeCreateMessage = async (message: MessageEntity, isOptimistic = false) => {
-    const { createMessage: baseStoreCreateMessage } = getRoomOperationData(message.partitionKey);
+  const storeCreateMessage = async (message: ClientMessage, isOptimistic = false) => {
+    const { createMessage: baseStoreCreateMessage } = getRoomOperationData(message.roomId);
     if (isOptimistic) {
       baseStoreCreateMessage(message, true);
       await MessageHookMap[Operation.Create].run(message);
@@ -181,12 +183,12 @@ export const useDataStore = defineStore("message/data", () => {
     }
   };
   const storeUpdateMessage = async (input: MessageEvents["updateMessage"][0][0]) => {
-    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.partitionKey);
+    const { updateMessage: baseStoreUpdateMessage } = getRoomOperationData(input.roomId);
     await MessageHookMap[Operation.Update].run(input);
     baseStoreUpdateMessage(input);
   };
   const storeDeleteMessage = async (input: DeleteMessageInput) => {
-    const { deleteMessage: baseStoreDeleteMessage } = getRoomOperationData(input.partitionKey);
+    const { deleteMessage: baseStoreDeleteMessage } = getRoomOperationData(input.roomId);
     await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
@@ -196,7 +198,7 @@ export const useDataStore = defineStore("message/data", () => {
     editor?: Editor,
     // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
     // Is the room's own send, and its reset finds nothing of the thread pane's to clear
-    target: ComposerTarget = { roomId: input.roomId, threadRootRowKey: "" },
+    target: ComposerTarget = { roomId: input.roomId, threadRootId: "" },
   ) => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.

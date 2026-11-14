@@ -2,8 +2,9 @@
 import type { ReadMessagesByRowKeysInput } from "#shared/models/db/message/ReadMessagesByRowKeysInput";
 
 import { useReadMessageMetadata } from "@/composables/message/message/useReadMessageMetadata";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -16,14 +17,9 @@ describe(useReadMessageMetadata, () => {
   test("reads only the replies a message names", async () => {
     expect.hasAssertions();
 
-    const reply = createMessageEntity({ roomId, type: MessageType.Message, userId });
-    const replyingMessage = createMessageEntity({
-      replyRowKey: reply.rowKey,
-      roomId,
-      type: MessageType.Message,
-      userId,
-    });
-    const message = createMessageEntity({ replyRowKey: "", roomId, type: MessageType.Message, userId });
+    const reply = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
+    const replyingMessage = createOptimisticMessage({ replyToId: reply.id, roomId, type: MessageType.Message }, userId);
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     const readMessagesByRowKeysInputs: ReadMessagesByRowKeysInput[] = [];
     trpcMsw.message.readMessagesByRowKeys.query(({ input }) => {
       readMessagesByRowKeysInputs.push(input);
@@ -41,6 +37,6 @@ describe(useReadMessageMetadata, () => {
     );
     await readMessageMetadata(roomId, [replyingMessage, message]);
 
-    expect(readMessagesByRowKeysInputs).toStrictEqual([{ roomId, rowKeys: [reply.rowKey] }]);
+    expect(readMessagesByRowKeysInputs).toStrictEqual([{ messageIds: [reply.id], roomId }]);
   });
 });

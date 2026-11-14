@@ -1,11 +1,11 @@
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { useDataStore } from "@/store/message/data";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useVotePoll = async (
-  message: () => StandardMessageEntity,
+  message: () => ClientMessage,
   pollContent: () => PollMessageContent,
   isPreview: boolean,
 ) => {
@@ -18,7 +18,7 @@ export const useVotePoll = async (
   // Scoped to the poll bound right now rather than to anything this instance has in flight — `message` is a
   // Getter, so the surface can re-point at another poll, and a whole-instance flag would disable a radio group
   // Whose own vote landed long ago
-  const isVoting = computed(() => checkIsPending(toValue(message).rowKey));
+  const isVoting = computed(() => checkIsPending(toValue(message).id));
   // An empty option id withdraws the reader's vote, as the server takes it
   const vote = async (optionId: string) => {
     const votingUserId = session.value?.user.id;
@@ -35,36 +35,23 @@ export const useVotePoll = async (
     // Only the option id travels. The onUpdateMessage subscription echoes the authoritative poll back to every
     // Client including this one, so nothing is written here after the call succeeds.
     await executeMutation(
-      () =>
-        $trpc.message.votePoll.mutate({
-          optionId,
-          partitionKey: messageValue.partitionKey,
-          rowKey: messageValue.rowKey,
-        }),
+      () => $trpc.message.votePoll.mutate({ id: messageValue.id, optionId, roomId: messageValue.roomId }),
       {
         // The snapshot is taken inside applyOptimistic, so the rollback can only ever restore the body as it was
         // Before this vote was applied
         applyOptimistic: async () => {
           const previousMessage = messageValue.message;
-          await storeUpdateMessage({
-            message: updatedMessage,
-            partitionKey: messageValue.partitionKey,
-            rowKey: messageValue.rowKey,
-          });
+          await storeUpdateMessage({ id: messageValue.id, message: updatedMessage, roomId: messageValue.roomId });
           // The rollback slot is synchronous and belongs to useMutation, so the store write is handed to the
           // Sanctioned fire-and-forget primitive rather than dropped
           return getSynchronizedFunction(() =>
             getResultAsync(() =>
-              storeUpdateMessage({
-                message: previousMessage,
-                partitionKey: messageValue.partitionKey,
-                rowKey: messageValue.rowKey,
-              }),
+              storeUpdateMessage({ id: messageValue.id, message: previousMessage, roomId: messageValue.roomId }),
             ).match(noop, console.error),
           );
         },
         isExclusive: true,
-        key: messageValue.rowKey,
+        key: messageValue.id,
       },
     );
   };

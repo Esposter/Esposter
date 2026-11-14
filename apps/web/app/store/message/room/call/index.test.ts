@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageInMessage } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
@@ -12,7 +12,7 @@ import { useCallStore } from "@/store/message/room/call";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRealtimeStore } from "@/store/message/room/realtime";
-import { AdminActionType, CALL_ID_LENGTH, getReverseTickedTimestamp } from "@esposter/db-schema";
+import { AdminActionType, CALL_ID_LENGTH } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -34,7 +34,7 @@ describe(useCallStore, () => {
   const callSessionId = createId(CALL_ID_LENGTH);
   const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = getReverseTickedTimestamp();
+  const threadRootId = crypto.randomUUID();
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: getMockSession() }));
@@ -102,20 +102,16 @@ describe(useCallStore, () => {
 
   // A thread call carries the room it belongs to, so a route keyed on the room alone lands in the room with the
   // Thread pane shut — the call announced itself in a pane the link then refuses to open
-  test.each<{ expected: string; threadRootRowKey: "" | MessageEntity["rowKey"]; title: string }>([
-    { expected: RoutePath.Messages(roomId), threadRootRowKey: "", title: "the room for a room call" },
-    {
-      expected: RoutePath.MessagesThread(roomId, threadRootRowKey),
-      threadRootRowKey,
-      title: "the thread for a thread call",
-    },
-  ])("routes to $title", ({ expected, threadRootRowKey: rootRowKey }) => {
+  test.each<{ expected: string; threadRootId: "" | MessageInMessage["id"]; title: string }>([
+    { expected: RoutePath.Messages(roomId), threadRootId: "", title: "the room for a room call" },
+    { expected: RoutePath.MessagesThread(roomId, threadRootId), threadRootId, title: "the thread for a thread call" },
+  ])("routes to $title", ({ expected, threadRootId: rootId }) => {
     expect.hasAssertions();
 
     const callStore = useCallStore();
-    const { callRoomId, callRoute, callThreadRootRowKey } = storeToRefs(callStore);
+    const { callRoomId, callRoute, callThreadRootId } = storeToRefs(callStore);
     callRoomId.value = roomId;
-    callThreadRootRowKey.value = rootRowKey;
+    callThreadRootId.value = rootId;
 
     expect(callRoute.value).toBe(expected);
   });

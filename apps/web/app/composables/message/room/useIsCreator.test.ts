@@ -1,7 +1,8 @@
 // @vitest-environment nuxt
 import { useIsCreator } from "@/composables/message/room/useIsCreator";
 import { useSession } from "@/services/auth/authClient.test";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { MessageType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -22,7 +23,7 @@ describe(useIsCreator, () => {
   test.each([MessageType.Message, MessageType.Poll] as const)("recognises the author of a %s", async (type) => {
     expect.hasAssertions();
 
-    const message = createMessageEntity({ roomId, type, userId });
+    const message = createOptimisticMessage({ roomId, type }, userId);
     const isCreator = await useIsCreator(() => message);
 
     expect(isCreator.value).toBe(true);
@@ -31,28 +32,23 @@ describe(useIsCreator, () => {
   test("does not recognise another member as the author", async () => {
     expect.hasAssertions();
 
-    const message = createMessageEntity({ roomId, type: MessageType.Poll, userId: crypto.randomUUID() });
+    const message = createOptimisticMessage({ roomId, type: MessageType.Poll }, crypto.randomUUID());
     const isCreator = await useIsCreator(() => message);
 
     expect(isCreator.value).toBe(false);
   });
 
-  // A webhook message declares `userId?: undefined`, so an absent author must never match an absent session
+  // A webhook message has a null `userId`, so an absent author must never match an absent session
   test("does not recognise an authorless webhook message as authored", async () => {
     expect.hasAssertions();
 
-    const message = createMessageEntity({
-      appUser: {
-        createdAt: new Date(0),
-        deletedAt: null,
-        id: crypto.randomUUID(),
-        image: "",
-        name: "name",
-        updatedAt: new Date(0),
-      },
-      roomId,
+    const message = {
+      ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId),
+      appUserId: crypto.randomUUID(),
+      senderName: "senderName",
       type: MessageType.Webhook,
-    });
+      userId: null,
+    };
     const isCreator = await useIsCreator(() => message);
 
     expect(isCreator.value).toBe(false);

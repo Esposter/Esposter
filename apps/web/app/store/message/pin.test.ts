@@ -1,9 +1,10 @@
 // @vitest-environment nuxt
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
 import { usePinStore } from "@/store/message/pin";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -11,7 +12,7 @@ describe(usePinStore, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
-  const createMessage = () => createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+  const createMessage = () => createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
@@ -27,14 +28,10 @@ describe(usePinStore, () => {
     const pinStore = usePinStore();
     const { displayMessages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
-    await MessageHookMap[Operation.Update].run({
-      isPinned: true,
-      partitionKey: pinnedMessage.partitionKey,
-      rowKey: pinnedMessage.rowKey,
-    });
+    getSlice(pinnedMessage.roomId).items.value = [pinnedMessage];
+    await MessageHookMap[Operation.Update].run({ id: pinnedMessage.id, isPinned: true, roomId: pinnedMessage.roomId });
 
-    expect(displayMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
+    expect(displayMessages.value.map(({ id }) => id)).toStrictEqual([pinnedMessage.id]);
   });
 
   // A pin toggled from a search result or a thread names a room the reader is not in. Read against the room on
@@ -47,15 +44,11 @@ describe(usePinStore, () => {
     const { getSlice: getDataSlice } = dataStore;
     const pinStore = usePinStore();
     const { getSlice: getPinSlice } = pinStore;
-    const pinnedMessage = createMessageEntity({ message, roomId: otherRoomId, type: MessageType.Message, userId });
+    const pinnedMessage = createOptimisticMessage({ message, roomId: otherRoomId, type: MessageType.Message }, userId);
     getDataSlice(otherRoomId).items.value = [pinnedMessage];
-    await MessageHookMap[Operation.Update].run({
-      isPinned: true,
-      partitionKey: pinnedMessage.partitionKey,
-      rowKey: pinnedMessage.rowKey,
-    });
+    await MessageHookMap[Operation.Update].run({ id: pinnedMessage.id, isPinned: true, roomId: pinnedMessage.roomId });
 
-    expect(getPinSlice(otherRoomId).items.value.map(({ rowKey }) => rowKey)).toStrictEqual([pinnedMessage.rowKey]);
+    expect(getPinSlice(otherRoomId).items.value.map(({ id }) => id)).toStrictEqual([pinnedMessage.id]);
   });
 
   test("drops a message the moment it is unpinned", async () => {
@@ -66,12 +59,12 @@ describe(usePinStore, () => {
     const pinStore = usePinStore();
     const { displayMessages } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
-    getSlice(pinnedMessage.partitionKey).items.value = [pinnedMessage];
-    const pinnedInput = { partitionKey: pinnedMessage.partitionKey, rowKey: pinnedMessage.rowKey };
+    getSlice(pinnedMessage.roomId).items.value = [pinnedMessage];
+    const pinnedInput = { id: pinnedMessage.id, roomId: pinnedMessage.roomId };
     await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: true });
-    // The unpin carries the key holding `undefined`, which is what the server emits — `isPinned` is typed
-    // `true | undefined`, so an unpin the hook can see is never a `false` and never an absent key
-    await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: undefined });
+    // The unpin carries `isPinned: false`, the boolean column's own value, so an unpin the hook can see is never an
+    // Absent key
+    await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: false });
 
     expect(displayMessages.value).toStrictEqual([]);
   });

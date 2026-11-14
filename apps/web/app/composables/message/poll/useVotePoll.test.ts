@@ -3,8 +3,9 @@ import type { PollMessageContent } from "#shared/models/message/poll/PollMessage
 
 import { useVotePoll } from "@/composables/message/poll/useVotePoll";
 import { useSession } from "@/services/auth/authClient.test";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { getReverseTickedTimestamp, MessageType, StandardMessageEntity } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -20,15 +21,7 @@ describe(useVotePoll, () => {
     votes: {},
   };
   const createPollMessage = () =>
-    new StandardMessageEntity({
-      createdAt: new Date(0),
-      message: JSON.stringify(pollContent),
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-      type: MessageType.Poll,
-      updatedAt: new Date(0),
-      userId,
-    });
+    createOptimisticMessage({ message: JSON.stringify(pollContent), roomId, type: MessageType.Poll }, userId);
 
   beforeEach(() => {
     useSession.mockReturnValue({ data: ref({ user: { id: userId } }) });
@@ -39,7 +32,7 @@ describe(useVotePoll, () => {
     expect.hasAssertions();
 
     const message = createPollMessage();
-    const votePoll = vi.fn<(input: { optionId: string; partitionKey: string; rowKey: string }) => void>();
+    const votePoll = vi.fn<(input: { id: string; optionId: string; roomId: string }) => void>();
     trpcMsw.message.votePoll.mutation(({ input }) => {
       votePoll(input);
     });
@@ -50,7 +43,7 @@ describe(useVotePoll, () => {
     );
     await vote("");
 
-    expect(votePoll).toHaveBeenCalledExactlyOnceWith({ optionId: "", partitionKey: roomId, rowKey: message.rowKey });
+    expect(votePoll).toHaveBeenCalledExactlyOnceWith({ id: message.id, optionId: "", roomId });
   });
 
   // The poll is a getter, so one instance answers for whatever the surface points it at. Read off the whole

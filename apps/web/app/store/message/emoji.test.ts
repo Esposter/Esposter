@@ -1,10 +1,8 @@
 // @vitest-environment nuxt
 import { getMockSession } from "#server/trpc/context.test";
-import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
-import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -16,9 +14,10 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 describe(useEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const partitionKey = crypto.randomUUID();
-  const rowKey = getReverseTickedTimestamp();
-  const messageRowKey = getReverseTickedTimestamp();
+  const roomId = crypto.randomUUID();
+  const messageId = crypto.randomUUID();
+  const emojiTag = "👍";
+  const createReaction = (userIds: string[] = []) => ({ emojiTag, messageId, userIds });
 
   beforeEach(() => {
     useSession.mockReturnValue(ref<MockSessionValue>({ data: undefined }));
@@ -33,9 +32,9 @@ describe(useEmojiStore, () => {
 
     const emojiStore = useEmojiStore();
     const { getEmojis, storeCreateEmoji } = emojiStore;
-    const newEmoji = new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey });
-    storeCreateEmoji(newEmoji);
-    const emojis = getEmojis(partitionKey, messageRowKey);
+    const newEmoji = createReaction();
+    storeCreateEmoji(roomId, newEmoji);
+    const emojis = getEmojis(roomId, messageId);
 
     expect(emojis).toStrictEqual([newEmoji]);
   });
@@ -45,16 +44,13 @@ describe(useEmojiStore, () => {
 
     const emojiStore = useEmojiStore();
     const { getEmojis, storeCreateEmoji, storeUpdateEmoji } = emojiStore;
-    const newEmoji = new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey });
-    storeCreateEmoji(newEmoji);
+    storeCreateEmoji(roomId, createReaction());
 
     const userId = getMockSession().user.id;
-    // oxlint-disable-next-line typescript/no-misused-spread -- the copy wants the instance's own fields, not its prototype
-    const updatedEmoji = { ...newEmoji, userIds: [userId] };
-    storeUpdateEmoji(updatedEmoji);
-    const emojis = getEmojis(partitionKey, messageRowKey);
+    storeUpdateEmoji(roomId, createReaction([userId]));
+    const emojis = getEmojis(roomId, messageId);
 
-    expect(emojis).toStrictEqual([new MessageEmojiMetadataEntity(updatedEmoji)]);
+    expect(emojis).toStrictEqual([createReaction([userId])]);
   });
 
   test("deletes", () => {
@@ -62,10 +58,10 @@ describe(useEmojiStore, () => {
 
     const emojiStore = useEmojiStore();
     const { getEmojis, storeCreateEmoji, storeDeleteEmoji } = emojiStore;
-    const newEmoji = new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey });
-    storeCreateEmoji(newEmoji);
-    storeDeleteEmoji(newEmoji);
-    const emojis = getEmojis(partitionKey, messageRowKey);
+    const newEmoji = createReaction();
+    storeCreateEmoji(roomId, newEmoji);
+    storeDeleteEmoji(roomId, newEmoji);
+    const emojis = getEmojis(roomId, messageId);
 
     expect(emojis).toStrictEqual([]);
   });
@@ -89,14 +85,9 @@ describe(useEmojiStore, () => {
     });
     const emojiStore = useEmojiStore();
     const { setEmojis, toggleEmoji } = emojiStore;
-    const emoji = new MessageEmojiMetadataEntity({
-      messageRowKey,
-      partitionKey,
-      rowKey,
-      userIds: [userId, ...userIds],
-    });
-    setEmojis(partitionKey, messageRowKey, [emoji]);
-    await toggleEmoji(emoji);
+    const emoji = createReaction([userId, ...userIds]);
+    setEmojis(roomId, messageId, [emoji]);
+    await toggleEmoji(roomId, emoji);
 
     expect(calledProcedures).toStrictEqual([expectedProcedure]);
   });
@@ -114,15 +105,13 @@ describe(useEmojiStore, () => {
     trpcMsw.message.emoji.updateEmoji.mutation(() => {
       // Another member's reaction, delivered from inside the request so it lands after the toggle applied and
       // Before its rejection unwinds
-      storeUpdateEmoji(
-        new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey, userIds: [userId, otherUserId] }),
-      );
+      storeUpdateEmoji(roomId, createReaction([userId, otherUserId]));
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    setEmojis(partitionKey, messageRowKey, [new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey })]);
-    await updateEmoji({ messageRowKey, partitionKey, rowKey, userIds: [] });
+    setEmojis(roomId, messageId, [createReaction()]);
+    await updateEmoji({ emojiTag, messageId, roomId, userIds: [] });
 
-    expect(takeOne(getEmojis(partitionKey, messageRowKey)).userIds).toStrictEqual([otherUserId]);
+    expect(takeOne(getEmojis(roomId, messageId)).userIds).toStrictEqual([otherUserId]);
   });
 
   // Both removals name the same reaction, so the second runs behind the first and is refused because the row is
@@ -138,10 +127,10 @@ describe(useEmojiStore, () => {
     });
     const emojiStore = useEmojiStore();
     const { deleteEmoji, getEmojis, setEmojis } = emojiStore;
-    setEmojis(partitionKey, messageRowKey, [new MessageEmojiMetadataEntity({ messageRowKey, partitionKey, rowKey })]);
-    const input = { messageRowKey, partitionKey, rowKey };
+    setEmojis(roomId, messageId, [createReaction()]);
+    const input = { emojiTag, messageId, roomId };
     await Promise.all([deleteEmoji(input), deleteEmoji(input)]);
 
-    expect(getEmojis(partitionKey, messageRowKey)).toHaveLength(0);
+    expect(getEmojis(roomId, messageId)).toHaveLength(0);
   });
 });

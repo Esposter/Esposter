@@ -1,14 +1,15 @@
 // @vitest-environment nuxt
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageInMessage } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useLayoutStore } from "@/store/layout";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
-import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { beforeEach, describe, expect, test } from "vitest";
@@ -22,9 +23,9 @@ describe(useThreadStore, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const message = "message";
-  const rootRowKey = getReverseTickedTimestamp();
-  const createReply = (replyRowKey: "" | MessageEntity["rowKey"] = "") =>
-    createMessageEntity({ message, replyRowKey, roomId, type: MessageType.Message, userId });
+  const threadRootId = crypto.randomUUID();
+  const createReply = (replyToId: null | MessageInMessage["id"] = null) =>
+    createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
 
   beforeEach(() => {
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
@@ -45,9 +46,9 @@ describe(useThreadStore, () => {
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
-    await openThread(roomId, rootRowKey);
+    await openThread(roomId, threadRootId);
 
-    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([reply.rowKey]);
+    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([reply.id]);
     expect(isRightDrawerOpen.value).toBe(true);
   });
 
@@ -56,13 +57,13 @@ describe(useThreadStore, () => {
   test("drops a thread read the user closed while it was loading", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: MessageEntity[]) => void = noop;
+    let resolveRead: (replies: MessageInMessage[]) => void = noop;
     // Resolved by the handler itself, so the close lands while the read is genuinely in flight rather than
     // Before the request has even reached it
     const readStarted = new Promise<void>((resolveReadStarted) => {
       trpcMsw.message.readThread.query(
         () =>
-          new Promise<MessageEntity[]>((resolve) => {
+          new Promise<MessageInMessage[]>((resolve) => {
             resolveRead = resolve;
             resolveReadStarted();
           }),
@@ -72,10 +73,10 @@ describe(useThreadStore, () => {
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
     const threadStore = useThreadStore();
-    const { activeRoomId, activeRootRowKey, threadMessages } = storeToRefs(threadStore);
+    const { activeRoomId, activeThreadRootId, threadMessages } = storeToRefs(threadStore);
     const { closeThread } = threadStore;
     const openThread = useOpenThread();
-    const openPromise = openThread(roomId, rootRowKey);
+    const openPromise = openThread(roomId, threadRootId);
     await readStarted;
 
     // The click opens the drawer, not the response — a read still in flight has a pane to load into
@@ -88,7 +89,7 @@ describe(useThreadStore, () => {
     expect(threadMessages.value).toStrictEqual([]);
     expect(isRightDrawerOpen.value).toBe(false);
     expect(activeRoomId.value).toBe("");
-    expect(activeRootRowKey.value).toBe("");
+    expect(activeThreadRootId.value).toBe("");
   });
 
   // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
@@ -105,21 +106,17 @@ describe(useThreadStore, () => {
       mimetype: MimeType.Png,
       size: 1,
     };
-    const reply = createMessageEntity({
-      files: [file],
-      message,
-      replyRowKey: rootRowKey,
-      roomId,
-      type: MessageType.Message,
+    const reply = createOptimisticMessage(
+      { files: [file], message, replyToId: threadRootId, roomId, type: MessageType.Message },
       userId,
-    });
+    );
     trpcMsw.message.readThread.query(() => [reply]);
     trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]);
     await mountThreadDrawer();
     const openThread = useOpenThread();
     const fileStore = useFileStore();
     const { getFileUrlMap } = fileStore;
-    await openThread(roomId, rootRowKey);
+    await openThread(roomId, threadRootId);
 
     expect(getFileUrlMap(roomId)?.get(file.id)?.url).toBe(url);
   });
@@ -135,11 +132,11 @@ describe(useThreadStore, () => {
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
-    await openThread(roomId, rootRowKey);
-    const reply = createReply(rootRowKey);
+    await openThread(roomId, threadRootId);
+    const reply = createReply(threadRootId);
     await MessageHookMap[Operation.Create].run(reply);
 
-    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([reply.rowKey]);
+    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([reply.id]);
   });
 
   // The response is a snapshot from before the reply, so assigning it wholesale drops a reply the create hook
@@ -147,11 +144,11 @@ describe(useThreadStore, () => {
   test("keeps a reply that landed while the thread read was in flight", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: MessageEntity[]) => void = noop;
+    let resolveRead: (replies: MessageInMessage[]) => void = noop;
     const readStarted = new Promise<void>((resolveReadStarted) => {
       trpcMsw.message.readThread.query(
         () =>
-          new Promise<MessageEntity[]>((resolve) => {
+          new Promise<MessageInMessage[]>((resolve) => {
             resolveRead = resolve;
             resolveReadStarted();
           }),
@@ -161,15 +158,15 @@ describe(useThreadStore, () => {
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
-    const openPromise = openThread(roomId, rootRowKey);
+    const openPromise = openThread(roomId, threadRootId);
     await readStarted;
-    const liveReply = createReply(rootRowKey);
+    const liveReply = createReply(threadRootId);
     await MessageHookMap[Operation.Create].run(liveReply);
-    const readReply = createReply(rootRowKey);
+    const readReply = createReply(threadRootId);
     resolveRead([readReply]);
     await openPromise;
 
-    expect(threadMessages.value.map(({ rowKey }) => rowKey)).toStrictEqual([readReply.rowKey, liveReply.rowKey]);
+    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([readReply.id, liveReply.id]);
   });
 
   test("ignores a message that belongs to another thread", async () => {
@@ -180,8 +177,8 @@ describe(useThreadStore, () => {
     const threadStore = useThreadStore();
     const { threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
-    await openThread(roomId, rootRowKey);
-    await MessageHookMap[Operation.Create].run(createReply(getReverseTickedTimestamp()));
+    await openThread(roomId, threadRootId);
+    await MessageHookMap[Operation.Create].run(createReply(crypto.randomUUID()));
 
     expect(threadMessages.value).toStrictEqual([]);
   });
@@ -191,17 +188,17 @@ describe(useThreadStore, () => {
   test("closes the pane when the root is deleted", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.readThread.query(() => [createReply(rootRowKey)]);
+    trpcMsw.message.readThread.query(() => [createReply(threadRootId)]);
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
     const threadStore = useThreadStore();
-    const { activeRootRowKey, threadMessages } = storeToRefs(threadStore);
+    const { activeThreadRootId, threadMessages } = storeToRefs(threadStore);
     const openThread = useOpenThread();
-    await openThread(roomId, rootRowKey);
-    await MessageHookMap[Operation.Delete].run({ partitionKey: roomId, rowKey: rootRowKey });
+    await openThread(roomId, threadRootId);
+    await MessageHookMap[Operation.Delete].run({ id: threadRootId, roomId });
 
-    expect(activeRootRowKey.value).toBe("");
+    expect(activeThreadRootId.value).toBe("");
     expect(threadMessages.value).toStrictEqual([]);
     expect(isRightDrawerOpen.value).toBe(false);
   });

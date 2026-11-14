@@ -20,7 +20,7 @@ export const useDraftItems = () => {
                 composerKey,
                 content: draft.content,
                 room,
-                threadRootRowKey: target.threadRootRowKey,
+                threadRootId: target.threadRootId,
                 updatedAt: draft.updatedAt,
               },
             ]

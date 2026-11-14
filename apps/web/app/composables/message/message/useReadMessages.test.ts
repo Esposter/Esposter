@@ -1,10 +1,9 @@
 // @vitest-environment nuxt
-import { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 import { useReadMessages } from "@/composables/message/message/useReadMessages";
+import { createMessage } from "@/services/message/message/createMessage.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useEmojiStore } from "@/store/message/emoji";
-import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -15,6 +14,7 @@ describe(useReadMessages, () => {
   let getEmojis: ReturnType<typeof useEmojiStore>["getEmojis"];
   const roomId = crypto.randomUUID();
   const otherRoomId = crypto.randomUUID();
+  const emojiTag = "👍";
 
   // A page's metadata is read after the page lands, so a room switched to in between must not become the room the
   // Reactions are read for and filed under — the room being left would come back with none
@@ -22,12 +22,8 @@ describe(useReadMessages, () => {
     expect.hasAssertions();
 
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
-    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: crypto.randomUUID() });
-    const emoji = new MessageEmojiMetadataEntity({
-      messageRowKey: message.rowKey,
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-    });
+    const message = createMessage(roomId);
+    const emoji = { emojiTag, messageId: message.id, userIds: [] as string[] };
     trpcMsw.message.readMessages.query(async () => {
       await readGate;
       return { hasMore: false, items: [message], nextCursor: "" };
@@ -51,6 +47,6 @@ describe(useReadMessages, () => {
     releaseRead();
     await pendingRead;
 
-    expect(getEmojis(roomId, message.rowKey).map(({ rowKey }) => rowKey)).toStrictEqual([emoji.rowKey]);
+    expect(getEmojis(roomId, message.id).map((reaction) => reaction.emojiTag)).toStrictEqual([emojiTag]);
   });
 });

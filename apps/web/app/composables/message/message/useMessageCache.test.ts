@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
@@ -9,23 +9,23 @@ import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/c
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { useDataStore } from "@/store/message/data";
-import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMessageCache, () => {
-  let items: ComputedRef<readonly MessageEntity[]>;
+  let items: ComputedRef<readonly ClientMessage[]>;
   let getSlice: ReturnType<typeof useDataStore>["getSlice"];
-  const partitionKey = crypto.randomUUID();
-  const secondPartitionKey = crypto.randomUUID();
-  const rowKey = getReverseTickedTimestamp();
+  const roomId = crypto.randomUUID();
+  const secondRoomId = crypto.randomUUID();
   const message = "message";
   // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
   // Context
-  const mountCache = async (initialRouteId: string = partitionKey) => {
+  const mountCache = async (initialRouteId: string = roomId) => {
     await mountSuspended(
       defineComponent({
         render: () => h("div"),
@@ -61,13 +61,13 @@ describe(useMessageCache, () => {
 
     const userId = getMockSession().user.id;
     await mountCache();
-    const loadedData = new CursorPaginationData<MessageEntity>();
-    loadedData.items = [new StandardMessageEntity({ isLoading: true, message, partitionKey, rowKey, userId })];
+    const loadedData = new CursorPaginationData<ClientMessage>();
+    loadedData.items = [createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId)];
     // Through the store hook a read would use, so the room counts as loaded — an unloaded room persists nothing
     // At all, which would leave the filter untested
-    getSlice(partitionKey).initializeCursorPaginationData(loadedData);
+    getSlice(roomId).initializeCursorPaginationData(loadedData);
     await flushCache();
-    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
+    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
 
     expect(cachedMessages).toHaveLength(0);
   });
@@ -78,11 +78,11 @@ describe(useMessageCache, () => {
     const userId = getMockSession().user.id;
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [new StandardMessageEntity({ message, partitionKey: secondPartitionKey, rowKey, userId })],
-      secondPartitionKey,
+      [createOptimisticMessage({ message, roomId: secondRoomId, type: MessageType.Message }, userId)],
+      secondRoomId,
     );
     await mountCache();
-    setCurrentRoomId(secondPartitionKey);
+    setCurrentRoomId(secondRoomId);
     await flushCache();
 
     expect(items.value).toHaveLength(1);

@@ -13,35 +13,35 @@ export const useThreadActionItems = () => {
   const { executeMutation } = useMutation();
   const copyMessageLink = useCopyMessageLink();
   const threadStore = useThreadStore();
-  const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
+  const { activeRoomId, activeThreadRootId } = storeToRefs(threadStore);
   const threadFollowStore = useThreadFollowStore();
   const { checkIsFollowing, followThread, unfollowThread } = threadFollowStore;
   const callStore = useCallStore();
   const { joinCallByRoomId, leaveCall } = callStore;
-  const { callThreadRootRowKey, isConnecting, isInCall } = storeToRefs(callStore);
+  const { callThreadRootId, isConnecting, isInCall } = storeToRefs(callStore);
   const messageLayoutStore = useMessageLayoutStore();
   const { previousRightDrawer, splitRightDrawer } = storeToRefs(messageLayoutStore);
   // The pane renders only on an open thread, but the store's empty root is still the type each read starts from
   const isFollowing = computed(() => {
-    const threadRootRowKey = activeRootRowKey.value;
-    return threadRootRowKey ? checkIsFollowing(activeRoomId.value, threadRootRowKey) : false;
+    const threadRootId = activeThreadRootId.value;
+    return threadRootId ? checkIsFollowing(activeRoomId.value, threadRootId) : false;
   });
   // The call this thread can start is the one the user is already in only when it is this thread's — being in
   // The room's call, or another thread's, still leaves this one to start
-  const isInThreadCall = computed(() => isInCall.value && callThreadRootRowKey.value === activeRootRowKey.value);
+  const isInThreadCall = computed(() => isInCall.value && callThreadRootId.value === activeThreadRootId.value);
   return computed<Item[]>(() => [
     {
       icon: isFollowing.value ? "i-mdi:bell-off" : "i-mdi:bell",
       onClick: async () => {
         const roomId = activeRoomId.value;
-        const threadRootRowKey = activeRootRowKey.value;
-        if (!threadRootRowKey) return;
+        const threadRootId = activeThreadRootId.value;
+        if (!threadRootId) return;
 
         await executeMutation(
-          () => (isFollowing.value ? unfollowThread(roomId, threadRootRowKey) : followThread(roomId, threadRootRowKey)),
+          () => (isFollowing.value ? unfollowThread(roomId, threadRootId) : followThread(roomId, threadRootId)),
           // Single-flight per thread: the menu closes on click, so a second toggle is a double-fire rather
           // Than an intent to flip back
-          { isExclusive: true, key: `${roomId}${ID_SEPARATOR}${threadRootRowKey}` },
+          { isExclusive: true, key: `${roomId}${ID_SEPARATOR}${threadRootId}` },
         );
       },
       title: isFollowing.value ? "Turn off notifications for replies" : "Turn on notifications for replies",
@@ -50,8 +50,8 @@ export const useThreadActionItems = () => {
       icon: "i-mdi:link-variant",
       onClick: async () => {
         // A thread is named by its root message, so its link is that message's link
-        const threadRootRowKey = activeRootRowKey.value;
-        if (threadRootRowKey) await copyMessageLink(activeRoomId.value, threadRootRowKey);
+        const threadRootId = activeThreadRootId.value;
+        if (threadRootId) await copyMessageLink(activeRoomId.value, threadRootId);
       },
       title: "Copy link",
     },
@@ -63,7 +63,7 @@ export const useThreadActionItems = () => {
       isGroupStart: true,
       onClick: async () => {
         if (isInThreadCall.value) await leaveCall();
-        else await joinCallByRoomId(activeRoomId.value, activeRootRowKey.value);
+        else await joinCallByRoomId(activeRoomId.value, activeThreadRootId.value);
       },
       title: isInThreadCall.value ? "Leave call in thread" : "Start call in thread",
     },
@@ -82,7 +82,7 @@ export const useThreadActionItems = () => {
       onClick: () => {
         // The thread's own route, so the window it opens is a full app on that thread rather than a copy of
         // The pane that would have to re-derive every store it reads
-        window.open(RoutePath.MessagesThread(activeRoomId.value, activeRootRowKey.value), "_blank");
+        window.open(RoutePath.MessagesThread(activeRoomId.value, activeThreadRootId.value), "_blank");
       },
       title: "Open in new window",
     },

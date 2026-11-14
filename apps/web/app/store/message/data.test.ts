@@ -6,6 +6,7 @@ import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MessageHook } from "@/models/message/MessageHook";
 import { useSession } from "@/services/auth/authClient.test";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
@@ -14,7 +15,7 @@ import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -29,7 +30,7 @@ describe(useDataStore, () => {
   let router: Router;
   const roomId = crypto.randomUUID();
   // Every send here is the room's own composer, which is the target `sendMessage` defaults to
-  const target: ComposerTarget = { roomId, threadRootRowKey: "" };
+  const target: ComposerTarget = { roomId, threadRootId: "" };
   const userId = getMockSession().user.id;
   const message = "message";
   const updatedMessage = "updatedMessage";
@@ -69,7 +70,7 @@ describe(useDataStore, () => {
     // A Create hook fetches attachment download URLs over the network; a rejection there must roll the
     // Optimistically-rendered bubble back out instead of leaving a permanent loading entity in the list.
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
-    const isCreated = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    const isCreated = await createMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(false);
     expect(items.value).toHaveLength(0);
@@ -103,7 +104,7 @@ describe(useDataStore, () => {
     trpcMsw.message.createMessage.mutation(() => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
     });
-    const isCreated = await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    const isCreated = await createMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(false);
     expect(items.value).toHaveLength(1);
@@ -119,7 +120,7 @@ describe(useDataStore, () => {
     const { sendMessage } = dataStore;
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
     const resetSendSpy = vi.spyOn(MessageHookMap[MessageHook.ResetSend], "run");
-    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await sendMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(resetSendSpy).not.toHaveBeenCalled();
   });
@@ -134,10 +135,10 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { sendMessage } = dataStore;
     trpcMsw.message.createMessage.mutation(() =>
-      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
     const resetSendSpy = vi.spyOn(MessageHookMap[MessageHook.ResetSend], "run");
-    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await sendMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(resetSendSpy).toHaveBeenCalledExactlyOnceWith(target, [], undefined);
   });
@@ -155,9 +156,9 @@ describe(useDataStore, () => {
     const { input } = storeToRefs(inputStore);
     trpcMsw.message.createMessage.mutation(() => {
       input.value = typedMessage;
-      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+      return createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     });
-    await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await sendMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(input.value).toBe(typedMessage);
   });
@@ -179,13 +180,13 @@ describe(useDataStore, () => {
     let heldFileIds: string[] = [];
     trpcMsw.message.createMessage.mutation(() => {
       heldFileIds = getComposerFiles(target).map(({ id }) => id);
-      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+      return createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     });
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
-      replyRowKey: "",
+      replyToId: null,
       roomId,
       type: MessageType.Message,
     });
@@ -213,7 +214,7 @@ describe(useDataStore, () => {
     await sendMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
-      replyRowKey: "",
+      replyToId: null,
       roomId,
       type: MessageType.Message,
     });
@@ -234,7 +235,7 @@ describe(useDataStore, () => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
     });
     const commitSendSpy = vi.spyOn(MessageHookMap[MessageHook.CommitSend], "run");
-    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await createMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(commitSendSpy).not.toHaveBeenCalled();
   });
@@ -246,10 +247,10 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { createMessage } = dataStore;
     trpcMsw.message.createMessage.mutation(() =>
-      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
     const commitSendSpy = vi.spyOn(MessageHookMap[MessageHook.CommitSend], "run");
-    await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
+    await createMessage({ files: [], message, replyToId: null, roomId, type: MessageType.Message });
 
     expect(commitSendSpy).toHaveBeenCalledExactlyOnceWith(target, []);
   });
@@ -266,7 +267,7 @@ describe(useDataStore, () => {
     const { createMessage } = dataStore;
     const { getComposerFiles } = uploadFileStore;
     trpcMsw.message.createMessage.mutation(() =>
-      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
     // The preview url the composer mints per attachment is incidental here, and the environment's
     // `createObjectURL` rejects the runtime's own `File` on an instanceof check
@@ -278,7 +279,7 @@ describe(useDataStore, () => {
     const createPromise = createMessage({
       files: [{ ...baseFile, id: sentFileId }],
       message,
-      replyRowKey: "",
+      replyToId: null,
       roomId,
       type: MessageType.Message,
     });
@@ -305,13 +306,13 @@ describe(useDataStore, () => {
     let payloadFileIds: string[] = [];
     trpcMsw.message.createMessage.mutation(({ input }) => {
       payloadFileIds = input.files?.map(({ id }) => id) ?? [];
-      return createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+      return createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     });
     uploadFileStore.storeUploadFiles(target, [{ file: createFile(), id: sentFileId, token: "" }]);
     const createPromise = createMessage({
       files: uploadFileStore.getComposerFiles(target),
       message,
-      replyRowKey: "",
+      replyToId: null,
       roomId,
       type: MessageType.Message,
     });
@@ -331,14 +332,14 @@ describe(useDataStore, () => {
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing } = threadFollowStore;
     const { createMessage } = dataStore;
-    const replyRowKey = getReverseTickedTimestamp();
+    const replyToId = crypto.randomUUID();
     trpcMsw.message.createMessage.mutation(() =>
-      createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
+      createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
     );
-    const isCreated = await createMessage({ files: [], message, replyRowKey, roomId, type: MessageType.Message });
+    const isCreated = await createMessage({ files: [], message, replyToId, roomId, type: MessageType.Message });
 
     expect(isCreated).toBe(true);
-    expect(checkIsFollowing(roomId, replyRowKey)).toBe(true);
+    expect(checkIsFollowing(roomId, replyToId)).toBe(true);
   });
 
   // The newer-cursor pages the room-keyed list, so it is keyed the same way. Held globally it survives the room
@@ -373,7 +374,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { storeCreateMessage } = dataStore;
-    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId: crypto.randomUUID() });
+    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, crypto.randomUUID());
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockResolvedValue();
     const storePromise = storeCreateMessage(newMessage);
 
@@ -397,12 +398,12 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
-    getSlice(newMessage.partitionKey).items.value = [newMessage];
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
+    getSlice(newMessage.roomId).items.value = [newMessage];
+    const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
     await Promise.all([
-      updateMessage({ ...compositeKey, message: updatedMessage }),
-      updateMessage({ ...compositeKey, message: rejectedMessage }),
+      updateMessage({ ...messageKey, message: updatedMessage }),
+      updateMessage({ ...messageKey, message: rejectedMessage }),
     ]);
 
     expect(takeOne(items.value).message).toBe(updatedMessage);
@@ -419,9 +420,9 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createMessageEntity({ message: "", roomId, type: MessageType.Message, userId });
-    getSlice(newMessage.partitionKey).items.value = [newMessage];
-    await updateMessage({ message: rejectedMessage, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey });
+    const newMessage = createOptimisticMessage({ message: "", roomId, type: MessageType.Message }, userId);
+    getSlice(newMessage.roomId).items.value = [newMessage];
+    await updateMessage({ id: newMessage.id, message: rejectedMessage, roomId: newMessage.roomId });
 
     expect(takeOne(items.value).message).toBe("");
   });
@@ -435,27 +436,29 @@ describe(useDataStore, () => {
     const acceptedFileId = crypto.randomUUID();
     const keptFileId = crypto.randomUUID();
     trpcMsw.message.deleteFile.mutation(({ input }) => {
-      if (input.id === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
+      if (input.fileId === rejectedFileId) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message });
     });
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { deleteFile, getSlice } = dataStore;
-    const newMessage = createMessageEntity({
-      files: [
-        { ...baseFile, id: acceptedFileId },
-        { ...baseFile, id: rejectedFileId },
-        { ...baseFile, id: keptFileId },
-      ],
-      message,
-      roomId,
-      type: MessageType.Message,
+    const newMessage = createOptimisticMessage(
+      {
+        files: [
+          { ...baseFile, id: acceptedFileId },
+          { ...baseFile, id: rejectedFileId },
+          { ...baseFile, id: keptFileId },
+        ],
+        message,
+        roomId,
+        type: MessageType.Message,
+      },
       userId,
-    });
-    getSlice(newMessage.partitionKey).items.value = [newMessage];
-    const compositeKey = { partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    );
+    getSlice(newMessage.roomId).items.value = [newMessage];
+    const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
     await Promise.all([
-      deleteFile({ ...compositeKey, id: acceptedFileId }),
-      deleteFile({ ...compositeKey, id: rejectedFileId }),
+      deleteFile({ ...messageKey, fileId: acceptedFileId }),
+      deleteFile({ ...messageKey, fileId: rejectedFileId }),
     ]);
 
     expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
@@ -467,9 +470,9 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { storeCreateMessage, storeUpdateMessage } = dataStore;
-    const newMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     await storeCreateMessage(newMessage);
-    const updatedInput = { message: updatedMessage, partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey };
+    const updatedInput = { id: newMessage.id, message: updatedMessage, roomId: newMessage.roomId };
     await storeUpdateMessage(updatedInput);
     await storeUpdateMessage(updatedInput);
 

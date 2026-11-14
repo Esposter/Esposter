@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
@@ -16,11 +16,11 @@ import { Extension } from "@tiptap/vue-3";
 // The same reason: ArrowUp edits the last own message of the conversation the composer is in, not the room's
 export const useKeyboardShortcutsExtension = async (
   send: (editor: Editor) => Promisable<void>,
-  messages: MaybeRefOrGetter<readonly MessageEntity[]>,
+  messages: MaybeRefOrGetter<readonly ClientMessage[]>,
 ) => {
   const { data: session } = await useAuthSession();
   const messageStore = useMessageStore();
-  const { editingRowKey } = storeToRefs(messageStore);
+  const { editingMessageId } = storeToRefs(messageStore);
   return new Extension({
     addKeyboardShortcuts() {
       return {
@@ -37,7 +37,7 @@ export const useKeyboardShortcutsExtension = async (
                 messageUserId === userId,
             );
           if (!lastOwnMessage) return false;
-          editingRowKey.value = lastOwnMessage.rowKey;
+          editingMessageId.value = lastOwnMessage.id;
           return true;
         },
         Enter: () => {

@@ -1,4 +1,4 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageInMessage } from "@esposter/db-schema";
 
 import { AdminActionHookMap } from "@/services/message/moderation/AdminActionHookMap";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
@@ -36,7 +36,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   const callRoomId = ref("");
   // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
   // The call it can start is the one the user is already in
-  const callThreadRootRowKey = ref<"" | MessageEntity["rowKey"]>("");
+  const callThreadRootId = ref<"" | MessageInMessage["id"]>("");
   const activeCallSessionId = ref("");
   // Whether the joined call's knocks are this participant's to answer — the server rejects the knock stream for
   // Anyone else, so it is opened only when this is true
@@ -47,7 +47,7 @@ export const useCallStore = defineStore("message/room/call", () => {
   // In opens with it rather than leaving the user in the room hunting for the message it hangs off
   const callRoute = computed(() => {
     if (!callRoomId.value) return RoutePath.Calls(activeCallSessionId.value);
-    else if (callThreadRootRowKey.value) return RoutePath.MessagesThread(callRoomId.value, callThreadRootRowKey.value);
+    else if (callThreadRootId.value) return RoutePath.MessagesThread(callRoomId.value, callThreadRootId.value);
     else return RoutePath.Messages(callRoomId.value);
   });
   const currentRoomCallSessionId = ref("");
@@ -144,7 +144,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     if (isJoined) await leaveCall();
     else {
       callRoomId.value = "";
-      callThreadRootRowKey.value = "";
+      callThreadRootId.value = "";
       activeCallSessionId.value = "";
       // The teardown reports rather than propagates: it is unwinding an attempt that already failed, and a
       // Rejected disconnect must not take the join's own error off screen or strand the connecting flag
@@ -191,16 +191,16 @@ export const useCallStore = defineStore("message/room/call", () => {
   // With the root the pane is showing — the room's own call is the empty root. Both ids come from the caller
   // Rather than from the thread store: a call is not a thread's own state, and reaching for it here would put
   // The drawer's layout behind every join
-  const joinCallByRoomId = async (roomId: string, threadRootRowKey: "" | MessageEntity["rowKey"] = "") => {
+  const joinCallByRoomId = async (roomId: string, threadRootId: "" | MessageInMessage["id"] = "") => {
     if (!roomId || activeCallSessionId.value) return;
     isConnecting.value = true;
     callRoomId.value = roomId;
-    callThreadRootRowKey.value = threadRootRowKey;
+    callThreadRootId.value = threadRootId;
     let isJoined = false;
     await getResultAsync(async () => {
       const { authToken, callSessionId, participantMap } = await $trpc.callSession.joinCallByRoomId.mutate({
         roomId,
-        threadRootRowKey,
+        threadRootId,
       });
       // Seeded before the connect, as in `joinCall`: the room's participant events that arrive while it is open
       // Would otherwise be overwritten by this snapshot once it resolves
@@ -208,7 +208,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       await connect(authToken, leaveCall, true);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
-      if (!threadRootRowKey) currentRoomCallSessionId.value = callSessionId;
+      if (!threadRootId) currentRoomCallSessionId.value = callSessionId;
       activeCallSessionId.value = callSessionId;
       isJoined = true;
       isCallViewOpen.value = true;
@@ -234,7 +234,7 @@ export const useCallStore = defineStore("message/room/call", () => {
           },
           async () => {
             callRoomId.value = "";
-            callThreadRootRowKey.value = "";
+            callThreadRootId.value = "";
             resetKnockerState();
             isDoorkeeper.value = false;
             activeCallSessionId.value = "";
@@ -333,7 +333,7 @@ export const useCallStore = defineStore("message/room/call", () => {
     activeCallSessionId,
     callRoomId,
     callRoute,
-    callThreadRootRowKey,
+    callThreadRootId,
     currentRoomCallSessionId,
     isCallViewOpen,
     isConnecting,

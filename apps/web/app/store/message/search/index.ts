@@ -1,4 +1,5 @@
-import type { Filter, FilterType, MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { Filter, FilterType } from "@esposter/db-schema";
 
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
@@ -16,7 +17,7 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };
-  const { items, ...restData } = useOffsetPaginationDataMap<MessageEntity>(() => roomStore.currentRoomId);
+  const { items, ...restData } = useOffsetPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
   // The totals a search writes back belong to the room it was issued for, so a read binds them alongside the
   // Result slice it is already binding — `count`/`page` themselves track whichever room is current, which is
   // What the rendered header and paginator want and exactly what an in-flight response must not use

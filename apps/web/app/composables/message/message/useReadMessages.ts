@@ -1,13 +1,14 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_OLDEST_FIRST_SORT_ITEM, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_SORT_BY } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { getReverseTickedTimestamp, reverseTickedTimestampSchema } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
@@ -26,20 +27,19 @@ export const useReadMessages = () => {
     const hasMoreNewer = getHasMoreNewerRef(roomId);
     const nextCursorNewer = getNextCursorNewerRef(roomId);
     return readItems(async () => {
-      // A route param is whatever the address bar holds, so one that is no rowKey reads as no message to open on
-      const { data: rowKey } = reverseTickedTimestampSchema.safeParse(
-        getRouteParam(currentRoute.value.params, "rowKey"),
-      );
-      if (rowKey) {
-        const messages = await $trpc.message.readMessagesByRowKeys.query({ roomId, rowKeys: [rowKey] });
+      // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
+      const messageId = getRouteParam(currentRoute.value.params, "messageId");
+      if (checkIsUuidV4(messageId)) {
+        const messages = await $trpc.message.readMessagesByRowKeys.query({ messageIds: [messageId], roomId });
         if (messages.length > 0) {
+          const messageCursor = serialize(takeOne(messages), MESSAGE_SORT_BY);
           const cursorPaginationData = await $trpc.message.readMessages.query({
-            cursor: serialize({ rowKey: takeOne(messages).rowKey }, [MESSAGE_ROW_KEY_SORT_ITEM]),
+            cursor: messageCursor,
             isIncludeValue: true,
             roomId,
           });
           hasMoreNewer.value = true;
-          nextCursorNewer.value = serialize({ rowKey }, [MESSAGE_OLDEST_FIRST_SORT_ITEM]);
+          nextCursorNewer.value = messageCursor;
           await readMetadata(roomId, cursorPaginationData.items);
           return cursorPaginationData;
         }
@@ -78,13 +78,13 @@ export const useReadMessages = () => {
     hasMoreNewer.value = hasMore;
     nextCursorNewer.value = nextCursor ?? "";
 
-    const rowKeys = new Set(items.map((item) => item.rowKey));
-    const newerItems: MessageEntity[] = [];
-    const olderItems: MessageEntity[] = [];
+    const messageIds = new Set(items.map(({ id }) => id));
+    const newerItems: ClientMessage[] = [];
+    const olderItems: ClientMessage[] = [];
 
     for (const item of roomItems.value)
-      if (!rowKeys.has(item.rowKey))
-        if (items.length > 0 && item.rowKey < takeOne(items).rowKey) newerItems.push(item);
+      if (!messageIds.has(item.id))
+        if (items.length > 0 && checkIsNewerMessage(item, takeOne(items))) newerItems.push(item);
         else olderItems.push(item);
 
     roomItems.value = [...newerItems, ...items, ...olderItems];

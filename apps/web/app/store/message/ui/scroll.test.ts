@@ -13,8 +13,8 @@ mockNuxtImport("navigateTo", () => navigateToMock);
 
 describe(useScrollStore, () => {
   const roomId = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
-  const secondRowKey = crypto.randomUUID();
+  const messageId = crypto.randomUUID();
+  const secondMessageId = crypto.randomUUID();
   const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 
@@ -24,48 +24,48 @@ describe(useScrollStore, () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
-    Object.assign(router.currentRoute.value.params, { id: roomId, rowKey: "" });
+    Object.assign(router.currentRoute.value.params, { id: roomId, messageId: "" });
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  test("setActiveRowKey clears activeRowKey after highlight delay", () => {
+  test("setActiveMessageId clears activeMessageId after highlight delay", () => {
     expect.hasAssertions();
 
     const scrollStore = useScrollStore();
-    const { setActiveRowKey } = scrollStore;
-    const { activeRowKey } = storeToRefs(scrollStore);
-    setActiveRowKey(rowKey);
+    const { setActiveMessageId } = scrollStore;
+    const { activeMessageId } = storeToRefs(scrollStore);
+    setActiveMessageId(messageId);
 
-    expect(activeRowKey.value).toBe(rowKey);
+    expect(activeMessageId.value).toBe(messageId);
 
     vi.advanceTimersByTime(highlightMs - 1);
 
-    expect(activeRowKey.value).toBe(rowKey);
+    expect(activeMessageId.value).toBe(messageId);
 
     vi.advanceTimersByTime(1);
 
-    expect(activeRowKey.value).toBe("");
+    expect(activeMessageId.value).toBe("");
   });
 
-  test("setActiveRowKey restarts the clear timer", () => {
+  test("setActiveMessageId restarts the clear timer", () => {
     expect.hasAssertions();
 
     const scrollStore = useScrollStore();
-    const { setActiveRowKey } = scrollStore;
-    const { activeRowKey } = storeToRefs(scrollStore);
-    setActiveRowKey(rowKey);
+    const { setActiveMessageId } = scrollStore;
+    const { activeMessageId } = storeToRefs(scrollStore);
+    setActiveMessageId(messageId);
     vi.advanceTimersByTime(highlightMs - 1);
-    setActiveRowKey(secondRowKey);
+    setActiveMessageId(secondMessageId);
     vi.advanceTimersByTime(1);
 
-    expect(activeRowKey.value).toBe(secondRowKey);
+    expect(activeMessageId.value).toBe(secondMessageId);
 
     vi.advanceTimersByTime(highlightMs - 1);
 
-    expect(activeRowKey.value).toBe("");
+    expect(activeMessageId.value).toBe("");
   });
 
   // The newer messages a permalink window leaves unloaded are above everything the list holds, so no scroll
@@ -75,7 +75,7 @@ describe(useScrollStore, () => {
 
     const dataStore = useDataStore();
     dataStore.getHasMoreNewerRef(roomId).value = true;
-    Object.assign(router.currentRoute.value.params, { rowKey });
+    Object.assign(router.currentRoute.value.params, { messageId });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;
     await jumpToPresent();
@@ -88,7 +88,7 @@ describe(useScrollStore, () => {
   test("jumpToPresent scrolls rather than re-reads when the loaded window is the live tail", async () => {
     expect.hasAssertions();
 
-    Object.assign(router.currentRoute.value.params, { rowKey });
+    Object.assign(router.currentRoute.value.params, { messageId });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;
     await jumpToPresent();

@@ -55,15 +55,15 @@ export const useFileStore = defineStore("message/file", () => {
   // Before it, so a message that arrives just before a room switch is handled after `currentRoomId` has already
   // Moved on. Read against the wrong room the SAS query names file ids that room does not own, so it rejects
   // And every attachment on that message renders broken.
-  MessageHookMap[Operation.Create].register(async ({ files, partitionKey }) => {
+  MessageHookMap[Operation.Create].register(async ({ files, roomId }) => {
     if (files.length === 0) return;
 
-    await readFileUrls(partitionKey, files);
+    await readFileUrls(roomId, files);
   });
   // The message's own room for the same reason: a rolled-back send is deleted after the Create hook's await
-  MessageHookMap[Operation.Delete].register(({ partitionKey, rowKey }) => {
-    const message = getDataSlice(partitionKey).items.value.find((item) => item.rowKey === rowKey);
-    const roomFileUrlMap = getData(partitionKey);
+  MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
+    const message = getDataSlice(roomId).items.value.find((item) => item.id === messageId);
+    const roomFileUrlMap = getData(roomId);
     if (!message || !roomFileUrlMap) return;
     for (const { id } of message.files) roomFileUrlMap.delete(id);
   });

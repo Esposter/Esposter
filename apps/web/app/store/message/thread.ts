@@ -1,4 +1,5 @@
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { MessageInMessage } from "@esposter/db-schema";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -12,9 +13,9 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
   const { executeQuery, isPending: isReadThreadPending } = useMutation();
-  const activeRootRowKey = ref<"" | MessageEntity["rowKey"]>("");
-  const activeRoomId = ref<MessageEntity["partitionKey"]>("");
-  const threadMessages = ref<MessageEntity[]>([]);
+  const activeThreadRootId = ref<"" | MessageInMessage["id"]>("");
+  const activeRoomId = ref<MessageInMessage["roomId"]>("");
+  const threadMessages = ref<ClientMessage[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
   const threadFollowStore = useThreadFollowStore();
@@ -23,11 +24,11 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Renders besides itself is read through the file store, which reads this one back
   const openThread = async (
     roomId: string,
-    threadRootRowKey: MessageEntity["rowKey"],
-    readThreadMessages: () => Promise<MessageEntity[]>,
+    threadRootId: MessageInMessage["id"],
+    readThreadMessages: () => Promise<MessageInMessage[]>,
   ) => {
     activeRoomId.value = roomId;
-    activeRootRowKey.value = threadRootRowKey;
+    activeThreadRootId.value = threadRootId;
     // Cleared with the drawer rather than when the replies land, so the pane never shows the previous thread's
     // Replies under the new thread's header while the read is in flight
     threadMessages.value = [];
@@ -43,14 +44,11 @@ export const useThreadStore = defineStore("message/thread", () => {
         onSuccess: (messages) => {
           // The read spans the whole open, so the user can close the drawer while it is still in flight — a
           // Response applied afterwards reopens a thread they just dismissed
-          if (!activeRootRowKey.value) return;
+          if (!activeThreadRootId.value) return;
           // A reply can land while the read is in flight, and the create hook has already pushed it here. The
           // Response is a snapshot from before it, so assigning it wholesale drops the reply until a reopen
-          const readRowKeys = new Set(messages.map(({ rowKey }) => rowKey));
-          threadMessages.value = [
-            ...messages,
-            ...threadMessages.value.filter(({ rowKey }) => !readRowKeys.has(rowKey)),
-          ];
+          const readMessageIds = new Set(messages.map(({ id }) => id));
+          threadMessages.value = [...messages, ...threadMessages.value.filter(({ id }) => !readMessageIds.has(id))];
         },
       }),
       // The pane's menu offers the reply notification toggle, so the follow state it reads loads with the
@@ -59,7 +57,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     ]);
   };
   const closeThread = () => {
-    activeRootRowKey.value = "";
+    activeThreadRootId.value = "";
     activeRoomId.value = "";
     threadMessages.value = [];
     // A split exists to hold the thread beside another pane, so it goes with the thread — and the drawer keeps
@@ -76,31 +74,31 @@ export const useThreadStore = defineStore("message/thread", () => {
   // The open pane is a live view of the thread, not the snapshot `readThread` returned: without these a reply
   // Lands in the room list and the thread it belongs to shows nothing until it is reopened — including the
   // Sender's own reply, which is the composer's entire feedback. The optimistic bubble is the same reactive
-  // Entity the room list holds, so the server's fields reach the pane through the object it already pushed
-  const checkIsActiveThreadMessage = ({ partitionKey, rowKey }: Pick<MessageEntity, "partitionKey" | "rowKey">) =>
-    partitionKey === activeRoomId.value && threadMessages.value.some((message) => message.rowKey === rowKey);
+  // Message the room list holds, so the server's fields reach the pane through the object it already pushed
+  const checkIsActiveThreadMessage = ({ id: messageId, roomId }: Pick<MessageInMessage, "id" | "roomId">) =>
+    roomId === activeRoomId.value && threadMessages.value.some((message) => message.id === messageId);
   MessageHookMap[Operation.Create].register((message) => {
-    if (message.partitionKey !== activeRoomId.value || message.replyRowKey !== activeRootRowKey.value) return;
+    if (message.roomId !== activeRoomId.value || message.replyToId !== activeThreadRootId.value) return;
     // A message the pane already holds is the room list echoing back a reply it optimistically pushed here
-    if (threadMessages.value.some(({ rowKey }) => rowKey === message.rowKey)) return;
+    if (threadMessages.value.some(({ id }) => id === message.id)) return;
 
     threadMessages.value.push(message);
   });
   MessageHookMap[Operation.Update].register((input) => {
     if (!checkIsActiveThreadMessage(input)) return;
 
-    const message = threadMessages.value.find(({ rowKey }) => rowKey === input.rowKey);
+    const message = threadMessages.value.find(({ id }) => id === input.id);
     if (message) Object.assign(message, input);
   });
-  MessageHookMap[Operation.Delete].register(({ partitionKey, rowKey }) => {
-    if (partitionKey !== activeRoomId.value) return;
+  MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
+    if (roomId !== activeRoomId.value) return;
     // The thread is named by its root, so a deleted root leaves nothing for the pane to be about
-    else if (rowKey === activeRootRowKey.value) {
+    else if (messageId === activeThreadRootId.value) {
       closeThread();
       return;
     }
 
-    threadMessages.value = threadMessages.value.filter((message) => message.rowKey !== rowKey);
+    threadMessages.value = threadMessages.value.filter((message) => message.id !== messageId);
   });
-  return { activeRoomId, activeRootRowKey, closeThread, isReadThreadPending, openThread, threadMessages };
+  return { activeRoomId, activeThreadRootId, closeThread, isReadThreadPending, openThread, threadMessages };
 });

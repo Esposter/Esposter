@@ -1,10 +1,11 @@
 // @vitest-environment nuxt
 import { useCreator } from "@/composables/message/room/useCreator";
 import { UNKNOWN_USER_NAME } from "@/services/message/constants";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useUserStore } from "@/store/message/user";
 import { useAppUserStore } from "@/store/message/user/appUser";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test } from "vitest";
 
 describe(useCreator, () => {
@@ -12,6 +13,14 @@ describe(useCreator, () => {
   const otherRoomId = crypto.randomUUID();
   const displayName = "displayName";
   const user = createUser({ name: "globalName" });
+  // A webhook row has no member author, and carries the app user it was sent under and that user's name
+  const createWebhookMessage = (appUserId: string, senderName: string) => ({
+    ...createOptimisticMessage({ roomId, type: MessageType.Message }, user.id),
+    appUserId,
+    senderName,
+    type: MessageType.Webhook,
+    userId: null,
+  });
 
   beforeEach(() => {
     const userStore = useUserStore();
@@ -27,7 +36,7 @@ describe(useCreator, () => {
     const userStore = useUserStore();
     const { storeRoomMembers } = userStore;
     storeRoomMembers(roomId, [{ ...user, displayName }]);
-    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: user.id });
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, user.id);
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(displayName);
@@ -40,7 +49,7 @@ describe(useCreator, () => {
     const userStore = useUserStore();
     const { storeRoomMembers } = userStore;
     storeRoomMembers(otherRoomId, [{ ...user, displayName }]);
-    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: user.id });
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, user.id);
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(user.name);
@@ -61,7 +70,7 @@ describe(useCreator, () => {
     const appUserStore = useAppUserStore();
     const { appUserMap } = storeToRefs(appUserStore);
     appUserMap.value.set(appUser.id, appUser);
-    const message = createMessageEntity({ appUser, roomId, type: MessageType.Webhook });
+    const message = createWebhookMessage(appUser.id, appUser.name);
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(appUser.name);
@@ -72,7 +81,7 @@ describe(useCreator, () => {
     expect.hasAssertions();
 
     const appUser = { id: crypto.randomUUID(), image: "", name: "appUserName" };
-    const message = createMessageEntity({ appUser, roomId, type: MessageType.Webhook });
+    const message = createWebhookMessage(appUser.id, appUser.name);
     const creator = useCreator(() => message);
 
     expect(creator.value?.name).toBe(appUser.name);
@@ -83,9 +92,10 @@ describe(useCreator, () => {
   test("names an author nobody can resolve with the placeholder", () => {
     expect.hasAssertions();
 
-    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: crypto.randomUUID() });
+    const userId = crypto.randomUUID();
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     const creator = useCreator(() => message);
 
-    expect(creator.value).toStrictEqual({ id: message.userId, image: "", name: UNKNOWN_USER_NAME });
+    expect(creator.value).toStrictEqual({ id: userId, image: "", name: UNKNOWN_USER_NAME });
   });
 });

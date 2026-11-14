@@ -10,7 +10,6 @@ import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test"
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
-import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -33,7 +32,7 @@ describe(useUploadFiles, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
   // The room's own composer — attachments are partitioned per composer, so every read below names one
-  const target: ComposerTarget = { roomId, threadRootRowKey: "" };
+  const target: ComposerTarget = { roomId, threadRootId: "" };
   const filename = "a";
   const fileId = crypto.randomUUID();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
@@ -78,7 +77,7 @@ describe(useUploadFiles, () => {
   });
 
   // A revert drops the only reference to blobs that already reached storage — the composer is the sole holder
-  // Of these ids, and every other deletion path walks a persisted message entity's files.
+  // Of these ids, and every other deletion path walks a persisted message's files.
   test("reclaims uploaded blobs when the original upload fails", async () => {
     expect.hasAssertions();
 
@@ -146,7 +145,7 @@ describe(useUploadFiles, () => {
   test("keeps a thread composer's attachments out of the room composer", async () => {
     expect.hasAssertions();
 
-    const threadTarget: ComposerTarget = { roomId, threadRootRowKey: getReverseTickedTimestamp() };
+    const threadTarget: ComposerTarget = { roomId, threadRootId: crypto.randomUUID() };
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     uploadFileToUrlMock.mockResolvedValue(undefined);

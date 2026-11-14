@@ -74,7 +74,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   // To create first, and the message is the reader's own
   const inviteDirectMessage = async (roomId: string, inviteLink: string) => {
     await executeInviteDirectMessageMutation(
-      () => createMessage({ files: [], message: inviteLink, replyRowKey: "", roomId, type: MessageType.Message }),
+      () => createMessage({ files: [], message: inviteLink, replyToId: null, roomId, type: MessageType.Message }),
       { key: roomId },
     );
   };

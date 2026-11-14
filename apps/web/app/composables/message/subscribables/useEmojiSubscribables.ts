@@ -17,7 +17,7 @@ export const useEmojiSubscribables = () => {
         { roomId },
         {
           onData: (newEmoji) => {
-            storeCreateEmoji(newEmoji);
+            storeCreateEmoji(roomId, newEmoji);
           },
         },
       ),
@@ -25,15 +25,15 @@ export const useEmojiSubscribables = () => {
         { roomId },
         {
           onData: (updatedEmoji) => {
-            storeUpdateEmoji(updatedEmoji);
+            storeUpdateEmoji(roomId, updatedEmoji);
           },
         },
       ),
       $trpc.message.emoji.onDeleteEmoji.subscribe(
         { roomId },
         {
-          onData: (id) => {
-            storeDeleteEmoji(id);
+          onData: (deletedEmoji) => {
+            storeDeleteEmoji(roomId, deletedEmoji);
           },
         },
       ),

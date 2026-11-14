@@ -1,14 +1,16 @@
 // @vitest-environment nuxt
-import type { Filter, MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { Filter } from "@esposter/db-schema";
 import type { MockInstance } from "vitest";
 
 import { useReadSearchedMessages } from "@/composables/message/search/useReadSearchedMessages";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { createMessageEntity, FilterType, MessageType } from "@esposter/db-schema";
+import { FilterType, MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
@@ -17,7 +19,7 @@ describe(useReadSearchedMessages, () => {
   const { trpcMsw } = setupMswTrpc();
   let count: Ref<number>;
   let isSearching: Ref<boolean>;
-  let items: Ref<MessageEntity[]>;
+  let items: Ref<ClientMessage[]>;
   let page: Ref<number>;
   let searchQuery: Ref<string>;
   let selectedFilters: Ref<Filter[]>;
@@ -208,8 +210,8 @@ describe(useReadSearchedMessages, () => {
 
     const userId = crypto.randomUUID();
     const { promise: isStaleResponseReleased, resolve: releaseStaleResponse } = Promise.withResolvers<void>();
-    const staleMessage = createMessageEntity({ message: query, roomId, type: MessageType.Message, userId });
-    const latestMessage = createMessageEntity({ message: latestQuery, roomId, type: MessageType.Message, userId });
+    const staleMessage = createOptimisticMessage({ message: query, roomId, type: MessageType.Message }, userId);
+    const latestMessage = createOptimisticMessage({ message: latestQuery, roomId, type: MessageType.Message }, userId);
     trpcMsw.message.searchMessages.query(async ({ input }) => {
       if (input.query !== query) return { count: newCount, data: { hasMore: false, items: [latestMessage] } };
 
@@ -234,7 +236,7 @@ describe(useReadSearchedMessages, () => {
     expect.hasAssertions();
 
     const author = createUser();
-    const hit = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
+    const hit = createOptimisticMessage({ roomId, type: MessageType.Message }, author.id);
     trpcMsw.message.searchMessages.query(() => ({ count: newCount, data: { hasMore: false, items: [hit] } }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     await mountRead();

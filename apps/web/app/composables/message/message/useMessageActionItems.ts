@@ -1,5 +1,5 @@
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Item } from "@/models/shared/Item";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
@@ -16,27 +16,27 @@ import { MessageType, RoomPermission } from "@esposter/db-schema";
 import { exhaustiveGuard, noop, normalizeString } from "@esposter/shared";
 import { parse } from "node-html-parser";
 
-export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
+export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<boolean>, isCreator: Ref<boolean>) => {
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeUnpinMessageMutation } = useMutation();
   const { executeMutation: executeMarkUnreadMutation } = useMutation();
   const clipboardStore = useClipboardStore();
   const { copy } = clipboardStore;
   const messageStore = useMessageStore();
-  const { editingRowKey } = storeToRefs(messageStore);
+  const { editingMessageId } = storeToRefs(messageStore);
   const messageDialogStore = useMessageDialogStore();
-  const { deletingRowKey, pinningRowKey } = storeToRefs(messageDialogStore);
+  const { deletingMessageId, pinningMessageId } = storeToRefs(messageDialogStore);
   const replyStore = useReplyStore();
-  const { rowKey: replyRowKey } = storeToRefs(replyStore);
+  const { replyToId } = storeToRefs(replyStore);
   const forwardStore = useForwardStore();
-  const { rowKey: forwardRowKey } = storeToRefs(forwardStore);
+  const { forwardMessageId } = storeToRefs(forwardStore);
   const copyMessageLink = useCopyMessageLink();
   const userToRoomStore = useUserToRoomStore();
   const { getMyUserToRoom, setMyUserToRoom } = userToRoomStore;
   const openThread = useOpenThread();
   const roleStore = useRoleStore();
   const { checkHasMyPermission } = roleStore;
-  const hasManageMessages = computed(() => checkHasMyPermission(message.partitionKey, RoomPermission.ManageMessages));
+  const hasManageMessages = computed(() => checkHasMyPermission(message.roomId, RoomPermission.ManageMessages));
   // The same declaration getMessageProcedure guards with, so the menu can never offer an operation the procedure
   // Refuses — presence answers whether the type supports it, the value answers whether this caller may perform it
   const checkIsOperationPermitted = (operation: MessageOperation) =>
@@ -52,7 +52,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const editMessageItem = {
     meaning: UiIconMeaning.Edit,
     onClick: () => {
-      editingRowKey.value = message.rowKey;
+      editingMessageId.value = message.id;
     },
     shortTitle: "Edit",
     title: "Edit Message",
@@ -60,14 +60,14 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const replyItem = {
     meaning: UiIconMeaning.Reply,
     onClick: () => {
-      replyRowKey.value = message.rowKey;
+      replyToId.value = message.id;
     },
     title: "Reply",
   } satisfies Item;
   const forwardMessageItem = {
     meaning: UiIconMeaning.Forward,
     onClick: () => {
-      forwardRowKey.value = message.rowKey;
+      forwardMessageId.value = message.id;
     },
     title: "Forward",
   } satisfies Item;
@@ -85,19 +85,19 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
           meaning: UiIconMeaning.Unpin,
           onClick: async () => {
             await executeUnpinMessageMutation(
-              () => $trpc.message.unpinMessage.mutate({ partitionKey: message.partitionKey, rowKey: message.rowKey }),
+              () => $trpc.message.unpinMessage.mutate({ id: message.id, roomId: message.roomId }),
               {
                 // Read as the write is sent rather than assumed: a pin that landed — or was itself rolled back —
                 // Between the click and this write decides what unpinning owes back, and a hard-coded true would
                 // Re-pin a message the server never pinned
                 applyOptimistic: () => {
                   const previousIsPinned = message.isPinned;
-                  delete message.isPinned;
+                  message.isPinned = false;
                   return () => {
-                    if (previousIsPinned) message.isPinned = previousIsPinned;
+                    message.isPinned = previousIsPinned;
                   };
                 },
-                key: message.rowKey,
+                key: message.id,
               },
             );
           },
@@ -106,7 +106,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
       : {
           meaning: UiIconMeaning.Pin,
           onClick: () => {
-            pinningRowKey.value = message.rowKey;
+            pinningMessageId.value = message.id;
           },
           title: "Pin Message",
         },
@@ -114,14 +114,14 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
   const viewThreadItem = {
     meaning: UiIconMeaning.Thread,
     onClick: async () => {
-      await openThread(message.partitionKey, message.rowKey);
+      await openThread(message.roomId, message.id);
     },
     title: "View Thread",
   } satisfies Item;
   const copyMessageLinkItem: Item = {
     meaning: UiIconMeaning.Link,
     onClick: async () => {
-      await copyMessageLink(message.partitionKey, message.rowKey);
+      await copyMessageLink(message.roomId, message.id);
     },
     title: "Copy Message Link",
   };
@@ -129,7 +129,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
     meaning: UiIconMeaning.Unread,
     onClick: async () => {
       const lastReadAt = new Date(message.createdAt.getTime() - 1);
-      const roomId = message.partitionKey;
+      const roomId = message.roomId;
       await executeMarkUnreadMutation(() => $trpc.userToRoom.updateUserToRoom.mutate({ lastReadAt, roomId }), {
         // Read as the write is sent, so a rejected mark-unread restores the marker the write ahead of it stored
         // Rather than the one on screen when the user clicked
@@ -197,7 +197,7 @@ export const useMessageActionItems = (message: MessageEntity, isEditable: Ref<bo
           isDanger: true,
           meaning: UiIconMeaning.Delete,
           onClick: () => {
-            deletingRowKey.value = message.rowKey;
+            deletingMessageId.value = message.id;
           },
           title: "Delete Message",
         }

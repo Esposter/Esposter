@@ -2,7 +2,8 @@ import type { CreateEmojiInput } from "#shared/models/db/message/metadata/Create
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { MessageType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Hoisted above the imports by `vi.mock`, so unlike a plain constant these cannot live inside the describe
@@ -10,7 +11,7 @@ const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
   createEmoji: vi.fn<(input: CreateEmojiInput) => Promise<void>>(),
   // Only the two fields the composable matches on, so the double states its own contract
   emojis: new Array<Pick<MessageEmojiMetadataEntity, "emojiTag" | "userIds">>(),
-  toggleEmoji: vi.fn<(emoji: MessageEmojiMetadataEntity) => Promise<void>>(),
+  toggleEmoji: vi.fn<(roomId: string, emoji: MessageEmojiMetadataEntity) => Promise<void>>(),
 }));
 
 // The composable reads three members off the store and nothing else, so the double is those three — the cast is
@@ -27,7 +28,7 @@ describe(useSelectEmoji, () => {
   const THUMBS_UP = "👍";
   const THUMBS_UP_MEDIUM = "👍🏽";
   const userId = crypto.randomUUID();
-  const message = createMessageEntity({ roomId: crypto.randomUUID(), type: MessageType.Message, userId });
+  const message = createOptimisticMessage({ roomId: crypto.randomUUID(), type: MessageType.Message }, userId);
 
   beforeEach(() => {
     emojis.length = 0;
@@ -55,6 +56,6 @@ describe(useSelectEmoji, () => {
     await selectEmoji(THUMBS_UP);
 
     expect(createEmoji).not.toHaveBeenCalled();
-    expect(toggleEmoji).toHaveBeenCalledExactlyOnceWith(foundEmoji);
+    expect(toggleEmoji).toHaveBeenCalledExactlyOnceWith(message.roomId, foundEmoji);
   });
 });

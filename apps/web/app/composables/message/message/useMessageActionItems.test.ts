@@ -1,13 +1,14 @@
 // @vitest-environment nuxt
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Item } from "@/models/shared/Item";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createUserToRoom } from "@/services/message/room/createUserToRoom.test";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useUserToRoomStore } from "@/store/message/room/userToRoom";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { assert, beforeAll, describe, expect, test } from "vitest";
@@ -15,7 +16,7 @@ import { assert, beforeAll, describe, expect, test } from "vitest";
 // The menu is built per mounted message, so a message on screen in both the timeline and the pinned panel has
 // Two of them over the one entity — each with its own write, neither queueing behind the other. It reaches
 // The app's breakpoints through the layout store, so it only builds inside a mounted component
-const mountActionItem = async (messageEntity: MessageEntity, title: string) => {
+const mountActionItem = async (messageEntity: ClientMessage, title: string) => {
   let item: Item | undefined;
   await mountSuspended(
     defineComponent({
@@ -39,12 +40,10 @@ describe(useMessageActionItems, () => {
   const dayAfter = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
   const userToRoom = createUserToRoom({ roomId, userId: getMockSession().user.id });
   const createMessage = (createdAt: Date) => {
-    const messageEntity = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId: getMockSession().user.id,
-    });
+    const messageEntity = createOptimisticMessage(
+      { message, roomId, type: MessageType.Message },
+      getMockSession().user.id,
+    );
     messageEntity.createdAt = createdAt;
     messageEntity.isPinned = true;
     return messageEntity;
@@ -70,7 +69,7 @@ describe(useMessageActionItems, () => {
     const otherItem = await mountActionItem(messageEntity, "Unpin Message");
     await Promise.all([item.onClick?.(new MouseEvent("click")), otherItem.onClick?.(new MouseEvent("click"))]);
 
-    expect(messageEntity.isPinned).toBeUndefined();
+    expect(messageEntity.isPinned).toBe(false);
   });
 
   // Two mark-unreads move one read marker, so the rejected one owes back the marker the write beside it stored —

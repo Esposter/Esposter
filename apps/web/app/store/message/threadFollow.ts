@@ -1,4 +1,5 @@
-import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { MessageInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
@@ -10,16 +11,14 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     data: followedThreads,
     getData: getFollowedThreads,
     setData: setFollowedThreads,
-  } = useDataMap<MessageEntity[]>(
+  } = useDataMap<ClientMessage[]>(
     () => roomStore.currentRoomId,
     () => [],
   );
-  // Follow-STATE source of truth: every followed root rowKey, including threads whose root message was
+  // Follow-STATE source of truth: every followed root id, including threads whose root message was
   // Deleted. followedThreads above drops deleted roots for the drawer, so checkIsFollowing must read this
   // Instead — otherwise a followed thread with a deleted root looks unfollowed and can never be unfollowed.
-  const { getData: getFollowedThreadRootRowKeys, setData: setFollowedThreadRootRowKeys } = useDataMap<
-    StandardMessageEntity["rowKey"][]
-  >(
+  const { getData: getFollowedThreadRootIds, setData: setFollowedThreadRootIds } = useDataMap<MessageInMessage["id"][]>(
     () => roomStore.currentRoomId,
     () => [],
   );
@@ -37,36 +36,36 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       return followedThreadsResult;
     },
     {
-      onSuccess: ({ threadRootRowKeys, threads }, roomId) => {
+      onSuccess: ({ threadRootIds, threads }, roomId) => {
         setFollowedThreads(roomId, threads);
-        setFollowedThreadRootRowKeys(roomId, threadRootRowKeys);
+        setFollowedThreadRootIds(roomId, threadRootIds);
       },
     },
   );
-  const checkIsFollowing = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) =>
-    Boolean(getFollowedThreadRootRowKeys(roomId)?.includes(threadRootRowKey));
-  // Follow STATE only — the drawer's display list needs the server-resolved root entity, which callers that
+  const checkIsFollowing = (roomId: string, threadRootId: MessageInMessage["id"]) =>
+    Boolean(getFollowedThreadRootIds(roomId)?.includes(threadRootId));
+  // Follow STATE only — the drawer's display list needs the server-resolved root message, which callers that
   // Merely learn about a follow (a reply auto-follows its thread server-side) do not hold.
-  const storeFollowThread = (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
-    const threadRootRowKeys = getFollowedThreadRootRowKeys(roomId) ?? [];
-    if (threadRootRowKeys.includes(threadRootRowKey)) return;
+  const storeFollowThread = (roomId: string, threadRootId: MessageInMessage["id"]) => {
+    const threadRootIds = getFollowedThreadRootIds(roomId) ?? [];
+    if (threadRootIds.includes(threadRootId)) return;
 
-    setFollowedThreadRootRowKeys(roomId, [...threadRootRowKeys, threadRootRowKey]);
+    setFollowedThreadRootIds(roomId, [...threadRootIds, threadRootId]);
   };
-  const followThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
-    await $trpc.message.followThread.mutate({ roomId, threadRootRowKey });
-    // Re-read rather than mirror locally: the drawer lists the root message entity, which only the server resolves.
+  const followThread = async (roomId: string, threadRootId: MessageInMessage["id"]) => {
+    await $trpc.message.followThread.mutate({ roomId, threadRootId });
+    // Re-read rather than mirror locally: the drawer lists the root message, which only the server resolves.
     await refetchFollowedThreads(roomId);
   };
-  const unfollowThread = async (roomId: string, threadRootRowKey: StandardMessageEntity["rowKey"]) => {
-    await $trpc.message.unfollowThread.mutate({ roomId, threadRootRowKey });
+  const unfollowThread = async (roomId: string, threadRootId: MessageInMessage["id"]) => {
+    await $trpc.message.unfollowThread.mutate({ roomId, threadRootId });
     setFollowedThreads(
       roomId,
-      (getFollowedThreads(roomId) ?? []).filter(({ rowKey }) => rowKey !== threadRootRowKey),
+      (getFollowedThreads(roomId) ?? []).filter(({ id }) => id !== threadRootId),
     );
-    setFollowedThreadRootRowKeys(
+    setFollowedThreadRootIds(
       roomId,
-      (getFollowedThreadRootRowKeys(roomId) ?? []).filter((rowKey) => rowKey !== threadRootRowKey),
+      (getFollowedThreadRootIds(roomId) ?? []).filter((followedThreadRootId) => followedThreadRootId !== threadRootId),
     );
   };
 

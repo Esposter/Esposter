@@ -1,32 +1,30 @@
 // @vitest-environment nuxt
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const threadRootRowKey = getReverseTickedTimestamp();
+  const threadRootId = crypto.randomUUID();
 
   // Every follow button in the room asks on mount, so the read is issued once — and the buttons that joined it
   // Have to see the follow state, or they render an unfollowed star for a thread the user follows
   test("hands every concurrent caller the follow state from one read", async () => {
     expect.hasAssertions();
 
-    const handler = vi.fn<() => ReadFollowedThreadsResult>(() => ({
-      threadRootRowKeys: [threadRootRowKey],
-      threads: [],
-    }));
+    const handler = vi.fn<() => ReadFollowedThreadsResult>(() => ({ threadRootIds: [threadRootId], threads: [] }));
     trpcMsw.message.readFollowedThreads.query(handler);
     const threadFollowStore = useThreadFollowStore();
     const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
     const inFlightLoad = readFollowedThreads(roomId);
     await readFollowedThreads(roomId);
-    const isFollowingAfterJoinedLoad = checkIsFollowing(roomId, threadRootRowKey);
+    const isFollowingAfterJoinedLoad = checkIsFollowing(roomId, threadRootId);
     await inFlightLoad;
     await readFollowedThreads(roomId);
 
@@ -39,8 +37,8 @@ describe(useThreadFollowStore, () => {
     expect.hasAssertions();
 
     const author = createUser();
-    const thread = createMessageEntity({ roomId, type: MessageType.Message, userId: author.id });
-    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootRowKeys: [thread.rowKey], threads: [thread] }));
+    const thread = createOptimisticMessage({ roomId, type: MessageType.Message }, author.id);
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [thread.id], threads: [thread] }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     const threadFollowStore = useThreadFollowStore();
     const { readFollowedThreads } = threadFollowStore;
