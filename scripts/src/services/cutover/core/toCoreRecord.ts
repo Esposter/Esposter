@@ -4,6 +4,7 @@ import type { D1Value } from "#src/services/cutover/core/toD1Value";
 
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
 import { inviteTableName, tokenColumnsByTableName } from "#src/services/cutover/ids/credentialColumns";
+import { requireNoReadableTokenColumn } from "#src/services/cutover/ids/requireNoReadableTokenColumn";
 import { requireReissuedTokenHash } from "#src/services/cutover/ids/requireReissuedTokenHash";
 import { isOldId } from "#src/services/cutover/ids/rewriteOldIds";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -12,6 +13,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // bearer token replaced by the hash it was re-issued as, and an invite's code by the one it was re-issued as. A row whose id was never given
 // a new one is refused, since writing it under its old id would leave its references pointing at nothing the copy wrote
 export const toCoreRecord = (table: CoreTable, row: Record<string, unknown>, idMap: IdMap): Record<string, D1Value> => {
+  requireNoReadableTokenColumn(table);
   const oldId = row.id;
   if (typeof oldId === "string" && isOldId(oldId) && idMap.newIdOf(oldId) === undefined)
     throw new InvalidOperationError(
