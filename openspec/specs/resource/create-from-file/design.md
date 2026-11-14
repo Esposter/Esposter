@@ -13,15 +13,15 @@ flowchart LR
   DROP["file drop / picker on<br/>/resource-explorer/create/Sheet"] -->|"extension → DataSourceConfigurationMap"| PARSE["client parse<br/>(deserialize)"]
   PARSE --> PREV["SHEET_IMPORT_PREVIEW_ROW_COUNT-row preview +<br/>name pre-filled from filename"]
   PREV -->|Create| CR["sheet.createResource"]
-  CR -->|"first saveResourceContent<br/>{ settings, data }"| BLOB[("content blob")]
-  BLOB --> DATA["/resource-explorer/[id]/data<br/>(rows ready)"]
+  CR -->|"first saveResourceContent<br/>{ settings, data }"| OBJ[("R2 content object")]
+  OBJ --> DATA["/resource-explorer/[id]/data<br/>(rows ready)"]
   CR -->|"save failed"| OVER["/resource-explorer/[id]<br/>(valid empty sheet + error)"]
 ```
 
 - **The format comes from the file, not a picker.** The drop zone accepts every extension in `DataSourceConfigurationMap`, and `getDataSourceTypeByFilename` resolves the format from the name — so a new portable format needs no change to the create form. An unsupported extension blocks Create with a message naming what is accepted.
 - **The filename is the name you never have to type.** It pre-fills the name field (extension stripped), and stays editable.
 - **A parse failure blocks Create**, surfaced on the file field itself. The form is not partly valid: you cannot create a sheet from a file that did not parse.
-- **A save failure after create is not a half-written resource.** `createResource` writes no blob, so the save is the first write, exactly as it is from the Data blade. If it fails you keep a valid, empty Sheet and see the error — never a corrupt blob.
+- **A save failure after create is not a half-written resource.** `createResource` writes no content object, so the save is the first write, exactly as it is from the Data blade. If it fails you keep a valid, empty Sheet and see the error — never a corrupt object.
 - **Success lands on the Data blade, not Overview.** You came to see your rows.
 
 ## Key files
@@ -36,6 +36,6 @@ flowchart LR
 
 ## Notes
 
-- There is no upload path, so the [`AZURE_MAX_PAGE_SIZE`-row dataset cap](../dataset-row-cap-warning/design.md) applies here unchanged.
+- There is no upload path, so the [dataset row cap](../dataset-row-cap-warning/design.md) applies here unchanged.
 - **Only Sheet opts in.** This is a per-type branch on the create form, which is the "type-specific initial settings" affordance the form already reserved. If more types ever want rich create forms, that is the [create wizard tabs](../../../deferred/resource/create-wizard-tabs/design.md) revisit trigger.
 - The Home quick-create tile and the gallery tile for Sheet lead to this same form; the drop zone is simply on it.

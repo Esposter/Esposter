@@ -8,13 +8,13 @@ The shape is the industry-standard declarative template (ARM/Bicep templates, Cl
 
 ```mermaid
 flowchart LR
-  ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| BLOB[("{id}/content<br/>manifest")]
+  ED["Editor blade<br/>manifest JSON"] -->|saveResourceContent| OBJ[("R2 {id}/content<br/>manifest")]
   CMD["Deploy command<br/>parameter form dialog"] -->|"deployBlueprint { id, parameterValues }"| SUB["substitute {{parameter:key}}<br/>in names and content strings"]
   SUB --> VAL["pre-validate every entry<br/>against its type contentSchema"]
   VAL --> TOPO["topo-sort entries by<br/>{{entry:key}} references"]
-  TOPO -->|"per entry: insert resources row +<br/>upload content blob (real ids substituted)"| RES[("created resources")]
+  TOPO -->|"per entry: insert resources row +<br/>write content object (real ids substituted)"| RES[("created resources")]
   VAL -->|any entry invalid| REJECT["reject — nothing created"]
-  TOPO -->|mid-deploy failure| CLEAN["compensating cleanup —<br/>delete already-created rows + blobs"]
+  TOPO -->|mid-deploy failure| CLEAN["compensating cleanup —<br/>delete already-created rows + objects"]
 ```
 
 - **Content schema** (the manifest):
@@ -32,7 +32,7 @@ flowchart LR
   - `{{parameter:<key>}}` — replaced with the deploy-time parameter value (in entry names and any content string). All parameters are strings; typed parameters would extend the parameter object, not redesign it.
   - `{{entry:<key>}}` — replaced with the **created resource id** of that entry. This is how a dashboard entry binds the sheet entry's dataset, or a program entry binds its email and survey — the same bare-id linking every cross-resource reference already uses ([resources](../../architecture/resource/design.md)), just late-bound.
 
-- **Deploy** (`deployBlueprint`, owner): substitute parameters → pre-validate every entry's substituted name and content, with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created, rather than mid-loop against a database constraint) → topologically sort entries by the `{{entry:*}}` references that validation walk already collected (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content blob upload + the type's registered after-save hook, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and blobs it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
+- **Deploy** (`deployBlueprint`, owner): substitute parameters → pre-validate every entry's substituted name and content, with placeholder UUIDs standing in for `{{entry:*}}` (so a bad manifest rejects before anything is created, rather than mid-loop against a database constraint) → topologically sort entries by the `{{entry:*}}` references that validation walk already collected (cycles and unknown references reject) → create each entry in order via the standard primitives (`resources` insert + content object write + the type's registered after-save hook, exactly what `createResource` + `saveResourceContent` do) with real ids substituted. A mid-deploy failure deletes the rows and objects it already created — best-effort all-or-nothing. Returns the alias → created-resource pairs; the Deploy dialog shows links to everything it made.
 
 - **An entry with no content** deploys to a resource with no content blob. That is the state a resource is genuinely in until its first save, so [capture](../blueprint-capture/design.md) records the absence rather than standing an empty object in — most types' schemas reject `{}`, and one unparseable entry rejects every deploy of the whole manifest.
 
