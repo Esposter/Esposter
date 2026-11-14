@@ -1,6 +1,7 @@
 import { CUTOVER_SECRET_HEADER, RESCHEDULE_PATH } from "#src/services/cutover/constants";
 import { checkIsSecretEqual } from "#src/services/cutover/checkIsSecretEqual";
 import { rescheduleCutoverJobs } from "#src/services/cutover/rescheduleCutoverJobs";
+import { rescheduleTodoReminders } from "#src/services/cutover/rescheduleTodoReminders";
 import { drizzle } from "drizzle-orm/d1";
 
 // The temporary internal route of the cutover, deleted at teardown. The only route the functions Worker answers; every other
@@ -10,6 +11,9 @@ export const handleCutoverRequest = async (request: Request, env: Cloudflare.Env
     return new Response("Not found", { status: 404 });
   if (!checkIsSecretEqual(request.headers.get(CUTOVER_SECRET_HEADER) ?? "", env.CUTOVER_SECRET))
     return new Response("Unauthorized", { status: 401 });
-  const scheduled = await rescheduleCutoverJobs(drizzle(env.CORE), env.SCHEDULER, Date.now());
-  return Response.json({ scheduled });
+  const database = drizzle(env.CORE);
+  const now = Date.now();
+  const scheduledMessageJobs = await rescheduleCutoverJobs(database, env.SCHEDULER, now);
+  const scheduledTodoReminders = await rescheduleTodoReminders(database, env.RESOURCE_ASSETS, env.SCHEDULER, now);
+  return Response.json({ scheduledMessageJobs, scheduledTodoReminders });
 };

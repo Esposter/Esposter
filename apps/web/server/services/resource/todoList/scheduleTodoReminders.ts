@@ -3,8 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import type { ToData } from "@esposter/shared";
 
 import { useScheduler } from "#server/composables/scheduler/useScheduler";
-import { getTodoReminderId } from "#server/services/resource/todoList/getTodoReminderId";
-import { QueueJob } from "@esposter/db-schema";
+import { getTodoReminderId, QueueJob } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Schedules one reminder per item whose due date is new or changed since the last Save and still in the future, on

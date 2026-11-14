@@ -1,8 +1,7 @@
 import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
-import { getTodoReminderId } from "#server/services/resource/todoList/getTodoReminderId";
 import { scheduleTodoReminders } from "#server/services/resource/todoList/scheduleTodoReminders";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { QueueJob } from "@esposter/db-schema";
+import { getTodoReminderId, QueueJob } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(scheduleTodoReminders, () => {

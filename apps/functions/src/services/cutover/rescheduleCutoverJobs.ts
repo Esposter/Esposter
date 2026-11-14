@@ -5,8 +5,7 @@ import { AzureFunction, scheduledMessageJobsInMessage } from "@esposter/db-schem
 import { and, isNull } from "drizzle-orm";
 
 // Schedules a Scheduler object for every scheduled message job neither completed nor cancelled, the way the app schedules
-// one when it is created. A job whose time passed while the estate was frozen is due now. The TodoList reminders are not
-// rescheduled here: their due dates live in resource content, which is stored in R2, not in D1 rows this route can read
+// one when it is created. A job whose time passed while the estate was frozen is due now
 export const rescheduleCutoverJobs = async (
   database: DrizzleD1Database,
   schedulerNamespace: DurableObjectNamespace<SchedulerObject>,
