@@ -10,7 +10,7 @@ const KEY_FILE_ROW_REGEX = /^\| `[^`]+`/gmu;
 const PROPOSAL_LINK_REGEX = /\]\(\.\.\/(?<id>[\w-]+)\/(?:design\.md)?(?:#[^)]*)?\)/gu;
 const MANIFEST_ROW_SUFFIX = "package.json`";
 const ProposalSignalPathPrefixesMap = {
-  [ProposalSignal.Azure]: ["apps/functions/", "apps/infra/"],
+  [ProposalSignal.Deploy]: ["apps/functions/", "apps/infra/"],
   [ProposalSignal.Schema]: ["packages/db-schema/"],
   [ProposalSignal.Server]: ["apps/web/server/"],
 } as const satisfies Record<Exclude<ProposalSignal, ProposalSignal.Dependency>, readonly string[]>;

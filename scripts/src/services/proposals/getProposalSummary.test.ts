@@ -15,7 +15,7 @@ describe(getProposalSummary, () => {
       hasKeyFiles: true,
       id,
       keyFileCount: 4,
-      signals: [ProposalSignal.Azure, ProposalSignal.Dependency, ProposalSignal.Schema, ProposalSignal.Server],
+      signals: [ProposalSignal.Dependency, ProposalSignal.Deploy, ProposalSignal.Schema, ProposalSignal.Server],
     });
   });
 

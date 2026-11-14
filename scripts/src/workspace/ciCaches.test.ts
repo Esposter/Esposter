@@ -63,6 +63,6 @@ describe("ciCaches", () => {
     expect(replayedRegex.test("vp run: 30/30 cache hit (100%), 31/31 successful")).toBe(true);
     expect(replayedRegex.test("vp run: 29/30 cache hit (97%), 31/31 successful")).toBe(false);
     expect(replayedRegex.test("vp run: 0/30 cache hit (0%), 31/31 successful")).toBe(false);
-    expect(replayedRegex.test("~/packages/azure$ pnpm run build ◉ cache hit, replaying")).toBe(false);
+    expect(replayedRegex.test("~/packages/db$ pnpm run build ◉ cache hit, replaying")).toBe(false);
   });
 });

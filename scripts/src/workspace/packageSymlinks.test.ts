@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 
 /**
  * The pnpm directory fetcher packs a workspace package whenever it is injected — which `pnpm deploy` always does, for
- * the Azure Functions release — and rejects any entry resolving outside the package root with
+ * a package's release — and rejects any entry resolving outside the package root with
  * `ERR_PNPM_DIRECTORY_FETCHER_PATH_ESCAPE`. It walks the whole directory, so neither `files`, nor `--legacy`, nor the
  * node linker excuses the link. Nothing else fails until the deploy job does, on a push to `ai/queue` or `main`.
  *
