@@ -2,7 +2,7 @@
   "name": "@esposter/db-mock",
   "version": "4.10.1",
   "private": true,
-  "description": "A library of database mock utilities for testing, available in server environment only.",
+  "description": "A library of database mock utilities for testing and the dev seed, available in server environment only.",
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/db-mock#readme",
   "bugs": {
     "url": "https://github.com/Esposter/Esposter/issues"

@@ -13,12 +13,15 @@ import { Miniflare } from "miniflare";
 // The Worker has no code of its own here, so its entry module only has to exist; the bindings are what a test uses
 const MOCK_WORKER_MODULE = "export default {};";
 
-// One Miniflare instance per call. The migrations are applied from their folders, the same SQL production runs
+// One Miniflare instance per call. The migrations are applied from their folders, the same SQL production runs. A persisted
+// Root keeps both databases on disk under its `d1` folder, so the dev seed writes the files a dev server opens
 export const createMockDatabase = async (
   coreMigrationsDirectory: string,
   streamsMigrationsDirectory: string,
+  persistRoot?: string,
 ): Promise<MockDatabase> => {
   const miniflare = new Miniflare({
+    resourcePersistencePath: persistRoot,
     workers: [
       {
         config: {
