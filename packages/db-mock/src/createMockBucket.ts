@@ -3,7 +3,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import { Miniflare } from "miniflare";
 
 // An in-memory R2 bucket, the binding a Worker gets, served by Miniflare under the bucket's own name. The instance is
-// handed back beside the bucket so the test that made it can dispose it
+// Handed back beside the bucket so the test that made it can dispose it
 export const createMockBucket = async (
   bucketName: string,
 ): Promise<{ bucket: R2Bucket; dispose: () => Promise<void> }> => {

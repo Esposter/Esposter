@@ -1,7 +1,7 @@
 import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMockDb } from "#src/createMockDb";
-import { StorageBucket, accountsInAuth, usersInAuth } from "@esposter/db-schema";
+import { accountsInAuth, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -19,12 +19,12 @@ describe(createMockDb, () => {
     mockDatabase = await createMockDb();
   });
 
-  afterAll(async () => {
-    await mockDatabase.dispose();
-  });
-
   afterEach(async () => {
     await mockDatabase.reset();
+  });
+
+  afterAll(async () => {
+    await mockDatabase.dispose();
   });
 
   test("returns a queryable db", async () => {
@@ -59,18 +59,19 @@ describe(createMockDb, () => {
     expect.hasAssertions();
 
     await insertUser(v7());
-    await mockDatabase.streamsDb.exec("CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)");
-    await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('before')").run();
+    await mockDatabase.coreDatabase.exec("CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)");
+    await mockDatabase.coreDatabase.prepare("INSERT INTO resetSearch (body) VALUES ('before')").run();
     const bucket = await mockDatabase.getBucket(StorageBucket.ClickerAssets);
     await bucket.put("object", "value");
 
     await mockDatabase.reset();
 
-    expect(await mockDatabase.db.$count(usersInAuth)).toBe(0);
+    await expect(mockDatabase.db.$count(usersInAuth)).resolves.toBe(0);
     expect((await bucket.list()).objects).toStrictEqual([]);
-    expect((await mockDatabase.streamsDb.prepare("SELECT body FROM resetSearch").all()).results).toStrictEqual([]);
-    await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('after')").run();
-    const matches = await mockDatabase.streamsDb
+    const { results: resetResults } = await mockDatabase.coreDatabase.prepare("SELECT body FROM resetSearch").all();
+    expect(resetResults).toStrictEqual([]);
+    await mockDatabase.coreDatabase.prepare("INSERT INTO resetSearch (body) VALUES ('after')").run();
+    const matches = await mockDatabase.coreDatabase
       .prepare("SELECT body FROM resetSearch WHERE resetSearch MATCH 'after'")
       .all<{ body: string }>();
     expect(matches.results).toStrictEqual([{ body: "after" }]);

@@ -18,10 +18,10 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 | Export         | Kind     | Purpose                                                                                                                                          |
 | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `createMockDb` | function | Starts the file's Miniflare instance, applies both databases' migrations and returns a `MockDatabase`. Calls in one file share the instance      |
+| `createMockDb` | function | Starts the file's Miniflare instance, applies the database's migrations and returns a `MockDatabase`. Calls in one file share the instance       |
 | `env`          | const    | The `cloudflare:workers` stand-in. `createMockDb` copies the instance's bindings into it, so code reached through a test reads the same bindings |
 
-`MockDatabase` has `db` (the core database as a Drizzle handle), `streamsDb` (the streams database's D1 binding), `getBucket(bucket)`, `getQueue(job)`, `reset()` and `dispose()`.
+`MockDatabase` has `db` (the core database as a Drizzle handle), `coreDatabase` (its D1 binding), `getBucket(bucket)`, `getQueue(job)`, `reset()` and `dispose()`.
 
 ## <a name="usage">📝 Usage</a>
 

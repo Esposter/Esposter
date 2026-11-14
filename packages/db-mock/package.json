@@ -48,6 +48,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
+    "@esposter/shared": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
     "uuid": "catalog:"
