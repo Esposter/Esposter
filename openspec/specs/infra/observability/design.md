@@ -1,22 +1,22 @@
 # Observability
 
-This estate runs with **no Application Insights and no Log Analytics**. Neither is provisioned in either environment, and the Function Apps carry no `APPINSIGHTS_*` / `APPLICATIONINSIGHTS_*` app settings. This is a deliberate cost decision, not an omission: paid telemetry ingestion (and the alert rules layered on it) would recur at a daily cost that buys nothing this estate acts on. Removing it is the single largest line-item saving in the infrastructure.
+The estate provisions no paid telemetry. The infrastructure program declares no log export, no analytics dataset and no alert in either environment, so watching the estate costs what the platform includes. This is a deliberate decision, not an omission: paid telemetry recurs at a daily cost that buys nothing this estate acts on.
 
-## What we rely on instead
+## What the estate relies on
 
-- **The `$0.01` budget guard is the cost ceiling.** Each Function App has a Consumption (Y1) plan — no idle cost — and a budget that stop-triggers it via Logic App automation the moment spend registers. That guard, not telemetry, is what bounds cost. See [cost and security posture](../cost-and-security-posture/design.md).
-- **Azure portal platform metrics** answer the operator-level questions (invocation counts, storage size, Service Bus depth) for free, without a Log Analytics workspace to ingest into.
-- **Function handler logs** still write to `context.log` / `context.error`; they surface in the Functions host's live log stream and the platform's built-in log, just not into a queryable, retained, billed store. That surface is what `host.json` leaves "logging.fileLoggingMode" unset for — the default "debugOnly" turns filesystem logging on for as long as a log stream is attached, and it is the only sink those calls have. Setting it to `never` costs nothing and silently discards every `context.error` in the app, so the operator instructions above and in [Event Grid dead-letter](../eventgrid-dead-letter/design.md) stop working.
+- **The platform's own metrics.** Each product's dashboard answers the operator's questions: a Worker's requests and errors, a queue's depth, the storage each D1 database and R2 bucket holds, and a Durable Object's duration.
+- **The live tail.** `wrangler tail` streams a deployed Worker's logs to a terminal while it is attached. Nothing retains them, so a log is read as it happens or not at all.
+- **The dead-letter queues.** A job's message that fails past the job's retry count is kept in that job's dead-letter queue, with the message that failed. Nothing alerts on it.
 
 ## Do not "add monitoring back" as a best practice
 
-Provisioning Application Insights, a Log Analytics workspace, diagnostic settings, smart-detector rules, or scheduled-query alerts is a recurring cost with no consumer here, and a review suggestion to add any of them "for observability best practice" should be **closed, not applied**. The trade — losing queryable telemetry and automated alerting to stay in the free tier — is intentional and recorded here so it does not get re-litigated per PR. Revisit only if paid tiers/quotas, an on-call rotation, or a real incident-investigation need make retained telemetry worth the spend.
+Provisioning a log export, an analytics dataset, an alert rule or a telemetry service is a recurring cost with no consumer here, and a review suggestion to add one "for observability best practice" should be closed, not applied. The trade, losing retained telemetry and automated alerting to stay on the included allowances, is intentional and recorded here so it is not re-argued per change. Revisit only when a paid tier, an on-call rotation or a real incident-investigation need makes retained telemetry worth its spend.
 
-One consequence to know: nothing pages on the [Event Grid dead-letter](../eventgrid-dead-letter/design.md) quarantine and replay-discard cases. An alert on either would be a scheduled query over the App Insights `traces` table, which is exactly what this estate does not provision — so both land silently and are found by inspecting the `deadletter` container.
+One consequence to know: nothing pages on a dead-letter message. An alert on one would need retained telemetry, which the estate does not provision, so a dead letter is found by reading the job's dead-letter queue.
 
 ## Key files
 
-| File                                                            | Role                                                 |
-| :-------------------------------------------------------------- | :--------------------------------------------------- |
-| `apps/infra/src/azure/resources/Microsoft.Consumption/budgets/` | The `$0.01` guard budgets — the actual cost ceiling  |
-| `apps/infra/src/azure/resources/Microsoft.Web/sites/`           | Function Apps, carrying no App Insights app settings |
+| File                                                  | Role                                             |
+| :---------------------------------------------------- | :----------------------------------------------- |
+| `apps/infra/src/cloudflare/resources/queues/`         | One dead-letter queue per job, per environment   |
+| `apps/infra/src/cloudflare/resources/queueConsumers/` | The consumer each queue delivers its messages to |

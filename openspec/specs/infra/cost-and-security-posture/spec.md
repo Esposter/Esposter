@@ -1,76 +1,67 @@
 ## Purpose
 
-The free-tier budget guard cycle and the recorded cost, security, and retention decisions for Esposter's Azure estate.
+The cost ceiling and the protection decisions the Cloudflare estate keeps: nothing is shut off by spend, stateful resources are protected from deletion, and stored objects are private unless their bucket is public.
 
 ## Requirements
 
-### Requirement: Budget guard stops metered application work
+### Requirement: Nothing is shut off by spend
 
-Each environment's budget guard SHALL stop the Function Apps and the two highest-volume application event subscriptions when metered spend registers, and the monthly restore SHALL bring them back.
+The estate SHALL NOT stop or delete a running product because metered spend registers.
 
-#### Scenario: Spend registers
+#### Scenario: Spend registers on the account
 
-- **GIVEN** an environment's budget has been exceeded by any metered spend
-- **WHEN** the guard fires
-- **THEN** the Function Apps are stopped
-- **AND** the two highest-volume application event subscriptions are deleted
+- **GIVEN** metered spend registers on the account
+- **WHEN** the account is billed
+- **THEN** no Worker, database, bucket, queue or queue consumer is stopped or deleted by the estate's own automation
 
-#### Scenario: Restore after the guard
+### Requirement: No spend alert is declared until the provider can declare one
 
-- **GIVEN** the guard has stopped the application work
-- **WHEN** the next monthly restore runs
-- **THEN** the Function Apps are started
-- **AND** the event subscriptions are recreated as they are declared
+The infrastructure program SHALL NOT declare a spend alert while the provider cannot express its total-spend filter, and SHALL NOT create one by hand.
 
-#### Scenario: Restore fails to read a subscription
+#### Scenario: Infrastructure previewed
 
-- **GIVEN** reading an event subscription during restore fails or times out
-- **WHEN** the restore runs
-- **THEN** that subscription is recreated from its declaration
+- **GIVEN** an infrastructure change is previewed for the account
+- **WHEN** the preview lists the resources
+- **THEN** no billing notification is listed
 
-### Requirement: Replay and blob-deletion subscriptions keep running under the guard
+### Requirement: Stateful resources are protected from deletion
 
-The budget guard SHALL leave the dead-letter replay subscription and the blob-deletion subscription running.
+Every database, bucket, queue and queue consumer SHALL be protected, so that a change cannot delete it silently.
 
-#### Scenario: Guard fires during an outage
+#### Scenario: A change would delete a database
 
-- **GIVEN** the budget guard has fired
-- **WHEN** dead letters are written during the outage
-- **THEN** the dead-letter replay subscription is still in place
-- **AND** the blob-deletion subscription still accepts its events
+- **GIVEN** a protected D1 database
+- **WHEN** a change would delete it
+- **THEN** the deletion is refused and the database and its rows stay in place
 
-### Requirement: Postures stay cheapest until blocking clients migrate
+#### Scenario: A change would replace a bucket
 
-Each Azure resource's posture SHALL be the cheapest one that keeps the application working, and a hardening step blocked by key-based clients SHALL stay deferred until the application migrates off them.
+- **GIVEN** a protected R2 bucket that holds objects
+- **WHEN** a change would replace it
+- **THEN** the replacement is refused and the objects stay in the bucket
 
-#### Scenario: Hardening considered before migration
+### Requirement: Deletions check their references first
 
-- **GIVEN** a hardening step depends on the application no longer using key-based clients
-- **WHEN** the step is considered for an infrastructure change
-- **THEN** it is not applied until the application has migrated
+An infrastructure change SHALL check the bindings, consumers, custom domains and DNS records that reference a resource before the change deletes it.
 
-#### Scenario: Storage network default-deny
+#### Scenario: A change deletes a queue
 
-- **GIVEN** the storage account has no complete allowlist or private endpoint
-- **WHEN** an infrastructure change is reviewed
-- **THEN** default-deny network access is not applied to the storage account
-
-### Requirement: Budgets are one cent in both environments
-
-Each environment's budget SHALL be one cent with identical behaviour in development and production.
-
-#### Scenario: Budget in each environment
-
-- **GIVEN** the development and production environments are both deployed
-- **WHEN** their budgets are compared
-- **THEN** both are one cent with the same guard behaviour
-
-### Requirement: Infrastructure changes protect imported resources and check references first
-
-An infrastructure change SHALL keep imported resources protected from replacement and SHALL NOT delete a resource before its downstream references have been checked.
-
-#### Scenario: Deleting a resource
-
-- **GIVEN** a change would delete a resource
+- **GIVEN** a change would delete a queue
 - **WHEN** the change is reviewed
-- **THEN** the application, function, event and workflow references to it are checked first
+- **THEN** the queue consumer and the Worker bindings that name the queue are checked first
+
+### Requirement: Stored objects are private unless their bucket is public
+
+An object SHALL be read through a short-lived presigned URL unless its bucket is a public bucket, and a public bucket's objects SHALL be served on the public custom domain.
+
+#### Scenario: A private object is read
+
+- **GIVEN** an object in a bucket without the public prefix
+- **WHEN** a person reads it
+- **THEN** the read is made with a presigned GET URL
+
+#### Scenario: A public object is read
+
+- **GIVEN** an object in a public bucket
+- **WHEN** a person reads it
+- **THEN** it is served on the public custom domain
