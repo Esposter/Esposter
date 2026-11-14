@@ -11,7 +11,7 @@ flowchart LR
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
   store --> proc[post.readPosts<br/>cursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
-  mutation[likes / comments] -->|transactional| counters[counter columns]
+  mutation[likes / comments] -->|batched| counters[counter columns]
   counters --> pg
 ```
 

@@ -12,7 +12,7 @@ flowchart TD
   pick -->|"the same value"| deleteLike["like.deleteLike — likeCount −= value"]
   createLike --> txn
   updateLike --> txn
-  deleteLike --> txn["one transaction"]
+  deleteLike --> txn["one batch"]
   txn --> row[("posts row")]
   txn --> patch["useLikeStore<br/>then usePostCountStore"]
   row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["post read with viewerLike"]
@@ -21,7 +21,7 @@ flowchart TD
 
 **Model** — `likes(userId, postId, value)` with a composite primary key (one row per user per post) and a DB check constraining `value` to ±1. The post's `likeCount` is the denormalized net sum.
 
-**Mutations** — three procedures, each a transaction that writes the like row, adjusts `likeCount`, and recomputes the stored [ranking](../feed-and-ranking/design.md) from the new count:
+**Mutations** — three procedures, each one batch that writes the like row and adjusts `likeCount`. The stored [ranking](../feed-and-ranking/design.md) follows in its own write, guarded on the count it was computed from, so the last vote to land writes the final ranking:
 
 The server is the only writer of `likeCount`. The client reads it back with `post.readPostCounts` (a batch read over the ids it changed) and never adds a vote to it, per [client data](../../architecture/client-data/design.md).
 
@@ -49,7 +49,7 @@ Paths are `apps/web`-relative; a `packages/` path is repo-relative.
 | --------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `packages/db-schema/src/schema/post/likesInPost.ts`             | table + ±1 check                                                   |
 | `packages/db-schema/src/models/post/PostInPostWithRelations.ts` | `PostInPostWithRelations` + `viewerLike`                           |
-| `server/trpc/routers/like.ts`                                   | transactional mutations                                            |
+| `server/trpc/routers/like.ts`                                   | batched mutations                                                  |
 | `server/services/post/getViewerPostRelations.ts`                | viewer-filtered likes fetch strategy                               |
 | `server/services/post/getPostWithViewerLike.ts`                 | maps the fetched row to `viewerLike`                               |
 | `app/components/Post/VoteButton.vue`                            | one arrow: its toggle and its write                                |

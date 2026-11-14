@@ -8,7 +8,7 @@ This page is about **inbound** webhooks only. Posting room events out to a user-
 
 Two tables, one-to-one. `webhooksInMessage` holds the room membership and the secret: `roomId`, `creatorId` (the member who made it), `token`, an `isActive` switch, a display `name`, and a `userId` that is `unique` and references the second table. `appUsersInMessage` is the bot identity — nothing but `id`, `name` and `image`. Separating them is what lets a webhook message carry an author at all: the identity is a row a message can point at, so rendering does not have to special-case "no user".
 
-The pairing is enforced by construction. `createWebhook` inserts both rows in one transaction, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same transaction.
+The pairing is enforced by construction. `createWebhook` inserts both rows in one batch, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same batch.
 
 ## Delivery
 

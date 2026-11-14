@@ -14,7 +14,7 @@ stateDiagram-v2
     Blocked: blocks row
 
     None --> Pending: sendFriendRequest
-    Pending --> Friends: acceptFriendRequest (transactional delete + insert)
+    Pending --> Friends: acceptFriendRequest (one batch: insert, then delete)
     Pending --> None: declineFriendRequest
     Friends --> None: deleteFriend
     Pending --> Blocked: createBlock (deletes request)

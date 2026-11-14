@@ -37,3 +37,11 @@ await tx
   .values(ids.map((id) => ({ id, parentId })))
   .onConflictDoNothing();
 ```
+
+## Insert ... select
+
+`insert(table).select(query)` copies the rows a query returns, and a column's `$defaultFn` does not run for it: only a values insert applies defaults. Every table gets `createdAt` and `updatedAt` from the shared table wrapper, so an insert-select binds both itself — `getInsertSelectMetadata(table)` in `apps/web/server/services/db/getInsertSelectMetadata.ts` names them — and binds a generated primary key the same way (a webhook's `id` is named up front and selected).
+
+A bare `sql.param(value, column)` is not an SQL chunk, so it cannot stand as a select field; wrap it in a template: sql`${sql.param(value, column)}`.
+
+A D1 statement takes at most `D1_MAX_BOUND_PARAMETERS` bound values, so a multi-row values insert inside a batch splits its rows into statements of `floor(D1_MAX_BOUND_PARAMETERS / columns)` rows each (`apps/web/server/services/db/constants.ts`).
