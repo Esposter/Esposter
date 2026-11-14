@@ -8,6 +8,7 @@ import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("roleRouter", () => {
@@ -71,7 +72,7 @@ describe("roleRouter", () => {
   test("excludes the writing tab's device from the echo of a role it creates", async () => {
     expect.hasAssertions();
 
-    const deviceId = crypto.randomUUID();
+    const deviceId = v7();
     getMockContext().headers.set(DEVICE_ID_HEADER, deviceId);
     const role = await roleCaller.createRole({ name, roomId });
 
