@@ -43,6 +43,9 @@
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },
+  "dependencies": {
+    "miniflare": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",

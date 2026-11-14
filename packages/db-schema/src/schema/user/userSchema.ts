@@ -1,3 +1,3 @@
-import { camelCase } from "drizzle-orm/pg-core";
+import { createDatabaseSchema } from "#src/createDatabaseSchema";
 
-export const userSchema = camelCase.schema("user");
+export const userSchema = createDatabaseSchema("user");

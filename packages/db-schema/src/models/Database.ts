@@ -1,8 +1,6 @@
 import type { relations } from "#src/generated/relations";
-import type { PgAsyncDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 
-// The one spelling of the drizzle handle. It names the relations object rather than the schema object because
-// The v2 relational API resolves `db.query.*` from the relations, so a handle typed without them loses every
-// Relational read. It is the driver-agnostic base every pg driver's handle extends, so the postgres-js handle
-// The apps build and the pglite handle db-mock builds both satisfy it as they are — nothing needs a cast
-export type Database = PgAsyncDatabase<PgQueryResultHKT, typeof relations>;
+// The one spelling of the drizzle handle: D1 in the Workers and Miniflare's D1 in tests, so both are the same type.
+// It names the relations object because the v2 relational API resolves `db.query.*` from the relations
+export type Database = DrizzleD1Database<typeof relations>;

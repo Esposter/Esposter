@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
+    "aws4fetch": "catalog:",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
     "node-html-parser": "catalog:"

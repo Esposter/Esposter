@@ -66,12 +66,14 @@
     "@azure/search-documents": "catalog:",
     "@azure/service-bus": "catalog:",
     "@azure/storage-blob": "catalog:",
+    "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
     "azure-mock": "workspace:*",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "wrangler": "catalog:"
   },
   "inlinedDependencies": {
     "@azure-rest/core-client": "2.9.0",

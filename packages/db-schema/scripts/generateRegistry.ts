@@ -10,7 +10,7 @@ interface RegistryEntry {
   specifier: string;
 }
 
-// Writes the two registries drizzle reads — every table, enum and Postgres schema, and every relation part — from
+// Writes the two registries drizzle reads — every table and every relation part — from
 // The folders that declare them, so a declaration is registered by existing and no list is kept by hand
 const sourceDirectory = join(import.meta.dirname, "..", "src");
 const generatedDirectory = join(sourceDirectory, "generated");
@@ -36,10 +36,7 @@ const getNames = (entries: RegistryEntry[]) =>
     .flatMap(({ exportNames }) => exportNames)
     .toSorted((firstName, secondName) => firstName.localeCompare(secondName));
 
-const schemaEntries = await readEntries(
-  "schema/**/*.ts",
-  /^export const (?<exportName>\w+) = (?:pgTable\(|\w+Schema\.enum\(|camelCase\.schema\()/gmu,
-);
+const schemaEntries = await readEntries("schema/**/*.ts", /^export const (?<exportName>\w+) = sqliteTable\(/gmu);
 const relationEntries = await readEntries(
   "relations/**/*.ts",
   /^export const (?<exportName>\w+) = defineRelationsPart\(/gmu,

@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "@esposter/db-schema": "workspace:*",
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "workspace:*",
+    "@pulumi/cloudflare": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
