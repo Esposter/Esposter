@@ -9,6 +9,7 @@ declare global {
     interface Env {
       CLICKER_ASSETS: R2Bucket;
       CORE: D1Database;
+      CUTOVER_SECRET: string;
       DELETE_ACCOUNT_QUEUE: Queue;
       DELETE_ORPHANED_PROFILE_IMAGE_QUEUE: Queue;
       EXPORT_USER_DATA_QUEUE: Queue;
