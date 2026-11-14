@@ -15,6 +15,7 @@ import { useAlertStore } from "@/store/alert";
 import { useWhiteboardStore } from "@/store/resource/whiteboard";
 import { useWhiteboardEditorStore } from "@/store/resource/whiteboard/editor";
 import { takeOne } from "@esposter/shared";
+import { v7 } from "uuid";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("uuid"), async (importOriginal) => {
