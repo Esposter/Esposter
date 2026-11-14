@@ -1,6 +1,6 @@
 # Charts
 
-`apps/web/app/components/Styled/ApexChart.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly, with no component wrapper, since that mount is all a wrapper would add. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
+`apps/web/app/components/Styled/ApexChart.client.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly, with no component wrapper, since that mount is all a wrapper would add. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
 
 ## How a chart is drawn
 
@@ -185,7 +185,7 @@ Every issue of `apexcharts/vue3-apexcharts` has one verdict, open or closed, rea
 
 | Path                                                        | Role                                                                   |
 | :---------------------------------------------------------- | :--------------------------------------------------------------------- |
-| `apps/web/app/components/Styled/ApexChart.vue`              | Mounts, updates, rebuilds and destroys the engine; the engine's tokens |
+| `apps/web/app/components/Styled/ApexChart.client.vue`       | Mounts, updates, rebuilds and destroys the engine; the engine's tokens |
 | `apps/web/app/services/styled/getStyledApexOptions.ts`      | The theme mode, the marker shapes and the escaped legend               |
 | `apps/web/app/services/styled/ApexChartMarkerShapes.ts`     | Which shape marks each series, so one reads apart without its colour   |
 | `packages/shared/src/util/object/clonePlainDeep.ts`         | The copy the engine is handed                                          |

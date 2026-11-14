@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import RichTextEditor from "@/components/RichTextEditor/Index.vue";
+import RichTextEditor from "@/components/RichTextEditor/Index.client.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
 import { afterEach, describe, expect, test, vi } from "vitest";

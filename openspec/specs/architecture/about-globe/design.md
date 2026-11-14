@@ -33,7 +33,7 @@ flowchart LR
 | Path                                                              | Role                                                                          |
 | :---------------------------------------------------------------- | :---------------------------------------------------------------------------- |
 | `apps/web/app/pages/about.vue`                                    | the sized box that mounts the globe once the reader nears it                  |
-| `apps/web/app/components/Visual/Globe.vue`                        | the canvas mount, sized by its box                                            |
+| `apps/web/app/components/Visual/Globe.client.vue`                 | the canvas mount, sized by its box                                            |
 | `apps/web/app/services/visual/globe/`                             | the pure services: mask decoding, dots, curves, quality tiers, start rotation |
 | `apps/web/app/services/visual/GlobeConfiguration.ts`              | the colours and the sizes                                                     |
 | `apps/web/app/assets/about/generated/globeLandMask/landMask.json` | the generated mask                                                            |

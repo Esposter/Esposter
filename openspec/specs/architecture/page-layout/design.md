@@ -63,12 +63,12 @@ An immersive page never scrolls the window at all: its layout hides the document
 
 ## Key files
 
-| File                                           | Role                                                                        |
-| ---------------------------------------------- | --------------------------------------------------------------------------- |
-| `apps/web/app/App.vue`                         | The dock and the dock insets on the root, around every page                 |
-| `apps/web/app/layouts/default.vue`             | The shell grid: the drawers as columns or sheets, the page, the height mode |
-| `apps/web/app/layouts/resource.vue`            | The resource header over the default shell                                  |
-| `apps/web/app/layouts/messages.vue`            | The room's drawers over the default shell, sized from the resize handles    |
-| `apps/web/app/layouts/immersive.vue`           | The whole viewport, with no dock, no shell and no document scroll           |
-| `apps/web/app/components/App/DrawerButton.vue` | The one button that opens a drawer on a narrow screen                       |
-| `apps/web/app/store/layout.ts`                 | Whether the screen is wide, and whether each drawer is open                 |
+| File                                                | Role                                                                        |
+| --------------------------------------------------- | --------------------------------------------------------------------------- |
+| `apps/web/app/App.vue`                              | The dock and the dock insets on the root, around every page                 |
+| `apps/web/app/layouts/default.vue`                  | The shell grid: the drawers as columns or sheets, the page, the height mode |
+| `apps/web/app/layouts/resource.vue`                 | The resource header over the default shell                                  |
+| `apps/web/app/components/Message/Layout.client.vue` | The room's drawers over the default shell, sized from the resize handles    |
+| `apps/web/app/layouts/immersive.vue`                | The whole viewport, with no dock, no shell and no document scroll           |
+| `apps/web/app/components/App/DrawerButton.vue`      | The one button that opens a drawer on a narrow screen                       |
+| `apps/web/app/store/layout.ts`                      | Whether the screen is wide, and whether each drawer is open                 |

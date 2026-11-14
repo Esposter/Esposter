@@ -1,7 +1,5 @@
 import type ApexCharts from "apexcharts";
 
-// Registers the feature that puts `chart.perspectives` on the instance; opt-in since v7
-import "apexcharts/features/perspectives";
 import { checkIsSafeViewPayload } from "@/services/dashboard/chart/checkIsSafeViewPayload";
 import { DASHBOARD_VIEW_QUERY_KEY } from "@/services/dashboard/chart/constants";
 import { parseViewEntry } from "@/services/dashboard/chart/parseViewEntry";

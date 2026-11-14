@@ -2,7 +2,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { MimeType } from "#shared/models/file/MimeType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { checkIsAxisVisualPropsData } from "@/services/dashboard/checkIsAxisVisualPropsData";
@@ -11,7 +11,6 @@ import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTy
 import { createDrawnDataset } from "@/services/dashboard/export/createDrawnDataset";
 import { createDatasetCsv } from "@/services/dataset/createDatasetCsv";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useAlertStore } from "@/store/alert";
 import { downloadFile, takeOne } from "@esposter/shared";
 
@@ -38,6 +37,6 @@ export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
   downloadFile(
     `${visual.chart.configuration.title || visual.type}.csv`,
     createDatasetCsv(createDrawnDataset(shape, query, drawn)),
-    DataSourceConfigurationMap[DataSourceType.Csv].mimeType,
+    MimeType.Csv,
   );
 };

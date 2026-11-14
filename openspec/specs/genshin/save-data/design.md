@@ -224,7 +224,7 @@ Paths relative to the repository root.
 | `apps/web/app/services/genshin/getGenshinStartRetryDelayMs.ts`                         | the wait before a start's next attempt, doubling to a cap                                                     |
 | `apps/web/app/services/shared/LocalStorageKey.ts`                                      | the `genshin-pending:{userId}` key of the journal and the `genshin-save` key of the guest's copy              |
 | `apps/web/app/services/genshin/readGuestSave.ts`                                       | the signed-out save, read through `parseJsonWithSchema` so its instants read                                  |
-| `apps/web/app/components/Genshin/Index.vue`                                            | the page wiring the save into the world, the loading progress, the retry and the replaced dialog              |
+| `apps/web/app/components/Genshin/Index.client.vue`                                     | the page wiring the save into the world, the loading progress, the retry and the replaced dialog              |
 | `packages/genshin-world/src/store/party.ts`                                            | the combat roster, starting from the saved characters and the Traveler alone when there are none              |
 | `packages/genshin-world/src/composables/useWorldSaveSync.ts`                           | the world's save state written through `toGenshinSave` on each sync                                           |
 | `packages/genshin-world/src/components/World/Session/Index.vue`                        | the world reading each system from the save and emitting the whole of it                                      |

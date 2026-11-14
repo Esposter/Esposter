@@ -53,7 +53,7 @@ The module was checked against the baseline without it before it left, and a ret
 | :----------------------------------------------------------------- | :-------------------------------------------------------------------------- |
 | `apps/web/configuration/modules.ts`                                | the Nuxt module list, where no Vize module registers                        |
 | `apps/web/configuration/typescript.ts`                             | the `.vue` content mapper the app's typecheck uses, which needs no module   |
-| `apps/web/app/components/Visual/Gem/Index.vue`                     | the component whose inline template holds the `new` form `/about` exercises |
+| `apps/web/app/components/Visual/Gem/Index.client.vue`              | the component whose inline template holds the `new` form `/about` exercises |
 | `packages/genshin-world/scripts/tres/tresCustomElements.ts`        | the element names the library builds hand Vize                              |
 | `packages/tresjs-nuxt/src/services/checkIsTresCustomElement.ts`    | the TresJS predicate the app's compiler uses                                |
 | `packages/configuration/src/services/getVuePlugins.ts`             | the Vize Vite plugin a package's Vitest and Vite runs add                   |

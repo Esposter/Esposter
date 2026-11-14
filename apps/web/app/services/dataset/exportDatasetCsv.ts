@@ -1,12 +1,11 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
+import { MimeType } from "#shared/models/file/MimeType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { createDatasetCsv } from "@/services/dataset/createDatasetCsv";
 import { DatasetProviderTypeResourceTypeMap } from "@/services/dataset/DatasetProviderTypeResourceTypeMap";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { getDatasetTruncationText } from "@/services/dataset/getDatasetTruncationText";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { downloadFile, getResultAsync, noop } from "@esposter/shared";
@@ -24,11 +23,7 @@ export const exportDatasetCsv = async (resource: ResourceInResource) => {
     const dataset = await $trpc.dataset.readDataset.query({ id: resource.id, type });
     const truncation = getDatasetTruncation(dataset);
     if (truncation) createAlert(getDatasetTruncationText(truncation), "warning");
-    downloadFile(
-      `${resource.name}.csv`,
-      createDatasetCsv(dataset),
-      DataSourceConfigurationMap[DataSourceType.Csv].mimeType,
-    );
+    downloadFile(`${resource.name}.csv`, createDatasetCsv(dataset), MimeType.Csv);
   }).match(noop, (error) => {
     createErrorAlert(error, getDatasetErrorMessage(error));
   });

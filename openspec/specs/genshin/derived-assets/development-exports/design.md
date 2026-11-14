@@ -25,7 +25,7 @@ Only a folder the index lists is read, and only its root files (the layout, the 
 
 ## What the world draws
 
-The app hands the world screen and the game's opening the route's address in development alone (`sceneExportBaseUrl`) `apps/web/app/components/Genshin/Index.vue`. Each scene asks `useSceneExports` for the components it wants: Windrise's scene for Windrise's own and each region's in reach, which come and go with the [region data](../../terrain/design.md), and the login scene for the login's. A component is loaded once the index lists it and the scene wants it, and its geometry, materials and textures are freed once it leaves reach or the scene goes; one still loading when it stops being wanted is freed as it arrives `packages/genshin-world/src/composables/useSceneExports.ts`.
+The app hands the world screen and the game's opening the route's address in development alone (`sceneExportBaseUrl`) `apps/web/app/components/Genshin/Index.client.vue`. Each scene asks `useSceneExports` for the components it wants: Windrise's scene for Windrise's own and each region's in reach, which come and go with the [region data](../../terrain/design.md), and the login scene for the login's. A component is loaded once the index lists it and the scene wants it, and its geometry, materials and textures are freed once it leaves reach or the scene goes; one still loading when it stops being wanted is freed as it arrives `packages/genshin-world/src/composables/useSceneExports.ts`.
 
 ```mermaid
 flowchart TD

@@ -7,6 +7,8 @@ import type { NuxtConfig } from "nuxt/schema";
 export const routeRules: NuxtConfig["routeRules"] = {
   "/calls/**": { robots: false, ssr: false },
   "/dungeons": { robots: false, ssr: false },
+  // A WebGPU canvas with nothing to render before it runs, and three.js is client-only, so the page is built for the browser alone
+  "/fluid-simulator": { robots: false, ssr: false },
   "/messages": { robots: false, ssr: false },
   "/messages/**": { robots: false, ssr: false },
   "/resource-explorer": { robots: false, ssr: false },
