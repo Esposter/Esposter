@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodDlqEsposterDeleteOrphanedProfileImage";
 import { prodQEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodQEsposterDeleteOrphanedProfileImage";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.DeleteOrphanedProfileImage),
+  QueueJob.DeleteOrphanedProfileImage,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
@@ -30,7 +30,10 @@ export const prodQEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueCo
     deadLetterQueue: prodDlqEsposterDeleteOrphanedProfileImage.queueName,
     queueId: prodQEsposterDeleteOrphanedProfileImage.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: {
+      maxRetries: QueueJobMaxRetriesMap[QueueJob.DeleteOrphanedProfileImage],
+      retryDelay: QueueConsumerRetryDelay,
+    },
     type: "worker",
   },
   { parent: prodQEsposterDeleteOrphanedProfileImage, protect: true },

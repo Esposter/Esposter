@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/devDlqEsposterReconcileStorageLedgerEntry";
 import { devQEsposterReconcileStorageLedgerEntry } from "#src/cloudflare/resources/queues/devQEsposterReconcileStorageLedgerEntry";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.ReconcileStorageLedgerEntry),
+  QueueJob.ReconcileStorageLedgerEntry,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
@@ -30,7 +30,10 @@ export const devQEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueCo
     deadLetterQueue: devDlqEsposterReconcileStorageLedgerEntry.queueName,
     queueId: devQEsposterReconcileStorageLedgerEntry.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: {
+      maxRetries: QueueJobMaxRetriesMap[QueueJob.ReconcileStorageLedgerEntry],
+      retryDelay: QueueConsumerRetryDelay,
+    },
     type: "worker",
   },
   { parent: devQEsposterReconcileStorageLedgerEntry, protect: true },

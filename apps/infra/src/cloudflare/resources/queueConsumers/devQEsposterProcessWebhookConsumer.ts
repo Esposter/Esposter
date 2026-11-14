@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterProcessWebhook } from "#src/cloudflare/resources/queues/devDlqEsposterProcessWebhook";
 import { devQEsposterProcessWebhook } from "#src/cloudflare/resources/queues/devQEsposterProcessWebhook";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.ProcessWebhook),
+  QueueJob.ProcessWebhook,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
@@ -30,7 +30,7 @@ export const devQEsposterProcessWebhookConsumer: cloudflare.QueueConsumer = new 
     deadLetterQueue: devDlqEsposterProcessWebhook.queueName,
     queueId: devQEsposterProcessWebhook.queueId,
     scriptName,
-    settings: QueueConsumerRetry.nonIdempotent,
+    settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessWebhook], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: devQEsposterProcessWebhook, protect: true },

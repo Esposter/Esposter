@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterProcessScheduledMessageJob } from "#src/cloudflare/resources/queues/prodDlqEsposterProcessScheduledMessageJob";
 import { prodQEsposterProcessScheduledMessageJob } from "#src/cloudflare/resources/queues/prodQEsposterProcessScheduledMessageJob";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.ProcessScheduledMessageJob),
+  QueueJob.ProcessScheduledMessageJob,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
@@ -30,7 +30,10 @@ export const prodQEsposterProcessScheduledMessageJobConsumer: cloudflare.QueueCo
     deadLetterQueue: prodDlqEsposterProcessScheduledMessageJob.queueName,
     queueId: prodQEsposterProcessScheduledMessageJob.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: {
+      maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessScheduledMessageJob],
+      retryDelay: QueueConsumerRetryDelay,
+    },
     type: "worker",
   },
   { parent: prodQEsposterProcessScheduledMessageJob, protect: true },

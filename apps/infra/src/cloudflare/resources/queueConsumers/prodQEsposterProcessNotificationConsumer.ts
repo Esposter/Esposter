@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterProcessNotification } from "#src/cloudflare/resources/queues/prodDlqEsposterProcessNotification";
 import { prodQEsposterProcessNotification } from "#src/cloudflare/resources/queues/prodQEsposterProcessNotification";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.ProcessNotification),
+  QueueJob.ProcessNotification,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
@@ -30,7 +30,7 @@ export const prodQEsposterProcessNotificationConsumer: cloudflare.QueueConsumer 
     deadLetterQueue: prodDlqEsposterProcessNotification.queueName,
     queueId: prodQEsposterProcessNotification.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.ProcessNotification], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: prodQEsposterProcessNotification, protect: true },

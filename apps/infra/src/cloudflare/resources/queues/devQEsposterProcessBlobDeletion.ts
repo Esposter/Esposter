@@ -1,21 +1,15 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import {
-  AzureFunction,
-  CloudflareAssetType,
-  CloudflareEnvironment,
-  getCloudflareResourceName,
-} from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
+import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.ProcessBlobDeletion),
+  QueueJob.ProcessBlobDeletion,
 );
 
 export const devQEsposterProcessBlobDeletion: cloudflare.Queue = new cloudflare.Queue(
   queueName,
-  { accountId: CloudflareAccountId, queueName: queueName },
+  { accountId: CloudflareAccountId, queueName },
   { protect: true },
 );

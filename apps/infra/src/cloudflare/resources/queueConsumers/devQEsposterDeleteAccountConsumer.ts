@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterDeleteAccount } from "#src/cloudflare/resources/queues/devDlqEsposterDeleteAccount";
 import { devQEsposterDeleteAccount } from "#src/cloudflare/resources/queues/devQEsposterDeleteAccount";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.DeleteAccount),
+  QueueJob.DeleteAccount,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
@@ -30,7 +30,7 @@ export const devQEsposterDeleteAccountConsumer: cloudflare.QueueConsumer = new c
     deadLetterQueue: devDlqEsposterDeleteAccount.queueName,
     queueId: devQEsposterDeleteAccount.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.DeleteAccount], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: devQEsposterDeleteAccount, protect: true },

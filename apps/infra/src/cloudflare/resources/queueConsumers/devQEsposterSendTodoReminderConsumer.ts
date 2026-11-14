@@ -1,21 +1,21 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import QueueConsumerRetry from "#src/cloudflare/constants/QueueConsumerRetry";
+import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { devDlqEsposterSendTodoReminder } from "#src/cloudflare/resources/queues/devDlqEsposterSendTodoReminder";
 import { devQEsposterSendTodoReminder } from "#src/cloudflare/resources/queues/devQEsposterSendTodoReminder";
 import {
-  AzureFunction,
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
   getCloudflareResourceName,
+  QueueJob,
+  QueueJobMaxRetriesMap,
 } from "@esposter/db-schema";
-import { toKebabCase } from "@esposter/shared";
 import * as cloudflare from "@pulumi/cloudflare";
 
 const queueName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Queue,
-  toKebabCase(AzureFunction.SendTodoReminder),
+  QueueJob.SendTodoReminder,
 );
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
@@ -30,7 +30,7 @@ export const devQEsposterSendTodoReminderConsumer: cloudflare.QueueConsumer = ne
     deadLetterQueue: devDlqEsposterSendTodoReminder.queueName,
     queueId: devQEsposterSendTodoReminder.queueId,
     scriptName,
-    settings: QueueConsumerRetry.idempotent,
+    settings: { maxRetries: QueueJobMaxRetriesMap[QueueJob.SendTodoReminder], retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: devQEsposterSendTodoReminder, protect: true },
