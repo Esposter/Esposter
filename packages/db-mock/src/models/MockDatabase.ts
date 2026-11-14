@@ -11,6 +11,8 @@ export interface MockDatabase {
   getQueue: (job: QueueJob) => Promise<MockQueue>;
   // Empties every table of both databases and every bucket, so the next test starts from nothing
   reset: () => Promise<void>;
+  // The core database's raw D1 binding, which a room object takes as its CORE binding
+  coreDatabase: MockD1Database;
   // The streams database's raw D1 binding, which the stream table client takes as a parameter
   streamsDb: MockD1Database;
 }

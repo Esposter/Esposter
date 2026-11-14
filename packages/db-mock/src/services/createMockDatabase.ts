@@ -41,6 +41,7 @@ export const createMockDatabase = async (
   await migrate(drizzle(streamsDb), { migrationsFolder: streamsMigrationsDirectory });
 
   return {
+    coreDatabase,
     db,
     dispose: () => miniflare.dispose(),
     getBucket: (bucket) => miniflare.getR2Bucket(bucket),

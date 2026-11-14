@@ -9,7 +9,6 @@ import {
   createSocket,
   readFrames,
   type MockObjectState,
-  type MockSocket,
 } from "#src/services/durableObject/createMockObjectState.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
 
