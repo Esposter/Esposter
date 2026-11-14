@@ -201,6 +201,14 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     return this.db.select().from(messageEmojisInRoom).where(inArray(messageEmojisInRoom.messageId, messageIds)).all();
   }
 
+  exportUserReactions(userId: string): RoomReaction[] {
+    return this.db
+      .select()
+      .from(messageEmojisInRoom)
+      .all()
+      .filter(({ userIds }) => userIds.includes(userId));
+  }
+
   // With text, the rows are the index's matches narrowed by the room's live rows and the filters, ranked by bm25 with the
   // message weighted 3, the file names 1 and the sender 1.5. Without text, the rows are the filters' matches, newest first
   searchMessages({ filters, limit, offset, query }: RoomSearchInput): RoomSearchResult {

@@ -58,6 +58,8 @@ export interface RoomObjectRpc {
   // The thread's root, when it is still live, followed by its live replies oldest first
   readThread(threadRootId: number): RoomMessage[];
   readReactions(messageIds: number[]): RoomReaction[];
+  // The reactions a user is one of the reactors of in this room, each with every reactor it has
+  exportUserReactions(userId: string): RoomReaction[];
   searchMessages(input: RoomSearchInput): RoomSearchResult;
   // A user's live messages in this room, oldest first, from the id after the cursor
   exportUserMessages(input: { after?: number; limit: number; userId: string }): RoomMessage[];
