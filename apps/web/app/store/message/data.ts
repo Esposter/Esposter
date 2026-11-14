@@ -1,11 +1,5 @@
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
-import type {
-  DeleteMessageInput,
-  MessageInMessage,
-  StandardCreateMessageInput,
-  Typing,
-  UpdateMessageInput,
-} from "@esposter/db-schema";
+import type { DeleteMessageInput, StandardCreateMessageInput, Typing, UpdateMessageInput } from "@esposter/db-schema";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
@@ -33,7 +27,7 @@ export const useDataStore = defineStore("message/data", () => {
   // `items` is the reading view — the room on screen. Every write names the room it is for, which a message
   // Always carries as its `roomId`: a subscription echo, a rejected edit's rollback and an attachment
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
-  const getRoomOperationData = (roomId: MessageInMessage["roomId"]) =>
+  const getRoomOperationData = (roomId: ClientMessage["roomId"]) =>
     createOperationData(getSlice(roomId).items, ["id"], AzureEntityType.Message);
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
@@ -62,7 +56,7 @@ export const useDataStore = defineStore("message/data", () => {
     input: StandardCreateMessageInput,
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
     // Whose attachments this send took, so the commit and the rollback reach the composer that is holding them
-    target: ComposerTarget = { roomId: input.roomId, threadRootId: "" },
+    target: ComposerTarget = { roomId: input.roomId, threadRootId: 0 },
   ) => {
     if (!session.value.data) return false;
     // `input.files` is the composer's own live array, and the composer keeps accepting uploads for the whole
@@ -197,7 +191,7 @@ export const useDataStore = defineStore("message/data", () => {
   // A reconnect replays the messages it missed but not the edits or deletes, so the loaded window is read again by id.
   // A row the room no longer returns was deleted while the socket was closed, and one whose `updatedAt` has moved was
   // edited, and each goes through the same funnel its live event would have
-  const refreshLoadedMessages = getSynchronizedFunction((roomId: MessageInMessage["roomId"]) =>
+  const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
       const { items: roomItems } = getSlice(roomId);
       const loadedMessages = roomItems.value.filter(({ isLoading }) => !isLoading);
@@ -224,7 +218,7 @@ export const useDataStore = defineStore("message/data", () => {
     editor?: Editor,
     // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
     // Is the room's own send, and its reset finds nothing of the thread pane's to clear
-    target: ComposerTarget = { roomId: input.roomId, threadRootId: "" },
+    target: ComposerTarget = { roomId: input.roomId, threadRootId: 0 },
   ) => {
     // The reset runs behind the optimistic bubble, never ahead of the send: it clears the editor and the reply
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.

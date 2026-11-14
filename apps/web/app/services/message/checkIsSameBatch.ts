@@ -1,11 +1,10 @@
-import type { MessageInMessage } from "@esposter/db-schema";
-
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { MessageType } from "@esposter/db-schema";
 
 // Consecutive messages from one author within the batch window render as one batch. A webhook post is matched by the
 // App that sent it, since the posts of one app can carry different user ids
-export const checkIsSameBatch = (message: MessageInMessage, nextMessage: MessageInMessage | undefined) => {
+export const checkIsSameBatch = (message: ClientMessage, nextMessage: ClientMessage | undefined) => {
   if (nextMessage === undefined) return false;
 
   const isSameAuthor =

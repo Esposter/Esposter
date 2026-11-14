@@ -16,7 +16,7 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 // The room's own composer — the thread pane renders its own with the thread as its target
-const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootId: "" }));
+const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootId: 0 }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it

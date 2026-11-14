@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { LinkPreviewResponse, MessageInMessage } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { LinkPreviewResponse } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -9,8 +10,8 @@ import { noop } from "@esposter/shared";
 
 interface Props {
   linkPreviewResponse: LinkPreviewResponse;
-  messageId: MessageInMessage["id"];
-  roomId: MessageInMessage["roomId"];
+  messageId: ClientMessage["id"];
+  roomId: ClientMessage["roomId"];
 }
 
 const { messageId, roomId } = defineProps<Props>();

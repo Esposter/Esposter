@@ -2,7 +2,7 @@
 import { useReplyStore } from "@/store/message/input/reply";
 
 interface Props {
-  replyToId: string;
+  replyToId: number;
   roomId: string;
 }
 

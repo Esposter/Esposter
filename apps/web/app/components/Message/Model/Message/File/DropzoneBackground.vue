@@ -20,8 +20,8 @@ const getDropTarget = (event: DragEvent): ComposerTarget =>
   event.target instanceof Element &&
   event.target.closest(`[${THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE}]`)
     ? { roomId: activeRoomId.value, threadRootId: activeThreadRootId.value }
-    : { roomId: currentRoomId.value, threadRootId: "" };
-const dropTarget = ref<ComposerTarget>({ roomId: "", threadRootId: "" });
+    : { roomId: currentRoomId.value, threadRootId: 0 };
+const dropTarget = ref<ComposerTarget>({ roomId: "", threadRootId: 0 });
 const uploadFiles = useUploadFiles(dropTarget);
 const { isOverDropZone } = useDropZone(defaultDocument, {
   onDrop: getSynchronizedFunction(async (files: File[] | null, event: DragEvent) => {

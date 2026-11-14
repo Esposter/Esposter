@@ -3,7 +3,7 @@ import type { ClientMessage } from "@/models/message/ClientMessage";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_SORT_BY } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { checkIsMessageId } from "@/services/message/checkIsMessageId";
 import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
@@ -29,8 +29,8 @@ export const useReadMessages = () => {
     return readItems(async () => {
       // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
       const messageId = getRouteParam(currentRoute.value.params, "messageId");
-      if (checkIsUuidV4(messageId)) {
-        const messages = await $trpc.message.readMessagesByRowKeys.query({ messageIds: [messageId], roomId });
+      if (checkIsMessageId(messageId)) {
+        const messages = await $trpc.message.readMessagesByRowKeys.query({ messageIds: [Number(messageId)], roomId });
         if (messages.length > 0) {
           const messageCursor = serialize(takeOne(messages), MESSAGE_SORT_BY);
           const cursorPaginationData = await $trpc.message.readMessages.query({

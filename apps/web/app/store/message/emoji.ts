@@ -1,5 +1,5 @@
 import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import type { DeleteEmojiInput, MessageEmojiMetadataEntity, UpdateEmojiInput } from "@esposter/db-schema";
+import type { DeleteEmojiInput, RoomReaction, UpdateEmojiInput } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { checkIsOnlyReactor, getOrCreate, getUpdatedUserIds, ID_SEPARATOR, takeOne } from "@esposter/shared";
@@ -12,15 +12,15 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const { executeMutation: executeDeleteEmojiMutation } = useMutation();
   // A message's reactions, filed under the room they belong to and then under the message. Every write names both,
   // Since a read response, a subscription echo and a rollback all land after an await, when the room on screen may have moved on
-  const emojiMap: Ref<Map<string, Map<string, MessageEmojiMetadataEntity[]>>> = ref(new Map());
+  const emojiMap: Ref<Map<string, Map<number, RoomReaction[]>>> = ref(new Map());
   // A read never writes, since a read can run during a render: a message nothing has set reads as none, and only a set
   // Makes an entry
-  const getEmojis = (roomId: string, messageId: string) => emojiMap.value.get(roomId)?.get(messageId) ?? [];
-  const setEmojis = (roomId: string, messageId: string, emojis: MessageEmojiMetadataEntity[]) => {
-    getOrCreate(emojiMap.value, roomId, () => new Map<string, MessageEmojiMetadataEntity[]>()).set(messageId, emojis);
+  const getEmojis = (roomId: string, messageId: number) => emojiMap.value.get(roomId)?.get(messageId) ?? [];
+  const setEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
+    getOrCreate(emojiMap.value, roomId, () => new Map<number, RoomReaction[]>()).set(messageId, emojis);
   };
   // A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair
-  const getEmojiKey = ({ emojiTag, messageId }: Pick<MessageEmojiMetadataEntity, "emojiTag" | "messageId">) =>
+  const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
     `${messageId}${ID_SEPARATOR}${emojiTag}`;
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;
@@ -44,7 +44,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
       },
     });
   };
-  const updateEmoji = async (input: Pick<MessageEmojiMetadataEntity, "messageId" | "userIds"> & UpdateEmojiInput) => {
+  const updateEmoji = async (input: Pick<RoomReaction, "messageId" | "userIds"> & UpdateEmojiInput) => {
     if (!session.value.data) return;
     const { id: userId } = session.value.data.user;
     const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, userId) };
@@ -80,7 +80,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     });
   };
   // Reacting again removes this user's own reaction; the last one to leave takes the reaction itself with it
-  const toggleEmoji = async (roomId: string, emoji: MessageEmojiMetadataEntity) => {
+  const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {
     if (!session.value.data) return;
 
     const { emojiTag, messageId, userIds } = emoji;
@@ -88,7 +88,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     else await updateEmoji({ emojiTag, messageId, roomId, userIds });
   };
 
-  const storeCreateEmoji = (roomId: string, newEmoji: MessageEmojiMetadataEntity) => {
+  const storeCreateEmoji = (roomId: string, newEmoji: RoomReaction) => {
     const emojis = getEmojis(roomId, newEmoji.messageId);
     emojis.push(newEmoji);
     setEmojis(roomId, newEmoji.messageId, emojis);
@@ -97,7 +97,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   // Cannot name, and the assign below is what applies them
   const storeUpdateEmoji = (
     roomId: string,
-    input: Partial<MessageEmojiMetadataEntity> & Pick<MessageEmojiMetadataEntity, "messageId"> & UpdateEmojiInput,
+    input: Partial<RoomReaction> & Pick<RoomReaction, "messageId"> & UpdateEmojiInput,
   ) => {
     const emojis = getEmojis(roomId, input.messageId);
     const index = emojis.findIndex((emoji) => getEntityIdEqualComparator(["emojiTag"], input)(emoji));
@@ -106,7 +106,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     Object.assign(takeOne(emojis, index), input);
     setEmojis(roomId, input.messageId, emojis);
   };
-  const storeDeleteEmoji = (roomId: string, input: Pick<MessageEmojiMetadataEntity, "emojiTag" | "messageId">) => {
+  const storeDeleteEmoji = (roomId: string, input: Pick<RoomReaction, "emojiTag" | "messageId">) => {
     const emojis = getEmojis(roomId, input.messageId);
     setEmojis(
       roomId,

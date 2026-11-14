@@ -12,7 +12,7 @@ const { id: roomId, messageId: threadRootId } = route.params;
 // Makes a thread linkable at all: a popped-out thread window, and every link into one, land here.
 // On mounted rather than in setup: the layout is this page's own child, so its mount decides the drawer state
 // For the breakpoint first, and an open issued before that would be closed again on a phone
-const openRouteThread = getSynchronizedFunction(() => openThread(roomId, threadRootId));
+const openRouteThread = getSynchronizedFunction(() => openThread(roomId, Number(threadRootId)));
 
 onMounted(() => {
   openRouteThread();

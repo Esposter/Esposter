@@ -10,7 +10,7 @@ export const useScrollToMessage = () => {
   const { setActiveMessageId } = scrollStore;
   const dataStore = useDataStore();
   const { items } = storeToRefs(dataStore);
-  return async (roomId: string, messageId: string) => {
+  return async (roomId: string, messageId: number) => {
     if (roomId !== currentRoomId.value || !items.value.some((message) => message.id === messageId)) {
       await navigateTo(RoutePath.MessagesMessage(roomId, messageId));
       return;

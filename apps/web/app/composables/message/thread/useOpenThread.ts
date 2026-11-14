@@ -1,5 +1,4 @@
-import type { MessageInMessage } from "@esposter/db-schema";
-
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import { useThreadStore } from "@/store/message/thread";
 
 export const useOpenThread = () => {
@@ -7,7 +6,7 @@ export const useOpenThread = () => {
   const threadStore = useThreadStore();
   const { openThread } = threadStore;
   const readMessageMetadata = useReadMessageMetadata();
-  return (roomId: string, threadRootId: MessageInMessage["id"]) =>
+  return (roomId: string, threadRootId: ClientMessage["id"]) =>
     openThread(roomId, threadRootId, async () => {
       const messages = await $trpc.message.readThread.query({ roomId, threadRootId });
       // What a reply renders besides itself — its attachments, the message it quotes, its reactions — is read the

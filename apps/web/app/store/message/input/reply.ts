@@ -1,5 +1,4 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { MessageInMessage } from "@esposter/db-schema";
 
 import { MessageHook } from "@/models/message/MessageHook";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -9,7 +8,7 @@ import { Operation } from "@esposter/shared";
 
 export const useReplyStore = defineStore("message/input/reply", () => {
   const roomStore = useRoomStore();
-  const { data: replyToId, setData: setReplyToId } = useDataMap<"" | MessageInMessage["id"]>(
+  const { data: replyToId, setData: setReplyToId } = useDataMap<"" | ClientMessage["id"]>(
     () => roomStore.currentRoomId,
     "",
   );

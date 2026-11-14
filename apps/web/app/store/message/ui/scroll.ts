@@ -36,11 +36,11 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   const isViewingOlderMessages = computed(
     () => dataStore.items.length > 0 && (!isNearPresent.value || dataStore.hasMoreNewer),
   );
-  const activeMessageId = ref("");
+  const activeMessageId = ref(0);
   const roomStore = useRoomStore();
   const { start: startClearActiveMessageId } = useTimeoutFn(
     () => {
-      activeMessageId.value = "";
+      activeMessageId.value = 0;
     },
     Temporal.Duration.from({ seconds: 2 }).total("milliseconds"),
     { immediate: false },
@@ -55,7 +55,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     // The list is column-reversed, so its scroll origin is the newest message
     else if (messageContainerElement.value) messageContainerElement.value.scrollTop = 0;
   };
-  const setActiveMessageId = (messageId: string) => {
+  const setActiveMessageId = (messageId: number) => {
     activeMessageId.value = messageId;
     startClearActiveMessageId();
   };

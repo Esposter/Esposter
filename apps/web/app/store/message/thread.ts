@@ -1,5 +1,4 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { MessageInMessage } from "@esposter/db-schema";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
@@ -13,8 +12,8 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
   const { executeQuery, isPending: isReadThreadPending } = useMutation();
-  const activeThreadRootId = ref<"" | MessageInMessage["id"]>("");
-  const activeRoomId = ref<MessageInMessage["roomId"]>("");
+  const activeThreadRootId = ref<"" | ClientMessage["id"]>("");
+  const activeRoomId = ref<ClientMessage["roomId"]>("");
   const threadMessages = ref<ClientMessage[]>([]);
   const layoutStore = useLayoutStore();
   const messageLayoutStore = useMessageLayoutStore();
@@ -24,8 +23,8 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Renders besides itself is read through the file store, which reads this one back
   const openThread = async (
     roomId: string,
-    threadRootId: MessageInMessage["id"],
-    readThreadMessages: () => Promise<MessageInMessage[]>,
+    threadRootId: ClientMessage["id"],
+    readThreadMessages: () => Promise<ClientMessage[]>,
   ) => {
     activeRoomId.value = roomId;
     activeThreadRootId.value = threadRootId;
@@ -75,7 +74,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Lands in the room list and the thread it belongs to shows nothing until it is reopened — including the
   // Sender's own reply, which is the composer's entire feedback. The optimistic bubble is the same reactive
   // Message the room list holds, so the server's fields reach the pane through the object it already pushed
-  const checkIsActiveThreadMessage = ({ id: messageId, roomId }: Pick<MessageInMessage, "id" | "roomId">) =>
+  const checkIsActiveThreadMessage = ({ id: messageId, roomId }: Pick<ClientMessage, "id" | "roomId">) =>
     roomId === activeRoomId.value && threadMessages.value.some((message) => message.id === messageId);
   MessageHookMap[Operation.Create].register((message) => {
     if (message.roomId !== activeRoomId.value || message.replyToId !== activeThreadRootId.value) return;

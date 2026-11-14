@@ -1,5 +1,4 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
-import type { MessageInMessage } from "@esposter/db-schema";
 
 import { useRoomStore } from "@/store/message/room";
 
@@ -18,7 +17,7 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // Follow-STATE source of truth: every followed root id, including threads whose root message was
   // Deleted. followedThreads above drops deleted roots for the drawer, so checkIsFollowing must read this
   // Instead — otherwise a followed thread with a deleted root looks unfollowed and can never be unfollowed.
-  const { getData: getFollowedThreadRootIds, setData: setFollowedThreadRootIds } = useDataMap<MessageInMessage["id"][]>(
+  const { getData: getFollowedThreadRootIds, setData: setFollowedThreadRootIds } = useDataMap<ClientMessage["id"][]>(
     () => roomStore.currentRoomId,
     () => [],
   );
@@ -42,22 +41,22 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
       },
     },
   );
-  const checkIsFollowing = (roomId: string, threadRootId: MessageInMessage["id"]) =>
+  const checkIsFollowing = (roomId: string, threadRootId: ClientMessage["id"]) =>
     Boolean(getFollowedThreadRootIds(roomId)?.includes(threadRootId));
   // Follow STATE only — the drawer's display list needs the server-resolved root message, which callers that
   // Merely learn about a follow (a reply auto-follows its thread server-side) do not hold.
-  const storeFollowThread = (roomId: string, threadRootId: MessageInMessage["id"]) => {
+  const storeFollowThread = (roomId: string, threadRootId: ClientMessage["id"]) => {
     const threadRootIds = getFollowedThreadRootIds(roomId) ?? [];
     if (threadRootIds.includes(threadRootId)) return;
 
     setFollowedThreadRootIds(roomId, [...threadRootIds, threadRootId]);
   };
-  const followThread = async (roomId: string, threadRootId: MessageInMessage["id"]) => {
+  const followThread = async (roomId: string, threadRootId: ClientMessage["id"]) => {
     await $trpc.message.followThread.mutate({ roomId, threadRootId });
     // Re-read rather than mirror locally: the drawer lists the root message, which only the server resolves.
     await refetchFollowedThreads(roomId);
   };
-  const unfollowThread = async (roomId: string, threadRootId: MessageInMessage["id"]) => {
+  const unfollowThread = async (roomId: string, threadRootId: ClientMessage["id"]) => {
     await $trpc.message.unfollowThread.mutate({ roomId, threadRootId });
     setFollowedThreads(
       roomId,

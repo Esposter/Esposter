@@ -23,6 +23,9 @@ describe(useMessageCache, () => {
   const roomId = crypto.randomUUID();
   const secondRoomId = crypto.randomUUID();
   const message = "message";
+  const secondMessage = "second message";
+  // A room's messages are numbered from one within the room, so two rooms hold a message under the same integer id
+  const sharedMessageId = 1;
   // The store refs are captured from inside the mounted component's scope because mountSuspended creates its own
   // Context
   const mountCache = async (initialRouteId: string = roomId) => {
@@ -87,5 +90,35 @@ describe(useMessageCache, () => {
 
     expect(items.value).toHaveLength(1);
     expect(takeOne(items.value).message).toStrictEqual(message);
+  });
+
+  // A message is keyed by its room and its integer id together, so the same id in two rooms caches as two messages
+  test("caches the same integer id in two rooms apart", async () => {
+    expect.hasAssertions();
+
+    const userId = getMockSession().user.id;
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [{ ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: sharedMessageId }],
+      roomId,
+    );
+    await writeIndexedDb(
+      MessageIndexedDbStoreConfiguration,
+      [
+        {
+          ...createOptimisticMessage(
+            { message: secondMessage, roomId: secondRoomId, type: MessageType.Message },
+            userId,
+          ),
+          id: sharedMessageId,
+        },
+      ],
+      secondRoomId,
+    );
+    const cachedMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, roomId);
+    const cachedSecondMessages = await readIndexedDb(MessageIndexedDbStoreConfiguration, secondRoomId);
+
+    expect(cachedMessages.map(({ message: text }) => text)).toStrictEqual([message]);
+    expect(cachedSecondMessages.map(({ message: text }) => text)).toStrictEqual([secondMessage]);
   });
 });

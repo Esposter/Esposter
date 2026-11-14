@@ -5,7 +5,7 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {
-  messageId: string;
+  messageId: number;
   roomId: string;
 }
 

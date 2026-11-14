@@ -26,7 +26,7 @@ export const useInputStore = defineStore("message/input", () => {
   // Which thread the pane's composer is on, written by that composer rather than read off the thread store:
   // The dependency runs UI → store, so instantiating this one can never drag in the drawer state — and the
   // Layout store it would reach through resolves the app's breakpoints, which need a component instance
-  const threadTarget = ref<ComposerTarget>({ roomId: "", threadRootId: "" });
+  const threadTarget = ref<ComposerTarget>({ roomId: "", threadRootId: 0 });
   const threadInput = computed({
     get: () => getComposerInput(threadTarget.value),
     set: (value) => {

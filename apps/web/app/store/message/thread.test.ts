@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { MessageInMessage } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import MessageRightSideBarThreadIndex from "@/components/Message/RightSideBar/Thread/Index.vue";
@@ -24,7 +24,7 @@ describe(useThreadStore, () => {
   const userId = crypto.randomUUID();
   const message = "message";
   const threadRootId = crypto.randomUUID();
-  const createReply = (replyToId: null | MessageInMessage["id"] = null) =>
+  const createReply = (replyToId: null | ClientMessage["id"] = null) =>
     createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
 
   beforeEach(() => {
@@ -57,13 +57,13 @@ describe(useThreadStore, () => {
   test("drops a thread read the user closed while it was loading", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: MessageInMessage[]) => void = noop;
+    let resolveRead: (replies: ClientMessage[]) => void = noop;
     // Resolved by the handler itself, so the close lands while the read is genuinely in flight rather than
     // Before the request has even reached it
     const readStarted = new Promise<void>((resolveReadStarted) => {
       trpcMsw.message.readThread.query(
         () =>
-          new Promise<MessageInMessage[]>((resolve) => {
+          new Promise<ClientMessage[]>((resolve) => {
             resolveRead = resolve;
             resolveReadStarted();
           }),
@@ -144,11 +144,11 @@ describe(useThreadStore, () => {
   test("keeps a reply that landed while the thread read was in flight", async () => {
     expect.hasAssertions();
 
-    let resolveRead: (replies: MessageInMessage[]) => void = noop;
+    let resolveRead: (replies: ClientMessage[]) => void = noop;
     const readStarted = new Promise<void>((resolveReadStarted) => {
       trpcMsw.message.readThread.query(
         () =>
-          new Promise<MessageInMessage[]>((resolve) => {
+          new Promise<ClientMessage[]>((resolve) => {
             resolveRead = resolve;
             resolveReadStarted();
           }),

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
+import type { RoomReaction } from "@esposter/db-schema";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 interface Props {
-  emojis: MessageEmojiMetadataEntity[];
+  emojis: RoomReaction[];
 }
 
 const modelValue = defineModel<string>({ required: true });

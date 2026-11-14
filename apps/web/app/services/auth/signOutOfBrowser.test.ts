@@ -1,5 +1,5 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
-import type { MessageInMessage } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { signOut } from "@/services/auth/authClient.test";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
 // Rows an earlier page load left in the database, written straight to IndexedDB so this module never opens it
-const writeEarlierPageRows = (message: MessageInMessage) =>
+const writeEarlierPageRows = (message: ClientMessage) =>
   new Promise<void>((resolve, reject) => {
     const { indexName, keyPath, storeName } = MessageIndexedDbStoreConfiguration;
     const request = indexedDB.open(SITE_NAME.toLowerCase(), 1);

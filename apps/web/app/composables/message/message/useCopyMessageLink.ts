@@ -1,5 +1,4 @@
-import type { MessageInMessage } from "@esposter/db-schema";
-
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import { useClipboardStore } from "@/store/clipboard";
 import { RoutePath } from "@esposter/shared";
 
@@ -9,7 +8,7 @@ export const useCopyMessageLink = () => {
   const clipboardStore = useClipboardStore();
   const { copy } = clipboardStore;
   const runtimeConfig = useRuntimeConfig();
-  return async (roomId: MessageInMessage["roomId"], messageId: MessageInMessage["id"]) => {
+  return async (roomId: ClientMessage["roomId"], messageId: ClientMessage["id"]) => {
     await copy(`${runtimeConfig.public.baseUrl}${RoutePath.MessagesMessage(roomId, messageId)}`);
   };
 };
