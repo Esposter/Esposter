@@ -1,7 +1,8 @@
 import type { CoreColumn } from "#src/models/cutover/CoreColumn";
 
+import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
 import { toD1Value } from "#src/services/cutover/core/toD1Value";
-import { describe, expect, test } from "vitest";
+import { assert, describe, expect, test } from "vitest";
 
 const createColumn = (dataType: string, notNull = true): CoreColumn => ({ dataType, name: "value", notNull });
 
@@ -10,6 +11,18 @@ describe(toD1Value, () => {
     expect.hasAssertions();
 
     expect(toD1Value(createColumn("object date"), new Date(1_700_000_000_123))).toBe(1_700_000_000_123);
+  });
+
+  test("stores a real column the schema declares as its number", () => {
+    expect.hasAssertions();
+
+    const column = getCoreTables()
+      .find(({ name }) => name === "post_posts")
+      ?.columns.find(({ name }) => name === "ranking");
+
+    assert(column);
+
+    expect(toD1Value(column, 1.5)).toBe(1.5);
   });
 
   test("stores a boolean as 0 or 1 and a json value as its text", () => {

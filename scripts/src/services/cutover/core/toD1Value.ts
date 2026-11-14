@@ -16,7 +16,7 @@ export const toD1Value = (column: CoreColumn, value: unknown): D1Value => {
       return value ? 1 : 0;
     case "custom":
       return getSafeInteger(column, BigInt(getBigIntSource(column, value)));
-    case "number":
+    case "number double":
       return Number(getNumberSource(column, value));
     case "number int53":
       return getSafeInteger(column, BigInt(getBigIntSource(column, value)));
