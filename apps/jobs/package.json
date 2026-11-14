@@ -1,0 +1,49 @@
+{
+  "name": "@esposter/jobs",
+  "version": "4.10.1",
+  "private": true,
+  "description": "The jobs Worker: a queue consumer for each job, and the nightly purge on its Cron Trigger.",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/jobs#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "wrangler deploy --dry-run --outdir dist --env prod",
+    "dev": "wrangler dev --env dev --env-file .env",
+    "deploy:worker": "wrangler deploy",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "fflate": "catalog:",
+    "node-html-parser": "catalog:",
+    "temporal-polyfill": "catalog:",
+    "web-push": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@esposter/db-mock": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/web-push": "catalog:",
+    "uuid": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

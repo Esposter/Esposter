@@ -1,0 +1,842 @@
+import type { Database, RoomMessage } from "@esposter/db-schema";
+
+import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
+import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
+import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
+import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
+import { createMockDb } from "@esposter/db-mock";
+import {
+  accountsInAuth,
+  achievementsInAchievement,
+  AdminActionType,
+  AppNotificationType,
+  blocksInSocial,
+  bookmarksInApp,
+  callSessionsInMessage,
+  EmailAchievementName,
+  friendRequestsInSocial,
+  friendsInSocial,
+  getResourceFileBlobName,
+  getRoomEmojiBlobName,
+  getSaveBlobName,
+  getUserProfileImageBlobName,
+  likesInPost,
+  MessageType,
+  moderationLogsInMessage,
+  moderationNotesInMessage,
+  NotificationSeverity,
+  notificationsInNotification,
+  postsInPost,
+  resourceAccessesInResource,
+  resourceFavoritesInResource,
+  resourceLinksInResource,
+  ResourceLinkType,
+  resourcePublicationsInResource,
+  resourcesInResource,
+  ResourceType,
+  resourceWorkingAssetsInResource,
+  roomCategoriesInMessage,
+  roomEmojisInMessage,
+  roomRolesInMessage,
+  roomsInMessage,
+  RoomType,
+  searchHistoriesInMessage,
+  StorageBucket,
+  threadFollowsInMessage,
+  userAchievementsInAchievement,
+  userSettingsInMessage,
+  usersInAuth,
+  userStatusesInMessage,
+  usersToRoomRolesInMessage,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
+import { jsonDateParse, takeOne } from "@esposter/shared";
+import { strFromU8, unzipSync } from "fflate";
+import { v7 } from "uuid";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { z } from "zod";
+
+let mockDb: Database;
+let resetMockDb: () => Promise<void>;
+
+vi.mock(import("#src/services/shared/db"), () => ({
+  get db() {
+    return mockDb;
+  },
+}));
+vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+
+const readArchiveEntries = async (blobName: string) => {
+  const archiveBucket = getBucket(StorageBucket.UserAssets);
+  const archiveObject = await archiveBucket.get(blobName);
+  assert.exists(archiveObject);
+  return unzipSync(new Uint8Array(await archiveObject.arrayBuffer()));
+};
+const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string) => {
+  const entry = entries[entryName];
+  assert.exists(entry);
+  return strFromU8(entry);
+};
+const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
+  jsonDateParse(readEntryText(entries, entryName));
+// A message as its room's object returns it: the fields the archive reads are given, and the rest hold their least value
+const createRoomMessage = (fields: Partial<RoomMessage> & Pick<RoomMessage, "id" | "message">): RoomMessage => ({
+  appUserId: null,
+  appUserImage: "",
+  createdAt: new Date(0),
+  deletedAt: null,
+  files: [],
+  isEdited: false,
+  isForward: false,
+  isPinned: false,
+  linkPreviewResponse: null,
+  mentions: [],
+  replyToId: null,
+  senderName: null,
+  type: MessageType.Message,
+  updatedAt: new Date(0),
+  userId: null,
+  ...fields,
+});
+
+describe(buildUserDataArchive, () => {
+  const attachmentBytes = new Uint8Array([255]);
+  const content = JSON.stringify({});
+  const description = "description";
+  const emojiTag = "emojiTag";
+  const filename = "filename";
+  const message = "a";
+  const messageId = 1;
+  const name = "name";
+  const note = "note";
+  const otherMessage = "b";
+  const path = "path";
+  const threadRootId = 1;
+  const title = "title";
+  const file = {
+    filename,
+    hasThumbnail: false,
+    id: v7(),
+    isSpoiler: false,
+    mimetype: "mimetype",
+    size: attachmentBytes.length,
+  };
+
+  beforeAll(async () => {
+    const mockDatabase = await createMockDb();
+    mockDb = mockDatabase.db;
+    resetMockDb = mockDatabase.reset;
+    await openMockBuckets([
+      StorageBucket.ClickerAssets,
+      StorageBucket.GenshinAssets,
+      StorageBucket.MessageAssets,
+      StorageBucket.PublicUserAssets,
+      StorageBucket.ResourceAssets,
+      StorageBucket.UserAssets,
+    ]);
+  });
+
+  // A room the person is in is asked for their reactions and messages on every build, and a room with none answers empty,
+  // So a test scripts only the answer it reads
+  beforeEach(() => {
+    roomObjectReplies.set("exportUserMessages", () => []);
+    roomObjectReplies.set("exportUserReactions", () => []);
+  });
+
+  afterEach(async () => {
+    vi.restoreAllMocks();
+    await clearMockBuckets();
+    clearRoomObjectCalls();
+    await resetMockDb();
+  });
+
+  afterAll(async () => {
+    await disposeMockBuckets();
+  });
+
+  const seedAttachment = async (blobName: string) => {
+    const bucket = getBucket(StorageBucket.MessageAssets);
+    await bucket.put(blobName, attachmentBytes);
+  };
+
+  test("unzips to the entries the design lists, asking only the rooms the person is in for their own messages", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
+
+    // A room the person is a member of, with their message and its attachment
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    roomObjectReplies.set("exportUserMessages", () => [
+      createRoomMessage({ files: [file], id: messageId, message, userId }),
+    ]);
+    await seedAttachment(getFileBlobNames(room.id, file.id, file.filename).blobName);
+
+    // A room the person has left, which the archive does not ask
+    await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId });
+
+    // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
+    // Moderation record naming the person as its target
+    const savesBucket = getBucket(StorageBucket.GenshinAssets);
+    await writeJsonBlob(savesBucket, getSaveBlobName(userId), content);
+    const publicBucket = getBucket(StorageBucket.PublicUserAssets);
+    await publicBucket.put(getUserProfileImageBlobName(userId), attachmentBytes);
+    const resource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const resourceBucket = getBucket(StorageBucket.ResourceAssets);
+    await writeJsonBlob(resourceBucket, getContentBlobName(resource.id), content);
+    const assetHash = "0".repeat(64);
+    await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
+    await resourceBucket.put(getResourceFileBlobName(resource.id, assetHash), attachmentBytes);
+    await mockDb
+      .insert(moderationLogsInMessage)
+      .values({ actorUserId: otherUserId, roomId: room.id, targetUserId: userId, type: AdminActionType.Warn });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // The room the person is in is asked for their reactions, then for their messages twice: once to write them, and once
+    // More to write their attachments. The room they left is never asked
+    expect(roomObjectCalls).toStrictEqual([
+      { args: [userId], method: "exportUserReactions", roomId: room.id },
+      {
+        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+    ]);
+    expect(Object.keys(entries).toSorted()).toStrictEqual(
+      [
+        "account.json",
+        "accesses.json",
+        "calls.json",
+        "favorites.json",
+        "follows.json",
+        "friends.json",
+        "images/ProfileImage",
+        "memberships.json",
+        "likes.json",
+        "moderation-actions.json",
+        "moderation.json",
+        `resources/${resource.id}/content.json`,
+        `resources/${resource.id}/files/${assetHash}`,
+        `resources/${resource.id}/resource.json`,
+        `rooms/${room.id}/files/${file.id}/${file.filename}`,
+        `rooms/${room.id}/messages.json`,
+        "saves/genshin/save.json",
+        "searches.json",
+      ].toSorted(),
+    );
+    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+    expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
+  });
+
+  test("writes the account's rows without their update or delete times, and a creation time only where a row is the person's act", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    const user = takeOne(await mockDb.insert(usersInAuth).values(createUser(userId)).returning());
+    await mockDb.insert(usersInAuth).values(createUser(otherUserId));
+    const block = takeOne(
+      await mockDb.insert(blocksInSocial).values({ blockedId: otherUserId, blockerId: userId }).returning(),
+    );
+    const bookmark = takeOne(await mockDb.insert(bookmarksInApp).values({ path, title, userId }).returning());
+    // The notification, the achievement, the settings and the status are written by the system or are the account's
+    // Current state, so their rows carry no creation time
+    await mockDb
+      .insert(notificationsInNotification)
+      .values({ severity: NotificationSeverity.Info, title, type: AppNotificationType.Message, userId });
+    const achievement = takeOne(
+      await mockDb.insert(achievementsInAchievement).values({ name: EmailAchievementName.EmailMarketer }).returning(),
+    );
+    await mockDb.insert(userAchievementsInAchievement).values({ achievementId: achievement.id, amount: 1, userId });
+    await mockDb.insert(userSettingsInMessage).values({ userId });
+    await mockDb.insert(userStatusesInMessage).values({ userId });
+
+    await buildUserDataArchive(userId, blobName);
+    const account = readEntryJson(await readArchiveEntries(blobName), "account.json");
+
+    expect(account.user).toStrictEqual({
+      biography: user.biography,
+      createdAt: user.createdAt,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      id: user.id,
+      image: user.image,
+      name: user.name,
+      storageBytesUsed: user.storageBytesUsed,
+      storageTier: user.storageTier,
+    });
+    expect(account.blocks).toStrictEqual([{ blockedId: otherUserId, blockerId: userId, createdAt: block.createdAt }]);
+    expect(account.bookmarks).toStrictEqual([
+      { createdAt: bookmark.createdAt, path, resourceType: null, title, userId },
+    ]);
+    for (const rows of [account.notifications, account.achievements, account.settings, account.statuses]) {
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).not.toHaveProperty("createdAt");
+      expect(rows[0]).not.toHaveProperty("updatedAt");
+      expect(rows[0]).not.toHaveProperty("deletedAt");
+    }
+  });
+
+  test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const receivedUserId = v7();
+    const friendUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb
+      .insert(usersInAuth)
+      .values([createUser(userId), createUser(otherUserId), createUser(receivedUserId), createUser(friendUserId)]);
+
+    // The person's post carries a like count from others, which the archive does not write
+    const post = takeOne(
+      await mockDb.insert(postsInPost).values({ description, likeCount: 1, ranking: 0, title, userId }).returning(),
+    );
+    const otherPost = takeOne(
+      await mockDb.insert(postsInPost).values({ description, ranking: 0, title, userId: otherUserId }).returning(),
+    );
+    // The person likes the other post, and another person's dislike of the person's own post is not theirs to list
+    const like = takeOne(
+      await mockDb.insert(likesInPost).values({ postId: otherPost.id, userId, value: 1 }).returning(),
+    );
+    await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
+
+    // The person's reaction in a room they are a member of is the room's row for that emoji on that message, which another
+    // Member shares as a reactor
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    roomObjectReplies.set("exportUserReactions", () => [{ emojiTag, messageId, userIds: [userId, otherUserId] }]);
+
+    // A request the person sent, one they received, and a friendship with a fourth account
+    const sentRequest = takeOne(
+      await mockDb
+        .insert(friendRequestsInSocial)
+        .values({ id: v7(), receiverId: otherUserId, senderId: userId })
+        .returning(),
+    );
+    await mockDb.insert(friendRequestsInSocial).values({ id: v7(), receiverId: userId, senderId: receivedUserId });
+    await mockDb.insert(friendsInSocial).values({ id: v7(), receiverId: userId, senderId: friendUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    expect(
+      Object.keys(entries)
+        .filter((entryName) => entryName.startsWith("posts/"))
+        .toSorted(),
+    ).toStrictEqual([`posts/${post.id}.json`]);
+    expect(readEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
+      createdAt: post.createdAt,
+      depth: 0,
+      description,
+      id: post.id,
+      parentId: null,
+      title,
+    });
+    // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
+    // The first reactor's, not the person's, and the exact shape leaves it out
+    expect(readEntryJson(entries, "likes.json")).toStrictEqual([
+      { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
+      { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageId },
+    ]);
+    // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
+    // Row for the pair, made when the receiver accepted it, so neither carries a time
+    expect(readEntryJson(entries, "friends.json")).toStrictEqual({
+      friends: [{ id: friendUserId, name }],
+      received: [{ id: receivedUserId, name }],
+      sent: [{ createdAt: sentRequest.createdAt, id: otherUserId, name }],
+    });
+  });
+
+  test("writes an owned room's record with its settings, images and emoji, and no other member's record", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ isReadOnly: true, name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
+    const messageAssetsBucket = getBucket(StorageBucket.MessageAssets);
+    await messageAssetsBucket.put(getRoomEmojiBlobName(room.id, emoji.id), attachmentBytes);
+    const publicBucket = getBucket(StorageBucket.PublicUserAssets);
+    await publicBucket.put(`rooms/${room.id}/ProfileImage`, attachmentBytes);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    expect(
+      Object.keys(entries)
+        .filter((entryName) => entryName.startsWith(`rooms/${room.id}/`))
+        .toSorted(),
+    ).toStrictEqual(
+      [
+        `rooms/${room.id}/emoji/${emoji.id}`,
+        `rooms/${room.id}/images/ProfileImage`,
+        `rooms/${room.id}/messages.json`,
+        `rooms/${room.id}/room.json`,
+      ].toSorted(),
+    );
+    expect(readEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
+      createdAt: room.createdAt,
+      emoji: [{ id: emoji.id, name }],
+      id: room.id,
+      name,
+      settings: {
+        allowedMimeCategories: room.allowedMimeCategories,
+        isInvitePaused: false,
+        isReadOnly: true,
+        maxFileSizeBytes: 0,
+        slowmodeMs: 0,
+      },
+      topic: "",
+      type: RoomType.Room,
+    });
+  });
+
+  test("writes the person's own search queries with their filters, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const search = takeOne(
+      await mockDb.insert(searchHistoriesInMessage).values({ query: message, roomId: room.id, userId }).returning(),
+    );
+    await mockDb.insert(searchHistoriesInMessage).values({ query: otherMessage, roomId: room.id, userId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A search carries the time it ran
+    expect(readEntryJson(entries, "searches.json")).toStrictEqual([
+      { createdAt: search.createdAt, filters: [], query: message, roomId: room.id },
+    ]);
+  });
+
+  test("writes a published resource's publication metadata, and none for a resource not published", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const publishedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const unpublishedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const publication = takeOne(
+      await mockDb
+        .insert(resourcePublicationsInResource)
+        .values({ publishedContentVersion: 3, publishVersion: 2, resourceId: publishedResource.id })
+        .returning(),
+    );
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
+    // It was last published, all as the row stores them
+    expect(readEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
+      createdAt: publication.createdAt,
+      publishedAt: publication.publishedAt,
+      publishedContentVersion: 3,
+      publishVersion: 2,
+    });
+    expect(Object.keys(entries)).not.toContain(`resources/${unpublishedResource.id}/publications.json`);
+  });
+
+  test("writes an owned resource's own fields and its creation time, and none of its bookkeeping", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const resource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
+    // Person's, so the record holds what the person wrote and when it was created
+    expect(readEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
+      contentVersion: 0,
+      createdAt: resource.createdAt,
+      id: resource.id,
+      name,
+      tags: {},
+      type: ResourceType.Blueprint,
+    });
+  });
+
+  test("writes an owned resource's link records as stored, and none for a resource with no links", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const linkingResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const linkedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const unlinkedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    await mockDb
+      .insert(resourceLinksInResource)
+      .values({ sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A link holds no token, so nothing is withheld from it, and the record is written as the row stores it
+    expect(readEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
+      { sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email },
+    ]);
+    expect(Object.keys(entries)).not.toContain(`resources/${unlinkedResource.id}/links.json`);
+  });
+
+  test("writes the moderation actions the person took in rooms they own, and no other moderator's", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+
+    // The action the person took in the room they own, at a fixed time, beside another moderator's action there against
+    // The person, and one the person took in a room they do not own
+    const actionTime = new Date(
+      Temporal.Duration.from({ hours: 1, milliseconds: 3, seconds: 2 }).total("milliseconds"),
+    );
+    await mockDb.insert(moderationLogsInMessage).values([
+      {
+        actorUserId: userId,
+        createdAt: actionTime,
+        roomId: ownedRoom.id,
+        targetUserId: otherUserId,
+        type: AdminActionType.Warn,
+      },
+      { actorUserId: otherUserId, roomId: ownedRoom.id, targetUserId: userId, type: AdminActionType.Warn },
+      { actorUserId: userId, roomId: otherRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // The action is written with its type, time and the id it was taken against, and no content of the target's
+    expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
+      { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
+    ]);
+  });
+
+  test("writes the moderation records that name the person as their target, from both tables, and none about other people", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const recordTime = new Date(Temporal.Duration.from({ minutes: 5 }).total("milliseconds"));
+    // The log and note name the person as their target in a room they are not in.
+    // A record about the other person is not theirs to read.
+    await mockDb.insert(moderationLogsInMessage).values([
+      {
+        actorUserId: otherUserId,
+        createdAt: recordTime,
+        roomId: room.id,
+        targetUserId: userId,
+        type: AdminActionType.Warn,
+      },
+      { actorUserId: otherUserId, roomId: room.id, targetUserId: otherUserId, type: AdminActionType.Warn },
+    ]);
+    await mockDb.insert(moderationNotesInMessage).values([
+      { actorUserId: otherUserId, createdAt: recordTime, note, roomId: room.id, targetUserId: userId },
+      { actorUserId: otherUserId, note, roomId: room.id, targetUserId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
+    expect(readEntryJson(entries, "moderation.json")).toStrictEqual({
+      logs: [
+        {
+          actorUserId: otherUserId,
+          createdAt: recordTime,
+          durationMs: null,
+          roomId: room.id,
+          targetUserId: userId,
+          type: AdminActionType.Warn,
+        },
+      ],
+      notes: [{ actorUserId: otherUserId, createdAt: recordTime, note, roomId: room.id, targetUserId: userId }],
+    });
+  });
+
+  test("writes the calls the person started, without their join ids, and no other person's call", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    // A room holds one call per thread, so the other person's call is in a room of their own
+    const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    // A call id is exactly CALL_ID_LENGTH alphanumerics, so these are twelve characters each
+    const call = takeOne(
+      await mockDb.insert(callSessionsInMessage).values({ id: "callSession1", roomId: room.id, userId }).returning(),
+    );
+    await mockDb
+      .insert(callSessionsInMessage)
+      .values({ id: "callSession2", roomId: otherRoom.id, userId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
+    expect(readEntryJson(entries, "calls.json")).toStrictEqual([
+      { createdAt: call.createdAt, roomId: room.id, threadRootId: 0 },
+    ]);
+  });
+
+  test("writes the person's own thread decisions, an unfollow included, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is
+    // Not theirs
+    const follow = takeOne(
+      await mockDb
+        .insert(threadFollowsInMessage)
+        .values({ isUnfollowed: true, roomId: room.id, threadRootId, userId })
+        .returning(),
+    );
+    await mockDb
+      .insert(threadFollowsInMessage)
+      .values({ isUnfollowed: false, roomId: room.id, threadRootId, userId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A follow carries the time of the person's first decision about the thread
+    expect(readEntryJson(entries, "follows.json")).toStrictEqual([
+      { createdAt: follow.createdAt, isUnfollowed: true, roomId: room.id, threadRootId },
+    ]);
+  });
+
+  test("writes the person's memberships in rooms they do not own, with their roles, and no other member's", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    const role = takeOne(await mockDb.insert(roomRolesInMessage).values({ name, roomId: room.id }).returning());
+    const roomCategory = takeOne(await mockDb.insert(roomCategoriesInMessage).values({ name, userId }).returning());
+    const membership = takeOne(
+      await mockDb
+        .insert(usersToRoomsInMessage)
+        .values({ categoryId: roomCategory.id, displayName: name, roomId: room.id, userId })
+        .returning(),
+    );
+    // The other member's row and the person's row in a room they own are not the membership written
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId: otherUserId },
+      { roomId: ownedRoom.id, userId },
+    ]);
+    await mockDb.insert(usersToRoomRolesInMessage).values([
+      { roleId: role.id, roomId: room.id, userId },
+      { roleId: role.id, roomId: room.id, userId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // The membership keeps the person's own settings, the category they filed it under, the time they joined and the
+    // Time they last read the room, and the roles they hold there
+    expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
+      {
+        categoryId: roomCategory.id,
+        createdAt: membership.createdAt,
+        displayName: membership.displayName,
+        isHidden: membership.isHidden,
+        lastReadAt: membership.lastReadAt,
+        notificationType: membership.notificationType,
+        roles: [{ id: role.id, name }],
+        roomId: room.id,
+      },
+    ]);
+  });
+
+  test("writes the person's own favorites and accesses of a resource, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const resource = takeOne(
+      await mockDb
+        .insert(resourcesInResource)
+        .values({ name, type: ResourceType.Blueprint, userId: otherUserId })
+        .returning(),
+    );
+    const favorite = takeOne(
+      await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId }).returning(),
+    );
+    await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId: otherUserId });
+    const access = takeOne(
+      await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId }).returning(),
+    );
+    await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
+    // Beside the time it was last opened
+    expect(readEntryJson(entries, "favorites.json")).toStrictEqual([
+      { createdAt: favorite.createdAt, resourceId: resource.id },
+    ]);
+    expect(readEntryJson(entries, "accesses.json")).toStrictEqual([
+      { accessedAt: access.accessedAt, createdAt: access.createdAt, resourceId: resource.id },
+    ]);
+  });
+
+  // A room's messages are read a page at a time, so a history longer than one page must come through whole and in order
+  test("archives every page of a room's messages in order, asking each page for the ids after the one before it", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const pagedMessages = Array.from(
+      { length: DATA_EXPORT_MESSAGE_PAGE_LIMIT + 1 },
+      (_value, index) => `${message}${index}`,
+    );
+    // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the cursor
+    // It is sent, up to the limit
+    const pagedRoomMessages = pagedMessages.map((pagedMessage, index) =>
+      createRoomMessage({ id: index + 1, message: pagedMessage, userId }),
+    );
+    roomObjectReplies.set("exportUserMessages", (args) => {
+      const { after } = z.object({ after: z.number().optional() }).parse(args[0]);
+      return pagedRoomMessages
+        .filter(({ id }) => after === undefined || id > after)
+        .slice(0, DATA_EXPORT_MESSAGE_PAGE_LIMIT);
+    });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+    const messages = jsonDateParse<RoomMessage[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
+
+    // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second from the
+    // Last id of the first, and the attachments are read through the same two pages again
+    expect(roomObjectCalls).toStrictEqual([
+      { args: [userId], method: "exportUserReactions", roomId: room.id },
+      {
+        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: DATA_EXPORT_MESSAGE_PAGE_LIMIT, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: DATA_EXPORT_MESSAGE_PAGE_LIMIT, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        method: "exportUserMessages",
+        roomId: room.id,
+      },
+    ]);
+    expect(messages.map(({ message: text }) => text)).toStrictEqual(pagedMessages);
+  });
+
+  test("streams an attachment's bytes into the archive, under its room and its file", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
+    const attachmentBlobName = getFileBlobNames(room.id, file.id, file.filename).blobName;
+    roomObjectReplies.set("exportUserMessages", () => [
+      createRoomMessage({ files: [file], id: messageId, message, userId }),
+    ]);
+    await seedAttachment(attachmentBlobName);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    expect(entries[`rooms/${room.id}/files/${file.id}/${filename}`]).toStrictEqual(attachmentBytes);
+  });
+});

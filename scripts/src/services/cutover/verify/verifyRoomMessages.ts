@@ -19,7 +19,7 @@ export const verifyRoomMessages = async (options: VerifyRoomMessagesOptions): Pr
     if (roomId === undefined || !parents.roomIds.has(roomId)) return;
 
     let messageCount = 0;
-    let newestId: null | number = null;
+    let newestId: number | undefined;
     for await (const { entity } of listMapperEntities(tableClient, LegacyAzureTable.Messages, {
       filter: `PartitionKey eq '${roomOldId}'`,
     })) {

@@ -45,7 +45,7 @@ interface CopyRoomOptions {
   roomOldId: string;
 }
 
-// Imports the messages, reactions and pending scheduled messages of every room into the room's own object, through the functions Worker's cutover route.
+// Imports the messages, reactions and pending scheduled messages of every room into the room's own object, through the jobs Worker's cutover route.
 // A room's messages are numbered in createdAt order, and each number is kept in the id map before the import writes it, so a re-run or the delta writes the same numbers.
 // The full copy runs while the app is live and records when it began; the delta imports the rooms' changed rows, and every write is an upsert, so a re-run writes the same rows again rather than adding to them.
 // A delta does not remove a message Azure no longer lists: no route deletes a message from an object yet

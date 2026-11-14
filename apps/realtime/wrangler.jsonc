@@ -1,0 +1,53 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "main": "src/worker.ts",
+  "account_id": "33d16cc4281c2845398ddb2fbd29829b",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "env": {
+    "prod": {
+      "name": "prod-wkr-esposter-realtime",
+      "queues": {
+        "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "prod-q-esposter-process-notification" }],
+      },
+      "d1_databases": [
+        {
+          "binding": "CORE",
+          "database_name": "prod-d1-esposter-core",
+          "database_id": "08a5061a-0fbb-487e-883e-f6b660cffce2",
+        },
+      ],
+      "r2_buckets": [{ "binding": "RESOURCE_ASSETS", "bucket_name": "prod-r2-esposter-resource-assets" }],
+      "durable_objects": {
+        "bindings": [
+          { "name": "CALL", "class_name": "CallObject" },
+          { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "USER", "class_name": "UserObject" },
+        ],
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] }],
+    },
+    "dev": {
+      "name": "dev-wkr-esposter-realtime",
+      "queues": {
+        "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "dev-q-esposter-process-notification" }],
+      },
+      "d1_databases": [
+        {
+          "binding": "CORE",
+          "database_name": "dev-d1-esposter-core",
+          "database_id": "0973f2df-a1f0-4d43-a801-663b0698503b",
+        },
+      ],
+      "r2_buckets": [{ "binding": "RESOURCE_ASSETS", "bucket_name": "dev-r2-esposter-resource-assets" }],
+      "durable_objects": {
+        "bindings": [
+          { "name": "CALL", "class_name": "CallObject" },
+          { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "USER", "class_name": "UserObject" },
+        ],
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] }],
+    },
+  },
+}

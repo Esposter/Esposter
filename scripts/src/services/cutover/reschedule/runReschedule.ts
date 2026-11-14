@@ -14,7 +14,7 @@ import { toRescheduleReminders } from "#src/services/cutover/reschedule/toResche
 import { readTableParents } from "#src/services/cutover/tables/readTableParents";
 
 // Arms, inside the freeze, the old estate's pending message reminders and the TodoList reminders from the copied rows, on
-// Their owners' objects, through the functions Worker's temporary route
+// Their owners' objects, through the jobs Worker's temporary route
 export const runReschedule = async (environment: CutoverEnvironment): Promise<void> => {
   const variables = readCutoverEnvironment();
   const source = createSourceClient(variables.SOURCE_DATABASE_URL);

@@ -1,0 +1,45 @@
+{
+  "name": "@esposter/realtime",
+  "version": "4.10.1",
+  "private": true,
+  "description": "The realtime Worker: the room, call and person objects that hold live state and the sockets that carry it.",
+  "homepage": "https://github.com/Esposter/Esposter/blob/main/apps/realtime#readme",
+  "bugs": {
+    "url": "https://github.com/Esposter/Esposter/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Jimmy Chen",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Esposter/Esposter.git"
+  },
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "wrangler deploy --dry-run --outdir dist --env prod",
+    "dev": "wrangler dev --env dev --env-file .env",
+    "deploy:worker": "wrangler deploy",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "test": "vitest",
+    "typecheck": "tsrs --fast"
+  },
+  "dependencies": {
+    "@esposter/db": "workspace:*",
+    "@esposter/db-schema": "workspace:*",
+    "@esposter/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "temporal-polyfill": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
+    "@esposter/configuration": "workspace:*",
+    "@esposter/db-mock": "workspace:*",
+    "@types/node": "catalog:",
+    "uuid": "catalog:",
+    "wrangler": "catalog:"
+  }
+}

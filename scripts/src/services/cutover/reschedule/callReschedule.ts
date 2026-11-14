@@ -5,7 +5,7 @@ import { rescheduleResponseSchema } from "#src/models/cutover/RescheduleResponse
 import { callFunctionsRoute } from "#src/services/cutover/callFunctionsRoute";
 import { RESCHEDULE_PATH } from "#src/services/cutover/constants";
 
-// Asks the functions Worker to arm the old estate's pending message reminders and the TodoList reminders from the copied
+// Asks the jobs Worker to arm the old estate's pending message reminders and the TodoList reminders from the copied
 // Rows, on their owners' objects
 export const callReschedule = async (
   functionsUrl: string,

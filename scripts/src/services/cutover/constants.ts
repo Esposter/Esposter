@@ -15,7 +15,7 @@ export const R2_CONNECT_ERROR_CODES: string[] = ["UND_ERR_CONNECT_TIMEOUT", "ECO
 // A D1 statement takes at most this many bound parameters and this many bytes of SQL and values
 export const D1_STATEMENT_PARAMETER_LIMIT = 100;
 export const D1_STATEMENT_BYTE_LIMIT = 100 * 1024;
-// A request to the Cloudflare API or the functions Worker, bounded longer than a script's own fetch since a batch or a route can run for minutes
+// A request to the Cloudflare API or the jobs Worker, bounded longer than a script's own fetch since a batch or a route can run for minutes
 export const CUTOVER_REQUEST_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // A batch request carries this many statements, all applied in one transaction
 export const D1_BATCH_STATEMENT_COUNT = 20;
@@ -29,8 +29,8 @@ export const AZURE_PAGE_SIZE = 1000;
 // A multipart part is buffered in memory before it is sent, so it is sized for that.
 // Every part but the last is at least R2's five mebibyte minimum
 export const R2_MULTIPART_PART_BYTES = 64 * 1024 * 1024;
-// The temporary internal routes on the functions Worker the cutover calls, and the header their secret travels in.
-// The functions Worker names the same paths; all of them are deleted at teardown
+// The temporary internal routes on the jobs Worker the cutover calls, and the header their secret travels in.
+// The jobs Worker names the same paths; all of them are deleted at teardown
 export const RESCHEDULE_PATH = "/_internal/cutover/reschedule";
 export const ROOM_IMPORT_PATH = "/_internal/cutover/room-import";
 export const ROOM_SUMMARY_PATH = "/_internal/cutover/room-summary";

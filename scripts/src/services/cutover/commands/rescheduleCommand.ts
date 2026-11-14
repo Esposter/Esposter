@@ -8,7 +8,7 @@ export const rescheduleCommand: SubCommandsDef[string] = defineCommand({
   args: { ...environmentArgs },
   meta: {
     description:
-      "Ask the functions Worker to arm the pending message reminders and the copied TodoList reminders on their owners' objects. In the freeze, after copy-tables --delta",
+      "Ask the jobs Worker to arm the pending message reminders and the copied TodoList reminders on their owners' objects. In the freeze, after copy-tables --delta",
     name: "reschedule",
   },
   run: async ({ args }) => {
