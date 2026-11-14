@@ -1,4 +1,4 @@
-export interface BarrelCheck {
+export interface GeneratedFileCheck {
   findings: string[];
   regenerated: string[];
 }

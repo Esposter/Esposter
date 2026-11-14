@@ -7,4 +7,9 @@ import { join } from "node:path";
 export const EXPORT_LINE_DIRECTORY_REGEX: RegExp = /^export \* from "\.\/(?<directory>.+)\/[^/"]+";$/u;
 // The configuration package's built entry, which carries the generator every package's build runs
 export const CONFIGURATION_DISTRIBUTION_PATH: string = join(PACKAGES_DIRECTORY, "configuration", "dist", "index.js");
+// What the dependency graph is drawn from: a member's manifest, which names its siblings, the workspace file that lists the
+// Members and the catalog they resolve from, and the generator that draws them
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands this annotation
+export const GRAPH_INPUT_REGEX: RegExp =
+  /^(?:(?:.+\/)?package\.json|pnpm-workspace\.yaml|scripts\/src\/(?:models|services)\/dependencyGraph\/.+)$/u;
 export const SOURCE_DIRECTORY_NAME = "src";

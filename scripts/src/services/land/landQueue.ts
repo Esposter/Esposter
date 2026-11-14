@@ -20,7 +20,7 @@ export const landQueue = async (remove: boolean, skipPrecheck: boolean): Promise
   if (remove && !checkIsLinkedWorktree())
     throw new InvalidOperationError(Operation.Delete, REPOSITORY_ROOT, "the main checkout is not a worktree to remove");
   if (!skipPrecheck) {
-    const report = runPrecheck(false);
+    const report = await runPrecheck(false);
     if (report.distributionMissing) {
       console.info(
         `${readMainCheckoutRoot()}/packages/configuration/dist is missing: vp run build:configuration there`,

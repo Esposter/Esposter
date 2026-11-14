@@ -1,4 +1,4 @@
-import type { BarrelCheck } from "#src/models/precheck/BarrelCheck";
+import type { GeneratedFileCheck } from "#src/models/precheck/GeneratedFileCheck";
 import type { BarrelLines } from "#src/models/precheck/BarrelLines";
 import type { ExportsGeneration } from "@esposter/configuration";
 
@@ -16,7 +16,7 @@ import { join } from "node:path";
 
 // One package's barrels against what its generator writes: each line the generator would write that a committed barrel
 // Lacks, and each committed line it would not write. With `fix`, the generator writes the barrels instead
-export const checkBarrel = (packageDirectory: string, mainCheckoutRoot: string, fix: boolean): BarrelCheck => {
+export const checkBarrel = (packageDirectory: string, mainCheckoutRoot: string, fix: boolean): GeneratedFileCheck => {
   const sourceDirectory = join(REPOSITORY_ROOT, packageDirectory, SOURCE_DIRECTORY_NAME);
   const barrelLabel = `${packageDirectory}/${SOURCE_DIRECTORY_NAME}/${BARREL_FILE}`;
   const componentsLabel = `${packageDirectory}/${SOURCE_DIRECTORY_NAME}/${COMPONENTS_DIRECTORY}/${BARREL_FILE}`;
