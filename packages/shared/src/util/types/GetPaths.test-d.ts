@@ -18,7 +18,11 @@ describe("getPaths type", () => {
   test("tableEntity should keep the literal keys even if type has an index signature", () => {
     expect.hasAssertions();
 
-    type TableEntity = { [key: string]: unknown; partitionKey: string; rowKey: string };
+    interface TableEntity {
+      [key: string]: unknown;
+      partitionKey: string;
+      rowKey: string;
+    }
     expectTypeOf<GetPaths<TableEntity>>().toEqualTypeOf<
       "partitionKey" | "partitionKey.length" | "rowKey" | "rowKey.length"
     >();

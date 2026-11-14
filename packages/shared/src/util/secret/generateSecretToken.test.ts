@@ -1,6 +1,6 @@
+import { secretTokenSchema } from "#src/services/secret/secretTokenSchema";
 import { SECRET_TOKEN_LENGTH } from "#src/util/secret/constants";
 import { generateSecretToken } from "#src/util/secret/generateSecretToken";
-import { secretTokenSchema } from "#src/util/secret/secretTokenSchema";
 import { describe, expect, test } from "vitest";
 
 describe(generateSecretToken, () => {

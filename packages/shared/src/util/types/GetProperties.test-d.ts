@@ -4,7 +4,7 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe("getProperties type", () => {
   // A table row: its two key properties, and an index signature its other properties sit under
-  type TableEntity<T extends object> = { [key: string]: unknown; partitionKey: string; rowKey: string } & T;
+  type TableEntity<T extends object> = T & { [key: string]: unknown; partitionKey: string; rowKey: string };
 
   test("array", () => {
     expect.hasAssertions();

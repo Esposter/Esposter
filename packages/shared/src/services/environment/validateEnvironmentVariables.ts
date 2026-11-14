@@ -3,9 +3,10 @@ import type { z } from "zod";
 import { InvalidOperationError } from "#src/models/error/InvalidOperationError";
 import { Operation } from "#src/models/shared/Operation";
 
-// Names every variable that fails, so one boot reports the whole fix rather than the first gap. A zod issue never
-// Quotes the value it rejected, so a secret that is malformed does not reach the log. The parsed environment is returned,
-// so a Worker that validates once at its start keeps what it checked rather than reading the environment again
+// Names every variable that fails, so one boot reports the whole fix rather than the first gap.
+// A zod issue never quotes the value it rejected, so a secret that is malformed does not reach the log.
+// The parsed environment is returned, so a Worker that validates once at its start keeps what it checked.
+// That keeps it from reading the environment again
 export const validateEnvironmentVariables = <Output>(
   schema: z.ZodType<Output>,
   environment: Record<string, string | undefined>,
