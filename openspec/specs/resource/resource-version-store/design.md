@@ -24,7 +24,7 @@ flowchart TD
   trigger["version trigger"] --> anchor["Read channel anchor"]
   anchor --> store["Write to the store — dedupe, delta, or promote to a keyframe"]
   store --> row[("Upsert the version row — hash, base, both sizes, reason, summary")]
-  row --> commit{"Inside a publish transaction?"}
+  row --> commit{"Inside a publish batch?"}
   commit -->|yes| claim["The publication claim commits with the row"]
   commit -->|no| charge
   claim --> charge["Charge stored bytes"]
@@ -38,15 +38,15 @@ flowchart TD
 
 `writeSnapshotVersion` is the one way a version is taken, whichever channel it lands in. It reads the channel's anchor, writes the content to the store against it, and upserts the row that makes the version visible. The object is durable before the row exists, so a failure between the two leaves no version rather than a row naming nothing — the correct outcome for a version that was never stored. An orphaned object is adopted by the next write of the same content, never swept.
 
-**A write and a collection of the same resource never overlap.** Both run inside a transaction holding the resource's advisory lock (`lockSnapshotObjects`), because the gap between an object landing and its row existing is one a concurrent eviction could otherwise fall into: it reads the surviving rows, finds nothing naming the hash the write is about to record, and frees the object — or the anchor it decodes against — under a row that then names something unreadable. Under the lock a collection either sees the row or runs before the write reads its anchor, in which case the write finds the anchor gone and honestly starts a new lineage. The lock is keyed on the resource id, so unrelated resources never wait on each other, and it is transaction-scoped, so a failed write releases it with its rollback.
+**A write and a collection of the same resource never overlap.** Both hold the resource's object lease (`withResourceObjectLock`), a row that a request takes by replacing only an expired one and releases by naming its own holder, because the gap between an object landing and its row existing is one a concurrent eviction could otherwise fall into: it reads the surviving rows, finds nothing naming the hash the write is about to record, and frees the object — or the anchor it decodes against — under a row that then names something unreadable. Under the lock a collection either sees the row or runs before the write reads its anchor, in which case the write finds the anchor gone and honestly starts a new lineage. The lease is keyed on the resource id, so unrelated resources never wait on each other. A holder that never releases it, having crashed, frees the resource when the lease expires, and a request that cannot take it within a bounded wait is refused rather than queued.
 
 **A write that lands second learns it lost.** Two writers of the same content both find nothing stored, and each encodes against its own anchor. The blob write is create-only, and its refusal is passed back as the object store's answer rather than swallowed: the loser reads the header the winner stored and records that base, deduplicated and uncharged, because a row carrying the loser's own base would name a keyframe the stored delta never decodes against, and a charge for its bytes would be for bytes it never stored.
 
 **The anchor is derived, never stored.** A channel's anchor is its newest row whose base is empty, and the bytes anchored to it are the stored sizes of the rows above it — `readSnapshotAnchor` answers both from the primary key. A column holding either would be a second source of truth for what one indexed read answers, and one that could disagree with the rows after a failed write.
 
-**The charge is separate from the write**, because a publish takes its version inside the transaction that claims `publishVersion` and the charge takes the ledger row's lock and then the user's — a transaction held open across those waits on locks it is itself holding. `chargeSnapshotVersion` runs after the transaction and charges exactly the stored bytes, against the object's own key, so the object's `BlobCreated` reconciles to the same figure and its eventual deletion releases it.
+**The charge is separate from the write**, because a publish takes its version inside the batch that claims `publishVersion` and the charge takes the ledger row's lock and then the user's — a batch held open across those waits on locks it is itself holding. `chargeSnapshotVersion` runs after the batch and charges exactly the stored bytes, against the object's own key, so the object's `BlobCreated` reconciles to the same figure and its eventual deletion releases it.
 
-**The one rewrite** is a write to a version the channel already holds. The upsert moves the row to the new object, and the object it named before is collected once the row has committed, if no other row still names it — published inside the transaction, a commit that failed would leave the row naming an object already gone.
+**The one rewrite** is a write to a version the channel already holds. The upsert moves the row to the new object, and the object it named before is collected once the row has committed, if no other row still names it — published inside the batch, a commit that failed would leave the row naming an object already gone.
 
 ## Reading a version
 
@@ -77,10 +77,10 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 | `apps/web/server/services/resource/snapshot/createSnapshotObjectStore.ts`  | the store's one contact with Azure — objects under `{id}/objects/`      |
 | `apps/web/server/services/resource/snapshot/writeSnapshotVersion.ts`       | the one way a version is taken, in either channel                       |
 | `apps/web/server/services/resource/snapshot/readSnapshotAnchor.ts`         | the channel's anchor, derived from its rows                             |
-| `apps/web/server/services/resource/snapshot/chargeSnapshotVersion.ts`      | the charge for the stored bytes, after the transaction                  |
+| `apps/web/server/services/resource/snapshot/chargeSnapshotVersion.ts`      | the charge for the stored bytes, after the batch                        |
 | `apps/web/server/services/resource/snapshot/readSnapshotVersionContent.ts` | reconstruct and parse one version                                       |
 | `apps/web/server/services/resource/snapshot/collectSnapshotObjects.ts`     | what an eviction or unpublish may delete                                |
-| `apps/web/server/services/resource/snapshot/lockSnapshotObjects.ts`        | the per-resource lock a write and a collection both hold                |
+| `apps/web/server/services/resource/snapshot/withResourceObjectLock.ts`     | the per-resource lease a write and a collection both hold               |
 | `apps/web/server/services/resource/snapshot/takeResourceRevision.ts`       | where a revision is taken and the expired and the oldest evicted        |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`      | where publishing, the public read and unpublishing are wired            |
 

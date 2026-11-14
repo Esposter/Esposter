@@ -27,7 +27,7 @@ flowchart TD
   address --> kept
 ```
 
-Release. Every path that can leave a file unreferenced hands its candidate hashes to one release, and the release decides under the resource's object lock.
+Release. Every path that can leave a file unreferenced hands its candidate hashes to one release, and the release decides under the resource's object lease.
 
 ```mermaid
 flowchart TD

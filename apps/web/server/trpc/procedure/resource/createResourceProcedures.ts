@@ -38,6 +38,7 @@ import { getSnapshotVersionWrites } from "#server/services/resource/snapshot/get
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { prepareSnapshotVersion } from "#server/services/resource/snapshot/prepareSnapshotVersion";
+import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
@@ -294,40 +295,45 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Row left carrying the column's default reports a draft that has moved since it was published,
         // Whatever the owner has or has not edited since
         const { contentVersion: publishedContentVersion } = ctx.resource;
-        // The content is stored before anything is claimed, so a failed store claims nothing and the publication never names a
-        // version that was never stored (openspec/specs/resource/resource-version-store/design.md)
-        const prepared = await prepareSnapshotVersion(
-          ctx.db,
-          ctx.resource,
-          SnapshotChannel.Published,
-          JSON.stringify(publishedContent),
-        );
-        // The claim and the version it names are one batch. The version reads the publication counter the claim has just
-        // bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
-        // version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
-        const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
-        const [publicationRows] = await ctx.db.batch([
-          ctx.db
-            .insert(resourcePublicationsInResource)
-            .values({ publishedContentVersion, resourceId: id })
-            .onConflictDoUpdate({
-              set: {
-                publishedAt: new Date(),
-                publishedContentVersion,
-                publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
-              },
-              target: resourcePublicationsInResource.resourceId,
-            })
-            .returning(),
-          ...getSnapshotVersionWrites(
+        // The object and the claim naming it are written under the lease, so a collection cannot free the object between them
+        const published = await withResourceObjectLock(ctx.db, id, async () => {
+          // The content is stored before anything is claimed, so a failed store claims nothing and the publication never names
+          // a version that was never stored (openspec/specs/resource/resource-version-store/design.md)
+          const prepared = await prepareSnapshotVersion(
             ctx.db,
-            id,
-            { channel: SnapshotChannel.Published, version: publishVersion },
-            prepared,
-          ),
-        ]);
+            ctx.resource,
+            SnapshotChannel.Published,
+            JSON.stringify(publishedContent),
+          );
+          // The claim and the version it names are one batch. The version reads the publication counter the claim has just
+          // bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
+          // version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
+          const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
+          const [publicationRows] = await ctx.db.batch([
+            ctx.db
+              .insert(resourcePublicationsInResource)
+              .values({ publishedContentVersion, resourceId: id })
+              .onConflictDoUpdate({
+                set: {
+                  publishedAt: new Date(),
+                  publishedContentVersion,
+                  publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
+                },
+                target: resourcePublicationsInResource.resourceId,
+              })
+              .returning(),
+            ...getSnapshotVersionWrites(
+              ctx.db,
+              id,
+              { channel: SnapshotChannel.Published, version: publishVersion },
+              prepared,
+            ),
+          ]);
+          return { prepared, publicationRows };
+        });
+        const { prepared } = published;
         const publication = requireMutation(
-          publicationRows[0],
+          published.publicationRows[0],
           Operation.Update,
           DatabaseEntityType.ResourcePublication,
           id,

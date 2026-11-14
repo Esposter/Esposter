@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { touchSnapshotAssets } from "#server/services/resource/snapshot/touchSnapshotAssets";
+import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { resourceWorkingAssetsInResource } from "@esposter/db-schema";
 import { eq, sql } from "drizzle-orm";
 
@@ -18,19 +19,23 @@ export const reserveWorkingAssets = async (
 ): Promise<void> => {
   if (assetHashes.size === 0) return;
 
-  const referencedRows = await db
-    .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
-    .from(resourceWorkingAssetsInResource)
-    .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId));
-  const referencedHashes = new Set(referencedRows.map(({ assetHash }) => assetHash));
-  // Only the assets not yet referenced are touched: a referenced one is kept by its row, so it needs no touch
-  const addedHashes = new Set([...assetHashes].filter((assetHash) => !referencedHashes.has(assetHash)));
-  await touchSnapshotAssets(resourceId, addedHashes);
-  // A concurrent reserve of the same asset may have written the row since the read, which is the same reference. One statement
-  // over a JSON array, since a bind limit of 100 parameters per statement would cap a document at a few dozen assets
-  // Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
-  const now = Date.now();
-  if (addedHashes.size > 0)
+  // Under the lease, so a release that is deciding on these assets sees the rows this reserve writes, or this reserve
+  // waits for it to finish
+  await withResourceObjectLock(db, resourceId, async () => {
+    const referencedRows = await db
+      .select({ assetHash: resourceWorkingAssetsInResource.assetHash })
+      .from(resourceWorkingAssetsInResource)
+      .where(eq(resourceWorkingAssetsInResource.resourceId, resourceId));
+    const referencedHashes = new Set(referencedRows.map(({ assetHash }) => assetHash));
+    // Only the assets not yet referenced are touched: a referenced one is kept by its row, so it needs no touch
+    const addedHashes = new Set([...assetHashes].filter((assetHash) => !referencedHashes.has(assetHash)));
+    await touchSnapshotAssets(resourceId, addedHashes);
+    if (addedHashes.size === 0) return;
+
+    // A concurrent reserve of the same asset may have written the row since the read, which is the same reference. One
+    // statement over a JSON array, since a bind limit of 100 parameters per statement would cap a document at a few dozen
+    // assets. Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
+    const now = Date.now();
     await db
       .insert(resourceWorkingAssetsInResource)
       .select(
@@ -45,4 +50,5 @@ export const reserveWorkingAssets = async (
           .where(sql`true`),
       )
       .onConflictDoNothing();
+  });
 };

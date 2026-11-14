@@ -6,6 +6,7 @@ import { collectSnapshotObjects } from "#server/services/resource/snapshot/colle
 import { getSnapshotVersionWrites } from "#server/services/resource/snapshot/getSnapshotVersionWrites";
 import { prepareSnapshotVersion } from "#server/services/resource/snapshot/prepareSnapshotVersion";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
+import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { resourceVersionAssetsInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -30,35 +31,40 @@ export const writeSnapshotVersion = async (
   serializedContent: string,
 ): Promise<WrittenVersion> => {
   const { id } = resource;
-  const prepared = await prepareSnapshotVersion(db, resource, channel, serializedContent);
-  const { writtenVersion } = prepared;
-  // Read before the batch replaces them, so the caller learns what the write displaced. Reads only: a release that
-  // races this write is decided by the grace window, and a collection by the rows that survive the batch
-  const [previousVersion, replacedAssetRows] = await Promise.all([
-    db.query.resourceVersionsInResource.findFirst({
-      columns: { baseHash: true, hash: true },
-      where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },
-    }),
-    db
-      .select({ assetHash: resourceVersionAssetsInResource.assetHash })
-      .from(resourceVersionAssetsInResource)
-      .where(
-        and(
-          eq(resourceVersionAssetsInResource.resourceId, id),
-          eq(resourceVersionAssetsInResource.channel, channel),
-          eq(resourceVersionAssetsInResource.version, version),
+  // The object is put and its row inserted under the lease, so a collection cannot free the object between the two
+  const { previousVersion, releasedAssetHashes, writtenVersion } = await withResourceObjectLock(db, id, async () => {
+    const prepared = await prepareSnapshotVersion(db, resource, channel, serializedContent);
+    // Read before the batch replaces them, so the caller learns what the write displaced
+    const [previousVersion, replacedAssetRows] = await Promise.all([
+      db.query.resourceVersionsInResource.findFirst({
+        columns: { baseHash: true, hash: true },
+        where: { channel: { eq: channel }, resourceId: { eq: id }, version: { eq: version } },
+      }),
+      db
+        .select({ assetHash: resourceVersionAssetsInResource.assetHash })
+        .from(resourceVersionAssetsInResource)
+        .where(
+          and(
+            eq(resourceVersionAssetsInResource.resourceId, id),
+            eq(resourceVersionAssetsInResource.channel, channel),
+            eq(resourceVersionAssetsInResource.version, version),
+          ),
         ),
-      ),
-  ]);
-  await db.batch(getSnapshotVersionWrites(db, id, { channel, reason, version }, prepared));
-  // After the batch, never inside: collection publishes the deletion the moment it decides, and a commit that failed after that
-  // would leave the row naming an object already gone. Best-effort like every other collection — a failed one leaves the object
-  // stored and charged until purge, never the version unwritten
+    ]);
+    await db.batch(getSnapshotVersionWrites(db, id, { channel, reason, version }, prepared));
+    return {
+      previousVersion,
+      releasedAssetHashes: replacedAssetRows
+        .map(({ assetHash }) => assetHash)
+        .filter((assetHash) => !prepared.assetHashes.has(assetHash)),
+      writtenVersion: prepared.writtenVersion,
+    };
+  });
+  // After the lease, never inside: a collection takes the lease itself, and a release that failed after its deletion
+  // was published would leave the row naming an object already gone. Best-effort like every other collection — a failed
+  // one leaves the object stored and charged until purge, never the version unwritten
   if (previousVersion && previousVersion.hash !== writtenVersion.hash)
     await getResultAsync(() => collectSnapshotObjects(db, id, [previousVersion])).match(noop, console.error);
-  const releasedAssetHashes = replacedAssetRows
-    .map(({ assetHash }) => assetHash)
-    .filter((assetHash) => !prepared.assetHashes.has(assetHash));
   await getResultAsync(() => releaseResourceAssets(db, id, releasedAssetHashes)).match(noop, console.error);
   return writtenVersion;
 };
