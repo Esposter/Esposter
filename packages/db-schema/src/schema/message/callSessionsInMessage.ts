@@ -18,6 +18,9 @@ export const callSessionsInMessage = pgTable(
     // The thread this call belongs to, empty for the room's own call. A room can run both at once — a call in
     // A thread is a call about that message, not the room's — so the room alone does not identify a session
     threadRootRowKey: text().$type<"" | ReverseTickedTimestamp>().notNull().default(""),
+    // The RealtimeKit meeting this call's participants join, made by its first join and never replaced. Null until that
+    // join, and for a call joined where RealtimeKit is not configured. Unique, since a webhook names its call by it
+    meetingId: text().unique(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

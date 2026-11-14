@@ -4,8 +4,8 @@ import { environmentSchema } from "#shared/models/environment/Environment";
 import { sharedEnvironmentVariablesShape } from "@esposter/shared";
 import { z } from "zod";
 
-// LiveKit is optional — a deployment without it runs calls with no media server — so its three variables may be
-// Absent or blank, and `getLiveKitCredentials` reads either as absent
+// RealtimeKit is optional — a deployment without it runs calls with no media server — so its three variables may be
+// Absent or blank, and `getRealtimeKitCredentials` reads either as absent
 export interface WebEnvironmentVariables {
   APP_ENV: Environment;
   AZURE_CONTAINER_BASE_URL: string;
@@ -21,6 +21,7 @@ export interface WebEnvironmentVariables {
   BASE_URL: string;
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;
+  CLOUDFLARE_ACCOUNT_ID?: string;
   DATABASE_URL: string;
   FACEBOOK_CLIENT_ID: string;
   FACEBOOK_CLIENT_SECRET: string;
@@ -28,9 +29,8 @@ export interface WebEnvironmentVariables {
   GITHUB_CLIENT_SECRET: string;
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
-  LIVEKIT_API_KEY?: string;
-  LIVEKIT_API_SECRET?: string;
-  LIVEKIT_URL?: string;
+  REALTIMEKIT_API_TOKEN?: string;
+  REALTIMEKIT_APP_ID?: string;
   VAPID_PRIVATE_KEY: string;
   VAPID_PUBLIC_KEY: string;
 }
@@ -44,15 +44,15 @@ export const webEnvironmentVariablesSchema = z.object({
   AZURE_SEARCH_API_KEY: z.string().min(1),
   BETTER_AUTH_SECRET: z.string().min(1),
   BETTER_AUTH_URL: z.url(),
+  CLOUDFLARE_ACCOUNT_ID: z.string().optional(),
   FACEBOOK_CLIENT_ID: z.string().min(1),
   FACEBOOK_CLIENT_SECRET: z.string().min(1),
   GITHUB_CLIENT_ID: z.string().min(1),
   GITHUB_CLIENT_SECRET: z.string().min(1),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: z.string().min(1),
-  LIVEKIT_API_KEY: z.string().optional(),
-  LIVEKIT_API_SECRET: z.string().optional(),
-  LIVEKIT_URL: z.string().optional(),
+  REALTIMEKIT_API_TOKEN: z.string().optional(),
+  REALTIMEKIT_APP_ID: z.string().optional(),
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_PUBLIC_KEY: z.string().min(1),
 }) satisfies z.ZodType<WebEnvironmentVariables>;

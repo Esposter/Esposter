@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
-// Whether a connection LiveKit reports may stay in its call. A token outlives the membership it was minted for, and
-// LiveKit lets a removed participant rejoin on it, so a room call asks the room's door again on every connection.
+// Whether a connection RealtimeKit reports may stay in its call. A token outlives the membership it was minted for, so a
+// Room call asks the room's door again on every connection it reports, rather than trusting the token it was given.
 // A member timed out of the room is kept out of its calls until the timeout ends, as a removed one is for good. A
 // Standalone call has no room and was admitted when its token was minted; a session with no row is a call that no
 // Longer exists

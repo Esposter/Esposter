@@ -11,8 +11,6 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { on } from "#server/services/events/on";
-import { SCREEN_SHARE_TRACK_SOURCES } from "#server/services/livekit/constants";
-import { updateLiveKitTrackSources } from "#server/services/livekit/updateLiveKitTrackSources";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
 import { readRoomCallParticipantMaps } from "#server/services/message/call/readRoomCallParticipantMaps";
 import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
@@ -25,6 +23,8 @@ import { getCursorPaginationData } from "#server/services/pagination/cursor/getC
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { PublishSource } from "#server/services/realtimeKit/constants";
+import { updateRealtimeKitParticipantPreset } from "#server/services/realtimeKit/updateRealtimeKitParticipantPreset";
 import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMemberRemoval";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -66,7 +66,6 @@ import { exhaustiveGuard, getResultAsync, noop, Operation } from "@esposter/shar
 import { TRPCError } from "@trpc/server";
 import { and, eq, getColumns, ilike, isNull } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
-import { TrackSource } from "livekit-server-sdk";
 
 export const moderationRouter = router({
   createModerationNote: getPermissionsProcedure(
@@ -167,18 +166,19 @@ export const moderationRouter = router({
           await evictAfterRemoval();
           break;
         }
-        // Enforced at the SFU, since the targeted client applying the action to itself is only a courtesy — one that
+        // Enforced at RealtimeKit, since the targeted client applying the action to itself is only a courtesy — one that
         // Ignored it would keep talking or presenting
         case AdminActionType.ForceMute:
         case AdminActionType.ForceUnmute:
         case AdminActionType.StopScreenShare: {
           const sources =
-            input.type === AdminActionType.StopScreenShare ? SCREEN_SHARE_TRACK_SOURCES : [TrackSource.MICROPHONE];
+            input.type === AdminActionType.StopScreenShare ? [PublishSource.Screenshare] : [PublishSource.Microphone];
           const roomCallParticipantMaps = await readRoomCallParticipantMaps(ctx.db, roomId);
           await Promise.all(
-            roomCallParticipantMaps.map(([callSessionId, participantMap]) =>
-              updateLiveKitTrackSources(
+            roomCallParticipantMaps.map(({ callSessionId, meetingId, participantMap }) =>
+              updateRealtimeKitParticipantPreset(
                 callSessionId,
+                meetingId,
                 participantMap,
                 targetUserId,
                 sources,

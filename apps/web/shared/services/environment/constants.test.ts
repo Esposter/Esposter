@@ -5,8 +5,8 @@ import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { MOCK_BLOB_BASE_URL } from "azure-mock";
 
 // Every variable the schema requires, so a test runs against an environment the start-up check would accept and a
-// Variable added to the interface fails here until it is given a value. The optional LiveKit ones are left out, which
-// Is a deployment without LiveKit
+// Variable added to the interface fails here until it is given a value. The optional RealtimeKit ones are left out, which
+// Is a deployment without RealtimeKit
 export const MOCK_ENVIRONMENT_VARIABLES = {
   APP_ENV: Environment.Test,
   AZURE_CONTAINER_BASE_URL: MOCK_BLOB_BASE_URL,

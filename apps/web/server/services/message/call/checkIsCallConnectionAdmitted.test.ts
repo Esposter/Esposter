@@ -34,8 +34,7 @@ describe(checkIsCallConnectionAdmitted, () => {
     await expect(checkIsCallConnectionAdmitted(mockContext.db, callSessionId, userId)).resolves.toBe(true);
   });
 
-  // LiveKit lets a removed participant rejoin on the token it still holds, so the connection is where the room's
-  // Door is asked again
+  // A token outlives the membership it was minted for, so the connection is where the room's door is asked again
   test("refuses a connection whose membership was removed", async () => {
     expect.hasAssertions();
 

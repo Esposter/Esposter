@@ -1,5 +1,5 @@
-import type { JoinCallResult } from "#server/models/room/call/JoinCallResult";
 import type { CallParticipant } from "#shared/models/room/call/CallParticipant";
+import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
 import type { CallSessionInMessage } from "@esposter/db-schema";
 
 import { callAdmittedParticipantMap } from "#server/services/message/call/callAdmittedParticipantMap";
@@ -8,7 +8,7 @@ import { checkIsCallConnectionAdmitted } from "#server/services/message/call/che
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "#server/services/message/call/createStandaloneCallSessionId";
-import { joinLiveKitCall } from "#server/services/message/call/joinLiveKitCall";
+import { joinRealtimeKitCall } from "#server/services/message/call/joinRealtimeKitCall";
 import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
 import { onWhileJoinedCall } from "#server/services/message/call/onWhileJoinedCall";
 import { readCallSessionId } from "#server/services/message/call/readCallSessionId";
@@ -52,7 +52,7 @@ export const baseCallRouter = router({
 
       callAdmittedParticipantMap.get(id)?.delete(session.id);
       return {
-        ...(await joinLiveKitCall(callSession, createParticipant(session, user), user.id)),
+        ...(await joinRealtimeKitCall(ctx.db, callSession, createParticipant(session, user), user.id)),
         isDoorkeeper: isCreator,
       };
     }),
@@ -66,7 +66,8 @@ export const baseCallRouter = router({
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
         throw getForbiddenError("You are timed out of this room");
       return {
-        ...(await joinLiveKitCall(
+        ...(await joinRealtimeKitCall(
+          ctx.db,
           { id: callSessionId, roomId, threadRootRowKey },
           createParticipant(session, user),
           user.id,
