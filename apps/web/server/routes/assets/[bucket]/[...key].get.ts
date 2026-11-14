@@ -23,6 +23,9 @@ export default defineEventHandler(async (event) => {
     "Content-Type": contentType,
   };
   for (const [name, value] of Object.entries(metadataHeaders)) if (value) event.res.headers.set(name, value);
+  // The app reads public data such as the game's from this host by fetch, which is cross-origin, and every object here is
+  // Public, so any origin may read it
+  event.res.headers.set("Access-Control-Allow-Origin", "*");
   event.res.headers.set("Cache-Control", `public, max-age=${PUBLIC_ASSET_CACHE_MAX_AGE_SECONDS}`);
   event.res.headers.set("ETag", object.httpEtag);
   return object.body;
