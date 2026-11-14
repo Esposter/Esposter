@@ -19,14 +19,6 @@ const createMessageEventSchema = z.object({
   data: z.array(roomMessageSchema).max(MESSAGE_BATCH_MAX_LENGTH),
   type: z.literal("createMessage"),
 });
-const memberOnlineEventSchema = z.object({
-  data: z.object({ userId: userIdSchema.shape.userId }),
-  type: z.literal("memberOnline"),
-});
-const memberOfflineEventSchema = z.object({
-  data: z.object({ userId: userIdSchema.shape.userId }),
-  type: z.literal("memberOffline"),
-});
 const createTypingEventSchema = z.object({ data: typingSchema, type: z.literal("createTyping") });
 const deleteMessageEventSchema = z.object({
   data: roomMessageSchema.pick({ id: true }),
@@ -80,11 +72,10 @@ const adminActionEventSchema = z.object({
   }),
   type: z.literal("adminAction"),
 });
+// A member's status row, which a member coming online or going offline also sends: the status it now has is the one
+// a client detects its presence from
 const upsertStatusEventSchema = z.object({
-  data: z.object({
-    ...selectUserStatusInMessageSchema.shape,
-    status: selectUserStatusInMessageSchema.shape.status.unwrap(),
-  }),
+  data: z.object({ ...selectUserStatusInMessageSchema.shape, expiresAt: z.coerce.date().nullable() }),
   type: z.literal("upsertStatus"),
 });
 
@@ -107,8 +98,6 @@ const roomEventSchemas = [
   updateMemberPermissionOverrideEventSchema,
   adminActionEventSchema,
   upsertStatusEventSchema,
-  memberOnlineEventSchema,
-  memberOfflineEventSchema,
 ] as const;
 
 export type RoomEvent = z.infer<(typeof roomEventSchemas)[number]>;

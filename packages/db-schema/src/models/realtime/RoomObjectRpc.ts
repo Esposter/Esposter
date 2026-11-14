@@ -3,6 +3,7 @@ import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { RoomEvent } from "#src/models/realtime/RoomEvent";
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { RoomReaction } from "#src/models/realtime/RoomReaction";
+import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 
 // Who a write is done as. The device, when named, is the one whose own socket is not sent the write's echo
 export interface RoomActor {
@@ -95,10 +96,13 @@ export interface RoomObjectRpc {
   deleteUserReactions(userId: string): void;
   deleteAll(): Promise<void>;
 
-  // A member's presence in the room: its online set, the events each change raises, and the member's sockets dropped
-  attachMember(userId: string): void;
-  detachMember(userId: string): void;
+  // A member's presence in the room: its online set, the status each change sends the room's viewers, and a removed
+  // member's sockets dropped
+  attachMember(userId: string, status: UserStatusInMessage): void;
+  detachMember(userId: string, status: UserStatusInMessage): void;
   removeMember(userId: string): void;
+  // A status the person set, which every room they are in shows
+  setMemberStatus(status: UserStatusInMessage): void;
   // A room event the caller raised from D1's own changes, sent to the sockets a tag names, or to every socket
   broadcastEvent(event: RoomEvent, options?: { excludeTag?: string; tag?: string }): void;
 }

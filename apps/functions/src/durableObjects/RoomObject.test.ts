@@ -59,6 +59,18 @@ describe(RoomObject, () => {
     return { object: new RoomObject(state.ctx as unknown as DurableObjectState, environment), state };
   };
 
+  // A member's status as the room is sent it when the member comes online or goes offline
+  const createStatus = (statusUserId: string, isConnected: boolean) => ({
+    createdAt: new Date(0),
+    deletedAt: null,
+    expiresAt: null,
+    isConnected,
+    message: "",
+    status: null,
+    updatedAt: new Date(0),
+    userId: statusUserId,
+  });
+
   const sendMessage = (object: RoomObjectRpc, message: string, sender = actor) =>
     object.createMessage({ message, type: MessageType.Message }, sender);
 
@@ -75,7 +87,7 @@ describe(RoomObject, () => {
     await mockDatabase.db.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDatabase.db.insert(roomsInMessage).values({ name: "name", userId }).returning());
     roomId = room.id;
-    environment = { CORE: mockDatabase.db.$client, USER: userNamespace } as unknown as Cloudflare.Env;
+    environment = { CORE: mockDatabase.coreDatabase, USER: userNamespace } as unknown as Cloudflare.Env;
   });
 
   afterEach(async () => {
@@ -241,8 +253,8 @@ describe(RoomObject, () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
-    object.attachMember(userId);
-    object.attachMember(otherUserId);
+    object.attachMember(userId, createStatus(userId, true));
+    object.attachMember(otherUserId, createStatus(otherUserId, true));
     await sendMessage(object, "first");
     vi.setSystemTime(new Date(ROOM_ACTIVITY_DELAY_MS / 4));
     const last = await sendMessage(object, "second");
@@ -296,21 +308,21 @@ describe(RoomObject, () => {
     expect(await state.ctx.storage.getAlarm()).toBeNull();
   });
 
-  test("a member coming online and going offline is announced to the room once each", async () => {
+  test("a member coming online and going offline is sent to the room as its status, once for each change", async () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
     const socket = createSocket();
     state.ctx.acceptWebSocket(socket, [`user:${userId}`, `device:${deviceId}`]);
+    const connectedStatus = createStatus(otherUserId, true);
+    const disconnectedStatus = createStatus(otherUserId, false);
 
-    object.attachMember(otherUserId);
-    object.attachMember(otherUserId);
-    object.detachMember(otherUserId);
-    object.detachMember(otherUserId);
+    object.attachMember(otherUserId, connectedStatus);
+    object.detachMember(otherUserId, disconnectedStatus);
 
     expect(readFrames(socket)).toStrictEqual([
-      { data: { userId: otherUserId }, type: "memberOnline" },
-      { data: { userId: otherUserId }, type: "memberOffline" },
+      { data: JSON.parse(JSON.stringify(connectedStatus)), type: "upsertStatus" },
+      { data: JSON.parse(JSON.stringify(disconnectedStatus)), type: "upsertStatus" },
     ]);
   });
 

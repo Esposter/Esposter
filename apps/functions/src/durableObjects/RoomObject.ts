@@ -1,3 +1,4 @@
+import type { UserStatusInMessage } from "@esposter/db-schema";
 import type {
   CreateRoomMessageInput,
   CreateWebhookRoomMessageInput,
@@ -434,25 +435,25 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     await this.ctx.storage.deleteAll();
   }
 
-  attachMember(userId: string): void {
-    const attachedRows = this.db.insert(onlineMembersInRoom).values({ userId }).onConflictDoNothing().returning().all();
-    if (attachedRows.length > 0) this.broadcast({ data: { userId }, type: "memberOnline" });
+  attachMember(userId: string, status: UserStatusInMessage): void {
+    this.db.insert(onlineMembersInRoom).values({ userId }).onConflictDoNothing().run();
+    this.setMemberStatus(status);
   }
 
-  detachMember(userId: string): void {
-    const detachedRows = this.db
-      .delete(onlineMembersInRoom)
-      .where(eq(onlineMembersInRoom.userId, userId))
-      .returning()
-      .all();
-    if (detachedRows.length > 0) this.broadcast({ data: { userId }, type: "memberOffline" });
+  detachMember(userId: string, status: UserStatusInMessage): void {
+    this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
+    this.setMemberStatus(status);
   }
 
   // A member who is no longer in the room is no longer online in it, and their sockets here are dropped
   removeMember(userId: string): void {
-    this.detachMember(userId);
+    this.db.delete(onlineMembersInRoom).where(eq(onlineMembersInRoom.userId, userId)).run();
     for (const webSocket of this.ctx.getWebSockets(`user:${userId}`))
       webSocket.close(ROOM_MEMBER_REMOVED_CODE, "Removed from the room");
+  }
+
+  setMemberStatus(status: UserStatusInMessage): void {
+    this.broadcast({ data: status, type: "upsertStatus" });
   }
 
   broadcastEvent(event: RoomEvent, options: { excludeTag?: string; tag?: string } = {}): void {
