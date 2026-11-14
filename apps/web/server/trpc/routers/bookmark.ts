@@ -1,5 +1,6 @@
 import type { PageLink } from "#shared/models/app/PageLink";
 
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
@@ -7,7 +8,7 @@ import { PageMarkType } from "#shared/models/app/PageMarkType";
 import { toggleBookmarkInputSchema } from "#shared/models/db/bookmark/ToggleBookmarkInput";
 import { bookmarksInApp, DatabaseEntityType, MAX_BOOKMARKS, usersInAuth } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 export const bookmarkRouter = router({
   readBookmarks: standardAuthedProcedure.query<PageLink[]>(async ({ ctx }) => {
@@ -20,28 +21,46 @@ export const bookmarkRouter = router({
       resourceType ? { mark: { resourceType, type: PageMarkType.Resource }, path, title } : { path, title },
     );
   }),
-  toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(({ ctx, input }) => {
+  toggleBookmark: standardAuthedProcedure.input(toggleBookmarkInputSchema).mutation<boolean>(async ({ ctx, input }) => {
     const userId = ctx.getSessionPayload.user.id;
-    return ctx.db.transaction(async (tx) => {
-      // The user's row is locked first, because the cap is a count and a count has no constraint behind it: two
-      // Toggles of different pages both reading one below the cap would both insert
-      await tx.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId)).for("update");
-      // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
-      // Was bookmarked, so the toggle can never race with itself
-      const deletedBookmarks = await tx
-        .delete(bookmarksInApp)
-        .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
-        .returning();
-      if (deletedBookmarks.length > 0) return false;
+    // Delete-then-insert rather than a read-then-branch: the delete's own returning() reports whether the page
+    // Was bookmarked, so the toggle can never race with itself
+    const deletedBookmarks = await ctx.db
+      .delete(bookmarksInApp)
+      .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path)))
+      .returning();
+    if (deletedBookmarks.length > 0) return false;
 
-      if ((await tx.$count(bookmarksInApp, eq(bookmarksInApp.userId, userId))) >= MAX_BOOKMARKS)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
-
-      await tx
+    // The cap is a count, so the insert carries it: the row is only selected while the user is under the cap, and
+    // The batch reads the page back after the insert, which tells a page another device just bookmarked (kept) from
+    // A full list (refused) without a read ahead of the write
+    const [, existingBookmarks] = await ctx.db.batch([
+      ctx.db
         .insert(bookmarksInApp)
-        .values({ path: input.path, resourceType: input.mark?.resourceType, title: input.title, userId })
-        .onConflictDoNothing();
-      return true;
-    });
+        .select(
+          ctx.db
+            .select({
+              ...getInsertSelectMetadata(bookmarksInApp),
+              path: sql`${input.path}`,
+              resourceType: sql`${input.mark?.resourceType ?? null}`,
+              title: sql`${input.title}`,
+              userId: sql`${userId}`,
+            })
+            .from(usersInAuth)
+            .where(
+              and(
+                eq(usersInAuth.id, userId),
+                sql`(select count(*) from ${bookmarksInApp} where ${eq(bookmarksInApp.userId, userId)}) < ${MAX_BOOKMARKS}`,
+              ),
+            ),
+        )
+        .onConflictDoNothing(),
+      ctx.db
+        .select({ path: bookmarksInApp.path })
+        .from(bookmarksInApp)
+        .where(and(eq(bookmarksInApp.userId, userId), eq(bookmarksInApp.path, input.path))),
+    ]);
+    if (existingBookmarks.length > 0) return true;
+    throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Bookmark, input.path);
   }),
 });

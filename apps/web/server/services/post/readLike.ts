@@ -1,9 +1,9 @@
-import type { Transaction } from "#server/models/db/Transaction";
+import type { Context } from "#server/trpc/context";
 import type { LikeInPost, PostInPost, UserInAuth } from "@esposter/db-schema";
 
 export const readLike = (
-  tx: Transaction,
+  db: Context["db"],
   postId: PostInPost["id"],
   userId: UserInAuth["id"],
 ): Promise<LikeInPost | undefined> =>
-  tx.query.likesInPost.findFirst({ where: { postId: { eq: postId }, userId: { eq: userId } } });
+  db.query.likesInPost.findFirst({ where: { postId: { eq: postId }, userId: { eq: userId } } });

@@ -1,5 +1,6 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { on } from "#server/services/events/on";
 import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
@@ -12,14 +13,17 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { friendUserIdInputSchema } from "#shared/models/db/friend/FriendUserIdInput";
 import {
   AppNotificationType,
+  blocksInSocial,
   DatabaseEntityType,
   FriendRequestInSocialRelations,
   friendRequestsInSocial,
   friendsInSocial,
   publishNotification,
   QueueJob,
+  usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
+import { and, eq, notExists, or, sql } from "drizzle-orm";
 
 export const friendRequestRouter = router({
   acceptFriendRequest: standardAuthedProcedure
@@ -30,23 +34,26 @@ export const friendRequestRouter = router({
       // The sender is both the emit payload and the return value, so nothing fallible sits between the write and
       // The emit
       const [senderUser, receiverUser] = await readUserPair(ctx.db, senderId, userId);
-      requireMutation(
-        (
-          await ctx.db.transaction(async (tx) => {
-            const [deletedFriendRequest] = await tx
-              .delete(friendRequestsInSocial)
-              .where(getReceivedFriendRequestWhere(friendshipId, userId))
-              .returning();
-            if (deletedFriendRequest)
-              return tx.insert(friendsInSocial).values({ id: friendshipId, receiverId: userId, senderId }).returning();
-            else return [];
-          })
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Friend,
-        friendshipId,
-        "NOT_FOUND",
-      );
+      // The friendship is selected from the request row itself, so it exists only while that request stands for this
+      // Receiver, and the request is deleted in the same batch: an accept lands whole or not at all
+      const [insertedFriends] = await ctx.db.batch([
+        ctx.db
+          .insert(friendsInSocial)
+          .select(
+            ctx.db
+              .select({
+                ...getInsertSelectMetadata(friendsInSocial),
+                id: friendRequestsInSocial.id,
+                receiverId: friendRequestsInSocial.receiverId,
+                senderId: friendRequestsInSocial.senderId,
+              })
+              .from(friendRequestsInSocial)
+              .where(getReceivedFriendRequestWhere(friendshipId, userId)),
+          )
+          .returning(),
+        ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)),
+      ]);
+      requireMutation(insertedFriends[0], Operation.Update, DatabaseEntityType.Friend, friendshipId, "NOT_FOUND");
       friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderUser });
       return senderUser;
     }),
@@ -105,8 +112,47 @@ export const friendRequestRouter = router({
       if (userId === receiverId) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, userId);
       const [, senderUser] = await readUserPair(ctx.db, receiverId, userId);
       const friendshipId = getFriendshipId(userId, receiverId);
-      const [newFriendRequest] = await ctx.db.transaction(async (tx) => {
-        const existingBlock = await tx.query.blocksInSocial.findFirst({
+      // The request is only inserted while no block or friendship stands between the two users, so the check and the
+      // Insert are one statement; a second request for the same pair is the conflict the insert ignores
+      const [newFriendRequest] = await ctx.db
+        .insert(friendRequestsInSocial)
+        .select(
+          ctx.db
+            .select({
+              ...getInsertSelectMetadata(friendRequestsInSocial),
+              id: sql`${friendshipId}`,
+              receiverId: sql`${receiverId}`,
+              senderId: sql`${userId}`,
+            })
+            .from(usersInAuth)
+            .where(
+              and(
+                eq(usersInAuth.id, receiverId),
+                notExists(
+                  ctx.db
+                    .select({ _: sql`1` })
+                    .from(blocksInSocial)
+                    .where(
+                      or(
+                        and(eq(blocksInSocial.blockedId, receiverId), eq(blocksInSocial.blockerId, userId)),
+                        and(eq(blocksInSocial.blockedId, userId), eq(blocksInSocial.blockerId, receiverId)),
+                      ),
+                    ),
+                ),
+                notExists(
+                  ctx.db
+                    .select({ _: sql`1` })
+                    .from(friendsInSocial)
+                    .where(eq(friendsInSocial.id, friendshipId)),
+                ),
+              ),
+            ),
+        )
+        .onConflictDoNothing({ target: friendRequestsInSocial.id })
+        .returning();
+      if (!newFriendRequest) {
+        // Nothing was inserted, so the refusal is read back in the order the insert's conditions were checked
+        const existingBlock = await ctx.db.query.blocksInSocial.findFirst({
           where: {
             OR: [
               { blockedId: { eq: receiverId }, blockerId: { eq: userId } },
@@ -115,16 +161,9 @@ export const friendRequestRouter = router({
           },
         });
         if (existingBlock) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Friend, receiverId);
-        const existingFriend = await tx.query.friendsInSocial.findFirst({ where: { id: { eq: friendshipId } } });
+        const existingFriend = await ctx.db.query.friendsInSocial.findFirst({ where: { id: { eq: friendshipId } } });
         if (existingFriend)
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId);
-        return tx
-          .insert(friendRequestsInSocial)
-          .values({ id: friendshipId, receiverId, senderId: userId })
-          .onConflictDoNothing({ target: friendRequestsInSocial.id })
-          .returning();
-      });
-      if (!newFriendRequest) {
         const existingFriendRequest = await ctx.db.query.friendRequestsInSocial.findFirst({
           where: { id: { eq: friendshipId } },
           with: FriendRequestInSocialRelations,
