@@ -1,7 +1,7 @@
 import type { GameDataLock } from "genshin-world";
 
 import { MAX_CONCURRENT_VERIFY_FETCHES } from "#src/services/gameData/constants";
-import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
+import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { toGameDataObjectRefs } from "#src/services/gameData/toGameDataObjectRefs";
 import { verifyGameDataObject } from "#src/services/gameData/verifyGameDataObject";
 import { settleAll } from "@esposter/shared";
@@ -26,7 +26,7 @@ export const verifyGameData = async (baseUrl: string, lock: GameDataLock): Promi
   // Each object is fetched once however many names reach it, and an index is not fetched again as an object
   const objectRefMap = new Map(
     [...toGameDataObjectRefs(lock.objects), ...entryRefs].map(
-      (ref) => [getGameDataBlobName(ref.dataset, ref.hash), ref] as const,
+      (ref) => [getGameDataObjectKey(ref.dataset, ref.hash), ref] as const,
     ),
   );
   await settleAll(

@@ -1,26 +1,25 @@
+import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { CharacterPackFile } from "#src/models/genshinAssets/characterPacks/CharacterPackFile";
+import type { CloudflareEnvironment } from "@esposter/db-schema";
 
-import { GameDataTarget } from "#src/models/shared/GameDataTarget";
-import { MAX_CONCURRENT_BLOB_UPLOADS } from "#src/services/gameData/constants";
-import { createGameDataContainerClient } from "#src/services/gameData/createGameDataContainerClient";
+import { MAX_CONCURRENT_OBJECT_REQUESTS } from "#src/services/gameData/constants";
 import { settleAll } from "@esposter/shared";
+import { openAsBlob } from "node:fs";
 
-// Every file uploads to both accounts over the name it publishes under, replacing what an account holds there, so a
-// Rerun publishes whatever the packs now hold. Caches revalidate, since a rerun replaces a file in place
-export const publishCharacterPacks = async (files: CharacterPackFile[]): Promise<void> => {
+// Every file uploads to every environment's bucket over the key it publishes under, replacing what the bucket holds there, so
+// A rerun publishes whatever the packs now hold. Caches revalidate, since a rerun replaces a file in place
+export const publishCharacterPacks = async (
+  files: CharacterPackFile[],
+  createBucketClientMap: () => Record<CloudflareEnvironment, R2BucketClient>,
+): Promise<void> => {
   await Promise.all(
-    Object.values(GameDataTarget).map(async (target) => {
-      const containerClient = createGameDataContainerClient(target);
-      await settleAll(
-        files.map(
-          ({ blobName, localPath }) =>
-            () =>
-              containerClient
-                .getBlockBlobClient(blobName)
-                .uploadFile(localPath, { blobHTTPHeaders: { blobCacheControl: "no-cache" } }),
-        ),
-        MAX_CONCURRENT_BLOB_UPLOADS,
-      );
-    }),
+    Object.values(createBucketClientMap()).map((bucketClient) =>
+      settleAll(
+        files.map(({ key, localPath }) => async () => {
+          await bucketClient.put(key, await openAsBlob(localPath), { cacheControl: "no-cache" });
+        }),
+        MAX_CONCURRENT_OBJECT_REQUESTS,
+      ),
+    ),
   );
 };

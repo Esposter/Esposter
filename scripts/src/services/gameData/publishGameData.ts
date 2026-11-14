@@ -1,23 +1,23 @@
+import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { GameDataPublishResult } from "#src/models/gameData/GameDataPublishResult";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
 import type { PublishGameDataOptions } from "#src/models/gameData/PublishGameDataOptions";
-import type { ContainerClient } from "@azure/storage-blob";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { GameDataTarget } from "#src/models/shared/GameDataTarget";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
 import { mergeGameDataLock } from "#src/services/gameData/mergeGameDataLock";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
-import { publishGameDataToTarget } from "#src/services/gameData/publishGameDataToTarget";
+import { publishGameDataToBucket } from "#src/services/gameData/publishGameDataToBucket";
 import { readGameDataReachableObjects } from "#src/services/gameData/readGameDataReachableObjects";
 import { compressZstd } from "@esposter/db";
+import { CloudflareEnvironment } from "@esposter/db-schema";
 import { DEFAULT_COMPRESSION_LEVEL, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
-// Stores what a publication names in every account, and returns the entries it planned for the caller to merge into the
-// Lock and commit. The caller commits only once this resolves: a failure in either account throws before then, so the
-// Committed lock never names data a Reader cannot fetch, and a rerun converges on the same objects.
+// Stores what a publication names in every environment's bucket, and returns the entries it planned for the caller to merge
+// Into the lock and commit. The caller commits only once this resolves: a failure in either bucket throws before then, so the
+// Committed lock never names data a reader cannot fetch, and a rerun converges on the same objects.
 export const publishGameData = async ({
-  createContainerClientMap,
+  createBucketClientMap,
   currentLock,
   publication,
   scopes,
@@ -31,8 +31,8 @@ export const publishGameData = async ({
     throw new InvalidOperationError(Operation.Update, outsideScopeKey, "is published outside the scopes it names");
   const nextLock = mergeGameDataLock(currentLock, scopes, plan.lock);
   const isLockUnchanged = formatGameDataLock(nextLock) === formatGameDataLock(currentLock);
-  // A dry run stops before any account, so it needs no credential and writes nothing
-  if (!createContainerClientMap) {
+  // A dry run stops before any bucket, so it needs no credential and writes nothing
+  if (!createBucketClientMap) {
     if (isLockUnchanged) return { outcome: GameDataPublishOutcome.Unchanged };
     return {
       nextLock,
@@ -41,30 +41,30 @@ export const publishGameData = async ({
       storedObjectCount: plan.records.length,
     };
   }
-  // A publication that stores no object and leaves the lock as it is returns before any account is created, so it lists
-  // None and needs no credential. Any other real publish lists each account, since the lock can name a blob an account
-  // Has lost, and each account stores only the blobs it lacks
+  // A publication that stores no object and leaves the lock as it is returns before any bucket is made, so it lists none
+  // And needs no credential. Any other real publish lists each bucket, since the lock can name an object a bucket has lost,
+  // And each bucket stores only the objects it lacks
   if (plan.records.length === 0 && isLockUnchanged) return { outcome: GameDataPublishOutcome.Empty };
-  const containerClientMap = createContainerClientMap();
+  const bucketClientMap = createBucketClientMap();
   const compressedJsonMap = new Map<string, Promise<Buffer>>();
-  // Compressed once per object and shared by both accounts, which hold the same bytes
+  // Compressed once per object and shared by both environments, which hold the same bytes
   const getCompressedJson = (record: GameDataRecord) => {
     const compressedJson = compressedJsonMap.get(record.hash) ?? compressZstd(record.json, DEFAULT_COMPRESSION_LEVEL);
     compressedJsonMap.set(record.hash, compressedJson);
     return compressedJson;
   };
-  const publishAccount = async (containerClient: ContainerClient) => {
-    const reachableObjects = await readGameDataReachableObjects(containerClient, [currentLock]);
-    return publishGameDataToTarget(containerClient, plan.records, reachableObjects, getCompressedJson);
+  const publishBucket = async (bucketClient: R2BucketClient) => {
+    const reachableObjects = await readGameDataReachableObjects(bucketClient, [currentLock]);
+    return publishGameDataToBucket(bucketClient, plan.records, reachableObjects, getCompressedJson);
   };
   const [devCount, prodCount] = await Promise.all([
-    publishAccount(containerClientMap[GameDataTarget.Dev]),
-    publishAccount(containerClientMap[GameDataTarget.Prod]),
+    publishBucket(bucketClientMap[CloudflareEnvironment.Development]),
+    publishBucket(bucketClientMap[CloudflareEnvironment.Production]),
   ]);
   return {
     outcome: GameDataPublishOutcome.Published,
     plannedLock: plan.lock,
     storedObjectCount: plan.records.length,
-    uploadedCountMap: { [GameDataTarget.Dev]: devCount, [GameDataTarget.Prod]: prodCount },
+    uploadedCountMap: { [CloudflareEnvironment.Development]: devCount, [CloudflareEnvironment.Production]: prodCount },
   };
 };

@@ -8,7 +8,7 @@ describe(checkHasLockAt, () => {
     expect(checkHasLockAt("HEAD")).toBe(true);
   });
 
-  // A commit missing from a shallow clone reads as a git error, which must not read as no lock beside a stored blob
+  // A commit missing from a shallow clone reads as a git error, which must not read as no lock beside a stored object
   test("throws for a revision git cannot read, rather than reporting no lock there", () => {
     expect.hasAssertions();
 

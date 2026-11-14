@@ -1,10 +1,8 @@
-import type { ContainerClient } from "@azure/storage-blob";
-
+import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/gameData/constants";
-import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
+import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { pruneGameData } from "#src/services/gameData/pruneGameData";
-import { CHARACTER_PACKS_BLOB_PREFIX } from "#src/services/genshinAssets/characterPacks/constants";
-import { MockContainerClient, MockContainerDatabase } from "azure-mock";
+import { CHARACTER_PACKS_PREFIX } from "#src/services/genshinAssets/characterPacks/constants";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(pruneGameData, () => {
@@ -12,11 +10,10 @@ describe(pruneGameData, () => {
   const liveHash = "a".repeat(64);
   const oldHash = "b".repeat(64);
   const youngHash = "c".repeat(64);
-  const containerClient = new MockContainerClient("", "dev") as unknown as ContainerClient;
+  const bucketClient = createMemoryR2BucketClient();
 
   // Each object is written at the instant the clock stands at, so the test moves the clock to age them
-  const writeObject = (hash: string) =>
-    containerClient.getBlockBlobClient(getGameDataBlobName(dataset, hash)).upload(Buffer.from("{}"), 2);
+  const writeObject = (key: string) => bucketClient.put(key, Buffer.from("{}"));
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -24,49 +21,49 @@ describe(pruneGameData, () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    bucketClient.store.clear();
   });
 
   test("deletes an object no live lock reaches and that is past retention, and keeps the rest", async () => {
     expect.hasAssertions();
 
-    await writeObject(liveHash);
-    await writeObject(oldHash);
+    await writeObject(getGameDataObjectKey(dataset, liveHash));
+    await writeObject(getGameDataObjectKey(dataset, oldHash));
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(99 * DAY_MS));
-    await writeObject(youngHash);
+    await writeObject(getGameDataObjectKey(dataset, youngHash));
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
     const result = await pruneGameData({
-      containerClient,
+      bucketClient,
       isDryRun: false,
       liveObjects: [{ dataset, hash: liveHash }],
       now: 100 * DAY_MS,
     });
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 1, keptCount: 0 });
-    expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])].toSorted()).toStrictEqual(
-      [getGameDataBlobName(dataset, liveHash), getGameDataBlobName(dataset, youngHash)].toSorted(),
+    expect([...bucketClient.store.keys()].toSorted()).toStrictEqual(
+      [getGameDataObjectKey(dataset, liveHash), getGameDataObjectKey(dataset, youngHash)].toSorted(),
     );
   });
 
-  test("keeps an old blob outside the game data datasets", async () => {
+  test("keeps an old object outside the game data datasets", async () => {
     expect.hasAssertions();
 
-    const packBlobName = `${CHARACTER_PACKS_BLOB_PREFIX}/10000006/model.pmx`;
-    await containerClient.getBlockBlobClient(packBlobName).upload(Buffer.from("{}"), 2);
+    const packKey = `${CHARACTER_PACKS_PREFIX}/10000006/model.pmx`;
+    await writeObject(packKey);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
-    const result = await pruneGameData({ containerClient, isDryRun: false, liveObjects: [], now: 100 * DAY_MS });
+    const result = await pruneGameData({ bucketClient, isDryRun: false, liveObjects: [], now: 100 * DAY_MS });
 
     expect(result).toStrictEqual({ candidateCount: 0, deletedCount: 0, keptCount: 0 });
-    expect([...(MockContainerDatabase.get("dev")?.keys() ?? [])]).toStrictEqual([packBlobName]);
+    expect([...bucketClient.store.keys()]).toStrictEqual([packKey]);
   });
 
   test("lists what it would delete without deleting it", async () => {
     expect.hasAssertions();
 
-    await writeObject(oldHash);
-    const result = await pruneGameData({ containerClient, isDryRun: true, liveObjects: [], now: 100 * DAY_MS });
+    await writeObject(getGameDataObjectKey(dataset, oldHash));
+    const result = await pruneGameData({ bucketClient, isDryRun: true, liveObjects: [], now: 100 * DAY_MS });
 
     expect(result).toStrictEqual({ candidateCount: 1, deletedCount: 0, keptCount: 0 });
-    expect(MockContainerDatabase.get("dev")?.size).toBe(1);
+    expect(bucketClient.store.size).toBe(1);
   });
 });

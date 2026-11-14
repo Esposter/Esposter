@@ -82,8 +82,8 @@ export const REFERENCE_ID_LANGUAGE_TAGS: Readonly<Record<string, string>> = {
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
 export const PLATE_CACHE_REGEX: RegExp = /\.plate-[\da-f]{16}\.png$/u;
 
-// The folder the game-data container keeps every stored object in, one per hash and extension, whatever its kind
-export const REFERENCE_BLOB_FOLDER = "parityObjects";
+// The folder the game-data bucket keeps every stored object in, one per hash and extension, whatever its kind
+export const REFERENCE_OBJECT_FOLDER = "parityObjects";
 // Every committed reference is lossless WebP, the format `packReferenceImage` writes, and its file name ends with it
 export const REFERENCE_FILE_EXTENSION = "webp";
 // A plate is committed flat in the references folder, named by its id with this suffix before the extension

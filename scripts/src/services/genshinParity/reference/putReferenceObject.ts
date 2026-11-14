@@ -1,16 +1,15 @@
-import type { RecordObjectTarget } from "#src/models/genshinParity/reference/RecordObjectTarget";
+import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 
-// Stores one object from the file at `localPath` in every account that does not hold it.
-// Each account is checked first, so an object is never uploaded twice. Returns how many accounts it uploaded to
-export const putReferenceObject = async (
-  blobName: string,
-  localPath: string,
-  targets: RecordObjectTarget[],
-): Promise<number> => {
+import { GAME_DATA_CACHE_CONTROL } from "#src/services/gameData/constants";
+
+// Stores one object in every bucket that does not hold it, each bucket checked first, so an object is never uploaded twice.
+// The file is streamed to each bucket it is written to, so a recording is never read whole into memory. Returns how many
+// Buckets it uploaded to
+export const putReferenceObject = async (key: string, file: Blob, bucketClients: R2BucketClient[]): Promise<number> => {
   const uploads = await Promise.all(
-    targets.map(async (target): Promise<number> => {
-      if (await target.exists(blobName)) return 0;
-      await target.upload(blobName, localPath);
+    bucketClients.map(async (bucketClient): Promise<number> => {
+      if (await bucketClient.has(key)) return 0;
+      await bucketClient.put(key, file, { cacheControl: GAME_DATA_CACHE_CONTROL });
       return 1;
     }),
   );

@@ -9,10 +9,10 @@ describe(summarizeGameDataChanges, () => {
     vi.restoreAllMocks();
   });
 
-  test("counts an object whose published blob the dev account lacks as new, rather than failing to read it", async () => {
+  test("counts an object whose published copy the dev bucket lacks as new, rather than failing to read it", async () => {
     expect.hasAssertions();
 
-    // The account answers 404 for the old blob, so there is nothing published to compare the new record against
+    // The bucket answers 404 for the old object, so there is nothing published to compare the new record against
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 404 }));
     const currentLock: GameDataLock = { indexes: {}, objects: { "stats/weapons": "1".repeat(64) } };
     const nextLock: GameDataLock = { indexes: {}, objects: { "stats/weapons": "2".repeat(64) } };

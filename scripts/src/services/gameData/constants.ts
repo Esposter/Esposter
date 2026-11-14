@@ -1,7 +1,6 @@
-import { GameDataTarget } from "#src/models/shared/GameDataTarget";
-import { GameDataTargetBlobServiceUrlMap } from "#src/services/gameData/GameDataTargetBlobServiceUrlMap";
+import { getGameDataBaseUrl } from "#src/services/gameData/getGameDataBaseUrl";
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { StorageBucket } from "@esposter/db-schema";
+import { CloudflareEnvironment } from "@esposter/db-schema";
 import { GameDataset } from "genshin-world";
 import { dirname, join } from "node:path";
 
@@ -31,12 +30,13 @@ export const GAME_DATA_RETENTION_MS: number = 90 * DAY_MS;
 export const GAME_DATA_REUSE_WINDOW_MS: number = GAME_DATA_RETENTION_MS / 2;
 // Every object is named by its content, so it never changes and may be cached for good
 export const GAME_DATA_CACHE_CONTROL = "public, max-age=31536000, immutable";
-export const MAX_CONCURRENT_BLOB_UPLOADS = 100;
+// Requests in flight at once against one bucket, for the writes and the deletes a publish or a prune makes
+export const MAX_CONCURRENT_OBJECT_REQUESTS = 100;
 // Fetches in flight at once against one account, which keeps a check's memory bounded by one wave of objects
 export const MAX_CONCURRENT_VERIFY_FETCHES = 16;
-// Where a step reads what another step published: the dev account, which holds every object the lock names as prod does
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
-export const GAME_DATA_DEV_BASE_URL: string = `${GameDataTargetBlobServiceUrlMap[GameDataTarget.Dev]}/${StorageBucket.PublicGenshinAssets}`;
+// Where a step reads what another step published: the dev environment's public bucket, which holds every object the lock
+// Names as prod does
+export const GAME_DATA_DEV_BASE_URL: string = getGameDataBaseUrl(CloudflareEnvironment.Development);
 // The catalogue's record, which `genshin:data authored` publishes and `fitAreaOutlines` publishes outlined
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this template literal would otherwise infer
 export const CATALOGUE_KEY: string = `${GameDataset.Catalogue}/catalogue`;

@@ -1,24 +1,23 @@
 import type { GameDataPublishResult } from "#src/models/gameData/GameDataPublishResult";
 import type { GameDataPublication } from "#src/models/shared/GameDataPublication";
-import type { ContainerClient } from "@azure/storage-blob";
 import type { GameDataLock } from "genshin-world";
 
 import { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
-import { GameDataTarget } from "#src/models/shared/GameDataTarget";
+import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { DAY_MS } from "#src/services/gameData/constants";
 import { formatGameDataLock } from "#src/services/gameData/formatGameDataLock";
-import { getGameDataBlobName } from "#src/services/gameData/getGameDataBlobName";
+import { getGameDataObjectKey } from "#src/services/gameData/getGameDataObjectKey";
 import { planGameDataPublication } from "#src/services/gameData/planGameDataPublication";
 import { publishGameData } from "#src/services/gameData/publishGameData";
+import { CloudflareEnvironment } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { GameDataset } from "genshin-world";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The mock keeps one store per container name, so each account's mock is named for its account
-const createContainerClientMap = () => ({
-  [GameDataTarget.Dev]: new MockContainerClient("", GameDataTarget.Dev) as unknown as ContainerClient,
-  [GameDataTarget.Prod]: new MockContainerClient("", GameDataTarget.Prod) as unknown as ContainerClient,
+// Each environment's bucket is its own in-memory store, made fresh for each test, so a rerun reads what the test stored
+const createBucketClientMap = () => ({
+  [CloudflareEnvironment.Development]: createMemoryR2BucketClient(),
+  [CloudflareEnvironment.Production]: createMemoryR2BucketClient(),
 });
 
 // The lock a published result plans, which a caller commits and a test carries into its next publish
@@ -44,13 +43,18 @@ describe(publishGameData, () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
-    MockContainerDatabase.clear();
   });
 
-  test("stores each object once per account and plans the lock it names", async () => {
+  test("stores each object once per environment and plans the lock it names", async () => {
     expect.hasAssertions();
 
-    const result = await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
+    const bucketClientMap = createBucketClientMap();
+    const result = await publishGameData({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock: emptyLock,
+      publication,
+      scopes,
+    });
 
     const plannedLock = getPlannedLock(result);
     expect(Object.keys(plannedLock.objects)).toStrictEqual(["stats/weapons"]);
@@ -59,25 +63,25 @@ describe(publishGameData, () => {
       outcome: GameDataPublishOutcome.Published,
       plannedLock,
       storedObjectCount: 4,
-      uploadedCountMap: { [GameDataTarget.Dev]: 4, [GameDataTarget.Prod]: 4 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 4, [CloudflareEnvironment.Production]: 4 },
     });
-    expect(MockContainerDatabase.get(GameDataTarget.Prod)?.size).toBe(4);
+    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
   });
 
-  test("stores nothing an account already holds when the lock already names the publication", async () => {
+  test("stores nothing an environment already holds when the lock already names the publication", async () => {
     expect.hasAssertions();
 
-    const containerClientMap = createContainerClientMap();
+    const bucketClientMap = createBucketClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        createContainerClientMap: () => containerClientMap,
+        createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
         publication,
         scopes,
       }),
     );
     const rerun = await publishGameData({
-      createContainerClientMap: () => containerClientMap,
+      createBucketClientMap: () => bucketClientMap,
       currentLock,
       publication,
       scopes,
@@ -87,29 +91,28 @@ describe(publishGameData, () => {
       outcome: GameDataPublishOutcome.Published,
       plannedLock: currentLock,
       storedObjectCount: 4,
-      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 0 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 0 },
     });
-    expect(MockContainerDatabase.get(GameDataTarget.Dev)?.size).toBe(4);
+    expect(bucketClientMap[CloudflareEnvironment.Development].store.size).toBe(4);
   });
 
-  test("stores a blob an account lost although the lock still names it", async () => {
+  test("stores an object an environment lost although the lock still names it", async () => {
     expect.hasAssertions();
 
-    const containerClientMap = createContainerClientMap();
+    const bucketClientMap = createBucketClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        createContainerClientMap: () => containerClientMap,
+        createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
         publication,
         scopes,
       }),
     );
     const record = takeOne(planGameDataPublication(publication).records);
-    const prodBlobs = MockContainerDatabase.get(GameDataTarget.Prod);
-    prodBlobs?.delete(getGameDataBlobName(record.dataset, record.hash));
+    bucketClientMap[CloudflareEnvironment.Production].store.delete(getGameDataObjectKey(record.dataset, record.hash));
 
     const rerun = await publishGameData({
-      createContainerClientMap: () => containerClientMap,
+      createBucketClientMap: () => bucketClientMap,
       currentLock,
       publication,
       scopes,
@@ -119,19 +122,19 @@ describe(publishGameData, () => {
       outcome: GameDataPublishOutcome.Published,
       plannedLock: currentLock,
       storedObjectCount: 4,
-      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 1 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 1 },
     });
-    expect(MockContainerDatabase.get(GameDataTarget.Prod)?.size).toBe(4);
+    expect(bucketClientMap[CloudflareEnvironment.Production].store.size).toBe(4);
   });
 
   // A record that changes is one new object, and its index is the only other object a lock change needs
   test("stores a changed record and its index only", async () => {
     expect.hasAssertions();
 
-    const containerClientMap = createContainerClientMap();
+    const bucketClientMap = createBucketClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        createContainerClientMap: () => containerClientMap,
+        createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
         publication,
         scopes,
@@ -142,7 +145,7 @@ describe(publishGameData, () => {
       indexes: { "profile/English": { ...publication.indexes["profile/English"], "10000003": { name: "c" } } },
     };
     const result = await publishGameData({
-      createContainerClientMap: () => containerClientMap,
+      createBucketClientMap: () => bucketClientMap,
       currentLock,
       publication: changedPublication,
       scopes,
@@ -152,7 +155,7 @@ describe(publishGameData, () => {
       outcome: GameDataPublishOutcome.Published,
       plannedLock: getPlannedLock(result),
       storedObjectCount: 4,
-      uploadedCountMap: { [GameDataTarget.Dev]: 2, [GameDataTarget.Prod]: 2 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 2, [CloudflareEnvironment.Production]: 2 },
     });
   });
 
@@ -160,15 +163,26 @@ describe(publishGameData, () => {
   test("rewrites a stored object that is past the reuse window and that no lock names", async () => {
     expect.hasAssertions();
 
-    await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
+    const bucketClientMap = createBucketClientMap();
+    await publishGameData({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock: emptyLock,
+      publication,
+      scopes,
+    });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(100 * DAY_MS));
-    const result = await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication, scopes });
+    const result = await publishGameData({
+      createBucketClientMap: () => bucketClientMap,
+      currentLock: emptyLock,
+      publication,
+      scopes,
+    });
 
     expect(result).toStrictEqual({
       outcome: GameDataPublishOutcome.Published,
       plannedLock: getPlannedLock(result),
       storedObjectCount: 4,
-      uploadedCountMap: { [GameDataTarget.Dev]: 4, [GameDataTarget.Prod]: 4 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 4, [CloudflareEnvironment.Production]: 4 },
     });
   });
 
@@ -192,17 +206,17 @@ describe(publishGameData, () => {
       objects: {},
     };
     const first = getPlannedLock(
-      await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication: ascending, scopes }),
+      await publishGameData({ createBucketClientMap, currentLock: emptyLock, publication: ascending, scopes }),
     );
     const second = getPlannedLock(
-      await publishGameData({ createContainerClientMap, currentLock: emptyLock, publication: descending, scopes }),
+      await publishGameData({ createBucketClientMap, currentLock: emptyLock, publication: descending, scopes }),
     );
 
     expect(formatGameDataLock(second)).toBe(formatGameDataLock(first));
   });
 
-  // A dry run is the build alone: it names what it would publish and reads and writes no account
-  test("names what it would publish without touching an account", async () => {
+  // A dry run is the build alone: it names what it would publish, and with no bucket factory it reads and writes none
+  test("names what it would publish without touching a bucket", async () => {
     expect.hasAssertions();
 
     const result = await publishGameData({ currentLock: emptyLock, publication, scopes });
@@ -215,41 +229,40 @@ describe(publishGameData, () => {
       records: plan.records,
       storedObjectCount: 4,
     });
-    expect(MockContainerDatabase.size).toBe(0);
   });
 
-  // An empty publication that leaves the lock as it is stores and lists nothing, so it returns before any account is
-  // Created, and the credential that would create one is never made
+  // An empty publication that leaves the lock as it is stores and lists nothing, so it returns before any bucket is made,
+  // And the credential that would make one is never read
   test("an empty publication makes no request and leaves the lock as it is", async () => {
     expect.hasAssertions();
 
-    const createContainerClientMapSpy = vi.fn<() => Record<GameDataTarget, ContainerClient>>(createContainerClientMap);
+    const createBucketClientMapSpy = vi.fn<typeof createBucketClientMap>(createBucketClientMap);
     const result = await publishGameData({
-      createContainerClientMap: createContainerClientMapSpy,
+      createBucketClientMap: createBucketClientMapSpy,
       currentLock: emptyLock,
       publication: { indexes: {}, objects: {} },
       scopes,
     });
 
     expect(result).toStrictEqual({ outcome: GameDataPublishOutcome.Empty });
-    expect(createContainerClientMapSpy).not.toHaveBeenCalled();
+    expect(createBucketClientMapSpy).not.toHaveBeenCalled();
   });
 
   // The lock can change with no upload: a scope that names entries the lock holds drops them when nothing replaces them
   test("an empty publication that drops a scope's entries still publishes the lock", async () => {
     expect.hasAssertions();
 
-    const containerClientMap = createContainerClientMap();
+    const bucketClientMap = createBucketClientMap();
     const currentLock = getPlannedLock(
       await publishGameData({
-        createContainerClientMap: () => containerClientMap,
+        createBucketClientMap: () => bucketClientMap,
         currentLock: emptyLock,
         publication,
         scopes,
       }),
     );
     const result = await publishGameData({
-      createContainerClientMap: () => containerClientMap,
+      createBucketClientMap: () => bucketClientMap,
       currentLock,
       publication: { indexes: {}, objects: {} },
       scopes,
@@ -259,26 +272,19 @@ describe(publishGameData, () => {
       outcome: GameDataPublishOutcome.Published,
       plannedLock: emptyLock,
       storedObjectCount: 0,
-      uploadedCountMap: { [GameDataTarget.Dev]: 0, [GameDataTarget.Prod]: 0 },
+      uploadedCountMap: { [CloudflareEnvironment.Development]: 0, [CloudflareEnvironment.Production]: 0 },
     });
   });
 
-  // An account that refuses a write must leave the lock where it was, which the caller only moves once this resolves
-  test("rejects when an account refuses a write", async () => {
+  // A bucket that refuses a write must leave the lock where it was, which the caller only moves once this resolves
+  test("rejects when a bucket refuses a write", async () => {
     expect.hasAssertions();
 
-    const containerClientMap = createContainerClientMap();
-    vi.spyOn(containerClientMap[GameDataTarget.Prod], "getBlockBlobClient").mockImplementation(() => {
-      throw new Error("offline");
-    });
+    const bucketClientMap = createBucketClientMap();
+    vi.spyOn(bucketClientMap[CloudflareEnvironment.Production], "put").mockRejectedValue(new Error("offline"));
 
     await expect(
-      publishGameData({
-        createContainerClientMap: () => containerClientMap,
-        currentLock: emptyLock,
-        publication,
-        scopes,
-      }),
+      publishGameData({ createBucketClientMap: () => bucketClientMap, currentLock: emptyLock, publication, scopes }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[AggregateError: offline]`);
   });
 

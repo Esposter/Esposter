@@ -1,6 +1,6 @@
 import type { GameDataPublishOutcome } from "#src/models/gameData/GameDataPublishOutcome";
 import type { GameDataRecord } from "#src/models/gameData/GameDataRecord";
-import type { GameDataTarget } from "#src/models/shared/GameDataTarget";
+import type { CloudflareEnvironment } from "@esposter/db-schema";
 import type { GameDataLock } from "genshin-world";
 
 // Each outcome carries only what it has: a dry run carries the lock it would leave and the records it would store, for the
@@ -17,6 +17,6 @@ export type GameDataPublishResult =
       outcome: GameDataPublishOutcome.Published;
       plannedLock: GameDataLock;
       storedObjectCount: number;
-      uploadedCountMap: Record<GameDataTarget, number>;
+      uploadedCountMap: Record<CloudflareEnvironment, number>;
     }
   | { outcome: GameDataPublishOutcome.Unchanged };

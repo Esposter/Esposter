@@ -2,7 +2,7 @@ import type { ParityReferenceManifest } from "#src/models/genshinParity/referenc
 
 import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
 import { downloadObjectTo } from "#src/services/genshinParity/reference/downloadObjectTo";
-import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
+import { getObjectKey } from "#src/services/genshinParity/reference/getObjectKey";
 import { getRecordDestination } from "#src/services/genshinParity/reference/getRecordDestination";
 import { sha256File } from "#src/services/genshinParity/reference/sha256File";
 import { settleAll } from "@esposter/shared";
@@ -23,7 +23,7 @@ export const restoreManifestFiles = async (
   const fetched = await settleAll(
     files.map(({ destination, extension, sha256 }) => async () => {
       if (existsSync(destination) && (await sha256File(destination)) === sha256) return false;
-      await downloadObjectTo(getObjectBlobName(sha256, extension), destination, sha256);
+      await downloadObjectTo(getObjectKey(sha256, extension), destination, sha256);
       return true;
     }),
     REFERENCE_PACK_CONCURRENCY,

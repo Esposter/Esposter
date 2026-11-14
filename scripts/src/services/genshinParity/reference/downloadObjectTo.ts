@@ -12,15 +12,13 @@ import { pipeline } from "node:stream/promises";
 
 // One stored object streamed to a file, checked against its hash before it takes the file's name: a download cut short
 // Or a changed object is never kept, and a recording is never held in memory whole
-export const downloadObjectTo = async (blobName: string, destination: string, sha256: string): Promise<void> => {
-  const response = await fetchResponse(`${GAME_DATA_DEV_BASE_URL}/${blobName}`, {
-    timeoutMs: OBJECT_DOWNLOAD_TIMEOUT_MS,
-  });
+export const downloadObjectTo = async (key: string, destination: string, sha256: string): Promise<void> => {
+  const response = await fetchResponse(`${GAME_DATA_DEV_BASE_URL}/${key}`, { timeoutMs: OBJECT_DOWNLOAD_TIMEOUT_MS });
   if (!response.ok || response.body === null)
-    throw new InvalidOperationError(Operation.Read, blobName, `responds ${response.status}`);
+    throw new InvalidOperationError(Operation.Read, key, `responds ${response.status}`);
   await writePartialThenMove(destination, async (partialPath) => {
     await pipeline(Readable.fromWeb(response.body as ReadableStream), createWriteStream(partialPath));
     if ((await sha256File(partialPath)) !== sha256)
-      throw new InvalidOperationError(Operation.Read, blobName, "does not hash to its name");
+      throw new InvalidOperationError(Operation.Read, key, "does not hash to its name");
   });
 };

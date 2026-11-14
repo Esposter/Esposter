@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { dryRunArgs } from "#src/services/gameData/commands/dryRunArgs";
+import { createGameDataBucketClientMap } from "#src/services/gameData/createGameDataBucketClientMap";
 import { publishGameDataStep } from "#src/services/gameData/publishGameDataStep";
 import { buildCharacterPackIndex } from "#src/services/genshinAssets/characterPacks/buildCharacterPackIndex";
 import { CHARACTER_PACKS_DIRECTORY } from "#src/services/genshinAssets/characterPacks/constants";
@@ -34,8 +35,8 @@ export const characterPacksCommand: SubCommandsDef[string] = defineCommand({
     const bytes = indexFiles.reduce((total, { bytes: fileBytes }) => total + fileBytes, 0);
     const isDryRun = args["dry-run"];
     console.log(`character packs: ${index.avatars.length} avatars, ${bytes} bytes, ${indexFiles.length} files`);
-    // The files upload before the index names them, so no account lists a file it does not hold
-    if (!isDryRun) await publishCharacterPacks(files);
+    // The files upload before the index names them, so no bucket lists a file it does not hold
+    if (!isDryRun) await publishCharacterPacks(files, createGameDataBucketClientMap);
     console.log(
       await publishGameDataStep({
         isDryRun,

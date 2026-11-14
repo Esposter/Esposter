@@ -11,7 +11,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 const SHA256 = "a".repeat(64);
 const FILES: CharacterPackFile[] = [
-  { avatarId: "10000006", blobName: "characterPacks/10000006/body.png", localPath: "", path: "body.png", size: 4 },
+  { avatarId: "10000006", key: "characterPacks/10000006/body.png", localPath: "", path: "body.png", size: 4 },
 ];
 const INDEX: CharacterPackIndex = {
   avatars: [
@@ -31,7 +31,9 @@ vi.mock(import("#src/services/gameData/publishGameDataStep"), () => ({
   publishGameDataStep: vi.fn<(options: unknown) => Promise<string>>(() => Promise.resolve("published")),
 }));
 vi.mock(import("#src/services/genshinAssets/characterPacks/publishCharacterPacks"), () => ({
-  publishCharacterPacks: vi.fn<(files: CharacterPackFile[]) => Promise<void>>(() => Promise.resolve()),
+  publishCharacterPacks: vi.fn<(files: CharacterPackFile[], createBucketClientMap: unknown) => Promise<void>>(() =>
+    Promise.resolve(),
+  ),
 }));
 vi.mock(import("#src/services/genshinAssets/characterPacks/readCharacterPackFiles"), () => ({
   readCharacterPackFiles: vi.fn<(directory: string) => Promise<CharacterPackFile[]>>(() => Promise.resolve(FILES)),
@@ -68,7 +70,7 @@ describe("characterPacksCommand", () => {
     });
   });
 
-  // The files upload before the index is published, so the index never names a file an account does not hold
+  // The files upload before the index is published, so the index never names a file a bucket does not hold
   test("a publish uploads the files before it publishes the index", async () => {
     expect.hasAssertions();
 

@@ -7,7 +7,7 @@ import { CONTENT_CACHE_DIRECTORY, readContentAddressedObject } from "@esposter/s
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-// The same object, or undefined when the dev account holds no blob under its name, so a comparison reads a blob the account
+// The same object, or undefined when the dev bucket holds no object under its key, so a comparison reads an object the bucket
 // Lacks as new rather than failing on it. A cached object is read as the cache serves it; a fetched one is verified and cached
 export const readPublishedGameDataObjectIfStored = async <T>(dataset: string, hash: string): Promise<T | undefined> => {
   if (existsSync(join(CONTENT_CACHE_DIRECTORY, hash))) return readPublishedGameDataObject<T>(dataset, hash);

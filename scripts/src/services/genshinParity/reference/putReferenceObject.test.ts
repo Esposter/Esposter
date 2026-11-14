@@ -1,42 +1,33 @@
-import type { RecordObjectTarget } from "#src/models/genshinParity/reference/RecordObjectTarget";
-
+import { createMemoryR2BucketClient } from "#src/services/cloudflare/createMemoryR2BucketClient.test";
 import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
 import { describe, expect, test, vi } from "vitest";
 
-// A fake account that holds the names it is given, and records every upload it is asked for
-const createTarget = (held: string[]): RecordObjectTarget & { uploads: string[] } => {
-  const uploads: string[] = [];
-  return {
-    exists: vi.fn<(blobName: string) => Promise<boolean>>((blobName: string) =>
-      Promise.resolve(held.includes(blobName)),
-    ),
-    upload: vi.fn<(blobName: string) => Promise<void>>((blobName: string) => {
-      uploads.push(blobName);
-      return Promise.resolve();
-    }),
-    uploads,
-  };
-};
-
 describe(putReferenceObject, () => {
-  const BLOB_NAME = "parityReferences/0.webp";
-  const LOCAL_PATH = "0.webp";
+  const KEY = "parityObjects/0.webp";
 
-  test("uploads only to the accounts that lack the object", async () => {
+  test("uploads only to the buckets that lack the object", async () => {
     expect.hasAssertions();
-    const lacking = createTarget([]);
-    const holding = createTarget([BLOB_NAME]);
-    const uploads = await putReferenceObject(BLOB_NAME, LOCAL_PATH, [lacking, holding]);
+
+    const lacking = createMemoryR2BucketClient();
+    const holding = createMemoryR2BucketClient();
+    await holding.put(KEY, new Blob());
+
+    const uploads = await putReferenceObject(KEY, new Blob(), [lacking, holding]);
+
     expect(uploads).toBe(1);
-    expect(lacking.uploads).toStrictEqual([BLOB_NAME]);
-    expect(holding.uploads).toStrictEqual([]);
+    expect([...lacking.store.keys()]).toStrictEqual([KEY]);
+    expect(holding.store.size).toBe(1);
   });
 
-  test("never uploads an object an account already holds", async () => {
+  test("never uploads an object a bucket already holds", async () => {
     expect.hasAssertions();
-    const target = createTarget([BLOB_NAME]);
-    const uploads = await putReferenceObject(BLOB_NAME, LOCAL_PATH, [target]);
+
+    const holding = createMemoryR2BucketClient();
+    await holding.put(KEY, new Blob());
+    const put = vi.spyOn(holding, "put");
+    const uploads = await putReferenceObject(KEY, new Blob(), [holding]);
+
     expect(uploads).toBe(0);
-    expect(target.upload).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
   });
 });

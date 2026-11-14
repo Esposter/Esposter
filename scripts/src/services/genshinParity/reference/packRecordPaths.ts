@@ -1,8 +1,8 @@
-import type { RecordObjectTarget } from "#src/models/genshinParity/reference/RecordObjectTarget";
+import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { RecordPathsOutcome } from "#src/models/genshinParity/reference/RecordPathsOutcome";
 
 import { REFERENCE_PACK_CONCURRENCY } from "#src/services/genshinParity/reference/constants";
-import { getObjectBlobName } from "#src/services/genshinParity/reference/getObjectBlobName";
+import { getObjectKey } from "#src/services/genshinParity/reference/getObjectKey";
 import { getRecordPath } from "#src/services/genshinParity/reference/getRecordPath";
 import { packPathObject } from "#src/services/genshinParity/reference/packPathObject";
 import { putReferenceObject } from "#src/services/genshinParity/reference/putReferenceObject";
@@ -10,15 +10,16 @@ import { readManifestFile } from "#src/services/genshinParity/reference/readMani
 import { writeManifestFile } from "#src/services/genshinParity/reference/writeManifestFile";
 import { PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { InvalidOperationError, Operation, settleAll } from "@esposter/shared";
+import { openAsBlob } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
-// Stores the record files named on the command line, each streamed from its own path and uploaded to the accounts that lack
+// Stores the record files named on the command line, each streamed from its own path and uploaded to the buckets that lack
 // It, then records each in the manifest's records section under its path relative to the parity folder, which a restore
 // Writes it back to
 export const packRecordPaths = async (
   paths: string[],
   isDryRun: boolean,
-  targets: RecordObjectTarget[],
+  bucketClients: R2BucketClient[],
 ): Promise<RecordPathsOutcome> => {
   const files = await settleAll(
     paths.map((path) => async () => {
@@ -34,7 +35,7 @@ export const packRecordPaths = async (
       const { bytes, extension, sha256 } = await packPathObject(absolutePath);
       const uploads = isDryRun
         ? 0
-        : await putReferenceObject(getObjectBlobName(sha256, extension), absolutePath, targets);
+        : await putReferenceObject(getObjectKey(sha256, extension), await openAsBlob(absolutePath), bucketClients);
       return { bytes, extension, path: getRecordPath(relativePath), sha256, uploads };
     }),
     REFERENCE_PACK_CONCURRENCY,
