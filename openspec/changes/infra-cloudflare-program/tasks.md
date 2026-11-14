@@ -44,7 +44,7 @@
 
 ## 7. Deploy and cutover
 
-- [ ] 7.1 Deploy both Workers to the develop estate with `wrangler deploy`, then run the second `pulumi up` for the queue consumers and custom domains. Verified by `dev.esposter.com` serving.
+- [ ] 7.1 Deploy both Workers to the develop estate with `wrangler deploy`, then run the second `pulumi up` for the queue consumers and custom domains, so `ai/queue` deploys to `dev.esposter.com` and `main` to `esposter.com`; each OAuth app (GitHub, Google, Facebook) lists `https://dev.esposter.com` and `https://esposter.com` callbacks in place of the Railway hosts. Verified by `dev.esposter.com` serving and a sign-in on it.
 - [ ] 7.2 Confirm the deploy job runs migrations before `wrangler deploy`, uploads secrets with `wrangler secret bulk`, and is never cancelled mid-deploy. Verified by one green deploy run.
 - [ ] 7.3 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and import each room's messages into its object (realtime 4.1), then rehearse the whole cutover on the develop estate. Verified by `verify` passing on develop.
 - [ ] 7.4 Run the production cutover on `next.esposter.com`, switch the apex record from Railway to the web Worker, soak, then tear down: the Azure resources and `src/azure` in Pulumi, the Railway services, the cutover tool and its reschedule route. The `esposter.com` nameservers already point at Cloudflare. Verified by the cutover design's checks.
