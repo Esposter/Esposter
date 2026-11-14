@@ -1,12 +1,12 @@
 ## Purpose
 
-tRPC router test wiring — in-memory database, mocked Azure services, and a controlled auth session.
+tRPC router test wiring — an in-memory D1 database with Miniflare's bindings, and a controlled auth session.
 
 ## Requirements
 
 ### Requirement: Router tests call procedures directly without network services
 
-Router tests SHALL call procedures directly against an in-memory database and mocked cloud services, with no HTTP request and no real cloud resource.
+Router tests SHALL call procedures directly against an in-memory database and Miniflare's bindings, with no HTTP request and no real cloud resource.
 
 #### Scenario: A router test runs
 
@@ -15,15 +15,15 @@ Router tests SHALL call procedures directly against an in-memory database and mo
 - **THEN** each procedure is called directly
 - **AND** no connection to a real cloud service is made
 
-### Requirement: The test database starts from a snapshot that must match the schema
+### Requirement: The test database is built from the migrations production runs
 
-The test database SHALL start from a prebuilt snapshot of the current schema, and the suite SHALL fail when that snapshot drifts from the schema.
+The test database SHALL be built by applying the migrations the schema generates, the same SQL production runs.
 
-#### Scenario: The schema changes without regenerating the snapshot
+#### Scenario: A test file starts its database
 
-- **GIVEN** a schema change that is not yet reflected in the prebuilt snapshot
-- **WHEN** the suite runs
-- **THEN** the snapshot check fails
+- **GIVEN** a test file that needs a database
+- **WHEN** the file starts
+- **THEN** the migrations are applied to a new database before its first test
 
 ### Requirement: Each test acts as the owner unless it asks for another user
 
@@ -40,22 +40,22 @@ Each test SHALL act as the default owner session unless the test queues another 
 
 Each test SHALL remove the rows and mock state it wrote after it runs, so that no test depends on the test before it.
 
-#### Scenario: A test writes rows and events
+#### Scenario: A test writes rows and stores objects
 
-- **GIVEN** a test that writes rows and sends events to a mocked service
+- **GIVEN** a test that writes rows and stores objects in a bucket
 - **WHEN** the test finishes
 - **THEN** the rows it wrote are deleted
-- **AND** the mocked stores it wrote to are cleared
+- **AND** the objects it stored are removed
 
-### Requirement: A cloud client is mocked once in the shared setup
+### Requirement: A platform binding comes from the one Miniflare instance a test file starts
 
-Each cloud client SHALL be replaced by its in-memory mock in the shared test setup, so that the mock covers both a procedure's own calls and a suite's direct imports.
+Each platform binding SHALL come from the Miniflare instance the test file starts, so that a procedure's own calls and a suite's direct reads reach the same binding.
 
-#### Scenario: A suite imports a cloud client directly
+#### Scenario: A suite reads a binding directly
 
-- **GIVEN** a suite that imports a cloud client directly rather than through a procedure
+- **GIVEN** a suite that reads a binding rather than calling a procedure
 - **WHEN** the suite runs
-- **THEN** the import receives the in-memory mock
+- **THEN** the read reaches the same Miniflare binding the procedures use
 
 ### Requirement: A router that needs the full app runtime runs its tests in that runtime
 
