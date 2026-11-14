@@ -10,5 +10,4 @@ The call row and its in-memory participant maps, the id through `createId`, stan
 | `Message/Content/Call` — the roots, `Control`, `Panel`, `PreJoin`, `JoinNotice`                                                      | 2026-10-05 · Opus 5.5 |       |
 | `Message/Content/Call` — `Participant`, `PictureInPicture`, `ScreenShare`, `Video`, `Audio`, `Camera`, `Device`, `VirtualBackground` | 2026-10-05 · Opus 5.5 |       |
 | `server/services/message/call`                                                                                                       | 2026-10-05 · Opus 5.5 |       |
-| `server/services/livekit`, `server/trpc/routers/call`, `server/api/webhooks`                                                         | 2026-10-05 · Opus 5.5 |       |
 | `pages/calls` and the call models in `app`, `server` and `shared`                                                                    | 2026-10-05 · Opus 5.5 |       |

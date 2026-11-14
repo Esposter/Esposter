@@ -3,7 +3,6 @@
 | Unit                      | Swept                   | Notes |
 | ------------------------- | ----------------------- | ----- |
 | `absent-values`           | 2026-10-31 · Haiku 5.5  |       |
-| `azure-table`             | 2026-10-31 · Sonnet 5.5 |       |
 | `backfills`               | 2026-10-31 · Sonnet 5.5 |       |
 | `bench`                   | 2026-10-31 · Haiku 5.5  |       |
 | `build`                   | 2026-10-31 · Haiku 5.5  |       |
