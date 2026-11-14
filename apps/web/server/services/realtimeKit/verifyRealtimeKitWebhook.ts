@@ -1,7 +1,5 @@
-import { REALTIMEKIT_WEBHOOK_KEY_URL } from "#server/services/realtimeKit/constants";
+import { REALTIMEKIT_WEBHOOK_ALGORITHM, REALTIMEKIT_WEBHOOK_KEY_URL } from "#server/services/realtimeKit/constants";
 import { z } from "zod";
-
-const RSA_ALGORITHM = { hash: "SHA-256", name: "RSASSA-PKCS1-v1_5" };
 
 const decodeBase64 = (value: string) => Uint8Array.from(atob(value), (character) => character.charCodeAt(0));
 
@@ -11,8 +9,12 @@ export const verifyRealtimeKitWebhook = async (body: ArrayBuffer, signature: str
   const response = await fetch(REALTIMEKIT_WEBHOOK_KEY_URL);
   const { data } = z.object({ data: z.object({ publicKey: z.string() }) }).parse(await response.json());
   const publicKeyBody = data.publicKey.replace(/-----[^-]+-----|\s/gu, "");
-  const publicKey = await crypto.subtle.importKey("spki", decodeBase64(publicKeyBody), RSA_ALGORITHM, false, [
-    "verify",
-  ]);
-  return crypto.subtle.verify(RSA_ALGORITHM.name, publicKey, decodeBase64(signature), body);
+  const publicKey = await crypto.subtle.importKey(
+    "spki",
+    decodeBase64(publicKeyBody),
+    REALTIMEKIT_WEBHOOK_ALGORITHM,
+    false,
+    ["verify"],
+  );
+  return crypto.subtle.verify(REALTIMEKIT_WEBHOOK_ALGORITHM.name, publicKey, decodeBase64(signature), body);
 };
