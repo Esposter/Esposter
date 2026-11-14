@@ -6,7 +6,7 @@ import { listContainerBlobs } from "#src/services/cutover/azure/listContainerBlo
 import { readBlobMd5 } from "#src/services/cutover/azure/readBlobMd5";
 import { COPY_CONCURRENCY } from "#src/services/cutover/constants";
 import { base64ToHex } from "#src/services/cutover/objects/base64ToHex";
-import { runWithConcurrency } from "#src/services/cutover/objects/runWithConcurrency";
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Checks a bucket against its container: the same number of objects and bytes, then each blob's object by key, its size and
@@ -27,7 +27,7 @@ export const verifyBucketObjects = async (options: VerifyBucketObjectsOptions): 
   if (blobBytes !== objectBytes)
     throw new InvalidOperationError(Operation.Read, bucket, `holds ${blobBytes} bytes but ${objectBytes} in R2`);
 
-  await runWithConcurrency(blobs, COPY_CONCURRENCY, async (blob) => {
+  await forEachConcurrently(blobs, COPY_CONCURRENCY, async (blob) => {
     const object = objects.get(blob.name);
     if (object === undefined) throw new InvalidOperationError(Operation.Read, blob.name, "is missing from R2");
     if (object.size !== blob.size)

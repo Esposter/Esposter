@@ -8,7 +8,7 @@ import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoin
 import { COPY_CONCURRENCY } from "#src/services/cutover/constants";
 import { COPY_OBJECTS_UNIT_PREFIX, DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { copyBlobIfChanged } from "#src/services/cutover/objects/copyBlobIfChanged";
-import { runWithConcurrency } from "#src/services/cutover/objects/runWithConcurrency";
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Copies one container into its R2 bucket. The full copy runs while the app is live and records when it began. The delta
@@ -26,7 +26,7 @@ export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Prom
     // Kept once set: the delta measures changes from this instant, so a re-run must not move it
     const preCopyStartedAt = checkpoint.preCopyStartedAt ?? new Date().toISOString();
     await writeCheckpoint(client, archiveBucket, unit, { ...checkpoint, preCopyStartedAt });
-    await runWithConcurrency(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
+    await forEachConcurrently(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
       if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob)) counts.copied += 1;
       else counts.skipped += 1;
     });
@@ -42,13 +42,13 @@ export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Prom
   const changedSince = Date.parse(checkpoint.preCopyStartedAt) - DELTA_CLOCK_MARGIN_MS;
   // Every name Azure lists, changed or not, so the deletes below know which R2 objects are gone from Azure
   const azureNames = new Set<string>();
-  await runWithConcurrency(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
+  await forEachConcurrently(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
     azureNames.add(blob.name);
     if (blob.lastModified.getTime() < changedSince) return;
     if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob)) counts.copied += 1;
     else counts.skipped += 1;
   });
-  await runWithConcurrency(client.listObjects(r2Bucket), COPY_CONCURRENCY, async (object) => {
+  await forEachConcurrently(client.listObjects(r2Bucket), COPY_CONCURRENCY, async (object) => {
     if (azureNames.has(object.key)) return;
     await client.deleteObject(r2Bucket, object.key);
     counts.deleted += 1;

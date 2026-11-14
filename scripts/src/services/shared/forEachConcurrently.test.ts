@@ -1,8 +1,9 @@
-import { runWithConcurrency } from "#src/services/cutover/objects/runWithConcurrency";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
-describe(runWithConcurrency, () => {
+import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
+
+describe(forEachConcurrently, () => {
   const items = ["a", "b", "c", "d", "e"];
   const limit = 2;
 
@@ -12,7 +13,7 @@ describe(runWithConcurrency, () => {
     let inFlight = 0;
     let maxInFlight = 0;
 
-    await runWithConcurrency(items, limit, async (item) => {
+    await forEachConcurrently(items, limit, async (item) => {
       started.push(item);
       inFlight += 1;
       maxInFlight = Math.max(maxInFlight, inFlight);
@@ -24,11 +25,29 @@ describe(runWithConcurrency, () => {
     expect(maxInFlight).toBeLessThanOrEqual(limit);
   });
 
+  test("streams an async iterable without collecting it first", async () => {
+    expect.hasAssertions();
+    const started: string[] = [];
+
+    await forEachConcurrently(
+      (async function* () {
+        for (const item of items) yield item;
+      })(),
+      limit,
+      async (item) => {
+        started.push(item);
+        await Promise.resolve();
+      },
+    );
+
+    expect(started.toSorted()).toStrictEqual(items);
+  });
+
   test("rejects with the first failure once the calls in flight have settled", async () => {
     expect.hasAssertions();
     const settled: string[] = [];
 
-    const run = runWithConcurrency(items, limit, async (item) => {
+    const run = forEachConcurrently(items, limit, async (item) => {
       await Promise.resolve();
       if (item === "a") throw new InvalidOperationError(Operation.Create, item, "failed");
       settled.push(item);

@@ -1,23 +1,30 @@
-import { takeOne } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
-// Every worker takes the next item from one shared cursor only once its own call has settled, so the calls in flight
-// Are bounded by `concurrency` and nothing is copied. The registry readers share this bound rather than each keeping a pool.
+// Runs `callback` over `items` with at most `concurrency` calls in flight. Each lane takes the next item from one cursor only
+// once its own call has settled, so the calls in flight are bounded and a listing is streamed rather than collected. A failure
+// stops the items not yet started, and the call rejects with the first failure only once every call in flight has settled.
+// The registry readers share this bound rather than each keeping a pool
 export const forEachConcurrently = async <T>(
-  items: T[],
+  items: AsyncIterable<T> | Iterable<T>,
   concurrency: number,
   callback: (item: T) => Promise<void>,
 ): Promise<void> => {
-  let nextIndex = 0;
-
-  const workers = Array.from({ length: concurrency }, async () => {
-    for (;;) {
-      if (nextIndex >= items.length) return;
-      const item = takeOne(items, nextIndex);
-      nextIndex += 1;
-      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: each worker takes the next item only after its call settles
-      await callback(item);
+  const cursor = (async function* () {
+    yield* items;
+  })();
+  const failures: Error[] = [];
+  const runLane = async (): Promise<void> => {
+    for (let next = await cursor.next(); !next.done && failures.length === 0; next = await cursor.next()) {
+      const { value } = next;
+      // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: a lane takes its next item only once its call settles
+      await getResultAsync(() => callback(value)).match(noop, (error) => {
+        failures.push(error);
+      });
     }
-  });
-
-  await Promise.all(workers);
+  };
+  const lanes = await Promise.allSettled(Array.from({ length: concurrency }, runLane));
+  const rejected = lanes.find((lane) => lane.status === "rejected");
+  if (rejected?.status === "rejected") throw rejected.reason;
+  const [failure] = failures;
+  if (failure) throw failure;
 };
