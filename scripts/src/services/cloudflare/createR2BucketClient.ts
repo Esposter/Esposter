@@ -1,5 +1,6 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
 import type { R2ListedObject } from "#src/models/cloudflare/R2ListedObject";
+import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
 import type { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 
 import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
@@ -64,7 +65,7 @@ export const createR2BucketClient = (
       return true;
     },
     list: (prefix) => listPage(prefix),
-    put: async (key, body, { cacheControl, contentEncoding, contentType, createOnly = false } = {}) => {
+    put: async (key, body, { cacheControl, contentEncoding, contentType, createOnly = false }: R2PutOptions = {}) => {
       const headers = new Headers();
       if (cacheControl !== undefined) headers.set("Cache-Control", cacheControl);
       if (contentEncoding !== undefined) headers.set("Content-Encoding", contentEncoding);

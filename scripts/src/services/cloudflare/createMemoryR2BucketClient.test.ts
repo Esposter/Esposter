@@ -1,4 +1,5 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
+import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
 
 import { zstdDecompressSync } from "node:zlib";
 import { describe } from "vitest";
@@ -7,7 +8,10 @@ import { describe } from "vitest";
 // Test fakes, a create-only write refuses a key already taken, and a read decodes a `zstd` object as R2 serves it through
 // `fetch`. It stands in for the S3 client wherever a test writes
 export const createMemoryR2BucketClient = () => {
-  const store = new Map<string, { body: Blob | Uint8Array; contentEncoding?: string; lastModified: Date }>();
+  const store = new Map<
+    string,
+    { body: Blob | Uint8Array<ArrayBuffer>; contentEncoding?: string; lastModified: Date }
+  >();
   const client: R2BucketClient = {
     delete: (key) => {
       store.delete(key);
@@ -16,7 +20,7 @@ export const createMemoryR2BucketClient = () => {
     get: async (key) => {
       const stored = store.get(key);
       if (stored === undefined) return undefined;
-      const bytes = stored.body instanceof Blob ? await stored.body.arrayBuffer() : stored.body;
+      const bytes = stored.body instanceof Blob ? new Uint8Array(await stored.body.arrayBuffer()) : stored.body;
       return stored.contentEncoding === "zstd" ? zstdDecompressSync(bytes) : Buffer.from(bytes);
     },
     has: (key) => Promise.resolve(store.has(key)),
@@ -24,7 +28,7 @@ export const createMemoryR2BucketClient = () => {
       Promise.resolve(
         [...store].filter(([key]) => key.startsWith(prefix)).map(([key, { lastModified }]) => ({ key, lastModified })),
       ),
-    put: (key, body, { contentEncoding, createOnly = false } = {}) => {
+    put: (key, body, { contentEncoding, createOnly = false }: R2PutOptions = {}) => {
       if (createOnly && store.has(key)) return Promise.resolve(false);
       store.set(key, { body, contentEncoding, lastModified: new Date() });
       return Promise.resolve(true);

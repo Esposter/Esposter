@@ -10,5 +10,5 @@ export interface R2BucketClient {
   list: (prefix: string) => Promise<R2ListedObject[]>;
   // Resolves to whether this call wrote the object. A create-only write that finds the key taken is not an error: the
   // Object is already there, so it resolves false
-  put: (key: string, body: Blob | Uint8Array, options?: R2PutOptions) => Promise<boolean>;
+  put: (key: string, body: Blob | Uint8Array<ArrayBuffer>, options?: R2PutOptions) => Promise<boolean>;
 }
