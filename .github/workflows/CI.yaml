@@ -184,3 +184,51 @@ jobs:
         uses: ./.github/actions/run-cached-task
         with:
           task: ${{ matrix.task }}
+
+  # After every check, on `main` and `ai/queue`: `ai/queue` deploys the dev environment and `main` the prod one, which
+  # the branch picks the way the Deploy Function App workflow's maps do. A newer push cancels a run in progress, this
+  # job included, so a deploy can be cut short.
+  deploy:
+    name: Deploy
+    needs: [build, check, coverage-merge, format]
+    if: ${{ github.ref_name == 'main' || github.ref_name == 'ai/queue' }}
+    runs-on: ubuntu-latest
+    env:
+      # Nitro reads it while building the web Worker, and wrangler reads it to pick the environment each Worker deploys to
+      CLOUDFLARE_ENV: ${{ fromJSON('{"ai/queue":"dev","main":"prod"}')[github.ref_name] }}
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      - name: 🏗️ Build the web app
+        uses: ./.github/actions/build-app
+        with:
+          package: "@esposter/web"
+
+      - name: 🏗️ Build the functions Worker
+        uses: ./.github/actions/build-app
+        with:
+          package: "@esposter/functions"
+
+      - name: 🚀 Deploy the web Worker
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/web deploy:worker
+
+      - name: 🚀 Deploy the functions Worker
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/functions deploy:worker
+
+      - name: 🗄️ Apply the D1 migrations
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/functions db:migrate:d1

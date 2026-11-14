@@ -40,6 +40,8 @@
   },
   "scripts": {
     "build": "tsdown",
+    "db:migrate:d1": "wrangler d1 migrations apply CORE --remote && wrangler d1 migrations apply STREAMS --remote",
+    "deploy:worker": "wrangler deploy",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
