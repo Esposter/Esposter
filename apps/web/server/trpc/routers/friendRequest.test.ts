@@ -2,17 +2,11 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
-import {
-  consumeMockSessionOnce,
-  createMockContext,
-  getMockSession,
-  mockSessionOnce,
-  replayMockSession,
-} from "#server/trpc/context.test";
+import { consumeMockSessionOnce, createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -39,6 +33,7 @@ describe("friendRequestRouter", () => {
     await mockContext.db.delete(blocksInSocial);
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(friendRequestsInSocial);
+    userObjectCalls.length = 0;
   });
 
   test("sends friend request", async () => {
@@ -237,99 +232,50 @@ describe("friendRequestRouter", () => {
     ]);
   });
 
-  test("on send friend request notifies receiver", async () => {
+  test("sends the friend request to both people's objects", async () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const subscription = await friendRequestCaller.onSendFriendRequest();
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.sendFriendRequest(receiverUser.id),
-    );
+    const friendRequest = await friendRequestCaller.sendFriendRequest(receiverUser.id);
 
-    expect(data.senderId).toBe(senderUser.id);
-    expect(data.receiverId).toBe(receiverUser.id);
-    expect(data.sender.id).toBe(senderUser.id);
+    expect(userObjectCalls).toStrictEqual([
+      { args: [friendRequest], method: "sendFriendRequest", userId: receiverUser.id },
+      { args: [friendRequest], method: "sendFriendRequest", userId: senderUser.id },
+    ]);
   });
 
-  test("on send friend request notifies caller", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const senderPayload = await mockSessionOnce(mockContext.db);
-    const { user: senderUser } = senderPayload;
-    const subscription = await friendRequestCaller.onSendFriendRequest();
-    replayMockSession(senderPayload);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.sendFriendRequest(receiverUser.id),
-    );
-
-    expect(data.senderId).toBe(senderUser.id);
-    expect(data.receiverId).toBe(receiverUser.id);
-    expect(data.sender.id).toBe(senderUser.id);
-  });
-
-  test("on accept friend request notifies sender", async () => {
+  test("sends the accepted friend request to both people's objects", async () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    await mockSessionOnce(mockContext.db, senderUser);
-    const subscription = await friendRequestCaller.onAcceptFriendRequest();
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.acceptFriendRequest(senderUser.id),
-    );
+    const acceptedSenderUser = await friendRequestCaller.acceptFriendRequest(senderUser.id);
+    const acceptance = {
+      receiverUser: expect.objectContaining({ id: receiverUser.id }),
+      senderUser: acceptedSenderUser,
+    };
 
-    expect(data.id).toBe(receiverUser.id);
+    expect(userObjectCalls.filter(({ method }) => method === "acceptFriendRequest")).toStrictEqual([
+      { args: [acceptance], method: "acceptFriendRequest", userId: senderUser.id },
+      { args: [acceptance], method: "acceptFriendRequest", userId: receiverUser.id },
+    ]);
   });
 
-  test("on accept friend request notifies caller", async () => {
+  test("sends the declined friend request to both people's objects", async () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
     const { user: senderUser } = await mockSessionOnce(mockContext.db);
     await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    const subscription = await friendRequestCaller.onAcceptFriendRequest();
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.acceptFriendRequest(senderUser.id),
-    );
+    await friendRequestCaller.declineFriendRequest(senderUser.id);
 
-    expect(data.id).toBe(senderUser.id);
-  });
+    const declinedFriendRequest = { receiverId: receiverUser.id, senderId: senderUser.id };
 
-  test("on decline friend request notifies sender", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    await mockSessionOnce(mockContext.db, senderUser);
-    const subscription = await friendRequestCaller.onDeclineFriendRequest();
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.declineFriendRequest(senderUser.id),
-    );
-
-    expect(data).toBe(receiverUser.id);
-  });
-
-  test("on decline friend request notifies caller", async () => {
-    expect.hasAssertions();
-
-    const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(receiverUser.id);
-    const subscription = await friendRequestCaller.onDeclineFriendRequest();
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendRequestCaller.declineFriendRequest(senderUser.id),
-    );
-
-    expect(data).toBe(senderUser.id);
+    expect(userObjectCalls.filter(({ method }) => method === "declineFriendRequest")).toStrictEqual([
+      { args: [declinedFriendRequest], method: "declineFriendRequest", userId: senderUser.id },
+      { args: [declinedFriendRequest], method: "declineFriendRequest", userId: receiverUser.id },
+    ]);
   });
 });

@@ -1,7 +1,7 @@
 import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnvelope";
 import type { GenshinSave } from "genshin-world/save";
 
-import { genshinEventEmitter } from "#server/services/genshin/events/genshinEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { startGenshinSession } from "#server/services/genshin/startGenshinSession";
 import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
@@ -39,6 +39,6 @@ export const startGenshin = async (userId: string, sessionId: string): Promise<S
 
   const startedEnvelope = startGenshinSession(envelope, sessionId);
   const writtenEtag = await writeGenshinSaveEnvelope(bucket, userId, startedEnvelope, etag);
-  if (envelope) genshinEventEmitter.emit("replaceSession", [userId, sessionId]);
+  if (envelope) await callUserObjects([userId], (userObject) => userObject.replaceSession(sessionId));
   return toStartResult(startedEnvelope, writtenEtag);
 };

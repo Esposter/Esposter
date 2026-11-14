@@ -2,8 +2,7 @@ import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/d
 
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { on } from "#server/services/events/on";
-import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
 import { readUserPair } from "#server/services/friend/readUserPair";
 import { router } from "#server/trpc";
@@ -54,7 +53,9 @@ export const friendRequestRouter = router({
         ctx.db.delete(friendRequestsInSocial).where(getReceivedFriendRequestWhere(friendshipId, userId)),
       ]);
       requireMutation(insertedFriends[0], Operation.Update, DatabaseEntityType.Friend, friendshipId, "NOT_FOUND");
-      friendEventEmitter.emit("acceptFriendRequest", { receiverUser, senderUser });
+      await callUserObjects([senderId, userId], (userObject) =>
+        userObject.acceptFriendRequest({ receiverUser, senderUser }),
+      );
       return senderUser;
     }),
   declineFriendRequest: standardAuthedProcedure
@@ -77,27 +78,10 @@ export const friendRequestRouter = router({
         friendshipId,
         "NOT_FOUND",
       );
-      friendEventEmitter.emit("declineFriendRequest", { receiverId: userId, senderId });
+      await callUserObjects([senderId, userId], (userObject) =>
+        userObject.declineFriendRequest({ receiverId: userId, senderId }),
+      );
     }),
-  onAcceptFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverUser, senderUser }] of on(friendEventEmitter, "acceptFriendRequest", { signal }))
-      if (senderUser.id === userId) yield receiverUser;
-      else if (receiverUser.id === userId) yield senderUser;
-  }),
-  onDeclineFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "declineFriendRequest", { signal }))
-      if (senderId === userId) yield receiverId;
-      else if (receiverId === userId) yield senderId;
-  }),
-  onSendFriendRequest: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    const userId = ctx.getSessionPayload.user.id;
-    for await (const [friendRequest] of on(friendEventEmitter, "sendFriendRequest", { signal })) {
-      if (![friendRequest.receiverId, friendRequest.senderId].includes(userId)) continue;
-      yield friendRequest;
-    }
-  }),
   readFriendRequests: standardAuthedProcedure.query<FriendRequestInSocialWithRelations[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db.query.friendRequestsInSocial.findMany({
@@ -173,7 +157,7 @@ export const friendRequestRouter = router({
         return existingFriendRequest;
       }
       const friendRequest: FriendRequestInSocialWithRelations = { ...newFriendRequest, sender: senderUser };
-      friendEventEmitter.emit("sendFriendRequest", friendRequest);
+      await callUserObjects([receiverId, userId], (userObject) => userObject.sendFriendRequest(friendRequest));
       // Best-effort after the insert — a failed publish loses one notification, never the friend request that
       // Already landed.
       await getResultAsync(() =>

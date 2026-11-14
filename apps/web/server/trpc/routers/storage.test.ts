@@ -1,13 +1,13 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { getMockSession } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
-import { StorageTier } from "@esposter/db-schema";
-import { beforeAll, describe, expect, test } from "vitest";
+import { StorageTier, StorageTierQuotaMap } from "@esposter/db-schema";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("storageRouter", () => {
   const { getCaller } = setupResourceSuite(trpcRouter);
@@ -16,6 +16,10 @@ describe("storageRouter", () => {
 
   beforeAll(() => {
     caller = getCaller();
+  });
+
+  afterEach(() => {
+    userObjectCalls.length = 0;
   });
 
   test("readUsage reads the initial storage usage for the authed user", async () => {
@@ -30,25 +34,22 @@ describe("storageRouter", () => {
     });
   });
 
-  test("onUpdateUsage emits the updated storage usage when resource content is saved", async () => {
+  test("sends the updated storage usage to the owner's object when resource content is saved", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.webpage.createResource({ name });
-    const subscription = await caller.storage.onUpdateUsage();
-    const emittedUsage = await getFirstEmit(
-      () => subscription,
-      () =>
-        caller.webpage.saveResourceContent({
-          content: new WebpageEditor(),
-          contentVersion: newResource.contentVersion,
-          id: newResource.id,
-        }),
-    );
+    await caller.webpage.saveResourceContent({
+      content: new WebpageEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    const storageUsage = await caller.storage.readUsage();
 
     // The exact figure is the serialized size of an empty editor, which moves with that model rather than with
     // The metering under test — so what is asserted is that the usage moved off zero
-    expect(emittedUsage.bytesUsed).toBeGreaterThan(0);
-    expect(emittedUsage.quotaBytes).toBe(StorageTierQuotaMap[StorageTier.Free]);
-    expect(emittedUsage.tier).toBe(StorageTier.Free);
+    expect(storageUsage.bytesUsed).toBeGreaterThan(0);
+    expect(userObjectCalls.filter(({ method }) => method === "updateUsage")).toStrictEqual([
+      { args: [storageUsage], method: "updateUsage", userId: getMockSession().user.id },
+    ]);
   });
 });

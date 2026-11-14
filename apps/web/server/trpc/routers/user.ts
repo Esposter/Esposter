@@ -11,7 +11,6 @@ import type {
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type { SetNonNullable } from "type-fest";
 import { auth } from "#server/auth";
-import { on } from "#server/services/events/on";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { readCallBackgroundBlobs } from "#server/services/message/call/readCallBackgroundBlobs";
@@ -23,7 +22,7 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
-import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { router } from "#server/trpc";
@@ -154,19 +153,6 @@ export const userRouter = router({
       return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
     },
   ),
-  onUpsertStatus: standardAuthedProcedure.input(userStatusIdsInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    if (input.includes(ctx.getSessionPayload.user.id))
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, JSON.stringify(input));
-
-    for await (const [data] of on(userEventEmitter, "upsertStatus", { signal })) {
-      if (!input.includes(data.userId)) continue;
-      yield data;
-    }
-  }),
   readCallBackgrounds: standardAuthedProcedure.query<CallBackground[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const bucket = getBucket(StorageBucket.UserAssets);
@@ -332,7 +318,7 @@ export const userRouter = router({
       );
 
       const detectedStatus = { ...upsertedStatus, status: getDetectedUserStatus(upsertedStatus) };
-      userEventEmitter.emit("upsertStatus", detectedStatus);
+      await callUserObjects([ctx.getSessionPayload.user.id], (userObject) => userObject.upsertStatus(detectedStatus));
       return detectedStatus;
     }),
 });

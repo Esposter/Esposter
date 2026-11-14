@@ -4,7 +4,7 @@ import type { UpdateUserToRoomInput } from "#shared/models/db/userToRoom/UpdateU
 import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { ownedBy } from "#server/services/db/ownedBy";
-import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { requireRoomCategory } from "#server/services/room/category/requireRoomCategory";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -63,6 +63,6 @@ export const updateUserToRoom = async (
     DatabaseEntityType.UserToRoom,
     JSON.stringify({ roomId }),
   );
-  userToRoomEventEmitter.emit("updateUserToRoom", updatedUserToRoom);
+  await callUserObjects([updatedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(updatedUserToRoom));
   return updatedUserToRoom;
 };

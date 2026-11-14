@@ -24,7 +24,6 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   deleteDirectory,
   deleteStorageBlobs,
@@ -52,6 +51,7 @@ import {
   usersToRoomsInMessage,
   WordFilterAction,
   WRITE_SAS_DURATION_MS,
+  StorageTierQuotaMap,
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { isTrackedEnvelope } from "@trpc/server";

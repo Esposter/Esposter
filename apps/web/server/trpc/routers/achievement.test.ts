@@ -2,9 +2,9 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
@@ -13,14 +13,13 @@ import {
   achievementsInAchievement,
   roomsInMessage,
   SpecialAchievementName,
-  UserAchievementInAchievementRelations,
   usersInAuth,
   WebpageAchievementName,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { count } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("achievementRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(trpcRouter);
@@ -28,7 +27,6 @@ describe("achievementRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
   const name = "name";
   const timeZone = "UTC";
-  const updatedAchievements = [WebpageAchievementName.WebDeveloper];
 
   beforeAll(() => {
     mockContext = getMockContext();
@@ -47,6 +45,7 @@ describe("achievementRouter", () => {
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
     await mockContext.db.delete(achievementsInAchievement);
+    userObjectCalls.length = 0;
   });
 
   // Masking is what the map endpoint adds over the definitions, so that is what is asserted — restating every
@@ -160,35 +159,30 @@ describe("achievementRouter", () => {
     expect(achievementRarities[SpecialAchievementName.EmojiLover]).toBe(0);
   });
 
-  test("onUpdateAchievement emits every achievement the save moved", async () => {
+  test("updateAchievement sends every achievement the save moved to the saver's object", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.webpage.createResource({ name });
-    const subscription = await caller.achievement.onUpdateAchievement();
-    const data = await getFirstEmit(
-      () => subscription,
-      () =>
-        caller.webpage.saveResourceContent({
-          content: new WebpageEditor(),
-          contentVersion: newResource.contentVersion,
-          id: newResource.id,
-        }),
-    );
-    const unlockedAchievement = takeOne(data.filter(({ unlockedAt }) => unlockedAt));
-
-    expect(data.map(({ achievement }) => achievement.name)).toStrictEqual(updatedAchievements);
-    expect(unlockedAchievement.achievement.name).toBe(WebpageAchievementName.WebDeveloper);
-    expect(unlockedAchievement.amount).toBe(1);
-    expect(unlockedAchievement.unlockedAt).toStrictEqual(new Date(0));
-
-    const userId = getMockSession().user.id;
-    const userAchievement = await mockContext.db.query.userAchievementsInAchievement.findFirst({
-      where: { achievementId: { eq: unlockedAchievement.achievementId }, userId: { eq: userId } },
-      with: UserAchievementInAchievementRelations,
+    await caller.webpage.saveResourceContent({
+      content: new WebpageEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
     });
 
-    assert.exists(userAchievement);
-
-    expect(userAchievement).toStrictEqual(unlockedAchievement);
+    expect(userObjectCalls.filter(({ method }) => method === "updateAchievement")).toStrictEqual([
+      {
+        args: [
+          [
+            expect.objectContaining({
+              achievement: expect.objectContaining({ name: WebpageAchievementName.WebDeveloper }),
+              amount: 1,
+              unlockedAt: new Date(0),
+            }),
+          ],
+        ],
+        method: "updateAchievement",
+        userId: getMockSession().user.id,
+      },
+    ]);
   });
 });

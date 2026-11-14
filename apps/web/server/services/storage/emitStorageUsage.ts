@@ -1,7 +1,7 @@
 import type { Database, UserInAuth } from "@esposter/db-schema";
+import { StorageTierQuotaMap } from "@esposter/db-schema";
 
-import { storageEventEmitter } from "#server/services/storage/events/storageEventEmitter";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Best-effort by construction, and it has to be: everything this announces is already durable by the time it
@@ -17,8 +17,11 @@ export const emitStorageUsage = (db: Database, userId: UserInAuth["id"]): Promis
     if (!user) return;
 
     const { storageBytesUsed, storageTier } = user;
-    storageEventEmitter.emit("updateUsage", [
-      { bytesUsed: storageBytesUsed, quotaBytes: StorageTierQuotaMap[storageTier], tier: storageTier },
-      userId,
-    ]);
+    await callUserObjects([userId], (userObject) =>
+      userObject.updateUsage({
+        bytesUsed: storageBytesUsed,
+        quotaBytes: StorageTierQuotaMap[storageTier],
+        tier: storageTier,
+      }),
+    );
   }).match(noop, console.error);

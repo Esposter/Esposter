@@ -2,11 +2,11 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -30,6 +30,7 @@ describe("friendRouter", () => {
     await mockContext.db.delete(blocksInSocial);
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(friendRequestsInSocial);
+    userObjectCalls.length = 0;
   });
 
   test("reads friends as sender", async () => {
@@ -107,32 +108,15 @@ describe("friendRouter", () => {
     expect(searchedUsers).toStrictEqual([]);
   });
 
-  test("on delete friend notifies the other party", async () => {
+  test("sends the friend deletion to both people's objects", async () => {
     expect.hasAssertions();
 
-    const { user: receiverUser, userId } = await createFriendship(mockContext);
-    const subscription = await friendCaller.onDeleteFriend();
-    await mockSessionOnce(mockContext.db, receiverUser);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendCaller.deleteFriend(userId),
-    );
+    const { user, userId } = await createFriendship(mockContext);
+    await friendCaller.deleteFriend(user.id);
 
-    expect(data).toBe(receiverUser.id);
-  });
-
-  test("on delete friend notifies caller", async () => {
-    expect.hasAssertions();
-
-    const { user: receiverUser, userId } = await createFriendship(mockContext);
-    const receiverPayload = await mockSessionOnce(mockContext.db, receiverUser);
-    const subscription = await friendCaller.onDeleteFriend();
-    replayMockSession(receiverPayload);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => friendCaller.deleteFriend(userId),
-    );
-
-    expect(data).toBe(userId);
+    expect(userObjectCalls.filter(({ method }) => method === "deleteFriend")).toStrictEqual([
+      { args: [{ receiverId: user.id, senderId: userId }], method: "deleteFriend", userId },
+      { args: [{ receiverId: user.id, senderId: userId }], method: "deleteFriend", userId: user.id },
+    ]);
   });
 });

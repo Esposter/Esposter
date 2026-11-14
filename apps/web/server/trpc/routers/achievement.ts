@@ -4,8 +4,6 @@ import type { AchievementName, UserAchievementInAchievementWithRelations } from 
 
 import { achievementPointsSummation } from "#server/services/achievement/achievementPointsSummation";
 import { buildPointsLeaderboard } from "#server/services/achievement/buildPointsLeaderboard";
-import { achievementEventEmitter } from "#server/services/achievement/events/achievementEventEmitter";
-import { on } from "#server/services/events/on";
 import { router } from "#server/trpc";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
@@ -24,12 +22,6 @@ import { TRPCError } from "@trpc/server";
 import { count, eq, isNotNull } from "drizzle-orm";
 
 export const achievementRouter = router({
-  onUpdateAchievement: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(achievementEventEmitter, "updateAchievement", { signal })) {
-      const updatedUserAchievements = data.filter(({ userId }) => userId === ctx.getSessionPayload.user.id);
-      if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
-    }
-  }),
   readAchievementMap: standardAuthedProcedure.query<AchievementDefinitionViewMap>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({

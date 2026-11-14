@@ -4,7 +4,6 @@ import type { TodoListResource } from "#shared/models/resource/todoList/TodoList
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
@@ -202,7 +201,6 @@ describe(saveResourceContent, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    resourceEventEmitter.removeAllListeners("saveResourceContent");
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     userObjectCalls.length = 0;
@@ -273,12 +271,6 @@ describe(saveResourceContent, () => {
   test("writes the content, emits the save, records the activity and runs the after-save hook as one unit", async () => {
     expect.hasAssertions();
 
-    let saveEvent:
-      | undefined
-      | { apiKeyName: string; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
-    resourceEventEmitter.on("saveResourceContent", ([data]) => {
-      saveEvent = data;
-    });
     const savedResource = await saveResourceContent(ctx, {
       activityType: ResourceActivityType.ContentSaved,
       content,
@@ -287,6 +279,7 @@ describe(saveResourceContent, () => {
     });
     await waitForSynchronizedFunctions();
     const storedContent = await readResourceContent(contentSchema, resource.id);
+    const saveEvent = userObjectCalls.find(({ method }) => method === "saveResourceContent")?.args[0];
     assert.exists(saveEvent);
 
     expect(savedResource.contentVersion).toBe(resource.contentVersion + 1);

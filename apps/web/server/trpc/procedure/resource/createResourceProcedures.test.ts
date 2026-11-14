@@ -5,6 +5,7 @@ import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks, createMockSession } from "#server/auth.test";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
@@ -12,7 +13,6 @@ import { createMockContext, mockSessionOnce, replayMockSession } from "#server/t
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { trpcRouter } from "#server/trpc/routers";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -95,6 +95,7 @@ describe(createResourceProcedures, () => {
     vi.useRealTimers();
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
+    userObjectCalls.length = 0;
     // Cascade removes any resourcePublications, activity and view rows too
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
@@ -207,27 +208,25 @@ describe(createResourceProcedures, () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
   });
 
-  test("emits the saved version and writing device to other devices, not the content", async () => {
+  test("sends the saved version and the saving session to the owner's object, not the content", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    // The mock session mints a fresh session id per call, so the subscription and the save
-    // Naturally run as different devices — the same-device echo filter stays out of the way
-    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
-    const data = await getFirstEmit(
-      () => subscription,
-      () => dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
-    );
+    const savingPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
+    replayMockSession(savingPayload);
+    await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
 
-    const { device, ...emitted } = data;
-
-    expect(emitted).toStrictEqual({ apiKeyName: "", contentVersion: 1, id: newResource.id });
-    expect(device.sessionId).toBeTypeOf("string");
-    expect(device.userId).toBe(authMocks.user.id);
+    expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
+      {
+        args: [{ apiKeyName: "", contentVersion: 1, id: newResource.id }, savingPayload.session.id],
+        method: "saveResourceContent",
+        userId: authMocks.user.id,
+      },
+    ]);
   });
 
-  // An agent writes through its key, so the stream names the key rather than leaving the save to read as the person's own
+  // An agent writes through its key, so the call names the key rather than leaving the save to read as the person's own
   test("a save made with a key is named by that key", async () => {
     expect.hasAssertions();
 
@@ -237,39 +236,15 @@ describe(createResourceProcedures, () => {
       ...mockContext,
       apiKey: { id: crypto.randomUUID(), name: apiKeyName },
     });
-    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
-    const data = await getFirstEmit(
-      () => subscription,
-      () => keyedCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
-    );
+    await keyedCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
 
-    expect(data.apiKeyName).toBe(apiKeyName);
-  });
-
-  // One user on two sessions is two devices: the first save the subscriber made is filtered out, so the first save
-  // It hears is the other session's, at the version that save landed on
-  test("a device does not hear its own save", async () => {
-    expect.hasAssertions();
-
-    const ownPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
-    const otherPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
-    const dashboard = new Dashboard({ visuals: [new Visual()] });
-    replayMockSession(ownPayload);
-    const newResource = await dashboardCaller.createResource({ name });
-    replayMockSession(ownPayload);
-    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
-    const data = await getFirstEmit(
-      () => subscription,
-      async () => {
-        replayMockSession(ownPayload);
-        await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
-        replayMockSession(otherPayload);
-        await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 1, id: newResource.id });
+    expect(userObjectCalls.filter(({ method }) => method === "saveResourceContent")).toStrictEqual([
+      {
+        args: [{ apiKeyName, contentVersion: 1, id: newResource.id }, expect.any(String)],
+        method: "saveResourceContent",
+        userId: authMocks.user.id,
       },
-    );
-
-    expect(data.contentVersion).toBe(2);
-    expect(data.device.sessionId).toBe(otherPayload.session.id);
+    ]);
   });
 
   test("fails save content with old content version", async () => {

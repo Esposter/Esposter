@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows; the union zod infers from a generic map key overlaps no one type's schema */
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
-import type { Device } from "#shared/models/auth/Device";
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
@@ -12,15 +11,12 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
-import { on } from "#server/services/events/on";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { RESOURCE_ASSET_SAS_DURATION_MS } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
-import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
@@ -172,21 +168,6 @@ export const createResourceProcedures = <TType extends ResourceType>(
         ),
     ),
     // Every content write funnels through saveResourceContent, so this one stream keeps every other device's
-    // View of this resource live. It names the new version and the writing device, never the content: a subscriber
-    // Re-reads the content through readResourceContent, so a large document crosses the way any read does
-    onSaveResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").subscription(async function* ({
-      ctx,
-      input: { id },
-      signal,
-    }): AsyncGenerator<{
-      apiKeyName: string;
-      contentVersion: ResourceInResource["contentVersion"];
-      device: Device;
-      id: ResourceInResource["id"];
-    }> {
-      for await (const [[data, device]] of on(resourceEventEmitter, "saveResourceContent", { signal }))
-        if (data.id === id && !checkIsSameDevice(device, ctx.getSessionPayload)) yield { ...data, device };
-    }),
     readResourceContent: getOwnerProcedure(type, resourceIdInputSchema, "id").query<ResourceContent<TType> | undefined>(
       ({ input: { id } }) => readContent(id),
     ),

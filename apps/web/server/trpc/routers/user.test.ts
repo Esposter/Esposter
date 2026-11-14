@@ -4,6 +4,7 @@ import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import { createMockSession } from "#server/auth.test";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -11,7 +12,6 @@ import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { createCallerFactory } from "#server/trpc";
 import {
-  consumeMockSessionOnce,
   createMockContext,
   createMockUser,
   getMockCreateApiKey,
@@ -20,9 +20,7 @@ import {
   mockNoSessionOnce,
   mockSessionOnce,
 } from "#server/trpc/context.test";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { userRouter } from "#server/trpc/routers/user";
-import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import {
   DatabaseEntityType,
   dataExportsInUser,
@@ -138,6 +136,7 @@ describe("userRouter", () => {
     MockTableDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
+    userObjectCalls.length = 0;
   });
 
   afterAll(async () => {
@@ -286,70 +285,12 @@ describe("userRouter", () => {
     expect(userStatus.status).toBe(UserStatus.Idle);
   });
 
-  test("on upserts status", async () => {
+  test("upserts status sends it to the caller's object", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    // The queued session is spent without a request, so the subscription below is opened by the original user
-    // While listening for the freshly created one
-    await consumeMockSessionOnce();
-    const subscription = await caller.onUpsertStatus([user.id]);
-    await mockSessionOnce(mockContext.db, user);
-    const status = UserStatus.Online;
-    const data = await getFirstEmit(
-      () => subscription,
-      () => caller.upsertStatus({ status }),
-    );
+    const upsertedUserStatus = await caller.upsertStatus({ status: UserStatus.Online });
 
-    expect(data.status).toBe(status);
-    expect(data.userId).toBe(user.id);
-  });
-
-  test(`on upserts status ${UserStatus.Online} with connect`, async () => {
-    expect.hasAssertions();
-
-    const { user } = await mockSessionOnce(mockContext.db);
-    await consumeMockSessionOnce();
-    const subscription = await caller.onUpsertStatus([user.id]);
-    await mockSessionOnce(mockContext.db, user);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => caller.connect(),
-    );
-
-    expect(data.status).toBe(UserStatus.Online);
-    expect(data.userId).toBe(user.id);
-  });
-
-  test(`on upserts status ${UserStatus.Offline} with disconnect`, async () => {
-    expect.hasAssertions();
-
-    const { user } = await mockSessionOnce(mockContext.db);
-    await consumeMockSessionOnce();
-    const subscription = await caller.onUpsertStatus([user.id]);
-    await mockSessionOnce(mockContext.db, user);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => caller.disconnect(),
-    );
-
-    expect(data.status).toBe(UserStatus.Offline);
-    expect(data.userId).toBe(user.id);
-  });
-
-  test("fails on upserts status with self", async () => {
-    expect.hasAssertions();
-
-    const subscription = await caller.onUpsertStatus([userId]);
-
-    await expect(
-      withAsyncIterator(
-        () => subscription,
-        (iterator) => iterator.next(),
-      ),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserStatus, JSON.stringify([userId])).message}]`,
-    );
+    expect(userObjectCalls).toStrictEqual([{ args: [upsertedUserStatus], method: "upsertStatus", userId }]);
   });
 
   test("generates profile image upload url", async () => {

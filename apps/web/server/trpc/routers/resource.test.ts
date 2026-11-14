@@ -13,7 +13,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
-import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -153,7 +152,6 @@ describe("resourceRouter", () => {
   afterEach(() => {
     vi.restoreAllMocks();
     vi.useRealTimers();
-    resourceEventEmitter.removeAllListeners("saveResourceContent");
     userObjectCalls.length = 0;
   });
 
@@ -1120,12 +1118,6 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    let saveEvent:
-      | undefined
-      | { apiKeyName: string; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
-    resourceEventEmitter.on("saveResourceContent", ([data]) => {
-      saveEvent = data;
-    });
     const { resource: restoredResource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,
       id: webpageResource.id,
@@ -1133,10 +1125,10 @@ describe("resourceRouter", () => {
     });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
+    const saveEvent = userObjectCalls.find(({ method }) => method === "saveResourceContent")?.args[0];
     assert.exists(saveEvent);
 
-    expect(saveEvent.id).toBe(webpageResource.id);
-    expect(saveEvent.contentVersion).toBe(restoredResource.contentVersion);
+    expect(saveEvent).toMatchObject({ contentVersion: restoredResource.contentVersion, id: webpageResource.id });
     expect(
       items
         .map(({ activityType }) => activityType)

@@ -1,7 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
-import { achievementEventEmitter } from "#server/services/achievement/events/achievementEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
 import { achievementsInAchievement, DatabaseEntityType, userAchievementsInAchievement } from "@esposter/db-schema";
@@ -73,7 +73,8 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
         ),
     );
 
-    if (updatedUserAchievements.length > 0) achievementEventEmitter.emit("updateAchievement", updatedUserAchievements);
+    if (updatedUserAchievements.length > 0)
+      await callUserObjects([userId], (userObject) => userObject.updateAchievement(updatedUserAchievements));
   }).match(noop, (error) => {
     console.error(`Failed to process achievements for path "${path}" and user "${userId}":`, error);
   });

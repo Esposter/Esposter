@@ -4,7 +4,7 @@ import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
 import { getDevice } from "#server/services/auth/getDevice";
-import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
 import { ResourceTypeGetLinkTargetsMap } from "#server/services/resource/link/ResourceTypeGetLinkTargetsMap";
 import { pruneWorkingAssets } from "#server/services/resource/pruneWorkingAssets";
@@ -233,11 +233,14 @@ export const saveResourceContent = async (
 
   // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
-  resourceEventEmitter.emit("saveResourceContent", [
-    // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save
-    { apiKeyName: ctx.apiKey?.name ?? "", contentVersion: savedResource.contentVersion, id },
-    getDevice(ctx.getSessionPayload),
-  ]);
+  // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save. The owner's
+  // tabs hear it, all but the session that saved it
+  await callUserObjects([savedResource.userId], (userObject) =>
+    userObject.saveResourceContent(
+      { apiKeyName: ctx.apiKey?.name ?? "", contentVersion: savedResource.contentVersion, id },
+      ctx.getSessionPayload.session.id,
+    ),
+  );
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on
   // Every write the user is waiting on
   if (activityType) getSynchronizedFunction(writeResourceActivity)(ctx, { activityType, resourceId: id });

@@ -1,7 +1,6 @@
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
-import { on } from "#server/services/events/on";
-import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -29,18 +28,8 @@ export const userToRoomRouter = router({
         )
         .returning()
     )[0];
-    if (updatedUserToRoom) userToRoomEventEmitter.emit("updateUserToRoom", updatedUserToRoom);
-  }),
-  onUpdateUserToRoom: standardAuthedProcedure.input(roomIdsInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    await assertIsMember(ctx.db, ctx.getSessionPayload, input);
-    for await (const [data] of on(userToRoomEventEmitter, "updateUserToRoom", { signal })) {
-      if (!input.includes(data.roomId) || data.userId !== ctx.getSessionPayload.user.id) continue;
-      yield data;
-    }
+    if (updatedUserToRoom)
+      await callUserObjects([updatedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(updatedUserToRoom));
   }),
   readMyUsersToRooms: standardAuthedProcedure
     .input(readMyUsersToRoomsInputSchema)

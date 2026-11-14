@@ -8,13 +8,13 @@ import {
   MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES,
   STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE,
 } from "#shared/services/storage/constants";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   DatabaseEntityType,
   QUEUE_DELIVERY_TTL_MS,
   storageLedgerInStorage,
   usersInAuth,
   WRITE_SAS_DURATION_MS,
+  StorageTierQuotaMap,
 } from "@esposter/db-schema";
 import { notInJsonArray } from "@esposter/db";
 import { TRPCError } from "@trpc/server";
@@ -51,7 +51,10 @@ export const reserveStorageBytes = async (
     eq(storageLedgerInStorage.userId, userId),
     isNull(storageLedgerInStorage.reconciledAt),
     gt(storageLedgerInStorage.expiresAt, now),
-    or(ne(storageLedgerInStorage.containerName, containerName), notInJsonArray(storageLedgerInStorage.blobName, blobNames)),
+    or(
+      ne(storageLedgerInStorage.containerName, containerName),
+      notInJsonArray(storageLedgerInStorage.blobName, blobNames),
+    ),
   );
   const pendingBytes = sql`(SELECT COALESCE(SUM(${storageLedgerInStorage.declaredBytes}), 0) FROM ${storageLedgerInStorage} WHERE ${pendingWhere})`;
   const pendingReservationCount = sql`(SELECT COUNT(*) FROM ${storageLedgerInStorage} WHERE ${pendingWhere})`;

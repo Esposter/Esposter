@@ -5,7 +5,7 @@ import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-sch
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
-import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
@@ -54,8 +54,11 @@ export const createUserMessage = async (
   const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))
     .orTee(console.error)
     .unwrapOr([]);
-  for (const mentionedUserToRoom of mentionedUsersToRooms)
-    userToRoomEventEmitter.emit("updateUserToRoom", mentionedUserToRoom);
+  await Promise.all(
+    mentionedUsersToRooms.map((mentionedUserToRoom) =>
+      callUserObjects([mentionedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(mentionedUserToRoom)),
+    ),
+  );
   // Post-persist and best-effort — a follow failure must never fail the reply that already landed — but
   // Strictly before the publish below, for the reason `createReplyThreadFollows` states
   await getResultAsync(() => createReplyThreadFollows(db, messageClient, newMessageEntity)).match(noop, console.error);

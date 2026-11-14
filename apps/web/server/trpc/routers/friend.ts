@@ -1,8 +1,7 @@
 import type { PublicUser } from "@esposter/db-schema";
 
 import { containsLike } from "#server/services/db/containsLike";
-import { on } from "#server/services/events/on";
-import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -34,14 +33,10 @@ export const friendRouter = router({
         friendshipId,
         "NOT_FOUND",
       );
-      friendEventEmitter.emit("deleteFriend", { receiverId: friendId, senderId: userId });
+      await callUserObjects([userId, friendId], (userObject) =>
+        userObject.deleteFriend({ receiverId: friendId, senderId: userId }),
+      );
     }),
-  onDeleteFriend: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
-    const userId = ctx.getSessionPayload.user.id;
-    for await (const [{ receiverId, senderId }] of on(friendEventEmitter, "deleteFriend", { signal }))
-      if (receiverId === userId) yield senderId;
-      else if (senderId === userId) yield receiverId;
-  }),
   readFriends: standardAuthedProcedure.query<PublicUser[]>(({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     return ctx.db

@@ -3,13 +3,13 @@ import type { Context } from "#server/trpc/context";
 import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
 import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   StorageBucket,
   MAX_THUMBNAIL_BYTES,
   storageLedgerInStorage,
   StorageTier,
   usersInAuth,
+  StorageTierQuotaMap,
 } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
