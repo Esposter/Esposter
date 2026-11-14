@@ -31,18 +31,12 @@ bail: false
 catalog:
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.2
-  "@azure/core-http-compat": ^2.5.0
   "@azure/core-rest-pipeline": ^1.25.1
   "@azure/data-tables": ^13.3.2
   "@azure/eventgrid": ^5.12.0
-  "@azure/functions": ^4.17.1
   "@azure/identity": ^4.14.1
-  "@azure/search-documents": ^13.1.0
-  "@azure/service-bus": ^7.10.0
   "@azure/storage-blob": ^12.34.0
   "@azure/storage-queue": ^12.32.0
-  "@azure/web-pubsub": ^1.2.0
-  "@azure/web-pubsub-client": ^1.1.0
   "@better-auth/api-key": ^1.7.23
   "@better-auth/drizzle-adapter": ^1.7.23
   "@cloudflare/realtimekit": ^2.0.4
@@ -54,7 +48,6 @@ catalog:
   "@codemirror/state": ^6.7.6
   "@dxup/nuxt": ^0.5.11
   "@dxup/unimport": ^0.1.2
-  "@electric-sql/pglite": ^0.5.16
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
   "@fission-ai/openspec": ^2.0.0
@@ -69,7 +62,6 @@ catalog:
   "@lerna-lite/cli": ^5.8.0
   "@lerna-lite/publish": ^5.8.0
   "@lezer/highlight": ^1.2.5
-  "@livekit/track-processors": ^0.8.3
   "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
   "@nuxt/fonts": ^1.2.0
@@ -142,7 +134,6 @@ catalog:
   "@webgpu/types": ^0.1.74
   apexcharts: ^8.8.2
   aws4fetch: ^1.0.20
-  azurite: ^3.37.0
   better-auth: ^1.7.23
   bowser: ^2.15.0
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
@@ -172,8 +163,6 @@ catalog:
   knip: ^6.45.1
   link-preview-js: ^6.0.0
   linkifyjs: ^4.4.0
-  livekit-client: ^2.24.0
-  livekit-server-sdk: ^2.19.3
   lowlight: ^3.3.0
   lru-cache: ^11.5.3
   marked: ^18.2.0
