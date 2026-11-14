@@ -18,7 +18,6 @@ export interface CreateRoomMessageInput {
   message: string;
   replyToId?: number;
   type: RoomMessage["type"];
-  userId: string;
 }
 
 export interface CreateWebhookRoomMessageInput {
@@ -64,10 +63,10 @@ export interface RoomObjectRpc {
   readScheduledMessages(userId: string): ScheduledRoomMessage[];
 
   createMessage(input: CreateRoomMessageInput, actor: RoomActor): Promise<RoomMessage>;
-  createWebhookMessage(input: CreateWebhookRoomMessageInput): RoomMessage;
+  createWebhookMessage(input: CreateWebhookRoomMessageInput): Promise<RoomMessage>;
   updateMessage(input: { id: number; message: string }, actor: RoomActor): RoomMessage | null;
   // Returns the message as it was before the delete, so the caller can remove the blobs its files named
-  deleteMessage(id: number, actor: RoomActor): RoomMessage | null;
+  deleteMessage(id: number, actor: RoomActor): Promise<RoomMessage | null>;
   // Returns the file it removed, so the caller can remove its blob
   deleteFile(input: { fileId: string; id: number }, actor: RoomActor): FileEntity | null;
   deleteLinkPreview(id: number, actor: RoomActor): RoomMessage | null;
@@ -77,8 +76,9 @@ export interface RoomObjectRpc {
   votePoll(input: { id: number; optionId?: string }, actor: RoomActor): RoomMessage | null;
   // Adds the actor to the emoji's reactors on the message, creating the reaction if it is new
   addReaction(input: { emojiTag: string; messageId: number }, actor: RoomActor): RoomReaction | null;
-  // Takes the actor off the emoji's reactors, deleting the reaction when the actor was its only one
-  removeReaction(input: { emojiTag: string; messageId: number }, actor: RoomActor): RoomReaction | null;
+  // Takes the actor off the emoji's reactors, deleting the reaction when the actor was its only one. False when the actor
+  // was not a reactor
+  removeReaction(input: { emojiTag: string; messageId: number }, actor: RoomActor): boolean;
   createScheduledMessage(
     input: { id: string; message: string; replyToId?: number; runAt: Date },
     actor: RoomActor,
@@ -89,16 +89,15 @@ export interface RoomObjectRpc {
   ): Promise<ScheduledRoomMessage | null>;
   deleteScheduledMessage(id: string, actor: RoomActor): Promise<boolean>;
 
-  // The account-level writes: the caller has already decided which messages and reactions the person's action reaches.
-  // The two message writes return the messages as they were, so the caller can remove the blobs their files named
-  softDeleteUserMessages(userId: string): RoomMessage[];
-  eraseUserMessages(userId: string): RoomMessage[];
+  // The person-level writes, for a moderation action or an account erase the caller has already authorised. Deleting the
+  // messages returns them as they were, so the caller can remove the blobs their files named
+  deleteUserMessages(userId: string): Promise<RoomMessage[]>;
   deleteUserReactions(userId: string): void;
   deleteAll(): Promise<void>;
 
   // A member's presence in the room: its online set, the events each change raises, and the member's sockets dropped
-  attachMember(userId: string): Promise<void>;
-  detachMember(userId: string): Promise<void>;
+  attachMember(userId: string): void;
+  detachMember(userId: string): void;
   removeMember(userId: string): void;
   // A room event the caller raised from D1's own changes, sent to the sockets a tag names, or to every socket
   broadcastEvent(event: RoomEvent, options?: { excludeTag?: string; tag?: string }): void;
