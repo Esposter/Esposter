@@ -5,5 +5,5 @@ import type { TableParents } from "#src/models/cutover/TableParents";
 export interface TableMapperContext {
   idMap: IdMap;
   parents: TableParents;
-  timestamp: Date | undefined;
+  timestamp?: Date;
 }
