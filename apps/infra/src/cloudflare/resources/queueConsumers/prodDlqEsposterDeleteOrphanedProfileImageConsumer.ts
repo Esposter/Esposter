@@ -1,4 +1,3 @@
-import DeadLetterConsumerMaxRetries from "#src/cloudflare/constants/DeadLetterConsumerMaxRetries";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterDeleteOrphanedProfileImage } from "#src/cloudflare/resources/queues/prodDlqEsposterDeleteOrphanedProfileImage";
 import {
@@ -6,6 +5,7 @@ import {
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
+  DEAD_LETTER_CONSUMER_MAX_RETRIES,
   getCloudflareResourceName,
   QueueJob,
 } from "@esposter/db-schema";
@@ -28,7 +28,7 @@ export const prodDlqEsposterDeleteOrphanedProfileImageConsumer: cloudflare.Queue
     accountId: CLOUDFLARE_ACCOUNT_ID,
     queueId: prodDlqEsposterDeleteOrphanedProfileImage.queueId,
     scriptName,
-    settings: { maxRetries: DeadLetterConsumerMaxRetries, retryDelay: QueueConsumerRetryDelay },
+    settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: prodDlqEsposterDeleteOrphanedProfileImage, protect: true },

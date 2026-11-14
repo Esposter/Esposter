@@ -1,4 +1,3 @@
-import DeadLetterConsumerMaxRetries from "#src/cloudflare/constants/DeadLetterConsumerMaxRetries";
 import QueueConsumerRetryDelay from "#src/cloudflare/constants/QueueConsumerRetryDelay";
 import { prodDlqEsposterExportUserData } from "#src/cloudflare/resources/queues/prodDlqEsposterExportUserData";
 import {
@@ -6,6 +5,7 @@ import {
   CloudflareAssetType,
   CloudflareEnvironment,
   CloudflareWorkerPurpose,
+  DEAD_LETTER_CONSUMER_MAX_RETRIES,
   getCloudflareResourceName,
   QueueJob,
 } from "@esposter/db-schema";
@@ -28,7 +28,7 @@ export const prodDlqEsposterExportUserDataConsumer: cloudflare.QueueConsumer = n
     accountId: CLOUDFLARE_ACCOUNT_ID,
     queueId: prodDlqEsposterExportUserData.queueId,
     scriptName,
-    settings: { maxRetries: DeadLetterConsumerMaxRetries, retryDelay: QueueConsumerRetryDelay },
+    settings: { maxRetries: DEAD_LETTER_CONSUMER_MAX_RETRIES, retryDelay: QueueConsumerRetryDelay },
     type: "worker",
   },
   { parent: prodDlqEsposterExportUserData, protect: true },

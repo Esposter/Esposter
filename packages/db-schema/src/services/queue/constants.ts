@@ -19,3 +19,7 @@ export const MAX_BLOB_DELETION_MESSAGE_BYTES = 64 * KIBIBYTE;
 // thousands of blobs. One DELETE per blob all at once would exhaust the worker's sockets and throttle the account, and a
 // single rejection fails the whole run, so the deletes go out in bounded waves instead.
 export const MAX_CONCURRENT_BLOB_DELETIONS = 100;
+// How many times a dead-letter queue's consumer is redelivered a message its handler threw on. Pulumi declares it as each
+// dead-letter consumer's maxRetries, and the replay quarantines a dead letter on the delivery that reaches it rather than
+// republishing, so the last delivery always lands somewhere durable. Both read it here, so they cannot disagree.
+export const DEAD_LETTER_CONSUMER_MAX_RETRIES = 5;
