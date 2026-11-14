@@ -19,6 +19,7 @@
 - [ ] 2.5 Build `UserObject` and move achievements, friends, storage usage, Genshin session replacement, resource saves on other devices, room-list events and mention counts onto it, with the sent-message and scheduled-message index, TodoList reminders on its alarm, and session revocation closing sockets on every object (realtime 2.1). Verified by its Miniflare tests.
 - [ ] 2.6 Delete the fourteen EventEmitters, every tRPC subscription procedure and `use*Subscribables` composable, the `$DurableObject` binding and `trpcDurableObject.ts`, `/_internal/publish`, the `Scheduler` object, and the scheduled-message and todo-reminder queues with their dead-letter queues in Pulumi (unprotect, then remove). Verified by no import of them remaining.
 - [ ] 2.7 Split `apps/functions` into `apps/realtime` and `apps/jobs` (realtime 5.1). A folder under `apps/` is a unit that deploys — a Worker, a Pulumi program — and a folder under `packages/` is a library apps import, so both new Workers and `apps/infra` stay apps. Verified by each Worker's wrangler test.
+- [ ] 2.8 Ship [live queries](../infra-cloudflare-live-queries/tasks.md): every query declares its topics, every mutation publishes the ones it changed, and the client refetches what is on screen. Verified by its tasks all ticked.
 
 ## 3. Database and storage leftovers
 
