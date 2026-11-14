@@ -29,18 +29,18 @@ one wrote and nothing depends on the order they land in:
 
 ## Keep — a real dependency between iterations
 
-| Shape                    | Why it stays sequential                                                                                     | Example                                                           |
-| ------------------------ | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Retry                    | The next attempt exists only because the last one failed                                                    | `updateEntityConditionally`, `createCallSessionId`, the invite id |
-| Pagination               | The next page's cursor or offset is the last page's answer                                                  | the message catch-up, the CSV export                              |
-| Committed prefix         | A failure must stop the chunks behind it, and everything before it stays durable for a redelivery to resume | `publishBlobDeletion`, the dead-letter replay                     |
-| Order is the contract    | The iterations land in an order something else reads                                                        | new messages entering the list, SQL statements of a migration     |
-| Lock order               | Rows are locked in a sorted order so two transactions cannot deadlock                                       | `releaseStorageLedgerEntriesByWhere`                              |
-| Each step reads the last | An iteration's check or input is what the ones before it wrote                                              | adding direct-message participants, a topological deploy          |
-| Stop at the first        | The loop ends at the first iteration that answers, and the rest must not run                                | an interaction handler that consumes the input                    |
-| Bounded concurrency      | A pool or a wave is the concurrency, set by a constant, and each worker takes one task at a time            | the registry pool, `deleteDirectory`'s waves, `settleAll`         |
-| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                     | the paged bucket listings, a response body reader                 |
-| One device               | The work shares a resource that runs one job at a time                                                      | voice synthesis on the GPU, audio playback                        |
+| Shape                    | Why it stays sequential                                                                                     | Example                                                        |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Retry                    | The next attempt exists only because the last one failed                                                    | `withResourceObjectLock`, `createCallSessionId`, the invite id |
+| Pagination               | The next page's cursor or offset is the last page's answer                                                  | the user data export (`writeRoomEntries`), the CSV export      |
+| Committed prefix         | A failure must stop the chunks behind it, and everything before it stays durable for a redelivery to resume | `publishBlobDeletion`, the dead-letter replay                  |
+| Order is the contract    | The iterations land in an order something else reads                                                        | new messages entering the list, SQL statements of a migration  |
+| Lock order               | Rows are locked in a sorted order so two transactions cannot deadlock                                       | `releaseStorageLedgerEntriesByWhere`                           |
+| Each step reads the last | An iteration's check or input is what the ones before it wrote                                              | adding direct-message participants, a topological deploy       |
+| Stop at the first        | The loop ends at the first iteration that answers, and the rest must not run                                | an interaction handler that consumes the input                 |
+| Bounded concurrency      | A pool or a wave is the concurrency, set by a constant, and each worker takes one task at a time            | the registry pool, `deleteDirectory`'s waves, `settleAll`      |
+| Async iteration          | An async generator yields in order, and a stream is read chunk by chunk                                     | the paged bucket listings, a response body reader              |
+| One device               | The work shares a resource that runs one job at a time                                                      | voice synthesis on the GPU, audio playback                     |
 
 **A count is not a reason.** "There are only a few" makes a sequence cheap, not correct, and the rule exists so the
 next caller does not have to measure it again — convert it.
