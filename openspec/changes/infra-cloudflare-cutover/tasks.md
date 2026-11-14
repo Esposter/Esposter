@@ -2,13 +2,13 @@
 
 ## 1. Zone
 
-- [ ] 1.1 Declare the `esposter.com` zone and every record Namecheap serves in `apps/infra/src/cloudflare`, DNS-only. Verified by `pnpm infra:preview` listing them.
-- [ ] 1.2 The owner turns off DNSSEC at Namecheap if it is on and switches the nameservers. Verified by every record resolving through public resolvers as it did through Namecheap.
+- [x] 1.1 Declare the `esposter.com` zone and every record Namecheap serves in `apps/infra/src/cloudflare`, DNS-only. Verified by `pnpm infra:preview` listing them.
+- [x] 1.2 The owner turns off DNSSEC at Namecheap if it is on and switches the nameservers. Verified by every record resolving through public resolvers as it did through Namecheap.
 
 ## 2. The cutover command
 
 - [ ] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-tables`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
-- [ ] 2.2 Add the maintenance mode to the Railway app on `ai/queue`. Verified by a request answering 503 while it is set.
+- [ ] 2.2 Freeze by scaling Railway's web service to no replicas, with no maintenance mode in the old app (design, "The freeze"). Verified in the rehearsal by the develop app answering from Railway's edge rather than the app while frozen, and again after scaling back up.
 
 ## 3. Rehearsal
 

@@ -30,7 +30,7 @@ flowchart TD
     REHV -->|"no"| REH
     REHV -->|"yes"| PRE["prod snapshot, then live pre-copy: assign-ids, objects, core, tables"]
   end
-  PRE --> FREEZE["freeze: Railway app to maintenance, Functions drained then stopped"]
+  PRE --> FREEZE["freeze: Railway app scaled to zero, Functions drained then stopped"]
   FREEZE --> DELTA["assign-ids, then the delta: objects, all of Postgres, entities and rooms changed since the pre-copy"]
   DELTA --> RESCH["rewrite-urls, reschedule pending jobs"]
   RESCH --> V{"verify: rows, keys, foreign keys, room counts, object hashes"}
@@ -83,18 +83,18 @@ Postgres stores microseconds and D1 milliseconds. `verify` checks that no unique
 
 ## The freeze
 
-1. The Railway app is put into maintenance: every request answers 503 with a maintenance page, WebSockets are refused, and no request writes. Because `userRouter.connect` writes on every socket open, a read-only mode is not enough; the app is closed.
+1. The Railway web service is scaled to no replicas (`railway scale --service Esposter --environment <env> asia-southeast1-eqsg3a=0`), so no request reaches the app and none writes; Railway's edge answers instead. Because `userRouter.connect` writes on every socket open, a read-only mode is not enough; the app is closed. The old app has no maintenance page to show, and building one into an app the switch retires is not worth it for the minutes the freeze lasts.
 2. The Functions keep running until Event Grid has delivered everything already published and the `deadletter` container is empty, then both Function Apps are stopped, so no Service Bus message or event writes after the read.
 3. `assign-ids` runs, so every row written since the live pre-copy has its key before anything references it. Then the delta copy of the objects runs, `copy-core` in full, `copy-tables --delta`, `rewrite-urls`, `reschedule` and `verify`, in that order. `copy-core` runs again in full because it is idempotent and core is small, so the typed rows never reference a parent the freeze has not written.
 4. With `verify` green, the smoke checks run on `next.esposter.com`: read a room's history, send a message and find it by search, upload and download a file, receive a push, post a webhook message, schedule a message a minute out and watch it arrive, start a call. They run as a session the command signs with the copied auth secret, so no OAuth provider has to know the staging hostname; OAuth sign-in itself is not exercised, since its callbacks, secrets and domain do not change.
 
-**Abort** at any point up to here is restarting the Railway app and the Function Apps: the old stores were never written after the freeze began and the new ones are not yet live.
+**Abort** at any point up to here is scaling the Railway web service back to one replica and starting the Function Apps (`az functionapp start`): the old stores were never written after the freeze began and the new ones are not yet live.
 
 ## The switch and the way back
 
-The apex record changes from Railway to the web Worker's custom domain; the sixty-second TTL bounds how long resolvers keep sending visitors to Railway, which stays in maintenance so none of them writes. OAuth callbacks, the session cookie, the VAPID keys and every push subscription carry over unchanged, since the domain, the secrets and the rows are the same.
+The apex record changes from Railway to the web Worker's custom domain; the sixty-second TTL bounds how long resolvers keep sending visitors to Railway, which stays scaled to zero so none of them writes. OAuth callbacks, the session cookie, the VAPID keys and every push subscription carry over unchanged, since the domain, the secrets and the rows are the same.
 
-The rollback window is the soak, a few days: Railway and the Azure estate stay stopped but intact. Rolling back inside it is putting the Worker into maintenance, switching the apex back, and restarting Railway and the Functions — and it discards whatever was written on Cloudflare since the switch, which is why the smoke checks run on the real copied data before the switch rather than after it.
+The rollback window is the soak, a few days: Railway and the Azure estate stay stopped but intact. Rolling back inside it is switching the apex back, scaling Railway back up and starting the Functions — and it discards whatever was written on Cloudflare since the switch, which is why the smoke checks run on the real copied data before the switch rather than after it.
 
 **Links change at the cutover.** Bearer tokens are stored only as their hash, and the copy writes the hash of a token nobody receives, so no readable token reaches D1. After the cutover:
 
