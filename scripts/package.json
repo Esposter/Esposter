@@ -102,7 +102,6 @@
     "@typesafe-ai/sdk": "catalog:",
     "@vizejs/native": "catalog:",
     "@webgpu/types": "catalog:",
-    "azure-mock": "workspace:*",
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",
     "genshin-persona": "workspace:*",

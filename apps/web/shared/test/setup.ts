@@ -2,7 +2,6 @@ import type { Pinia } from "pinia";
 
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
 import { checkIsServer } from "@esposter/shared";
-import { MOCK_BLOB_BASE_URL } from "azure-mock";
 import { afterAll, afterEach, beforeEach, vi } from "vitest";
 
 // The node environment has no storage at all: the shared Vitest configuration switches node's own Web Storage
@@ -41,36 +40,15 @@ class MemoryStorage implements Storage {
 
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
-// Every Azure client redirects to its colocated in-memory mock, here rather than in `context.test.ts`: a `vi.mock`
+// The Scheduler client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
-// Registering once here covers both. The factories are lazy, so a test that touches no Azure client pays nothing.
-vi.mock(
-  import("#server/composables/azure/container/useContainerClient"),
-  () => import("#server/composables/azure/container/useContainerClient.test"),
-);
-
-vi.mock(
-  import("#server/composables/azure/eventGrid/useEventGridPublisherClient"),
-  () => import("#server/composables/azure/eventGrid/useEventGridPublisherClient.test"),
-);
-
-vi.mock(
-  import("#server/composables/azure/search/useSearchClient"),
-  () => import("#server/composables/azure/search/useSearchClient.test"),
-);
-
-vi.mock(
-  import("#server/composables/azure/table/useTableClient"),
-  () => import("#server/composables/azure/table/useTableClient.test"),
-);
-
+// Registering once here covers both. The factory is lazy, so a test that touches no scheduler pays nothing.
 vi.mock(
   import("#server/composables/scheduler/useScheduler"),
   () => import("#server/composables/scheduler/useScheduler.test"),
 );
-
-// The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
+// The better-auth session is registered here rather than beside the context helpers: it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
@@ -102,7 +80,7 @@ vi.mock("nuxt/server", async (importOriginal) => ({
     // Nuxt's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
-    public: { azure: { container: { baseUrl: MOCK_BLOB_BASE_URL } } },
+    public: {},
   }),
 }));
 // The first mountSuspended in a worker pays a one-time cold cost: the Nuxt app graph is evaluated and its

@@ -71,7 +71,6 @@
     "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
-    "azure-mock": "workspace:*",
     "tsdown": "catalog:",
     "wrangler": "catalog:"
   },

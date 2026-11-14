@@ -158,7 +158,6 @@
     "@vue/compiler-core": "catalog:",
     "@vue/test-utils": "catalog:",
     "@vueuse/nuxt": "catalog:",
-    "azure-mock": "workspace:*",
     "azurite": "catalog:",
     "chokidar": "catalog:",
     "citty": "catalog:",
