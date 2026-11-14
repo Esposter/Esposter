@@ -35,6 +35,7 @@ export const IMPORT_SPECIFIER_REGEX = /(?:from|import)\s*\(?\s*"(?<specifier>[^"
 export const LAYOUT_META_REGEX = /layout:\s*"(?<layout>[\w-]+)"/u;
 export const MIDDLEWARE_EXTENSION_REGEX = /(?:\.client|\.server)?\.ts$/u;
 export const MIDDLEWARE_META_REGEX = /middleware:\s*(?<middleware>\[[^\]]*\]|"[^"]*")/u;
+export const MODE_SUFFIX_REGEX = /\.(?:client|server)$/u;
 export const NODE_ID_SEPARATOR_REGEX = /[^\da-z]+/giu;
 export const NAME_SEPARATOR_REGEX = /[-./\\_]+/u;
 export const QUOTED_STRING_REGEX = /"(?<value>[^"]+)"/gu;

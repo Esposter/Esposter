@@ -1,4 +1,4 @@
-import { CASE_BOUNDARY_REGEX, NAME_SEPARATOR_REGEX } from "@@/scripts/flowMap/constants";
+import { CASE_BOUNDARY_REGEX, MODE_SUFFIX_REGEX, NAME_SEPARATOR_REGEX } from "@@/scripts/flowMap/constants";
 import { basename, dirname, extname } from "node:path";
 
 const splitByCase = (value: string) =>
@@ -10,7 +10,7 @@ const splitByCase = (value: string) =>
 // And joined so a PascalCase tag and a kebab-case one resolve to the same key
 export const getComponentKey = (relativePath: string) => {
   const prefixParts = splitByCase(dirname(relativePath));
-  const fileName = basename(relativePath, extname(relativePath));
+  const fileName = basename(relativePath, extname(relativePath)).replace(MODE_SUFFIX_REGEX, "");
   const fileNameParts = splitByCase(fileName.toLowerCase() === "index" ? "" : fileName);
   const fileNamePartsContent = fileNameParts.join("/").toLowerCase();
   const repeatedPrefixIndex = prefixParts.findIndex((prefixPart, index) => {
