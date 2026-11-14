@@ -4,7 +4,7 @@ Messages are high-volume, append-heavy, and time-ordered, so each room's object 
 
 ## How it works
 
-A message is one row in `messagesInRoom`, the room object's table (`apps/functions/src/durableObjects/room/schema.ts`). Its `id` is an integer that only grows within its room, so id order is send order: a page without a cursor reads newest first (`desc(id)`), and a page past a cursor reads oldest first (`asc(id)`), which is how a jump to an older message reads its newer side. The message's files, link preview, mentions and reply target are columns on that same row, so there is no companion table to keep in step. Reactions live in `messageEmojisInRoom` and scheduled messages in `scheduledMessagesInRoom`, in the same object.
+A message is one row in `messagesInRoom`, the room object's table (`packages/db-schema/src/objects/room/schema.ts`). Its `id` is an integer that only grows within its room, so id order is send order: a page without a cursor reads newest first (`desc(id)`), and a page past a cursor reads oldest first (`asc(id)`), which is how a jump to an older message reads its newer side. The message's files, link preview, mentions and reply target are columns on that same row, so there is no companion table to keep in step. Reactions live in `messageEmojisInRoom` and scheduled messages in `scheduledMessagesInRoom`, in the same object.
 
 Sending a message flows through one server service, `createUserMessage`, which claims the slowmode clock in D1, writes the message to the room's object, and publishes its notification:
 
@@ -50,7 +50,7 @@ sequenceDiagram
 
 A vote is one call to the room object, which applies it to the stored poll inside its single-threaded write, so two votes on one poll never race and no version check or retry runs.
 
-`applyPollVote` (`apps/functions/src/services/room/applyPollVote.ts`) reads the stored body, checks that it is a poll with options and votes, and changes only the voter's entry in `votes`. Every other field is written back exactly as it was read, so a vote never rewrites the question or the option labels. The client parses the same body with `pollMessageContentSchema` (`apps/web/shared/models/message/poll/`), the one schema that owns a poll's shape, to render it and to create one.
+`applyPollVote` (`apps/realtime/src/services/room/applyPollVote.ts`) reads the stored body, checks that it is a poll with options and votes, and changes only the voter's entry in `votes`. Every other field is written back exactly as it was read, so a vote never rewrites the question or the option labels. The client parses the same body with `pollMessageContentSchema` (`apps/web/shared/models/message/poll/`), the one schema that owns a poll's shape, to render it and to create one.
 
 ## Message types
 
@@ -88,11 +88,11 @@ The `message` router merges its base procedures with the `emoji`, `moderation`, 
 | ----------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
 | `apps/web/server/trpc/routers/message/index.ts`                         | Message router (procedures above)                                              |
 | `apps/web/server/services/message/createUserMessage.ts`                 | Send pipeline: slowmode claim, object write, ProcessNotification publish       |
-| `apps/functions/src/durableObjects/room/schema.ts`                      | The room object's tables: messages, reactions, scheduled messages              |
-| `apps/functions/src/durableObjects/RoomObject.ts`                       | The room object: message writes and reads, votes, and the broadcast to sockets |
+| `packages/db-schema/src/objects/room/schema.ts`                         | The room object's tables: messages, reactions, scheduled messages              |
+| `apps/realtime/src/durableObjects/RoomObject.ts`                        | The room object: message writes and reads, votes, and the broadcast to sockets |
 | `packages/db-schema/src/models/message/MessageType.ts`                  | Message type discriminator                                                     |
 | `apps/web/shared/services/message/MessageTypeOperationPermissionMap.ts` | Which operations each type supports, and for whom                              |
-| `apps/functions/src/services/room/applyPollVote.ts`                     | The vote applied to a stored poll body                                         |
+| `apps/realtime/src/services/room/applyPollVote.ts`                      | The vote applied to a stored poll body                                         |
 | `packages/db-schema/src/models/realtime/RoomEvent.ts`                   | The frames a room's socket carries                                             |
 | `apps/web/app/composables/message/events/useMessageEvents.ts`           | The client's handlers for a room's message frames                              |
 
