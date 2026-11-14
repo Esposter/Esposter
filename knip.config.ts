@@ -125,7 +125,7 @@ const knipConfiguration: KnipConfig = {
       entry: ["src/**/index.ts", "src/oxlint/**/*.ts", "src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts"],
       // Loaded by path through createRequire, which knip cannot follow
       // `@azure/identity` is declared for the lockfile alone: unstorage's optional Azure peer resolves to this copy, so
-      // dropping it re-resolves every Nuxt peer variant with it, and nothing imports it
+      // Dropping it re-resolves every Nuxt peer variant with it, and nothing imports it
       ignoreDependencies: ["@azure/identity", "jscpd"],
     },
   },

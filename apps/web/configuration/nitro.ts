@@ -26,7 +26,7 @@ const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs
 export const nitro: NuxtConfig["nitro"] = {
   // The Worker's own wrangler configuration, written beside the build. A build is made for one environment — CI sets
   // CLOUDFLARE_ENV by its branch before building, and a local build is prod — so the file holds that environment alone:
-  // wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the functions Worker's
+  // Wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the functions Worker's
   // Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,
@@ -42,7 +42,7 @@ export const nitro: NuxtConfig["nitro"] = {
           const entries = await readdir(directory, { recursive: true, withFileTypes: true });
           const sizes = await Promise.all(
             entries
-              .filter((entry) => entry.isFile() && !/\.map$/u.test(entry.name))
+              .filter((entry) => entry.isFile() && !entry.name.endsWith(".map"))
               .map(async (entry) => (await stat(join(entry.parentPath, entry.name))).size),
           );
           return { name, sizes };

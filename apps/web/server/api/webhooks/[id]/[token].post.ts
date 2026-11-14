@@ -42,6 +42,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // The payload is checked here, before anything is queued, so a malformed one is answered rather than failing its job
+    // oxlint-disable-next-line no-restricted-properties -- an external sender's payload is content, whose date-shaped strings stay strings
     const payload = getResult(() => webhookPayloadSchema.parse(JSON.parse(body))).match(
       (parsedPayload) => parsedPayload,
       () => null,
