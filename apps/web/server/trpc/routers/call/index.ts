@@ -30,12 +30,18 @@ import { noop } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const baseCallRouter = router({
-  createCall: standardAuthedProcedure.mutation<{ callSessionId: CallSessionInMessage["id"] }>(async ({ ctx }) => {
-    const callSessionId = await createStandaloneCallSessionId(ctx.db, ctx.getSessionPayload.user.id);
-    return { callSessionId };
-  }),
+  createCall: standardAuthedProcedure
+    .meta({
+      staticReason:
+        "Its id goes to its creator alone, and the call's state is pushed by its call object as typed events",
+    })
+    .mutation<{ callSessionId: CallSessionInMessage["id"] }>(async ({ ctx }) => {
+      const callSessionId = await createStandaloneCallSessionId(ctx.db, ctx.getSessionPayload.user.id);
+      return { callSessionId };
+    }),
   joinCall: standardAuthedProcedure
     .input(callSessionInputSchema)
+    .meta({ staticReason: "The call object pushes the join to its sockets as a typed event" })
     .mutation<JoinCallResult>(async ({ ctx, input: { id } }) => {
       const callSession = await requireCallSession(ctx.db, id);
       if (callSession.roomId) throw getForbiddenError("Room calls must be joined via joinCallByRoomId");
@@ -57,8 +63,9 @@ export const baseCallRouter = router({
         participantMap: join.participantMap,
       };
     }),
-  joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallResult>(
-    async ({ ctx, input: { roomId, threadRootId } }) => {
+  joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId")
+    .meta({ staticReason: "The call object pushes the join to its sockets as a typed event" })
+    .mutation<JoinCallResult>(async ({ ctx, input: { roomId, threadRootId } }) => {
       const { session, user } = ctx.getSessionPayload;
       await requireThreadRoot(roomId, threadRootId);
       const callSessionId = await createCallSessionId(ctx.db, roomId, user.id, threadRootId);
@@ -87,10 +94,10 @@ export const baseCallRouter = router({
         meetingId: join.meetingId,
         participantMap: join.participantMap,
       };
-    },
-  ),
+    }),
   leaveCall: standardAuthedProcedure
     .input(callSessionIdSchema)
+    .meta({ staticReason: "The call object pushes the departure to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId } }) => {
       const { session } = ctx.getSessionPayload;
       const leave = await getCallObject(callSessionId).leaveCall({ callSessionId, sessionId: session.id });
@@ -100,21 +107,27 @@ export const baseCallRouter = router({
     }),
   readCallParticipantMap: standardAuthedProcedure
     .input(callSessionIdSchema)
+    .meta({ staticReason: "The call object pushes participant changes to its sockets as typed events" })
     .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
       return getCallObject(callSessionId).readParticipantMap();
     }),
   readCallSession: standardAuthedProcedure
     .input(callSessionInputSchema)
+    .meta({ staticReason: "A call session's room and owner are fixed when it starts, so nothing it returns changes" })
     .query<Pick<CallSessionInMessage, "id" | "roomId" | "userId">>(async ({ ctx, input: { id } }) => {
       const callSession = await requireReadableCallSession(ctx.db, ctx.getSessionPayload, id);
       return { id: callSession.id, roomId: callSession.roomId, userId: callSession.userId };
     }),
-  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId").query<string>(
-    ({ ctx, input: { roomId, threadRootId } }) => readCallSessionId(ctx.db, roomId, threadRootId),
-  ),
+  readCallSessionId: getMemberProcedure(roomCallInputSchema, "roomId")
+    .meta({
+      staticReason:
+        "A room's call is announced in the room, and its participants are pushed by the call object as typed events",
+    })
+    .query<string>(({ ctx, input: { roomId, threadRootId } }) => readCallSessionId(ctx.db, roomId, threadRootId)),
   setCameraEnabled: standardAuthedProcedure
     .input(setCameraEnabledInputSchema)
+    .meta({ staticReason: "The call object pushes the camera change to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
       const isUpdated = await getCallObject(callSessionId).setCameraEnabled({
@@ -126,6 +139,7 @@ export const baseCallRouter = router({
     }),
   setHandRaised: standardAuthedProcedure
     .input(setHandRaisedInputSchema)
+    .meta({ staticReason: "The call object pushes the hand change to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, isHandRaised, participantId: targetSessionId } }) => {
       const callSession = await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
       const sessionId = ctx.getSessionPayload.session.id;
@@ -151,6 +165,7 @@ export const baseCallRouter = router({
     }),
   setMuted: standardAuthedProcedure
     .input(setMutedInputSchema)
+    .meta({ staticReason: "The call object pushes the mute change to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input: { callSessionId, isMuted } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
       const isUpdated = await getCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });

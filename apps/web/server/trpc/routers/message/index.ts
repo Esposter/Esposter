@@ -59,6 +59,7 @@ import { votePollInputSchema } from "#shared/models/db/message/VotePollInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
+import { getTopic } from "#shared/services/realtime/getTopic";
 import {
   cloneFiles,
   createThreadFollow,
@@ -75,6 +76,7 @@ import {
   MessageType,
   roomIdSchema,
   StorageBucket,
+  TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -82,12 +84,14 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const baseMessageRouter = router({
   // The sender's time zone is the call's and never the message's, so it is dropped before the message is written
-  createMessage: getMemberProcedure(zonedCreateMessageInputSchema, "roomId").mutation<RoomMessage>(
-    ({ ctx, input: { timeZone: _timeZone, ...input } }) =>
+  createMessage: getMemberProcedure(zonedCreateMessageInputSchema, "roomId")
+    .meta({ staticReason: "The room object pushes the new message to its sockets as a typed event" })
+    .mutation<RoomMessage>(({ ctx, input: { timeZone: _timeZone, ...input } }) =>
       createUserMessage(ctx.db, getRoomActor(ctx.getSessionPayload, ctx.headers), input),
-  ),
+    ),
   // oxlint-disable-next-line trpc-procedure/require-query-verb -- typing earns no achievement, and a mutation runs the achievement plugin on every keystroke
   createTyping: getMemberProcedure(roomIdSchema, "roomId")
+    .meta({ staticReason: "The room object pushes who is typing to its sockets as a typed event" })
     // Query, not mutation: emitting has no ordering/concurrency concerns.
     .query<void>(async ({ ctx, input: { roomId } }) => {
       const { user } = ctx.getSessionPayload;
@@ -104,8 +108,9 @@ export const baseMessageRouter = router({
     }),
   // Removing one file rewrites the whole files array inside the room's object, which applies the removal to the version
   // It holds and returns the file it removed, so the blob deleted is the one that version named
-  deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation<void>(
-    async ({ ctx, input: { fileId, id, roomId } }) => {
+  deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update)
+    .meta({ staticReason: "The room object pushes the message with the file removed to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input: { fileId, id, roomId } }) => {
       if (ctx.message.isForward || ctx.message.files.length === 0)
         throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.Message, JSON.stringify({ fileId, id }));
 
@@ -119,21 +124,22 @@ export const baseMessageRouter = router({
         StorageBucket.MessageAssets,
         Object.values(getFileBlobNames(roomId, fileId, deletedFile.filename)),
       ).match(noop, console.error);
-    },
-  ),
+    }),
   // Clearing the preview is the room object's write, which replaces the whole row's preview rather than merging a field
-  deleteLinkPreviewResponse: getMessageProcedure(
-    deleteLinkPreviewResponseInputSchema,
-    MessageOperation.Update,
-  ).mutation<void>(async ({ ctx, input }) => {
-    await requireEntity(
-      useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
-      DatabaseEntityType.Message,
-      JSON.stringify(input),
-    );
-  }),
-  deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete).mutation<void>(
-    async ({ ctx, input }) => {
+  deleteLinkPreviewResponse: getMessageProcedure(deleteLinkPreviewResponseInputSchema, MessageOperation.Update)
+    .meta({
+      staticReason: "The room object pushes the message with its preview cleared to its sockets as a typed event",
+    })
+    .mutation<void>(async ({ ctx, input }) => {
+      await requireEntity(
+        useRoomObject(input.roomId).deleteLinkPreview(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
+        DatabaseEntityType.Message,
+        JSON.stringify(input),
+      );
+    }),
+  deleteMessage: getMessageProcedure(deleteMessageInputSchema, MessageOperation.Delete)
+    .meta({ staticReason: "The room object pushes the deletion to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input }) => {
       // The object returns the message as it was before the delete, so the blobs its files named can be removed
       const deletedMessage = await requireEntity(
         useRoomObject(input.roomId).deleteMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
@@ -141,16 +147,16 @@ export const baseMessageRouter = router({
         JSON.stringify(input),
       );
       await publishDeletedMessageFiles(input.roomId, [deletedMessage]);
-    },
-  ),
+    }),
   // Reclaims blobs that were uploaded against a write SAS but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
   // Away is referenced by no message at all, so the bytes would sit in the bucket until the whole room is deleted.
   // Membership cannot be the check: an unreferenced upload and a posted attachment share one room-scoped namespace, and
   // Every member reads every attachment's id off the wire, so a name-only delete destroys anyone's posted attachment.
   // The caller presents the grant it was handed when the SAS was minted
-  deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { files, roomId } }) => {
+  deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId")
+    .meta({ staticReason: "It removes blobs no message names, so no reader shows what it deletes" })
+    .mutation<void>(async ({ ctx, input: { files, roomId } }) => {
       for (const { id, token } of files)
         if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -159,16 +165,16 @@ export const baseMessageRouter = router({
         noop,
         console.error,
       );
-    },
-  ),
-  followThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { roomId, threadRootId } }) => {
+    }),
+  followThread: getMemberProcedure(followThreadInputSchema, "roomId")
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
+    .mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
       // The bell is the member's own decision, so it clears any unfollow they recorded earlier
       await createThreadFollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id }, true);
-    },
-  ),
-  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { id, message, roomId, roomIds } }) => {
+    }),
+  forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId")
+    .meta({ staticReason: "The room objects push the forwarded messages to their sockets as typed events" })
+    .mutation<void>(async ({ ctx, input: { id, message, roomId, roomIds } }) => {
       await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
       const userId = ctx.getSessionPayload.user.id;
       const [source] = await useRoomObject(roomId).readMessagesByIds([id]);
@@ -233,55 +239,56 @@ export const baseMessageRouter = router({
       for (const { reason, roomId: rejectedRoomId } of rejections)
         console.error(`Failed to forward message to room ${rejectedRoomId}:`, reason);
       throw takeOne(rejections).reason;
-    },
-  ),
-  generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
-    ({ input: { files, roomId } }) =>
+    }),
+  generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId")
+    .meta({ staticReason: "A presigned download url, which no other reader shows" })
+    .query<string[]>(({ input: { files, roomId } }) =>
       generateDownloadFileSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
-  ),
-  generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId").query<
-    string[]
-  >(({ input: { files, roomId } }) =>
-    generateDownloadThumbnailSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
-  ),
-  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").mutation<
-    MessageFileSasEntity[]
-  >(async ({ ctx, input: { files, roomId } }) => {
-    const room = await requireEntity(
-      ctx.db.query.roomsInMessage.findFirst({
-        columns: { allowedMimeCategories: true, maxFileSizeBytes: true },
-        where: { id: { eq: roomId } },
-      }),
-      DatabaseEntityType.Room,
-      roomId,
-    );
-    // The mime category is checked here on the declared type only: the write SAS's content type is a response
-    // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
-    // `size` is whatever the client declared, an upload SAS carries no length constraint, and the block PUT never
-    // Passes back through Nitro, so a client that under-declares can write past this cap until the SAS expires.
-    // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies.
-    // See openspec/specs/esbabbler/file-media/design.md.
-    const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
-    for (const { mimetype, size } of files)
-      if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
-    // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
-    // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
-    const fileSasEntities = await generateReservedMessageFileSasEntities(
-      ctx.db,
-      ctx.getSessionPayload.user.id,
-      roomId,
-      files,
-    );
-    // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
-    return fileSasEntities.map((fileSasEntity) =>
-      Object.assign(fileSasEntity, {
-        token: createUploadFileToken(ctx.getSessionPayload.user.id, roomId, fileSasEntity.id),
-      }),
-    );
-  }),
-  pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin).mutation<void>(
-    async ({ ctx, input }) => {
+    ),
+  generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId")
+    .meta({ staticReason: "A presigned download url, which no other reader shows" })
+    .query<string[]>(({ input: { files, roomId } }) =>
+      generateDownloadThumbnailSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
+    ),
+  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId")
+    .meta({ staticReason: "A presigned upload target and its grant, which no other reader shows" })
+    .mutation<MessageFileSasEntity[]>(async ({ ctx, input: { files, roomId } }) => {
+      const room = await requireEntity(
+        ctx.db.query.roomsInMessage.findFirst({
+          columns: { allowedMimeCategories: true, maxFileSizeBytes: true },
+          where: { id: { eq: roomId } },
+        }),
+        DatabaseEntityType.Room,
+        roomId,
+      );
+      // The mime category is checked here on the declared type only: the write SAS's content type is a response
+      // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
+      // `size` is whatever the client declared, an upload SAS carries no length constraint, and the block PUT never
+      // Passes back through Nitro, so a client that under-declares can write past this cap until the SAS expires.
+      // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies.
+      // See openspec/specs/esbabbler/file-media/design.md.
+      const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
+      for (const { mimetype, size } of files)
+        if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
+          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
+      // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
+      // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
+      const fileSasEntities = await generateReservedMessageFileSasEntities(
+        ctx.db,
+        ctx.getSessionPayload.user.id,
+        roomId,
+        files,
+      );
+      // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
+      return fileSasEntities.map((fileSasEntity) =>
+        Object.assign(fileSasEntity, {
+          token: createUploadFileToken(ctx.getSessionPayload.user.id, roomId, fileSasEntity.id),
+        }),
+      );
+    }),
+  pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin)
+    .meta({ staticReason: "The room object pushes the pin to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input }) => {
       await requireEntity(
         useRoomObject(input.roomId).pinMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
         DatabaseEntityType.Message,
@@ -293,64 +300,69 @@ export const baseMessageRouter = router({
         replyToId: input.id,
         type: MessageType.PinMessage,
       }).match(noop, console.error);
-    },
-  ),
+    }),
   // One read for both shapes the client needs, since the display list is derived from the follow state:
   // `threadRootIds` is the follow-STATE source of truth — every followed root, including those whose root message was
   // Deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose follow row remains — while
   // `threads` drops deleted roots so the drawer never lists a dangling follow
-  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsResult>(
-    async ({ ctx, input: { roomId } }) => {
+  readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId")
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
+    .query<ReadFollowedThreadsResult>(async ({ ctx, input: { roomId } }) => {
       const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.getSessionPayload.user.id);
       if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
       // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
       const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
       return { threadRootIds, threads };
-    },
-  ),
-  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query<BasePaginationData<RoomMessage>>(
-    async ({ input: { after, before, filter, limit, roomId } }) =>
+    }),
+  readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
+    .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
+    .query<BasePaginationData<RoomMessage>>(async ({ input: { after, before, filter, limit, roomId } }) =>
       getBasePaginationData(
         await useRoomObject(roomId).readMessages({ after, before, isPinned: filter?.isPinned, limit: limit + 1 }),
         limit,
       ),
-  ),
-  readMessagesByIds: getMemberProcedure(readMessagesByIdsInputSchema, "roomId").query<RoomMessage[]>(
-    ({ input: { messageIds, roomId } }) => useRoomObject(roomId).readMessagesByIds(messageIds),
-  ),
+    ),
+  readMessagesByIds: getMemberProcedure(readMessagesByIdsInputSchema, "roomId")
+    .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
+    .query<RoomMessage[]>(({ input: { messageIds, roomId } }) => useRoomObject(roomId).readMessagesByIds(messageIds)),
   readMySentMessages: standardAuthedProcedure
     .input(readMySentMessagesInputSchema)
+    .meta({
+      staticReason:
+        "Each message is read from its room's object, which pushes message changes to its sockets as typed events",
+    })
     .query<ReadMySentMessagesResult>(({ ctx, input }) =>
       readMySentMessages(input, ctx.db, ctx.getSessionPayload.user.id),
     ),
-  readThread: getMemberProcedure(readThreadInputSchema, "roomId").query<RoomMessage[]>(
-    ({ input: { roomId, threadRootId } }) => useRoomObject(roomId).readThread(threadRootId),
-  ),
-  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId").query<SearchMessagesResult>(
-    async ({ ctx, input }) => {
+  readThread: getMemberProcedure(readThreadInputSchema, "roomId")
+    .meta({ staticReason: "The room object pushes the thread's messages to its sockets as typed events" })
+    .query<RoomMessage[]>(({ input: { roomId, threadRootId } }) => useRoomObject(roomId).readThread(threadRootId)),
+  searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId")
+    .meta({ staticReason: "A search answered once for its input, and never kept live" })
+    .query<SearchMessagesResult>(async ({ ctx, input }) => {
       const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
       if (!inFilterRoomIds.every((value) => typeof value === "string"))
         throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Message, JSON.stringify(inFilterRoomIds));
       else if (inFilterRoomIds.length > 0) await assertIsMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
       return searchMessages(input);
-    },
-  ),
-  unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input: { roomId, threadRootId } }) => {
+    }),
+  unfollowThread: getMemberProcedure(unfollowThreadInputSchema, "roomId")
+    .meta({ topics: ({ userId }) => (userId === undefined ? [] : [getTopic(TopicKind.ThreadFollow, userId)]) })
+    .mutation<void>(async ({ ctx, input: { roomId, threadRootId } }) => {
       await upsertThreadUnfollow(ctx.db, { roomId, threadRootId, userId: ctx.getSessionPayload.user.id });
-    },
-  ),
-  unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin).mutation<void>(
-    async ({ ctx, input }) => {
+    }),
+  unpinMessage: getMessageProcedure(unpinMessageInputSchema, MessageOperation.Pin)
+    .meta({ staticReason: "The room object pushes the unpin to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input }) => {
       await requireEntity(
         useRoomObject(input.roomId).unpinMessage(input.id, getRoomActor(ctx.getSessionPayload, ctx.headers)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
-    },
-  ),
-  updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation<void>(
-    async ({ ctx, input }) => {
+    }),
+  updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update)
+    .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input }) => {
       // The object stamps the message as edited and takes its mentions as the new text names them, which the procedure
       // Reads off the text it was sent
       await requireEntity(
@@ -361,19 +373,20 @@ export const baseMessageRouter = router({
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
-    },
-  ),
+    }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its
   // Author. The client names the option it picked and the object applies it to the stored poll, so a member can never
   // Rewrite anyone else's vote by sending a whole poll body. An empty option id withdraws the caller's vote
-  votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote).mutation<void>(async ({ ctx, input }) => {
-    const votedMessage = await useRoomObject(input.roomId).votePoll(
-      { id: input.id, optionId: input.optionId || undefined },
-      getRoomActor(ctx.getSessionPayload, ctx.headers),
-    );
-    if (!votedMessage)
-      throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify(input));
-  }),
+  votePoll: getMessageProcedure(votePollInputSchema, MessageOperation.Vote)
+    .meta({ staticReason: "The room object pushes the poll with the vote to its sockets as a typed event" })
+    .mutation<void>(async ({ ctx, input }) => {
+      const votedMessage = await useRoomObject(input.roomId).votePoll(
+        { id: input.id, optionId: input.optionId || undefined },
+        getRoomActor(ctx.getSessionPayload, ctx.headers),
+      );
+      if (!votedMessage)
+        throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Message, JSON.stringify(input));
+    }),
 });
 
 export const messageRouter = mergeRouters(

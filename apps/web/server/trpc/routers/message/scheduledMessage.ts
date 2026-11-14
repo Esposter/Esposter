@@ -1,3 +1,4 @@
+import type { ProcedureTopics } from "#server/models/trpc/ProcedureTopics";
 import type { RoomMessage, ScheduledRoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
@@ -13,41 +14,49 @@ import { deleteScheduledMessageInputSchema } from "#shared/models/db/message/sch
 import { readScheduledMessagesInputSchema } from "#shared/models/db/message/scheduledMessage/ReadScheduledMessagesInput";
 import { sendScheduledMessageNowInputSchema } from "#shared/models/db/message/scheduledMessage/SendScheduledMessageNowInput";
 import { updateScheduledMessageInputSchema } from "#shared/models/db/message/scheduledMessage/UpdateScheduledMessageInput";
-import { DatabaseEntityType, MessageType } from "@esposter/db-schema";
+import { getTopic } from "#shared/services/realtime/getTopic";
+import { DatabaseEntityType, MessageType, TopicKind } from "@esposter/db-schema";
 import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 
+// The sender's own scheduled messages, which only their own writes change. No object pushes them as events, so readers
+// Learn of a change through this topic
+const scheduledMessageTopics: ProcedureTopics = ({ userId }) =>
+  userId === undefined ? [] : [getTopic(TopicKind.ScheduledMessage, userId)];
+
 // A scheduled message is held by its room's object, which sends it when it comes due and applies the sender's rules
 // Then. The id is the object's key for it, minted here
 export const scheduledMessageRouter = router({
-  createScheduledMessage: getMemberProcedure(
-    createScheduledMessageInputSchema,
-    "roomId",
-  ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
-    await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-    return useRoomObject(input.roomId).createScheduledMessage(
-      { id: v7(), message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
-      getRoomActor(ctx.getSessionPayload, ctx.headers),
-    );
-  }),
-  deleteScheduledMessage: getMemberProcedure(deleteScheduledMessageInputSchema, "roomId").mutation<void>(
-    async ({ ctx, input }) => {
+  createScheduledMessage: getMemberProcedure(createScheduledMessageInputSchema, "roomId")
+    .meta({ topics: scheduledMessageTopics })
+    .mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
+      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+      return useRoomObject(input.roomId).createScheduledMessage(
+        { id: v7(), message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
+        getRoomActor(ctx.getSessionPayload, ctx.headers),
+      );
+    }),
+  deleteScheduledMessage: getMemberProcedure(deleteScheduledMessageInputSchema, "roomId")
+    .meta({ topics: scheduledMessageTopics })
+    .mutation<void>(async ({ ctx, input }) => {
       const isDeleted = await useRoomObject(input.roomId).deleteScheduledMessage(
         input.id,
         getRoomActor(ctx.getSessionPayload, ctx.headers),
       );
       if (!isDeleted) throw getNotFoundError(DatabaseEntityType.ScheduledMessageJob, input.id);
-    },
-  ),
-  readScheduledMessages: getMemberProcedure(readScheduledMessagesInputSchema, "roomId").query<ScheduledRoomMessage[]>(
-    ({ ctx, input }) => useRoomObject(input.roomId).readScheduledMessages(ctx.getSessionPayload.user.id),
-  ),
+    }),
+  readScheduledMessages: getMemberProcedure(readScheduledMessagesInputSchema, "roomId")
+    .meta({ topics: scheduledMessageTopics })
+    .query<ScheduledRoomMessage[]>(({ ctx, input }) =>
+      useRoomObject(input.roomId).readScheduledMessages(ctx.getSessionPayload.user.id),
+    ),
   // The claim is the object's delete, so a message the object is already sending cannot be sent a second time from here.
   // Every guard createUserMessage would reject runs before the claim, because a claim the guards then refuse would burn
   // The scheduled message without ever sending it
-  sendScheduledMessageNow: getMemberProcedure(sendScheduledMessageNowInputSchema, "roomId").mutation<RoomMessage>(
-    async ({ ctx, input }) => {
+  sendScheduledMessageNow: getMemberProcedure(sendScheduledMessageNowInputSchema, "roomId")
+    .meta({ topics: scheduledMessageTopics })
+    .mutation<RoomMessage>(async ({ ctx, input }) => {
       const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
       const roomObject = useRoomObject(input.roomId);
       const scheduledMessage = (await roomObject.readScheduledMessages(actor.userId)).find(({ id }) => id === input.id);
@@ -94,20 +103,18 @@ export const scheduledMessageRouter = router({
           throw error;
         },
       );
-    },
-  ),
-  updateScheduledMessage: getMemberProcedure(
-    updateScheduledMessageInputSchema,
-    "roomId",
-  ).mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
-    await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
-    return requireEntity(
-      useRoomObject(input.roomId).updateScheduledMessage(
-        { id: input.id, message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
-        getRoomActor(ctx.getSessionPayload, ctx.headers),
-      ),
-      DatabaseEntityType.ScheduledMessageJob,
-      input.id,
-    );
-  }),
+    }),
+  updateScheduledMessage: getMemberProcedure(updateScheduledMessageInputSchema, "roomId")
+    .meta({ topics: scheduledMessageTopics })
+    .mutation<ScheduledRoomMessage>(async ({ ctx, input }) => {
+      await assertCanCreateMessage(ctx.db, ctx.getSessionPayload.user.id, input.roomId, input.message);
+      return requireEntity(
+        useRoomObject(input.roomId).updateScheduledMessage(
+          { id: input.id, message: input.message, replyToId: input.replyToId ?? undefined, runAt: input.runAt },
+          getRoomActor(ctx.getSessionPayload, ctx.headers),
+        ),
+        DatabaseEntityType.ScheduledMessageJob,
+        input.id,
+      );
+    }),
 });
