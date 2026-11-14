@@ -30,7 +30,7 @@ pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareAccount
 pulumi env set esposter-infra/prod pulumiConfig.esposter-infra:cloudflareBillingAlertEmail <email>
 ```
 
-Every Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`). The prod names differ from the first cut's, so a stack that already applied that cut previews its buckets, databases and queues as replacements, which `protect: true` blocks. Those resources hold data, so the change is a create, cutover and delete, not an alias.
+Every Cloudflare resource name is built by `getCloudflareResourceName` and `getCloudflareAccountResourceName` (`apps/infra/docs/cloudflare/naming-conventions.md`), and a Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, and `protect: true` blocks the delete. Those resources hold data, so the move is the create, cutover and delete sequence on the pulumi-infra migrations page, not an alias.
 
 ### First deploy
 
