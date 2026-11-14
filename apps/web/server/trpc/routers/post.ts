@@ -31,7 +31,7 @@ import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
 import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { Operation, takeOne } from "@esposter/shared";
 import { and, count, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
 
 export const postRouter = router({
@@ -124,7 +124,7 @@ export const postRouter = router({
         eq(postsInPost.id, input),
         sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
       );
-      const [[{ removedCommentCount }], , deletedCommentRows] = await ctx.db.batch([
+      const [countRows, , deletedCommentRows] = await ctx.db.batch([
         ctx.db.select({ removedCommentCount: count() }).from(postsInPost).where(subtreeWhere),
         // Every ancestor loses the whole subtree; the guard leaves the counters alone when the delete below will not land
         ctx.db
@@ -141,6 +141,7 @@ export const postRouter = router({
         ctx.db.delete(postsInPost).where(ownedComment).returning({ id: postsInPost.id }),
       ]);
       requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
+      const { removedCommentCount } = takeOne(countRows, 0);
       return { ancestorIds, removedCommentCount };
     }),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost>(async ({ ctx, input }) =>
