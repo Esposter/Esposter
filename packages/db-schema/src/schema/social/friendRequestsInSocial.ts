@@ -3,6 +3,7 @@ import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheck
 import { createSenderReceiverColumns } from "#src/services/social/createSenderReceiverColumns";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, index, text } from "drizzle-orm/sqlite-core";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const friendRequestsInSocial = sqliteTable(
   "friendRequests",
@@ -23,3 +24,5 @@ export const friendRequestsInSocial = sqliteTable(
 );
 
 export type FriendRequestInSocial = typeof friendRequestsInSocial.$inferSelect;
+
+export const selectFriendRequestInSocialSchema = createSelectSchema(friendRequestsInSocial);

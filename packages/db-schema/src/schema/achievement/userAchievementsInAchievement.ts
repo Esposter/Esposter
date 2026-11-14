@@ -4,6 +4,7 @@ import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { sqliteTable } from "#src/sqliteTable";
 import { check, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
+import { createSelectSchema } from "drizzle-orm/zod";
 
 export const userAchievementsInAchievement = sqliteTable(
   "userAchievements",
@@ -27,3 +28,5 @@ export const userAchievementsInAchievement = sqliteTable(
 );
 
 export type UserAchievementInAchievement = typeof userAchievementsInAchievement.$inferSelect;
+
+export const selectUserAchievementInAchievementSchema = createSelectSchema(userAchievementsInAchievement);
