@@ -1,20 +1,18 @@
 <script setup lang="ts">
 import { checkIsMessageRoute } from "@/services/router/checkIsMessageRoute";
-import { reverseTickedTimestampSchema } from "@esposter/db-schema";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 definePageMeta({ middleware: "auth", validate: checkIsMessageRoute });
 
 const route = useRoute();
 const openThread = useOpenThread();
-const { id: roomId, rowKey } = route.params;
-// Validated by checkIsMessageRoute before the page renders, and parsed here for its type
-const threadRootRowKey = reverseTickedTimestampSchema.parse(rowKey);
+// Validated by checkIsMessageRoute before the page renders, so the segment is the thread's root message id
+const { id: roomId, messageId: threadRootId } = route.params;
 // The same room the message route renders, with the pane opened on the thread the url names — which is what
 // Makes a thread linkable at all: a popped-out thread window, and every link into one, land here.
 // On mounted rather than in setup: the layout is this page's own child, so its mount decides the drawer state
 // For the breakpoint first, and an open issued before that would be closed again on a phone
-const openRouteThread = getSynchronizedFunction(() => openThread(roomId, threadRootRowKey));
+const openRouteThread = getSynchronizedFunction(() => openThread(roomId, threadRootId));
 
 onMounted(() => {
   openRouteThread();

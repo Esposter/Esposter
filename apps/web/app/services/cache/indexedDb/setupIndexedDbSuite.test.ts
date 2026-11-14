@@ -1,22 +1,13 @@
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
+import { createMessage } from "@/services/message/message/createMessage.test";
 import { afterEach, describe } from "vitest";
 
-// The shared indexedDb fixture: the canonical message triple (message3 shares message1's partition) and the
+// The shared indexedDb fixture: the canonical message triple (message3 shares message1's room) and the
 // Per-test database reset.
 export const setupIndexedDbSuite = () => {
-  const message1 = new StandardMessageEntity({
-    partitionKey: crypto.randomUUID(),
-    rowKey: getReverseTickedTimestamp(),
-  });
-  const message2 = new StandardMessageEntity({
-    partitionKey: crypto.randomUUID(),
-    rowKey: getReverseTickedTimestamp(),
-  });
-  const message3 = new StandardMessageEntity({
-    partitionKey: message1.partitionKey,
-    rowKey: getReverseTickedTimestamp(),
-  });
+  const message1 = createMessage(crypto.randomUUID());
+  const message2 = createMessage(crypto.randomUUID());
+  const message3 = createMessage(message1.roomId);
 
   afterEach(async () => {
     await resetIndexedDb();

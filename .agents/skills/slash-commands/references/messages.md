@@ -10,7 +10,7 @@ A `case` that posts assigns the markdown `message` and nothing else — one that
 if (message)
   await sendMessage({
     message: marked.parse(message, { async: false }),
-    replyRowKey: replyRowKey.value,
+    replyToId: replyToId.value,
     roomId,
     type: MessageType.Message,
   });

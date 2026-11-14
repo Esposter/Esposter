@@ -2,7 +2,6 @@ import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDb
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
@@ -27,13 +26,13 @@ export const writeIndexedDb = async <
   // Deletes before it puts — awaiting them one at a time only bought a round trip per row, and a full
   // Rewrite runs on every store write the cached list absorbs
   await Promise.all(existingKeys.map((key) => objectStore.delete(key)));
-  // A shallow copy is all the partitionKey stamp needs: `put` structured-clones the record itself, so
+  // A shallow copy is all the partition stamp needs: `put` structured-clones the record itself, so
   // Cloning deeply first duplicated that work and produced a copy nothing else ever read
   await Promise.all(
     itemsToCache.map((item) =>
       // The stored record is data, not an entity — `put` structured-clones away the prototype regardless
       // oxlint-disable-next-line typescript/no-misused-spread -- `put` stores the fields alone
-      objectStore.put({ ...toRawDeep(item), [CompositeKeyPropertyNames.partitionKey]: partitionKey }),
+      objectStore.put({ ...toRawDeep(item), [indexName]: partitionKey }),
     ),
   );
   await transaction.done;

@@ -8,4 +8,5 @@ export interface UpgradeDatabase<TSchema extends DatabaseSchema = DatabaseSchema
     name: TStoreName,
     options?: IDBObjectStoreParameters,
   ) => DatabaseObjectStore<TSchema, TStoreName, "versionchange">;
+  deleteObjectStore: <TStoreName extends DatabaseStoreName<TSchema>>(name: TStoreName) => void;
 }

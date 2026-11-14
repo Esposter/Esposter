@@ -14,7 +14,7 @@ export const createScheduledMessageJob = (
     createdAt: new Date(0),
     deletedAt: null,
     id: crypto.randomUUID(),
-    payload: { message: "message", replyRowKey: "", type: ScheduledMessageJobType.ScheduledMessage },
+    payload: { message: "message", replyToId: null, type: ScheduledMessageJobType.ScheduledMessage },
     processingStartedAt: null,
     room,
     roomId: room.id,

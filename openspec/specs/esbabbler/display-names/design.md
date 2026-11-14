@@ -28,7 +28,7 @@ flowchart TD
   Webhook -->|"yes"| AppUser["the app user the message carries, over appUserMap — no room display name"]
   Webhook -->|"no"| User["userMap.get(message.userId)"]
   User -->|"not loaded"| Placeholder["UNKNOWN_USER_NAME, the message's own userId"]
-  User --> Display["getRoomMemberName(message.partitionKey, user.id)"]
+  User --> Display["getRoomMemberName(message.roomId, user.id)"]
   Display --> HasDisplayName{"the room's member row has a displayName?"}
   HasDisplayName -->|"yes"| RoomDisplayName["the room display name"]
   HasDisplayName -->|"no"| Global["user.name"]

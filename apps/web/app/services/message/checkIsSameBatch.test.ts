@@ -1,19 +1,24 @@
 import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
 import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createMessage } from "@/services/message/message/createMessage.test";
+import { MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
-
-const withCreatedAt = (message: ReturnType<typeof createMessageEntity>, messageCreatedAt: Date) =>
-  Object.assign(message, { createdAt: messageCreatedAt });
 
 describe(checkIsSameBatch, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const createdAt = new Date(0);
-  const createStandardMessage = (messageUserId: string, messageCreatedAt: Date) =>
-    withCreatedAt(createMessageEntity({ roomId, type: MessageType.Message, userId: messageUserId }), messageCreatedAt);
-  const createWebhookMessage = (appId: string, messageCreatedAt: Date) =>
-    withCreatedAt(createMessageEntity({ appUser: { id: appId }, roomId, type: MessageType.Webhook }), messageCreatedAt);
+  const createStandardMessage = (messageUserId: string, messageCreatedAt: Date) => ({
+    ...createMessage(roomId),
+    createdAt: messageCreatedAt,
+    userId: messageUserId,
+  });
+  const createWebhookMessage = (appId: string, messageCreatedAt: Date) => ({
+    ...createMessage(roomId, "", MessageType.Webhook),
+    appUserId: appId,
+    createdAt: messageCreatedAt,
+    userId: null,
+  });
 
   test("batches an author's consecutive messages within the window", () => {
     expect.hasAssertions();

@@ -1,7 +1,7 @@
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { MessageEntity } from "@esposter/db-schema";
+import type { MessageInMessage } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
 
@@ -30,7 +30,7 @@ export const MessageHookMap = {
   // The composer's attachments were handed back — a send the server rejected. They never left the store, so
   // Their grants are intact and the user retries with the files already uploaded instead of re-picking them
   [MessageHook.RollbackSend]: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
-  [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
+  [Operation.Create]: createHookRegistry<(message: MessageInMessage) => Promisable<void>>(),
   [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
   [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][0][0]) => Promisable<void>>(),
 };

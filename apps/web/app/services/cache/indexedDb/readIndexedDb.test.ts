@@ -12,24 +12,24 @@ describe(readIndexedDb, () => {
     vi.restoreAllMocks();
   });
 
-  test("returns empty array when no items exist for partitionKey", async () => {
+  test("returns empty array when no items exist for the room", async () => {
     expect.hasAssertions();
 
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
+    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.roomId);
 
     expect(result).toHaveLength(0);
   });
 
-  test("only returns items for the requested partitionKey", async () => {
+  test("only returns items for the requested room", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.partitionKey);
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message2], message2.partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message1], message1.roomId);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [message2], message2.roomId);
 
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
+    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.roomId);
 
     expect(result).toHaveLength(1);
-    expect(takeOne(result)).toStrictEqual(message1.toJSON());
+    expect(takeOne(result)).toStrictEqual(message1);
   });
 
   test("reports a refused read to its caller", async () => {
@@ -41,7 +41,7 @@ describe(readIndexedDb, () => {
     });
 
     await expect(
-      readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey),
+      readIndexedDb(MessageIndexedDbStoreConfiguration, message1.roomId),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
   });
 });

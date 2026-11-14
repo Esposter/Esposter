@@ -1,7 +1,6 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(requirePartitionKey, () => {
@@ -18,7 +17,7 @@ describe(requirePartitionKey, () => {
     expect.hasAssertions();
 
     expect(() => requirePartitionKey("", name)).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, name, CompositeKeyPropertyNames.partitionKey).message}]`,
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, name, "partitionKey").message}]`,
     );
   });
 });

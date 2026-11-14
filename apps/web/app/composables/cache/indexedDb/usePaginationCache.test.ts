@@ -11,8 +11,8 @@ import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/c
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
 import { readIndexedDb } from "@/services/cache/indexedDb/readIndexedDb";
 import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
+import { createMessage } from "@/services/message/message/createMessage.test";
 import { useAlertStore } from "@/store/alert";
-import { getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -113,16 +113,14 @@ describe.each<PaginationCacheVariant>([
   });
   const partitionKey = crypto.randomUUID();
   const secondPartitionKey = crypto.randomUUID();
-  const rowKey = getReverseTickedTimestamp();
+  const messageId = crypto.randomUUID();
   const message = "message";
   const secondMessage = "secondMessage";
-  const createMessageEntity = (entityPartitionKey: string = partitionKey, entityMessage: string = message) =>
-    new StandardMessageEntity({
-      message: entityMessage,
-      partitionKey: entityPartitionKey,
-      rowKey,
-      userId: getMockSession().user.id,
-    });
+  const createMessageRow = (roomId: string = partitionKey, messageText: string = message): MessageValue => ({
+    ...createMessage(roomId, messageText),
+    id: messageId,
+    userId: getMockSession().user.id,
+  });
   // The load a store performs writes the rows and records readiness together, so the harness does both at once.
   // The partition is named where a load happens before the key is on the ref — a store that already held rows
   // When this composable mounted
@@ -163,7 +161,7 @@ describe.each<PaginationCacheVariant>([
     expect.hasAssertions();
 
     await mountCache();
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
@@ -175,7 +173,7 @@ describe.each<PaginationCacheVariant>([
     expect.hasAssertions();
 
     await mountCache();
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     items.value = [];
     await flushCache();
@@ -190,7 +188,7 @@ describe.each<PaginationCacheVariant>([
   test("clears cache when a load lands empty", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
     goOnline();
     await mountCache();
     isLoaded.value = true;
@@ -205,12 +203,12 @@ describe.each<PaginationCacheVariant>([
 
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [createMessageEntity(secondPartitionKey)],
+      [createMessageRow(secondPartitionKey)],
       secondPartitionKey,
     );
     goOnline();
     await mountCache();
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     partitionKeyRef.value = secondPartitionKey;
     items.value = [];
@@ -230,7 +228,7 @@ describe.each<PaginationCacheVariant>([
 
     goOnline();
     await mountCache();
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     partitionKeyRef.value = secondPartitionKey;
     await flushCache();
@@ -249,7 +247,7 @@ describe.each<PaginationCacheVariant>([
     expect.hasAssertions();
 
     await mountCache("");
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
@@ -270,7 +268,7 @@ describe.each<PaginationCacheVariant>([
     await mountCache();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(error);
@@ -282,7 +280,7 @@ describe.each<PaginationCacheVariant>([
 
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [createMessageEntity(secondPartitionKey)],
+      [createMessageRow(secondPartitionKey)],
       secondPartitionKey,
     );
     await mountCache();
@@ -298,7 +296,7 @@ describe.each<PaginationCacheVariant>([
   test("populates store from cache when the partition key is already set on mount", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
     await mountCache();
     await flushCache();
 
@@ -313,11 +311,11 @@ describe.each<PaginationCacheVariant>([
 
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [createMessageEntity(secondPartitionKey, secondMessage)],
+      [createMessageRow(secondPartitionKey, secondMessage)],
       secondPartitionKey,
     );
     await mountCache();
-    loadItems([createMessageEntity()]);
+    loadItems([createMessageRow()]);
     await flushCache();
     partitionKeyRef.value = secondPartitionKey;
     isLoaded.value = false;
@@ -335,11 +333,11 @@ describe.each<PaginationCacheVariant>([
 
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [createMessageEntity(partitionKey, secondMessage)],
+      [createMessageRow(partitionKey, secondMessage)],
       partitionKey,
     );
     // The list and its readiness are what the store already held when this composable mounted
-    loadItems([createMessageEntity()], partitionKey);
+    loadItems([createMessageRow()], partitionKey);
     await mountCache();
     await flushCache();
 
@@ -352,7 +350,7 @@ describe.each<PaginationCacheVariant>([
   test("populates store from cache when the network drops without a partition key change", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
     goOnline();
     await mountCache();
     await flushCache();
@@ -371,7 +369,7 @@ describe.each<PaginationCacheVariant>([
 
     await writeIndexedDb(
       MessageIndexedDbStoreConfiguration,
-      [createMessageEntity(secondPartitionKey)],
+      [createMessageRow(secondPartitionKey)],
       secondPartitionKey,
     );
     goOnline();
@@ -385,7 +383,7 @@ describe.each<PaginationCacheVariant>([
   test("does not populate store if partition key changed during async read", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
     await mountCache(crypto.randomUUID());
     partitionKeyRef.value = partitionKey;
     partitionKeyRef.value = crypto.randomUUID();
@@ -400,7 +398,7 @@ describe.each<PaginationCacheVariant>([
   test("hydrates the partition its read was issued for rather than the current one", async () => {
     expect.hasAssertions();
 
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageEntity()], partitionKey);
+    await writeIndexedDb(MessageIndexedDbStoreConfiguration, [createMessageRow()], partitionKey);
     await mountCache();
     partitionKeyRef.value = secondPartitionKey;
     await flushCache();

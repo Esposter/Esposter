@@ -30,9 +30,11 @@ Feature wiring is a thin wrapper supplying partition key, store refs, and hooks:
 
 Every object store is partitioned; `readIndexedDb` / `writeIndexedDb` always take an explicit `partitionKey`:
 
-- **Messages** → `roomId` (entity already has a `partitionKey` field; key path `[partitionKey, rowKey]`, limit 50)
-- **Members** → `roomId` (injected `partitionKey`; key path `[partitionKey, id]`)
-- **Rooms** → `userId` (injected `partitionKey`; key path `[partitionKey, id]`)
+- **Messages** → `roomId` (the row already carries `roomId`; key path `[roomId, id]`, limit 50)
+- **Members** → `roomId` (injected as `roomId`; key path `[roomId, id]`)
+- **Rooms** → the viewing user, injected as `viewerId` (key path `[viewerId, id]`). A room's own `userId` is its creator, so it is not the partition
+
+Each store's index is named for the field it partitions on, and `writeIndexedDb` stamps that field onto every record it writes. The keys changed from the Azure-shaped `[partitionKey, rowKey]`, so `DATABASE_VERSION` is bumped and an upgrade clears the stores rather than migrating them: the cache is refilled from the server.
 
 ### Sign-out clears the whole database
 

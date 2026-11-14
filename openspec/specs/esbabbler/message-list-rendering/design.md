@@ -8,7 +8,7 @@ The list is a plain scroller: one `div` laid out as a reversed flex column, so t
 
 The hover bar is Discord's: one lifted group, named "Message actions", holding the quick reactions, the emoji picker, the actions a message offers most as quiet icon buttons, and a `UiOverflowMenu` named More holding the rest — its updates, its actions and deleting, each section opening a group. It is mounted with `v-if` only for the item that is hovered, has one of its menus open (`messageStore.optionsMenuRowKey`), or is the target of a context menu — so exactly one instance of that subtree, with its tooltips, popover and menu, exists at a time. It is also the only place a message's action items are built, so a right-click, long press or menu key on a message records the point as `messageStore.contextMenuRequest`, which mounts the bar on that item; the bar then opens the app's one [context menu](../../architecture/context-menus/design.md) at that point with the same list its More menu holds. Reacting stays on the bar, one move away.
 
-The confirm dialogs follow the repo-wide [singleton dialog standard](../../architecture/singleton-dialogs/design.md): `MessageModelMessageList` mounts one `ConfirmDeleteDialog`, one `ConfirmPinDialog` and one `ReactionsDialog`, driven by the message dialog store's `deletingRowKey`, `pinningRowKey` and `reactionsRowKey` targets. Action items (`useMessageActionItems`) write those store refs directly instead of threading emit chains through the component tree.
+The confirm dialogs follow the repo-wide [singleton dialog standard](../../architecture/singleton-dialogs/design.md): `MessageModelMessageList` mounts one `ConfirmDeleteDialog`, one `ConfirmPinDialog` and one `ReactionsDialog`, driven by the message dialog store's `deletingMessageId`, `pinningMessageId` and `reactionsMessageId` targets. Action items (`useMessageActionItems`) write those store refs directly instead of threading emit chains through the component tree.
 
 ```mermaid
 flowchart TD
@@ -18,9 +18,9 @@ flowchart TD
     M -->|right-click sets contextMenuRequest| S[(messageStore)]
     S -->|mounts over the target| O
     O -->|opens with its items| CM[UiContextMenuHost]
-    O -->|action item writes deletingRowKey / pinningRowKey| DS[(messageDialogStore)]
-    DS -->|deletingRowKey| D[ConfirmDeleteDialog - singleton in List/Index.vue]
-    DS -->|pinningRowKey| P[ConfirmPinDialog - singleton in List/Index.vue]
+    O -->|action item writes deletingMessageId / pinningMessageId| DS[(messageDialogStore)]
+    DS -->|deletingMessageId| D[ConfirmDeleteDialog - singleton in List/Index.vue]
+    DS -->|pinningMessageId| P[ConfirmPinDialog - singleton in List/Index.vue]
     O --> E[StyledEmojiPicker<br/>popover at every width]
     E -->|its panel mounts on first open| X[getEmojiIndex - built once]
 ```
@@ -66,8 +66,8 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 | `apps/web/app/composables/message/message/useMessageActionItems.ts`     | Action items writing store targets directly                                                           |
 | `apps/web/app/components/Message/Model/Message/List/Index.vue`          | The column-reverse scroller and the singleton dialogs                                                 |
 | `apps/web/app/services/message/emoji/getEmojiIndex.ts`                  | Shared emoji index, built once on first use                                                           |
-| `apps/web/app/store/message/index.ts`                                   | `optionsMenuRowKey`, `contextMenuRequest`, `editingRowKey`                                            |
-| `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingRowKey`, `pinningRowKey`, `reactionsRowKey` + `reactionsRoomId`              |
+| `apps/web/app/store/message/index.ts`                                   | `optionsMenuMessageId`, `contextMenuRequest`, `editingMessageId`                                      |
+| `apps/web/app/store/message/dialog.ts`                                  | Dialog targets: `deletingMessageId`, `pinningMessageId`, `reactionsMessageId` + `reactionsRoomId`     |
 
 ## Notes
 

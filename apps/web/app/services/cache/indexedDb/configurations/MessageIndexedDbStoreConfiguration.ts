@@ -1,11 +1,10 @@
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 
 import { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
-import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 
 export const MessageIndexedDbStoreConfiguration = {
-  indexName: CompositeKeyPropertyNames.partitionKey,
-  keyPath: CompositeAzureKeyPath,
+  indexName: "roomId",
+  keyPath: ["roomId", "id"],
   limit: 50,
   storeName: IndexedDbStoreName.Messages,
 } as const satisfies IndexedDbStoreConfiguration<IndexedDbStoreName.Messages>;

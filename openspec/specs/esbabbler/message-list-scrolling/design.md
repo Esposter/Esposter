@@ -40,7 +40,7 @@ The list pages in both directions from a `StyledWaypoint` at each end. Older pag
 
 `overflow-anchor` is disabled only while the reader is pinned to the bottom, so a message arriving at the tail keeps them at the tail; anywhere else the browser's own anchoring is what holds their place.
 
-A permalink lands through `useScrollToMessage`: if the room and the message are already loaded it highlights the row (`activeRowKey`, cleared by a timer) and scrolls it into view, otherwise it navigates to the permalink route, whose mounted list scrolls to the named message.
+A permalink lands through `useScrollToMessage`: if the room and the message are already loaded it highlights the row (`activeMessageId`, cleared by a timer) and scrolls it into view, otherwise it navigates to the permalink route, whose mounted list scrolls to the named message.
 
 ## Key files
 

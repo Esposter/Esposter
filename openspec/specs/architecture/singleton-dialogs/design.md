@@ -51,7 +51,7 @@ Where the parent owns the lookup because it passes the item down as a prop (the 
 | File                                                                                | Role                                                                                            |
 | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `app/composables/useSingletonDialog.ts`                                             | Writable `v-model` computed over a target ref — open while set, close resets to `""` or `[]`    |
-| `app/store/message/dialog.ts`                                                       | Message dialog targets (`deletingRowKey`, `pinningRowKey`)                                      |
+| `app/store/message/dialog.ts`                                                       | Message dialog targets (`deletingMessageId`, `pinningMessageId`)                                |
 | `app/store/message/room/dialog.ts`                                                  | Room dialog state (`settingsRoomId`, `isEditRoomDialogOpen`)                                    |
 | `app/store/message/roomCategoryDialog.ts`                                           | Category delete target                                                                          |
 | `app/store/message/room/webhookDialog.ts`                                           | Webhook delete and rotate targets, one ref per action read through `getSelectedId(action)`      |

@@ -17,7 +17,7 @@ import {
 } from "@esposter/shared";
 
 export const DATABASE_NAME = SITE_NAME.toLowerCase();
-export const DATABASE_VERSION = 1;
+export const DATABASE_VERSION = 2;
 
 let databasePromise: Promise<Database<IndexedDbDatabaseSchema>> | undefined;
 
@@ -38,12 +38,15 @@ export const openIndexedDb = () => {
     // A delete or upgrade from another tab waits until this connection closes, so the connection gives way when asked.
     // The next read or write opens a fresh one, queued behind that request
     blocking: getSynchronizedFunction(releaseDatabase),
-    upgrade: (database) => {
+    upgrade: (database, oldVersion) => {
       const configurations = [
         MemberIndexedDbStoreConfiguration,
         MessageIndexedDbStoreConfiguration,
         RoomIndexedDbStoreConfiguration,
       ];
+      // A store an earlier version created was keyed by a different key path, and a cache is refilled from the server,
+      // so it is cleared rather than migrated
+      if (oldVersion > 0) for (const { storeName } of configurations) database.deleteObjectStore(storeName);
       for (const { indexName, keyPath, storeName } of configurations) {
         const objectStore = database.createObjectStore(storeName, { keyPath });
         objectStore.createIndex(indexName, indexName);

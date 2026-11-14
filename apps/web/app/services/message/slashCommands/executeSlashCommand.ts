@@ -28,7 +28,7 @@ export const executeSlashCommand = async (
   const scheduledMessageJobDialogStore = useScheduledMessageJobDialogStore();
   const { open } = scheduledMessageJobDialogStore;
   const replyStore = useReplyStore();
-  const { rowKey: replyRowKey } = storeToRefs(replyStore);
+  const { replyToId } = storeToRefs(replyStore);
   const slashCommandStore = useSlashCommandStore();
   const { executeSlashCommandMutation } = slashCommandStore;
   const roomId = currentRoomId.value;
@@ -94,7 +94,7 @@ export const executeSlashCommand = async (
   if (message)
     await sendMessage({
       message: marked.parse(message, { async: false }),
-      replyRowKey: replyRowKey.value,
+      replyToId: replyToId.value,
       roomId,
       type: MessageType.Message,
     });

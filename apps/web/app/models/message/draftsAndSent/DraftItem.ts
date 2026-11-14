@@ -8,5 +8,5 @@ export interface DraftItem extends Draft {
   composerKey: string;
   room: RoomInMessage;
   // The thread this draft replies into, empty for a draft of the room's own message
-  threadRootRowKey: ComposerTarget["threadRootRowKey"];
+  threadRootId: ComposerTarget["threadRootId"];
 }

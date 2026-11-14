@@ -10,4 +10,7 @@ export const wrapUpgradeDatabase = <TSchema extends DatabaseSchema = DatabaseSch
   ...wrapDatabase<TSchema>(database),
   createObjectStore: (name, options) =>
     wrapObjectStore<TSchema, typeof name, "versionchange">(database.createObjectStore(name, options)),
+  deleteObjectStore: (name) => {
+    database.deleteObjectStore(name);
+  },
 });
