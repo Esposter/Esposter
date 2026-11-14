@@ -1,19 +1,19 @@
-import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { INVITE_ID_LENGTH, INVITE_ID_REGEX } from "#src/services/message/invite/constants";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
-import { check, index, integer, text, timestamp } from "drizzle-orm/pg-core";
+import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const invitesInMessage = pgTable(
+export const invitesInMessage = sqliteTable(
   "invites",
   {
     // Null = never expires (timestamps have no empty value, unlike numbers/strings)
-    expiresAt: timestamp(),
+    expiresAt: integer({ mode: "timestamp_ms" }),
     id: text().primaryKey(),
     // 0 = unlimited uses — the numeric empty sentinel, stored as-is so it propagates end-to-end
     maxUses: integer().notNull().default(0),

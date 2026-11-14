@@ -17,21 +17,17 @@ import { invitesInMessage } from "#src/schema/message/invitesInMessage";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { roomEmojisInMessage } from "#src/schema/message/roomEmojisInMessage";
-import { roomFiltersInMessage, wordFilterActionEnum } from "#src/schema/message/roomFiltersInMessage";
+import { roomFiltersInMessage } from "#src/schema/message/roomFiltersInMessage";
 import { roomMemberPermissionsInMessage } from "#src/schema/message/roomMemberPermissionsInMessage";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
-import { mimeCategoryEnum, roomsInMessage, roomTypeEnum } from "#src/schema/message/roomsInMessage";
+import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { scheduledMessageJobsInMessage } from "#src/schema/message/scheduledMessageJobsInMessage";
 import { searchHistoriesInMessage } from "#src/schema/message/searchHistoriesInMessage";
 import { threadFollowsInMessage } from "#src/schema/message/threadFollowsInMessage";
-import {
-  noiseSuppressionModeEnum,
-  userSettingsInMessage,
-  voiceInputModeEnum,
-} from "#src/schema/message/userSettingsInMessage";
-import { userStatusEnum, userStatusesInMessage } from "#src/schema/message/userStatusesInMessage";
+import { userSettingsInMessage } from "#src/schema/message/userSettingsInMessage";
+import { userStatusesInMessage } from "#src/schema/message/userStatusesInMessage";
 import { usersToRoomRolesInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
-import { notificationTypeEnum, usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
+import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { webhooksInMessage } from "#src/schema/message/webhooksInMessage";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
 import {
@@ -87,12 +83,9 @@ export const schema = {
   invitesInMessage,
   likesInPost,
   messageSchema,
-  mimeCategoryEnum,
-  noiseSuppressionModeEnum,
   notificationSchema,
   notificationSeverityEnum,
   notificationsInNotification,
-  notificationTypeEnum,
   postSchema,
   postsInPost,
   pushSubscriptionsInNotification,
@@ -114,7 +107,6 @@ export const schema = {
   roomMemberPermissionsInMessage,
   roomRolesInMessage,
   roomsInMessage,
-  roomTypeEnum,
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessionsInAuth,
@@ -129,12 +121,9 @@ export const schema = {
   userSchema,
   userSettingsInMessage,
   usersInAuth,
-  userStatusEnum,
   userStatusesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   verificationsInAuth,
-  voiceInputModeEnum,
   webhooksInMessage,
-  wordFilterActionEnum,
 };

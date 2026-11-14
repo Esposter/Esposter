@@ -1,22 +1,21 @@
 import { UserStatus, userStatusSchema } from "#src/models/user/UserStatus";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { STATUS_MESSAGE_MAX_LENGTH } from "#src/services/user/constants";
-import { boolean, check, text, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const userStatusEnum = messageSchema.enum("userStatus", UserStatus);
-
-export const userStatusesInMessage = pgTable(
+export const userStatusesInMessage = sqliteTable(
   "userStatuses",
   {
-    expiresAt: timestamp(),
-    isConnected: boolean().notNull().default(true),
+    expiresAt: integer({ mode: "timestamp_ms" }),
+    isConnected: integer({ mode: "boolean" }).notNull().default(true),
     message: text().notNull().default(""),
     // This is only used if the user manually sets a status
-    status: userStatusEnum(),
+    status: createEnumColumn(UserStatus),
     userId: text()
       .primaryKey()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

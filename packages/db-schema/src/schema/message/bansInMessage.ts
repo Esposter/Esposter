@@ -1,12 +1,12 @@
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
-import { primaryKey, text } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { primaryKey, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const bansInMessage = pgTable(
+export const bansInMessage = sqliteTable(
   "bans",
   {
     // The audit record outlives the moderator's account: their row going nulls this rather than taking the ban

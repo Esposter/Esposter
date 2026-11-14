@@ -1,14 +1,14 @@
-import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomRolesInMessage } from "#src/schema/message/roomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
-import { foreignKey, index, primaryKey, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { foreignKey, index, primaryKey, text } from "drizzle-orm/sqlite-core";
 
-export const usersToRoomRolesInMessage = pgTable(
+export const usersToRoomRolesInMessage = sqliteTable(
   "usersToRoomRoles",
   {
-    roleId: uuid()
+    roleId: text()
       .notNull()
       .references(() => roomRolesInMessage.id, { onDelete: "cascade" }),
     ...createRoomUserColumns(),

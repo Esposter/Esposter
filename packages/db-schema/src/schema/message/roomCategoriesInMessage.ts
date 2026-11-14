@@ -1,18 +1,20 @@
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { ROOM_CATEGORY_NAME_MAX_LENGTH } from "#src/services/room/constants";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { check, index, integer, text, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const roomCategoriesInMessage = pgTable(
+export const roomCategoriesInMessage = sqliteTable(
   "roomCategories",
   {
-    id: uuid().primaryKey().defaultRandom(),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     name: text().notNull(),
     position: integer().notNull().default(0),
     userId: text()

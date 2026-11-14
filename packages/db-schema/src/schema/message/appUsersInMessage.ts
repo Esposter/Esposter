@@ -1,15 +1,21 @@
-import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { APP_USER_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { check, text, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const appUsersInMessage = pgTable(
+export const appUsersInMessage = sqliteTable(
   "appUsers",
-  { id: uuid().primaryKey().defaultRandom(), image: text().notNull().default(""), name: text().notNull() },
+  {
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    image: text().notNull().default(""),
+    name: text().notNull(),
+  },
   {
     extraConfig: ({ name }) => [
       check("appUsers_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH)),

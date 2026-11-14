@@ -1,4 +1,3 @@
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { appUsersInMessage } from "#src/schema/message/appUsersInMessage";
 import { messageSchema } from "#src/schema/message/messageSchema";
@@ -6,24 +5,27 @@ import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { WEBHOOK_NAME_MAX_LENGTH } from "#src/services/message/webhook/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { boolean, check, index, text, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const webhooksInMessage = pgTable(
+export const webhooksInMessage = sqliteTable(
   "webhooks",
   {
     creatorId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
-    id: uuid().primaryKey().defaultRandom(),
-    isActive: boolean().notNull().default(true),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    isActive: integer({ mode: "boolean" }).notNull().default(true),
     name: text().notNull(),
-    roomId: uuid()
+    roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     token: text().notNull(),
-    userId: uuid()
+    userId: text()
       .notNull()
       // 1:1 with appUsers
       .unique()

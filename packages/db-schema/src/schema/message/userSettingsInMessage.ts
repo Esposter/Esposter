@@ -3,7 +3,6 @@ import {
   noiseSuppressionModeSchema,
 } from "#src/models/message/userSettings/NoiseSuppressionMode";
 import { VoiceInputMode, voiceInputModeSchema } from "#src/models/message/userSettings/VoiceInputMode";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import {
@@ -23,23 +22,21 @@ import {
   MIN_PUSH_TO_TALK_RELEASE_DELAY_MS,
 } from "#src/services/message/userSettings/constants";
 import { createBetweenCheckSql } from "#src/services/shared/createBetweenCheckSql";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
-import { boolean, check, integer, text } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
-export const voiceInputModeEnum = messageSchema.enum("voiceInputMode", VoiceInputMode);
-
-export const noiseSuppressionModeEnum = messageSchema.enum("noiseSuppressionMode", NoiseSuppressionMode);
-
-export const userSettingsInMessage = pgTable(
+export const userSettingsInMessage = sqliteTable(
   "userSettings",
   {
     autoIdleThresholdMs: integer().notNull().default(DEFAULT_AUTO_IDLE_THRESHOLD_MS),
     inputSensitivityDecibels: integer().notNull().default(DEFAULT_INPUT_SENSITIVITY_DECIBELS),
-    isDeafenOnJoin: boolean().notNull().default(false),
-    isMuteOnJoin: boolean().notNull().default(false),
+    isDeafenOnJoin: integer({ mode: "boolean" }).notNull().default(false),
+    isMuteOnJoin: integer({ mode: "boolean" }).notNull().default(false),
     microphoneVolumePercentage: integer().notNull().default(DEFAULT_MICROPHONE_VOLUME_PERCENTAGE),
-    noiseSuppressionMode: noiseSuppressionModeEnum().notNull().default(NoiseSuppressionMode.Custom),
+    noiseSuppressionMode: createEnumColumn(NoiseSuppressionMode).notNull().default(NoiseSuppressionMode.Custom),
     pushToTalkKeybind: text().notNull().default(""),
     pushToTalkReleaseDelayMs: integer().notNull().default(DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS),
     speakerVolumePercentage: integer().notNull().default(DEFAULT_SPEAKER_VOLUME_PERCENTAGE),
@@ -49,7 +46,7 @@ export const userSettingsInMessage = pgTable(
     // Empty means no background, which is exactly what the picker's None entry already selects, so a value
     // That no longer resolves - a deleted slot - degrades to the same state rather than to a broken track
     virtualBackground: text().notNull().default(""),
-    voiceInputMode: voiceInputModeEnum().notNull().default(VoiceInputMode.VoiceActivity),
+    voiceInputMode: createEnumColumn(VoiceInputMode).notNull().default(VoiceInputMode.VoiceActivity),
   },
   {
     extraConfig: ({

@@ -1,27 +1,30 @@
-import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { ROOM_ROLE_COLOR_MAX_LENGTH, ROOM_ROLE_NAME_MAX_LENGTH } from "#src/services/room/constants";
+import { createBigintColumn } from "#src/services/shared/createBigintColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
+import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
-import { bigint, boolean, check, index, integer, text, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const roomRolesInMessage = pgTable(
+export const roomRolesInMessage = sqliteTable(
   "roomRoles",
   {
     color: text().notNull().default(""),
-    id: uuid().primaryKey().defaultRandom(),
-    isEveryone: boolean().notNull().default(false),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    isEveryone: integer({ mode: "boolean" }).notNull().default(false),
     name: text().notNull(),
-    permissions: bigint({ mode: "bigint" }).notNull().default(0n),
+    permissions: createBigintColumn().notNull().default(0n),
     position: integer().notNull().default(0),
-    roomId: uuid()
+    roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
   },
@@ -45,6 +48,8 @@ export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessa
   color: (schema) => createNormalizedStringSchema(ROOM_ROLE_COLOR_MAX_LENGTH, schema),
   id: () => z.uuidv4(),
   name: (schema) => createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH, schema),
+  // A custom column has no zod type of its own, so the bigint it reads back as is named here
+  permissions: () => z.bigint(),
   position: (schema) => schema.nonnegative(),
   roomId: () => z.uuidv4(),
 });

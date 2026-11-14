@@ -1,20 +1,20 @@
 import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
 
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { CALL_ID_LENGTH, CALL_ID_REGEX } from "#src/services/message/call/constants";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
-import { check, text, unique, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, text, unique } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const callSessionsInMessage = pgTable(
+export const callSessionsInMessage = sqliteTable(
   "callSessions",
   {
     id: text().primaryKey(),
-    roomId: uuid().references(() => roomsInMessage.id, { onDelete: "cascade" }),
+    roomId: text().references(() => roomsInMessage.id, { onDelete: "cascade" }),
     // The thread this call belongs to, empty for the room's own call. A room can run both at once — a call in
     // A thread is a call about that message, not the room's — so the room alone does not identify a session
     threadRootRowKey: text().$type<"" | ReverseTickedTimestamp>().notNull().default(""),

@@ -1,37 +1,36 @@
 import { NotificationType, notificationTypeSchema } from "#src/models/message/NotificationType";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { DISPLAY_NAME_MAX_LENGTH } from "#src/services/room/constants";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { check, index, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const notificationTypeEnum = messageSchema.enum("notificationType", NotificationType);
-
-export const usersToRoomsInMessage = pgTable(
+export const usersToRoomsInMessage = sqliteTable(
   "usersToRooms",
   {
     // A category is its member's own, so the assignment is the member's too.
     // Each member files a room under their own category.
     // A category deleted by its owner leaves the membership uncategorized.
-    categoryId: uuid().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
+    categoryId: text().references(() => roomCategoriesInMessage.id, { onDelete: "set null" }),
     displayName: text().notNull().default(""),
-    isHidden: boolean().notNull().default(false),
-    lastMessageAt: timestamp(),
-    lastReadAt: timestamp(),
+    isHidden: integer({ mode: "boolean" }).notNull().default(false),
+    lastMessageAt: integer({ mode: "timestamp_ms" }),
+    lastReadAt: integer({ mode: "timestamp_ms" }),
     mentionCount: integer().notNull().default(0),
-    notificationType: notificationTypeEnum().notNull().default(NotificationType.DirectMessage),
-    roomId: uuid()
+    notificationType: createEnumColumn(NotificationType).notNull().default(NotificationType.DirectMessage),
+    roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    timeoutUntil: timestamp(),
+    timeoutUntil: integer({ mode: "timestamp_ms" }),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

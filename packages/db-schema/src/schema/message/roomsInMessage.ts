@@ -1,37 +1,38 @@
-import { MimeCategories, MimeCategory, mimeCategorySchema } from "#src/models/file/MimeCategory";
+import type { MimeCategory } from "#src/models/file/MimeCategory";
+
+import { MimeCategories, mimeCategorySchema } from "#src/models/file/MimeCategory";
 import { RoomType, roomTypeSchema } from "#src/models/message/RoomType";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { ROOM_NAME_MAX_LENGTH, ROOM_TOPIC_MAX_LENGTH } from "#src/services/room/constants";
 import { URL_MAX_LENGTH } from "#src/services/shared/constants";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { sqliteTable } from "#src/sqliteTable";
 import { createNormalizedStringSchema, createUniqueArraySchema } from "@esposter/shared";
 import { sql } from "drizzle-orm";
-import { boolean, check, integer, text, uuid } from "drizzle-orm/pg-core";
+import { check, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const roomTypeEnum = messageSchema.enum("roomType", RoomType);
-
-export const mimeCategoryEnum = messageSchema.enum("mimeCategory", MimeCategory);
-
-export const roomsInMessage = pgTable(
+export const roomsInMessage = sqliteTable(
   "rooms",
   {
     // Attachment categories members may upload to this room — every category is no restriction
-    allowedMimeCategories: mimeCategoryEnum()
-      .array()
+    allowedMimeCategories: text({ mode: "json" })
       .notNull()
+      .$type<MimeCategory[]>()
       .default([...MimeCategories]),
-    id: uuid().primaryKey().defaultRandom(),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     image: text().notNull().default(""),
     // Closes the room to every existing invite link at once, without deleting any of them — the control for a
     // Raid in progress, which the links have to survive.
-    isInvitePaused: boolean().notNull().default(false),
-    isReadOnly: boolean().notNull().default(false),
+    isInvitePaused: integer({ mode: "boolean" }).notNull().default(false),
+    isReadOnly: integer({ mode: "boolean" }).notNull().default(false),
     // Per-room attachment size cap in bytes — 0 falls back to the global MAX_FILE_REQUEST_SIZE.
     maxFileSizeBytes: integer().notNull().default(0),
     name: text().notNull().default(""),
@@ -39,7 +40,7 @@ export const roomsInMessage = pgTable(
     // 0 is no slowmode
     slowmodeMs: integer().notNull().default(0),
     topic: text().notNull().default(""),
-    type: roomTypeEnum().notNull().default(RoomType.Room),
+    type: createEnumColumn(RoomType).notNull().default(RoomType.Room),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

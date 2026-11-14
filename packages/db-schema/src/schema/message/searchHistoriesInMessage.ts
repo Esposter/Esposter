@@ -1,21 +1,23 @@
 import type { Filter } from "#src/models/message/filter/Filter";
 
 import { filterSchema } from "#src/models/message/filter/Filter";
-import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";
 import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { sqliteTable } from "#src/sqliteTable";
 import { MAX_READ_LIMIT } from "@esposter/shared";
-import { check, index, jsonb, text, uuid } from "drizzle-orm/pg-core";
+import { check, index, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const searchHistoriesInMessage = pgTable(
+export const searchHistoriesInMessage = sqliteTable(
   "searchHistories",
   {
-    filters: jsonb().notNull().$type<Filter[]>().default([]),
-    id: uuid().primaryKey().defaultRandom(),
+    filters: text({ mode: "json" }).notNull().$type<Filter[]>().default([]),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     query: text().notNull().default(""),
     ...createRoomUserColumns(),
   },
