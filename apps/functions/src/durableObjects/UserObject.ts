@@ -13,7 +13,7 @@ import type {
 } from "@esposter/db-schema";
 
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
-import userMigrations from "#src/durableObjects/user/migrations/migrations";
+import userMigrations from "#src/durableObjects/user/migrations/migrations.js";
 import { scheduledMessagesInUser, sentMessagesInUser, todoRemindersInUser } from "#src/durableObjects/user/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
