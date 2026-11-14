@@ -17,12 +17,10 @@ export const AZURE_PAGE_SIZE = 1000;
 // A multipart part is buffered in memory before it is sent, so it is sized for that, and every part but the last is at
 // least R2's five mebibyte minimum
 export const R2_MULTIPART_PART_BYTES = 64 * 1024 * 1024;
-export const MESSAGES_SEARCH_TABLE_NAME = "messages_search";
 // The temporary internal route on the functions Worker the reschedule step calls, and the header its secret travels in
 export const RESCHEDULE_PATH = "/_internal/cutover/reschedule";
 export const CUTOVER_SECRET_HEADER = "x-cutover-secret";
 // The throughput the inventory's estimate assumes. The rehearsal measures the real rate, and the estimate says so
 export const ESTIMATE_BYTES_PER_SECOND = 10 * 1024 * 1024;
 export const ESTIMATE_ROWS_PER_SECOND = 2000;
-export const SHA256_ALGORITHM = "sha256";
 export const MD5_ALGORITHM = "md5";
