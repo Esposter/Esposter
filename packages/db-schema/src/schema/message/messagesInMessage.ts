@@ -40,7 +40,8 @@ export const messagesInMessage = sqliteTable(
     // The name a webhook message was sent under; null for a member's own message
     senderName: text(),
     type: createEnumColumn(MessageType).notNull(),
-    userId: text().references(() => usersInAuth.id, { onDelete: "cascade" }),
+    // Nullable and set null on deletion: an account's messages in rooms it joined outlive it, with their content erased
+    userId: text().references(() => usersInAuth.id, { onDelete: "set null" }),
   },
   {
     extraConfig: ({ createdAt, id, replyToId, roomId, userId }) => [
