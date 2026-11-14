@@ -1,5 +1,5 @@
 import type { LegacyEntity } from "#src/models/cutover/LegacyEntity";
-import type { StreamTable } from "@esposter/db-schema";
+import type { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 
 import { legacyJsonProperties } from "#src/services/cutover/azure/legacyJsonProperties";
 import { jsonDateParse } from "@esposter/shared";
@@ -8,7 +8,7 @@ import { jsonDateParse } from "@esposter/shared";
 // property's type (a DateTime is a Date). The system properties are split off, so a mapper never sees the etag or the
 // timestamp, which the copy keeps for its delta
 export const deserializeLegacyEntity = (
-  tableName: StreamTable,
+  tableName: LegacyAzureTable,
   raw: Record<string, unknown>,
 ): { entity: LegacyEntity; timestamp: Date | undefined } => {
   const { etag: _etag, timestamp, ...properties } = raw;

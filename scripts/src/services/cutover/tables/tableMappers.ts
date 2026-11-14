@@ -1,7 +1,5 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
-import { messageEmojiTableMapper } from "#src/services/cutover/tables/messageEmojiTableMapper";
-import { messageTableMapper } from "#src/services/cutover/tables/messageTableMapper";
 import { moderationLogTableMapper } from "#src/services/cutover/tables/moderationLogTableMapper";
 import { moderationNoteTableMapper } from "#src/services/cutover/tables/moderationNoteTableMapper";
 import { programParticipantTableMapper } from "#src/services/cutover/tables/programParticipantTableMapper";
@@ -9,11 +7,9 @@ import { resourceActivityTableMapper } from "#src/services/cutover/tables/resour
 import { resourceViewTableMapper } from "#src/services/cutover/tables/resourceViewTableMapper";
 import { surveyResponseTableMapper } from "#src/services/cutover/tables/surveyResponseTableMapper";
 
-// Every former Azure Table, in copy order: an emoji attaches to a message, so messages are copied first. Every other table
-// references only rows copy-core writes, so its order among them is free
+// Every former Azure Table with a typed D1 table, in copy order. Each references only rows copy-core writes, so the order among them is
+// free. Messages, and their reactions, are not here: they are imported into their rooms' objects (services/cutover/messages/)
 export const tableMappers: TableMapper[] = [
-  messageTableMapper,
-  messageEmojiTableMapper,
   moderationLogTableMapper,
   moderationNoteTableMapper,
   programParticipantTableMapper,

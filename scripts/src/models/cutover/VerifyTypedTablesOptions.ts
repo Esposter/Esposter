@@ -1,10 +1,9 @@
 import type { D1Executor } from "#src/models/cutover/D1Executor";
-import type { R2Client } from "#src/models/cutover/R2Client";
+import type { IdMap } from "#src/models/cutover/IdMap";
 
-// The typed-table verify: the archive that holds the id map, the R2 client, the Azure connection and the D1 executor
+// The typed-table verify: the id map the copy gave every row, the Azure connection and the D1 executor
 export interface VerifyTypedTablesOptions {
-  archiveBucket: string;
-  client: R2Client;
   connectionString: string;
   executor: D1Executor;
+  idMap: IdMap;
 }

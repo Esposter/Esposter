@@ -6,6 +6,7 @@ import { environmentArgs } from "#src/services/cutover/commands/environmentArgs"
 import { getCloudflareEnvironment } from "#src/services/cutover/getCloudflareEnvironment";
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
+import { requireEnvironmentVariable } from "#src/services/cutover/requireEnvironmentVariable";
 import { runCopyTables } from "#src/services/cutover/tables/runCopyTables";
 import { defineCommand } from "citty";
 
@@ -15,13 +16,13 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
     delta: {
       default: false,
       description:
-        "Copy the entities changed since the full copy began, link them, and remove the rows Azure no longer lists",
+        "Copy the rows changed since the full copy began, and the messages changed in each room. A message Azure no longer lists is not removed",
       type: "boolean",
     },
   },
   meta: {
     description:
-      "Copy the Azure Table entities into their typed core tables (messages and their emoji reactions), keeping each entity's id in the archive. Live after copy-core; in the freeze, after copy-core again, with --delta",
+      "Import the messages and their reactions into each room's object, and copy the Azure Table entities into their typed core tables, keeping each entity's id in the archive. Live after copy-core; in the freeze, after copy-core again, with --delta",
     name: "copy-tables",
   },
   run: async ({ args }) => {
@@ -33,6 +34,8 @@ export const copyTablesCommand: SubCommandsDef[string] = defineCommand({
       connectionString: variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING,
       delta: args.delta,
       executor: createCoreExecutor(cloudflareEnvironment, variables),
+      functionsUrl: requireEnvironmentVariable("CUTOVER_FUNCTIONS_URL"),
+      secret: requireEnvironmentVariable("CUTOVER_SECRET"),
     });
   },
 });

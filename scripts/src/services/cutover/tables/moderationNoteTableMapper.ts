@@ -1,7 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
-import { moderationNotesInMessage, StreamTable } from "@esposter/db-schema";
+import { moderationNotesInMessage } from "@esposter/db-schema";
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -14,23 +15,28 @@ const legacyModerationNoteSchema = z.object({
   targetUserId: z.string(),
 });
 
-// The ModerationNotes table: one row per note, partitioned by room and read newest-first
+// The ModerationNotes table: one row per note, partitioned by room and read newest-first. Every id it holds is a Postgres row's, so each
+// is written with its new id
 export const moderationNoteTableMapper: TableMapper = {
-  azureTable: StreamTable.ModerationNotes,
+  azureTable: LegacyAzureTable.ModerationNotes,
   countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationNotesInMessage)}" GROUP BY "roomId"`,
   coreTable: getTableName(moderationNotesInMessage),
   map: (entity, { idMap, parents, timestamp }) => {
     const note = legacyModerationNoteSchema.parse(entity);
-    if (!parents.roomIds.has(note.partitionKey) || !parents.userIds.has(note.targetUserId)) return undefined;
+    const roomId = idMap.rewrite(note.partitionKey);
+    const targetUserId = idMap.rewrite(note.targetUserId);
+    const actorUserId = note.actorUserId === undefined ? undefined : idMap.rewrite(note.actorUserId);
+    if (!parents.roomIds.has(roomId) || !parents.userIds.has(targetUserId)) return undefined;
+
     const createdAt = getReverseTickedMilliseconds(note.rowKey);
     return {
-      actorUserId: note.actorUserId && parents.userIds.has(note.actorUserId) ? note.actorUserId : null,
+      actorUserId: actorUserId && parents.userIds.has(actorUserId) ? actorUserId : null,
       createdAt,
       deletedAt: null,
-      id: idMap.assign(StreamTable.ModerationNotes, note.partitionKey, note.rowKey),
+      id: idMap.assign(LegacyAzureTable.ModerationNotes, note.partitionKey, note.rowKey, new Date(createdAt)).id,
       note: note.note,
-      roomId: note.partitionKey,
-      targetUserId: note.targetUserId,
+      roomId,
+      targetUserId,
       updatedAt: timestamp?.getTime() ?? createdAt,
     };
   },

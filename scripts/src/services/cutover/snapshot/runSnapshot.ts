@@ -12,7 +12,7 @@ import { dumpPostgresToArchive } from "#src/services/cutover/snapshot/dumpPostgr
 import { encodeJsonLines } from "#src/services/cutover/snapshot/encodeJsonLines";
 import { exportPostgresJsonLines } from "#src/services/cutover/snapshot/exportPostgresJsonLines";
 import { hasPgDump } from "#src/services/cutover/snapshot/hasPgDump";
-import { StreamTable } from "@esposter/db-schema";
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 
 // The archive before production is copied: the Postgres dump (or its JSON lines when no client tools are installed) and
 // every Azure Table as JSON lines, kept until teardown
@@ -30,7 +30,7 @@ export const runSnapshot = async (environment: CutoverEnvironment): Promise<void
     await source.end();
     console.info("postgres exported as JSON lines: pg_dump is not on PATH");
   }
-  for (const tableName of Object.values(StreamTable)) {
+  for (const tableName of Object.values(LegacyAzureTable)) {
     const tableClient = createTableClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING, tableName);
     await client.uploadMultipart(
       archiveBucket,

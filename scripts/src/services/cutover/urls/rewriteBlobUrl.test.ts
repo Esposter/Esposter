@@ -26,6 +26,6 @@ describe(rewriteBlobUrl, () => {
 
     expect(() =>
       rewriteBlobUrl("https://prodstesposter001.blob.core.windows.net/deadletter/key.json", PUBLIC_ASSETS_BASE_URL),
-    ).toThrowError(/no bucket/u);
+    ).toThrowError(/is not a container with a bucket/u);
   });
 });

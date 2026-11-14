@@ -1,76 +1,175 @@
 import type { IdMap } from "#src/models/cutover/IdMap";
-import type { IdMapEntry } from "#src/models/cutover/IdMapEntry";
+import type { IdMapScope } from "#src/models/cutover/IdMapScope";
+import type { AzureIdMapEntry, InviteCodeEntry, OldIdMapEntry } from "#src/models/cutover/IdMapEntry";
 import type { R2Client } from "#src/models/cutover/R2Client";
-import type { StreamTable } from "@esposter/db-schema";
+import type { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 
-import { idMapEntrySchema } from "#src/models/cutover/IdMapEntry";
+import {
+  azureIdMapEntrySchema,
+  inviteCodeEntrySchema,
+  messageNumberEntrySchema,
+  oldIdMapEntrySchema,
+} from "#src/models/cutover/IdMapEntry";
+import { INVITE_CODE_SCOPE, MESSAGE_NUMBER_SCOPE, POSTGRES_ID_MAP_SCOPE } from "#src/services/cutover/constants";
+import { assignMessageNumbers } from "#src/services/cutover/ids/assignMessageNumbers";
+import { getCreatedAtUuidV7 } from "#src/services/cutover/ids/getCreatedAtUuidV7";
+import { issueTokenHash } from "#src/services/cutover/ids/issueTokenHash";
+import { rewriteOldIds } from "#src/services/cutover/ids/rewriteOldIds";
 import { getIdMapKey } from "#src/services/cutover/tables/getIdMapKey";
 import { getIdMapSegmentKey } from "#src/services/cutover/tables/getIdMapSegmentKey";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { generateSecretToken, InvalidOperationError, Operation } from "@esposter/shared";
 import { z } from "zod";
 
-const idMapSegmentSchema = z.array(idMapEntrySchema);
+// The two calls the id map makes against the archive bucket, so a test can keep the segments in memory
+type ArchiveClient = Pick<R2Client, "getText" | "putText">;
 
-// Loads every segment the archive holds for the tables, in order, into the map they make. An entity given no id yet gets a random
-// v4, the form the app validates, so a row is never given a derived one. A new entry waits in memory until `flush` writes the
-// table's next segment, which the copy does before it writes the rows that carry those ids
-export const createIdMap = async (
-  client: R2Client,
+interface SegmentStore<T> {
+  add: (entry: T) => void;
+  entries: T[];
+  flush: () => Promise<void>;
+}
+
+// One scope's entries, loaded from its segments in order. The entries given since the last flush are written as the next segment
+const loadSegmentStore = async <T>(
+  client: ArchiveClient,
   archiveBucket: string,
-  azureTables: StreamTable[],
-): Promise<IdMap> => {
-  const entryByKey = new Map<string, IdMapEntry>();
-  const entriesByTable = new Map<StreamTable, IdMapEntry[]>();
-  const flushedCountByTable = new Map<StreamTable, number>();
-  const segmentCountByTable = new Map<StreamTable, number>();
-
-  for (const azureTable of azureTables) {
-    const loaded: IdMapEntry[] = [];
-    let index = 0;
-    for (;;) {
-      // oxlint-disable-next-line no-await-in-loop -- segments load in order, each named by the count of the ones before it
-      const text = await client.getText(archiveBucket, getIdMapSegmentKey(azureTable, index));
-      if (text === undefined) break;
-      loaded.push(...idMapSegmentSchema.parse(parseMachineJson(text)));
-      index += 1;
-    }
-    for (const entry of loaded) entryByKey.set(getIdMapKey(azureTable, entry.partitionKey, entry.rowKey), entry);
-    entriesByTable.set(azureTable, loaded);
-    flushedCountByTable.set(azureTable, loaded.length);
-    segmentCountByTable.set(azureTable, index);
+  scope: IdMapScope,
+  entrySchema: z.ZodType<T>,
+): Promise<SegmentStore<T>> => {
+  const entries: T[] = [];
+  let segmentCount = 0;
+  for (;;) {
+    // oxlint-disable-next-line no-await-in-loop -- segments load in order, each named by the count of the ones before it
+    const text = await client.getText(archiveBucket, getIdMapSegmentKey(scope, segmentCount));
+    if (text === undefined) break;
+    entries.push(...z.array(entrySchema).parse(parseMachineJson(text)));
+    segmentCount += 1;
   }
+  let flushedCount = entries.length;
+  return {
+    add: (entry) => {
+      entries.push(entry);
+    },
+    entries,
+    flush: async () => {
+      if (entries.length === flushedCount) return;
+      await client.putText(
+        archiveBucket,
+        getIdMapSegmentKey(scope, segmentCount),
+        JSON.stringify(entries.slice(flushedCount)),
+      );
+      flushedCount = entries.length;
+      segmentCount += 1;
+    },
+  };
+};
 
-  const getTableEntries = (azureTable: StreamTable): IdMapEntry[] => {
-    const entries = entriesByTable.get(azureTable);
-    if (!entries) throw new InvalidOperationError(Operation.Read, azureTable, "has no id map loaded");
-    return entries;
+// Loads every scope the archive holds into the map they make. A row given no id yet gets a UUIDv7 built from its own createdAt, a credential
+// row gets the hash of a fresh token for its old one, and an invite a fresh code, so no id, token or code is ever derived from the row. Every
+// new entry waits in memory until `flush`, which the copy does before it writes the rows that carry those ids
+export const createIdMap = async (
+  client: ArchiveClient,
+  archiveBucket: string,
+  azureTables: LegacyAzureTable[],
+): Promise<IdMap> => {
+  const oldIdStore = await loadSegmentStore(client, archiveBucket, POSTGRES_ID_MAP_SCOPE, oldIdMapEntrySchema);
+  const inviteStore = await loadSegmentStore(client, archiveBucket, INVITE_CODE_SCOPE, inviteCodeEntrySchema);
+  const numberStore = await loadSegmentStore(client, archiveBucket, MESSAGE_NUMBER_SCOPE, messageNumberEntrySchema);
+  const azureStores = new Map<LegacyAzureTable, SegmentStore<AzureIdMapEntry>>();
+  for (const azureTable of azureTables)
+    // oxlint-disable-next-line no-await-in-loop -- each table's segments load on their own, one table after another
+    azureStores.set(azureTable, await loadSegmentStore(client, archiveBucket, azureTable, azureIdMapEntrySchema));
+
+  const oldEntryByOldId = new Map<string, OldIdMapEntry>(oldIdStore.entries.map((entry) => [entry.oldId, entry]));
+  const newIdByOldId = new Map<string, string>(oldIdStore.entries.map((entry) => [entry.oldId, entry.id]));
+  const inviteEntryByOldCode = new Map<string, InviteCodeEntry>(
+    inviteStore.entries.map((entry) => [entry.oldCode, entry]),
+  );
+  const azureEntryByKey = new Map<string, AzureIdMapEntry>();
+  const tokenHashByOldToken = new Map<string, string>();
+  for (const { oldToken, tokenHash } of oldIdStore.entries)
+    if (oldToken && tokenHash) tokenHashByOldToken.set(oldToken, tokenHash);
+  for (const [azureTable, store] of azureStores)
+    for (const entry of store.entries) {
+      azureEntryByKey.set(getIdMapKey(azureTable, entry.partitionKey, entry.rowKey), entry);
+      if (entry.oldToken && entry.tokenHash) tokenHashByOldToken.set(entry.oldToken, entry.tokenHash);
+    }
+  const numbersByRoom = new Map<string, Map<string, number>>();
+  const getRoomNumbers = (roomId: string): Map<string, number> => {
+    const numbers = numbersByRoom.get(roomId) ?? new Map<string, number>();
+    numbersByRoom.set(roomId, numbers);
+    return numbers;
+  };
+  for (const { number, roomId, rowKey } of numberStore.entries) getRoomNumbers(roomId).set(rowKey, number);
+
+  const getAzureStore = (azureTable: LegacyAzureTable): SegmentStore<AzureIdMapEntry> => {
+    const store = azureStores.get(azureTable);
+    if (!store) throw new InvalidOperationError(Operation.Read, azureTable, "has no id map loaded");
+    return store;
+  };
+  // A row that holds a token is given the hash of a fresh one, kept for the old token so every reference to it is found again
+  const getIssuedFields = (oldToken: string | undefined): { oldToken?: string; tokenHash?: string } => {
+    if (oldToken === undefined) return {};
+    const tokenHash = tokenHashByOldToken.get(oldToken) ?? issueTokenHash();
+    tokenHashByOldToken.set(oldToken, tokenHash);
+    return { oldToken, tokenHash };
   };
 
   return {
-    assign: (azureTable, partitionKey, rowKey) => {
+    assign: (azureTable, partitionKey, rowKey, createdAt, oldToken) => {
+      const store = getAzureStore(azureTable);
       const key = getIdMapKey(azureTable, partitionKey, rowKey);
-      const existing = entryByKey.get(key);
-      if (existing) return existing.id;
-      const entry: IdMapEntry = { id: crypto.randomUUID(), partitionKey, rowKey };
-      entryByKey.set(key, entry);
-      getTableEntries(azureTable).push(entry);
-      return entry.id;
+      const existing = azureEntryByKey.get(key);
+      if (existing) return existing;
+
+      const entry: AzureIdMapEntry = {
+        id: getCreatedAtUuidV7(createdAt),
+        partitionKey,
+        rowKey,
+        ...getIssuedFields(oldToken),
+      };
+      azureEntryByKey.set(key, entry);
+      store.add(entry);
+      return entry;
     },
-    entries: (azureTable) => [...getTableEntries(azureTable)],
-    flush: async (azureTable) => {
-      const entries = getTableEntries(azureTable);
-      const flushedCount = flushedCountByTable.get(azureTable) ?? 0;
-      if (entries.length === flushedCount) return;
-      const index = segmentCountByTable.get(azureTable) ?? 0;
-      await client.putText(
-        archiveBucket,
-        getIdMapSegmentKey(azureTable, index),
-        JSON.stringify(entries.slice(flushedCount)),
-      );
-      flushedCountByTable.set(azureTable, entries.length);
-      segmentCountByTable.set(azureTable, index + 1);
+    assignInviteCode: (oldCode) => {
+      const existing = inviteEntryByOldCode.get(oldCode);
+      if (existing) return existing;
+
+      const entry: InviteCodeEntry = { code: generateSecretToken(), oldCode };
+      inviteEntryByOldCode.set(oldCode, entry);
+      inviteStore.add(entry);
+      return entry;
     },
-    get: (azureTable, partitionKey, rowKey) => entryByKey.get(getIdMapKey(azureTable, partitionKey, rowKey))?.id,
+    assignOldId: (oldId, createdAt, oldToken) => {
+      const existing = oldEntryByOldId.get(oldId);
+      if (existing) return existing;
+
+      const entry: OldIdMapEntry = { id: getCreatedAtUuidV7(createdAt), oldId, ...getIssuedFields(oldToken) };
+      oldEntryByOldId.set(oldId, entry);
+      newIdByOldId.set(oldId, entry.id);
+      oldIdStore.add(entry);
+      return entry;
+    },
+    flush: async (scope) => {
+      if (scope === POSTGRES_ID_MAP_SCOPE) return oldIdStore.flush();
+      if (scope === INVITE_CODE_SCOPE) return inviteStore.flush();
+      if (scope === MESSAGE_NUMBER_SCOPE) return numberStore.flush();
+      return getAzureStore(scope).flush();
+    },
+    getMessageNumber: (roomId, rowKey) => numbersByRoom.get(roomId)?.get(rowKey),
+    inviteCodeOf: (oldCode) => inviteEntryByOldCode.get(oldCode)?.code,
+    newIdOf: (oldId) => oldEntryByOldId.get(oldId)?.id,
+    numberMessages: (roomId, messages) => {
+      const numbers = getRoomNumbers(roomId);
+      for (const { number, rowKey } of assignMessageNumbers(messages, numbers)) {
+        numbers.set(rowKey, number);
+        numberStore.add({ number, roomId, rowKey });
+      }
+    },
+    oldIds: () => [...oldEntryByOldId.keys()],
+    reissuedTokenHashOf: (oldToken) => tokenHashByOldToken.get(oldToken),
+    rewrite: (text) => rewriteOldIds(text, newIdByOldId),
   };
 };

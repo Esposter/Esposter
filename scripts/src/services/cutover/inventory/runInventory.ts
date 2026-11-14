@@ -8,7 +8,7 @@ import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
 import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
-import { StreamTable } from "@esposter/db-schema";
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 
 // Counts what the copy moves and estimates its duration from assumed throughputs. The rehearsal measures the real rates.
 // Writes nothing anywhere
@@ -27,7 +27,7 @@ export const runInventory = async (): Promise<void> => {
   }
   await source.end();
   const entities: Record<string, number> = {};
-  for (const tableName of Object.values(StreamTable)) {
+  for (const tableName of Object.values(LegacyAzureTable)) {
     const counts = await countEntitiesByPartition(
       createTableClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING, tableName),
     );

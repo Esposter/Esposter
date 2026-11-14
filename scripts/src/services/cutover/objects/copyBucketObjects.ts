@@ -15,7 +15,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // runs in the freeze: it copies what changed since then and deletes what Azure no longer lists. Both skip an object already
 // stored with the same MD5, so a re-run redoes only what is not yet there
 export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Promise<BucketCopyCounts> => {
-  const { archiveBucket, azure, bucket, client, delta, r2Bucket } = options;
+  const { archiveBucket, azure, bucket, client, delta, idMap, r2Bucket } = options;
   const unit = `${COPY_OBJECTS_UNIT_PREFIX}/${bucket}`;
   const containerClient = azure.getContainerClient(bucket);
   const checkpoint: CutoverCheckpoint = (await readCheckpoint(client, archiveBucket, unit)) ?? {};
@@ -27,7 +27,7 @@ export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Prom
     const preCopyStartedAt = checkpoint.preCopyStartedAt ?? new Date().toISOString();
     await writeCheckpoint(client, archiveBucket, unit, { ...checkpoint, preCopyStartedAt });
     await forEachConcurrently(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
-      if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob)) counts.copied += 1;
+      if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob, idMap)) counts.copied += 1;
       else counts.skipped += 1;
     });
     const completedAt = new Date().toISOString();
@@ -51,9 +51,9 @@ export const copyBucketObjects = async (options: CopyBucketObjectsOptions): Prom
   // Every name Azure lists, changed or not, so the deletes below know which R2 objects are gone from Azure
   const azureNames = new Set<string>();
   await forEachConcurrently(listContainerBlobs(containerClient), COPY_CONCURRENCY, async (blob) => {
-    azureNames.add(blob.name);
+    azureNames.add(idMap.rewrite(blob.name));
     if (blob.lastModified.getTime() < changedSince) return;
-    if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob)) counts.copied += 1;
+    if (await copyBlobIfChanged(client, containerClient, r2Bucket, blob, idMap)) counts.copied += 1;
     else counts.skipped += 1;
   });
   await forEachConcurrently(client.listObjects(r2Bucket), COPY_CONCURRENCY, async (object) => {

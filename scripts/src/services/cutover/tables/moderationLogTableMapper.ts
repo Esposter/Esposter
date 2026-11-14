@@ -1,7 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
-import { AdminActionType, moderationLogsInMessage, StreamTable } from "@esposter/db-schema";
+import { AdminActionType, moderationLogsInMessage } from "@esposter/db-schema";
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -15,23 +16,27 @@ const legacyModerationLogSchema = z.object({
   type: z.enum(AdminActionType),
 });
 
-// The ModerationLog table: one row per action, partitioned by room and read newest-first
+// The ModerationLog table: one row per action, partitioned by room and read newest-first. Every id it holds is a Postgres row's, so each
+// is written with its new id
 export const moderationLogTableMapper: TableMapper = {
-  azureTable: StreamTable.ModerationLog,
+  azureTable: LegacyAzureTable.ModerationLog,
   countByPartitionSql: `SELECT "roomId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(moderationLogsInMessage)}" GROUP BY "roomId"`,
   coreTable: getTableName(moderationLogsInMessage),
   map: (entity, { idMap, parents, timestamp }) => {
     const log = legacyModerationLogSchema.parse(entity);
-    if (!parents.roomIds.has(log.partitionKey) || !parents.userIds.has(log.targetUserId)) return undefined;
+    const roomId = idMap.rewrite(log.partitionKey);
+    const targetUserId = idMap.rewrite(log.targetUserId);
+    if (!parents.roomIds.has(roomId) || !parents.userIds.has(targetUserId)) return undefined;
+
     const createdAt = getReverseTickedMilliseconds(log.rowKey);
     return {
-      actorUserId: log.actorUserId,
+      actorUserId: idMap.rewrite(log.actorUserId),
       createdAt,
       deletedAt: null,
       durationMs: log.durationMs ?? null,
-      id: idMap.assign(StreamTable.ModerationLog, log.partitionKey, log.rowKey),
-      roomId: log.partitionKey,
-      targetUserId: log.targetUserId,
+      id: idMap.assign(LegacyAzureTable.ModerationLog, log.partitionKey, log.rowKey, new Date(createdAt)).id,
+      roomId,
+      targetUserId,
       type: log.type,
       updatedAt: timestamp?.getTime() ?? createdAt,
     };

@@ -9,13 +9,12 @@ import { copyMapperRows } from "#src/services/cutover/tables/copyMapperRows";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
 import { deleteStaleMapperRows } from "#src/services/cutover/tables/deleteStaleMapperRows";
 import { getMapperCoreTable } from "#src/services/cutover/tables/getMapperCoreTable";
-import { linkMapperRows } from "#src/services/cutover/tables/linkMapperRows";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // One Azure Table into its typed table. The full copy runs while the app is live and records when it began. The delta copies what
-// changed since then, links it, and removes the rows Azure no longer lists. Both are re-runnable: an entity keeps the id the id map
-// gave it, so a re-run upserts the same rows
+// changed since then and removes the rows Azure no longer lists. Both are re-runnable: an entity keeps the id the id map gave it,
+// so a re-run upserts the same rows
 export const copyTable = async (options: CopyTableOptions): Promise<void> => {
   const { archiveBucket, client, connectionString, delta, executor, idMap, mapper, parents } = options;
   const unit = `${COPY_TABLES_UNIT_PREFIX}/${mapper.azureTable}`;
@@ -33,7 +32,6 @@ export const copyTable = async (options: CopyTableOptions): Promise<void> => {
       ...rowsOptions,
       entities: listMapperEntities(tableClient, mapper.azureTable),
     });
-    await linkMapperRows({ ...rowsOptions, entities: listMapperEntities(tableClient, mapper.azureTable) });
     await writeCheckpoint(client, archiveBucket, unit, {
       ...checkpoint,
       completedAt: new Date().toISOString(),
@@ -57,7 +55,6 @@ export const copyTable = async (options: CopyTableOptions): Promise<void> => {
     ...rowsOptions,
     entities: listMapperEntities(tableClient, mapper.azureTable, { filter }),
   });
-  await linkMapperRows({ ...rowsOptions, entities: listMapperEntities(tableClient, mapper.azureTable, { filter }) });
   // Every entity Azure lists, changed or not, so the rows of one it no longer lists are the ones removed
   const removed = await deleteStaleMapperRows({
     ...rowsOptions,

@@ -1,6 +1,8 @@
 import type { TableMapper } from "#src/models/cutover/TableMapper";
 
-import { programParticipantsInResource, StreamTable } from "@esposter/db-schema";
+import { requireReissuedTokenHash } from "#src/services/cutover/ids/requireReissuedTokenHash";
+import { programParticipantsInResource } from "@esposter/db-schema";
+import { LegacyAzureTable } from "#src/models/cutover/LegacyAzureTable";
 import { getTableName } from "drizzle-orm";
 import { z } from "zod";
 
@@ -13,23 +15,34 @@ const legacyProgramParticipantSchema = z.object({
   token: z.string(),
 });
 
-// The ProgramParticipants table: partitioned by the program's resource, and its time is the write's own timestamp
+// The ProgramParticipants table: partitioned by the program's resource, and its time is the write's own timestamp. The token is the
+// bearer credential a survey write accepts, so the row keeps only the hash of a token nobody receives: the owner regenerates the link after
+// the cutover. A survey response that names the old token is written with that same hash
 export const programParticipantTableMapper: TableMapper = {
-  azureTable: StreamTable.ProgramParticipants,
+  azureTable: LegacyAzureTable.ProgramParticipants,
   countByPartitionSql: `SELECT "resourceId" AS "partitionKey", COUNT(*) AS "count" FROM "${getTableName(programParticipantsInResource)}" GROUP BY "resourceId"`,
   coreTable: getTableName(programParticipantsInResource),
   map: (entity, { idMap, parents, timestamp }) => {
     const participant = legacyProgramParticipantSchema.parse(entity);
-    if (!parents.resourceIds.has(participant.partitionKey)) return undefined;
+    const resourceId = idMap.rewrite(participant.partitionKey);
+    if (!parents.resourceIds.has(resourceId)) return undefined;
+
     const createdAt = timestamp?.getTime() ?? Date.now();
+    const { id } = idMap.assign(
+      LegacyAzureTable.ProgramParticipants,
+      participant.partitionKey,
+      participant.rowKey,
+      new Date(createdAt),
+      participant.token,
+    );
     return {
       createdAt,
       deletedAt: null,
-      id: idMap.assign(StreamTable.ProgramParticipants, participant.partitionKey, participant.rowKey),
+      id,
       keyValue: participant.keyValue,
       publicId: participant.publicId,
-      resourceId: participant.partitionKey,
-      token: participant.token,
+      resourceId,
+      tokenHash: requireReissuedTokenHash(idMap, participant.token, getTableName(programParticipantsInResource)),
       updatedAt: createdAt,
     };
   },

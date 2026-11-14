@@ -1,3 +1,4 @@
+import { assignIdsCommand } from "#src/services/cutover/commands/assignIdsCommand";
 import { copyCoreCommand } from "#src/services/cutover/commands/copyCoreCommand";
 import { copyObjectsCommand } from "#src/services/cutover/commands/copyObjectsCommand";
 import { copyTablesCommand } from "#src/services/cutover/commands/copyTablesCommand";
@@ -13,10 +14,11 @@ import { defineCommand } from "citty";
 export const cutoverCommand = defineCommand({
   meta: {
     description:
-      "Move the Railway and Azure data onto Cloudflare, each step idempotent with a checkpoint in the archive bucket. Live, in order: snapshot, copy-objects, copy-core, copy-tables. Freeze, in order: copy-objects --delta, copy-core, copy-tables --delta, rewrite-urls, reschedule, verify",
+      "Move the Railway and Azure data onto Cloudflare, each step idempotent with a checkpoint in the archive bucket. Live, in order: snapshot, assign-ids, copy-objects, copy-core, copy-tables. Freeze, in order: assign-ids, copy-objects --delta, copy-core, copy-tables --delta, rewrite-urls, reschedule, verify",
     name: "cutover",
   },
   subCommands: {
+    "assign-ids": assignIdsCommand,
     "copy-core": copyCoreCommand,
     "copy-objects": copyObjectsCommand,
     "copy-tables": copyTablesCommand,
