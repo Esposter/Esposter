@@ -4,8 +4,8 @@ import type { IdMap } from "#src/models/cutover/IdMap";
 import type { SourceClient } from "#src/models/cutover/SourceClient";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
-import { getSourceColumns } from "#src/services/cutover/core/getSourceColumns";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
+import { readSourceCoreRows } from "#src/services/cutover/core/readSourceCoreRows";
 import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -34,13 +34,7 @@ export const verifyCoreTable = async (
     );
 
   let sourceCount = 0;
-  for await (const row of readKeysetRows({
-    columns: getSourceColumns(table),
-    dialect: SqlDialect.Postgres,
-    keyColumns: table.primaryKeyColumns,
-    qualifiedTableName: `${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
-    readPage: async ({ params, sql }) => source.unsafe<Record<string, unknown>[]>(sql, params),
-  })) {
+  for await (const row of readSourceCoreRows(source, table)) {
     sourceCount += 1;
     const record = toCoreRecord(table, row, idMap);
     const key = JSON.stringify(table.primaryKeyColumns.map(({ name }) => record[name]));

@@ -15,10 +15,10 @@ import { readCheckpoint } from "#src/services/cutover/checkpoint/readCheckpoint"
 import { writeCheckpoint } from "#src/services/cutover/checkpoint/writeCheckpoint";
 import { MESSAGE_NUMBER_SCOPE, ROOM_IMPORT_PATH } from "#src/services/cutover/constants";
 import { buildRoomImport } from "#src/services/cutover/messages/buildRoomImport";
+import { numberRoomMessages } from "#src/services/cutover/messages/numberRoomMessages";
 import { toRoomScheduledMessages } from "#src/services/cutover/messages/toRoomScheduledMessages";
 import { DELTA_CLOCK_MARGIN_MS } from "#src/services/cutover/objects/constants";
 import { COPY_TABLES_UNIT_PREFIX } from "#src/services/cutover/tables/constants";
-import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { listMapperEntities } from "#src/services/cutover/tables/listMapperEntities";
 import { TableClient } from "@azure/data-tables";
 import { roomImportSchema } from "@esposter/db-schema";
@@ -79,12 +79,10 @@ export const copyRoomMessages = async (options: CopyRoomMessagesOptions): Promis
 
     // The numbers are kept before anything reads them: the scheduled messages' replies resolve their roots among them, and the room object is written with them.
     // So a re-run gets the same numbers
-    idMap.numberMessages(
+    numberRoomMessages(
+      idMap,
       roomId,
-      messages.map(({ message }) => ({
-        createdAt: new Date(getReverseTickedMilliseconds(message.rowKey)),
-        rowKey: message.rowKey,
-      })),
+      messages.map(({ message }) => message.rowKey),
     );
     await idMap.flush(MESSAGE_NUMBER_SCOPE);
     const getNumber = (rowKey: string) => idMap.getMessageNumber(roomId, rowKey);

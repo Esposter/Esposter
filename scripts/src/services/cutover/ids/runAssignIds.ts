@@ -6,12 +6,13 @@ import { getPostgresCoreTables } from "#src/services/cutover/core/getPostgresCor
 import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { assignCoreTableIds } from "#src/services/cutover/ids/assignCoreTableIds";
 import { loadIdMap } from "#src/services/cutover/ids/loadIdMap";
+import { assignRoomMessageNumbers } from "#src/services/cutover/messages/assignRoomMessageNumbers";
 import { createSourceClient } from "#src/services/cutover/postgres/createSourceClient";
 import { readPendingScheduledJobs } from "#src/services/cutover/postgres/readPendingScheduledJobs";
 import { readCutoverEnvironment } from "#src/services/cutover/readCutoverEnvironment";
 
 // Gives every Postgres row its new id before anything copies a reference to it.
-// The objects' keys, the core rows and the tables' parents all read the map. Idempotent, so it runs again before the freeze picks up the rows created since
+// The objects' keys, the core rows and the tables' parents all read the map, and every room's messages are numbered, so a core row can name a thread root. Idempotent, so it runs again before the freeze picks up the rows created since
 export const runAssignIds = async (cutoverEnvironment: CutoverEnvironment): Promise<void> => {
   const variables = readCutoverEnvironment();
   const source = createSourceClient(variables.SOURCE_DATABASE_URL);
@@ -23,5 +24,6 @@ export const runAssignIds = async (cutoverEnvironment: CutoverEnvironment): Prom
   // It is given the time it is first seen, which the map keeps
   for (const { id } of await readPendingScheduledJobs(source)) idMap.assignOldId(id, new Date());
   await idMap.flush(POSTGRES_ID_MAP_SCOPE);
+  await assignRoomMessageNumbers(source, variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING, idMap);
   await source.end();
 };

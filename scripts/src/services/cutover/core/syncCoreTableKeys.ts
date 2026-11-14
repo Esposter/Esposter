@@ -3,11 +3,12 @@ import type { CoreTable } from "#src/models/cutover/CoreTable";
 import type { D1Executor } from "#src/models/cutover/D1Executor";
 import type { D1Statement } from "#src/models/cutover/D1Statement";
 import type { IdMap } from "#src/models/cutover/IdMap";
-import type { D1Value } from "#src/services/cutover/core/toD1Value";
 import type { SourceClient } from "#src/models/cutover/SourceClient";
+import type { D1Value } from "#src/services/cutover/core/toD1Value";
 
 import { SqlDialect } from "#src/models/cutover/SqlDialect";
 import { readKeysetRows } from "#src/services/cutover/core/readKeysetRows";
+import { readSourceCoreRows } from "#src/services/cutover/core/readSourceCoreRows";
 import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
 import { writeStatements } from "#src/services/cutover/core/writeStatements";
 import { quoteIdentifier } from "#src/services/cutover/postgres/quoteIdentifier";
@@ -29,13 +30,7 @@ export const syncCoreTableKeys = async (
   idMap: IdMap,
 ): Promise<number> => {
   const sourceKeys = new Set<string>();
-  for await (const row of readKeysetRows({
-    columns: table.columns,
-    dialect: SqlDialect.Postgres,
-    keyColumns: table.primaryKeyColumns,
-    qualifiedTableName: `${quoteIdentifier(table.pgSchema)}.${quoteIdentifier(table.pgTable)}`,
-    readPage: async ({ params, sql }) => source.unsafe<Record<string, unknown>[]>(sql, params),
-  })) {
+  for await (const row of readSourceCoreRows(source, table)) {
     const record = toCoreRecord(table, row, idMap);
     sourceKeys.add(JSON.stringify(table.primaryKeyColumns.map(({ name }) => record[name])));
   }
