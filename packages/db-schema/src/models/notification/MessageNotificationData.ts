@@ -1,9 +1,9 @@
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { roomIdSchema } from "#src/models/shared/RoomId";
-import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
+import { roomMessageSchema } from "#src/models/realtime/RoomMessage";
+import { roomIdSchema } from "#src/models/shared/RoomId";
 import { z } from "zod";
 
 // One event for every message, thread reply included: threadRootId is what a reply adds, and it widens the

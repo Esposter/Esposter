@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Every bucket is private unless its name says `public-`, so a public one is always visible in its name. Each name is
-// also its R2 bucket's name
+// Also its R2 bucket's name
 export const StorageBucket = {
   ClickerAssets: "clicker-assets",
   GenshinAssets: "genshin-assets",

@@ -1,7 +1,7 @@
 import { QueueJob } from "#src/models/queue/QueueJob";
 
 // The producer binding each job's queue is sent through, in SCREAMING_SNAKE with a `_QUEUE` suffix. A Worker reads its
-// bindings by these names, so each job's binding is written once here and every call site names the job instead
+// Bindings by these names, so each job's binding is written once here and every call site names the job instead
 export const QueueJobBindingNameMap = {
   [QueueJob.DeleteAccount]: "DELETE_ACCOUNT_QUEUE",
   [QueueJob.DeleteOrphanedProfileImage]: "DELETE_ORPHANED_PROFILE_IMAGE_QUEUE",

@@ -7,8 +7,8 @@ import { selectWebhookInMessageSchema } from "#src/schema/message/webhooksInMess
 import { z } from "zod";
 
 // The message a webhook push sends: the payload the sender posted, and the webhook's room and author. The route checks
-// the webhook and its token before it sends, so the job trusts what it reads here. Queues deliver at least once and a
-// dead letter replays, so the push carries the id it was accepted under: every delivery of this body writes one message
+// The webhook and its token before it sends, so the job trusts what it reads here. Queues deliver at least once and a
+// Dead letter replays, so the push carries the id it was accepted under: every delivery of this body writes one message
 export interface WebhookQueueMessage {
   deliveryId: string;
   payload: WebhookPayload;

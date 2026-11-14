@@ -6,5 +6,3 @@ export enum BinaryOperator {
   Lt = "lt",
   Ne = "ne",
 }
-
-export const BinaryOperators: readonly BinaryOperator[] = Object.values(BinaryOperator);

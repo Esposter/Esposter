@@ -1,7 +1,7 @@
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
 
-import { getDetectedUserStatus } from "#src/services/user/getDetectedUserStatus";
 import { UserStatus, UserStatuses } from "#src/models/user/UserStatus";
+import { getDetectedUserStatus } from "#src/services/user/getDetectedUserStatus";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 

@@ -1,22 +1,22 @@
-import type { FileEntity } from "#src/models/streams/FileEntity";
-import type { ReverseTickedTimestamp } from "#src/models/streams/ReverseTickedTimestamp";
 import type { LinkPreviewResponse } from "#src/models/message/linkPreview/LinkPreviewResponse";
+import type { ReverseTickedTimestamp } from "#src/models/message/ReverseTickedTimestamp";
 import type { StandardMessageType } from "#src/models/message/StandardMessageType";
+import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ItemEntityType, ToData } from "@esposter/shared";
 import type { Except } from "type-fest";
 
-import { AzureEntity } from "#src/models/streams/AzureEntity";
-import { fileEntitySchema } from "#src/models/streams/FileEntity";
-import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { MessageType } from "#src/models/message/MessageType";
+import { reverseTickedTimestampSchema } from "#src/models/message/ReverseTickedTimestamp";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
+import { AzureEntity } from "#src/models/shared/AzureEntity";
+import { itemMetadataSchema } from "#src/models/shared/ItemMetadata";
+import { fileEntitySchema } from "#src/models/streams/FileEntity";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
-import { FILE_MAX_LENGTH } from "#src/services/storage/constants";
-import { createAzureEntitySchema } from "#src/services/streams/createAzureEntitySchema";
 import { MENTION_MAX_LENGTH } from "#src/services/message/constants";
+import { FILE_MAX_LENGTH } from "#src/services/storage/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 
@@ -39,9 +39,9 @@ export class BaseMessageEntity<TType extends MessageType = StandardMessageType>
 }
 
 export const baseMessageEntitySchema = z.object({
-  ...createAzureEntitySchema(
-    z.object({ partitionKey: selectRoomInMessageSchema.shape.id, rowKey: reverseTickedTimestampSchema }),
-  ).shape,
+  partitionKey: selectRoomInMessageSchema.shape.id,
+  rowKey: reverseTickedTimestampSchema,
+  ...itemMetadataSchema.shape,
   files: createUniqueArraySchema(fileEntitySchema, "id").max(FILE_MAX_LENGTH),
   isEdited: z.literal(true).optional(),
   isForward: z.literal(true).optional(),

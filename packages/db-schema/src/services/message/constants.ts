@@ -23,3 +23,9 @@ export const MESSAGE_BATCH_MAX_LENGTH = 2;
 export const MEMBER_PERMISSION_BIGINT_REGEX = /^\d{1,20}$/u;
 // A RealtimeKit participant token is a signed JWT, which the call's own join hands its client once
 export const CALL_AUTH_TOKEN_MAX_LENGTH = 4096;
+// The origin every reverse-ticked timestamp counts down from. It is wider than any nanosecond timestamp, so the countdown
+// Never goes negative
+export const AZURE_SELF_DESTRUCT_TIMER = "9".repeat(30);
+// What a reverse-ticked timestamp is allowed to look like: a countdown is digits and nothing else, with no sign, no
+// Separator and no empty string
+export const REVERSE_TICKED_TIMESTAMP_REGEX = /^\d+$/u;

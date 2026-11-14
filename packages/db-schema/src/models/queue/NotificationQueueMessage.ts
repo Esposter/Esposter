@@ -22,15 +22,11 @@ export type NotificationQueueMessage =
   | ResourceOperationNotificationData
   | TodoReminderNotificationData;
 
-// The envelope sits beside the union rather than inside its members, which are notification models that no queue field
-// belongs in
-export const notificationQueueMessageSchema = z.intersection(
-  z.discriminatedUnion("type", [
-    friendRequestNotificationDataSchema,
-    messageNotificationDataSchema,
-    reminderNotificationDataSchema,
-    resourceOperationNotificationDataSchema,
-    todoReminderNotificationDataSchema,
-  ]),
-  queueMessageEnvelopeSchema,
-) satisfies z.ZodType<NotificationQueueMessage>;
+// The envelope extends each member's queue schema, so the notification models underneath carry no queue fields
+export const notificationQueueMessageSchema = z.discriminatedUnion("type", [
+  friendRequestNotificationDataSchema.extend(queueMessageEnvelopeSchema.shape),
+  messageNotificationDataSchema.extend(queueMessageEnvelopeSchema.shape),
+  reminderNotificationDataSchema.extend(queueMessageEnvelopeSchema.shape),
+  resourceOperationNotificationDataSchema.extend(queueMessageEnvelopeSchema.shape),
+  todoReminderNotificationDataSchema.extend(queueMessageEnvelopeSchema.shape),
+]) satisfies z.ZodType<NotificationQueueMessage>;

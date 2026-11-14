@@ -37,9 +37,9 @@ export const notificationsInNotification = sqliteTable(
   },
   {
     // Every read of this table is the same shape — one user's own bell, newest first on id, which is creation order — so
-    // the index carries the order too and a page is a range scan rather than a scan plus a sort. The retention trim is the
-    // one time-range read, so `createdAt` keeps its own index beside it. `createdAt` comes from the metadata columns the
-    // sqliteTable wrapper adds, which are outside what extraConfig is handed, so it is named in SQL.
+    // The index carries the order too and a page is a range scan rather than a scan plus a sort. The retention trim is the
+    // One time-range read, so `createdAt` keeps its own index beside it. `createdAt` comes from the metadata columns the
+    // `sqliteTable` wrapper adds, which are outside what extraConfig is handed, so it is named in SQL.
     //
     // The unread total is the second read, and the composite index is the wrong shape for it: it would scan one
     // User's whole history to count the unread rows in it, and that history only grows — nothing purges a

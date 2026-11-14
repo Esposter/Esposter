@@ -1,8 +1,8 @@
 import type { FilterType } from "#src/models/message/filter/FilterType";
-import type { SerializableValue } from "#src/models/streams/SerializableValue";
+import type { SerializableValue } from "#src/models/message/filter/SerializableValue";
 
 import { filterTypeSchema } from "#src/models/message/filter/FilterType";
-import { serializableValueSchema } from "#src/models/streams/SerializableValue";
+import { serializableValueSchema } from "#src/models/message/filter/SerializableValue";
 import { z } from "zod";
 
 export interface Filter {

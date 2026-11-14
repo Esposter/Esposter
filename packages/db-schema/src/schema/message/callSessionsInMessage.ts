@@ -12,13 +12,13 @@ export const callSessionsInMessage = sqliteTable(
   "callSessions",
   {
     id: text().primaryKey(),
+    // The RealtimeKit meeting this call's participants join, made by its first join and never replaced. Null until that
+    // Join, and for a call joined where RealtimeKit is not configured. Unique, since a webhook names its call by it
+    meetingId: text().unique(),
     roomId: text().references(() => roomsInMessage.id, { onDelete: "cascade" }),
     // The thread this call belongs to, by its root message's id, and 0 for the room's own call. A room can run both at
-    // once — a call in a thread is a call about that message, not the room's — so the room alone does not identify a session
+    // Once — a call in a thread is a call about that message, not the room's — so the room alone does not identify a session
     threadRootId: integer().notNull().default(0),
-    // The RealtimeKit meeting this call's participants join, made by its first join and never replaced. Null until that
-    // join, and for a call joined where RealtimeKit is not configured. Unique, since a webhook names its call by it
-    meetingId: text().unique(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

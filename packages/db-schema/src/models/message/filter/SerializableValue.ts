@@ -1,4 +1,4 @@
-import { SERIALIZABLE_VALUE_MAX_LENGTH } from "#src/services/streams/constants";
+import { SERIALIZABLE_VALUE_MAX_LENGTH } from "#src/services/message/filter/constants";
 import { z } from "zod";
 
 export type SerializableValue = boolean | Date | null | number | string;

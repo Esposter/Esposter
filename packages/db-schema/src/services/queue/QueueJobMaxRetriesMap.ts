@@ -1,8 +1,8 @@
 import { QueueJob } from "#src/models/queue/QueueJob";
 
 // How many times a job's queue redelivers a message its handler threw on, before the message goes to the job's dead-letter
-// queue. Exhaustive over QueueJob on purpose: a new job has to state its answer here rather than inherit a default that
-// silently retries it. apps/infra's QueueConsumerRetry declares each consumer with this same count, so the two change together.
+// Queue. Exhaustive over QueueJob on purpose: a new job has to state its answer here rather than inherit a default that
+// Silently retries it. apps/infra's QueueConsumerRetry declares each consumer with this same count, so the two change together.
 const MAX_IDEMPOTENT_QUEUE_JOB_RETRIES = 5;
 
 export const QueueJobMaxRetriesMap = {
@@ -15,12 +15,12 @@ export const QueueJobMaxRetriesMap = {
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a failure.
   [QueueJob.ProcessBlobDeletion]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
   // Delivers an already-persisted occurrence. Its bell write is the last step that may fail the delivery; everything after
-  // it is best-effort, so a retry cannot repeat a side effect that already landed beyond the one bell row a crash can repeat.
+  // It is best-effort, so a retry cannot repeat a side effect that already landed beyond the one bell row a crash can repeat.
   [QueueJob.ProcessNotification]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
   // Creates a message whose rowKey is a fresh reverse-ticked timestamp, so a rerun writes a second, indistinguishable
-  // message into the room rather than repairing the first. A failed webhook goes straight to its dead-letter queue.
+  // Message into the room rather than repairing the first. A failed webhook goes straight to its dead-letter queue.
   [QueueJob.ProcessWebhook]: 0,
   // Sets the ledger row's counted bytes to what storage reports and moves the counter by the difference it observed, so
-  // a redelivery computes a zero delta rather than double-counting.
+  // A redelivery computes a zero delta rather than double-counting.
   [QueueJob.ReconcileStorageLedgerEntry]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
 } as const satisfies Record<QueueJob, number>;

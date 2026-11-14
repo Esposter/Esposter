@@ -1,4 +1,5 @@
 import type { McpScope } from "#src/models/user/McpScope";
+
 import { McpScopes, mcpScopeSchema } from "#src/models/user/McpScope";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";

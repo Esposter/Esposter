@@ -14,7 +14,7 @@ export const moderationLogsInMessage = sqliteTable(
   "moderationLogs",
   {
     // The moderator who took the action, or the reserved AutoMod id for a word filter, which no account holds and so no
-    // foreign key can name. Null once the moderator's account is deleted: the record stays for the room, without naming them
+    // Foreign key can name. Null once the moderator's account is deleted: the record stays for the room, without naming them
     actorUserId: text(),
     // Set for a timeout only, in milliseconds
     durationMs: integer(),

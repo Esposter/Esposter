@@ -1,13 +1,13 @@
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 
-import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { userIdSchema } from "#src/models/shared/UserId";
+import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { z } from "zod";
 
 export interface CallParticipant extends Pick<UserInAuth, "name"> {
   id: string;
-  image: UserInAuth["image"] | null;
+  image: null | UserInAuth["image"];
   isCameraEnabled: boolean;
   isHandRaised: boolean;
   isMuted: boolean;

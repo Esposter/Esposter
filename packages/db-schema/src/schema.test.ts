@@ -5,9 +5,9 @@ import { describe, expect, test } from "vitest";
 
 describe("schema", () => {
   // Every table lives in the product area that owns it, never unprefixed, and its export is derived from its DDL name
-  // rather than chosen: `auth_users` is exported as `usersInAuth`, so it can never collide with a local, a row type or
-  // a library name and always says where the table lives. Nothing normalises a DDL name, so a snake_case one would
-  // otherwise go unnoticed
+  // Rather than chosen: `auth_users` is exported as `usersInAuth`, so it can never collide with a local, a row type or
+  // A library name and always says where the table lives. Nothing normalises a DDL name, so a snake_case one would
+  // Otherwise go unnoticed
   test("every table lives in a named schema and exports its name with its suffix", () => {
     expect.hasAssertions();
 

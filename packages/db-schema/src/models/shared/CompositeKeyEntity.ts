@@ -1,4 +1,4 @@
-import type { CompositeKey } from "#src/models/streams/CompositeKey";
+import type { CompositeKey } from "#src/models/shared/CompositeKey";
 
 import { Serializable } from "@esposter/shared";
 

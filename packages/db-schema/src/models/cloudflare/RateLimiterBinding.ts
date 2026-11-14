@@ -1,7 +1,7 @@
-// The binding each rate limiter is served by, named as the web Worker's wrangler configuration declares it. A binding counts in a
-// namespace of its own, a key's count is kept within one, and the keys of two limiters are not prefixed, so two limiters on one
-// binding would count each other's calls against a single budget. Each limiter therefore has a binding of its own, even where two
-// budgets match
+// The binding each rate limiter is served by, named as the web Worker's wrangler configuration declares it. A binding
+// Counts in a namespace of its own, a key's count is kept within one, and the keys of two limiters are not prefixed,
+// So two limiters on one binding would count each other's calls against a single budget. Each limiter therefore has
+// A binding of its own, even where two budgets match
 export const RateLimiterBinding = {
   Address: "RATE_LIMITER_ADDRESS",
   Asset: "RATE_LIMITER_ASSET",

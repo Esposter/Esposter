@@ -1,5 +1,6 @@
 import type { PublicUser } from "#src/models/user/PublicUser";
 import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
+
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectUserToRoomInMessageSchema } from "#src/schema/message/usersToRoomsInMessage";
 import { z } from "zod";

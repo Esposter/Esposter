@@ -1,4 +1,4 @@
-import { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
+import { CompositeKeyEntity } from "#src/models/shared/CompositeKeyEntity";
 import { applyItemMetadataMixin } from "@esposter/shared";
 
 export const AzureEntity = applyItemMetadataMixin(CompositeKeyEntity);

@@ -16,7 +16,7 @@ export const threadFollowsInMessage = sqliteTable(
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
     // The thread's root message, by the integer id its room's object numbers it with. The message is stored in that
-    // object rather than in this database, so this is a number the object hands out and not a foreign key
+    // Object rather than in this database, so this is a number the object hands out and not a foreign key
     threadRootId: integer().notNull(),
     userId: text()
       .notNull()

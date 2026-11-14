@@ -1,7 +1,7 @@
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
+import type { z } from "zod";
 
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
-import { z } from "zod";
 
 // What one user may see of another: never their email or their storage account, which are the account holder's
 // Alone. Every row a procedure hands a client about somebody else is this, never a User. The row's timestamps ride
