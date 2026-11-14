@@ -19,7 +19,7 @@ Every event that tells a person something happened SHALL travel one path: a sing
 
 - **GIVEN** a new notification type is added
 - **WHEN** it is delivered
-- **THEN** it uses the existing delivery path without a new delivery function or event subscription
+- **THEN** it uses the existing delivery path without a new queue or consumer
 
 ### Requirement: A publisher states what happened and who it concerns
 
@@ -77,29 +77,29 @@ A resource operation's device push SHALL reach every other device of the same us
 - **THEN** the tab that performed it shows its own feedback
 - **AND** every other device of that user receives the push
 
-### Requirement: Accepted notification events are retried and dead-lettered by the event system
+### Requirement: Accepted notifications are retried and dead-lettered by their queue
 
-A notification event accepted by the event system SHALL be retried, and any delivery that exhausts its retries SHALL be dead-lettered so it can be replayed.
+A notification accepted by the queue SHALL be retried, and any delivery that exhausts its retries SHALL be dead-lettered and kept for inspection.
 
 #### Scenario: A delivery exhausts its retries
 
 - **GIVEN** a delivery of an accepted notification keeps failing
 - **WHEN** its retries are exhausted
-- **THEN** the event is dead-lettered
-- **AND** an operator can replay it
+- **THEN** the message is dead-lettered
+- **AND** the dead-letter queue keeps it
 
 #### Scenario: A reminder is delivered
 
 - **GIVEN** a reminder is due
 - **WHEN** it is delivered
-- **THEN** it is published as an event like every other notification and is not sent inline
+- **THEN** it is published to the notification queue like every other notification and is not sent inline
 
-#### Scenario: A publish fails before the event system accepts it
+#### Scenario: A publish the queue rejects
 
-- **GIVEN** a publish fails before the event system accepts the event
-- **WHEN** the failure happens
+- **GIVEN** a publish is rejected before the queue accepts the message
+- **WHEN** the rejection happens
 - **THEN** the publisher logs an error
-- **AND** nothing is retried or dead-lettered, because there is no accepted event
+- **AND** nothing is retried or dead-lettered, because no message was accepted
 
 ### Requirement: A device subscription the push service reports gone is removed
 
