@@ -44,8 +44,8 @@ Two shapes of stale shim are why a row's signature is written down rather than r
 
 Not every piece of test scaffolding is a workaround, and treating them alike would make the table unfalsifiable:
 
-- **The harness itself** — the in-memory Azure clients, the PGlite database, the session mock. They stand in for services that have no business running inside a unit test, and no upstream release retires them.
-- **Deliberate narrowing** — `toFake: ["Date"]` fakes _less_ than the default on purpose, because the wide default also freezes the monotonic clock a table write's `rowKey` depends on. That is a rule, not a gap.
+- **The harness itself** — the Miniflare D1, R2 and Queues bindings, the session mock. They stand in for services that have no business running inside a unit test, and no upstream release retires them.
+- **Deliberate narrowing** — `toFake: ["Date"]` fakes _less_ than the default on purpose, because the wide default also freezes the monotonic clock a write's time-ordered id depends on. That is a rule, not a gap.
 - **An origin nothing answers** — the nuxt environment runs on `http://nuxt.test`, a `.test` host that never resolves, rather than Nuxt's default `localhost:3000`. It is a rule rather than a gap: msw intercepts beneath happy-dom's `fetch`, and a request it misses goes out to the real network, where the default origin is exactly where a developer's dev server listens — so a suite answered by the real router would pass or fail depending on whether a dev server is running. On this origin a missed request fails at once with `fetch failed`, whatever the cause of the miss, and `apps/web/vitest.config.test.ts` pins that it does.
 - **Language ergonomics** — `takeOne` exists for `noUncheckedIndexedAccess` across the whole repo, not for tests.
 
@@ -55,7 +55,7 @@ Not every piece of test scaffolding is a workaround, and treating them alike wou
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `packages/configuration/src/services/getVueTestConfiguration.ts` | The upstream Vue log filter                                                                |
 | `packages/configuration/src/services/getVitestConfiguration.ts`  | `--no-webstorage` for every member                                                         |
-| `apps/web/shared/test/setup.ts`                                  | Storage, the Azure and runtime-config mocks, the warm-up hook, and auto-unmount            |
+| `apps/web/shared/test/setup.ts`                                  | Storage, the storage and runtime-config mocks, the warm-up hook, and auto-unmount          |
 | `apps/web/vitest.config.ts`                                      | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
 | `apps/web/app/services/trpc/mswTrpc.test.ts`                     | The msw `fetch` and `Headers` realignment                                                  |
 | `apps/web/configuration/modules.ts`                              | The Vitest module allowlist                                                                |
