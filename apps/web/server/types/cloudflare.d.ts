@@ -1,22 +1,20 @@
 /// <reference types="@cloudflare/workers-types" />
 import type {
-  AzureFunction,
   CallObjectRpc,
   CloudflareEnvironment,
   RoomObjectRpc,
   StorageBucket,
   UserObjectRpc,
 } from "@esposter/db-schema";
-import type { KebabCase } from "type-fest";
 
-// The binding names `nitro.ts` derives from the same enums: a bucket or job is bound under its SCREAMING_SNAKE name
+// The binding names `nitro.ts` derives from the same enum: a bucket is bound under its SCREAMING_SNAKE name. The queue
+// producers are declared in `shared/types/env.d.ts`, under the names `QueueJobBindingNameMap` gives
 type ScreamingSnakeCase<T extends string> = T extends `${infer Head}-${infer Tail}`
   ? `${Uppercase<Head>}_${ScreamingSnakeCase<Tail>}`
   : Uppercase<T>;
 type BucketBindings = { [Bucket in StorageBucket as ScreamingSnakeCase<Bucket>]: R2Bucket };
-type QueueBindings = { [Job in AzureFunction as `${ScreamingSnakeCase<KebabCase<Job>>}_QUEUE`]: Queue };
 
-interface Bindings extends BucketBindings, QueueBindings {
+interface Bindings extends BucketBindings {
   ASSETS: Fetcher;
   CALL: DurableObjectNamespace<Rpc.DurableObjectBranded & CallObjectRpc>;
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
