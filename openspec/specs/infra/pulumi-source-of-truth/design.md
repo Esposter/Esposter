@@ -1,40 +1,36 @@
 # Pulumi source of truth
 
-A Function App's runtime app settings are declared on its `WebApp` resource, not set in the portal. Settings held only in the portal are the one surface a `pulumi preview` cannot prove, so a live configuration that the code cannot see is a configuration nobody can review — which is why they are declared here alongside the resource itself.
+A Worker's configuration is declared in the repository, not set in the Cloudflare dashboard. Settings held only in a dashboard are the one surface a review or a preview cannot see, so each Worker's values are written from the repository on every deploy, and each secret's value comes from the secrets environment the program reads.
 
 ## How it works
 
-Each Function App's `siteConfig.appSettings` holds the full set of app settings, resolved from three sources by classification:
+Each Worker's configuration has three sources, classified by the kind of value:
 
-- **Plain values** — runtime version, worker runtime, storage / queue / table service URIs, the managed-identity credential marker, `BASE_URL`, the VAPID public key, and the run-from-package URL — are written as literals matching the live values.
-- **Managed-resource wiring** — the Event Grid endpoint comes from the Event Grid topic's output, so it tracks the resource Pulumi already owns.
-- **Secrets** — the database URL, Event Grid key, storage / Web PubSub / Service Bus connection strings, and the VAPID private key — flow from Pulumi ESC via `config.requireSecret`, the same channel that manages the GitHub Actions secrets. No secret value lives in the code.
+- **Plain values** that the environment's name fixes. The web Worker's come from `apps/web/configuration/wrangler.ts`, which writes one wrangler block per environment, and the functions Worker's are in its `wrangler.jsonc`.
+- **Binding ids.** A D1 database's id is not a setting read from the environment. `CloudflareCoreDatabaseIdMap` commits each environment's id, and the wrangler blocks and the migrations read it from there.
+- **Secrets.** Each secret is a schema key marked as a secret. `.github/worker-secrets.json` lists them per Worker, and the values are read from the Pulumi ESC environment `esposter-infra/prod` under `pulumiConfig.esposter-infra:<environment>_<NAME>`, so development and production values sit side by side in one environment. The deploy job writes them with `wrangler secret bulk` after the Worker deploys.
+
+The web build bakes its public configuration into its runtime configuration, so the public client ids and the public push key are read from ESC before the build, and the origins come from the workflow's environment for each branch.
 
 ```mermaid
 flowchart TD
-  literal[Plain literals] --> app[WebApp siteConfig appSettings]
-  topic[Event Grid topic output] --> app
-  esc[Pulumi ESC secrets] --> app
-  app -->|declared list replaces the live one| live[Function App runtime configuration]
+  vars["Vars fixed by the environment name"] --> config["Wrangler configuration of the Worker"]
+  ids["Binding ids from CloudflareCoreDatabaseIdMap"] --> config
+  esc["Pulumi ESC esposter-infra/prod"] --> bulk["wrangler secret bulk"]
+  list[".github/worker-secrets.json"] --> bulk
+  config --> worker["Worker deployed by Wrangler"]
+  bulk --> worker
 ```
 
-## The list is authoritative, not additive
+## What the repository does not hold
 
-`siteConfig.appSettings` is a **replace**, not a merge: applying it drops any live setting the declaration omits. That is the point — a setting the code cannot see is a setting `pulumi preview` cannot prove — but it is only safe because these Function Apps have no live-only settings to lose:
-
-- The declared list matches both live sites **name for name** (`az functionapp config appsettings list`): dev and prod each return exactly the names declared here, so the replace has nothing to drop. Re-run that command before adding or removing a setting; a difference is the only thing that makes this replace unsafe.
-- The app runs **from a package URL** (`WEBSITE_RUN_FROM_PACKAGE` pointing at `release.zip` in the environment's storage account), so deployment writes a blob rather than mutating app settings behind Pulumi's back. The URL carries **no SAS** and there is deliberately no "WEBSITE_RUN_FROM_PACKAGE_BLOB_MI_RESOURCE_ID" beside it — that is the live configuration, not an omission, and adding either to "fix" it would change a running deployment on the strength of a reading of the Azure docs rather than of the site.
-- Neither app uses the consumption-plan **content share** ("WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" / "WEBSITE_CONTENTSHARE") — the settings Azure otherwise injects at create time and which a declared list would silently strip, breaking the host on its next restart. `storageAccountRequired: false` with `AzureWebJobsStorage__*` identity-based URIs is what removes the need for them.
-
-Any future setting added in the portal is therefore drift by definition, and the next deploy correctly removes it.
+No secret value is in the code, in a wrangler configuration or in a stack file. A stack reads ESC rather than keeping a secret in its own configuration, so no encrypted value is committed. A value a Worker reads that is not declared in the repository is invisible to review, and a secret added to a Worker by hand is not in the list the deploy writes, so a later deploy does not restore it.
 
 ## Key files
 
-| File                                                                        | Role                           |
-| :-------------------------------------------------------------------------- | :----------------------------- |
-| `apps/infra/src/azure/resources/Microsoft.Web/sites/devFuncEsposter001.ts`  | Dev Function App app settings  |
-| `apps/infra/src/azure/resources/Microsoft.Web/sites/prodFuncEsposter001.ts` | Prod Function App app settings |
-
-## Notes
-
-Adoption is import-then-own — the `WebApp` resources are `protect: true` and adopting settings updates them in place rather than recreating them. The ESC environment must hold each `config.requireSecret` key with the exact live value before a deploy, so that a preview shows an empty diff and the deploy proves ownership without changing the running configuration.
+| File                                                                      | Role                                                                   |
+| :------------------------------------------------------------------------ | :--------------------------------------------------------------------- |
+| `apps/web/configuration/wrangler.ts`                                      | The web Worker's wrangler block per environment, its vars and bindings |
+| `apps/functions/wrangler.jsonc`                                           | The functions Worker's configuration                                   |
+| `.github/worker-secrets.json`                                             | The secret names each Worker takes                                     |
+| `packages/db-schema/src/models/cloudflare/CloudflareCoreDatabaseIdMap.ts` | Each environment's `core` database id                                  |

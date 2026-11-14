@@ -1,28 +1,28 @@
 ## Purpose
 
-How Esposter's Azure resources are managed in Pulumi — one resource per file, ARM-aligned source paths, a single prod stack, and a GitHub provider alongside Azure.
+How Esposter's Cloudflare resources and GitHub settings are declared in Pulumi: one resource per file, folders by resource type, names built by one function, and a single prod stack for both environments.
 
 ## Requirements
 
 ### Requirement: Resources are declared, never created by hand
 
-Every Azure resource the platform runs SHALL be declared as code for the single prod stack, so that no resource exists only as a portal setting.
+Every Cloudflare resource the platform runs and every GitHub repository setting SHALL be declared as code for the single prod stack, so that no resource exists only as a dashboard setting.
 
-#### Scenario: A resource created in the portal without a declaration
+#### Scenario: A resource created in the dashboard without a declaration
 
-- **GIVEN** a live Azure resource that has no declaration
+- **GIVEN** a live Cloudflare resource that has no declaration
 - **WHEN** the infrastructure is previewed
 - **THEN** the resource is reported as drift to be imported and declared, or deleted
 
 #### Scenario: Development and production share one stack
 
-- **GIVEN** the development and production resource groups
+- **GIVEN** the development and production resources
 - **WHEN** the infrastructure is deployed
-- **THEN** both groups are declared under the one prod stack
+- **THEN** both are declared under the one prod stack
 
 ### Requirement: One resource per declaration file
 
-Each Azure resource SHALL be declared in its own file, named after that resource in camel case.
+Each Cloudflare resource SHALL be declared in its own file, named after that resource in camel case.
 
 #### Scenario: Reviewing a declaration file
 
@@ -36,45 +36,25 @@ Each Azure resource SHALL be declared in its own file, named after that resource
 - **WHEN** another resource is added to the infrastructure
 - **THEN** it is declared in a file of its own
 
-### Requirement: Declaration paths follow Azure resource identifiers
+### Requirement: Declaration folders follow the resource type
 
-The location of each resource's declaration SHALL mirror its Azure resource identifier, so that a resource found in the Azure portal shows where its declaration lives.
+The folder holding a resource's declaration SHALL be named for the Cloudflare resource type it declares.
 
-#### Scenario: Locating a declaration from a portal resource
+#### Scenario: Locating a bucket's declaration
 
-- **GIVEN** a resource identifier copied from the Azure portal
+- **GIVEN** a bucket named in the dashboard
 - **WHEN** a person looks for its declaration
-- **THEN** the declaration sits under the provider namespace and resource type that the identifier names
+- **THEN** the declaration sits in the folder for buckets
 
-### Requirement: Imported resources are protected from deletion
+### Requirement: Resource names come from one function
 
-Every imported Azure resource SHALL be protected, so that a bad change cannot delete live infrastructure.
-
-#### Scenario: A change that would delete a protected resource
-
-- **GIVEN** an imported resource marked protected
-- **WHEN** a change would delete it
-- **THEN** the deletion is refused and the resource stays in place
-
-### Requirement: GitHub settings are declared apart from Azure
-
-The repository's GitHub settings SHALL be declared under their own provider, separate from the Azure resources.
-
-#### Scenario: A GitHub setting declared in the infrastructure
-
-- **GIVEN** a repository setting such as a collaborator, label, environment or ruleset
-- **WHEN** it is declared
-- **THEN** it is declared under the GitHub provider rather than among the Azure resources
-
-### Requirement: Resource names follow the naming convention from declaration
-
-Every dev and production resource SHALL be named under the CAF-aligned naming convention with its parent hierarchy, applied when the resource is first declared.
+Every resource's name SHALL be built by the same function the Workers use to name it, so that a resource and the code that names it always agree.
 
 #### Scenario: A stateful resource declared for the first time
 
 - **GIVEN** a new stateful resource
 - **WHEN** it is declared
-- **THEN** its name already follows the naming convention
+- **THEN** its name is the one the Workers compute for it
 
 #### Scenario: Renaming a stateful resource
 
@@ -82,35 +62,25 @@ Every dev and production resource SHALL be named under the CAF-aligned naming co
 - **WHEN** its name changes
 - **THEN** its data moves with it, so the rename is treated as a data move rather than a relabel
 
-### Requirement: Function App settings are declared with the app
+### Requirement: Resources that name a Worker wait for the Worker
 
-Each Function App's runtime settings SHALL be declared with the app, so that no deployed setting exists only in the portal.
+A queue consumer or a custom domain SHALL be declared only after the Worker it names exists.
 
-#### Scenario: A runtime setting of a deployed app
+#### Scenario: The first apply of a new environment
 
-- **GIVEN** a deployed Function App
-- **WHEN** its runtime settings are read
-- **THEN** every setting is one the app's declaration states
+- **GIVEN** an environment whose Workers have not been deployed
+- **WHEN** its first apply runs
+- **THEN** its queue consumers and custom domains are left out until the Workers are deployed
 
-### Requirement: The subscription policy assignment is protected and renamed only by operator step
+### Requirement: GitHub settings are declared apart from Cloudflare
 
-The subscription policy assignment SHALL be protected, so that a rename needs an operator step before the change can apply.
+The repository's GitHub settings SHALL be declared under their own provider, separate from the Cloudflare resources.
 
-#### Scenario: Renaming the policy assignment without the operator step
+#### Scenario: A GitHub setting declared in the infrastructure
 
-- **GIVEN** the protected policy assignment
-- **WHEN** its name changes and no operator step has run
-- **THEN** the update aborts on the protected resource and nothing else in the same change lands
-
-### Requirement: The search index schema is recreated from its data file
-
-The Azure AI Search index schema SHALL be recreated from its data file rather than managed as a declared resource.
-
-#### Scenario: Recreating the search index
-
-- **GIVEN** the index schema data file
-- **WHEN** the search index is recreated
-- **THEN** its schema is taken from that file
+- **GIVEN** a repository setting such as a collaborator, label, environment or ruleset
+- **WHEN** it is declared
+- **THEN** it is declared under the GitHub provider rather than among the Cloudflare resources
 
 ### Requirement: GitHub defaults are declared rather than left to the settings page
 

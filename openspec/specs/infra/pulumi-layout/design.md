@@ -1,47 +1,61 @@
-# Azure Pulumi Layout
+# Pulumi Layout
 
-Every Azure resource Esposter runs is declared in `apps/infra`, which is the source of truth for both the development and production resource groups under a single Pulumi stack named `prod`. Anything created by hand in the portal is drift, not a resource — it is imported and declared, or it is deleted.
+Every Cloudflare resource Esposter runs, and every GitHub repository setting, is declared in `apps/infra`, which is the source of truth for the single `prod` stack. Anything created by hand in the dashboard is drift, not a resource: it is imported and declared, or it is deleted.
 
 ## Layout rules
 
-- **One resource per file**, named after the Azure resource in camelCase (e.g. `devLogicEsposterAe001.ts`).
-- **Source paths mirror ARM resource IDs**: `src/azure/resources/<ProviderNamespace>/<resourceType>/<resourceName>.ts`, e.g. `Microsoft.Web/sites/…`. Finding a resource in the Azure portal tells you exactly where its declaration lives.
-- **`protect: true`** on imported resources so a bad refactor can't delete live infrastructure.
-- **Providers are split**: `src/azure/` for Azure Native resources, `src/github/` for the `@pulumi/github` provider (collaborators, environments, labels, secrets via Pulumi ESC, and the branch rulesets that make a branch's name the rule for who may create and push it — [branch namespaces](../branch-namespaces/design.md)).
-- **CAF-aligned naming** with a `parent` hierarchy, documented in `apps/infra/docs/azure/naming-conventions.md` and followed by every dev and prod resource, stateless and stateful alike. Renaming a stateful resource moves its data, so the convention is applied at declaration time rather than corrected later.
-- The package entrypoint `src/index.ts` is a generated barrel; Pulumi executes the compiled `dist/index.js`.
+- **One resource per file**, named after the resource in camelCase and prefixed with its environment for resources that exist once per environment: `prodD1EsposterCore.ts`, `devQEsposterDeleteAccount.ts`.
+- **Folders follow the Cloudflare resource type**: `src/cloudflare/resources/<resourceType>/`, such as `d1Databases/`, `r2Buckets/`, `queues/` and `queueConsumers/`. Finding a resource's declaration takes the type the dashboard shows it under.
+- **Names come from one function.** `getCloudflareResourceName` and `getCloudflareAccountResourceName` build every name, and the Workers call the same functions, so a resource and the code that names it cannot disagree. A Pulumi logical name is that name. A resource applied under a different name previews as a delete and a create, so a rename of a stateful resource is a move of its data, never a relabel.
+- **Providers are split.** `src/cloudflare/` holds the `@pulumi/cloudflare` resources and `src/github/` holds the `@pulumi/github` ones: collaborators, environments, labels, secrets written from ESC, and the branch rulesets that make a branch's name the rule for who may create and push it ([branch namespaces](../branch-namespaces/design.md)).
+- **The naming shape** is written once in `apps/infra/docs/cloudflare/naming-conventions.md`: an environment token, an asset-type token and a workload token. Account-scoped resources drop the environment token.
+- The package entrypoint `src/index.ts` is a generated barrel, and Pulumi runs the compiled `dist/index.js`.
 
 ## Resource inventory
 
-What each provider namespace under `src/azure/resources/` holds:
+What each folder under `src/cloudflare/resources/` holds:
 
-| Namespace                  | Resources                                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `Microsoft.Resources`      | Dev and prod resource groups                                                                                   |
-| `Microsoft.Storage`        | Storage accounts (blobs, tables, queues)                                                                       |
-| `Microsoft.Web`            | Function Apps, Dynamic Y1 hosting plans, Logic App API connections                                             |
-| `Microsoft.EventGrid`      | Topics and event subscriptions targeting the Azure Functions                                                   |
-| `Microsoft.ServiceBus`     | Namespaces and queues (scheduled-message jobs)                                                                 |
-| `Microsoft.SignalRService` | Web PubSub (`Free_F1`)                                                                                         |
-| `Microsoft.Search`         | Cognitive Search services (free SKU)                                                                           |
-| `Microsoft.Logic`          | The guard-cycle workflows per environment (stop/start Function Apps, delete/recreate Event Grid subscriptions) |
-| `Microsoft.Consumption`    | The `$0.01` guard budgets                                                                                      |
-| `Microsoft.Insights`       | Budget-guard action groups (`*AgEsposter001` stop, `*AgEsposter003` delete)                                    |
-| `Microsoft.Authorization`  | Least-privilege role assignments for managed identities, and the subscription policy assignment                |
+| Folder                               | Resources                                                                                            |
+| :----------------------------------- | :--------------------------------------------------------------------------------------------------- |
+| `zones/`, `dnsRecords/`, `rulesets/` | The `esposter.com` zone, its apex and `www` records, and the redirect ruleset                        |
+| `workersCustomDomains/`              | The custom domains of the web Worker and the functions Worker                                        |
+| `d1Databases/`                       | The `core` database, one per environment                                                             |
+| `r2Buckets/`                         | One bucket per storage bucket name, per environment, the `public-` buckets served on a custom domain |
+| `r2BucketLifecycles/`                | The message-assets rule moving objects to Infrequent Access after thirty days                        |
+| `r2BucketEventNotifications/`        | The object-create notifications that send bucket writes to a queue                                   |
+| `queues/`                            | One queue and one dead-letter queue per job, per environment                                         |
+| `queueConsumers/`                    | Each queue's consumer, which is the functions Worker                                                 |
 
-## Key files
+The Workers' code is not in this list. Nitro writes the web Worker's configuration file and the functions Worker has its own, and both name the binding ids the program exports.
 
-| File                                            | Role                                                                |
-| ----------------------------------------------- | ------------------------------------------------------------------- |
-| `apps/infra/Pulumi.yaml` / `Pulumi.prod.yaml`   | Project + the single `prod` stack configuration                     |
-| `apps/infra/src/azure/resources/`               | One file per Azure resource, ARM-aligned paths                      |
-| `apps/infra/src/github/`                        | GitHub repository settings, labels, environments, rulesets, secrets |
-| `apps/infra/docs/azure/naming-conventions.md`   | CAF-aligned naming convention reference                             |
-| `apps/infra/docs/azure/security-constraints.md` | Hardening blockers and the app code paths gating each one           |
+## Order of the first apply
+
+A queue consumer names the functions Worker, and a custom domain names a Worker, so neither can be declared until its Worker exists. The first apply runs in three steps:
+
+```mermaid
+flowchart TD
+  A["Pulumi apply, queue consumers and custom domains excluded"] --> B["zone, records, buckets, databases, queues and notifications exist"]
+  B --> C["Wrangler deploys the web Worker and the functions Worker"]
+  C --> D["Pulumi apply again, nothing excluded"]
+  D --> E["queue consumers and custom domains exist"]
+```
+
+The exclusion is by resource type, so it holds for every instance of the type. Every later apply declares everything, and a preview is read before each apply. A full apply is never run with its preview skipped.
+
+## Decisions
+
+**Worker code is not a Pulumi resource.** Declaring each deploy as a `WorkerVersion` would make every application deploy a Pulumi update of the prod stack. CI runs Wrangler after its checks pass on `main`, and Pulumi declares the resources the Workers bind to, not the Workers' code.
 
 ## Notes
 
-- App-plane settings are declared too: each Function App's runtime settings live in its `WebApp` declaration, so nothing about a deployed app is portal-only — see [Pulumi source of truth](../pulumi-source-of-truth/design.md).
-- **A GitHub default is declared rather than left to the settings page.** The provider owns the repository's Actions surface beside its refs: which actions a workflow may call, the token a job is handed when its workflow declares no `permissions:` of its own — read — and Dependabot's automatic pull requests, off because Renovate writes every version here and a second bot's pull request would arrive against `main`, outside the queue the review reads. Each has a GitHub default, and a default nobody declared is one a click flips with no diff to show for it. The exception is the ruleset parameter `require_extra_approval_for_unattributed_changes`, outside what `@pulumi/github` can express at the version the lockfile resolves — [branch namespaces](../branch-namespaces/design.md). Private vulnerability reporting is on and set on the repository directly for the same reason. Requiring every action to be pinned to a sha is deliberately not taken: the review workflow checks out `ai/queue`, a moving ref by design, and a policy that counts a reusable workflow deadlocks every event it fires on — which no preview can prove either way.
-- The one policy assignment carries the naming convention too (`pa-esposter-001`) and is `protect: true`, so renaming it is a replace whose delete half needs the operator step the `pulumi-infra` skill's `references/migrations.md` gives — without it the update aborts on the protected resource and nothing else in the plan lands either.
-- Not everything in the package is a Pulumi declaration: `apps/infra/data/searchIndexes/messages-index.json` holds the Azure AI Search index schema, which is a data-plane resource recreated from that file rather than managed by the provider ([Azure services](../../architecture/azure-services/design.md)).
+- **A GitHub default is declared rather than left to the settings page.** The provider owns the repository's Actions surface beside its refs: which actions a workflow may call, the token a job is handed when its workflow declares no `permissions:` of its own (read), and Dependabot's automatic pull requests, off because Renovate writes every version here and a second bot's pull request would arrive against `main`, outside the queue the review reads. Each has a GitHub default, and a default nobody declared is one a click flips with no diff to show for it. The exception is the ruleset parameter `require_extra_approval_for_unattributed_changes`, outside what `@pulumi/github` can express at the version the lockfile resolves ([branch namespaces](../branch-namespaces/design.md)). Private vulnerability reporting is on and set on the repository directly for the same reason. Requiring every action to be pinned to a sha is deliberately not taken: the review workflow checks out `ai/queue`, a moving ref by design, and a policy that counts a reusable workflow deadlocks every event it fires on, which no preview can prove either way.
+
+## Key files
+
+| File                                                                      | Role                                                                |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------ |
+| `apps/infra/src/cloudflare/resources/`                                    | One file per Cloudflare resource, folders by resource type          |
+| `apps/infra/src/cloudflare/constants/CloudflareAccountId.ts`              | The account id every Cloudflare resource is declared under          |
+| `apps/infra/src/github/`                                                  | GitHub repository settings, labels, environments, rulesets, secrets |
+| `apps/infra/docs/cloudflare/naming-conventions.md`                        | The Cloudflare naming shape and its tokens                          |
+| `packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts` | The name function the program and the Workers both call             |
