@@ -34,15 +34,15 @@ export const surveyRouter = router({
   ...createResourceProcedures(ResourceType.Survey),
   createSurveyResponse: slowRespondentProcedure
     .input(createSurveyResponseInputSchema)
-    .mutation<SurveyResponseInResource>(async ({ ctx, input: { isDraft, ...input } }) => {
-      const participantToken = await resolveSurveyResponseWrite(ctx.db, input.resourceId, input.participantToken, {
+    .mutation<SurveyResponseInResource>(async ({ ctx, input: { isDraft, participantToken, ...input } }) => {
+      const participantTokenHash = await resolveSurveyResponseWrite(ctx.db, input.resourceId, participantToken, {
         isDraft,
         model: input.model,
       });
       return takeOne(
         await ctx.db
           .insert(surveyResponsesInResource)
-          .values({ ...input, isDraft, participantToken })
+          .values({ ...input, isDraft, participantTokenHash })
           .returning(),
       );
     }),
@@ -62,7 +62,7 @@ export const surveyRouter = router({
   readSurveyResponse: standardRespondentProcedure
     .input(readSurveyResponseInputSchema)
     .query<SurveyResponseInResource | undefined>(async ({ ctx, input: { id, participantToken, resourceId } }) => {
-      const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, resourceId, participantToken);
+      const resolvedParticipantTokenHash = await resolveSurveyResponseRead(ctx.db, resourceId, participantToken);
       const surveyResponse = await ctx.db.query.surveyResponsesInResource.findFirst({
         where: { id: { eq: id }, resourceId: { eq: resourceId } },
       });
@@ -71,7 +71,7 @@ export const surveyRouter = router({
       // Indistinguishable from one that does not exist. Only Identified mode resolves a token to compare —
       // Anonymous carries no identity to contradict, so a survey switched to it still resumes its
       // Identified-era responses, exactly as the write boundary treats them
-      else if (resolvedParticipantToken && resolvedParticipantToken !== surveyResponse.participantToken)
+      else if (resolvedParticipantTokenHash && resolvedParticipantTokenHash !== surveyResponse.participantTokenHash)
         return undefined;
       else return surveyResponse;
     }),
@@ -94,7 +94,7 @@ export const surveyRouter = router({
   updateSurveyResponse: standardRespondentProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseInResource>(async ({ ctx, input: { id, isDraft, resourceId, ...input } }) => {
-      const participantToken = await resolveSurveyResponseWrite(ctx.db, resourceId, input.participantToken, {
+      const participantTokenHash = await resolveSurveyResponseWrite(ctx.db, resourceId, input.participantToken, {
         isDraft,
         model: input.model,
       });
@@ -105,7 +105,7 @@ export const surveyRouter = router({
       );
       // A resume must carry the identity it started with, so swapping tokens mid-response is a forgery.
       // Only Identified mode resolves a token to compare — Anonymous carries no identity to contradict
-      if (participantToken && participantToken !== surveyResponse.participantToken)
+      if (participantTokenHash && participantTokenHash !== surveyResponse.participantTokenHash)
         throw getInvalidParticipantTokenError();
       // A submitted response stays submitted, whatever a later save says
       const isUpdatedDraft = surveyResponse.isDraft && isDraft;
@@ -137,7 +137,7 @@ export const surveyRouter = router({
           model: input.model,
           modelVersion,
           pageNo: input.pageNo,
-          participantToken: participantToken || surveyResponse.participantToken,
+          participantTokenHash: participantTokenHash || surveyResponse.participantTokenHash,
         })
         .where(
           and(

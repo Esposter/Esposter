@@ -34,6 +34,7 @@ import {
 } from "@esposter/db-schema";
 import {
   generateSecretToken,
+  hashSecretToken,
   InvalidOperationError,
   MAX_READ_LIMIT,
   NotFoundError,
@@ -153,33 +154,34 @@ describe("programRouter", () => {
     expect(audienceTruncation?.hiddenRows).toBe(1);
   });
 
-  test("generateProgramParticipants is idempotent", async () => {
+  test("generateProgramParticipants answers nothing on a repeat, since no credential is given twice", async () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const { participants: reissuedParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
-    // Re-running never rotates a token — a rotated token would dead-link a link already sent out
-    expect(reissuedParticipants).toStrictEqual(participants);
+    // Re-running never rotates a token, since a rotated token would dead-link a link already sent out. A stored credential
+    // Is a hash, so the repeat has no credential to answer with
+    expect(participants.map((participant) => participant.keyValue)).toStrictEqual([" ", "a"]);
+    expect(reissuedParticipants).toStrictEqual([]);
   });
 
   test("generateProgramParticipants issues one token per participant across concurrent runs", async () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
-    // Neither run sees the other's rows, so both try to issue every token — the storage key is what makes
-    // One of them lose, and the loser adopts the winner's token instead of minting a rival
+    // Neither run sees the other's rows, so both try to issue every credential — the storage key is what makes one of them
+    // Lose, and each participant is answered by the one run that won it
     const [{ participants }, { participants: concurrentParticipants }] = await Promise.all([
       caller.generateProgramParticipants({ id: program.id }),
       caller.generateProgramParticipants({ id: program.id }),
     ]);
 
-    expect(concurrentParticipants).toStrictEqual(participants);
-
     const storedParticipants = await readStoredParticipants(mockContext.db, program.id);
 
-    expect(storedParticipants).toHaveLength(participants.length);
+    expect(storedParticipants).toHaveLength(2);
+    expect(participants.length + concurrentParticipants.length).toBe(storedParticipants.length);
   });
 
   test("generates only the missing tokens for a grown audience", async () => {
@@ -197,8 +199,9 @@ describe("programRouter", () => {
     });
     const { participants: grownParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
-    expect(grownParticipants).toHaveLength(2);
-    expect(takeOne(grownParticipants)).toStrictEqual(takeOne(participants));
+    // Only the participant the audience grew by is issued a credential, and the one already issued is not answered again
+    expect(grownParticipants.map((participant) => participant.keyValue)).toStrictEqual(["a"]);
+    expect(takeOne(participants).keyValue).toBe(" ");
   });
 
   test("fails generate with dangling audience binding", async () => {
@@ -324,13 +327,13 @@ describe("programRouter", () => {
       surveyId: foreignSurvey.id,
     });
     // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
-    const token = generateSecretToken();
+    const tokenHash = await hashSecretToken(generateSecretToken());
     await mockContext.db
       .insert(programParticipantsInResource)
-      .values({ keyValue, publicId: v7(), resourceId: program.id, token });
+      .values({ keyValue, publicId: v7(), resourceId: program.id, tokenHash });
     await mockContext.db
       .insert(surveyResponsesInResource)
-      .values({ participantToken: token, resourceId: foreignSurvey.id });
+      .values({ participantTokenHash: tokenHash, resourceId: foreignSurvey.id });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
     expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([false]);
@@ -343,7 +346,7 @@ describe("programRouter", () => {
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     await mockContext.db
       .insert(surveyResponsesInResource)
-      .values({ participantToken: takeOne(participants).token, resourceId: survey.id });
+      .values({ participantTokenHash: await hashSecretToken(takeOne(participants).token), resourceId: survey.id });
     await surveyCaller.deleteResource({ id: survey.id });
     const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
 
@@ -462,27 +465,31 @@ describe("programRouter", () => {
     const { program } = await createInviteProgram(false);
 
     await expect(
-      caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.All }),
+      caller.issueProgramInvites({ id: program.id, scope: ProgramInviteScope.All }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Read, name: Resource, the email has no link to the survey]`,
     );
   });
 
-  test("invites hand each participant their own token with the audience row", async () => {
+  test("invites issue each participant a new link that is the one stored, with the audience row", async () => {
     expect.hasAssertions();
 
     const { program } = await createInviteProgram();
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const { emailHtml, invites, unmatchedCount } = await caller.readProgramInvites({
+    const { emailHtml, invites, unmatchedCount } = await caller.issueProgramInvites({
       id: program.id,
       scope: ProgramInviteScope.All,
     });
+    const storedParticipants = await readStoredParticipants(mockContext.db, program.id);
+    const inviteTokenHashes = await Promise.all(invites.map(({ token }) => hashSecretToken(token)));
 
     expect(unmatchedCount).toBe(0);
     expect(emailHtml).toContain(TEST_LABEL);
-    expect(
-      sortByKeyValue(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))),
-    ).toStrictEqual(sortByKeyValue(participants));
+    // The generated links are retired: an invite's link is a new credential, and it is the one the row now holds
+    expect(sortByKeyValue(invites).map(({ token }) => token)).not.toStrictEqual(
+      sortByKeyValue(participants).map(({ token }) => token),
+    );
+    expect(inviteTokenHashes.toSorted()).toStrictEqual(storedParticipants.map(({ tokenHash }) => tokenHash).toSorted());
     expect(sortByKeyValue(invites).map(({ row }) => row[AUDIENCE_KEY_COLUMN])).toStrictEqual(["a", "b"]);
   });
 
@@ -496,11 +503,38 @@ describe("programRouter", () => {
     ).token;
     await mockContext.db
       .insert(surveyResponsesInResource)
-      .values({ participantToken: responderToken, resourceId: survey.id });
-    const { invites } = await caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.Awaiting });
+      .values({ participantTokenHash: await hashSecretToken(responderToken), resourceId: survey.id });
+    const { invites } = await caller.issueProgramInvites({ id: program.id, scope: ProgramInviteScope.Awaiting });
 
-    expect(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))).toStrictEqual(
-      participants.filter(({ token }) => token !== responderToken),
-    );
+    // A responder gets no new link, so the one that answered it keeps working
+    expect(invites.map(({ keyValue: inviteKeyValue }) => inviteKeyValue)).toStrictEqual(["b"]);
+  });
+
+  // A link already sent is retired by a new one, and the answer given under the old link still belongs to its participant
+  test("regenerating a link retires the one it replaces and keeps the answer given under it", async () => {
+    expect.hasAssertions();
+
+    const { program, survey } = await setupIdentifiedProgram([" "]);
+    const { participants } = await caller.generateProgramParticipants({ id: program.id });
+    const participant = takeOne(participants);
+    await surveyCaller.createSurveyResponse({
+      id: v7(),
+      isDraft: false,
+      model: { a: 1 },
+      pageNo: 0,
+      participantToken: participant.token,
+      resourceId: survey.id,
+    });
+    const regenerated = await caller.regenerateProgramParticipantToken({
+      id: program.id,
+      keyValue: participant.keyValue,
+    });
+    const storedParticipant = takeOne(await readStoredParticipants(mockContext.db, program.id));
+    const { rows: statusRows } = await caller.readProgramStatus({ id: program.id });
+
+    // The row holds only the new credential's hash, so the old link finds no participant to answer for
+    expect(regenerated.token).not.toBe(participant.token);
+    expect(storedParticipant.tokenHash).toBe(await hashSecretToken(regenerated.token));
+    expect(statusRows.map(({ isResponded }) => isResponded)).toStrictEqual([true]);
   });
 });

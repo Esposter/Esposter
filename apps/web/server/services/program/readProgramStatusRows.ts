@@ -20,7 +20,7 @@ export const readProgramStatusRows = async (
     readProgramParticipantEntities(db, programId),
     readResourceContent(programResourceSchema, programId),
   ]);
-  const respondedTokens = new Set<string>();
+  const respondedTokenHashes = new Set<string>();
   // The response read is capped, and a token past that cap is indistinguishable from one that never responded —
   // So a truncated read under-reports `isResponded` rather than failing. The caller is told, because "3 of 900
   // Responded" is a claim the surface cannot make honestly without knowing whether it saw every response
@@ -42,15 +42,16 @@ export const readProgramStatusRows = async (
   if (survey) {
     const { hasMore, surveyResponses } = await readSurveyResponseEntities(db, survey.id);
     isRespondedPartial = hasMore;
-    for (const { participantToken } of surveyResponses) if (participantToken) respondedTokens.add(participantToken);
+    for (const { participantTokenHash } of surveyResponses)
+      if (participantTokenHash) respondedTokenHashes.add(participantTokenHash);
   }
-  // The token is what the join matches on, never something it carries out — no consumer of this row has any
-  // Use for the credential itself
+  // The token's hash is what the join matches on, never something it carries out — no consumer of this row has any
+  // Use for the credential or its hash
   return {
     isRespondedPartial,
-    rows: participants.map(({ createdAt, keyValue, publicId, token }) => ({
+    rows: participants.map(({ createdAt, keyValue, publicId, tokenHash }) => ({
       addedAt: createdAt,
-      isResponded: respondedTokens.has(token),
+      isResponded: respondedTokenHashes.has(tokenHash),
       keyValue,
       publicId,
     })),

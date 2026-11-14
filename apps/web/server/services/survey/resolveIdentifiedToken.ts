@@ -4,6 +4,7 @@ import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyRe
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
 import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
+import { hashSecretToken } from "@esposter/shared";
 import { and, eq, inArray } from "drizzle-orm";
 
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
@@ -23,7 +24,8 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
   const boundProgramIds = await readBoundProgramIds(db, survey);
   // The token is unique across every program, so one indexed lookup answers it, and the bound programs decide whether
-  // its issuer may answer this survey
+  // its issuer may answer this survey. The lookup is by the hash the participant row stores, never the credential
+  const participantTokenHash = await hashSecretToken(participantToken);
   const participants =
     boundProgramIds.length === 0
       ? []
@@ -32,11 +34,11 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (
           .from(programParticipantsInResource)
           .where(
             and(
-              eq(programParticipantsInResource.token, participantToken),
+              eq(programParticipantsInResource.tokenHash, participantTokenHash),
               inArray(programParticipantsInResource.resourceId, boundProgramIds),
             ),
           )
           .limit(1);
-  if (participants.length > 0) return participantToken;
+  if (participants.length > 0) return participantTokenHash;
   throw getInvalidParticipantTokenError();
 };

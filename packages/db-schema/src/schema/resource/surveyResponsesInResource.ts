@@ -21,9 +21,9 @@ export const surveyResponsesInResource = sqliteTable(
     // Resume position, tracked apart from `model` so a question named "pageNo" can never collide with it. 0 means the
     // respondent never advanced past the first page
     pageNo: integer().notNull().default(0),
-    // The program participant token an Identified response was given under, "" in Anonymous mode. A credential, not a
-    // row id: "" names no participant, and the token is checked against its program when the response is written
-    participantToken: text().notNull().default(""),
+    // The SHA-256 of the program participant token an Identified response was given under, "" in Anonymous mode. Only the
+    // hash is kept, so a response names its participant without holding the credential that opens it
+    participantTokenHash: text().notNull().default(""),
     resourceId: text()
       .notNull()
       .references(() => resourcesInResource.id, { onDelete: "cascade" }),

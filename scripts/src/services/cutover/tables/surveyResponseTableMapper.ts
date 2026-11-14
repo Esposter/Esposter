@@ -39,7 +39,7 @@ export const surveyResponseTableMapper: TableMapper = {
       model: JSON.stringify(response.model ?? {}),
       modelVersion: response.modelVersion,
       pageNo: response.pageNo,
-      participantToken: requireReissuedTokenHash(
+      participantTokenHash: requireReissuedTokenHash(
         idMap,
         response.participantToken,
         getTableName(surveyResponsesInResource),

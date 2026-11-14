@@ -8,6 +8,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceProgramStatus from "@/components/Resource/Program/Status.vue";
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useSession } from "@/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
@@ -31,6 +32,16 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 
 // Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
 // Nothing. The notices are the whole visible outcome, so they are what each test reads back
+// Exporting issues links afresh, so an export waits on its confirm, which is the danger button naming the export
+const confirmExport = async (component: VueWrapper) => {
+  await flushPromises();
+  const confirmButton = component
+    .findAll(`button[data-variant="${UiButtonVariant.Danger}"]`)
+    .find((candidate) => candidate.text() === "Export");
+  assert.exists(confirmButton);
+  await confirmButton.trigger("click");
+  await flushPromises();
+};
 const findButton = (component: VueWrapper, label: string) => {
   const button = component.findAll("button").find((candidate) => candidate.text() === label);
   assert.exists(button);
@@ -132,7 +143,7 @@ describe("resourceProgramStatus", () => {
 
   // The mutation's answer is the only place a participant's token reaches the owner, and without the link it makes
   // An Identified survey cannot be answered at all
-  test("hands the owner every participant's link when they generate", async () => {
+  test("hands the owner the links a run issues when they generate", async () => {
     expect.hasAssertions();
 
     const participants = [{ keyValue, token: generateSecretToken() }];
@@ -176,7 +187,7 @@ describe("resourceProgramStatus", () => {
     }));
     // The click's last call is the invite read, so the test holds until it lands rather than ending with it in flight
     const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
-    trpcMsw.program.readProgramInvites.query(() => {
+    trpcMsw.program.issueProgramInvites.mutation(() => {
       onInviteRead();
       return { emailHtml, invites: [invite], unmatchedCount: 0 };
     });
@@ -185,6 +196,7 @@ describe("resourceProgramStatus", () => {
     const inviteButton = component.findAll("button").find((button) => button.text() === "Export invites");
     assert.exists(inviteButton);
     await inviteButton.trigger("click");
+    await confirmExport(component);
     await isInviteRead;
     await flushPromises();
 
@@ -200,11 +212,12 @@ describe("resourceProgramStatus", () => {
   // The click's last call is the invite read, so the test holds until it lands rather than ending with it in flight
   const clickExportWithInvites = async (component: VueWrapper, label: string, invites: ProgramInvites) => {
     const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
-    trpcMsw.program.readProgramInvites.query(() => {
+    trpcMsw.program.issueProgramInvites.mutation(() => {
       onInviteRead();
       return invites;
     });
     await findButton(component, label).trigger("click");
+    await confirmExport(component);
     await isInviteRead;
     await flushPromises();
   };
@@ -215,6 +228,7 @@ describe("resourceProgramStatus", () => {
     setStatus(false);
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
     await findButton(component, "Export invites").trigger("click");
+    await confirmExport(component);
     await flushPromises();
 
     expect(downloadFile).not.toHaveBeenCalled();
@@ -233,6 +247,7 @@ describe("resourceProgramStatus", () => {
     trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial: false, rows: [] }));
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
     await findButton(component, "Export invites").trigger("click");
+    await confirmExport(component);
     await flushPromises();
 
     expect(downloadFile).not.toHaveBeenCalled();

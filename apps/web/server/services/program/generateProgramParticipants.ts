@@ -1,6 +1,5 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
-import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
@@ -12,13 +11,12 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
-import { chunk, generateSecretToken } from "@esposter/shared";
-import { and, eq, inArray } from "drizzle-orm";
+import { chunk, generateSecretToken, hashSecretToken } from "@esposter/shared";
 import { v7 } from "uuid";
 
-// Idempotent by the audience key value: re-running after the audience grows issues only the missing
-// Tokens and never rotates an existing one, because a rotated token would dead-link a link already sent out.
-// The guarantee is the unique constraint on the program and the key, not this read-then-write
+// Idempotent by the audience key value: re-running after the audience grows issues only the missing participants and
+// never replaces an existing credential, because a replaced one would dead-link a link already sent out. The guarantee
+// is the unique constraint on the program and the key, not this read-then-write
 export const generateProgramParticipants = async (
   ctx: AuthedContext,
   programId: ResourceInResource["id"],
@@ -37,51 +35,42 @@ export const generateProgramParticipants = async (
   const { columns, rows } = audienceDataset;
   if (!survey || !columns.some(({ name }) => name === keyColumn)) throw getDanglingProgramBindingError();
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
-  // This read did not see, and the insert below still refuses to issue them a second token
+  // This read did not see, and the insert below still refuses to issue them a second credential
   const existingParticipants = await readProgramParticipantEntities(ctx.db, programId);
-  const keyValueParticipantMap = new Map<string, ProgramParticipant>(
-    existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
-  );
-  // One token per distinct key value — the same recipient twice in the audience is one participant
-  const newParticipants: (typeof programParticipantsInResource.$inferInsert)[] = [];
+  const existingKeyValues = new Set(existingParticipants.map(({ keyValue }) => keyValue));
+  // One credential per distinct key value — the same recipient twice in the audience is one participant
   const newKeyValues = new Set<string>();
   for (const row of rows) {
     const keyValue = row[keyColumn];
-    if (typeof keyValue !== "string" || !keyValue || keyValueParticipantMap.has(keyValue) || newKeyValues.has(keyValue))
-      continue;
-
-    newKeyValues.add(keyValue);
-    newParticipants.push({ keyValue, publicId: v7(), resourceId: programId, token: generateSecretToken() });
+    if (typeof keyValue === "string" && keyValue && !existingKeyValues.has(keyValue)) newKeyValues.add(keyValue);
   }
-  // The batches are independent, so they overlap. A participant another run claimed first conflicts and comes back
-  // unreturned, and its token is the one a link may already carry, so this run adopts it and drops the token it minted
-  const batchParticipants = await Promise.all(
-    chunk(newParticipants, PROGRAM_PARTICIPANT_BATCH_SIZE).map(async (batch): Promise<ProgramParticipant[]> => {
-      const insertedParticipants = await ctx.db
-        .insert(programParticipantsInResource)
-        .values(batch)
-        .onConflictDoNothing()
-        .returning({ keyValue: programParticipantsInResource.keyValue, token: programParticipantsInResource.token });
-      const insertedKeyValues = new Set(insertedParticipants.map(({ keyValue }) => keyValue));
-      const claimedKeyValues = batch
-        .map(({ keyValue }) => keyValue)
-        .filter((keyValue) => !insertedKeyValues.has(keyValue));
-      const claimedParticipants =
-        claimedKeyValues.length === 0
-          ? []
-          : await ctx.db
-              .select({ keyValue: programParticipantsInResource.keyValue, token: programParticipantsInResource.token })
-              .from(programParticipantsInResource)
-              .where(
-                and(
-                  eq(programParticipantsInResource.resourceId, programId),
-                  inArray(programParticipantsInResource.keyValue, claimedKeyValues),
-                ),
-              );
-      return [...insertedParticipants, ...claimedParticipants];
+  // Only the hash is stored. The credential leaves in this run's answer alone, and no later read can return it again
+  const issuedParticipants = await Promise.all(
+    [...newKeyValues].map(async (keyValue) => {
+      const token = generateSecretToken();
+      return { keyValue, token, tokenHash: await hashSecretToken(token) };
     }),
   );
-  for (const participant of batchParticipants.flat()) keyValueParticipantMap.set(participant.keyValue, participant);
+  // The batches are independent, so they overlap. A participant another run claimed first conflicts and is left out of
+  // this answer: that run issued its credential, and its owner was answered with it
+  const insertedKeyValueSets = await Promise.all(
+    chunk(issuedParticipants, PROGRAM_PARTICIPANT_BATCH_SIZE).map(async (batch) => {
+      const insertedParticipants = await ctx.db
+        .insert(programParticipantsInResource)
+        .values(
+          batch.map(({ keyValue, tokenHash }) => ({ keyValue, publicId: v7(), resourceId: programId, tokenHash })),
+        )
+        .onConflictDoNothing()
+        .returning({ keyValue: programParticipantsInResource.keyValue });
+      return insertedParticipants.map(({ keyValue }) => keyValue);
+    }),
+  );
+  const insertedKeyValues = new Set(insertedKeyValueSets.flat());
   const audienceTruncation = getDatasetTruncation(audienceDataset);
-  return { ...(audienceTruncation && { audienceTruncation }), participants: [...keyValueParticipantMap.values()] };
+  return {
+    ...(audienceTruncation && { audienceTruncation }),
+    participants: issuedParticipants
+      .filter(({ keyValue }) => insertedKeyValues.has(keyValue))
+      .map(({ keyValue, token }) => ({ keyValue, token })),
+  };
 };

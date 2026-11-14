@@ -37,7 +37,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { generateSecretToken, takeOne } from "@esposter/shared";
+import { generateSecretToken, hashSecretToken, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -225,7 +225,12 @@ describe(deleteAccountHandler, () => {
     );
     await mockDb
       .insert(programParticipantsInResource)
-      .values({ keyValue: v7(), publicId: v7(), resourceId: ownedProgram.id, token: generateSecretToken() });
+      .values({
+        keyValue: v7(),
+        publicId: v7(),
+        resourceId: ownedProgram.id,
+        tokenHash: await hashSecretToken(generateSecretToken()),
+      });
     await mockDb.insert(apiKeysInAuth).values({ id: v7(), key: v7(), referenceId: userId });
 
     // A resource the account does not own, with the account's own activity on it, which is kept

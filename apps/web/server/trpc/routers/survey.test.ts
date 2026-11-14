@@ -24,7 +24,14 @@ import {
   surveyResponsesInResource,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { generateSecretToken, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import {
+  generateSecretToken,
+  hashSecretToken,
+  InvalidOperationError,
+  NotFoundError,
+  Operation,
+  takeOne,
+} from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { assert, beforeAll, describe, expect, test } from "vitest";
@@ -420,7 +427,7 @@ describe("surveyRouter", () => {
     // A stale participant link into an anonymous survey still works, it just carries nothing
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0, generateSecretToken());
 
-    expect(newSurveyResponse.participantToken).toBe("");
+    expect(newSurveyResponse.participantTokenHash).toBe("");
   });
 
   test(`${SurveyResponseMode.Identified}: accepts a valid token and stores it`, async () => {
@@ -429,7 +436,7 @@ describe("surveyRouter", () => {
     const { survey, token } = await setupIdentifiedSurvey();
     const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
 
-    expect(newSurveyResponse.participantToken).toBe(token);
+    expect(newSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
 
   test(`fails create with missing token in ${SurveyResponseMode.Identified} mode`, async () => {
@@ -510,7 +517,7 @@ describe("surveyRouter", () => {
     await programCaller.deleteResource({ id: program.id });
     const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
 
-    expect(newSurveyResponse.participantToken).toBe(token);
+    expect(newSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
 
   test(`${SurveyResponseMode.Identified}: resumes with the same token`, async () => {
@@ -520,7 +527,7 @@ describe("surveyRouter", () => {
     const newSurveyResponse = await createSurveyResponse(survey.id, 0, token);
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1, token);
 
-    expect(updatedSurveyResponse.participantToken).toBe(token);
+    expect(updatedSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
 
   test(`fails update with swapped token in ${SurveyResponseMode.Identified} mode`, async () => {
@@ -560,9 +567,9 @@ describe("surveyRouter", () => {
       resourceId: survey.id,
     });
 
-    expect(anonymousSurveyResponse.participantToken).toBe("");
+    expect(anonymousSurveyResponse.participantTokenHash).toBe("");
     // The mode governs the write boundary from now on; it never mutates responses already stored
-    expect(existingSurveyResponse?.participantToken).toBe(token);
+    expect(existingSurveyResponse?.participantTokenHash).toBe(await hashSecretToken(token));
   });
 
   test(`updating an ${SurveyResponseMode.Identified}-era response after switching to ${SurveyResponseMode.Anonymous} keeps its token`, async () => {
@@ -574,7 +581,7 @@ describe("surveyRouter", () => {
     const updatedSurveyResponse = await updateSurveyResponse(newSurveyResponse, 1);
 
     // The funnel joins participants × responses by token, so an Anonymous-mode edit must not erase who answered
-    expect(updatedSurveyResponse.participantToken).toBe(token);
+    expect(updatedSurveyResponse.participantTokenHash).toBe(await hashSecretToken(token));
   });
 
   test("fails create with closed survey", async () => {

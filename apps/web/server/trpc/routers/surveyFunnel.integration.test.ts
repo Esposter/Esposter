@@ -26,7 +26,7 @@ import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySetti
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import { DatabaseEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { generateSecretToken, InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterAll, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
@@ -104,9 +104,9 @@ describe("surveyFunnel", () => {
     const { participants } = await programCaller.generateProgramParticipants({ id: program.id });
 
     expect(participants).toHaveLength(customers.length);
-    // Re-running the drive after adding customers must never rotate a token already sent out
+    // Re-running the drive after adding customers must never rotate a token already sent out, so a repeat issues none
     await expect(programCaller.generateProgramParticipants({ id: program.id })).resolves.toStrictEqual({
-      participants,
+      participants: [],
     });
 
     const [firstParticipant, secondParticipant, silentParticipant] = participants;
@@ -138,7 +138,7 @@ describe("surveyFunnel", () => {
         isDraft: false,
         model: { a: 1 },
         pageNo: 0,
-        participantToken: v7(),
+        participantToken: generateSecretToken(),
         resourceId: survey.id,
       }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(

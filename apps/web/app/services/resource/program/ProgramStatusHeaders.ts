@@ -13,4 +13,6 @@ export const ProgramStatusHeaders: UiDataTableColumn<ProgramStatusRow & { id: st
     key: "isResponded",
     title: "Responded",
   },
+  // Holds the row's action for a new link, which is not a value the row carries
+  { isSortable: false, key: "link", title: "Link" },
 ];

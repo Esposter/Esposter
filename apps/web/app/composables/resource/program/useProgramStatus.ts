@@ -6,6 +6,7 @@ import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInvit
 import { pluralize } from "#shared/util/text/pluralize";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
+import { createParticipantLink } from "@/services/resource/program/createParticipantLink";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
 import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
@@ -53,18 +54,21 @@ export const useProgramStatus = () => {
       key: id.value,
       onError: createErrorNotification,
       onSuccess: async ({ audienceTruncation, participants }) => {
-        // The mutation is the one place tokens reach the owner, so its answer leaves as the file of links they send.
-        // It holds every participant rather than only the new ones, since re-running never rotates a token already sent
-        const participantLinksCsv = createParticipantLinksCsv(
-          keyColumn,
-          surveyId,
-          participants,
-          window.location.origin,
-        );
-        downloadFile(filename, participantLinksCsv, MimeType.Csv);
+        // The mutation is the one place a new credential reaches the owner, so its answer leaves as the file of links they
+        // send. It holds only the participants this run issued, since a credential is never given twice, and no link is
+        // shown again once the file is gone
+        if (participants.length > 0)
+          downloadFile(
+            filename,
+            createParticipantLinksCsv(keyColumn, surveyId, participants, window.location.origin),
+            MimeType.Csv,
+          );
         createNotification({
           severity: NotificationSeverity.Success,
-          title: `${participants.length} participants ready`,
+          title:
+            participants.length > 0
+              ? `${participants.length} new participant ${pluralize("link", participants.length)} issued, shown only in the file just downloaded`
+              : "Every participant already has a link",
         });
         // A person past the audience read's cap goes unchecked by this run and may hold no link, and the owner is about
         // To send these links
@@ -114,7 +118,7 @@ export const useProgramStatus = () => {
       createWarningNotification("Generate participants before exporting invites");
       return;
     }
-    await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(
+    await getResultAsync(() => $trpc.program.issueProgramInvites.mutate({ id: id.value, scope })).match(
       (programInvites) => {
         exportInviteFiles(scope, programInvites);
       },
@@ -122,5 +126,36 @@ export const useProgramStatus = () => {
     );
   };
 
-  return { exportInvites, generateParticipants, isGeneratePending, isRespondedPartial, readStatus, statusRows };
+  // A participant's link is issued by the server once, and a new one replaces it: the replacement is held here until its
+  // Dialog closes, since the server does not answer it again
+  const issuedLink = ref("");
+  const { executeMutation: executeRegenerateLinkMutation } = useMutation();
+  const regenerateParticipantLink = async (keyValue: string) => {
+    const { surveyId } = programResource.value;
+    if (!surveyId) {
+      createWarningNotification("Bind a survey on the Setup blade before regenerating a link");
+      return;
+    }
+    await executeRegenerateLinkMutation(
+      () => $trpc.program.regenerateProgramParticipantToken.mutate({ id: id.value, keyValue }),
+      {
+        key: keyValue,
+        onError: createErrorNotification,
+        onSuccess: ({ token }) => {
+          issuedLink.value = createParticipantLink(window.location.origin, surveyId, token);
+        },
+      },
+    );
+  };
+
+  return {
+    exportInvites,
+    generateParticipants,
+    isGeneratePending,
+    isRespondedPartial,
+    issuedLink,
+    readStatus,
+    regenerateParticipantLink,
+    statusRows,
+  };
 };

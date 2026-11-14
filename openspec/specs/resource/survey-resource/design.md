@@ -7,7 +7,7 @@ Survey is a resource type: its content is a typed survey document and its settin
 - Content blob: `surveyResourceSchema = z.strictObject({ document, settings })`. `document` is a `SurveyDocument` from the `vue-survey-engine-headless` package, and `settings` is the [settings section](../survey-response-controls/design.md). The object is strict, so a save in the `{ model }` shape is refused rather than read as an empty survey. A save that omits its document or its settings is refused: neither key has a default. A document the survey check reports issues on is refused, and every issue is reported at the field it names.
 - The `settings` section is live collection state read outside the publish snapshot: the accepting-responses toggle and closed message ([response controls](../survey-response-controls/design.md)) and the response mode ([response modes](../survey-response-modes/design.md)) share that one object.
 - `contentVersion` is server-incremented by the resource factory, never by the client.
-- The `surveyResponses` table in core holds one row per respondent response, cascading with its survey, with the opaque `participantToken` that joins a response back to a program participant.
+- The `surveyResponses` table in core holds one row per respondent response, cascading with its survey, with the hash of the opaque `participantToken` that joins a response back to a program participant.
 - A survey belongs to no group; grouping resources at all is the deferred [resource groups](../../../deferred/resource/resource-groups/design.md) idea.
 
 ## Capabilities

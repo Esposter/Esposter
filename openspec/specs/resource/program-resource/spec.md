@@ -1,6 +1,6 @@
 ## Purpose
 
-The distribution orchestrator — a resource binding an audience dataset, an email, and a survey; issuing opaque participant tokens; and serving the joined funnel status as a dataset. The platform issues the links and the invites, but sends nothing itself.
+The distribution orchestrator — a resource binding an audience dataset, an email, and a survey; issuing opaque participant links, stored only as their hashes; and serving the joined funnel status as a dataset. The platform issues the links and the invites, but sends nothing itself.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ The owner SHALL be able to set a program's audience, its key column, its email a
 
 ### Requirement: Generating participants issues one link per person, without rotating existing ones
 
-The owner SHALL be able to generate participants, which gives each distinct audience person one survey link, and SHALL NOT change a link that was already issued.
+The owner SHALL be able to generate participants, which gives each distinct audience person one survey link, and SHALL NOT change a link that was already issued. A link is shown once, in the answer that issues it, and is stored only as its hash, so no read gives it back; the owner gets a new one by regenerating it.
 
 #### Scenario: Each person gets one link
 
@@ -35,7 +35,7 @@ The owner SHALL be able to generate participants, which gives each distinct audi
 - **GIVEN** participants were generated and the audience later gains two people
 - **WHEN** the owner generates participants again
 - **THEN** two new participants are added
-- **AND** the existing participants keep their links
+- **AND** the existing participants keep their links, and the answer carries the two new links only
 
 #### Scenario: Generating without a bound survey is refused
 
@@ -49,26 +49,51 @@ The owner SHALL be able to generate participants, which gives each distinct audi
 - **WHEN** both finish
 - **THEN** each person has one link only
 
-### Requirement: The participant links file lists everyone in the program
+### Requirement: The participant links file lists the links a run issued
 
-The owner SHALL be able to download a file of every participant's key value and survey link, including participants generated earlier.
+The owner SHALL be able to download a file of the key value and survey link of each participant a generate run issued, and a run that issues none SHALL download nothing.
 
-#### Scenario: The download includes earlier participants
+#### Scenario: A repeat run downloads nothing
 
-- **GIVEN** participants were generated in an earlier run
-- **WHEN** the owner generates participants again and downloads the file
-- **THEN** the file lists every participant with their link
+- **GIVEN** participants were generated in an earlier run and the audience has not grown
+- **WHEN** the owner generates participants again
+- **THEN** no participant is issued a link
+- **AND** no file is downloaded
+
+#### Scenario: The file lists only the links that run issued
+
+- **GIVEN** the audience gained two people since the earlier run
+- **WHEN** the owner generates participants again
+- **THEN** the file lists those two participants with their new links
+- **AND** no earlier participant's link appears in it
+
+### Requirement: A participant's link is regenerated, retiring the one they held
+
+The owner SHALL be able to regenerate one participant's link. The link it replaces SHALL stop naming that participant, and the answers given under it SHALL stay with the participant.
+
+#### Scenario: A regenerated link replaces the one held
+
+- **GIVEN** a participant holds a link
+- **WHEN** the owner regenerates their link
+- **THEN** the new link is shown once, in the answer to that regeneration
+- **AND** the link they held no longer names their participant
+
+#### Scenario: A response given under the old link still counts
+
+- **GIVEN** a participant responded through their link before it was regenerated
+- **WHEN** the owner opens Status
+- **THEN** that participant is still shown as responded
 
 ### Requirement: Invites and reminders are exported as one personal file per person
 
-The owner SHALL be able to export invites for everyone, or reminders for those who have not yet responded, as a zip of one HTML file per person with merge fields filled and the survey link carrying that person's link.
+The owner SHALL be able to export invites for everyone, or reminders for those who have not yet responded, as a zip of one HTML file per person with merge fields filled and the survey link carrying a new link issued for that person, which retires the one already sent.
 
 #### Scenario: Exporting invites gives each person a filled file
 
 - **GIVEN** the email's merge fields match the audience columns
 - **WHEN** the owner exports invites
 - **THEN** the zip holds one HTML file per participant
-- **AND** each file shows that participant's audience values and their survey link
+- **AND** each file shows that participant's audience values and their new survey link
 
 #### Scenario: Exporting reminders covers only those who have not responded
 
@@ -107,7 +132,7 @@ The participant links file and the invite files SHALL neutralise any key value t
 
 ### Requirement: The status view shows who has responded, without showing links
 
-The status view SHALL list each participant's key value, when they were added and whether they responded, and SHALL NOT show any participant's link.
+The status view SHALL list each participant's key value, when they were added and whether they responded, and SHALL NOT show any participant's link. Each row offers a regenerate action for its participant's link instead.
 
 #### Scenario: The status view lists participants with their response state
 
@@ -126,7 +151,7 @@ The status view SHALL list each participant's key value, when they were added an
 
 - **GIVEN** the owner opens Status
 - **WHEN** they look at the participant rows
-- **THEN** no participant's survey link is shown
+- **THEN** no participant's survey link is shown, and each row offers to regenerate it
 
 ### Requirement: A response through a participant's link is matched to that participant
 

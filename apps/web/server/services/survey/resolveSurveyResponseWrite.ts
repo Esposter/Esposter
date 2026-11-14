@@ -19,9 +19,9 @@ import { SurveyAnswerValidationMode, validateSurveyAnswers } from "vue-survey-en
 export const resolveSurveyResponseWrite = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-  participantToken: SurveyResponseInResource["participantToken"],
+  participantToken: string,
   { isDraft, model }: Pick<CreateSurveyResponseInput, "isDraft" | "model">,
-): Promise<SurveyResponseInResource["participantToken"]> => {
+): Promise<SurveyResponseInResource["participantTokenHash"]> => {
   const survey = await readLiveSurvey(db, surveyId);
 
   const { isAcceptingResponses, responseMode } = await readSurveySettings(surveyId);
@@ -33,7 +33,11 @@ export const resolveSurveyResponseWrite = async (
       "CONFLICT",
     );
 
-  const resolvedParticipantToken = await SurveyResponseModeValidatorMap[responseMode](db, surveyId, participantToken);
+  const resolvedParticipantTokenHash = await SurveyResponseModeValidatorMap[responseMode](
+    db,
+    surveyId,
+    participantToken,
+  );
   // The write is checked against the publication a respondent is served now, not the working copy the owner may have edited since
   if (!survey.publication) throw getNotFoundError(DatabaseEntityType.ResourcePublication, surveyId);
   const publishedContent = await readSnapshotVersionContent(
@@ -55,5 +59,5 @@ export const resolveSurveyResponseWrite = async (
       DatabaseEntityType.SurveyResponse,
       `Answer to "${issue.name}": ${issue.message}`,
     );
-  return resolvedParticipantToken;
+  return resolvedParticipantTokenHash;
 };

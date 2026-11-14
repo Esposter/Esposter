@@ -12,8 +12,8 @@ import { SurveyResponseModeValidatorMap } from "#server/services/survey/SurveyRe
 export const resolveSurveyResponseRead = async (
   db: Context["db"],
   surveyId: ResourceInResource["id"],
-  participantToken: SurveyResponseInResource["participantToken"],
-): Promise<SurveyResponseInResource["participantToken"]> => {
+  participantToken: string,
+): Promise<SurveyResponseInResource["participantTokenHash"]> => {
   await readLiveSurvey(db, surveyId);
 
   const { responseMode } = await readSurveySettings(surveyId);

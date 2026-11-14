@@ -13,12 +13,12 @@ flowchart LR
   VIEW -->|"Identified — token present"| FORM["form renders"]
   VIEW -->|"Identified — no token"| GATE["token-required state"]
   OPEN & FORM -->|"createSurveyResponse with participantToken"| VALIDATE["SurveyResponseModeValidatorMap<br/>one arm per mode"]
-  VALIDATE -->|"Anonymous: store empty token"| ST[("surveyResponses<br/>participantToken")]
+  VALIDATE -->|"Anonymous: store empty token"| ST[("surveyResponses<br/>participantTokenHash")]
   VALIDATE -->|"Identified: the token must name a participant<br/>of a program bound to this survey"| ST
 ```
 
 - **Setting** — `responseMode` joins the survey content `settings` section alongside the [response controls](../survey-response-controls/design.md) toggle. One settings object, one write path, one `contentVersion`. Default `Anonymous`.
-- **Row** — a `surveyResponses` row carries `participantToken` (an opaque UUID string, default `""`). It is deliberately **not** a SurveyResponses dataset column: raw tokens mean nothing to a human. An Identified survey's respondent column carries the participant's `publicId` instead ([dataset CSV export](../dataset-csv-export/design.md)). Client code never interprets tokens.
+- **Row** — a `surveyResponses` row carries `participantTokenHash`, the SHA-256 of the participant token it was given under (default `""`). The token itself is never stored, so a response names its participant without holding the credential that opens it. It is deliberately **not** a SurveyResponses dataset column: raw tokens mean nothing to a human. An Identified survey's respondent column carries the participant's `publicId` instead ([dataset CSV export](../dataset-csv-export/design.md)). Client code never interprets tokens.
 - **Respondent page** — reads `?t=` once on load and threads it through create and update. In Identified mode with no token it renders a token-required state.
 - **Validation** — in `resolveSurveyResponseWrite`, the mode selects one arm of `SurveyResponseModeValidatorMap`. Anonymous strips the token to `""`, so a stale participant link into an anonymous survey still works and just carries nothing. Identified resolves the token against the participant table of a program **bound to this survey** — one holding a `Survey` link to it in the [resource-link index](../../architecture/resource-links/design.md), which a program reading the survey only as its audience does not — which makes a missing token, a forged token, and another survey's token all fail identically, so the response is never an oracle for probing valid tokens. Mode changes take effect live, because they live in working settings rather than the publish snapshot.
 - **Resume** — an Identified update must carry the token it started with; swapping tokens mid-response is a forgery and is rejected. The resolved token is what gets written, never the caller's, so a stale token cannot ride an Anonymous write. A resume reads through `resolveSurveyResponseRead`, which refuses a recycle-binned survey in either mode, as the write boundary does, so a deleted survey's answers stay unreadable to respondents until it is restored or purged.
@@ -27,14 +27,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                                  | Role                                      |
-| --------------------------------------------------------------------- | ----------------------------------------- |
-| `packages/db-schema/src/models/survey/SurveyResponseMode.ts`          | the mode values                           |
-| `packages/db-schema/src/schema/resource/surveyResponsesInResource.ts` | the `participantToken` column             |
-| `apps/web/shared/models/resource/survey/SurveySettings.ts`            | `responseMode` on the settings section    |
-| `apps/web/server/services/survey/SurveyResponseModeValidatorMap.ts`   | one validation arm per mode               |
-| `apps/web/server/services/survey/resolveIdentifiedToken.ts`           | the Identified arm — token must bind here |
-| `apps/web/app/components/Resource/Survey/View.vue`                    | `?t=` passthrough + token-required state  |
+| File                                                                  | Role                                                      |
+| --------------------------------------------------------------------- | --------------------------------------------------------- |
+| `packages/db-schema/src/models/survey/SurveyResponseMode.ts`          | the mode values                                           |
+| `packages/db-schema/src/schema/resource/surveyResponsesInResource.ts` | the `participantTokenHash` column (the hash of the token) |
+| `apps/web/shared/models/resource/survey/SurveySettings.ts`            | `responseMode` on the settings section                    |
+| `apps/web/server/services/survey/SurveyResponseModeValidatorMap.ts`   | one validation arm per mode                               |
+| `apps/web/server/services/survey/resolveIdentifiedToken.ts`           | the Identified arm — token must bind here                 |
+| `apps/web/app/components/Resource/Survey/View.vue`                    | `?t=` passthrough + token-required state                  |
 
 ## Notes
 

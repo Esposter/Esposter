@@ -14,8 +14,35 @@ const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
 const { loadContent } = programStore;
 const { programResource } = storeToRefs(programStore);
-const { exportInvites, generateParticipants, isGeneratePending, isRespondedPartial, readStatus, statusRows } =
-  useProgramStatus();
+const {
+  exportInvites,
+  generateParticipants,
+  isGeneratePending,
+  isRespondedPartial,
+  issuedLink,
+  readStatus,
+  regenerateParticipantLink,
+  statusRows,
+} = useProgramStatus();
+// Exporting and regenerating both issue links afresh, so the links already sent stop working: each waits on a confirm
+const exportScope = ref(ProgramInviteScope.All);
+const isExportConfirmOpen = ref(false);
+const regeneratingKeyValue = ref("");
+const isRegenerateConfirmOpen = ref(false);
+const isIssuedLinkOpen = computed({
+  get: () => issuedLink.value !== "",
+  set: (isOpen) => {
+    if (!isOpen) issuedLink.value = "";
+  },
+});
+const askExportInvites = (scope: ProgramInviteScope) => {
+  exportScope.value = scope;
+  isExportConfirmOpen.value = true;
+};
+const askRegenerateLink = (keyValue: string) => {
+  regeneratingKeyValue.value = keyValue;
+  isRegenerateConfirmOpen.value = true;
+};
 const { data: surveyContent, refresh: refreshSurveyContent } = useQuery(
   () => $trpc.survey.readResourceContent.query({ id: programResource.value.surveyId }),
   { isLazy: true },
@@ -43,8 +70,8 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
       <p text-sm text-muted flex-1 min-w-0 truncate>
         {{ isRespondedPartial ? "at least " : "" }}{{ respondedCount }} of {{ statusRows.length }} responded
       </p>
-      <UiButton @click="exportInvites(ProgramInviteScope.All)">Export invites</UiButton>
-      <UiButton @click="exportInvites(ProgramInviteScope.Awaiting)">Export reminders</UiButton>
+      <UiButton @click="askExportInvites(ProgramInviteScope.All)">Export invites</UiButton>
+      <UiButton @click="askExportInvites(ProgramInviteScope.Awaiting)">Export reminders</UiButton>
       <UiButton :is-pending="isGeneratePending" :variant="UiButtonVariant.Accent" @click="generateParticipants()">
         Generate participants
       </UiButton>
@@ -78,6 +105,13 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
     >
       <template #cell="{ column, item, value }">
         <NuxtTime v-if="column.key === 'addedAt'" :="RESOURCE_DATE_TIME_ATTRIBUTES" :datetime="item.addedAt" />
+        <UiIconButton
+          v-else-if="column.key === 'link'"
+          label="Regenerate link"
+          :meaning="UiIconMeaning.Refresh"
+          :variant="UiButtonVariant.Quiet"
+          @click="askRegenerateLink(item.keyValue)"
+        />
         <span v-else-if="column.key === 'isResponded'" flex gap-2 items-center>
           <UiIcon
             :class="item.isResponded ? 'text-success' : 'text-muted'"
@@ -95,5 +129,34 @@ await Promise.all([readStatus(), programResource.value.surveyId ? refreshSurveyC
         />
       </template>
     </UiDataTable>
+    <UiConfirmDialog
+      v-model="isExportConfirmOpen"
+      confirm-label="Export"
+      title="Export invites"
+      :confirm="() => exportInvites(exportScope)"
+    >
+      <p>
+        Each participant in this file gets a new link, and the links already sent to them stop working. Their answers
+        stay with them.
+      </p>
+    </UiConfirmDialog>
+    <UiConfirmDialog
+      v-model="isRegenerateConfirmOpen"
+      confirm-label="Regenerate"
+      title="Regenerate link"
+      :confirm="() => regenerateParticipantLink(regeneratingKeyValue)"
+    >
+      <p>
+        Regenerate the link for {{ regeneratingKeyValue }}? The link already sent to them stops working. Their answer
+        stays with them.
+      </p>
+    </UiConfirmDialog>
+    <UiDialog v-model="isIssuedLinkOpen" title="Participant link">
+      <p>Copy this link now. It won't be shown again, so if it is lost, regenerate the link for a new one.</p>
+      <div flex gap-2 items-center>
+        <p flex-1 min-w-0 break-all>{{ issuedLink }}</p>
+        <UiCopyButton :source="issuedLink" label="Copy link" />
+      </div>
+    </UiDialog>
   </div>
 </template>

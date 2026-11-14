@@ -37,7 +37,7 @@ export const readSurveyResponsesDataset: DatasetProvider["read"] = async (db, su
     rows: surveyResponses.map((surveyResponse) => {
       const row = toSurveyResponseDatasetRow(questionColumns, surveyResponse.model);
       row[submittedAtName] = toDatasetColumnValue(surveyResponse.updatedAt);
-      if (respondents) row[respondentName] = respondents.respondentIds.get(surveyResponse.participantToken) ?? null;
+      if (respondents) row[respondentName] = respondents.respondentIds.get(surveyResponse.participantTokenHash) ?? null;
       return row;
     }),
     // A respondent past a program read's cap is absent from the column, and every row still carries it as null

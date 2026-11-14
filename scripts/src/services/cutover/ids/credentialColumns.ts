@@ -20,7 +20,7 @@ export const tokenColumnsByTableName: ReadonlyMap<string, TokenColumn[]> = new M
   [getTableName(webhooksInMessage), [{ column: "tokenHash", issues: true, oldColumn: "token" }]],
   [
     getTableName(surveyResponsesInResource),
-    [{ column: "participantToken", issues: false, oldColumn: "participantToken" }],
+    [{ column: "participantTokenHash", issues: false, oldColumn: "participantToken" }],
   ],
 ]);
 
