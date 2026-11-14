@@ -1,0 +1,109 @@
+name: 🚀 Deploy
+# The deploy's order and its cancellation rule are `openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape`.
+# Comments here keep only what that page does not say.
+
+on:
+  workflow_run:
+    workflows:
+      - "🏗️ CI"
+    types:
+      - completed
+    branches:
+      - main
+      - ai/queue
+
+permissions:
+  contents: read
+
+# Per branch and never cancelled: a deploy that has started runs to its end, and a newer commit's deploy waits behind it
+concurrency:
+  group: deploy-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    # Held rather than deployed unless CI's run concluded success: a failed run, or one a newer push cancelled, deploys nothing
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    env:
+      # Nitro reads it while building the web Worker, and wrangler reads it to pick the environment each Worker deploys to
+      CLOUDFLARE_ENV: ${{ fromJSON('{"ai/queue":"dev","main":"prod"}')[github.event.workflow_run.head_branch] }}
+      # The build writes these into the web Worker's runtime config and wrangler vars, so they are set before it runs. The
+      # origins are each environment's hostnames, as the naming conventions give them
+      BASE_URL: ${{ fromJSON('{"ai/queue":"https://dev.esposter.com","main":"https://esposter.com"}')[github.event.workflow_run.head_branch] }}
+      PUBLIC_ASSETS_BASE_URL: ${{ fromJSON('{"ai/queue":"https://assets.dev.esposter.com","main":"https://assets.esposter.com"}')[github.event.workflow_run.head_branch] }}
+    steps:
+      # The commit CI's run tested, not the branch's tip, which a newer push may already have moved
+      - name: 📥 Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+
+      - name: 🔧 Setup Project Dependencies
+        uses: ./.github/actions/setup-project-dependencies
+
+      # Installs the CLI only, since no `command` is given, so the secrets below are read with `pulumi env get`
+      - name: 🔧 Install the Pulumi CLI
+        uses: pulumi/actions@96c7761824268174e0d2a4e8c7d75671eebd24a7 # v7.1.0
+
+      # Two values the web build bakes into its client and server runtime config, so they must exist before the build. Each
+      # is also a Worker secret, put by the step after its Worker deploys. The list is `build` in worker-secrets.json
+      - name: 🔐 Read the build's public configuration
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          for name in $(jq -r '.build[]' .github/worker-secrets.json); do
+            value="$(pulumi env get esposter-infra/prod "pulumiConfig.esposter-infra:${CLOUDFLARE_ENV}_${name}" --value string --show-secrets)"
+            echo "::add-mask::$value"
+            echo "$name=$value" >> "$GITHUB_ENV"
+          done
+
+      - name: 🏗️ Build the web app
+        uses: ./.github/actions/build-app
+        with:
+          package: "@esposter/web"
+
+      - name: 🏗️ Build the functions Worker
+        uses: ./.github/actions/build-app
+        with:
+          package: "@esposter/functions"
+
+      # Reads the install the functions build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
+      - name: 🗄️ Apply the D1 migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ENVIRONMENT: ${{ env.CLOUDFLARE_ENV }}
+        run: pnpm --filter @esposter/db-schema db:migrate
+
+      - name: 🚀 Deploy the functions Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/functions deploy:worker
+
+      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
+      - name: 🔐 Put the functions Worker's secrets
+        uses: ./.github/actions/put-worker-secrets
+        with:
+          worker: functions
+          directory: apps/functions
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: 🚀 Deploy the web Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/web deploy:worker
+
+      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
+      - name: 🔐 Put the web Worker's secrets
+        uses: ./.github/actions/put-worker-secrets
+        with:
+          worker: web
+          directory: apps/web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

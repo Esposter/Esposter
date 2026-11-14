@@ -20,7 +20,7 @@ One private package, one `prod` stack, `src/` split by provider (`src/cloudflare
 - **Provider.** Every Cloudflare resource is declared with `@pulumi/cloudflare`, imported as a namespace (Provider Imports below).
 - **Names.** An environment's resource is `<env>-<assetType>-esposter-<purpose>` and an account's is `<assetType>-esposter-<purpose>`. `getCloudflareResourceName` and `getCloudflareAccountResourceName` in `packages/db-schema/src/services/cloudflare/` build both, for Pulumi and for the Workers, and `apps/infra/docs/cloudflare/naming-conventions.md` lists the asset types. A Pulumi logical name is that name.
 - **Secrets.** Only in the ESC environment, never in Pulumi config (Settled, above).
-- **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. CI's deploy job runs `wrangler deploy` for both Workers, on `main` for production and `ai/queue` for development (`.github/workflows/CI.yaml`).
+- **Worker code.** Pulumi declares what the Workers bind to — queues, queue consumers, buckets, D1 databases, custom domains — and never ships their code. The Deploy workflow (`.github/workflows/Deploy.yaml`) runs `wrangler deploy` for both Workers, on `main` for production and `ai/queue` for development, once CI's run on that commit succeeds.
 
 ## Resource Files
 

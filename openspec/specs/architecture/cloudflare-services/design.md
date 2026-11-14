@@ -139,7 +139,8 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 | `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                   |
 | `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                            |
 | `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares                |
-| `.github/workflows/CI.yaml`                                                 | the checks and the deploy that runs on `main`                       |
+| `.github/workflows/CI.yaml`                                                 | the checks                                                          |
+| `.github/workflows/Deploy.yaml`                                             | the deploy that runs on `main` and `ai/queue`                       |
 
 ## Sources
 
