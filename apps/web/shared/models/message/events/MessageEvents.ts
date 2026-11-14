@@ -1,14 +1,7 @@
-import type { StandardMessageEntity, UpdateMessageInput } from "@esposter/db-schema";
-import type { SetOptional } from "type-fest";
+import type { RoomMessage } from "@esposter/db-schema";
 
-// The payload of a message update the client applies to its own list
+// The payload of a message update the client applies to its own list: the message named by its room and integer id,
+// with the fields the update changed
 export interface MessageEvents {
-  updateMessage: [
-    [
-      SetOptional<
-        Pick<StandardMessageEntity, "files" | "isEdited" | "isPinned" | "linkPreviewResponse"> & UpdateMessageInput,
-        "files" | "linkPreviewResponse" | "message"
-      >,
-    ],
-  ];
+  updateMessage: [[Partial<RoomMessage> & Pick<RoomMessage, "id"> & { roomId: string }]];
 }

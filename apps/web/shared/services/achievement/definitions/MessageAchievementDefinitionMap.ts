@@ -1,12 +1,10 @@
 // @unocss-include
 import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
-import {
-  deleteMessageInputSchema,
-  MessageAchievementName,
-  messageCompositeKeySchema,
-  updateMessageInputSchema,
-} from "@esposter/db-schema";
+import { MessageAchievementName } from "@esposter/db-schema";
+import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
+import { messageIdentityInputSchema } from "#shared/models/db/message/MessageIdentityInput";
+import { updateMessageInputSchema } from "#shared/models/db/message/UpdateMessageInput";
 import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
 import { contains } from "#shared/services/achievement/conditions/contains";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
@@ -38,7 +36,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
   }),
   [MessageAchievementName.ConversationKeeper]: defineAchievementDefinition({
     amount: 50,
-    condition: property("replyRowKey", Boolean),
+    condition: property("replyToId", Boolean),
     description: "Reply to 50 messages",
     icon: "i-mdi:reply",
     inputSchema: zonedCreateMessageInputSchema,
@@ -140,7 +138,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 10,
     description: "Pin 10 important messages",
     icon: "i-mdi:pin",
-    inputSchema: messageCompositeKeySchema,
+    inputSchema: messageIdentityInputSchema,
     points: 50,
     triggerPath: "message.pinMessage",
   }),
@@ -165,7 +163,7 @@ export const MessageAchievementDefinitionMap = defineAchievementDefinitionMap(Ac
     amount: 1,
     description: "Unpin a message",
     icon: "i-mdi:pin-off",
-    inputSchema: messageCompositeKeySchema,
+    inputSchema: messageIdentityInputSchema,
     points: 5,
     triggerPath: "message.unpinMessage",
   }),

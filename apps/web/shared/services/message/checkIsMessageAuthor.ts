@@ -1,4 +1,4 @@
-import type { MessageEntity, PublicUser } from "@esposter/db-schema";
+import type { PublicUser, RoomMessage } from "@esposter/db-schema";
 
 // The one source of truth for the `isAuthor` half of MessageOperationPermission.Author, so the options menu and
 // `getMessageProcedure` can never disagree about who authored a message. Authorship is the message's own userId
@@ -6,6 +6,6 @@ import type { MessageEntity, PublicUser } from "@esposter/db-schema";
 // Message declares `userId?: undefined`, so an absent author is answered here rather than matching an absent
 // Session at every call site.
 export const checkIsMessageAuthor = (
-  message: Pick<MessageEntity, "userId">,
+  message: Pick<RoomMessage, "userId">,
   userId: PublicUser["id"] | null | undefined,
 ) => Boolean(message.userId) && message.userId === userId;

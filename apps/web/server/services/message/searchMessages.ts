@@ -21,12 +21,12 @@ const getSearchRoomIds = (filters: Filter[], roomId: string): string[] => {
 // Each room ranks its own matches by bm25, and a score is not comparable across rooms, since each room's index counts its
 // own terms. With no text, each room lists its matches newest first, and those lists merge by the message's own time and
 // id, which is exact across rooms
-const interleaveByRank = (lists: RoomMessage[][]): RoomMessage[] => {
+const interleaveByRank = <THit extends RoomMessage>(lists: THit[][]): THit[] => {
   const depth = Math.max(0, ...lists.map(({ length }) => length));
   return Array.from({ length: depth }, (_, rank) => lists.flatMap((list) => list.slice(rank, rank + 1))).flat();
 };
 
-const mergeNewestFirst = (lists: RoomMessage[][]): RoomMessage[] =>
+const mergeNewestFirst = <THit extends RoomMessage>(lists: THit[][]): THit[] =>
   lists
     .flat()
     .toSorted(
@@ -48,9 +48,8 @@ export const searchMessages = async ({
   const results = await fanOutRoomReads(getSearchRoomIds(searchableFilters, roomId), (roomObject) =>
     roomObject.searchMessages({ filters: roomFilters, limit: offset + limit + 1, offset: 0, query }),
   );
-  const roomResults = [...results.values()];
-  const lists = roomResults.map(({ messages }) => messages);
-  const count = roomResults.reduce((total, { count: roomCount }) => total + roomCount, 0);
+  const lists = [...results].map(([roomId, { messages }]) => messages.map((message) => ({ ...message, roomId })));
+  const count = [...results.values()].reduce((total, { count: roomCount }) => total + roomCount, 0);
   const merged = getSearchExpression(query) ? interleaveByRank(lists) : mergeNewestFirst(lists);
   return { count, data: getBasePaginationData(merged.slice(offset), limit) };
 };
