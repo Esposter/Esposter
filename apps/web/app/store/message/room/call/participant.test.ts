@@ -14,7 +14,7 @@ const createSessionParticipant = (): CallParticipant => {
   const { session, user } = getMockSession();
   return {
     id: session.id,
-    image: user.image ?? null,
+    image: user.image ?? "",
     isCameraEnabled: false,
     isHandRaised: false,
     isMuted: false,

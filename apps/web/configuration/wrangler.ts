@@ -20,21 +20,22 @@ import { Environment } from "../shared/models/environment/Environment.ts";
 const toBindingName = (name: string) => name.replaceAll("-", "_").toUpperCase();
 
 // The environment a build is for: CI sets CLOUDFLARE_ENV by its branch, and a build without it is prod. Any other value is
-// a typo that would deploy one environment's bindings under another's name, so it fails the build
+// A typo that would deploy one environment's bindings under another's name, so it fails the build
 export const getBuildCloudflareEnvironment = (): CloudflareEnvironment => {
   const value = process.env.CLOUDFLARE_ENV ?? CloudflareEnvironment.Production;
   const environment = Object.values(CloudflareEnvironment).find(
     (cloudflareEnvironment) => cloudflareEnvironment === value,
   );
   if (!environment)
+    // oxlint-disable-next-line error-handling/no-bare-error -- the Nuxt configuration loads before `@esposter/shared` is built
     throw new Error(`CLOUDFLARE_ENV must be one of ${Object.values(CloudflareEnvironment).join(", ")}, got ${value}`);
   return environment;
 };
 
 // One environment's wrangler block. Wrangler does not inherit a binding, or a var, into an `env` block, so each carries
-// its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A binding's
-// name is the same in both environments, so no code branches on the environment to reach a resource. The vars are the
-// variables the environment's name fixes; the rest of the web Worker's variables are secrets a deploy uploads
+// Its own, and every resource name is the one function both Pulumi and the Workers call for the environment. A binding's
+// Name is the same in both environments, so no code branches on the environment to reach a resource. The vars are the
+// Variables the environment's name fixes; the rest of the web Worker's variables are secrets a deploy uploads
 export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
   const isDevelopment = environment === CloudflareEnvironment.Development;
   // The functions Worker exports the realtime objects and runs them: the web Worker calls each across by its name
@@ -45,7 +46,6 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
   );
   return {
     account_id: CLOUDFLARE_ACCOUNT_ID,
-    name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, CloudflareWorkerPurpose.Web),
     d1_databases: [
       {
         binding: "CORE",
@@ -64,6 +64,7 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
         { class_name: "UserObject", name: "USER", script_name: functionsWorkerName },
       ],
     },
+    name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, CloudflareWorkerPurpose.Web),
     queues: {
       producers: Object.values(QueueJob).map((job) => ({
         binding: QueueJobBindingNameMap[job],
@@ -78,15 +79,19 @@ export const getEnvironmentWrangler = (environment: CloudflareEnvironment) => {
     ratelimits: Object.values(RateLimiterBinding).map((binding) => ({
       name: binding,
       namespace_id: RateLimiterNamespaceIdMap[environment][binding],
-      simple: { limit: RateLimiterPointsMap[binding], period: RATE_LIMITER_DURATION_SECONDS },
+      simple: { limit: RateLimiterPointsMap[binding], period: RATE_LIMITER_DURATION_SECONDS } as const,
     })),
-    vars: {
-      APP_ENV: isDevelopment ? Environment.Development : Environment.Production,
-      // The auth origin is the app's own origin, so better-auth reads the same address the app is served from
-      BASE_URL: process.env.BASE_URL,
-      BETTER_AUTH_URL: process.env.BASE_URL,
-      CLOUDFLARE_ENVIRONMENT: environment,
-      PUBLIC_ASSETS_BASE_URL: process.env.PUBLIC_ASSETS_BASE_URL,
-    },
+    // The addresses come from the build's environment, which CI sets by branch. `nuxt prepare` evaluates this with none
+    // Set, and an unset one is left out rather than written as an undefined var
+    vars: Object.fromEntries(
+      Object.entries({
+        APP_ENV: isDevelopment ? Environment.Development : Environment.Production,
+        // The auth origin is the app's own origin, so better-auth reads the same address the app is served from
+        BASE_URL: process.env.BASE_URL,
+        BETTER_AUTH_URL: process.env.BASE_URL,
+        CLOUDFLARE_ENVIRONMENT: environment,
+        PUBLIC_ASSETS_BASE_URL: process.env.PUBLIC_ASSETS_BASE_URL,
+      }).flatMap(([name, value]) => (value === undefined ? [] : [[name, value] as const])),
+    ),
   };
 };

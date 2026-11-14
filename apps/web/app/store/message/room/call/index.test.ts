@@ -87,7 +87,7 @@ describe(useCallStore, () => {
           session.id,
           {
             id: session.id,
-            image: user.image ?? null,
+            image: user.image ?? "",
             isCameraEnabled: false,
             isHandRaised: false,
             isMuted: false,

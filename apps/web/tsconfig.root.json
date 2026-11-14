@@ -2,6 +2,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "include": [
     ".nuxt/nuxt.node.d.ts",
+    "app/types/cloudflareWorkers.d.ts",
     "*.ts",
     "configuration/**/*.ts",
     "scripts/**/*.ts",

@@ -13,10 +13,17 @@ export default defineEventHandler(async (event) => {
   const object = await getBucket(storageBucket).get(key);
   if (!object) throw createError({ status: 404 });
 
-  // R2 writes the object's own content type, encoding and the rest of its stored HTTP metadata
-  const headers = new Headers();
-  object.writeHttpMetadata(headers);
-  headers.set("Cache-Control", `public, max-age=${PUBLIC_ASSET_CACHE_MAX_AGE_SECONDS}`);
-  headers.set("ETag", object.httpEtag);
-  return new Response(object.body, { headers });
+  // The object's own stored metadata is written onto the response by name rather than through `writeHttpMetadata`, whose
+  // Workers `Headers` is not the server program's, and the body stream is returned for h3 to send
+  const { contentDisposition, contentEncoding, contentLanguage, contentType } = object.httpMetadata ?? {};
+  const metadataHeaders = {
+    "Content-Disposition": contentDisposition,
+    "Content-Encoding": contentEncoding,
+    "Content-Language": contentLanguage,
+    "Content-Type": contentType,
+  };
+  for (const [name, value] of Object.entries(metadataHeaders)) if (value) event.res.headers.set(name, value);
+  event.res.headers.set("Cache-Control", `public, max-age=${PUBLIC_ASSET_CACHE_MAX_AGE_SECONDS}`);
+  event.res.headers.set("ETag", object.httpEtag);
+  return object.body;
 });
