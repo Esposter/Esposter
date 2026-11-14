@@ -14,10 +14,10 @@ describe(handleCutoverRequest, () => {
   // The room's object as the route reaches it, with its import recorded
   const createEnvironment = () => {
     const importRoom = vi.fn<RoomObjectRpc["importRoom"]>(() => Promise.resolve(summary));
-    const idFromName = vi.fn((name: string) => name);
-    const get = vi.fn(() => ({ importRoom }));
+    const idFromName = vi.fn<(name: string) => string>((name) => name);
+    const get = vi.fn<() => { importRoom: typeof importRoom }>(() => ({ importRoom }));
     const environment = { CUTOVER_SECRET: secret, ROOM: { get, idFromName } };
-    return { environment: environment as unknown as Cloudflare.Env, importRoom, idFromName };
+    return { environment: environment as unknown as Cloudflare.Env, idFromName, importRoom };
   };
 
   const createImportRequest = (body: string, requestSecret = secret) =>
@@ -38,7 +38,7 @@ describe(handleCutoverRequest, () => {
 
     expect(idFromName).toHaveBeenCalledExactlyOnceWith(roomId);
     expect(importRoom).toHaveBeenCalledExactlyOnceWith(emptyCopy);
-    expect(await response.json()).toStrictEqual(summary);
+    await expect(response.json()).resolves.toStrictEqual(summary);
   });
 
   test("a room import with the wrong secret is refused before any room object is reached", async () => {

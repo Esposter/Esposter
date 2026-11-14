@@ -5,7 +5,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
+import { getUserProfileImageBlobName, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -22,7 +22,7 @@ vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/s
 const createObjectCreatedMessage = (key: string) =>
   ({
     bucket: StorageBucket.PublicUserAssets,
-    eventTime: "2026-11-14T00:00:00.000Z",
+    eventTime: new Date(0).toISOString(),
     object: { key, size: 1 },
   }) satisfies R2ObjectCreatedQueueMessage;
 const hasBlob = async (blobName: string) => (await getBucket(StorageBucket.PublicUserAssets).head(blobName)) !== null;

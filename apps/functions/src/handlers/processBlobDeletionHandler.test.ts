@@ -11,9 +11,9 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   MAX_CONCURRENT_BLOB_DELETIONS,
   StorageBucket,
+  storageLedgerInStorage,
   StorageTier,
   StorageTierQuotaMap,
-  storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
 import { v7 } from "uuid";
@@ -32,7 +32,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 // Handed out as a spy so one call can be given a bucket whose delete fails: Miniflare's bucket takes no spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
   const actual = await import("#src/services/storage/getBucket.test");
-  return { ...actual, getBucket: vi.fn(actual.getBucket) };
+  return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
 });
 
 // The owner's meter lives in the app process, so the figure reaches it through the owner's User object
@@ -216,7 +216,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);
-    vi.mocked(getBucket).mockImplementationOnce(() => createDeletingBucket(() => Promise.reject(new Error(" "))));
+    vi.mocked(getBucket).mockReturnValueOnce(createDeletingBucket(() => Promise.reject(new Error(" "))));
 
     await expect(processBlobDeletionHandler(createEvent([blobName]))).rejects.toThrowErrorMatchingInlineSnapshot(
       `[Error:  ]`,
@@ -231,7 +231,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     // Deletes go out a wave of MAX_CONCURRENT_BLOB_DELETIONS names at a time, so the last name is alone in its wave
-    const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_, index) => `blob/${index}`);
+    const blobNames = Array.from({ length: MAX_CONCURRENT_BLOB_DELETIONS + 1 }, (_value, index) => `blob/${index}`);
     const lastBlobName = `blob/${MAX_CONCURRENT_BLOB_DELETIONS}`;
     const bucket = getBucket(StorageBucket.MessageAssets);
     await Promise.all(blobNames.map(async (name) => seedBlob(name)));
@@ -251,7 +251,7 @@ describe(processBlobDeletionHandler, () => {
       ),
     );
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes * blobNames.length });
-    vi.mocked(getBucket).mockImplementationOnce(() =>
+    vi.mocked(getBucket).mockReturnValueOnce(
       createDeletingBucket(async (names) =>
         Array.isArray(names) && names.includes(lastBlobName) ? Promise.reject(new Error(" ")) : bucket.delete(names),
       ),

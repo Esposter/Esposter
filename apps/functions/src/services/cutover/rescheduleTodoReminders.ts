@@ -2,12 +2,13 @@ import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 import { todoReminderContentSchema } from "#src/models/todoReminder/TodoReminderContent";
 import { getContentBlobName } from "@esposter/db";
-import { ResourceType, resourcesInResource } from "@esposter/db-schema";
+import { resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { and, eq, isNull } from "drizzle-orm";
 
-// Gives every incomplete TodoList item with a due date a reminder on its owner's User object, the way the app does when
-// the item is saved. A due date that passed while the estate was frozen is due now. The content is read from the bucket
-// the copy wrote, under the blob name the app reads it by. A resource never saved has no content and no reminder
+// Gives every incomplete TodoList item with a due date a reminder on its owner's User object.
+// The app does the same when the item is saved. A due date that passed while the estate was frozen is due now.
+// The content is read from the bucket the copy wrote, under the blob name the app reads it by.
+// A resource never saved has no content and no reminder
 export const rescheduleTodoReminders = async (
   database: DrizzleD1Database,
   bucket: R2Bucket,

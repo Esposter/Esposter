@@ -14,9 +14,10 @@ import { z } from "zod";
 const roomImportRequestSchema = roomImportSchema.extend({ roomId: z.uuidv7() });
 const roomSummaryRequestSchema = z.object({ roomId: z.uuidv7() });
 
-// The temporary internal routes of the cutover, all deleted at teardown: the reschedule of the copied jobs, and the
-// import and summary of each room's copied history in its object. The only routes the functions Worker answers; every
-// other request is a 404, and every route refuses a request whose secret is not the configured one
+// The temporary internal routes of the cutover are all deleted at teardown.
+// They are the reschedule of the copied jobs, and the import and summary of each room's copied history in its object.
+// The only routes the functions Worker answers.
+// Every other request is a 404, and every route refuses a request whose secret is not the configured one
 export const handleCutoverRequest = async (request: Request, env: Cloudflare.Env): Promise<Response> => {
   const { pathname } = new URL(request.url);
   if (request.method !== "POST" || ![RESCHEDULE_PATH, ROOM_IMPORT_PATH, ROOM_SUMMARY_PATH].includes(pathname))

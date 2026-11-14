@@ -1,4 +1,4 @@
-import type { R2Bucket } from "@cloudflare/workers-types";
+import type { R2Bucket, R2ObjectBody } from "@cloudflare/workers-types";
 import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
@@ -11,9 +11,9 @@ import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   StorageBucket,
+  storageLedgerInStorage,
   StorageTier,
   StorageTierQuotaMap,
-  storageLedgerInStorage,
   usersInAuth,
 } from "@esposter/db-schema";
 import { createHash } from "node:crypto";
@@ -31,7 +31,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 // Handed out as a spy so one call can be given a bucket with only the method under test: Miniflare's bucket takes no spy on its methods
 vi.mock(import("#src/services/storage/getBucket"), async () => {
   const actual = await import("#src/services/storage/getBucket.test");
-  return { ...actual, getBucket: vi.fn(actual.getBucket) };
+  return { ...actual, getBucket: vi.fn<typeof actual.getBucket>(actual.getBucket) };
 });
 
 // The meter lives in the app process, so the figure reaches it through the owner's User object
@@ -47,7 +47,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const containerName = StorageBucket.ResourceAssets;
   const blobName = " ";
   const contentLength = 1;
-  const eventTime = "2026-11-14T00:00:00.000Z";
+  const eventTime = new Date(0).toISOString();
   const createObjectCreatedMessage = (key: string, bucket: StorageBucket = containerName) =>
     ({ bucket, eventTime, object: { key, size: contentLength } }) satisfies R2ObjectCreatedQueueMessage;
   const readStorageBytesUsed = async () =>
@@ -156,8 +156,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await seedResourceAsset(matchingResourceAssetName);
     const resourceAssetsBucket = getBucket(StorageBucket.ResourceAssets);
-    const getSpy = vi.fn((name: string) => resourceAssetsBucket.get(name));
-    vi.mocked(getBucket).mockImplementationOnce(() => createBucketWith({ get: getSpy }));
+    const getSpy = vi.fn<(name: string) => Promise<null | R2ObjectBody>>((name) => resourceAssetsBucket.get(name));
+    vi.mocked(getBucket).mockReturnValueOnce(createBucketWith({ get: getSpy }));
     const errorSpy = vi.spyOn(console, "error");
     await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(matchingResourceAssetName));
 
@@ -195,7 +195,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await seedResourceAsset(mismatchedResourceAssetName);
-    vi.mocked(getBucket).mockImplementationOnce(() =>
+    vi.mocked(getBucket).mockReturnValueOnce(
       createBucketWith({ get: () => Promise.reject(new Error("service unavailable")) }),
     );
 

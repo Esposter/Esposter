@@ -3,35 +3,35 @@ import type { Database } from "@esposter/db-schema";
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
-import { createUser } from "#src/services/shared/createUser.test";
-import { getBucket } from "#src/services/storage/getBucket";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import {
   clearMockRooms,
   getRoomObject,
   openMockRooms,
   readMockRoomTableNames,
 } from "#src/services/room/getRoomObject.test";
+import { createUser } from "#src/services/shared/createUser.test";
+import { getBucket } from "#src/services/storage/getBucket";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { chargeStorageLedgerEntry, getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
   AdminActionType,
   apiKeysInAuth,
-  StorageBucket,
   getSaveBlobName,
   getUserProfileImageBlobName,
   MessageType,
   moderationLogsInMessage,
   programParticipantsInResource,
-  ResourceActivityType,
   resourceActivitiesInResource,
+  ResourceActivityType,
   resourcesInResource,
   ResourceType,
   resourceVersionsInResource,
   roomsInMessage,
   sessionsInAuth,
   SnapshotChannel,
+  StorageBucket,
   storageLedgerInStorage,
   surveyResponsesInResource,
   usersInAuth,
@@ -131,8 +131,8 @@ describe(deleteAccountHandler, () => {
     await mockDb.insert(accountsInAuth).values({ accountId: "accountId", id: v7(), providerId: "providerId", userId });
     await mockDb.insert(sessionsInAuth).values({ expiresAt: new Date(0), id: v7(), token: v7(), userId });
 
-    // The account's owned room, with its own message and reaction, a member's membership, a profile image and a charged
-    // attachment
+    // The account's owned room, with its own message and reaction, a member's membership, and a profile image.
+    // The room's attachment is charged to the account.
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${v7()}`;
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId });
@@ -168,8 +168,8 @@ describe(deleteAccountHandler, () => {
     await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
 
-    // The moderation record names the account in a room the account does not own. Its target is a foreign key with a
-    // cascade, so it goes with the account's row
+    // The moderation record names the account in a room the account does not own.
+    // Its target is a foreign key with a cascade, so it goes with the account's row
     await mockDb
       .insert(moderationLogsInMessage)
       .values({ actorUserId: otherUserId, roomId: memberRoom.id, targetUserId: userId, type: AdminActionType.Warn });
@@ -178,9 +178,10 @@ describe(deleteAccountHandler, () => {
       .insert(moderationLogsInMessage)
       .values({ actorUserId: userId, roomId: memberRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn });
 
-    // Reactions are one row per emoji on a message, holding every reactor to it. In the member room the account alone
-    // reacts to the first message, which the erase takes away; it shares the second with the other account, which keeps
-    // its reactor; the other account alone reacts to the third, which is kept. The owned room's reaction goes with its object
+    // Reactions are one row per emoji on a message, holding every reactor to it.
+    // In the member room the account alone reacts to the first message, which the erase takes away.
+    // The account shares the second with the other account, which keeps its reactor.
+    // The other account alone reacts to the third, which is kept. The owned room's reaction goes with its object
     const soloReactedMessage = await memberRoomObject.createMessage(
       { message, type: MessageType.Message },
       { userId: otherUserId },
@@ -314,9 +315,9 @@ describe(deleteAccountHandler, () => {
     await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
-    // The account's messages in the room it is a member of are erased, and its charged attachment is gone. The other
-    // account's messages stay as they were, and the reaction the account held alone is gone while the one it shared
-    // is left with only the other account
+    // The account's messages in the room it is a member of are erased, and its charged attachment is gone.
+    // The other account's messages stay as they were.
+    // The reaction the account held alone is gone, while the one it shared is left with only the other account
     expect(memberRoomObject.exportUserMessages({ limit: 10, userId })).toStrictEqual([]);
     expect(memberRoomObject.readMessages({ limit: 10 })).toStrictEqual([
       sharedReactedMessage,
@@ -341,8 +342,9 @@ describe(deleteAccountHandler, () => {
     await expect(readBlobNamesUnder(StorageBucket.GenshinAssets, `${userId}/`)).resolves.toStrictEqual([]);
     await expect(readBlobNamesUnder(StorageBucket.ClickerAssets, `${userId}/`)).resolves.toStrictEqual([]);
 
-    // The moderation record that names the account went with the account's row. The account's activity on a resource it
-    // does not own is kept, and its author is cleared, since the trail outlives the person who wrote it
+    // The moderation record that names the account went with the account's row.
+    // The account's activity on a resource it does not own is kept.
+    // Its author is cleared, since the trail outlives the person who wrote it
     await expect(
       mockDb
         .select({ id: moderationLogsInMessage.id })

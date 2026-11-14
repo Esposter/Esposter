@@ -1,7 +1,7 @@
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
-import { StorageBucket, getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema } from "@esposter/db-schema";
+import { getUserProfileImageBlobName, r2ObjectCreatedQueueMessageSchema, StorageBucket } from "@esposter/db-schema";
 
 // A profile image's write SAS outlives the request that minted it, so its blob can land after the account has been
 // Swept. Nothing lists it at that point, so the landing deletes itself. A landing for an account still in use is kept.
