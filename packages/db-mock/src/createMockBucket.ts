@@ -4,7 +4,9 @@ import { Miniflare } from "miniflare";
 
 // An in-memory R2 bucket, the binding a Worker gets, served by Miniflare under the bucket's own name. The instance is
 // handed back beside the bucket so the test that made it can dispose it
-export const createMockBucket = async (bucketName: string) => {
+export const createMockBucket = async (
+  bucketName: string,
+): Promise<{ bucket: R2Bucket; dispose: () => Promise<void> }> => {
   const miniflare = new Miniflare({
     workers: [
       {
@@ -21,6 +23,8 @@ export const createMockBucket = async (bucketName: string) => {
       },
     ],
   });
-  const bucket: R2Bucket = await miniflare.getR2Bucket(bucketName);
+  const miniflareBucket = await miniflare.getR2Bucket(bucketName);
+  // eslint-disable-next-line no-restricted-syntax -- Miniflare types its bucket over undici's `Headers`, which the Workers `R2Bucket`'s iterators do not satisfy; the binding is the same object
+  const bucket = miniflareBucket as unknown as R2Bucket;
   return { bucket, dispose: () => miniflare.dispose() };
 };

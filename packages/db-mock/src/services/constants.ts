@@ -10,12 +10,12 @@ export const CORE_BINDING = "CORE";
 export const STREAMS_BINDING = "STREAMS";
 // The databases the development environment names them by, which a dev server's local D1 file is keyed on. The streams
 // Database has no role in CloudflareDatabaseRole, so its purpose token is spelled here
-export const CORE_DATABASE_NAME = getCloudflareResourceName(
+export const CORE_DATABASE_NAME: string = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.D1Database,
   CloudflareDatabaseRole.Core,
 );
-export const STREAMS_DATABASE_NAME = getCloudflareResourceName(
+export const STREAMS_DATABASE_NAME: string = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.D1Database,
   "streams",
@@ -28,4 +28,4 @@ export const COMPATIBILITY_DATE = "2000-01-01";
 export const DRIZZLE_MIGRATIONS_TABLE = "__drizzle_migrations";
 // The tables an FTS5 virtual table keeps beside itself, named `<table>_<suffix>`. A reset deletes from the virtual table,
 // Which clears these too, and deleting from them directly would corrupt the index
-export const FTS5_SHADOW_TABLE_SUFFIXES = ["config", "content", "data", "docsize", "idx"];
+export const FTS5_SHADOW_TABLE_SUFFIXES: string[] = ["config", "content", "data", "docsize", "idx"];
