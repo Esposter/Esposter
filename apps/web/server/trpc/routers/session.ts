@@ -1,6 +1,7 @@
 import type { SessionSummary } from "#server/models/session/SessionSummary";
 
 import { auth } from "#server/auth";
+import { closeSessionWebSocketPeers } from "#server/services/auth/closeSessionWebSocketPeers";
 import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
 import { readActiveSessions } from "#server/services/auth/readActiveSessions";
 import { router } from "#server/trpc";
@@ -11,7 +12,11 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const sessionRouter = router({
   deleteOtherSessions: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
+    const { session, user } = ctx.getSessionPayload;
+    // Read before the revoke, which leaves nothing to name the sessions it ended by
+    const otherSessions = (await readActiveSessions(ctx.db, user.id)).filter(({ id }) => id !== session.id);
     await auth.api.revokeOtherSessions({ headers: ctx.headers });
+    for (const { id } of otherSessions) closeSessionWebSocketPeers(id);
   }),
   deleteSession: standardAuthedProcedure.input(deleteSessionInputSchema).mutation<void>(async ({ ctx, input }) => {
     const { user } = ctx.getSessionPayload;
@@ -22,6 +27,7 @@ export const sessionRouter = router({
     const session = sessions.find(({ id }) => id === input);
     if (!session) throw getNotFoundError(DatabaseEntityType.Session, input);
     await auth.api.revokeSession({ body: { token: session.token }, headers: ctx.headers });
+    closeSessionWebSocketPeers(session.id);
     // The session's push subscriptions went with the row better-auth just deleted — `pushSubscriptions.sessionId` cascades
   }),
   readSessions: standardAuthedProcedure.query<SessionSummary[]>(async ({ ctx }) => {

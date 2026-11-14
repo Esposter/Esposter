@@ -1,6 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCWebSocketConnection } from "trpc-nuxt-module/runtime/server/models/TRPCWebSocketConnection";
 
+import { readSession } from "#server/services/auth/readSession";
+import { webSocketPeerMap } from "#server/services/auth/webSocketPeerMap";
 import { createCallerFactory } from "#server/trpc";
 import { userRouter } from "#server/trpc/routers/user";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -22,8 +24,15 @@ const runAsConnection = async (
 };
 
 export default definePlugin((nitroApp) => {
-  nitroApp.hooks.hook(WEBSOCKET_OPEN_HOOK, (connection) => runAsConnection(connection, (caller) => caller.connect()));
-  nitroApp.hooks.hook(WEBSOCKET_CLOSE_HOOK, (connection) =>
-    runAsConnection(connection, (caller) => caller.disconnect()),
-  );
+  nitroApp.hooks.hook(WEBSOCKET_OPEN_HOOK, async (connection) => {
+    // Kept under the session it opened as, so a revoke of that session can close the socket and its subscriptions
+    const getSessionPayload = await readSession(connection.context.headers);
+    if (getSessionPayload)
+      webSocketPeerMap.set(connection.peer.id, { peer: connection.peer, sessionId: getSessionPayload.session.id });
+    await runAsConnection(connection, (caller) => caller.connect());
+  });
+  nitroApp.hooks.hook(WEBSOCKET_CLOSE_HOOK, async (connection) => {
+    webSocketPeerMap.delete(connection.peer.id);
+    await runAsConnection(connection, (caller) => caller.disconnect());
+  });
 });

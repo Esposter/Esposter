@@ -4,6 +4,8 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { Session } from "better-auth";
 
 import { createMockSession } from "#server/auth.test";
+import { createMockWebSocketPeer } from "#server/services/auth/createMockWebSocketPeer.test";
+import { webSocketPeerMap } from "#server/services/auth/webSocketPeerMap";
 import { createCallerFactory } from "#server/trpc";
 import {
   createMockContext,
@@ -66,6 +68,7 @@ describe("sessionRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    webSocketPeerMap.clear();
   });
 
   test("reads the caller's unexpired sessions, without the stored address", async () => {
@@ -110,5 +113,33 @@ describe("sessionRouter", () => {
     await caller.deleteOtherSessions();
 
     expect(getMockRevokeOtherSessions()).toHaveBeenCalledExactlyOnceWith({ headers: mockContext.headers });
+  });
+
+  test("closes the sockets of the session it revokes, and of no other", async () => {
+    expect.hasAssertions();
+
+    const revokedPeer = createMockWebSocketPeer();
+    const currentPeer = createMockWebSocketPeer();
+    webSocketPeerMap.set(crypto.randomUUID(), { peer: revokedPeer, sessionId: otherSession.id });
+    webSocketPeerMap.set(crypto.randomUUID(), { peer: currentPeer, sessionId: currentSession.id });
+
+    await caller.deleteSession(otherSession.id);
+
+    expect(revokedPeer.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(currentPeer.close).not.toHaveBeenCalled();
+  });
+
+  test("closes the sockets of every other session it revokes, and not the current one's", async () => {
+    expect.hasAssertions();
+
+    const otherPeer = createMockWebSocketPeer();
+    const currentPeer = createMockWebSocketPeer();
+    webSocketPeerMap.set(crypto.randomUUID(), { peer: otherPeer, sessionId: otherSession.id });
+    webSocketPeerMap.set(crypto.randomUUID(), { peer: currentPeer, sessionId: currentSession.id });
+
+    await caller.deleteOtherSessions();
+
+    expect(otherPeer.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
+    expect(currentPeer.close).not.toHaveBeenCalled();
   });
 });
