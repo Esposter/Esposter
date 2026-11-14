@@ -1,30 +1,24 @@
-import { QueueJobHandlerMap } from "#src/services/queue/QueueJobHandlerMap";
-import { CloudflareAssetType, CloudflareEnvironment, getCloudflareResourceName, QueueJob } from "@esposter/db-schema";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getQueueMessageHandler } from "#src/services/queue/getQueueMessageHandler";
+import { CloudflareEnvironment } from "@esposter/db-schema";
+import { getResultAsync } from "@esposter/shared";
 
-// A batch names its queue in this environment's spelling, so its job is the one whose queue name this environment builds
-// to the same string. The name is never parsed back into a job, so a name that only resembles one is not mistaken for it.
-// One batch is one queue's messages, so its handler is the job's. Each message is acknowledged when its handler resolves
-// and retried when it throws, so one failing message neither holds nor repeats the others. Past the job's retry count the
-// queue sends the message to the job's dead-letter queue, which keeps what failed.
+// A batch names its queue in this environment's spelling, and that name finds the handler for the batch: a job's own, or the
+// dead-letter replay of a job's dead letters. One batch is one queue's messages. Each message is acknowledged when its
+// handling resolves and retried when it throws, so one failing message neither holds nor repeats the others. Past the job's
+// retry count the queue sends the message to the job's dead-letter queue, which keeps what failed until its replay settles it.
 export const handleQueueBatch = async (
   batch: MessageBatch<unknown>,
   environment: CloudflareEnvironment,
 ): Promise<void> => {
-  const job = Object.values(QueueJob).find(
-    (queueJob) => getCloudflareResourceName(environment, CloudflareAssetType.Queue, queueJob) === batch.queue,
-  );
-  if (!job) throw new InvalidOperationError(Operation.Read, batch.queue, "is not a queue this Worker consumes");
-
-  const handler = QueueJobHandlerMap[job];
+  const handleMessage = getQueueMessageHandler(batch.queue, environment);
   await Promise.all(
     batch.messages.map((message) =>
-      getResultAsync(() => handler(message.body)).match(
+      getResultAsync(() => handleMessage(message)).match(
         () => {
           message.ack();
         },
         (error) => {
-          console.error(`${job} failed: `, error);
+          console.error(`${batch.queue} failed: `, error);
           message.retry();
         },
       ),

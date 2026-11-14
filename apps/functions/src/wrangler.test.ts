@@ -19,7 +19,7 @@ interface WranglerEnvironment {
   durable_objects: { bindings: { class_name: string; name: string; script_name?: string }[] };
   migrations: { new_sqlite_classes: string[]; tag: string }[];
   name: string;
-  queues: { producers: { binding: string; queue: string }[] };
+  queues: { consumers: { queue: string }[]; producers: { binding: string; queue: string }[] };
   r2_buckets: { bucket_name: string }[];
   triggers: { crons: string[] };
   vars: { CLOUDFLARE_ENVIRONMENT: string };
@@ -44,15 +44,26 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
       expect(configuration.account_id).toBe(CLOUDFLARE_ACCOUNT_ID);
     });
 
-    test("produces to the notification queue under its environment's queue name", () => {
+    // Every job's queue is produced to, since a dead letter is republished to the queue it failed in
+    test("produces to every job's queue under its environment's queue name", () => {
       expect.hasAssertions();
 
-      expect(wrangler.queues.producers).toStrictEqual([
-        {
-          binding: QueueJobBindingNameMap[QueueJob.ProcessNotification],
-          queue: getCloudflareResourceName(environment, CloudflareAssetType.Queue, QueueJob.ProcessNotification),
-        },
-      ]);
+      expect(wrangler.queues.producers).toStrictEqual(
+        Object.values(QueueJob).map((job) => ({
+          binding: QueueJobBindingNameMap[job],
+          queue: getCloudflareResourceName(environment, CloudflareAssetType.Queue, job),
+        })),
+      );
+    });
+
+    test("consumes every job's dead-letter queue, which its replay drains", () => {
+      expect.hasAssertions();
+
+      expect(wrangler.queues.consumers.map(({ queue }) => queue)).toStrictEqual(
+        Object.values(QueueJob).map((job) =>
+          getCloudflareResourceName(environment, CloudflareAssetType.DeadLetterQueue, job),
+        ),
+      );
     });
 
     test("binds every storage bucket, and the core database by its environment's name and id", () => {

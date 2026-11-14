@@ -3,7 +3,7 @@ import type { QueueJob } from "@esposter/db-schema";
 import { getOrCreate } from "@esposter/shared";
 import { describe } from "vitest";
 
-// Every message sent to the notification queue, in send order. Stands in for the producer binding, which only exists
+// Every message sent to each job's queue, in send order. Stands in for the producer binding, which only exists
 // inside the Worker, so a test reads what a publisher sent without a Workers runtime
 export const MockJobQueueDatabase: Map<QueueJob, unknown[]> = new Map<QueueJob, unknown[]>();
 
@@ -20,6 +20,6 @@ export class MockJobQueue {
   }
 }
 
-export const getJobQueue = (job: QueueJob.ProcessNotification) => new MockJobQueue(job);
+export const getJobQueue = (job: QueueJob) => new MockJobQueue(job);
 
 describe.todo("getJobQueue");
