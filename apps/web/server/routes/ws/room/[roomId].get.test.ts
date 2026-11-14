@@ -1,4 +1,4 @@
-import type { H3Event } from "nuxt/server";
+import type { RequestEvent } from "nuxt/server";
 
 import { TRPCError } from "@trpc/server";
 import { env } from "@esposter/db-mock";
@@ -62,5 +62,5 @@ const createEvent = () => {
     context: { params: { roomId: "11111111-1111-7111-8111-111111111111" } },
     req: new Request(url, { headers: { Upgrade: "websocket" } }),
     url: new URL(url),
-  } as unknown as H3Event;
+  } as unknown as RequestEvent;
 };

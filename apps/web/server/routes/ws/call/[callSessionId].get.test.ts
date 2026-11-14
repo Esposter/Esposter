@@ -1,4 +1,4 @@
-import type { H3Event } from "nuxt/server";
+import type { RequestEvent } from "nuxt/server";
 
 import { env } from "@esposter/db-mock";
 import { describe, expect, test, vi } from "vitest";
@@ -60,5 +60,5 @@ const createEvent = () => {
     context: { params: { callSessionId: "abcdefghijkl" } },
     req: new Request(url, { headers: { Upgrade: "websocket" } }),
     url: new URL(url),
-  } as unknown as H3Event;
+  } as unknown as RequestEvent;
 };

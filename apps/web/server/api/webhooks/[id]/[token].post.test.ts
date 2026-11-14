@@ -1,4 +1,4 @@
-import type { H3Event } from "nuxt/server";
+import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/[id]/[token].post";
 import { generateSecretToken, hashSecretToken, takeOne } from "@esposter/shared";
@@ -36,7 +36,7 @@ const createEvent = (id: string, token: string) =>
       method: "POST",
     }),
     res: { status: 200 },
-  }) as unknown as H3Event;
+  }) as unknown as RequestEvent;
 
 // Answers the lookup as the table would for one row: the row is found only when every condition the query names holds
 const storeWebhook = (webhook: StoredWebhook) =>

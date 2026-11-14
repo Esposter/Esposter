@@ -1,4 +1,4 @@
-import type { H3Event } from "nuxt/server";
+import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/realtimekit.post";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
@@ -31,7 +31,7 @@ const createEvent = (body: ArrayBuffer, signature: string) =>
       method: "POST",
     }),
     res: { status: 200 },
-  }) as unknown as H3Event;
+  }) as unknown as RequestEvent;
 
 describe("api/webhooks/realtimekit", () => {
   const callSessionId = v7();

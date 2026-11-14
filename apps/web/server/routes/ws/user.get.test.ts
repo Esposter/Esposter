@@ -1,4 +1,4 @@
-import type { H3Event } from "nuxt/server";
+import type { RequestEvent } from "nuxt/server";
 
 import { env } from "@esposter/db-mock";
 import { describe, expect, test, vi } from "vitest";
@@ -42,5 +42,5 @@ const createSessionPayload = () =>
 
 const createEvent = () => {
   const url = "https://esposter.com/ws/user?deviceId=33333333-3333-7333-8333-333333333333";
-  return { req: new Request(url, { headers: { Upgrade: "websocket" } }), url: new URL(url) } as unknown as H3Event;
+  return { req: new Request(url, { headers: { Upgrade: "websocket" } }), url: new URL(url) } as unknown as RequestEvent;
 };
