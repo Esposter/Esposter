@@ -1,6 +1,6 @@
 ## Purpose
 
-The single Azure-portal-like UI for every resource — Home, list, marketplace create flow, and a resource page composing capability-aware blades. Every resource type reaches the same explorer, and a type's capabilities decide only which blades and commands it shows.
+The single cloud-portal-like UI for every resource — Home, list, marketplace create flow, and a resource page composing capability-aware blades. Every resource type reaches the same explorer, and a type's capabilities decide only which blades and commands it shows.
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 # Resource
 
-The resource area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one Azure-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a whiteboard are all the same thing to the resource layer — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
+The resource area is the cross-product integration program: **everything is a resource with opt-in capabilities**, surfaced through one cloud-portal-like Resource Explorer at `/resource-explorer`. A sheet, a survey, a program, a todo list, a dashboard, an email, a webpage, and a whiteboard are all the same thing to the resource layer — an identity row, a content blob, and a definition — differing only in which blades and commands their type declares.
 
 The standards the area applies live in architecture: the layer model ([cross-product layer model](../architecture/layer-model/design.md)), the resource model ([resource](../architecture/resource/design.md)), datasets ([dataset](../architecture/dataset/design.md)), and publishing ([publishing](../architecture/publishing/design.md)). The pages in this area describe the product surface built on them.
 
@@ -8,7 +8,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 
 - **Resource** — one D1 identity row + one content object in R2 + one `ResourceDefinitionMap` entry. Single-owner, auth-gated, one `contentVersion` write path.
 - **Capability** — a cross-cutting mechanism a type opts into: **Publishable** (versioned snapshot + public `/view/[type]/[id]`), **DatasetProvider** (serves columns + rows through `dataset.readDataset`), **Portable** (import/export formats), **FileAssets** (hosted binary assets under `{id}/files/…` — see [resource file assets](resource-file-assets/design.md)).
-- **Explorer** — the Azure-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](explorer/design.md).
+- **Explorer** — the cloud-portal-shaped shell: Home landing, `/resource-explorer/all` list, marketplace-style create flow, and a resource page composing blades. See [resource explorer](explorer/design.md).
 - **Blade** — one panel of a resource page, addressed by route segment (`/resource-explorer/[id]/[[blade]]`). Every resource has a built-in Overview; types add their own (Sheet: Data + Settings, Survey: Responses, Program: Setup + Status, TodoList: Items + Calendar) and editor-backed types render their editor inline in the Editor blade.
 - **Dataset** — the read contract that lets one resource consume another's data: a Dashboard visual binds to a `DatasetReference` ([dashboard data binding](dashboard-data-binding/design.md)), an Email binds one for merge fields ([email personalization](email-personalization/design.md)), and a Program both binds one as its audience and serves one as its funnel status ([program resource](program-resource/design.md)).
 

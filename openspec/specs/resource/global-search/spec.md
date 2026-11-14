@@ -1,6 +1,6 @@
 ## Purpose
 
-Azure-portal-faithful resource-explorer search — the command palette's resources scope on the explorer home page, grouped as it is typed, opened from a field-shaped button on Home, keyboard chords, and prefix-match ranking. Search covers resources, services and pages in one palette, with the last row opening the full filtered list.
+Cloud-portal-faithful resource-explorer search — the command palette's resources scope on the explorer home page, grouped as it is typed, opened from a field-shaped button on Home, keyboard chords, and prefix-match ranking. Search covers resources, services and pages in one palette, with the last row opening the full filtered list.
 
 ## Requirements
 

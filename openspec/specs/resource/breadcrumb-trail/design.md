@@ -1,8 +1,8 @@
 # Breadcrumb Trail
 
-The breadcrumb answers **"how did I get here, and how do I get back"** — not "where does this url sit in the route tree". Azure Portal is the reference, and it is worth being exact about what the portal derives its crumbs from, because it decides what is worth copying.
+The breadcrumb answers **"how did I get here, and how do I get back"** — not "where does this url sit in the route tree". The reference is a cloud portal, and it is worth being exact about what the portal derives its crumbs from, because it decides what is worth copying.
 
-**Azure's breadcrumb is two things at once.** The containment part comes out of the url: an ARM resource id is a path — subscription → resource group → provider → resource — so that much is reconstructible from the address, identical for everyone, stable across a refresh. The **browse** part is not. Opening the same resource from the App Services list or from its resource group produces the identical url and a different crumb, so that context lives in the portal's client state — and it is gone the moment you refresh.
+**The cloud portal's breadcrumb is two things at once.** The containment part comes out of the url: a cloud resource id is a path — subscription → resource group → provider → resource — so that much is reconstructible from the address, identical for everyone, stable across a refresh. The **browse** part is not. Opening the same resource from a service's list or from its resource group produces the identical url and a different crumb, so that context lives in the portal's client state — and it is gone the moment you refresh.
 
 We have neither half for free. Our resources have no container (a resource is not _inside_ `/resource-explorer/all`, which is a list view), so deriving crumbs from the route tree would invent an ancestor and stamp `Resource Explorer › All` onto every resource, including one opened from a link. And putting the click path in the url would make two addresses for one resource — worse for sharing, bookmarks and analytics than the thing it buys, and editable by anyone who types.
 

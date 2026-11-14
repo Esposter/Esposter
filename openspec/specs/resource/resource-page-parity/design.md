@@ -12,7 +12,7 @@ The commands on a resource's page, `/resource-explorer/[id]/[[blade]]`: one acti
 
 ## Delete asks, then offers Restore
 
-Delete moves the resource to the [recycle bin](../recycle-bin/design.md), so a plain confirm guards it rather than Azure's "type the resource name to confirm". The blade's Delete asks, sends on the answer and leaves the page for `/all`, and its toast offers a single-use **Restore**, as the `/all` row's delete does. The type-the-name guard stays where a delete is real: the bin's purge ([destructive confirmation](../../architecture/destructive-confirmation/design.md)).
+Delete moves the resource to the [recycle bin](../recycle-bin/design.md), so a plain confirm guards it rather than the cloud portal's "type the resource name to confirm". The blade's Delete asks, sends on the answer and leaves the page for `/all`, and its toast offers a single-use **Restore**, as the `/all` row's delete does. The type-the-name guard stays where a delete is real: the bin's purge ([destructive confirmation](../../architecture/destructive-confirmation/design.md)).
 
 ## Save-conflict surface
 

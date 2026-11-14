@@ -1,6 +1,6 @@
 # Resource Explorer
 
-The single UI for every resource: one list, one resource page with capability-aware blades, one public view route. The shell is driven entirely by `ResourceDefinitionMap` ([resources](../../architecture/resource/design.md)). The table below names each part by the Azure portal's own term, so a reader who knows the portal finds each part under the same name.
+The single UI for every resource: one list, one resource page with capability-aware blades, one public view route. The shell is driven entirely by `ResourceDefinitionMap` ([resources](../../architecture/resource/design.md)). The table below names each part by the cloud portal's own term, so a reader who knows that portal finds each part under the same name.
 
 | Portal term              | Resource Explorer                                                                                  |
 | ------------------------ | -------------------------------------------------------------------------------------------------- |
@@ -58,7 +58,7 @@ flowchart LR
 
 ## Home — `/resource-explorer`
 
-The Azure-portal landing. Not a table — a dashboard of entry points across the page's full width, in the order a visit runs, each a section under its own heading rather than a card:
+The cloud-portal landing. Not a table — a dashboard of entry points across the page's full width, in the order a visit runs, each a section under its own heading rather than a card:
 
 - **Search** — a button drawn as the field it opens, which opens the command palette in its resources scope ([global search](../global-search/design.md)).
 - **Create** — **quick-create tiles** from `CreatableResourceTypes` (icon + title → `/resource-explorer/create/[type]`) under the page's one accent action, **Create a resource** (→ gallery).

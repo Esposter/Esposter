@@ -2,7 +2,7 @@
 
 A **Blueprint** is a resource whose content is a **manifest**: a list of resource entries (each with a type, a name, and full content) plus a list of parameters. **Deploying** a blueprint substitutes the parameter values, creates every entry as a real resource through the standard write paths, and rewires the cross-resource references between them — turning N manual create → configure → bind steps into one parameterized action. It is the platform's answer to "set this whole thing up again, but for the next client": build once, capture, redeploy forever.
 
-The shape is the industry-standard declarative template (ARM/Bicep templates, CloudFormation, Backstage software templates) reduced to its minimum: a manifest, string parameters, and local aliases for cross-entry references. No expression language, no conditions, no deployment engine — substitution plus topological create order, synchronous, in one procedure call.
+The shape is the industry-standard declarative template (CloudFormation, Backstage software templates) reduced to its minimum: a manifest, string parameters, and local aliases for cross-entry references. No expression language, no conditions, no deployment engine — substitution plus topological create order, synchronous, in one procedure call.
 
 ## How it works
 
@@ -66,15 +66,10 @@ Its twin, [`captureBlueprint`](../blueprint-capture/design.md), joins the same r
 
 ## Notes
 
-- **Naming.** _Blueprint_ — a plan you execute. Considered and set aside: **Template** (collides with the merge-field template language in Email/Webpage and with single-resource starter templates), **Stack** (CloudFormation's word, but it names the deployed _output_, not the plan), **Module** (code connotation), **Recipe**/**Kit** (cutesy). The unrelated Azure Blueprints governance product shares the word and carries no baggage here.
+- **Naming.** _Blueprint_ — a plan you execute. Considered and set aside: **Template** (collides with the merge-field template language in Email/Webpage and with single-resource starter templates), **Stack** (CloudFormation's word, but it names the deployed _output_, not the plan), **Module** (code connotation), **Recipe**/**Kit** (cutesy). The unrelated cloud governance product of the same name shares the word and carries no baggage here.
 - **Starter templates.** A single-entry blueprint with no parameters _is_ a starter template, and user-authored templates are that use of the format. Built-in starter blueprints (an authored gallery) remain future work.
 - **Deliberately no engine.** If a manifest needs logic, the answer is a second blueprint, not a language. The extension seam is the manifest schema (typed parameters, entry-count growth), same posture as the [Program](../program-resource/design.md) content schema.
 - **Exact-match id rewiring is safe** because resource ids are UUIDs — capture replaces whole-string matches only, so no risk of corrupting prose that merely mentions an id fragment. Deploy replaces each `{{entry:key}}` token wherever it sits in a string, since a token is written on purpose and names an alias rather than an id.
-- Deployed resources are ordinary resources with no live link back to the blueprint — editing the blueprint never mutates past deployments (exactly ARM's template/deployment split).
+- Deployed resources are ordinary resources with no live link back to the blueprint — editing the blueprint never mutates past deployments (the same template/deployment split cloud resource managers use).
 - The canonical motivating manifest: **survey funnel wave** — audience Sheet + Identified Survey + tokened Email + Program + funnel Dashboard, one `client` parameter in names and email subject. Deploy per client; each wave lands fully wired.
 - **Agentic by design.** A manifest is pure schema-validated JSON deployed through ordinary procedures — the ideal unit for AI authoring: an agent emits a manifest, the platform validates it against every entry type's contentSchema, and deploy is the only side-effectful step. Every schema decision here (explicit tokens, no hidden state, validation before creation) keeps that path open: whatever creates resources — human, form, or model — goes through this same front door.
-
-## Sources
-
-- [Microsoft Learn — Deploy resources with Azure portal](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/deploy-portal) — values entered, reviewed under Review + create, then created.
-- [Microsoft Learn — Parameters in ARM templates](https://learn.microsoft.com/en-us/azure/azure-resource-manager/templates/parameters) — parameter values resolved before any deployment operation starts, and a default used when no value is given.
