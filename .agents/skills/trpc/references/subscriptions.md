@@ -23,15 +23,6 @@ Decide the side once for each event, then keep to it: the same row is never upda
 
 A read whose answer a change could overtake waits for its socket to settle, then reads. `openCall` returns a promise that settles once the call socket's first attempt opens or closes, so a read made after it misses no change (`apps/web/app/store/realtime/connection.ts`). A room socket opens with `after` set to the last message id the page holds, and the room object replays every message sent after that id before it goes live, so a reconnect misses nothing (`apps/functions/src/durableObjects/RoomObject.ts`).
 
-## Room-scoped subscriptions — `getRoomEventSubscription`
+## Room streams are socket routes, not procedures
 
-The shared single-room subscription shape (member check + `roomIdSchema` input + forward `[data, device]` events matching the input room to everyone except the emitting device) is `getRoomEventSubscription(emitter, eventName, getRoomId)` in `server/trpc/procedure/room/`. The member check runs once, when the stream opens, so the stream itself also ends when the subscriber leaves the room — through `onWhileMember` (`server/services/room/`), which every room-scoped stream reads through, including `onCreateMessage`. A subscription whose body would only filter by room id and same-device must use it:
-
-```ts
-onCreateFoo: getRoomEventSubscription(fooEventEmitter, "createFoo", ({ partitionKey }) => partitionKey),
-```
-
-A stream that ends on a departure announced by another emitter composes `onUntilDeparture` (`server/services/events/`), which takes the `onDeparture` subscription that ends it. `onWhileMember` is that composition for a room's leave.
-
-- Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
-- **Deliberately not abstracted**: the bodies of multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.
+No room's live events come through a procedure. The room's object writes its `RoomEvent` frames, and `broadcastRoomEvent` (`server/services/room/`) sends the room's writes to it. The membership check a subscription used to make when it opened is now made when the socket opens, in `apps/web/server/routes/ws/room/[roomId].get.ts` (`assertIsMember`). A departure drops the member's sockets on the room's object (`RoomObject.removeMember`), so no socket outlives its membership.

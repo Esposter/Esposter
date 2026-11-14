@@ -18,7 +18,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 - `references/read-endpoints.md` — when writing a `read*` procedure, its pagination input schema, or the `useRead*` composable that calls it.
 - `references/blob-mutations.md` — when a mutation deletes or replaces a blob, or saves a blob a client read.
 - `references/procedure-arity.md` — when a procedure acts on an entity, or a surface starts acting on a set of them.
-- `references/file-placement.md` — when adding an input schema, a server helper, a shared service or an event emitter.
+- `references/file-placement.md` — when adding an input schema, a server helper, a shared service or a live event.
 - `references/client-calls.md` — when client code calls a procedure.
 - `references/router-structure.md` — when adding a router, a sub-router or a key, or mapping routers and stores to tables.
 - `references/procedure-naming.md` — when naming a procedure, a result type, a socket event or a DB result variable.
@@ -35,7 +35,7 @@ description: Apply when writing tRPC routers, procedures, or router tests. Espos
 
 ## Where the Pieces Live
 
-One input schema file per procedure under `shared/models/db/<feature>/`, even for identical shapes; helpers one per file under `server/services/<feature>/`, a store-shared one under `shared/services/`, a Functions-shared query under `packages/db`, and each emitter under its feature's `events/` (`references/file-placement.md`).
+One input schema file per procedure under `shared/models/db/<feature>/`, even for identical shapes; helpers one per file under `server/services/<feature>/`, a store-shared one under `shared/services/`, a Functions-shared query under `packages/db`, and a live event's union under `packages/db-schema/src/models/realtime/` (`references/file-placement.md`).
 
 ## Client-Side Calling Conventions
 
