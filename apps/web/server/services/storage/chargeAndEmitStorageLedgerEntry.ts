@@ -1,4 +1,4 @@
-import type { StorageBucket, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
+import type { Database, StorageBucket, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
 
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { chargeStorageLedgerEntry } from "@esposter/db";

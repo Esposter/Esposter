@@ -2,8 +2,8 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { PROGRAM_PARTICIPANT_BATCH_SIZE } from "#server/services/program/constants";
+import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
 import { readOwnedResource } from "#server/services/resource/readOwnedResource";
@@ -15,8 +15,8 @@ import { chunk, generateSecretToken, hashSecretToken } from "@esposter/shared";
 import { v7 } from "uuid";
 
 // Idempotent by the audience key value: re-running after the audience grows issues only the missing participants and
-// never replaces an existing credential, because a replaced one would dead-link a link already sent out. The guarantee
-// is the unique constraint on the program and the key, not this read-then-write
+// Never replaces an existing credential, because a replaced one would dead-link a link already sent out. The guarantee
+// Is the unique constraint on the program and the key, not this read-then-write
 export const generateProgramParticipants = async (
   ctx: AuthedContext,
   programId: ResourceInResource["id"],
@@ -46,13 +46,13 @@ export const generateProgramParticipants = async (
   }
   // Only the hash is stored. The credential leaves in this run's answer alone, and no later read can return it again
   const issuedParticipants = await Promise.all(
-    [...newKeyValues].map(async (keyValue) => {
+    Array.from(newKeyValues, async (keyValue) => {
       const token = generateSecretToken();
       return { keyValue, token, tokenHash: await hashSecretToken(token) };
     }),
   );
   // The batches are independent, so they overlap. A participant another run claimed first conflicts and is left out of
-  // this answer: that run issued its credential, and its owner was answered with it
+  // This answer: that run issued its credential, and its owner was answered with it
   const insertedKeyValueSets = await Promise.all(
     chunk(issuedParticipants, PROGRAM_PARTICIPANT_BATCH_SIZE).map(async (batch) => {
       const insertedParticipants = await ctx.db

@@ -1,4 +1,4 @@
-import type { StorageBucket, BlobDeletionQueueMessage } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, StorageBucket } from "@esposter/db-schema";
 
 import { chunkBlobNamesByMessageSize } from "#server/services/queue/chunkBlobNamesByMessageSize";
 import { getJobQueue } from "#server/services/queue/getJobQueue";

@@ -8,24 +8,24 @@ import {
   MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES,
   STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE,
 } from "#shared/services/storage/constants";
+import { notInJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
   QUEUE_DELIVERY_TTL_MS,
   storageLedgerInStorage,
+  StorageTierQuotaMap,
   usersInAuth,
   WRITE_SAS_DURATION_MS,
-  StorageTierQuotaMap,
 } from "@esposter/db-schema";
-import { notInJsonArray } from "@esposter/db";
 import { TRPCError } from "@trpc/server";
 import { and, eq, gt, isNull, lte, ne, or, sql } from "drizzle-orm";
 
 // The gate every upload SAS passes through. A read-then-check would let a client firing many upload requests at once
-// have them all read the same low usage and all pass. So the check is the insert's own guard: one statement inserts
-// every reservation from the user's row only while the quota and the outstanding-reservation cap still hold over the
-// holds other than these, and the batch is atomic, so a refused reserve leaves no hold behind. The counter itself only
-// ever carries bytes that are actually stored, and a hold that has not landed yet lives in the ledger and is summed in
-// here (openspec/specs/resource/storage-quotas/design.md)
+// Have them all read the same low usage and all pass. So the check is the insert's own guard: one statement inserts
+// Every reservation from the user's row only while the quota and the outstanding-reservation cap still hold over the
+// Holds other than these, and the batch is atomic, so a refused reserve leaves no hold behind. The counter itself only
+// Ever carries bytes that are actually stored, and a hold that has not landed yet lives in the ledger and is summed in
+// Here (openspec/specs/resource/storage-quotas/design.md)
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: UserInAuth["id"],
@@ -65,7 +65,7 @@ export const reserveStorageBytes = async (
   )} END`;
   const isWithinQuota = sql`${usersInAuth.id} = ${userId} AND ${usersInAuth.storageBytesUsed} + ${pendingBytes} + ${declaredBytes} <= ${quotaBytes} AND ${pendingReservationCount} + ${reservations.length} <= ${MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES}`;
   // The collectable holds are dropped first, as the write path always did, and their drop stands even when the reserve is
-  // refused: they are holds no event can still settle, so there is nothing to give back by undoing it
+  // Refused: they are holds no event can still settle, so there is nothing to give back by undoing it
   const [, reservedRows] = await db.batch([
     db
       .delete(storageLedgerInStorage)
@@ -92,7 +92,7 @@ export const reserveStorageBytes = async (
             declaredBytes: sql<number>`json_extract(reservation.value, '$.declaredBytes')`.as("declaredBytes"),
             expiresAt: sql<Date>`${expiresAt.getTime()}`.as("expiresAt"),
             reconciledAt: sql<Date | null>`NULL`.as("reconciledAt"),
-            sequencer: sql<string | null>`NULL`.as("sequencer"),
+            sequencer: sql<null | string>`NULL`.as("sequencer"),
             updatedAt: sql<Date>`${now.getTime()}`.as("updatedAt"),
             userId: sql<string>`${userId}`.as("userId"),
           })

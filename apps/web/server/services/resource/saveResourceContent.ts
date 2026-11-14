@@ -21,11 +21,11 @@ import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shar
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  StorageBucket,
   ResourceActivityType,
   resourceLinksInResource,
   resourcesInResource,
   SnapshotReason,
+  StorageBucket,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -123,7 +123,7 @@ export const saveResourceContent = async (
       (storedResourceLinkTarget) => !resourceLinkKeys.has(getResourceLinkKey(storedResourceLinkTarget)),
     );
   // A save's links are a set its content version names. The clear and the write are guarded on that version, so a save
-  // superseded since it established its version clears nothing and writes nothing
+  // Superseded since it established its version clears nothing and writes nothing
   const isCurrentContentVersion = (expectedContentVersion: number) =>
     exists(
       ctx.db
@@ -135,7 +135,7 @@ export const saveResourceContent = async (
   const clearResourceLinks = (where?: ReturnType<typeof isCurrentContentVersion>) =>
     ctx.db.delete(resourceLinksInResource).where(and(eq(resourceLinksInResource.sourceId, id), where));
   // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the one this
-  // save wrote or the one the save that superseded it wrote
+  // Save wrote or the one the save that superseded it wrote
   const writeResourceLinks = (expectedContentVersion: number) => {
     // Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
     const now = Date.now();
@@ -156,12 +156,12 @@ export const saveResourceContent = async (
     ]);
   };
   // The links are cleared before the upload and written after the charge, so they never claim what the blob does not back. A
-  // cleared set rejects the survey's tokens until the next save that lands writes it again — every partial outcome lands there
-  // rather than on a stale set:
+  // Cleared set rejects the survey's tokens until the next save that lands writes it again — every partial outcome lands there
+  // Rather than on a stale set:
   //
   // - the version check loses to a concurrent save: nothing was claimed, so no link is cleared
   // - the upload fails: the version bump is put back and the links are cleared, since for an unbind the content may have landed
-  //   and keeping the old set would be fail-open
+  //   And keeping the old set would be fail-open
   // - it succeeds: the new links are written after, once the content they describe is durable
   //
   // The assets the content embeds, named by the working copy's reference rows before the upload and settled to them
@@ -169,8 +169,8 @@ export const saveResourceContent = async (
   const assetHashes = getSnapshotAssetHashes(serializedContent);
   await reserveWorkingAssets(ctx.db, id, assetHashes);
   // The bump is claimed before the upload, so a save that loses the version check writes no content. A failed upload puts it
-  // back, so a write that did not land never leaves a version every client caches against advanced. A first write has no
-  // version to protect and claims none
+  // Back, so a write that did not land never leaves a version every client caches against advanced. A first write has no
+  // Version to protect and claims none
   let savedResource: ResourceInResource;
   // The rows dropped once the blob has landed, released after the write so a dropped asset is collected like any other
   let removedAssetHashes: string[] = [];
@@ -182,7 +182,7 @@ export const saveResourceContent = async (
     savedResource = { ...resource, contentHash, contentSize };
   } else {
     // One statement for every column the save moves, with the version check part of it so concurrent saves cannot both
-    // pass and silently lose one write
+    // Pass and silently lose one write
     const [updatedResource] = await ctx.db
       .update(resourcesInResource)
       .set({ contentHash, contentSize, contentVersion: contentVersion + 1 })
@@ -222,8 +222,8 @@ export const saveResourceContent = async (
     storedContentSize,
   );
   // Guarded on the version this save established: the bump is what orders two saves, and this write lands after the bump, so
-  // unguarded a save that committed first could overwrite a later one's links. A failed write clears the set rather than
-  // keeping the previous one, which the committed content no longer backs
+  // Unguarded a save that committed first could overwrite a later one's links. A failed write clears the set rather than
+  // Keeping the previous one, which the committed content no longer backs
   if (hasResourceLinksChanged)
     await getResultAsync(() => writeResourceLinks(savedResource.contentVersion)).match(noop, async (error) => {
       await clearResourceLinks();
@@ -233,7 +233,7 @@ export const saveResourceContent = async (
   // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
   // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save. The owner's
-  // tabs hear it, all but the tab that saved it, which names itself in the device header
+  // Tabs hear it, all but the tab that saved it, which names itself in the device header
   const deviceId = readDeviceId(ctx.headers);
   await callUserObjects([savedResource.userId], (userObject) =>
     userObject.saveResourceContent(

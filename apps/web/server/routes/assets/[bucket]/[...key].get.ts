@@ -1,6 +1,6 @@
+import { PUBLIC_ASSET_CACHE_MAX_AGE_SECONDS } from "#server/services/storage/constants";
 import { getBucket } from "#server/services/storage/getBucket";
 import { parsePublicBucket } from "#server/services/storage/parsePublicBucket";
-import { PUBLIC_ASSET_CACHE_MAX_AGE_SECONDS } from "#server/services/storage/constants";
 import { createError, defineEventHandler } from "nuxt/server";
 
 // Serves an object of a public bucket at its stable url, `${PUBLIC_ASSETS_BASE_URL}/{bucket}/{key}`, which the edge caches.

@@ -1,18 +1,19 @@
 import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
+import type { SQL } from "drizzle-orm";
 
 import { mergeMemberPermissionOverride } from "#server/services/room/rbac/mergeMemberPermissionOverride";
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, type SQL } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
 
 // The bitfields are read and merged in JS, since D1 stores them as text and SQL cannot OR or AND them. The write is then
-// compare-and-set on the bits it was merged from: a concurrent override that got there first makes this one lose, and it
-// reads the row again and merges onto that, a bounded number of times. A row with neither field set is the member's roles
-// again, so it is removed rather than kept as an empty entry. Returns the state left behind, both zero when there is no row
+// Compare-and-set on the bits it was merged from: a concurrent override that got there first makes this one lose, and it
+// Reads the row again and merges onto that, a bounded number of times. A row with neither field set is the member's roles
+// Again, so it is removed rather than kept as an empty entry. Returns the state left behind, both zero when there is no row
 export const setMemberPermissionOverride = async (
   db: Context["db"],
   input: UpsertMemberPermissionOverrideInput,
@@ -39,7 +40,7 @@ export const setMemberPermissionOverride = async (
 };
 
 // Whether the write landed: an insert needs the row still absent, an update and a delete need it still holding the
-// bits the merge read. Anything else means another write got there first
+// Bits the merge read. Anything else means another write got there first
 const writeMemberPermissionOverride = async (
   db: Context["db"],
   {
@@ -49,8 +50,8 @@ const writeMemberPermissionOverride = async (
     roomId,
     userId,
   }: {
-    current: MemberPermissionOverride | undefined;
-    isMemberRow: SQL | undefined;
+    current?: MemberPermissionOverride;
+    isMemberRow?: SQL;
     override: MemberPermissionOverride;
     roomId: string;
     userId: string;

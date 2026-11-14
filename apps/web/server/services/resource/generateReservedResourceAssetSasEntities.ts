@@ -7,7 +7,7 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import { createPresignedPutUrl } from "@esposter/db";
-import { StorageBucket, getResourceFileBlobName } from "@esposter/db-schema";
+import { getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
 
 // The write targets for one batch of resource files, each addressed by the hash of its bytes. A file the resource
 // Already holds under its hash, with bytes that hash to it, gets no signature and no quota hold: its blob's last-modified

@@ -2,8 +2,8 @@ import { runSheetCommand } from "#server/services/resource/sheet/runSheetCommand
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { McpScope, ResourceType } from "@esposter/db-schema";
 import { runSheetCommandInputSchema } from "#shared/models/db/resource/sheet/RunSheetCommandInput";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 
 export const sheetRouter = router({
   ...createResourceProcedures(ResourceType.Sheet),

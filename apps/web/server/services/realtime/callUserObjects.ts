@@ -4,7 +4,7 @@ import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Sends one personal event to each person's object, settled independently: a person whose object cannot be reached
-// loses that one event, and the write that raised it has already committed by the time this runs
+// Loses that one event, and the write that raised it has already committed by the time this runs
 export const callUserObjects = (
   userIds: string[],
   call: (userObject: UserObjectRpc) => Promise<void>,

@@ -14,7 +14,7 @@ const getNamedHashes = (versions: Pick<ResourceVersionInResource, "baseHash" | "
 // Segment whole. The released rows are the ones an eviction or an unpublish just deleted; what they named is
 // Subtracted against every surviving row, and the remainder goes to the deletion path that releases its bytes.
 // A query rather than an object read, which is what the base hash is denormalised onto the row for. The rows are read and
-// the objects deleted under the lease, so a write that stores an object and then names it cannot fall between the two
+// The objects deleted under the lease, so a write that stores an object and then names it cannot fall between the two
 export const collectSnapshotObjects = (
   db: Context["db"],
   resourceId: ResourceInResource["id"],

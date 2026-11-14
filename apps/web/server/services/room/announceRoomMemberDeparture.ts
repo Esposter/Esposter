@@ -6,8 +6,8 @@ import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomM
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Every departure from a room, a leave or a removal, drops the member's sockets on the room's object, then tells the
-// members the room has online and the member's own tabs. The member is dropped first, so the members the room reaches
-// are the ones who stayed
+// Members the room has online and the member's own tabs. The member is dropped first, so the members the room reaches
+// Are the ones who stayed
 export const announceRoomMemberDeparture = async ({
   roomId,
   userId,

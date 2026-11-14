@@ -1,9 +1,10 @@
 import type { Dataset } from "#shared/models/dataset/Dataset";
+
 import { readDataset } from "#server/services/dataset/readDataset";
 import { router } from "#server/trpc";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { McpScope } from "@esposter/db-schema";
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
+import { McpScope } from "@esposter/db-schema";
 
 export const datasetRouter = router({
   readDataset: standardAuthedProcedure

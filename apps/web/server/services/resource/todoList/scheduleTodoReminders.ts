@@ -6,10 +6,10 @@ import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Gives the reminder of each item whose due date is new or changed since the last Save, and still in the future, to the
-// resource owner's User object, which replaces the item's row rather than adding one. Diffing keeps repeated saves from
-// rewriting the reminder for an unchanged due date. A reminder that no longer stands — its due date moved to the past,
-// was cleared, completed or removed — is cancelled. A completed item needs no reminder, so reopening it gives one for
-// the date it was given while completed. The diff only sees the immediately-previous save
+// Resource owner's User object, which replaces the item's row rather than adding one. Diffing keeps repeated saves from
+// Rewriting the reminder for an unchanged due date. A reminder that no longer stands — its due date moved to the past,
+// Was cleared, completed or removed — is cancelled. A completed item needs no reminder, so reopening it gives one for
+// The date it was given while completed. The diff only sees the immediately-previous save
 export const scheduleTodoReminders = (
   resource: Pick<ResourceInResource, "id" | "userId">,
   content: ToData<TodoListResource>,

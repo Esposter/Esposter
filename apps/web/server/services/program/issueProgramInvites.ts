@@ -20,8 +20,8 @@ import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { Operation, RoutePath } from "@esposter/shared";
 
 // The invite export: the bound email as compiled, and one invite per participant the scope selects, each issued a new
-// link. A link cannot be read back once issued, so the export issues the links it carries, and the links already sent
-// to those participants stop working. Owner-only, and the one answer that carries links, which reaches the owner alone
+// Link. A link cannot be read back once issued, so the export issues the links it carries, and the links already sent
+// To those participants stop working. Owner-only, and the one answer that carries links, which reaches the owner alone
 export const issueProgramInvites = async (
   ctx: AuthedContext,
   program: ResourceInResource,

@@ -6,7 +6,9 @@ import { SOCKET_IDENTITY_HEADER, SOCKET_IDENTITY_HEADER_PREFIX } from "@esposter
 // Client sent is dropped first, so the object reads only the identity written here
 export const forwardSocket = (stub: DurableObjectStub, request: Request, identity: SocketIdentity) => {
   const headers = new Headers(request.headers);
-  for (const name of [...headers.keys()]) if (name.startsWith(SOCKET_IDENTITY_HEADER_PREFIX)) headers.delete(name);
+  // The names are copied before any is deleted, so the loop does not read the headers it is changing
+  const names = [...headers.keys()];
+  for (const name of names) if (name.startsWith(SOCKET_IDENTITY_HEADER_PREFIX)) headers.delete(name);
   headers.set(SOCKET_IDENTITY_HEADER.deviceId, identity.deviceId);
   headers.set(SOCKET_IDENTITY_HEADER.sessionId, identity.sessionId);
   headers.set(SOCKET_IDENTITY_HEADER.userId, identity.userId);

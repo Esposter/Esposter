@@ -6,8 +6,8 @@ import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A revoked session keeps no socket open on any object the person reaches: their own, each room they are a member of
-// and each call they made or sit in a room of. Each object closes the sessions' sockets on its own, and one object's
-// failure costs that object alone, since the session is already revoked when this runs
+// And each call they made or sit in a room of. Each object closes the sessions' sockets on its own, and one object's
+// Failure costs that object alone, since the session is already revoked when this runs
 export const closeSessionSockets = async (db: Database, userId: string, sessionIds: string[]): Promise<void> => {
   if (sessionIds.length === 0) return;
 

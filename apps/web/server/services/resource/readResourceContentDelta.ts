@@ -7,7 +7,7 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
 } from "#shared/services/resource/constants";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, getWindowLog, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createHash } from "node:crypto";

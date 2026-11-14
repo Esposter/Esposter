@@ -13,7 +13,7 @@ import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { chargeAndCopyBlob } from "@esposter/db";
-import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES, StorageBucket } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,

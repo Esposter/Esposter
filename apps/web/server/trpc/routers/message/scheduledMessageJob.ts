@@ -20,7 +20,7 @@ import { v7 } from "uuid";
 // Both are listed and cancelled here, so the tab reads and writes each kind through this router alone
 export const scheduledMessageJobRouter = router({
   // A reminder is the person's own row, so their object answers first. A miss means the id is a scheduled message, which
-  // its room's object deletes for the sender who scheduled it and for nobody else
+  // Its room's object deletes for the sender who scheduled it and for nobody else
   cancelScheduledMessageJob: standardAuthedProcedure
     .input(scheduledMessageIdentityInputSchema)
     .mutation<void>(async ({ ctx, input: { id, roomId } }) => {
@@ -46,7 +46,7 @@ export const scheduledMessageJobRouter = router({
     return scheduledMessages.length + reminders.length;
   }),
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
-  // to, so only a member of that room can set one
+  // To, so only a member of that room can set one
   scheduleReminder: getMemberProcedure(scheduleReminderInputSchema, "roomId").mutation<ScheduledReminder>(
     async ({ ctx, input }) => {
       const reminder = { id: v7(), roomId: input.roomId, runAt: input.runAt, text: input.text };

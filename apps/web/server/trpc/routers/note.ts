@@ -2,8 +2,8 @@ import { writeNoteMarkdown } from "#server/services/resource/note/writeNoteMarkd
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { McpScope, ResourceType } from "@esposter/db-schema";
 import { writeNoteMarkdownInputSchema } from "#shared/models/db/resource/note/WriteNoteMarkdownInput";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 
 export const noteRouter = router({
   ...createResourceProcedures(ResourceType.Note),

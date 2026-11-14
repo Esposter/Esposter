@@ -3,7 +3,6 @@ import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogIn
 import type { ModerationNoteInRoom } from "#shared/models/db/room/ModerationNoteInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-
 import type { BanInMessage, ModerationLogInMessage, ModerationNoteInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
@@ -41,7 +40,6 @@ import { readModerationNotesCountInputSchema } from "#shared/models/db/moderatio
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-
 import { checkHasPermission } from "@esposter/db";
 import {
   AdminActionType,
@@ -135,8 +133,8 @@ export const moderationRouter = router({
               RoomMemberRemovalAction.Banned,
             );
           // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect that
-          // must not be lost. The purge is one call to the member's room, which tombstones every message they wrote in one
-          // turn, and the blobs those messages named are queued for deletion behind it
+          // Must not be lost. The purge is one call to the member's room, which tombstones every message they wrote in one
+          // Turn, and the blobs those messages named are queued for deletion behind it
           if (input.type === AdminActionType.SoftBan)
             await getResultAsync(async () =>
               publishDeletedMessageFiles(roomId, await useRoomObject(roomId).deleteUserMessages(targetUserId)),
@@ -266,12 +264,13 @@ export const moderationRouter = router({
       page.items.flatMap((item) => (item.actorUserId ? [item.actorUserId, item.targetUserId] : [item.targetUserId])),
     );
     return {
-      ...page,
+      hasMore: page.hasMore,
       items: page.items.map((item) => ({
         ...item,
         actorDisplayName: item.actorUserId ? (displayNameMap.get(item.actorUserId) ?? "") : "",
         targetDisplayName: displayNameMap.get(item.targetUserId) ?? "",
       })),
+      nextCursor: page.nextCursor,
     };
   }),
   readModerationNotes: getPermissionsProcedure(
@@ -301,12 +300,13 @@ export const moderationRouter = router({
         page.items.flatMap(({ actorUserId }) => (actorUserId ? [actorUserId] : [])),
       );
       return {
-        ...page,
+        hasMore: page.hasMore,
         items: page.items.map((note) => ({
           ...note,
           // A note whose author's account is gone has no name to show
           actorDisplayName: note.actorUserId ? (displayNameMap.get(note.actorUserId) ?? "") : "",
         })),
+        nextCursor: page.nextCursor,
       };
     },
   ),

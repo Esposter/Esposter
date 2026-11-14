@@ -4,7 +4,7 @@ import { getStagingContentBlobName } from "#server/services/resource/getStagingC
 import { getBucket } from "#server/services/storage/getBucket";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 
@@ -45,10 +45,10 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
     "staged content does not match its hash",
   );
   // A mismatch is another device's upload landing on the same name between this one's PUT and its commit, which reads as
-  // the same mismatch rather than as bytes the measurement did not describe. The object read back names the etag it holds,
-  // so one that is not the measured version is refused before its bytes are read, and a blob gone since the measurement
-  // answers nothing; both take the mismatch path. The etag is compared rather than probed for a body, since probing a
-  // body's presence consumes it under the local emulator
+  // The same mismatch rather than as bytes the measurement did not describe. The object read back names the etag it holds,
+  // So one that is not the measured version is refused before its bytes are read, and a blob gone since the measurement
+  // Answers nothing; both take the mismatch path. The etag is compared rather than probed for a body, since probing a
+  // Body's presence consumes it under the local emulator
   const compressedObject = await bucket.get(blobName);
   if (compressedObject?.etag !== etag) throw hashMismatchError;
 

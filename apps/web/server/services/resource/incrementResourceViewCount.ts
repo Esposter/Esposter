@@ -7,7 +7,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { sql } from "drizzle-orm";
 
 // One row per resource per UTC day, incremented in one statement, so every view counts exactly once. The read path
-// must never fail or slow because of counting, so a failed increment is logged and that view is dropped
+// Must never fail or slow because of counting, so a failed increment is logged and that view is dropped
 export const incrementResourceViewCount = async (
   db: Context["db"],
   resourceId: ResourceInResource["id"],

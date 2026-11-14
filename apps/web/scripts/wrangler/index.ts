@@ -5,7 +5,7 @@ import { CloudflareEnvironment } from "../../../../packages/db-schema/src/models
 import { getEnvironmentWrangler } from "../../configuration/wrangler.ts";
 
 // The wrangler configuration `predev` applies the core migrations with: the development environment's bindings, with the
-// migrations folder Drizzle writes. It is written under `.wrangler`, which is git-ignored, and not beside the app, because
+// Migrations folder Drizzle writes. It is written under `.wrangler`, which is git-ignored, and not beside the app, because
 // Nitro reads a wrangler file there and merges its arrays into the deploy configuration
 const LOCAL_WRANGLER_DIRECTORY = ".wrangler/local";
 const { d1_databases: databases, ...environmentWrangler } = getEnvironmentWrangler(CloudflareEnvironment.Development);

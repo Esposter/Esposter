@@ -1,7 +1,7 @@
 import type { Database, UserInAuth } from "@esposter/db-schema";
-import { StorageTierQuotaMap } from "@esposter/db-schema";
 
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { StorageTierQuotaMap } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Best-effort by construction, and it has to be: everything this announces is already durable by the time it

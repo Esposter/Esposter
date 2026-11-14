@@ -2,7 +2,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { touchResourceAssetBlob } from "#server/services/resource/touchResourceAssetBlob";
 import { getBucket } from "#server/services/storage/getBucket";
-import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES, StorageBucket } from "@esposter/db-schema";
 import { settleAll } from "@esposter/shared";
 
 // Every asset a write is about to name that is still stored is touched rather than only checked, so its grace window

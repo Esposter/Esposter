@@ -6,8 +6,8 @@ import { takeOne } from "@esposter/shared";
 import { count, sql } from "drizzle-orm";
 
 // The rows a filter matches, counted no further than `limit`. A count over a whole table walks every row it matches, so
-// a count a render path or an unbounded list pays for is bounded here, and a caller that needs to tell exactly the limit
-// from beyond it asks for one past the cap
+// A count a render path or an unbounded list pays for is bounded here, and a caller that needs to tell exactly the limit
+// From beyond it asks for one past the cap
 export const readCappedCount = async (
   db: Context["db"],
   table: SQLiteTable,

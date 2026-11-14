@@ -5,9 +5,9 @@ import { resourceVersionAssetsInResource, resourceVersionsInResource } from "@es
 import { and, eq, sql } from "drizzle-orm";
 
 // The two statements that delete the versions a condition selects, in the order they must run: the reference rows are
-// read first, because they go with their versions by cascade. Returned rather than run, so the caller batches them with
-// whatever must commit with them — an unpublish with its publication row. An absent condition selects nothing, since
-// it would otherwise match every version the table holds
+// Read first, because they go with their versions by cascade. Returned rather than run, so the caller batches them with
+// Whatever must commit with them — an unpublish with its publication row. An absent condition selects nothing, since
+// It would otherwise match every version the table holds
 export const getSnapshotVersionDeletes = (db: Context["db"], condition: SQL | undefined) => {
   const selection = condition ?? sql`0`;
   return [

@@ -10,7 +10,7 @@ import { TRPCError } from "@trpc/server";
 import { env } from "cloudflare:workers";
 
 // A rate limit binding answers only whether a key is within its budget, so a refusal is the whole answer: the points left and
-// the time to the reset are not known to the Worker, and no rate limit header is written
+// The time to the reset are not known to the Worker, and no rate limit header is written
 export const getRateLimitedMiddleware = (type: RateLimiterType) =>
   middleware(async ({ ctx, next, path }) => {
     const getSessionPayload = ctx.getSessionPayload ?? (await readSession(ctx.headers, ctx.responseHeaders));

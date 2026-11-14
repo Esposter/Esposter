@@ -4,7 +4,7 @@ import { createParticipant } from "#server/services/message/call/createParticipa
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, jsonDateParse } from "@esposter/shared";
 import { defineEventHandler } from "nuxt/server";
 import { z } from "zod";
 
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     async (isVerified) => {
       if (!isVerified) return getInvalidWebhookResponse(401);
       const { data: webhookEvent, success } = realtimeKitWebhookSchema.safeParse(
-        JSON.parse(new TextDecoder().decode(body)),
+        jsonDateParse(new TextDecoder().decode(body)),
       );
       if (!success) return getInvalidWebhookResponse(400);
 

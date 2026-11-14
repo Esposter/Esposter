@@ -14,25 +14,26 @@ import { noop } from "@esposter/shared";
 // It encoded. Deletion goes through the published event rather than a direct delete, because that path already
 // Deletes and releases the ledger entry as one retried unit, and a bare delete would leave the object's bytes
 // Charged to the owner forever
-export const createSnapshotObjectStore = async (resourceId: ResourceInResource["id"]): Promise<ObjectStore> => {
-  const bucket = getBucket(StorageBucket.ResourceAssets);
-  return {
-    delete: (keys) =>
-      publishBlobDeletion(
-        StorageBucket.ResourceAssets,
-        keys.map((key) => getSnapshotObjectBlobName(resourceId, key)),
-      ).match(noop, console.error),
-    read: async (key) => {
-      const object = await bucket.get(getSnapshotObjectBlobName(resourceId, key));
-      if (object) return Buffer.from(await object.arrayBuffer());
-      else return undefined;
-    },
-    write: async (key, bytes) => {
-      const stored = await bucket.put(getSnapshotObjectBlobName(resourceId, key), bytes, {
-        onlyIf: { etagDoesNotMatch: "*" },
-      });
-      // Null when the object is already stored under its own address, by this write's twin
-      return stored !== null;
-    },
-  };
-};
+export const createSnapshotObjectStore = (resourceId: ResourceInResource["id"]): Promise<ObjectStore> =>
+  Promise.try((): ObjectStore => {
+    const bucket = getBucket(StorageBucket.ResourceAssets);
+    return {
+      delete: (keys) =>
+        publishBlobDeletion(
+          StorageBucket.ResourceAssets,
+          keys.map((key) => getSnapshotObjectBlobName(resourceId, key)),
+        ).match(noop, console.error),
+      read: async (key) => {
+        const object = await bucket.get(getSnapshotObjectBlobName(resourceId, key));
+        if (object) return Buffer.from(await object.arrayBuffer());
+        else return undefined;
+      },
+      write: async (key, bytes) => {
+        const stored = await bucket.put(getSnapshotObjectBlobName(resourceId, key), bytes, {
+          onlyIf: { etagDoesNotMatch: "*" },
+        });
+        // Null when the object is already stored under its own address, by this write's twin
+        return stored !== null;
+      },
+    };
+  });

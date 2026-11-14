@@ -6,7 +6,7 @@ import { MessageType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The call's summary line, written by the departure that ends a room call: its duration, in the thread the call ran in or
-// else the room. A standalone call has no room and writes none, and a departure that did not end the call writes none
+// Else the room. A standalone call has no room and writes none, and a departure that did not end the call writes none
 export const writeCallSummary = (
   db: Context["db"],
   callSessionId: string,

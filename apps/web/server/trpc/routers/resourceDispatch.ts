@@ -6,6 +6,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
+
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
@@ -15,11 +16,11 @@ import { noteRouter } from "#server/trpc/routers/note";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
-import { McpScope, ResourceType } from "@esposter/db-schema";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
 import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { McpScope, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // The file procedures each type with file assets generates, called the same way

@@ -10,8 +10,8 @@ import { inJsonArray } from "@esposter/db";
 import { roomsInMessage, ScheduledMessageJobType } from "@esposter/db-schema";
 
 // The Scheduled tab's rows are both kinds of scheduled item, each held where its owner is: the person's reminders in their
-// own object, and their scheduled messages in the rooms they are for, indexed in their object. The page is those merged,
-// soonest first, and a row whose room is gone is left out
+// Own object, and their scheduled messages in the rooms they are for, indexed in their object. The page is those merged,
+// Soonest first, and a row whose room is gone is left out
 export const readMyScheduledMessageJobs = async (
   db: Context["db"],
   userId: string,

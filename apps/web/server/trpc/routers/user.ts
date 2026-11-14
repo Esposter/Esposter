@@ -1,4 +1,5 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
+import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   ApiKeyPermissions,
   DataExportInUser,
@@ -8,21 +9,20 @@ import type {
   UserSettingsInMessage,
   UserStatusInMessage,
 } from "@esposter/db-schema";
-import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type { SetNonNullable } from "type-fest";
+
 import { auth } from "#server/auth";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { readCallBackgroundBlobs } from "#server/services/message/call/readCallBackgroundBlobs";
-import { getDetectedUserStatus } from "@esposter/db-schema";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { router } from "#server/trpc";
@@ -31,6 +31,16 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
+import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
+import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
+import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
+import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
+import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
+import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
+import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
+import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
+import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
+import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import {
   createApiKeyInputSchema,
   DatabaseEntityType,
@@ -41,6 +51,7 @@ import {
   DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
+  getDetectedUserStatus,
   getMimeCategory,
   getUserProfileImageBlobName,
   MimeCategory,
@@ -53,16 +64,6 @@ import {
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
-import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
-import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
-import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
-import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
-import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsInput";
-import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
-import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
-import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 

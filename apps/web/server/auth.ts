@@ -46,7 +46,7 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
   plugins: [apiKeyPlugin],
   // Off: better-auth's limiter keeps its counts in each isolate's memory. The auth route budgets these endpoints through a binding
-  // instead (`server/api/auth/[...].ts`)
+  // Instead (`server/api/auth/[...].ts`)
   rateLimit: { enabled: false },
   socialProviders: {
     facebook: { clientId: process.env.FACEBOOK_CLIENT_ID, clientSecret: process.env.FACEBOOK_CLIENT_SECRET },

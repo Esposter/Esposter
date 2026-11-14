@@ -1,5 +1,5 @@
-import type { Context } from "#server/trpc/context";
 import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyResponseModeValidator";
+import type { Context } from "#server/trpc/context";
 
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
@@ -24,7 +24,7 @@ export const resolveIdentifiedToken: SurveyResponseModeValidator = async (
   // And only an actual purge — not a recoverable soft-delete — should invalidate them.
   const boundProgramIds = await readBoundProgramIds(db, survey);
   // The token is unique across every program, so one indexed lookup answers it, and the bound programs decide whether
-  // its issuer may answer this survey. The lookup is by the hash the participant row stores, never the credential
+  // Its issuer may answer this survey. The lookup is by the hash the participant row stores, never the credential
   const participantTokenHash = await hashSecretToken(participantToken);
   const participants =
     boundProgramIds.length === 0

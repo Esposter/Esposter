@@ -7,9 +7,9 @@ import { chunk, generateSecretToken, hashSecretToken } from "@esposter/shared";
 import { and, eq, exists } from "drizzle-orm";
 
 // Replaces each participant's credential with a new one, and re-keys the responses it answered under to the new hash, so
-// its answers stay its own. The two writes are one batch per participant, so they land together or not at all, and the
-// response write only matches once the participant write has landed. A participant whose credential moved since it was
-// read matches nothing, so it is left as it is and is not in the result. The old credential stops working with the write
+// Its answers stay its own. The two writes are one batch per participant, so they land together or not at all, and the
+// Response write only matches once the participant write has landed. A participant whose credential moved since it was
+// Read matches nothing, so it is left as it is and is not in the result. The old credential stops working with the write
 export const regenerateProgramParticipantTokens = async (
   db: Context["db"],
   participants: Pick<ProgramParticipantInResource, "id" | "tokenHash">[],

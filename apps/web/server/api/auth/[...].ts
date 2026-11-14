@@ -6,9 +6,9 @@ import { ID_SEPARATOR } from "@esposter/shared";
 import { env } from "cloudflare:workers";
 import { createError, defineEventHandler, getRequestIP } from "nuxt/server";
 
-// better-auth's own limiter is off (`server/auth.ts`): it keeps its counts in the memory of one isolate, which no other shares,
-// so the auth endpoints are budgeted here through a binding as a procedure is. Keyed on the endpoint and the address, as an
-// anonymous procedure is
+// `better-auth`'s own limiter is off (`server/auth.ts`): it keeps its counts in the memory of one isolate, which no other shares,
+// So the auth endpoints are budgeted here through a binding as a procedure is. Keyed on the endpoint and the address, as an
+// Anonymous procedure is
 export default defineEventHandler(async (event) => {
   if (IS_PRODUCTION) {
     const address = getIpAddress(event.req.headers, getRequestIP(event) ?? "");

@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const getSessionPayload = await readSession(event.req.headers);
   if (IS_PRODUCTION) {
     // Its own binding, because one published page issues a request per embedded asset and that spend must not come
-    // out of the caller's API budget (see openspec/specs/architecture/rate-limiting/design.md)
+    // Out of the caller's API budget (see openspec/specs/architecture/rate-limiting/design.md)
     const rateLimiterKey = getSessionPayload?.user.id ?? getIpAddress(event.req.headers, getRequestIP(event) ?? "");
     if (!rateLimiterKey) console.warn(RATE_LIMITER_BYPASS_LOG_MESSAGE);
     else if (!(await env.RATE_LIMITER_ASSET.limit({ key: rateLimiterKey })).success) throw createError({ status: 429 });

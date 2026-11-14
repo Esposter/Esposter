@@ -10,21 +10,21 @@ import { inJsonArray } from "@esposter/db";
 import { roomsInMessage } from "@esposter/db-schema";
 
 // The sender's index names each sent message by its room and id, newest first. Each room's object is asked for the
-// messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
-// from the page, and no other message takes its place
+// Messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
+// From the page, and no other message takes its place
 export const readMySentMessages = async (
   { before, limit }: ReadMySentMessagesInput,
   db: Context["db"],
   userId: string,
 ): Promise<ReadMySentMessagesResult> => {
   const page = getBasePaginationData(await useUserObject(userId).readSentMessages({ before, limit: limit + 1 }), limit);
-  const messageIdsByRoomId = new Map<string, number[]>();
+  const roomIdMessageIdsMap = new Map<string, number[]>();
   for (const { messageId, roomId } of page.items)
-    messageIdsByRoomId.set(roomId, [...(messageIdsByRoomId.get(roomId) ?? []), messageId]);
+    roomIdMessageIdsMap.set(roomId, [...(roomIdMessageIdsMap.get(roomId) ?? []), messageId]);
 
-  const roomIds = [...messageIdsByRoomId.keys()];
+  const roomIds = [...roomIdMessageIdsMap.keys()];
   const messagesByRoomId = await fanOutRoomReads(roomIds, async (roomObject, roomId) => {
-    const messages: RoomMessage[] = await roomObject.readMessagesByIds(messageIdsByRoomId.get(roomId) ?? []);
+    const messages: RoomMessage[] = await roomObject.readMessagesByIds(roomIdMessageIdsMap.get(roomId) ?? []);
     return new Map(messages.map((message) => [message.id, message]));
   });
   const rooms =

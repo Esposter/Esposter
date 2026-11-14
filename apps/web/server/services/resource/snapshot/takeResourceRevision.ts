@@ -3,8 +3,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { readSerializedResourceContent } from "#server/services/resource/readSerializedResourceContent";
 import { chargeSnapshotVersion } from "#server/services/resource/snapshot/chargeSnapshotVersion";
-import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
+import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";

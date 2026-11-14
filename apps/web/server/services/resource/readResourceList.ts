@@ -9,12 +9,12 @@ import { getResourceSearchHits } from "#server/services/resource/getResourceSear
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
-import { getSearchExpression } from "@esposter/shared";
 import { resourcesInResource } from "@esposter/db-schema";
+import { getSearchExpression } from "@esposter/shared";
 import { asc, desc } from "drizzle-orm";
 
 // One offset page of the owner's resources matching the filter. A search ranks its matches first: a name match ahead
-// of a row matched only by a tag, then by bm25, and only then the order the caller asked for, which defaults to newest
+// Of a row matched only by a tag, then by bm25, and only then the order the caller asked for, which defaults to newest
 export const readResourceList = (
   db: Context["db"],
   userId: string,

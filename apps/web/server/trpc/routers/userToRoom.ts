@@ -1,7 +1,7 @@
 import type { UserToRoomInMessage } from "@esposter/db-schema";
 
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { router } from "#server/trpc";

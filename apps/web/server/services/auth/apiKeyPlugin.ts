@@ -1,11 +1,12 @@
 import type { schema } from "@esposter/db-schema";
+
+import { apiKey } from "@better-auth/api-key";
 import {
   API_KEY_NAME_MAX_LENGTH,
   RATE_LIMITER_DURATION_SECONDS,
   RateLimiterBinding,
   RateLimiterPointsMap,
 } from "@esposter/db-schema";
-import { apiKey } from "@better-auth/api-key";
 
 // The keys an agent authenticates with at the MCP endpoint. Shared with the adapter's test so better-auth's schema
 // Check covers the table the app actually writes

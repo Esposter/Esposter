@@ -31,9 +31,9 @@ import { chargeSnapshotVersion } from "#server/services/resource/snapshot/charge
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
 import { getSnapshotVersionDeletes } from "#server/services/resource/snapshot/getSnapshotVersionDeletes";
 import { getSnapshotVersionWrites } from "#server/services/resource/snapshot/getSnapshotVersionWrites";
+import { prepareSnapshotVersion } from "#server/services/resource/snapshot/prepareSnapshotVersion";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
-import { prepareSnapshotVersion } from "#server/services/resource/snapshot/prepareSnapshotVersion";
 import { withResourceObjectLock } from "#server/services/resource/snapshot/withResourceObjectLock";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
@@ -64,7 +64,6 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
 import {
-  StorageBucket,
   DatabaseEntityType,
   ResourceActivityType,
   resourcePublicationsInResource,
@@ -72,6 +71,7 @@ import {
   resourceVersionsInResource,
   selectResourceInResourceSchema,
   SnapshotChannel,
+  StorageBucket,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
 import { and, EmptyFilter, eq, exists, sql } from "drizzle-orm";
@@ -279,7 +279,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // The object and the claim naming it are written under the lease, so a collection cannot free the object between them
         const published = await withResourceObjectLock(ctx.db, id, async () => {
           // The content is stored before anything is claimed, so a failed store claims nothing and the publication never names
-          // a version that was never stored (openspec/specs/resource/resource-version-store/design.md)
+          // A version that was never stored (openspec/specs/resource/resource-version-store/design.md)
           const prepared = await prepareSnapshotVersion(
             ctx.db,
             ctx.resource,
@@ -287,8 +287,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
             JSON.stringify(publishedContent),
           );
           // The claim and the version it names are one batch. The version reads the publication counter the claim has just
-          // bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
-          // version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
+          // Bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
+          // Version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
           const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
           const [publicationRows] = await ctx.db.batch([
             ctx.db
@@ -320,7 +320,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
           id,
         );
         // A version is stored bytes the owner keeps, charged for what its object cost. After the batch, never inside: the
-        // charge locks the ledger row and then the user's, and a batch held open across that waits on locks it is itself holding.
+        // Charge locks the ledger row and then the user's, and a batch held open across that waits on locks it is itself holding.
         // See openspec/specs/resource/storage-quotas/design.md
         await chargeSnapshotVersion(ctx.db, ctx.resource, prepared.writtenVersion);
         // Best-effort: a failed write loses one trail entry, never the publish.
@@ -378,8 +378,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
       async ({ ctx }) => {
         const { id } = ctx.resource;
         // The publication row and the published channel's versions go in one batch, and the versions are selected only while
-        // the publication exists, so a publish landing between them cannot have its new version deleted by this unpublish
-        // while its publication row survives
+        // The publication exists, so a publish landing between them cannot have its new version deleted by this unpublish
+        // While its publication row survives
         const [referenceRows, unpublishedVersions, deletedPublications] = await ctx.db.batch([
           ...getSnapshotVersionDeletes(
             ctx.db,

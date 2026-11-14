@@ -5,9 +5,9 @@ import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getResourceSearchMatch } from "#server/services/resource/getResourceSearchMatch";
-import { getSearchExpression } from "@esposter/shared";
 import { inJsonArray } from "@esposter/db";
 import { resourceAccessesInResource, resourceFavoritesInResource, resourcesInResource } from "@esposter/db-schema";
+import { getSearchExpression } from "@esposter/shared";
 import { and, eq, exists, gte, inArray, isNotNull, isNull, lte, notExists, sql } from "drizzle-orm";
 
 export const getResourcesWhere = (
@@ -35,7 +35,7 @@ export const getResourcesWhere = (
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
     isDeletedOnly ? isNotNull(resourcesInResource.deletedAt) : isNull(resourcesInResource.deletedAt),
     // A name or a tag holding one of the words. The tags are indexed beside the name, so a tag the owner remembers
-    // finds its resource as the name does
+    // Finds its resource as the name does
     searchExpression ? getResourceSearchMatch(searchExpression) : undefined,
     ids ? inJsonArray(resourcesInResource.id, ids) : undefined,
     // Every tag the filter names must be on the resource with that value, each tested against the stored JSON's pairs
