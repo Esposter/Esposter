@@ -25,7 +25,7 @@ A delete confirmation that needs something the shared component lacks adds the c
 
 ## The type-the-name guard
 
-High-stakes deletes add the Azure-portal-style guard by passing `confirmName`, as the recycle bin's purge does:
+High-stakes deletes add the type-the-name guard by passing `confirmName`, as the recycle bin's purge does:
 
 ```vue
 <UiConfirmDialog

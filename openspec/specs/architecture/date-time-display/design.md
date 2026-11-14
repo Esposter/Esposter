@@ -1,6 +1,6 @@
 # Date and time display
 
-A date rendered by a component is formatted twice: once on the server, once again when the client hydrates. Those two runs do not agree. The server formats in the container's locale and timezone (UTC on Azure), the browser in the reader's — so `formatDate(...)`, `toLocaleDateString()` and `useTimeAgo()` in a template produce different text on each side. Vue reports that as `Hydration completed but contains mismatches`, silently re-renders the subtree, and the reader is left looking at the server's clock rather than their own.
+A date rendered by a component is formatted twice: once on the server, once again when the client hydrates. Those two runs do not agree. The server formats in the Worker's locale and timezone (UTC on Cloudflare), the browser in the reader's — so `formatDate(...)`, `toLocaleDateString()` and `useTimeAgo()` in a template produce different text on each side. Vue reports that as `Hydration completed but contains mismatches`, silently re-renders the subtree, and the reader is left looking at the server's clock rather than their own.
 
 **Anything a reader sees is a `<NuxtTime>`.** Formatting a date any other way inside a `.vue` file is a `vue/no-restricted-syntax` error. The one exception is the client-rendered message list, [below](#where-a-format-string-still-belongs).
 

@@ -58,7 +58,7 @@ Three consequences worth knowing:
 
 - **A cache that was never constructed is never invalidated**, and that is correct — it holds nothing stale. Registration happens when the store is first used.
 - **Adding a cached set is one `tags` entry.** Nothing central enumerates caches, so nothing central has to be found and edited.
-- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when Azure's `BlobCreated` event lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread. `userSettings` carries none because the only write that touches the record is `updateUserSettings`, which is answered with the row it just persisted.
+- **Untagged is a decision, and it gets written down.** `storage` carries no tags because its counter only moves when the bucket's object-create notification lands seconds after the PUT — there is no moment a write could invalidate it and read a different number. `threadFollow` carries none because no resource write changes who follows which thread. `userSettings` carries none because the only write that touches the record is `updateUserSettings`, which is answered with the row it just persisted.
 
 ## Why an invalidated cache is re-read, not edited
 

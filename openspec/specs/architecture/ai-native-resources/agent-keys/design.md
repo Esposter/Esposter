@@ -4,7 +4,7 @@ Keys carry scopes, reads are marked read-only and an agent's writes name their k
 
 ## The keys made before scopes
 
-Every key created before scopes was made for the follow-ups, the only tools there were. Each was made with no permissions, which the endpoint reads as no scope, so a drain run on one would be refused every tool. A backfill gives each existing key the `FollowUps` scope and nothing else. The keys live in `auth.apiKeys` in Postgres, which a session cannot reach in production, so the backfill is a data migration applied at startup — an `UPDATE` of every key whose permissions are null to `{"mcp":["FollowUps"]}` — rather than a script run as the `backfills` skill runs one.
+Every key created before scopes was made for the follow-ups, the only tools there were. Each was made with no permissions, which the endpoint reads as no scope, so a drain run on one would be refused every tool. A backfill gave each existing key the `FollowUps` scope and nothing else: an `UPDATE` of every key whose permissions were null to `{"mcp":["FollowUps"]}`, run once against the keys table, `auth_apiKeys` in the `core` D1 database, which a session cannot reach in production. No migration for it remains in the tree.
 
 ## The owner's alone
 
@@ -31,12 +31,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                   | Role                                                                          |
-| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `apps/web/server/models/trpc/Meta.ts`                                                  | `humanOnly` names why a procedure is never served                             |
-| `apps/web/server/services/mcp/getMcpTools.ts`                                          | skips a human-only procedure                                                  |
-| `apps/web/server/services/mcp/getMcpTools.test.ts`                                     | the tools each scope reaches, and no human-only procedure listed as one       |
-| `apps/web/server/trpc/routers/resource.ts`                                             | `purgeResource` declares itself human-only                                    |
-| `apps/web/server/trpc/routers/survey.ts`                                               | response deletion and the respondent procedures declare themselves human-only |
-| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts`                                  | the table the keys live in                                                    |
-| `apps/web/server/db/migrations/20261013003850_api_keys_follow_ups_scope/migration.sql` | the backfill, applied at startup as the migration that owns it                |
+| File                                                  | Role                                                                          |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `apps/web/server/models/trpc/Meta.ts`                 | `humanOnly` names why a procedure is never served                             |
+| `apps/web/server/services/mcp/getMcpTools.ts`         | skips a human-only procedure                                                  |
+| `apps/web/server/services/mcp/getMcpTools.test.ts`    | the tools each scope reaches, and no human-only procedure listed as one       |
+| `apps/web/server/trpc/routers/resource.ts`            | `purgeResource` declares itself human-only                                    |
+| `apps/web/server/trpc/routers/survey.ts`              | response deletion and the respondent procedures declare themselves human-only |
+| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts` | the table the keys live in                                                    |

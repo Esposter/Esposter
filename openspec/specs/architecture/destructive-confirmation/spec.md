@@ -1,6 +1,6 @@
 ## Purpose
 
-Every delete asks first, through one shared dialog — UiConfirmDialog, the answer it owns, the lint rule that holds it, and an opt-in Azure-style type-the-name guard.
+Every delete asks first, through one shared dialog — UiConfirmDialog, the answer it owns, the lint rule that holds it, and an opt-in type-the-name guard.
 
 ## Requirements
 
