@@ -4,7 +4,7 @@ Every resource has an **Activity** blade: created, renamed, saved, published, un
 
 ## How it works
 
-Activity events are message-shaped — high write volume, time-ordered, no joins — so they are rows in a SQLite table in core, read newest first through an index on the resource, creation time and id. The table's foreign key cascades from the resource row, so purging the resource clears its trail with no separate sweep.
+Activity events are message-shaped — high write volume, time-ordered, no joins — so they are rows in a D1 table in the `core` database, read newest first through an index on the resource, creation time and id. The table's foreign key cascades from the resource row, so purging the resource clears its trail with no separate sweep.
 
 Events are emitted inside the `createResourceProcedures` mutations, in the best-effort tail after the primary write ([persist then notify](../../architecture/persist-then-notify/design.md)). Losing an audit line is bad; losing someone's save because an audit line failed is worse.
 
@@ -16,13 +16,13 @@ The `Created`/`Duplicated` entry is the one exception to the fire-and-forget tai
 sequenceDiagram
   participant U as User
   participant P as factory mutation<br/>(rename/save/publish/…)
-  participant PG as Postgres/Blob (primary write)
+  participant DB as D1 / R2 (primary write)
   participant RA as resourceActivities (core)
   participant B as Activity blade
 
   U->>P: mutate
-  P->>PG: primary write
-  PG-->>P: ok
+  P->>DB: primary write
+  DB-->>P: ok
   P--)RA: writeResourceActivity (best-effort,<br/>ContentSaved coalesced per user·key·hour)
   Note over P,RA: an activity failure logs, never fails the mutation
   P-->>U: mutation result
