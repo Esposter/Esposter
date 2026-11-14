@@ -42,7 +42,7 @@ grep -cE "DROP TABLE|DELETE FROM" <migration>.sql   # expect 0
 
 ## Schema changes rebuild tables
 
-SQLite cannot alter most of a column, so drizzle-kit rebuilds the table for a change to a column or a constraint: `PRAGMA foreign_keys=OFF`, a `__new_` table, an `INSERT … SELECT` copy, `DROP TABLE`, `ALTER TABLE … RENAME TO`, `PRAGMA foreign_keys=ON`. `apps/web/server/db/migrations/core/20261114044134_low_the_stranger/migration.sql` is one.
+SQLite cannot alter most of a column, so drizzle-kit rebuilds the table for a change to a column or a constraint: `PRAGMA foreign_keys=OFF`, a `__new_` table, an `INSERT … SELECT` copy, `DROP TABLE`, `ALTER TABLE … RENAME TO`, `PRAGMA foreign_keys=ON`.
 
 The bundles the size tests read grow with a schema change wherever `@esposter/db-schema` is inlined. The bundle-size record that growth moves is regenerated with `pnpm bundle-sizes:gen` only after the rebuild, as `build`'s `references/dist-size.md` sets out. `@esposter/db-mock` applies the migration folders on every `createMockDb`, so no snapshot goes stale.
 

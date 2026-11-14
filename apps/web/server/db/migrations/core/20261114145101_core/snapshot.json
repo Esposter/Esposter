@@ -1,9 +1,9 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "a751070e-dfba-4816-8f40-90e0be75a5cb",
+  "id": "07472549-ed6c-4b63-8748-be78a5afda46",
   "prevIds": [
-    "85bce749-20ad-4fc6-8afd-3380fc4baded"
+    "00000000-0000-0000-0000-000000000000"
   ],
   "ddl": [
     {
@@ -16,10 +16,6 @@
     },
     {
       "name": "app_bookmarks",
-      "entityType": "tables"
-    },
-    {
-      "name": "app_rateLimiterFlexible",
       "entityType": "tables"
     },
     {
@@ -59,14 +55,6 @@
       "entityType": "tables"
     },
     {
-      "name": "message_messageEmojis",
-      "entityType": "tables"
-    },
-    {
-      "name": "message_messages",
-      "entityType": "tables"
-    },
-    {
       "name": "message_moderationLogs",
       "entityType": "tables"
     },
@@ -96,10 +84,6 @@
     },
     {
       "name": "message_rooms",
-      "entityType": "tables"
-    },
-    {
-      "name": "message_scheduledMessageJobs",
       "entityType": "tables"
     },
     {
@@ -402,66 +386,6 @@
       "table": "app_bookmarks",
       "name": "userId",
       "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "createdAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "deletedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "updatedAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "expire",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "key",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "points",
-      "type": "integer",
       "notNull": true,
       "autoincrement": false,
       "default": null,
@@ -1280,6 +1204,16 @@
     },
     {
       "table": "message_callSessions",
+      "name": "meetingId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_callSessions",
       "name": "roomId",
       "type": "text",
       "notNull": false,
@@ -1295,16 +1229,6 @@
       "notNull": true,
       "autoincrement": false,
       "default": "0",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_callSessions",
-      "name": "meetingId",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
       "generated": null,
       "entityType": "columns"
     },
@@ -1405,256 +1329,6 @@
       "notNull": true,
       "autoincrement": false,
       "default": "0",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "createdAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "deletedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "updatedAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "emojiTag",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "messageId",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messageEmojis",
-      "name": "userIds",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "'[]'",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "createdAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "deletedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "updatedAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "appUserId",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "appUserImage",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "''",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "filenames",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "''",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "files",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "'[]'",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "id",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "isEdited",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "false",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "isForward",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "false",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "isPinned",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "false",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "linkPreviewResponse",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "mentions",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "'[]'",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "message",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": "''",
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "replyToId",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "roomId",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "senderName",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "type",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_messages",
-      "name": "userId",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
       "generated": null,
       "entityType": "columns"
     },
@@ -2349,116 +2023,6 @@
       "entityType": "columns"
     },
     {
-      "table": "message_scheduledMessageJobs",
-      "name": "createdAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "deletedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "updatedAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "cancelledAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "completedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "id",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "payload",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "processingStartedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "roomId",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "runAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "userId",
-      "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
       "table": "message_searchHistories",
       "name": "createdAt",
       "type": "integer",
@@ -3110,7 +2674,7 @@
     },
     {
       "table": "message_webhooks",
-      "name": "token",
+      "name": "tokenHash",
       "type": "text",
       "notNull": true,
       "autoincrement": false,
@@ -3560,9 +3124,9 @@
     },
     {
       "table": "resource_programParticipants",
-      "name": "keyValue",
+      "name": "id",
       "type": "text",
-      "notNull": true,
+      "notNull": false,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -3570,9 +3134,9 @@
     },
     {
       "table": "resource_programParticipants",
-      "name": "id",
+      "name": "keyValue",
       "type": "text",
-      "notNull": false,
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -3600,7 +3164,7 @@
     },
     {
       "table": "resource_programParticipants",
-      "name": "token",
+      "name": "tokenHash",
       "type": "text",
       "notNull": true,
       "autoincrement": false,
@@ -4550,7 +4114,7 @@
     },
     {
       "table": "resource_surveyResponses",
-      "name": "participantToken",
+      "name": "participantTokenHash",
       "type": "text",
       "notNull": true,
       "autoincrement": false,
@@ -5043,69 +4607,11 @@
       "entityType": "indexes"
     },
     {
-      "table": "message_messages",
-      "name": "messages_roomId_createdAt_id_index",
-      "columns": [
-        {
-          "value": "roomId",
-          "isExpression": false
-        },
-        {
-          "value": "createdAt",
-          "isExpression": false
-        },
-        {
-          "value": "id",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "entityType": "indexes"
-    },
-    {
-      "table": "message_messages",
-      "name": "messages_replyToId_index",
-      "columns": [
-        {
-          "value": "replyToId",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "entityType": "indexes"
-    },
-    {
-      "table": "message_messages",
-      "name": "messages_roomId_userId_index",
-      "columns": [
-        {
-          "value": "roomId",
-          "isExpression": false
-        },
-        {
-          "value": "userId",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "entityType": "indexes"
-    },
-    {
       "table": "message_moderationLogs",
-      "name": "moderationLogs_roomId_createdAt_id_index",
+      "name": "moderationLogs_roomId_id_index",
       "columns": [
         {
           "value": "roomId",
-          "isExpression": false
-        },
-        {
-          "value": "createdAt",
           "isExpression": false
         },
         {
@@ -5148,7 +4654,7 @@
     },
     {
       "table": "message_moderationNotes",
-      "name": "moderationNotes_roomId_targetUserId_createdAt_id_index",
+      "name": "moderationNotes_roomId_targetUserId_id_index",
       "columns": [
         {
           "value": "roomId",
@@ -5156,10 +4662,6 @@
         },
         {
           "value": "targetUserId",
-          "isExpression": false
-        },
-        {
-          "value": "createdAt",
           "isExpression": false
         },
         {
@@ -5279,28 +4781,6 @@
       "entityType": "indexes"
     },
     {
-      "table": "message_scheduledMessageJobs",
-      "name": "scheduledMessageJobs_userId_roomId_runAt_index",
-      "columns": [
-        {
-          "value": "userId",
-          "isExpression": false
-        },
-        {
-          "value": "roomId",
-          "isExpression": false
-        },
-        {
-          "value": "runAt",
-          "isExpression": false
-        }
-      ],
-      "isUnique": false,
-      "where": null,
-      "origin": "manual",
-      "entityType": "indexes"
-    },
-    {
       "table": "message_searchHistories",
       "name": "searchHistories_userId_roomId_index",
       "columns": [
@@ -5413,6 +4893,24 @@
         {
           "value": "roomId",
           "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "notification_notifications",
+      "name": "notifications_userId_id_index",
+      "columns": [
+        {
+          "value": "userId",
+          "isExpression": false
+        },
+        {
+          "value": "\"id\" DESC",
+          "isExpression": true
         }
       ],
       "isUnique": false,
@@ -5544,6 +5042,24 @@
     },
     {
       "table": "resource_resourceActivities",
+      "name": "resourceActivities_resourceId_id_index",
+      "columns": [
+        {
+          "value": "resourceId",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "resource_resourceActivities",
       "name": "resourceActivities_resourceId_createdAt_id_index",
       "columns": [
         {
@@ -5626,7 +5142,7 @@
     },
     {
       "table": "resource_surveyResponses",
-      "name": "surveyResponses_resourceId_isDraft_createdAt_id_index",
+      "name": "surveyResponses_resourceId_isDraft_id_index",
       "columns": [
         {
           "value": "resourceId",
@@ -5634,10 +5150,6 @@
         },
         {
           "value": "isDraft",
-          "isExpression": false
-        },
-        {
-          "value": "createdAt",
           "isExpression": false
         },
         {
@@ -5962,81 +5474,6 @@
       "entityType": "fks"
     },
     {
-      "table": "message_messageEmojis",
-      "name": "fk_message_messageEmojis_messageId_message_messages_id_fk",
-      "columns": [
-        "messageId"
-      ],
-      "tableTo": "message_messages",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_messages",
-      "name": "fk_message_messages_appUserId_message_appUsers_id_fk",
-      "columns": [
-        "appUserId"
-      ],
-      "tableTo": "message_appUsers",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "SET NULL",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_messages",
-      "name": "fk_message_messages_replyToId_message_messages_id_fk",
-      "columns": [
-        "replyToId"
-      ],
-      "tableTo": "message_messages",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "SET NULL",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_messages",
-      "name": "fk_message_messages_roomId_message_rooms_id_fk",
-      "columns": [
-        "roomId"
-      ],
-      "tableTo": "message_rooms",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_messages",
-      "name": "fk_message_messages_userId_auth_users_id_fk",
-      "columns": [
-        "userId"
-      ],
-      "tableTo": "auth_users",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "SET NULL",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
       "table": "message_moderationLogs",
       "name": "fk_message_moderationLogs_roomId_message_rooms_id_fk",
       "columns": [
@@ -6206,36 +5643,6 @@
     {
       "table": "message_rooms",
       "name": "fk_message_rooms_userId_auth_users_id_fk",
-      "columns": [
-        "userId"
-      ],
-      "tableTo": "auth_users",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "fk_message_scheduledMessageJobs_roomId_message_rooms_id_fk",
-      "columns": [
-        "roomId"
-      ],
-      "tableTo": "message_rooms",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "nameExplicit": false,
-      "entityType": "fks"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "fk_message_scheduledMessageJobs_userId_auth_users_id_fk",
       "columns": [
         "userId"
       ],
@@ -7005,16 +6412,6 @@
       "entityType": "pks"
     },
     {
-      "table": "message_messageEmojis",
-      "name": "message_messageEmojis_pk",
-      "columns": [
-        "messageId",
-        "emojiTag"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
       "table": "message_roomMemberPermissions",
       "name": "message_roomMemberPermissions_pk",
       "columns": [
@@ -7160,15 +6557,6 @@
       "entityType": "pks"
     },
     {
-      "table": "app_rateLimiterFlexible",
-      "name": "app_rateLimiterFlexible_pk",
-      "columns": [
-        "key"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
       "table": "auth_accounts",
       "name": "auth_accounts_pk",
       "columns": [
@@ -7241,15 +6629,6 @@
       "entityType": "pks"
     },
     {
-      "table": "message_messages",
-      "name": "message_messages_pk",
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
       "table": "message_moderationLogs",
       "name": "message_moderationLogs_pk",
       "columns": [
@@ -7306,15 +6685,6 @@
     {
       "table": "message_rooms",
       "name": "message_rooms_pk",
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "message_scheduledMessageJobs_pk",
       "columns": [
         "id"
       ],
@@ -7495,6 +6865,15 @@
       "entityType": "uniques"
     },
     {
+      "table": "message_webhooks",
+      "name": "webhooks_tokenHash_unique",
+      "columns": [
+        "tokenHash"
+      ],
+      "nameExplicit": true,
+      "entityType": "uniques"
+    },
+    {
       "table": "notification_pushSubscriptions",
       "name": "pushSubscriptions_userId_endpoint_unique",
       "columns": [
@@ -7516,9 +6895,9 @@
     },
     {
       "table": "resource_programParticipants",
-      "name": "programParticipants_token_unique",
+      "name": "programParticipants_tokenHash_unique",
       "columns": [
-        "token"
+        "tokenHash"
       ],
       "nameExplicit": true,
       "entityType": "uniques"
@@ -7632,7 +7011,7 @@
     {
       "table": "message_invites",
       "name": "invites_id_length_check",
-      "value": "LENGTH(\"id\") = 8",
+      "value": "LENGTH(\"id\") = 43",
       "entityType": "checks"
     },
     {
@@ -7735,12 +7114,6 @@
       "table": "message_rooms",
       "name": "rooms_topic_length_check",
       "value": "LENGTH(\"topic\") <= 500",
-      "entityType": "checks"
-    },
-    {
-      "table": "message_scheduledMessageJobs",
-      "name": "scheduledMessageJobs_payload_type_check",
-      "value": "\n          (json_extract(\"payload\", '$.type') = 'Reminder' AND json_type(\"payload\", '$.text') IS NOT NULL)\n          OR (json_extract(\"payload\", '$.type') = 'ScheduledMessage' AND json_type(\"payload\", '$.message') IS NOT NULL)\n        ",
       "entityType": "checks"
     },
     {

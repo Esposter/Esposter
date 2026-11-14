@@ -34,15 +34,6 @@ CREATE TABLE `app_bookmarks` (
 	CONSTRAINT "bookmarks_title_length_check" CHECK(LENGTH("title") <= 100)
 );
 --> statement-breakpoint
-CREATE TABLE `app_rateLimiterFlexible` (
-	`createdAt` integer NOT NULL,
-	`deletedAt` integer,
-	`updatedAt` integer NOT NULL,
-	`expire` integer,
-	`key` text PRIMARY KEY,
-	`points` integer NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE `auth_accounts` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
@@ -157,13 +148,13 @@ CREATE TABLE `message_callSessions` (
 	`deletedAt` integer,
 	`updatedAt` integer NOT NULL,
 	`id` text PRIMARY KEY,
-	`roomId` text,
-	`threadRootRowKey` text DEFAULT '' NOT NULL,
 	`meetingId` text UNIQUE,
+	`roomId` text,
+	`threadRootId` integer DEFAULT 0 NOT NULL,
 	`userId` text NOT NULL,
 	CONSTRAINT `fk_message_callSessions_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
 	CONSTRAINT `fk_message_callSessions_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `callSessions_roomId_threadRootRowKey_unique` UNIQUE(`roomId`,`threadRootRowKey`),
+	CONSTRAINT `callSessions_roomId_threadRootId_unique` UNIQUE(`roomId`,`threadRootId`),
 	CONSTRAINT "callSessions_id_length_check" CHECK(LENGTH("id") = 12)
 );
 --> statement-breakpoint
@@ -179,47 +170,38 @@ CREATE TABLE `message_invites` (
 	`uses` integer DEFAULT 0 NOT NULL,
 	CONSTRAINT `fk_message_invites_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
 	CONSTRAINT `fk_message_invites_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE,
-	CONSTRAINT "invites_id_length_check" CHECK(LENGTH("id") = 8),
+	CONSTRAINT "invites_id_length_check" CHECK(LENGTH("id") = 43),
 	CONSTRAINT "invites_maxUses_check" CHECK("maxUses" >= 0),
 	CONSTRAINT "invites_uses_check" CHECK("uses" >= 0),
 	CONSTRAINT "invites_uses_maxUses_check" CHECK("maxUses" = 0 OR "uses" <= "maxUses")
 );
 --> statement-breakpoint
-CREATE TABLE `message_messageEmojis` (
+CREATE TABLE `message_moderationLogs` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
 	`updatedAt` integer NOT NULL,
-	`emojiTag` text NOT NULL,
-	`messageId` text NOT NULL,
-	`userIds` text DEFAULT '[]' NOT NULL,
-	CONSTRAINT `message_messageEmojis_pk` PRIMARY KEY(`messageId`, `emojiTag`),
-	CONSTRAINT `fk_message_messageEmojis_messageId_message_messages_id_fk` FOREIGN KEY (`messageId`) REFERENCES `message_messages`(`id`) ON DELETE CASCADE
+	`actorUserId` text,
+	`durationMs` integer,
+	`id` text PRIMARY KEY,
+	`roomId` text NOT NULL,
+	`targetUserId` text NOT NULL,
+	`type` text NOT NULL,
+	CONSTRAINT `fk_message_moderationLogs_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_message_moderationLogs_targetUserId_auth_users_id_fk` FOREIGN KEY (`targetUserId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
-CREATE TABLE `message_messages` (
+CREATE TABLE `message_moderationNotes` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
 	`updatedAt` integer NOT NULL,
-	`appUserId` text,
-	`appUserImage` text DEFAULT '' NOT NULL,
-	`filenames` text DEFAULT '' NOT NULL,
-	`files` text DEFAULT '[]' NOT NULL,
+	`actorUserId` text,
 	`id` text PRIMARY KEY,
-	`isEdited` integer DEFAULT false NOT NULL,
-	`isForward` integer DEFAULT false NOT NULL,
-	`isPinned` integer DEFAULT false NOT NULL,
-	`linkPreviewResponse` text,
-	`mentions` text DEFAULT '[]' NOT NULL,
-	`message` text DEFAULT '' NOT NULL,
-	`replyToId` text,
+	`note` text NOT NULL,
 	`roomId` text NOT NULL,
-	`senderName` text,
-	`type` text NOT NULL,
-	`userId` text,
-	CONSTRAINT `fk_message_messages_appUserId_message_appUsers_id_fk` FOREIGN KEY (`appUserId`) REFERENCES `message_appUsers`(`id`) ON DELETE SET NULL,
-	CONSTRAINT `fk_message_messages_replyToId_message_messages_id_fk` FOREIGN KEY (`replyToId`) REFERENCES `message_messages`(`id`) ON DELETE SET NULL,
-	CONSTRAINT `fk_message_messages_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_message_messages_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE
+	`targetUserId` text NOT NULL,
+	CONSTRAINT `fk_message_moderationNotes_actorUserId_auth_users_id_fk` FOREIGN KEY (`actorUserId`) REFERENCES `auth_users`(`id`) ON DELETE SET NULL,
+	CONSTRAINT `fk_message_moderationNotes_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_message_moderationNotes_targetUserId_auth_users_id_fk` FOREIGN KEY (`targetUserId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `message_roomCategories` (
@@ -264,14 +246,13 @@ CREATE TABLE `message_roomMemberPermissions` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
 	`updatedAt` integer NOT NULL,
-	`allow` integer DEFAULT '0' NOT NULL,
-	`deny` integer DEFAULT '0' NOT NULL,
+	`allow` text DEFAULT '0' NOT NULL,
+	`deny` text DEFAULT '0' NOT NULL,
 	`roomId` text NOT NULL,
 	`userId` text NOT NULL,
 	CONSTRAINT `message_roomMemberPermissions_pk` PRIMARY KEY(`userId`, `roomId`),
 	CONSTRAINT `fk_message_roomMemberPermissions_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_message_roomMemberPermissions_userId_roomId_message_usersToRooms_userId_roomId_fk` FOREIGN KEY (`userId`,`roomId`) REFERENCES `message_usersToRooms`(`userId`,`roomId`) ON DELETE CASCADE,
-	CONSTRAINT "roomMemberPermissions_allow_deny_disjoint_check" CHECK(("allow" & "deny") = 0)
+	CONSTRAINT `fk_message_roomMemberPermissions_userId_roomId_message_usersToRooms_userId_roomId_fk` FOREIGN KEY (`userId`,`roomId`) REFERENCES `message_usersToRooms`(`userId`,`roomId`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `message_roomRoles` (
@@ -282,7 +263,7 @@ CREATE TABLE `message_roomRoles` (
 	`id` text PRIMARY KEY,
 	`isEveryone` integer DEFAULT false NOT NULL,
 	`name` text NOT NULL,
-	`permissions` integer DEFAULT '0' NOT NULL,
+	`permissions` text DEFAULT '0' NOT NULL,
 	`position` integer DEFAULT 0 NOT NULL,
 	`roomId` text NOT NULL,
 	CONSTRAINT `fk_message_roomRoles_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
@@ -315,26 +296,6 @@ CREATE TABLE `message_rooms` (
 	CONSTRAINT "rooms_topic_length_check" CHECK(LENGTH("topic") <= 500)
 );
 --> statement-breakpoint
-CREATE TABLE `message_scheduledMessageJobs` (
-	`createdAt` integer NOT NULL,
-	`deletedAt` integer,
-	`updatedAt` integer NOT NULL,
-	`cancelledAt` integer,
-	`completedAt` integer,
-	`id` text PRIMARY KEY,
-	`payload` text NOT NULL,
-	`processingStartedAt` integer,
-	`roomId` text NOT NULL,
-	`runAt` integer NOT NULL,
-	`userId` text NOT NULL,
-	CONSTRAINT `fk_message_scheduledMessageJobs_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_message_scheduledMessageJobs_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE,
-	CONSTRAINT "scheduledMessageJobs_payload_type_check" CHECK(
-          (json_extract("payload", '$.type') = 'Reminder' AND json_type("payload", '$.text') IS NOT NULL)
-          OR (json_extract("payload", '$.type') = 'ScheduledMessage' AND json_type("payload", '$.message') IS NOT NULL)
-        )
-);
---> statement-breakpoint
 CREATE TABLE `message_searchHistories` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
@@ -355,11 +316,10 @@ CREATE TABLE `message_threadFollows` (
 	`updatedAt` integer NOT NULL,
 	`isUnfollowed` integer DEFAULT false NOT NULL,
 	`roomId` text NOT NULL,
-	`threadRootId` text NOT NULL,
+	`threadRootId` integer NOT NULL,
 	`userId` text NOT NULL,
-	CONSTRAINT `message_threadFollows_pk` PRIMARY KEY(`userId`, `roomId`, `threadRootId`),
+	CONSTRAINT `message_threadFollows_pk` PRIMARY KEY(`roomId`, `threadRootId`, `userId`),
 	CONSTRAINT `fk_message_threadFollows_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_message_threadFollows_threadRootId_message_messages_id_fk` FOREIGN KEY (`threadRootId`) REFERENCES `message_messages`(`id`) ON DELETE CASCADE,
 	CONSTRAINT `fk_message_threadFollows_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
@@ -446,7 +406,7 @@ CREATE TABLE `message_webhooks` (
 	`isActive` integer DEFAULT true NOT NULL,
 	`name` text NOT NULL,
 	`roomId` text NOT NULL,
-	`token` text NOT NULL,
+	`tokenHash` text NOT NULL CONSTRAINT `webhooks_tokenHash_unique` UNIQUE,
 	`userId` text NOT NULL UNIQUE,
 	CONSTRAINT `fk_message_webhooks_creatorId_auth_users_id_fk` FOREIGN KEY (`creatorId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE,
 	CONSTRAINT `fk_message_webhooks_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
@@ -519,6 +479,19 @@ CREATE TABLE `post_posts` (
 	CONSTRAINT "posts_commentCount_check" CHECK("commentCount" >= 0)
 );
 --> statement-breakpoint
+CREATE TABLE `resource_programParticipants` (
+	`createdAt` integer NOT NULL,
+	`deletedAt` integer,
+	`updatedAt` integer NOT NULL,
+	`id` text PRIMARY KEY,
+	`keyValue` text NOT NULL,
+	`publicId` text NOT NULL,
+	`resourceId` text NOT NULL,
+	`tokenHash` text NOT NULL CONSTRAINT `programParticipants_tokenHash_unique` UNIQUE,
+	CONSTRAINT `fk_resource_programParticipants_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `programParticipants_resourceId_keyValue_unique` UNIQUE(`resourceId`,`keyValue`)
+);
+--> statement-breakpoint
 CREATE TABLE `resource_resourceAccesses` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
@@ -529,6 +502,24 @@ CREATE TABLE `resource_resourceAccesses` (
 	CONSTRAINT `resource_resourceAccesses_pk` PRIMARY KEY(`userId`, `resourceId`),
 	CONSTRAINT `fk_resource_resourceAccesses_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE,
 	CONSTRAINT `fk_resource_resourceAccesses_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE CASCADE
+);
+--> statement-breakpoint
+CREATE TABLE `resource_resourceActivities` (
+	`createdAt` integer NOT NULL,
+	`deletedAt` integer,
+	`updatedAt` integer NOT NULL,
+	`activityType` text NOT NULL,
+	`apiKeyId` text,
+	`apiKeyName` text DEFAULT '' NOT NULL,
+	`id` text PRIMARY KEY,
+	`newName` text,
+	`oldName` text,
+	`publishVersion` integer,
+	`resourceId` text NOT NULL,
+	`userId` text,
+	CONSTRAINT `fk_resource_resourceActivities_apiKeyId_auth_apiKeys_id_fk` FOREIGN KEY (`apiKeyId`) REFERENCES `auth_apiKeys`(`id`) ON DELETE SET NULL,
+	CONSTRAINT `fk_resource_resourceActivities_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `fk_resource_resourceActivities_userId_auth_users_id_fk` FOREIGN KEY (`userId`) REFERENCES `auth_users`(`id`) ON DELETE SET NULL
 );
 --> statement-breakpoint
 CREATE TABLE `resource_resourceFavorites` (
@@ -551,6 +542,16 @@ CREATE TABLE `resource_resourceLinks` (
 	`type` text NOT NULL,
 	CONSTRAINT `resource_resourceLinks_pk` PRIMARY KEY(`sourceId`, `type`, `targetId`),
 	CONSTRAINT `fk_resource_resourceLinks_sourceId_resource_resources_id_fk` FOREIGN KEY (`sourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE
+);
+--> statement-breakpoint
+CREATE TABLE `resource_resourceObjectLocks` (
+	`createdAt` integer NOT NULL,
+	`deletedAt` integer,
+	`updatedAt` integer NOT NULL,
+	`expiresAt` integer NOT NULL,
+	`holder` text NOT NULL,
+	`resourceId` text PRIMARY KEY,
+	CONSTRAINT `fk_resource_resourceObjectLocks_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `resource_resourcePublications` (
@@ -614,6 +615,19 @@ CREATE TABLE `resource_resourceVersions` (
 	CONSTRAINT "resourceVersions_storedBytes_check" CHECK("storedBytes" >= 0)
 );
 --> statement-breakpoint
+CREATE TABLE `resource_resourceViews` (
+	`createdAt` integer NOT NULL,
+	`deletedAt` integer,
+	`updatedAt` integer NOT NULL,
+	`count` integer DEFAULT 0 NOT NULL,
+	`id` text PRIMARY KEY,
+	`resourceId` text NOT NULL,
+	`utcDate` text NOT NULL,
+	CONSTRAINT `fk_resource_resourceViews_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE,
+	CONSTRAINT `resourceViews_resourceId_utcDate_unique` UNIQUE(`resourceId`,`utcDate`),
+	CONSTRAINT "resourceViews_count_check" CHECK("count" >= 0)
+);
+--> statement-breakpoint
 CREATE TABLE `resource_resourceWorkingAssets` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
@@ -623,6 +637,20 @@ CREATE TABLE `resource_resourceWorkingAssets` (
 	CONSTRAINT `resource_resourceWorkingAssets_pk` PRIMARY KEY(`resourceId`, `assetHash`),
 	CONSTRAINT `fk_resource_resourceWorkingAssets_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE,
 	CONSTRAINT "resourceWorkingAssets_assetHash_check" CHECK(LENGTH("assetHash") = 64 AND "assetHash" NOT GLOB '*[^0-9a-f]*')
+);
+--> statement-breakpoint
+CREATE TABLE `resource_surveyResponses` (
+	`createdAt` integer NOT NULL,
+	`deletedAt` integer,
+	`updatedAt` integer NOT NULL,
+	`id` text PRIMARY KEY,
+	`isDraft` integer DEFAULT false NOT NULL,
+	`model` text DEFAULT '{}' NOT NULL,
+	`modelVersion` integer DEFAULT 0 NOT NULL,
+	`pageNo` integer DEFAULT 0 NOT NULL,
+	`participantTokenHash` text DEFAULT '' NOT NULL,
+	`resourceId` text NOT NULL,
+	CONSTRAINT `fk_resource_surveyResponses_resourceId_resource_resources_id_fk` FOREIGN KEY (`resourceId`) REFERENCES `resource_resources`(`id`) ON DELETE CASCADE
 );
 --> statement-breakpoint
 CREATE TABLE `social_blocks` (
@@ -700,15 +728,17 @@ CREATE INDEX `apiKeys_key_index` ON `auth_apiKeys` (`key`);--> statement-breakpo
 CREATE INDEX `apiKeys_referenceId_index` ON `auth_apiKeys` (`referenceId`);--> statement-breakpoint
 CREATE INDEX `sessions_userId_index` ON `auth_sessions` (`userId`);--> statement-breakpoint
 CREATE INDEX `invites_roomId_index` ON `message_invites` (`roomId`);--> statement-breakpoint
-CREATE INDEX `messages_roomId_createdAt_id_index` ON `message_messages` (`roomId`,`createdAt`,`id`);--> statement-breakpoint
-CREATE INDEX `messages_replyToId_index` ON `message_messages` (`replyToId`);--> statement-breakpoint
-CREATE INDEX `messages_roomId_userId_index` ON `message_messages` (`roomId`,`userId`);--> statement-breakpoint
+CREATE INDEX `moderationLogs_roomId_id_index` ON `message_moderationLogs` (`roomId`,`id`);--> statement-breakpoint
+CREATE INDEX `moderationLogs_actorUserId_index` ON `message_moderationLogs` (`actorUserId`);--> statement-breakpoint
+CREATE INDEX `moderationLogs_targetUserId_index` ON `message_moderationLogs` (`targetUserId`);--> statement-breakpoint
+CREATE INDEX `moderationNotes_roomId_targetUserId_id_index` ON `message_moderationNotes` (`roomId`,`targetUserId`,`id`);--> statement-breakpoint
+CREATE INDEX `moderationNotes_actorUserId_index` ON `message_moderationNotes` (`actorUserId`);--> statement-breakpoint
+CREATE INDEX `moderationNotes_targetUserId_index` ON `message_moderationNotes` (`targetUserId`);--> statement-breakpoint
 CREATE INDEX `roomCategories_userId_index` ON `message_roomCategories` (`userId`);--> statement-breakpoint
 CREATE UNIQUE INDEX `roomEmojis_roomId_name_unique` ON `message_roomEmojis` (`roomId`,`name`);--> statement-breakpoint
 CREATE INDEX `roomMemberPermissions_roomId_index` ON `message_roomMemberPermissions` (`roomId`);--> statement-breakpoint
 CREATE INDEX `roomRoles_roomId_position_index` ON `message_roomRoles` (`roomId`,`position`);--> statement-breakpoint
-CREATE UNIQUE INDEX `roomRoles_roomId_isEveryone_unique` ON `message_roomRoles` (`roomId`) WHERE "message_roomRoles"."isEveryone" = TRUE;--> statement-breakpoint
-CREATE INDEX `scheduledMessageJobs_userId_roomId_runAt_index` ON `message_scheduledMessageJobs` (`userId`,`roomId`,`runAt`);--> statement-breakpoint
+CREATE UNIQUE INDEX `roomRoles_roomId_isEveryone_unique` ON `message_roomRoles` (`roomId`) WHERE "message_roomRoles"."isEveryone" = 1;--> statement-breakpoint
 CREATE INDEX `searchHistories_userId_roomId_index` ON `message_searchHistories` (`userId`,`roomId`);--> statement-breakpoint
 CREATE INDEX `searchHistories_roomId_index` ON `message_searchHistories` (`roomId`);--> statement-breakpoint
 CREATE INDEX `usersToRoomRoles_roleId_index` ON `message_usersToRoomRoles` (`roleId`);--> statement-breakpoint
@@ -717,15 +747,21 @@ CREATE INDEX `usersToRooms_roomId_index` ON `message_usersToRooms` (`roomId`);--
 CREATE INDEX `usersToRooms_categoryId_index` ON `message_usersToRooms` (`categoryId`) WHERE "message_usersToRooms"."categoryId" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX `usersToRooms_timeoutUntil_index` ON `message_usersToRooms` (`timeoutUntil`) WHERE "message_usersToRooms"."timeoutUntil" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX `webhooks_roomId_index` ON `message_webhooks` (`roomId`);--> statement-breakpoint
+CREATE INDEX `notifications_userId_id_index` ON `notification_notifications` (`userId`,"id" DESC);--> statement-breakpoint
 CREATE INDEX `notifications_userId_createdAt_index` ON `notification_notifications` (`userId`,"createdAt" DESC);--> statement-breakpoint
-CREATE INDEX `notifications_userId_isRead_index` ON `notification_notifications` (`userId`) WHERE "notification_notifications"."isRead" = false;--> statement-breakpoint
+CREATE INDEX `notifications_userId_isRead_index` ON `notification_notifications` (`userId`) WHERE "notification_notifications"."isRead" = 0;--> statement-breakpoint
 CREATE INDEX `pushSubscriptions_sessionId_index` ON `notification_pushSubscriptions` (`sessionId`);--> statement-breakpoint
 CREATE INDEX `likes_postId_index` ON `post_likes` (`postId`);--> statement-breakpoint
 CREATE INDEX `posts_parentId_ranking_index` ON `post_posts` (`parentId`,"ranking" DESC,"id" DESC);--> statement-breakpoint
 CREATE INDEX `posts_userId_ranking_index` ON `post_posts` (`userId`,"ranking" DESC,"id" DESC);--> statement-breakpoint
 CREATE INDEX `resourceAccesses_userId_accessedAt_index` ON `resource_resourceAccesses` (`userId`,`accessedAt`);--> statement-breakpoint
+CREATE INDEX `resourceActivities_resourceId_id_index` ON `resource_resourceActivities` (`resourceId`,`id`);--> statement-breakpoint
+CREATE INDEX `resourceActivities_resourceId_createdAt_id_index` ON `resource_resourceActivities` (`resourceId`,`createdAt`,`id`);--> statement-breakpoint
+CREATE INDEX `resourceActivities_apiKeyId_index` ON `resource_resourceActivities` (`apiKeyId`);--> statement-breakpoint
+CREATE INDEX `resourceActivities_userId_index` ON `resource_resourceActivities` (`userId`);--> statement-breakpoint
 CREATE INDEX `resourceLinks_target_index` ON `resource_resourceLinks` (`targetId`,`type`);--> statement-breakpoint
 CREATE INDEX `resources_userId_index` ON `resource_resources` (`userId`);--> statement-breakpoint
+CREATE INDEX `surveyResponses_resourceId_isDraft_id_index` ON `resource_surveyResponses` (`resourceId`,`isDraft`,`id`);--> statement-breakpoint
 CREATE INDEX `blocks_blockedId_index` ON `social_blocks` (`blockedId`);--> statement-breakpoint
 CREATE INDEX `friendRequests_receiverId_index` ON `social_friendRequests` (`receiverId`);--> statement-breakpoint
 CREATE INDEX `friendRequests_senderId_index` ON `social_friendRequests` (`senderId`);--> statement-breakpoint
@@ -734,14 +770,14 @@ CREATE INDEX `friends_senderId_index` ON `social_friends` (`senderId`);--> state
 CREATE INDEX `storageLedger_userId_reconciledAt_index` ON `storage_storageLedger` (`userId`,`reconciledAt`);--> statement-breakpoint
 CREATE UNIQUE INDEX `dataExports_userId_status_unique` ON `user_dataExports` (`userId`) WHERE "user_dataExports"."status" IN ('queued', 'building');--> statement-breakpoint
 CREATE INDEX `dataExports_userId_index` ON `user_dataExports` (`userId`);--> statement-breakpoint
-CREATE VIRTUAL TABLE `messages_search` USING fts5(`message`, `filenames`, `senderName`, content='message_messages', content_rowid='rowid', tokenize = 'unicode61 remove_diacritics 2');--> statement-breakpoint
-CREATE TRIGGER `message_messages_search_insert` AFTER INSERT ON `message_messages` BEGIN
-	INSERT INTO `messages_search` (`rowid`, `message`, `filenames`, `senderName`) VALUES (new.`rowid`, new.`message`, new.`filenames`, new.`senderName`);
+CREATE VIRTUAL TABLE `resources_search` USING fts5(`name`, `tags`, `id` UNINDEXED, tokenize = 'unicode61 remove_diacritics 2');--> statement-breakpoint
+CREATE TRIGGER `resource_resources_search_insert` AFTER INSERT ON `resource_resources` BEGIN
+	INSERT INTO `resources_search` (`id`, `name`, `tags`) VALUES (new.`id`, new.`name`, (SELECT group_concat(`key` || ' ' || `value`, ' ') FROM json_each(new.`tags`)));
 END;--> statement-breakpoint
-CREATE TRIGGER `message_messages_search_delete` AFTER DELETE ON `message_messages` BEGIN
-	INSERT INTO `messages_search` (`messages_search`, `rowid`, `message`, `filenames`, `senderName`) VALUES ('delete', old.`rowid`, old.`message`, old.`filenames`, old.`senderName`);
+CREATE TRIGGER `resource_resources_search_update` AFTER UPDATE OF `name`, `tags` ON `resource_resources` BEGIN
+	DELETE FROM `resources_search` WHERE `id` = old.`id`;
+	INSERT INTO `resources_search` (`id`, `name`, `tags`) VALUES (new.`id`, new.`name`, (SELECT group_concat(`key` || ' ' || `value`, ' ') FROM json_each(new.`tags`)));
 END;--> statement-breakpoint
-CREATE TRIGGER `message_messages_search_update` AFTER UPDATE OF `message`, `filenames`, `senderName` ON `message_messages` BEGIN
-	INSERT INTO `messages_search` (`messages_search`, `rowid`, `message`, `filenames`, `senderName`) VALUES ('delete', old.`rowid`, old.`message`, old.`filenames`, old.`senderName`);
-	INSERT INTO `messages_search` (`rowid`, `message`, `filenames`, `senderName`) VALUES (new.`rowid`, new.`message`, new.`filenames`, new.`senderName`);
+CREATE TRIGGER `resource_resources_search_delete` AFTER DELETE ON `resource_resources` BEGIN
+	DELETE FROM `resources_search` WHERE `id` = old.`id`;
 END;

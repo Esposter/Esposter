@@ -30,7 +30,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 - [x] 3.3 Replace `rate-limiter-flexible` with the Workers Rate Limiting binding declared in the web Worker's wrangler config. Verified by the rate-limit middleware test.
 - [ ] 3.4 A batch update or delete that matches no row throws `NotFoundError` from `meta.changes`, as the Azure 404 did. Verified by a not-found test per writer.
 - [ ] 3.5 Move `apps/web/scripts/phaser/filePack/createFilePack.ts` and `getGenshinGameDataBaseUrl.ts` to R2, delete `packages/db/src/services/azure/container/getContainerClient.ts`, the generic streams layer, `packages/azure`, the `STREAMS` binding and every `@azure/*` dependency outside the cutover tool. Verified by no `@azure/` import outside `scripts/src/services/cutover`.
-- [ ] 3.6 Regenerate one fresh `core` migration with `db:gen`, then `registry:gen` and the schema snapshot. Verified by the migration applying on Miniflare.
+- [x] 3.6 Regenerate one fresh `core` migration with `db:gen`, then `registry:gen` and the schema snapshot. Verified by the migration applying on Miniflare.
 - [x] 3.7 Give every dead-letter queue a consumer on the jobs Worker that republishes under the attempt cap and quarantines to R2 past it or on an invalid body, counted per message ([jobs](../infra-cloudflare-jobs/design.md)). Verified by the dead-letter consumer test.
 
 ## 4. Tests
