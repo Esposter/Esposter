@@ -1,4 +1,4 @@
-import type { RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
+import type { RoomImport, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { createMockDb } from "@esposter/db-mock";
@@ -91,6 +91,28 @@ describe(RoomObject, () => {
 
   const sendMessage = (object: RoomObjectRpc, message: string, sender = actor) =>
     object.createMessage({ message, type: MessageType.Message }, sender);
+
+  // A message as the cutover copies it: a live row under the number it was given, with the fields a plain send holds
+  const createImportedMessage = (
+    overrides: Pick<RoomImport["messages"][number], "id"> & Partial<RoomImport["messages"][number]>,
+  ): RoomImport["messages"][number] => ({
+    appUserId: null,
+    appUserImage: "",
+    createdAt: new Date(0),
+    files: [],
+    isEdited: false,
+    isForward: false,
+    isPinned: false,
+    linkPreviewResponse: null,
+    mentions: [],
+    message: "",
+    replyToId: null,
+    senderName: null,
+    type: MessageType.Message,
+    updatedAt: new Date(0),
+    userId,
+    ...overrides,
+  });
 
   beforeAll(async () => {
     mockDatabase = await createMockDb();
@@ -486,6 +508,106 @@ describe(RoomObject, () => {
     expect(object.readMessages({ limit: 10 })).toStrictEqual([bystander]);
     expect(object.searchMessages({ ...searchAll, query: "first" }).count).toBe(0);
     expect(getUserStub(userId).removeSentMessage).toHaveBeenCalledTimes(2);
+  });
+
+  test("a copied message keeps its number, and a live message after the import is numbered after the newest", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    expect(object.summarizeRoom()).toStrictEqual({ messageCount: 0, newestId: null });
+
+    const summary = await object.importRoom({
+      messages: [createImportedMessage({ id: 2 })],
+      reactions: [],
+      scheduledMessages: [],
+    });
+    const message = await sendMessage(object, "");
+
+    expect(summary).toStrictEqual({ messageCount: 1, newestId: 2 });
+    expect(message.id).toBe(3);
+  });
+
+  test("importing the same copy twice leaves the same rows, with no row written twice", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const copiedId = 2;
+    const emojiTag = v7();
+    const copy = {
+      messages: [createImportedMessage({ id: copiedId })],
+      reactions: [{ emojiTag, messageId: copiedId, userIds: [userId] }],
+      scheduledMessages: [],
+    };
+    const firstSummary = await object.importRoom(copy);
+    const firstMessages = object.readMessages({ limit: 10 });
+    const firstReactions = object.readReactions([copiedId]);
+
+    const secondSummary = await object.importRoom(copy);
+
+    expect(secondSummary).toStrictEqual(firstSummary);
+    expect(object.readMessages({ limit: 10 })).toStrictEqual(firstMessages);
+    expect(object.readReactions([copiedId])).toStrictEqual(firstReactions);
+  });
+
+  test("a copied message is found by its words, and a copy imported again is found by its new words only", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await object.importRoom({
+      messages: [createImportedMessage({ id: 2, message: "hello" })],
+      reactions: [],
+      scheduledMessages: [],
+    });
+
+    expect(object.searchMessages({ ...searchAll, query: "hello" }).count).toBe(1);
+
+    await object.importRoom({
+      messages: [createImportedMessage({ id: 2, message: "goodbye" })],
+      reactions: [],
+      scheduledMessages: [],
+    });
+
+    expect(object.searchMessages({ ...searchAll, query: "hello" }).count).toBe(0);
+    expect(object.searchMessages({ ...searchAll, query: "goodbye" }).count).toBe(1);
+  });
+
+  test("a copied reply keeps the number of the message it replies to", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    await object.importRoom({
+      messages: [createImportedMessage({ id: 1 }), createImportedMessage({ id: 2, replyToId: 1 })],
+      reactions: [],
+      scheduledMessages: [],
+    });
+
+    expect(object.readThread(1).map(({ id, replyToId }) => ({ id, replyToId }))).toStrictEqual([
+      { id: 1, replyToId: null },
+      { id: 2, replyToId: 1 },
+    ]);
+  });
+
+  test("a copied send and a copied scheduled message are held in their sender's object", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledId = v7();
+    const runAt = new Date(ROOM_ACTIVITY_DELAY_MS);
+    await object.importRoom({
+      messages: [createImportedMessage({ id: 1 })],
+      reactions: [],
+      scheduledMessages: [{ id: scheduledId, message: "", replyToId: null, runAt, userId }],
+    });
+
+    expect(getUserStub(userId).addSentMessage).toHaveBeenCalledExactlyOnceWith({
+      createdAt: new Date(0),
+      messageId: 1,
+      roomId,
+    });
+    expect(getUserStub(userId).addScheduledMessage).toHaveBeenCalledExactlyOnceWith({ roomId, runAt, scheduledId });
+    expect(object.readScheduledMessages(userId)).toStrictEqual([
+      { id: scheduledId, message: "", replyToId: null, runAt, userId },
+    ]);
   });
 
   test("deleting the room closes its sockets and clears its alarm", async () => {

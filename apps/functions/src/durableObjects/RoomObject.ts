@@ -6,11 +6,13 @@ import type {
   LinkPreviewResponse,
   RoomActor,
   RoomEvent,
+  RoomImport,
   RoomMessage,
   RoomObjectRpc,
   RoomReaction,
   RoomSearchInput,
   RoomSearchResult,
+  RoomSummary,
   ScheduledRoomMessage,
 } from "@esposter/db-schema";
 import type { UserObject } from "#src/durableObjects/UserObject";
@@ -46,7 +48,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { chunk, getResultAsync, getSearchExpression, noop, NotFoundError, NotInitializedError } from "@esposter/shared";
-import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, max, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
 // The columns a message is read by. Its search text and its webhook delivery id stay in the row: nothing a reader is
@@ -498,6 +500,64 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     await this.armAlarm();
     await this.notifyUser(actor.userId, (user) => user.removeScheduledMessage(id));
     return true;
+  }
+
+  // The cutover's copy of a room's history. Every row is written under the number the cutover gave it, in one
+  // synchronous transaction, so a re-run rewrites the same rows and an edited row overwrites its own. Each copied send
+  // is indexed in its sender's object as a live send is. Nothing is broadcast, notified or marked active: this is
+  // history, not a send
+  async importRoom(input: RoomImport): Promise<RoomSummary> {
+    this.db.transaction((transaction) => {
+      for (const message of input.messages) {
+        const row = { ...message, deletedAt: null, filenames: getFilenames(message.files), webhookDeliveryId: null };
+        const { id: _id, ...updatedColumns } = row;
+        transaction
+          .insert(messagesInRoom)
+          .values(row)
+          .onConflictDoUpdate({ set: updatedColumns, target: messagesInRoom.id })
+          .run();
+      }
+      for (const reaction of input.reactions)
+        transaction
+          .insert(messageEmojisInRoom)
+          .values(reaction)
+          .onConflictDoUpdate({
+            set: { userIds: reaction.userIds },
+            target: [messageEmojisInRoom.messageId, messageEmojisInRoom.emojiTag],
+          })
+          .run();
+      for (const scheduledMessage of input.scheduledMessages) {
+        const { id: _id, ...updatedColumns } = scheduledMessage;
+        transaction
+          .insert(scheduledMessagesInRoom)
+          .values(scheduledMessage)
+          .onConflictDoUpdate({ set: updatedColumns, target: scheduledMessagesInRoom.id })
+          .run();
+      }
+    });
+    await this.armAlarm();
+    // One request to each sender's object per copied row, each best-effort: a failed one costs only its own index
+    await Promise.all([
+      ...input.scheduledMessages.map(({ id, runAt, userId }) =>
+        this.notifyUser(userId, (user) => user.addScheduledMessage({ roomId: this.roomId, runAt, scheduledId: id })),
+      ),
+      ...input.messages.flatMap(({ createdAt, id, userId }) =>
+        userId === null
+          ? []
+          : [this.notifyUser(userId, (user) => user.addSentMessage({ createdAt, messageId: id, roomId: this.roomId }))],
+      ),
+    ]);
+    return this.summarizeRoom();
+  }
+
+  // What verify compares with what Azure held: every row the room has, a deleted message's tombstone included, and the
+  // number of the newest. Nothing is written or broadcast
+  summarizeRoom(): RoomSummary {
+    const [summary] = this.db
+      .select({ messageCount: count(), newestId: max(messagesInRoom.id) })
+      .from(messagesInRoom)
+      .all();
+    return { messageCount: summary?.messageCount ?? 0, newestId: summary?.newestId ?? null };
   }
 
   async deleteUserMessages(userId: string): Promise<RoomMessage[]> {
