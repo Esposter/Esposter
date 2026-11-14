@@ -1,4 +1,4 @@
-import { getResult } from "@esposter/shared";
+import { getResult, jsonDateParse } from "@esposter/shared";
 
 interface PollBody {
   options: { id: string }[];
@@ -17,7 +17,7 @@ const isPollBody = (value: unknown): value is PollBody =>
 // The poll body with the actor's vote applied, or undefined when the body is not a poll or names no option of its own.
 // Only the votes change: every other field of the poll is written back exactly as it was read
 export const applyPollVote = (message: string, userId: string, optionId: string | undefined): string | undefined => {
-  const body = getResult(() => JSON.parse(message) as unknown).unwrapOr(undefined);
+  const body = getResult(() => jsonDateParse<unknown>(message)).unwrapOr(undefined);
   if (!isPollBody(body) || (optionId !== undefined && !body.options.some(({ id }) => id === optionId)))
     return undefined;
 
