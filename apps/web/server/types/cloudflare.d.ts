@@ -3,6 +3,7 @@ import type {
   AzureFunction,
   CallObjectRpc,
   CloudflareEnvironment,
+  RoomObjectRpc,
   StorageBucket,
   UserObjectRpc,
 } from "@esposter/db-schema";
@@ -21,7 +22,7 @@ interface Bindings extends BucketBindings, QueueBindings {
   CALL: DurableObjectNamespace<Rpc.DurableObjectBranded & CallObjectRpc>;
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   CORE: D1Database;
-  ROOM: DurableObjectNamespace;
+  ROOM: DurableObjectNamespace<Rpc.DurableObjectBranded & RoomObjectRpc>;
   SCHEDULER: DurableObjectNamespace;
   STREAMS: D1Database;
   USER: DurableObjectNamespace<Rpc.DurableObjectBranded & UserObjectRpc>;

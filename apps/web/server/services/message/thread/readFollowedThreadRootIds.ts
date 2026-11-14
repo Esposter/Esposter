@@ -16,7 +16,8 @@ export const readFollowedThreadRootIds = async (
   const follows = await db.query.threadFollowsInMessage.findMany({
     columns: { threadRootId: true },
     limit: MAX_FOLLOWED_THREADS,
-    orderBy: { createdAt: "desc" },
+    // A root's id is its room's sequence, so the newest root is the largest id
+    orderBy: { threadRootId: "desc" },
     where: { isUnfollowed: { eq: false }, roomId: { eq: roomId }, userId: { eq: userId } },
   });
   return follows.map(({ threadRootId }) => threadRootId);
