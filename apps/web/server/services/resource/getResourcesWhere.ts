@@ -5,7 +5,7 @@ import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getResourceSearchMatch } from "#server/services/resource/getResourceSearchMatch";
-import { getSearchExpression } from "#server/services/search/getSearchExpression";
+import { getSearchExpression } from "@esposter/shared";
 import { inJsonArray } from "@esposter/db";
 import { resourceAccessesInResource, resourceFavoritesInResource, resourcesInResource } from "@esposter/db-schema";
 import { and, eq, exists, gte, inArray, isNotNull, isNull, lte, notExists, sql } from "drizzle-orm";

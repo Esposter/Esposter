@@ -9,7 +9,7 @@ import { getResourceSearchHits } from "#server/services/resource/getResourceSear
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { resourceListSelection } from "#server/services/resource/resourceListSelection";
-import { getSearchExpression } from "#server/services/search/getSearchExpression";
+import { getSearchExpression } from "@esposter/shared";
 import { resourcesInResource } from "@esposter/db-schema";
 import { asc, desc } from "drizzle-orm";
 

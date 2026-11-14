@@ -11,6 +11,7 @@ import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
 import { createApiKeyInputSchema } from "#src/models/user/CreateApiKeyInput";
 import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
+import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
 import { storageUsageSchema } from "#src/models/storage/StorageUsage";
 
 // The events a person's own socket carries, one frame each, for every tab the person has open. A payload is what the
@@ -54,6 +55,12 @@ const saveResourceContentEventSchema = z.object({
   type: z.literal("saveResourceContent"),
 });
 const updateRoomEventSchema = z.object({ data: updateRoomInputSchema, type: z.literal("updateRoom") });
+// A room's last message moved it to the top of the list, which is what the room list sorts by. Its own event, since a
+// room update names only the fields a room edit changes
+const roomActivityEventSchema = z.object({
+  data: z.object({ id: selectRoomInMessageSchema.shape.id, updatedAt: z.coerce.date() }),
+  type: z.literal("roomActivity"),
+});
 const deleteRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema.pick({ roomId: true, userId: true }),
   type: z.literal("deleteRoom"),
@@ -81,6 +88,7 @@ const userEventSchemas = [
   updateUsageEventSchema,
   saveResourceContentEventSchema,
   updateRoomEventSchema,
+  roomActivityEventSchema,
   deleteRoomEventSchema,
   joinRoomEventSchema,
   leaveRoomEventSchema,

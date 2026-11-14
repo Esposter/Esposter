@@ -4,10 +4,9 @@ import type { Database, MessageInMessage } from "@esposter/db-schema";
 
 import { getSearchFilterConditions } from "#server/services/message/search/getSearchFilterConditions";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
-import { getSearchExpression } from "#server/services/search/getSearchExpression";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { FilterType, messagesInMessage } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { getSearchExpression, takeOne } from "@esposter/shared";
 import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
 // With text, the rows are the index's matches narrowed by the room, the soft delete and the filters, ranked by bm25 with

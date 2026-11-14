@@ -1,4 +1,4 @@
-import { getSearchExpression } from "#server/services/search/getSearchExpression";
+import { getSearchExpression } from "#src/services/search/getSearchExpression";
 import { describe, expect, test } from "vitest";
 
 describe(getSearchExpression, () => {

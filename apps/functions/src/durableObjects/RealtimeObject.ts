@@ -21,8 +21,13 @@ export abstract class RealtimeObject<
       `session:${identity.sessionId}`,
       `device:${identity.deviceId}`,
     ]);
+    this.onSocketAccepted(server, request);
     return new Response(null, { status: 101, webSocket: client });
   }
+
+  // Runs once a socket is accepted and before its upgrade is answered, so what it sends first is what the socket hears
+  // before anything live. The synchronous work here is never interleaved with another event on the object
+  protected onSocketAccepted(_server: WebSocket, _request: Request): void {}
 
   // A close the peer began is answered in kind, so the socket is released rather than left half open
   override webSocketClose(ws: WebSocket, code: number, reason: string) {
