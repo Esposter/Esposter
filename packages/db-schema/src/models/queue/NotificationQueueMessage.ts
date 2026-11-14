@@ -9,6 +9,7 @@ import { messageNotificationDataSchema } from "#src/models/notification/MessageN
 import { reminderNotificationDataSchema } from "#src/models/notification/ReminderNotificationData";
 import { resourceOperationNotificationDataSchema } from "#src/models/notification/ResourceOperationNotificationData";
 import { todoReminderNotificationDataSchema } from "#src/models/notification/TodoReminderNotificationData";
+import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { z } from "zod";
 
 // The one message every notification in this system is sent as. Publishers state what happened and who it
@@ -21,10 +22,15 @@ export type NotificationQueueMessage =
   | ResourceOperationNotificationData
   | TodoReminderNotificationData;
 
-export const notificationQueueMessageSchema = z.discriminatedUnion("type", [
-  friendRequestNotificationDataSchema,
-  messageNotificationDataSchema,
-  reminderNotificationDataSchema,
-  resourceOperationNotificationDataSchema,
-  todoReminderNotificationDataSchema,
-]) satisfies z.ZodType<NotificationQueueMessage>;
+// The envelope sits beside the union rather than inside its members, which are notification models that no queue field
+// belongs in
+export const notificationQueueMessageSchema = z.intersection(
+  z.discriminatedUnion("type", [
+    friendRequestNotificationDataSchema,
+    messageNotificationDataSchema,
+    reminderNotificationDataSchema,
+    resourceOperationNotificationDataSchema,
+    todoReminderNotificationDataSchema,
+  ]),
+  queueMessageEnvelopeSchema,
+) satisfies z.ZodType<NotificationQueueMessage>;

@@ -1,3 +1,4 @@
+import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { z } from "zod";
 
 // The one message an export request sends. It names the export's row, which the handler builds the archive for. The
@@ -7,5 +8,6 @@ export interface ExportUserDataQueueMessage {
 }
 
 export const exportUserDataQueueMessageSchema = z.object({
+  ...queueMessageEnvelopeSchema.shape,
   dataExportId: z.uuidv4(),
 }) satisfies z.ZodType<ExportUserDataQueueMessage>;

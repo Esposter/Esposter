@@ -1,3 +1,4 @@
+import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { z } from "zod";
 
 // The body of R2's object-create event notification, which R2 sends to a queue as it stores an object. Only the fields a
@@ -12,10 +13,8 @@ export interface R2ObjectCreatedQueueMessage {
 }
 
 export const r2ObjectCreatedQueueMessageSchema = z.object({
+  ...queueMessageEnvelopeSchema.shape,
   bucket: z.string(),
   eventTime: z.string(),
-  object: z.object({
-    key: z.string(),
-    size: z.int().nonnegative(),
-  }),
+  object: z.object({ key: z.string(), size: z.int().nonnegative() }),
 }) satisfies z.ZodType<R2ObjectCreatedQueueMessage>;

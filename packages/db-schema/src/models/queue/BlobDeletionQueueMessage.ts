@@ -1,5 +1,6 @@
 import type { StorageBucket } from "#src/models/storage/StorageBucket";
 
+import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { storageBucketSchema } from "#src/models/storage/StorageBucket";
 import { MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES } from "#src/services/queue/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
@@ -17,6 +18,7 @@ export type BlobDeletionQueueMessage = (
 
 export const blobDeletionQueueMessageSchema = z.union([
   z.object({
+    ...queueMessageEnvelopeSchema.shape,
     blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES),
     containerName: storageBucketSchema,
     // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a retry can
@@ -25,6 +27,7 @@ export const blobDeletionQueueMessageSchema = z.union([
     decidedAt: z.coerce.date().optional(),
   }),
   z.object({
+    ...queueMessageEnvelopeSchema.shape,
     containerName: storageBucketSchema,
     // The listing happens at delivery time, but the set the publisher meant is the one that existed when it
     // Published. Delivery is at-least-once and a dead-lettered message can be retried hours later, so without

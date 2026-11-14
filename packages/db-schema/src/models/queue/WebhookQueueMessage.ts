@@ -2,6 +2,7 @@ import type { WebhookPayload } from "#src/models/message/webhook/WebhookPayload"
 import type { WebhookInMessage } from "#src/schema/message/webhooksInMessage";
 
 import { webhookPayloadSchema } from "#src/models/message/webhook/WebhookPayload";
+import { queueMessageEnvelopeSchema } from "#src/models/queue/QueueMessageEnvelope";
 import { selectWebhookInMessageSchema } from "#src/schema/message/webhooksInMessage";
 import { z } from "zod";
 
@@ -13,6 +14,7 @@ export interface WebhookQueueMessage {
 }
 
 export const webhookQueueMessageSchema = z.object({
+  ...queueMessageEnvelopeSchema.shape,
   payload: webhookPayloadSchema,
   webhook: selectWebhookInMessageSchema.pick({ roomId: true, userId: true }),
 }) satisfies z.ZodType<WebhookQueueMessage>;
