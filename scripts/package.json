@@ -60,6 +60,7 @@
     "bench": "vitest bench --run",
     "bench:types": "vpx src/benchTypes/index.ts",
     "crossOS": "node src/crossOS/index.ts",
+    "cutover": "vpx src/cutover/index.ts",
     "dev:seed": "vpx src/devSeed/index.ts",
     "genshin:animestudio:build": "vpx src/animeStudio/index.ts",
     "genshin:assets": "vpx src/genshinAssets/index.ts",
@@ -87,6 +88,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@azure/data-tables": "catalog:",
     "@azure/identity": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@esposter/configuration": "workspace:*",
@@ -103,6 +105,7 @@
     "@typesafe-ai/sdk": "catalog:",
     "@vizejs/native": "catalog:",
     "@webgpu/types": "catalog:",
+    "aws4fetch": "catalog:",
     "genshin-engine": "workspace:*",
     "genshin-interface": "workspace:*",
     "genshin-persona": "workspace:*",
