@@ -6,14 +6,7 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
-import {
-  createMessage,
-  getContentBlobName,
-  getFileBlobNames,
-  serializeEntity,
-  writeJsonBlob,
-  writeModerationLogEntry,
-} from "@esposter/db";
+import { createMessage, getContentBlobName, getFileBlobNames, serializeEntity, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
@@ -36,6 +29,8 @@ import {
   likesInPost,
   MessageMetadataType,
   MessageType,
+  moderationLogsInMessage,
+  moderationNotesInMessage,
   NotificationSeverity,
   notificationsInNotification,
   postsInPost,
@@ -101,6 +96,7 @@ describe(buildUserDataArchive, () => {
   const filename = "filename";
   const message = "a";
   const name = "name";
+  const note = "note";
   const otherMessage = "b";
   const path = "path";
   const title = "title";
@@ -114,7 +110,7 @@ describe(buildUserDataArchive, () => {
   };
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -185,12 +181,9 @@ describe(buildUserDataArchive, () => {
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
     await resourceBucket.put(getResourceFileBlobName(resource.id, assetHash), attachmentBytes);
-    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
-      actorUserId: otherUserId,
-      roomId: room.id,
-      targetUserId: userId,
-      type: AdminActionType.Warn,
-    });
+    await mockDb
+      .insert(moderationLogsInMessage)
+      .values({ actorUserId: otherUserId, roomId: room.id, targetUserId: userId, type: AdminActionType.Warn });
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
@@ -543,31 +536,17 @@ describe(buildUserDataArchive, () => {
     const actionTime = new Date(
       Temporal.Duration.from({ hours: 1, milliseconds: 3, seconds: 2 }).total("milliseconds"),
     );
-    const moderationLogClient = getStreamTableClient(StreamTable.ModerationLog);
-    const actions = [
+    await mockDb.insert(moderationLogsInMessage).values([
       {
         actorUserId: userId,
-        partitionKey: ownedRoom.id,
-        rowKey: getReverseTickedTimestamp((BigInt(actionTime.getTime()) * 10n ** 6n).toString()),
+        createdAt: actionTime,
+        roomId: ownedRoom.id,
         targetUserId: otherUserId,
         type: AdminActionType.Warn,
       },
-      {
-        actorUserId: otherUserId,
-        partitionKey: ownedRoom.id,
-        rowKey: getReverseTickedTimestamp(),
-        targetUserId: userId,
-        type: AdminActionType.Warn,
-      },
-      {
-        actorUserId: userId,
-        partitionKey: otherRoom.id,
-        rowKey: getReverseTickedTimestamp(),
-        targetUserId: otherUserId,
-        type: AdminActionType.Warn,
-      },
-    ];
-    await Promise.all(actions.map((action) => moderationLogClient.createEntity(serializeEntity(action))));
+      { actorUserId: otherUserId, roomId: ownedRoom.id, targetUserId: userId, type: AdminActionType.Warn },
+      { actorUserId: userId, roomId: otherRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn },
+    ]);
 
     await buildUserDataArchive(userId, blobName);
     const entries = await readArchiveEntries(blobName);
@@ -576,6 +555,51 @@ describe(buildUserDataArchive, () => {
     expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
       { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
     ]);
+  });
+
+  test("writes the moderation records that name the person as their target, from both tables, and none about other people", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const recordTime = new Date(Temporal.Duration.from({ minutes: 5 }).total("milliseconds"));
+    // The log and note name the person as their target in a room they are not in, and a record about the other person is
+    // not theirs to read
+    await mockDb.insert(moderationLogsInMessage).values([
+      {
+        actorUserId: otherUserId,
+        createdAt: recordTime,
+        roomId: room.id,
+        targetUserId: userId,
+        type: AdminActionType.Warn,
+      },
+      { actorUserId: otherUserId, roomId: room.id, targetUserId: otherUserId, type: AdminActionType.Warn },
+    ]);
+    await mockDb.insert(moderationNotesInMessage).values([
+      { actorUserId: otherUserId, createdAt: recordTime, note, roomId: room.id, targetUserId: userId },
+      { actorUserId: otherUserId, note, roomId: room.id, targetUserId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A record carries its actor, its room and the time it was made beside what it did or said, and no update or delete time
+    expect(readEntryJson(entries, "moderation.json")).toStrictEqual({
+      logs: [
+        {
+          actorUserId: otherUserId,
+          createdAt: recordTime,
+          durationMs: null,
+          roomId: room.id,
+          targetUserId: userId,
+          type: AdminActionType.Warn,
+        },
+      ],
+      notes: [{ actorUserId: otherUserId, createdAt: recordTime, note, roomId: room.id, targetUserId: userId }],
+    });
   });
 
   test("writes the calls the person started, without their join ids, and no other person's call", async () => {

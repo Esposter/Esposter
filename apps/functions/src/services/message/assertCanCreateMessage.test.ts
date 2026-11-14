@@ -4,7 +4,10 @@ import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMes
 import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
+  AdminActionType,
+  AUTOMOD_USER_ID,
   DatabaseEntityType,
+  moderationLogsInMessage,
   roomFiltersInMessage,
   RoomPermission,
   roomRolesInMessage,
@@ -24,10 +27,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 
 describe(assertCanCreateMessage, () => {
   const memberUserId = crypto.randomUUID();
@@ -36,7 +35,7 @@ describe(assertCanCreateMessage, () => {
   const roomId = crypto.randomUUID();
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await mockDb.insert(usersInAuth).values([createUser(ownerUserId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values({ id: roomId, name, userId: ownerUserId });
     // The @everyone role every member holds, seeded with the send permission `createRoom` gives it
@@ -60,6 +59,7 @@ describe(assertCanCreateMessage, () => {
       .set({ lastMessageAt: null, timeoutUntil: null })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberUserId)));
     await mockDb.delete(roomFiltersInMessage).where(eq(roomFiltersInMessage.roomId, roomId));
+    await mockDb.delete(moderationLogsInMessage).where(eq(moderationLogsInMessage.roomId, roomId));
     vi.useRealTimers();
   });
 
@@ -72,9 +72,7 @@ describe(assertCanCreateMessage, () => {
 
     const missingRoomId = crypto.randomUUID();
 
-    await expect(
-      assertCanCreateMessage(memberUserId, missingRoomId, ""),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(memberUserId, missingRoomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, missingRoomId).message}]`,
     );
   });
@@ -82,9 +80,7 @@ describe(assertCanCreateMessage, () => {
   test("throws when member not found", async () => {
     expect.hasAssertions();
 
-    await expect(
-      assertCanCreateMessage(crypto.randomUUID(), roomId, ""),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(assertCanCreateMessage(crypto.randomUUID(), roomId, "")).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, roomId).message}]`,
     );
   });
@@ -161,6 +157,25 @@ describe(assertCanCreateMessage, () => {
       where: { roomId: { eq: roomId }, userId: { eq: memberUserId } },
     });
     expect(member?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
+    // The audit row is written by the automod actor, against the member, with the timeout's duration
+    await expect(
+      mockDb
+        .select({
+          actorUserId: moderationLogsInMessage.actorUserId,
+          durationMs: moderationLogsInMessage.durationMs,
+          targetUserId: moderationLogsInMessage.targetUserId,
+          type: moderationLogsInMessage.type,
+        })
+        .from(moderationLogsInMessage)
+        .where(eq(moderationLogsInMessage.roomId, roomId)),
+    ).resolves.toStrictEqual([
+      {
+        actorUserId: AUTOMOD_USER_ID,
+        durationMs: timeoutDurationMs,
+        targetUserId: memberUserId,
+        type: AdminActionType.TimeoutUser,
+      },
+    ]);
   });
 
   test("passes when all conditions are met", async () => {

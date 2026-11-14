@@ -9,15 +9,13 @@ import { eq } from "drizzle-orm";
 
 // An owner's departure deletes the room for everyone, and account deletion does the same to each room its account owns.
 // The message partitions, the attachments and the profile images go first, and
-// The room row last: the row is what a replay finds the room by, so a room whose sweep fails keeps its row and is swept again
+// The room row last: the row is what a replay finds the room by, so a room whose sweep fails keeps its row and is swept again.
+// The room's moderation log and notes are rows that cascade with the room row, so they need no sweep of their own
 export const deleteAccountOwnedRoom = async (roomId: RoomInMessage["id"]): Promise<void> => {
   await Promise.all(
-    [
-      StreamTable.Messages,
-      StreamTable.MessagesMetadata,
-      StreamTable.ModerationLog,
-      StreamTable.ModerationNotes,
-    ].map(async (tableName) => deleteTablePartitionEntities(getStreamTableClient(tableName), roomId)),
+    [StreamTable.Messages, StreamTable.MessagesMetadata].map(async (tableName) =>
+      deleteTablePartitionEntities(getStreamTableClient(tableName), roomId),
+    ),
   );
   await deleteStoragePrefix(StorageBucket.MessageAssets, `${roomId}/`);
   await deleteStoragePrefix(StorageBucket.PublicUserAssets, `rooms/${roomId}/`);

@@ -11,10 +11,7 @@
       "queues": {
         "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "prod-q-esposter-process-notification" }],
       },
-      "d1_databases": [
-        { "binding": "CORE", "database_name": "prod-d1-esposter-core", "database_id": "set-at-deploy" },
-        { "binding": "STREAMS", "database_name": "prod-d1-esposter-streams", "database_id": "set-at-deploy" },
-      ],
+      "d1_databases": [{ "binding": "CORE", "database_name": "prod-d1-esposter-core", "database_id": "set-at-deploy" }],
       "r2_buckets": [
         { "binding": "CLICKER_ASSETS", "bucket_name": "prod-r2-esposter-clicker-assets" },
         { "binding": "GENSHIN_ASSETS", "bucket_name": "prod-r2-esposter-genshin-assets" },
@@ -41,10 +38,7 @@
       "queues": {
         "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "dev-q-esposter-process-notification" }],
       },
-      "d1_databases": [
-        { "binding": "CORE", "database_name": "dev-d1-esposter-core", "database_id": "set-at-deploy" },
-        { "binding": "STREAMS", "database_name": "dev-d1-esposter-streams", "database_id": "set-at-deploy" },
-      ],
+      "d1_databases": [{ "binding": "CORE", "database_name": "dev-d1-esposter-core", "database_id": "set-at-deploy" }],
       "r2_buckets": [
         { "binding": "CLICKER_ASSETS", "bucket_name": "dev-r2-esposter-clicker-assets" },
         { "binding": "GENSHIN_ASSETS", "bucket_name": "dev-r2-esposter-genshin-assets" },

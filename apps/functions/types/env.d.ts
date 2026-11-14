@@ -28,7 +28,6 @@ declare global {
       SCHEDULER: DurableObjectNamespace<Rpc.DurableObjectBranded & SchedulerObject>;
       SEND_TODO_REMINDER_QUEUE: Queue;
       SERVER: DurableObjectNamespace;
-      STREAMS: D1Database;
       USER_ASSETS: R2Bucket;
     }
   }

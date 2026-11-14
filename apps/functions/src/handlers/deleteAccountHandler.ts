@@ -3,6 +3,7 @@ import { deleteAccountChargedBlobs } from "#src/services/account/deleteAccountCh
 import { deleteAccountDataExportArchives } from "#src/services/account/deleteAccountDataExportArchives";
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
 import { deleteAccountOwnedResources } from "#src/services/account/deleteAccountOwnedResources";
+import { clearAccountModerationActor } from "#src/services/account/clearAccountModerationActor";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { db } from "#src/services/shared/db";
@@ -22,5 +23,6 @@ export const deleteAccountHandler = async (body: unknown): Promise<void> => {
   await deleteAccountChargedBlobs(userId);
   await deleteAccountBlobDirectories(userId);
   await deleteAccountDataExportArchives(userId);
+  await clearAccountModerationActor(userId);
   await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
 };

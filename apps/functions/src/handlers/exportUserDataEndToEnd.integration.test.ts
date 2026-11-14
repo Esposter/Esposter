@@ -7,13 +7,7 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import {
-  createMessage,
-  getContentBlobName,
-  getFileBlobNames,
-  writeJsonBlob,
-  writeModerationLogEntry,
-} from "@esposter/db";
+import { createMessage, getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
@@ -22,6 +16,7 @@ import {
   dataExportsInUser,
   DataExportStatus,
   friendsInSocial,
+  moderationLogsInMessage,
   getResourceFileBlobName,
   getRoomEmojiBlobName,
   getSaveBlobName,
@@ -64,7 +59,7 @@ describe(exportUserDataHandler, () => {
   const title = "title";
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -141,12 +136,9 @@ describe(exportUserDataHandler, () => {
     await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
     const genshinAssetsBucket = getBucket(StorageBucket.GenshinAssets);
     await writeJsonBlob(genshinAssetsBucket, getSaveBlobName(userId), content);
-    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
-      actorUserId: otherUserId,
-      roomId: room.id,
-      targetUserId: userId,
-      type: AdminActionType.Warn,
-    });
+    await mockDb
+      .insert(moderationLogsInMessage)
+      .values({ actorUserId: otherUserId, roomId: room.id, targetUserId: userId, type: AdminActionType.Warn });
 
     // The request writes the queued row the web procedure writes, and the event carries its id to the handler
     const dataExportId = crypto.randomUUID();

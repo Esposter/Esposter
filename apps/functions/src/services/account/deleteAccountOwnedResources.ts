@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 // Directory, the partitions its type owns and its ledger rows go in the order that makes a replay safe
 export const deleteAccountOwnedResources = async (userId: UserInAuth["id"]): Promise<void> => {
   const ownedResources = await db
-    .select({ id: resourcesInResource.id, type: resourcesInResource.type })
+    .select({ id: resourcesInResource.id })
     .from(resourcesInResource)
     .where(eq(resourcesInResource.userId, userId));
   const bucket = getBucket(StorageBucket.ResourceAssets);

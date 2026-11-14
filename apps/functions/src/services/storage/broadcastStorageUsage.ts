@@ -6,7 +6,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 
 // The counter moves in two processes and is only ever read in one. A blob event settles it here, in the
 // Functions host, while the meter watching it is subscribed to an in-process emitter in the app — so without
-// This the number is right in postgres and stale on screen until the next full page load. The event names the
+// This the number is right in the database and stale on screen until the next full page load. The event names the
 // Owner rather than a device, because the quota is a property of the account and every device showing it is
 // Wrong by the same amount. See openspec/specs/resource/storage-quotas/design.md
 //

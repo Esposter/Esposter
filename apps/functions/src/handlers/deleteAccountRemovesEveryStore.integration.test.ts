@@ -4,6 +4,7 @@ import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
+import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
@@ -11,12 +12,10 @@ import { getStreamTableClient } from "#src/services/streams/getStreamTableClient
 import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import {
   chargeStorageLedgerEntry,
-  createEntity,
   createMessage,
   getContentBlobName,
   serializeEntity,
   writeJsonBlob,
-  writeModerationLogEntry,
 } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -30,9 +29,10 @@ import {
   getUserProfileImageBlobName,
   MessageMetadataType,
   MessageType,
-  ProgramParticipantEntity,
-  ResourceActivityEntity,
+  moderationLogsInMessage,
+  programParticipantsInResource,
   ResourceActivityType,
+  resourceActivitiesInResource,
   resourcesInResource,
   ResourceType,
   resourceVersionsInResource,
@@ -40,7 +40,7 @@ import {
   sessionsInAuth,
   SnapshotChannel,
   storageLedgerInStorage,
-  SurveyResponseEntity,
+  surveyResponsesInResource,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -78,20 +78,30 @@ const readUserRows = (userId: string) =>
   mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
 const readApiKeyRows = (userId: string) =>
   mockDb.select({ id: apiKeysInAuth.id }).from(apiKeysInAuth).where(eq(apiKeysInAuth.referenceId, userId));
+const readResourceActivityRows = (resourceId: string) =>
+  mockDb
+    .select({ id: resourceActivitiesInResource.id })
+    .from(resourceActivitiesInResource)
+    .where(eq(resourceActivitiesInResource.resourceId, resourceId));
+const readProgramParticipantRows = (resourceId: string) =>
+  mockDb
+    .select({ id: programParticipantsInResource.id })
+    .from(programParticipantsInResource)
+    .where(eq(programParticipantsInResource.resourceId, resourceId));
+const readSurveyResponseRows = (resourceId: string) =>
+  mockDb
+    .select({ id: surveyResponsesInResource.id })
+    .from(surveyResponsesInResource)
+    .where(eq(surveyResponsesInResource.resourceId, resourceId));
 describe(deleteAccountHandler, () => {
   const content = JSON.stringify({});
   const countedBytes = 1;
   const message = "message";
   const name = "name";
-  const roomTableNames = [
-    StreamTable.Messages,
-    StreamTable.MessagesMetadata,
-    StreamTable.ModerationLog,
-    StreamTable.ModerationNotes,
-  ];
+  const roomTableNames = [StreamTable.Messages, StreamTable.MessagesMetadata];
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -118,7 +128,7 @@ describe(deleteAccountHandler, () => {
     await chargeStorageLedgerEntry(mockDb, userId, containerName, blobName, countedBytes);
   };
 
-  test("removes every store the inventory keys to the account, keeps what the spec names, and leaves the other account's data as it was", async () => {
+  test("removes every store the inventory keys to the account, keeps the activity it left on another's resource, and leaves the other account's data as it was", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
@@ -166,13 +176,15 @@ describe(deleteAccountHandler, () => {
     await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
 
-    // The moderation record names the account in a room the account does not own, so it is kept
-    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
-      actorUserId: otherUserId,
-      roomId: memberRoom.id,
-      targetUserId: userId,
-      type: AdminActionType.Warn,
-    });
+    // The moderation record names the account in a room the account does not own. Its target is a foreign key with a
+    // cascade, so it goes with the account's row
+    await mockDb
+      .insert(moderationLogsInMessage)
+      .values({ actorUserId: otherUserId, roomId: memberRoom.id, targetUserId: userId, type: AdminActionType.Warn });
+    // The account's own action against the other account, in the same room, is kept with its author blanked
+    await mockDb
+      .insert(moderationLogsInMessage)
+      .values({ actorUserId: userId, roomId: memberRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn });
 
     // Reactions are one row per emoji that its reactors share. The account alone holds the first, which goes; it shares
     // The second with the other account, which keeps its id; the other account alone holds the third, which is kept.
@@ -216,33 +228,27 @@ describe(deleteAccountHandler, () => {
         storedBytes: versionSize,
         version: 0,
       });
-    const resourceActivityClient = getStreamTableClient(StreamTable.ResourceActivity);
-    await createEntity(
-      resourceActivityClient,
-      new ResourceActivityEntity({
-        activityType: ResourceActivityType.Created,
-        partitionKey: ownedResource.id,
-        rowKey: getReverseTickedTimestamp(),
-        userId,
-      }),
-    );
+    await mockDb
+      .insert(resourceActivitiesInResource)
+      .values({ activityType: ResourceActivityType.Created, resourceId: ownedResource.id, userId });
 
-    // The account's owned survey and program, each with a row in the partition its type owns, and an API key.
+    // The account's owned survey and program, each with a row that belongs to it, and an API key.
     // The user row's cascade takes the API key
     const ownedSurvey = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Survey, userId }).returning(),
     );
-    await createEntity(
-      getStreamTableClient(StreamTable.SurveyResponses),
-      new SurveyResponseEntity({ partitionKey: ownedSurvey.id, rowKey: crypto.randomUUID() }),
-    );
+    await mockDb.insert(surveyResponsesInResource).values({ resourceId: ownedSurvey.id });
     const ownedProgram = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Program, userId }).returning(),
     );
-    await createEntity(
-      getStreamTableClient(StreamTable.ProgramParticipants),
-      new ProgramParticipantEntity({ partitionKey: ownedProgram.id, rowKey: crypto.randomUUID() }),
-    );
+    await mockDb
+      .insert(programParticipantsInResource)
+      .values({
+        keyValue: crypto.randomUUID(),
+        publicId: crypto.randomUUID(),
+        resourceId: ownedProgram.id,
+        token: crypto.randomUUID(),
+      });
     await mockDb
       .insert(apiKeysInAuth)
       .values({ id: crypto.randomUUID(), key: crypto.randomUUID(), referenceId: userId });
@@ -254,15 +260,9 @@ describe(deleteAccountHandler, () => {
         .values({ name, type: ResourceType.Note, userId: otherUserId })
         .returning(),
     );
-    await createEntity(
-      resourceActivityClient,
-      new ResourceActivityEntity({
-        activityType: ResourceActivityType.ContentSaved,
-        partitionKey: otherResource.id,
-        rowKey: getReverseTickedTimestamp(),
-        userId,
-      }),
-    );
+    await mockDb
+      .insert(resourceActivitiesInResource)
+      .values({ activityType: ResourceActivityType.ContentSaved, resourceId: otherResource.id, userId });
 
     // The account's own blob directories
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
@@ -274,8 +274,8 @@ describe(deleteAccountHandler, () => {
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
     // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
-    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
-    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
+    await expect(readSurveyResponseRows(ownedSurvey.id)).resolves.toHaveLength(1);
+    await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
 
     await deleteAccountHandler({ userId });
@@ -319,12 +319,12 @@ describe(deleteAccountHandler, () => {
         .where(eq(resourceVersionsInResource.resourceId, ownedResource.id)),
     ).resolves.toStrictEqual([]);
     await expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).resolves.toStrictEqual([]);
-    expect(readPartitionEntities(StreamTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
+    await expect(readResourceActivityRows(ownedResource.id)).resolves.toStrictEqual([]);
 
     // The owned survey's responses and the owned program's participants go with their resources
     // The API key goes with the user row
-    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toStrictEqual([]);
-    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toStrictEqual([]);
+    await expect(readSurveyResponseRows(ownedSurvey.id)).resolves.toStrictEqual([]);
+    await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
     // The account's messages in the room it is a member of are erased and soft-deleted, and its charged attachment is gone
@@ -351,15 +351,29 @@ describe(deleteAccountHandler, () => {
     await expect(readBlobNamesUnder(StorageBucket.GenshinAssets, `${userId}/`)).resolves.toStrictEqual([]);
     await expect(readBlobNamesUnder(StorageBucket.ClickerAssets, `${userId}/`)).resolves.toStrictEqual([]);
 
-    // Kept: the moderation record that names the account, and the account's activity on a resource it does not own
-    expect(
-      readPartitionEntities(StreamTable.ModerationLog, memberRoom.id).map(({ targetUserId }) => targetUserId),
-    ).toStrictEqual([userId]);
-    expect(
-      readPartitionEntities(StreamTable.ResourceActivity, otherResource.id).map(
-        ({ userId: activityUserId }) => activityUserId,
-      ),
-    ).toStrictEqual([userId]);
+    // The moderation record that names the account went with the account's row. The account's activity on a resource it
+    // does not own is kept, and its author is cleared, since the trail outlives the person who wrote it
+    await expect(
+      mockDb
+        .select({ id: moderationLogsInMessage.id })
+        .from(moderationLogsInMessage)
+        .where(eq(moderationLogsInMessage.targetUserId, userId)),
+    ).resolves.toStrictEqual([]);
+    await expect(
+      mockDb
+        .select({
+          actorUserId: moderationLogsInMessage.actorUserId,
+          targetUserId: moderationLogsInMessage.targetUserId,
+        })
+        .from(moderationLogsInMessage)
+        .where(eq(moderationLogsInMessage.roomId, memberRoom.id)),
+    ).resolves.toStrictEqual([{ actorUserId: null, targetUserId: otherUserId }]);
+    await expect(
+      mockDb
+        .select({ userId: resourceActivitiesInResource.userId })
+        .from(resourceActivitiesInResource)
+        .where(eq(resourceActivitiesInResource.resourceId, otherResource.id)),
+    ).resolves.toStrictEqual([{ userId: null }]);
 
     // The other account: its row, its message and its charged attachment are exactly as they were
     await expect(mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId))).resolves.toStrictEqual(

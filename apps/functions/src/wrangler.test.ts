@@ -25,7 +25,7 @@ interface WranglerEnvironment {
 // The names this file shares with Pulumi and the app: a queue, bucket or database a wrangler config names that Pulumi does
 // not create is a binding that resolves to nothing. Each expected name is built by the same function Pulumi calls, so the
 // two cannot disagree. Read from this package's own file so the suite runs from the repo root too.
-const configuration = jsonDateParse<Record<CloudflareEnvironment, WranglerEnvironment>>(
+const configuration = jsonDateParse<{ env: Record<CloudflareEnvironment, WranglerEnvironment> }>(
   readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8"),
 );
 
@@ -48,7 +48,7 @@ describe.each(environments)("the $environment environment of the functions Worke
     ]);
   });
 
-  test("binds every storage bucket and both databases under their environment's names", () => {
+  test("binds every storage bucket and the database under their environment's names", () => {
     expect.hasAssertions();
 
     expect(wrangler.r2_buckets.map(({ bucket_name }) => bucket_name).toSorted()).toStrictEqual(
@@ -56,11 +56,9 @@ describe.each(environments)("the $environment environment of the functions Worke
         .map((bucket) => getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket))
         .toSorted(),
     );
-    expect(wrangler.d1_databases.map(({ database_name }) => database_name)).toStrictEqual(
-      ["core", "streams"].map((database) =>
-        getCloudflareResourceName(environment, CloudflareAssetType.D1Database, database),
-      ),
-    );
+    expect(wrangler.d1_databases.map(({ database_name }) => database_name)).toStrictEqual([
+      getCloudflareResourceName(environment, CloudflareAssetType.D1Database, "core"),
+    ]);
   });
 
   test("runs as its environment's Worker, reads its queue names by that environment, and purges on the nightly cron", () => {

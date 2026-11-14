@@ -7,9 +7,15 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
+import {
+  resourceActivitiesInResource,
+  ResourceActivityType,
+  StorageBucket,
+  resourcesInResource,
+  ResourceType,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -20,24 +26,19 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 describe(deleteAccountOwnedResources, () => {
   const name = "name";
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.ResourceAssets]);
   });
 
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
 
@@ -45,7 +46,7 @@ describe(deleteAccountOwnedResources, () => {
     await disposeMockBuckets();
   });
 
-  test("purges an owned resource's directory and row, and no other owner's resource", async () => {
+  test("purges an owned resource's directory, activity trail and row, and no other owner's resource", async () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
@@ -60,6 +61,11 @@ describe(deleteAccountOwnedResources, () => {
         .values({ name, type: ResourceType.Note, userId: otherUserId })
         .returning(),
     );
+    // The activity trail is the resource's own rows, so they cascade with its row
+    await mockDb.insert(resourceActivitiesInResource).values([
+      { activityType: ResourceActivityType.Created, resourceId: ownedResource.id, userId },
+      { activityType: ResourceActivityType.Created, resourceId: otherResource.id, userId: otherUserId },
+    ]);
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(otherResource.id));
 
@@ -71,5 +77,8 @@ describe(deleteAccountOwnedResources, () => {
     await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([
       { id: otherResource.id },
     ]);
+    await expect(
+      mockDb.select({ resourceId: resourceActivitiesInResource.resourceId }).from(resourceActivitiesInResource),
+    ).resolves.toStrictEqual([{ resourceId: otherResource.id }]);
   });
 });
