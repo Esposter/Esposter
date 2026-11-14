@@ -29,7 +29,7 @@ describe(useConnectionStore, () => {
 
     const connectionStore = useConnectionStore();
     const roomId = v7();
-    const handler = vi.fn();
+    const handler = vi.fn<(data: unknown, roomId: string) => void>();
     connectionStore.onRoomEvent("deleteMessage", handler);
     await connectionStore.openRoom(
       roomId,
