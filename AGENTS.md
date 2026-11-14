@@ -89,29 +89,29 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 
 ## Where everything is owned
 
-| Subject                                                                      | Owner                                                       |
-| :--------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| Storage split, Azure service map, Functions, Event Grid, Service Bus, PubSub | `openspec/specs/architecture/cloudflare-services/design.md` |
-| Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `openspec/specs/architecture/cloudflare-services/design.md` |
-| Notifications — the one event, Function and delivery path                    | `openspec/specs/architecture/notifications/design.md`       |
-| RBAC — permission bitfield, hierarchy, the service functions                 | `openspec/specs/esbabbler/rbac/design.md`                   |
-| Moderation — `AdminActionType` and every place it touches                    | `openspec/specs/esbabbler/moderation/design.md`             |
-| Message types — `MessageComponentMap` and the shared shells                  | `openspec/specs/esbabbler/message-list-rendering/design.md` |
-| Client reads and writes — `useQuery` / `useMutation` and their exceptions    | `openspec/specs/architecture/client-data/design.md`         |
-| Monorepo orchestration, publishing, installs, CI runners                     | `openspec/specs/architecture/monorepo-tooling/design.md`    |
-| Agent tree — `.agents/`, the `.claude` alias, tool excludes                  | `openspec/specs/architecture/agent-configuration/design.md` |
-| Engineering loops — where work enters, what feeds what, what runs next       | `openspec/specs/architecture/engineering-loops/design.md`   |
-| Review: what lands on `ai/queue`, reviewed and fixed by haiku                | `openspec/specs/infra/review/design.md`                     |
-| Game text — the game's own words in its languages, by text id                | `genshin-text` skill                                        |
-| Building a proposal — choosing, verifying, shipping, handing back            | `building-proposals` skill                                  |
-| Specifications and decision records — OpenSpec changes under `openspec/`     | `openspec` skill                                            |
-| tRPC — router structure, procedure builders, naming, tests                   | `trpc` skill                                                |
-| Schema and migrations — `db:gen`, SQL fixups, chain recovery                 | `drizzle` skill                                             |
-| Slash commands — the registry and adding one                                 | `slash-commands` skill                                      |
-| Reviewing anything — lanes, scope, findings, the stop rule                   | `code-review` skill                                         |
-| Static files — bundled under `app/assets`, or fixed under `public`           | `openspec/specs/architecture/static-assets/design.md`       |
-| Enforcing a rule — construction, primitive, lint, test, then prose           | `openspec/specs/architecture/enforcement-ladder/design.md`  |
-| Where an artifact lives — the repo or Azure Blob, never one disk             | `openspec/specs/architecture/recoverability/design.md`      |
+| Subject                                                                            | Owner                                                       |
+| :--------------------------------------------------------------------------------- | :---------------------------------------------------------- |
+| Storage split, Cloudflare service map, queues, alarms, Durable Objects, R2 buckets | `openspec/specs/architecture/cloudflare-services/design.md` |
+| Real-time — typed events over the room, call and user objects' sockets             | `openspec/specs/architecture/cloudflare-services/design.md` |
+| Notifications — the one event, Function and delivery path                          | `openspec/specs/architecture/notifications/design.md`       |
+| RBAC — permission bitfield, hierarchy, the service functions                       | `openspec/specs/esbabbler/rbac/design.md`                   |
+| Moderation — `AdminActionType` and every place it touches                          | `openspec/specs/esbabbler/moderation/design.md`             |
+| Message types — `MessageComponentMap` and the shared shells                        | `openspec/specs/esbabbler/message-list-rendering/design.md` |
+| Client reads and writes — `useQuery` / `useMutation` and their exceptions          | `openspec/specs/architecture/client-data/design.md`         |
+| Monorepo orchestration, publishing, installs, CI runners                           | `openspec/specs/architecture/monorepo-tooling/design.md`    |
+| Agent tree — `.agents/`, the `.claude` alias, tool excludes                        | `openspec/specs/architecture/agent-configuration/design.md` |
+| Engineering loops — where work enters, what feeds what, what runs next             | `openspec/specs/architecture/engineering-loops/design.md`   |
+| Review: what lands on `ai/queue`, reviewed and fixed by haiku                      | `openspec/specs/infra/review/design.md`                     |
+| Game text — the game's own words in its languages, by text id                      | `genshin-text` skill                                        |
+| Building a proposal — choosing, verifying, shipping, handing back                  | `building-proposals` skill                                  |
+| Specifications and decision records — OpenSpec changes under `openspec/`           | `openspec` skill                                            |
+| tRPC — router structure, procedure builders, naming, tests                         | `trpc` skill                                                |
+| Schema and migrations — `db:gen`, SQL fixups, chain recovery                       | `drizzle` skill                                             |
+| Slash commands — the registry and adding one                                       | `slash-commands` skill                                      |
+| Reviewing anything — lanes, scope, findings, the stop rule                         | `code-review` skill                                         |
+| Static files — bundled under `app/assets`, or fixed under `public`                 | `openspec/specs/architecture/static-assets/design.md`       |
+| Enforcing a rule — construction, primitive, lint, test, then prose                 | `openspec/specs/architecture/enforcement-ladder/design.md`  |
+| Where an artifact lives — the repo or Azure Blob, never one disk                   | `openspec/specs/architecture/recoverability/design.md`      |
 
 Deciding without asking — the recommended option is taken, and only the user-only list is asked about — is the `throughput` skill's "Decide, don't ask" section. Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 
