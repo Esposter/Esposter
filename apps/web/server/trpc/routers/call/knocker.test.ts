@@ -77,7 +77,7 @@ describe("knockerRouter", () => {
       isKnocking: false,
     }));
     const admitKnocker = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(true));
-    vi.mocked(getCallObject).mockReturnValueOnce({ admitKnocker, readAccess } as unknown as ReturnType<
+    vi.mocked(getCallObject).mockReturnValue({ admitKnocker, readAccess } as unknown as ReturnType<
       typeof getCallObject
     >);
 
