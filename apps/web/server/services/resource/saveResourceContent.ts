@@ -1,6 +1,5 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { SaveResourceContentInput } from "#server/models/resource/SaveResourceContentInput";
-import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
 import { callUserObjects } from "#server/services/realtime/callUserObjects";

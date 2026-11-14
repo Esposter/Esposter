@@ -11,6 +11,7 @@ import { createSingleFlight } from "@/services/shared/createSingleFlight";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 import { useAlertStore } from "@/store/alert";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { checkIsServer, getResult, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { StorageSerializers } from "@vueuse/core";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, mergeGenshinSave } from "genshin-world/save";

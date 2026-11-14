@@ -3,7 +3,7 @@ import type { SurveyResponseModeValidator } from "#server/models/survey/SurveyRe
 
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readBoundProgramIds } from "#server/services/survey/readBoundProgramIds";
-import { programParticipantsInResource, ResourceType, resourcesInResource } from "@esposter/db-schema";
+import { programParticipantsInResource, ResourceType } from "@esposter/db-schema";
 import { and, eq, inArray } from "drizzle-orm";
 
 // The program is the issuer, the survey is the gate — a token only passes when it was issued by a
