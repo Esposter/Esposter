@@ -75,6 +75,7 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     closeSession: vi.fn<UserObjectRpc["closeSession"]>(),
     declineFriendRequest: vi.fn<UserObjectRpc["declineFriendRequest"]>(),
     deleteFriend: vi.fn<UserObjectRpc["deleteFriend"]>(),
+    invalidate: vi.fn<UserObjectRpc["invalidate"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
     readSentMessages: vi.fn<UserObjectRpc["readSentMessages"]>(),

@@ -1,5 +1,6 @@
 import type { CallObject } from "#src/durableObjects/CallObject";
 import type { RoomObject } from "#src/durableObjects/RoomObject";
+import type { TopicObject } from "#src/durableObjects/TopicObject";
 import type { UserObject } from "#src/durableObjects/UserObject";
 import type { RealtimeEnvironmentVariables } from "#src/models/environment/RealtimeEnvironmentVariables";
 
@@ -13,6 +14,7 @@ declare global {
       PROCESS_NOTIFICATION_QUEUE: Queue;
       RESOURCE_ASSETS: R2Bucket;
       ROOM: DurableObjectNamespace<RoomObject>;
+      TOPIC: DurableObjectNamespace<TopicObject>;
       USER: DurableObjectNamespace<UserObject>;
     }
   }

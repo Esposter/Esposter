@@ -43,6 +43,11 @@ class MemoryStorage implements Storage {
 globalThis.localStorage ??= new MemoryStorage();
 globalThis.sessionStorage ??= new MemoryStorage();
 vi.mock(import("#server/services/queue/getJobQueue"), () => import("#server/services/queue/getJobQueue.test"));
+// A topic's object lives in the realtime Worker, so a published topic is recorded where a test can read it
+vi.mock(
+  import("#server/services/realtime/publishTopics"),
+  () => import("#server/services/realtime/publishTopics.test"),
+);
 
 // The user object client redirects to its colocated in-memory double, here rather than in `context.test.ts`: a `vi.mock`
 // Is hoisted only within the file that writes it, so one registered from an imported module never intercepts a test

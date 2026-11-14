@@ -1,5 +1,6 @@
 import { userAchievementInAchievementWithRelationsSchema } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
 import { updateRoomInputSchema } from "#src/models/message/UpdateRoomInput";
+import { topicSchema } from "#src/models/realtime/Topic";
 import { sessionIdSchema } from "#src/models/shared/SessionId";
 import { friendRequestInSocialWithRelationsSchema } from "#src/models/social/FriendRequestInSocialWithRelations";
 import { storageUsageSchema } from "#src/models/storage/StorageUsage";
@@ -82,6 +83,8 @@ const updateUserToRoomEventSchema = z.object({
   data: selectUserToRoomInMessageSchema,
   type: z.literal("updateUserToRoom"),
 });
+// A topic a tab watches changed, so its queries on that topic refetch. The frame names the topic alone, never data
+const invalidateEventSchema = z.object({ data: z.object({ topic: topicSchema }), type: z.literal("invalidate") });
 
 const userEventSchemas = [
   updateAchievementEventSchema,
@@ -98,6 +101,7 @@ const userEventSchemas = [
   joinRoomEventSchema,
   leaveRoomEventSchema,
   updateUserToRoomEventSchema,
+  invalidateEventSchema,
 ] as const;
 
 export type UserEvent = z.infer<(typeof userEventSchemas)[number]>;

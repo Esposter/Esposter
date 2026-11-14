@@ -4,11 +4,19 @@ import { jsonDateParse } from "@esposter/shared";
 import { DatabaseSync } from "node:sqlite";
 import { describe, vi } from "vitest";
 
-// A socket the runtime accepted: the two calls the object makes on one are the ones a test reads
-export const createSocket = () => ({
-  close: vi.fn<(code: number, reason: string) => void>(),
-  send: vi.fn<(frame: string) => void>(),
-});
+// A socket the runtime accepted: the close and send calls the object makes are the ones a test reads, and its attachment is
+// Held as the runtime holds it across hibernation
+export const createSocket = () => {
+  let attachment: unknown;
+  return {
+    close: vi.fn<(code: number, reason: string) => void>(),
+    deserializeAttachment: () => attachment,
+    send: vi.fn<(frame: string) => void>(),
+    serializeAttachment: (value: unknown) => {
+      attachment = value;
+    },
+  };
+};
 
 export type MockSocket = ReturnType<typeof createSocket>;
 
@@ -25,9 +33,10 @@ const createCursor = (rows: unknown[]) => {
 // The socket registry answers getWebSockets and getTags as the runtime does.
 // So a second object over the same state reads back the first's writes.
 // A closed socket leaves the registry, so a close handler sees only the sockets still open.
-// The alarm is held as the runtime holds it, and deleteAll starts the database again empty
+// The alarm and the key-value storage are held as the runtime holds them, and deleteAll starts both again empty
 export const createMockObjectState = (name: string) => {
   let database = new DatabaseSync(":memory:");
+  const keyValues = new Map<string, unknown>();
   const socketTags = new Map<MockSocket, string[]>();
   let pendingWork: Promise<unknown>[] = [];
   let alarm: null | number = null;
@@ -44,16 +53,25 @@ export const createMockObjectState = (name: string) => {
       [...socketTags].filter(([, tags]) => tag === undefined || tags.includes(tag)).map(([socket]) => socket),
     id: { name },
     storage: {
+      delete: (key: string) => Promise.resolve(keyValues.delete(key)),
       deleteAlarm: () => {
         alarm = null;
         return Promise.resolve();
       },
       deleteAll: () => {
         database = new DatabaseSync(":memory:");
+        keyValues.clear();
         alarm = null;
         return Promise.resolve();
       },
+      get: (key: string) => Promise.resolve(keyValues.get(key)),
       getAlarm: () => Promise.resolve(alarm),
+      list: ({ prefix }: { prefix: string }) =>
+        Promise.resolve(new Map([...keyValues].filter(([key]) => key.startsWith(prefix)))),
+      put: (key: string, value: unknown) => {
+        keyValues.set(key, value);
+        return Promise.resolve();
+      },
       setAlarm: (time: number) => {
         alarm = time;
         return Promise.resolve();

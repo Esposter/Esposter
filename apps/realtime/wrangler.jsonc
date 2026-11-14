@@ -22,10 +22,11 @@
         "bindings": [
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "TOPIC", "class_name": "TopicObject" },
           { "name": "USER", "class_name": "UserObject" },
         ],
       },
-      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] }],
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "TopicObject", "UserObject"] }],
     },
     "dev": {
       "name": "dev-wkr-esposter-realtime",
@@ -44,10 +45,11 @@
         "bindings": [
           { "name": "CALL", "class_name": "CallObject" },
           { "name": "ROOM", "class_name": "RoomObject" },
+          { "name": "TOPIC", "class_name": "TopicObject" },
           { "name": "USER", "class_name": "UserObject" },
         ],
       },
-      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "UserObject"] }],
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["CallObject", "RoomObject", "TopicObject", "UserObject"] }],
     },
   },
 }

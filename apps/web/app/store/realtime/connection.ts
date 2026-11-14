@@ -1,10 +1,10 @@
-import type { RoomEvent } from "@esposter/db-schema";
+import type { RoomEvent, Topic, UserClientFrame } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
 import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import { getOrCreate, jsonDateParse } from "@esposter/shared";
 
 type EventData<TEvent extends { data: unknown; type: string }, TType extends TEvent["type"]> = Extract<
   TEvent,
@@ -61,6 +61,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   let closeCallSocket: (() => void) | undefined;
   let closeRoomSocket: (() => void) | undefined;
   let closeUserSocket: (() => void) | undefined;
+  let sendUserSocketFrame: ((text: string) => void) | undefined;
 
   const closeCall = () => {
     closeCallSocket?.();
@@ -74,6 +75,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const closeUser = () => {
     closeUserSocket?.();
     closeUserSocket = undefined;
+    sendUserSocketFrame = undefined;
   };
 
   // A call's socket is the call's own, so it is opened by the call's id and closed when the person leaves. Opening the
@@ -86,15 +88,17 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     callSocketSessionId = callSessionId;
     const { promise, resolve } = Promise.withResolvers<void>();
     callSocketSettled = promise;
-    closeCallSocket = openRealtimeSocket(
+    ({ close: closeCallSocket } = openRealtimeSocket(
       () => createSocketUrl(`/ws/call/${callSessionId}`),
       (text) => {
         callHub.dispatch(text, undefined);
       },
-      () => {
-        resolve();
+      {
+        onSettled: () => {
+          resolve();
+        },
       },
-    );
+    ));
     return promise;
   };
   // A room's socket replays what it missed after the last message the page holds, read again at every reconnect, and
@@ -103,26 +107,68 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const openRoom = (roomId: string, getLastMessageId: () => number | undefined, onReopen: () => void) => {
     closeRoom();
     const { promise, resolve } = Promise.withResolvers<void>();
-    closeRoomSocket = openRealtimeSocket(
+    ({ close: closeRoomSocket } = openRealtimeSocket(
       () => createSocketUrl(`/ws/room/${roomId}`, getLastMessageId()),
       (text) => {
         roomHub.dispatch(text, roomId);
       },
-      () => {
-        resolve();
+      {
+        onReopen,
+        onSettled: () => {
+          resolve();
+        },
       },
-      onReopen,
-    );
+    ));
     return promise;
   };
+  // The topics the mounted queries watch, each with the refetches of the queries on it. A topic is watched up the user
+  // Socket as its first query mounts and unwatched as its last unmounts, and every open watches them all again, since a
+  // New connection holds nothing. A reconnect refetches every watched query, since an invalidation sent while the
+  // Socket was closed never arrived
+  const topicRefetchesMap = new Map<Topic, Set<() => void>>();
+  const sendUserFrame = (frame: UserClientFrame) => {
+    sendUserSocketFrame?.(JSON.stringify(frame));
+  };
+  const watchTopics = (topics: Topic[], refetch: () => void) => {
+    const newTopics = topics.filter((topic) => !topicRefetchesMap.has(topic));
+    for (const topic of topics) getOrCreate(topicRefetchesMap, topic, () => new Set()).add(refetch);
+    if (newTopics.length > 0) sendUserFrame({ data: { topics: newTopics }, type: "watch" });
+    return () => {
+      const releasedTopics = topics.filter((topic) => {
+        const refetches = topicRefetchesMap.get(topic);
+        refetches?.delete(refetch);
+        if (refetches?.size !== 0) return false;
+        topicRefetchesMap.delete(topic);
+        return true;
+      });
+      if (releasedTopics.length > 0) sendUserFrame({ data: { topics: releasedTopics }, type: "unwatch" });
+    };
+  };
+  const refetchTopics = (topics: Iterable<Topic>) => {
+    const refetches = new Set([...topics].flatMap((topic) => [...(topicRefetchesMap.get(topic) ?? [])]));
+    for (const refetch of refetches) refetch();
+  };
+  userHub.on("invalidate", ({ topic }) => {
+    refetchTopics([topic]);
+  });
+
   const openUser = () => {
     closeUser();
-    closeUserSocket = openRealtimeSocket(
+    ({ close: closeUserSocket, send: sendUserSocketFrame } = openRealtimeSocket(
       () => createSocketUrl("/ws/user"),
       (text) => {
         userHub.dispatch(text, undefined);
       },
-    );
+      {
+        onOpen: () => {
+          if (topicRefetchesMap.size > 0)
+            sendUserFrame({ data: { topics: [...topicRefetchesMap.keys()] }, type: "watch" });
+        },
+        onReopen: () => {
+          refetchTopics(topicRefetchesMap.keys());
+        },
+      },
+    ));
   };
 
   return {
@@ -135,5 +181,6 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     openCall,
     openRoom,
     openUser,
+    watchTopics,
   };
 });

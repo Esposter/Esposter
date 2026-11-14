@@ -1,4 +1,7 @@
+import type { Topic } from "@esposter/db-schema";
+
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { getSynchronizedFunction } from "@esposter/shared";
 
 interface QueryOptions<TResult> {
@@ -9,11 +12,14 @@ interface QueryOptions<TResult> {
   // Where a fetch at setup would spend a round trip on a read nothing renders yet
   isLazy?: true;
   onSuccess?: (result: TResult) => void;
+  // The topics the read's result comes from, the query procedure's own. While the surface is mounted they are watched
+  // Over the user socket, and a write that changed one refetches the read
+  topics?: MaybeRefOrGetter<Topic[]>;
 }
 
 export const useQuery = <TResult>(
   query: () => Promise<TResult>,
-  { isInlineError, isLazy, onSuccess }: QueryOptions<TResult> = {},
+  { isInlineError, isLazy, onSuccess, topics }: QueryOptions<TResult> = {},
 ) => {
   const { executeQuery, isPending } = useMutation();
   const data = shallowRef<TResult>();
@@ -38,6 +44,16 @@ export const useQuery = <TResult>(
       },
     });
   };
+  if (import.meta.client && topics !== undefined) {
+    const connectionStore = useConnectionStore();
+    watchImmediate(
+      () => toValue(topics),
+      (newTopics, _oldTopics, onCleanup) => {
+        if (newTopics.length === 0) return;
+        onCleanup(connectionStore.watchTopics(newTopics, getSynchronizedFunction(refresh)));
+      },
+    );
+  }
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query
   if (!isLazy) getSynchronizedFunction(refresh)();
   return { data, error, isPending, refresh };

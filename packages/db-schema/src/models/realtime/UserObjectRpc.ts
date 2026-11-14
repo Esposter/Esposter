@@ -1,5 +1,6 @@
 import type { UserAchievementInAchievementWithRelations } from "#src/models/achievement/UserAchievementInAchievementWithRelations";
 import type { SentMessageCursor } from "#src/models/realtime/SentMessageCursor";
+import type { Topic } from "#src/models/realtime/Topic";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { FriendRequestInSocialWithRelations } from "#src/models/social/FriendRequestInSocialWithRelations";
 import type { ReconcileTodoRemindersInput } from "#src/models/todoReminder/ReconcileTodoRemindersInput";
@@ -31,6 +32,8 @@ export interface UserObjectRpc {
   closeSession: (sessionId: string) => Promise<void>;
   declineFriendRequest: (input: Pick<FriendRequestInSocial, "receiverId" | "senderId">) => Promise<void>;
   deleteFriend: (input: Pick<FriendInSocial, "receiverId" | "senderId">) => Promise<void>;
+  // A topic one of the person's tabs watches changed: every tab watching it hears so, and no other tab does
+  invalidate: (topic: Topic) => Promise<void>;
   readReminders: () => Promise<ScheduledReminder[]>;
   readScheduledMessages: () => Promise<{ roomId: string; runAt: Date; scheduledId: string }[]>;
   readSentMessages: (input: {

@@ -103,10 +103,11 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
       expect(wrangler.durable_objects.bindings).toStrictEqual([
         { class_name: "CallObject", name: "CALL" },
         { class_name: "RoomObject", name: "ROOM" },
+        { class_name: "TopicObject", name: "TOPIC" },
         { class_name: "UserObject", name: "USER" },
       ]);
       expect(wrangler.migrations).toStrictEqual([
-        { new_sqlite_classes: ["CallObject", "RoomObject", "UserObject"], tag: "v1" },
+        { new_sqlite_classes: ["CallObject", "RoomObject", "TopicObject", "UserObject"], tag: "v1" },
       ]);
     });
   },

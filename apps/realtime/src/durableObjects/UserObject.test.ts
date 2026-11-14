@@ -1,5 +1,6 @@
 import type { RoomObject } from "#src/durableObjects/RoomObject";
-import type { RoomObjectRpc, TodoReminder } from "@esposter/db-schema";
+import type { MockSocket } from "#src/services/durableObject/createMockObjectState.test";
+import type { RoomObjectRpc, TodoReminder, Topic, TopicObjectRpc, UserClientFrame } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { UserObject } from "#src/durableObjects/UserObject";
@@ -59,13 +60,31 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 
+// A frame a tab sends up its user socket, as the runtime hands it to the object
+const sendFrame = (object: UserObject, socket: MockSocket, frame: UserClientFrame) =>
+  object.webSocketMessage(socket as unknown as WebSocket, JSON.stringify(frame));
+
 describe(UserObject, () => {
   const userId = v7();
   const sessionId = v7();
   const otherSessionId = v7();
   const deviceId = v7();
   const otherDeviceId = v7();
-  let environment = {} as unknown as Cloudflare.Env;
+  // Each topic's object as the person's watches reach it, so a test reads what each topic was asked to hold
+  const topicStubs = new Map<string, Record<"subscribe" | "unsubscribe", Mock<TopicObjectRpc["subscribe"]>>>();
+  const getTopicStub = (topic: string) => {
+    const existingStub = topicStubs.get(topic);
+    if (existingStub) return existingStub;
+
+    const stub = {
+      subscribe: vi.fn<TopicObjectRpc["subscribe"]>(() => Promise.resolve()),
+      unsubscribe: vi.fn<TopicObjectRpc["unsubscribe"]>(() => Promise.resolve()),
+    };
+    topicStubs.set(topic, stub);
+    return stub;
+  };
+  const topicNamespace = { get: (topic: string) => getTopicStub(topic), idFromName: (topic: string) => topic };
+  let environment = { TOPIC: topicNamespace } as unknown as Cloudflare.Env;
 
   const createUserObject = () => {
     const state = createMockObjectState(userId);
@@ -130,6 +149,7 @@ describe(UserObject, () => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
     roomStubs.clear();
+    topicStubs.clear();
     await mockDatabase.reset();
   });
 
@@ -151,13 +171,13 @@ describe(UserObject, () => {
 
     const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
     await state.settleWaitUntil();
-    object.webSocketClose(firstSocket as unknown as WebSocket, 1000, "");
+    await object.webSocketClose(firstSocket as unknown as WebSocket, 1000, "");
     await state.settleWaitUntil();
 
     expect(getRoomStub(firstRoom.id).attachMember).toHaveBeenCalledExactlyOnceWith(userId, presenceOf(true));
     expect(getRoomStub(firstRoom.id).detachMember).not.toHaveBeenCalled();
 
-    object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
+    await object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
     await state.settleWaitUntil();
 
     expect(getRoomStub(firstRoom.id).detachMember).toHaveBeenCalledExactlyOnceWith(userId, presenceOf(false));
@@ -281,5 +301,38 @@ describe(UserObject, () => {
     expect(revokedSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(otherDeviceSocket.close).toHaveBeenCalledExactlyOnceWith(1008, "Session revoked");
     expect(otherSessionSocket.close).not.toHaveBeenCalled();
+  });
+
+  test("a topic is held once however many of the person's tabs watch it, and let go when the last stops", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const firstSocket = await connect(object, { deviceId, sessionId });
+    const secondSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
+    await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, secondSocket, { data: { topics: [topic] }, type: "watch" });
+    await sendFrame(object, firstSocket, { data: { topics: [topic] }, type: "unwatch" });
+
+    expect(getTopicStub(topic).subscribe).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(getTopicStub(topic).unsubscribe).not.toHaveBeenCalled();
+
+    await object.webSocketClose(secondSocket as unknown as WebSocket, 1000, "");
+
+    expect(getTopicStub(topic).unsubscribe).toHaveBeenCalledExactlyOnceWith(userId);
+  });
+
+  test("an invalidation reaches the tabs watching its topic and no other", async () => {
+    expect.hasAssertions();
+
+    const { object } = createUserObject();
+    const topic: Topic = `post:${v7()}`;
+    const watchingSocket = await connect(object, { deviceId, sessionId });
+    const otherSocket = await connect(object, { deviceId: otherDeviceId, sessionId });
+    await sendFrame(object, watchingSocket, { data: { topics: [topic] }, type: "watch" });
+    await object.invalidate(topic);
+
+    expect(readFrames(watchingSocket)).toContainEqual({ data: { topic }, type: "invalidate" });
+    expect(readFrames(otherSocket)).not.toContainEqual({ data: { topic }, type: "invalidate" });
   });
 });

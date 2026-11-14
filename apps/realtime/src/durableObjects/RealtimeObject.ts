@@ -29,8 +29,9 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
     });
   }
 
-  // A close the peer began is answered in kind, so the socket is released rather than left half open
-  override webSocketClose(ws: WebSocket, code: number, reason: string) {
+  // A close the peer began is answered in kind, so the socket is released rather than left half open. An object that has
+  // Its own work to do on a close may await it, as the runtime's handler allows
+  override webSocketClose(ws: WebSocket, code: number, reason: string): Promise<void> | void {
     ws.close(code, reason);
   }
 

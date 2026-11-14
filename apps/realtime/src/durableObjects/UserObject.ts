@@ -7,6 +7,7 @@ import type {
   ScheduledReminder,
   SentMessageCursor,
   StorageUsage,
+  Topic,
   UserAchievementInAchievementWithRelations,
   UserEvent,
   UserObjectRpc,
@@ -19,6 +20,7 @@ import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
 import { REMINDER_RETRY_DELAY_MS } from "#src/services/reminder/constants";
 import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
+import { readWatchedTopics } from "#src/services/topic/readWatchedTopics";
 import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRooms";
 import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import {
@@ -28,9 +30,10 @@ import {
   scheduledMessagesInUser,
   sentMessagesInUser,
   todoRemindersInUser,
+  userClientFrameSchema,
 } from "@esposter/db-schema";
 import userMigrations from "@esposter/db-schema/objects/user/migrations/migrations";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
 // One User object per person: its SQLite indexes the messages they sent and their pending scheduled messages.
@@ -103,6 +106,13 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     const identity = readSocketIdentity(request.headers);
     if (isFirstSocket && response.status === 101 && identity) this.#reportPresence(identity.userId, true);
     return response;
+  }
+
+  // A topic one of the person's tabs watches changed, and each tab watching it hears so
+  invalidate(topic: Topic): Promise<void> {
+    for (const socket of this.ctx.getWebSockets())
+      if (readWatchedTopics(socket).includes(topic)) this.sendEvent(socket, { data: { topic }, type: "invalidate" });
+    return Promise.resolve();
   }
 
   async readReminders(): Promise<ScheduledReminder[]> {
@@ -229,10 +239,28 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await setUserStatusInRooms(status);
   }
 
-  override webSocketClose(ws: WebSocket, code: number, reason: string) {
-    super.webSocketClose(ws, code, reason);
+  override async webSocketClose(ws: WebSocket, code: number, reason: string) {
+    const watchedTopics = this.#readAllWatchedTopics();
+    await super.webSocketClose(ws, code, reason);
     const userId = this.ctx.id.name;
     if (userId && this.ctx.getWebSockets().every((socket) => socket === ws)) this.#reportPresence(userId, false);
+    await this.#syncTopicSubscriptions(watchedTopics, this.#readAllWatchedTopics(ws));
+  }
+
+  // A tab watches or unwatches the topics of its mounted queries. The object subscribes to a topic on the first of the
+  // Person's tabs watching it and unsubscribes on the last, so a topic holds each person once however many tabs they have
+  override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
+    if (typeof message !== "string") return;
+    const frame = userClientFrameSchema.safeParse(jsonDateParse(message));
+    if (!frame.success) return;
+
+    const watchedTopics = this.#readAllWatchedTopics();
+    const socketTopics = new Set(readWatchedTopics(ws));
+    for (const topic of frame.data.data.topics)
+      if (frame.data.type === "watch") socketTopics.add(topic);
+      else socketTopics.delete(topic);
+    ws.serializeAttachment({ topics: [...socketTopics] });
+    await this.#syncTopicSubscriptions(watchedTopics, this.#readAllWatchedTopics());
   }
 
   // The alarm is the earliest row still ahead across the reminders and the TodoList reminders.
@@ -271,6 +299,16 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on
+  // Every topic the person's open tabs watch, leaving out a socket that is closing
+  #readAllWatchedTopics(closingSocket?: WebSocket): Set<Topic> {
+    return new Set(
+      this.ctx
+        .getWebSockets()
+        .filter((socket) => socket !== closingSocket)
+        .flatMap((socket) => readWatchedTopics(socket)),
+    );
+  }
+
   #reportPresence(userId: string, isConnected: boolean) {
     this.ctx.waitUntil(
       getResultAsync(() => setUserConnectedInRooms(userId, isConnected)).match(noop, (error) => {
@@ -335,5 +373,17 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
             );
       }),
     );
+  }
+
+  // The topics the person's tabs started or stopped watching, subscribed to and unsubscribed from their Topic objects
+  async #syncTopicSubscriptions(before: Set<Topic>, after: Set<Topic>): Promise<void> {
+    await Promise.all([
+      ...[...after]
+        .filter((topic) => !before.has(topic))
+        .map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).subscribe(this.#userId)),
+      ...[...before]
+        .filter((topic) => !after.has(topic))
+        .map((topic) => this.env.TOPIC.get(this.env.TOPIC.idFromName(topic)).unsubscribe(this.#userId)),
+    ]);
   }
 }

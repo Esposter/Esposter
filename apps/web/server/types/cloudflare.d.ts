@@ -14,6 +14,7 @@ import type {
   RateLimiterBinding,
   RoomObjectRpc,
   StorageBucket,
+  TopicObjectRpc,
   UserObjectRpc,
 } from "@esposter/db-schema";
 
@@ -30,6 +31,7 @@ interface Bindings extends BucketBindings, RateLimiterBindings {
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
   CORE: D1Database;
   ROOM: DurableObjectNamespace<RoomObjectRpc & Rpc.DurableObjectBranded>;
+  TOPIC: DurableObjectNamespace<Rpc.DurableObjectBranded & TopicObjectRpc>;
   USER: DurableObjectNamespace<Rpc.DurableObjectBranded & UserObjectRpc>;
 }
 
