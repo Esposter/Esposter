@@ -41,9 +41,10 @@ describe("messageModelMessageConfirmPinDialog", () => {
     storeUser(creator);
     const messageDialogStore = useMessageDialogStore();
     const { pinningMessageId } = storeToRefs(messageDialogStore);
-    const pinnedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
+    // The pin is sent by the room-assigned id, which an optimistic bubble has not been given
+    const pinnedMessage = { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), id: 1 };
     getSlice(roomId).items.value = [pinnedMessage];
-    pinningMessageId.value = pinnedMessage.id;
+    pinningMessageId.value = String(pinnedMessage.id);
     await flushPromises();
     // The pin a subscription delivered while the dialog was open
     pinnedMessage.isPinned = true;

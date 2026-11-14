@@ -33,7 +33,7 @@ describe(useUploadFiles, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   // The room's own composer — attachments are partitioned per composer, so every read below names one
-  const target: ComposerTarget = { roomId, threadRootId: "" };
+  const target: ComposerTarget = { roomId, threadRootId: 0 };
   const filename = "a";
   const fileId = v7();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
@@ -146,7 +146,7 @@ describe(useUploadFiles, () => {
   test("keeps a thread composer's attachments out of the room composer", async () => {
     expect.hasAssertions();
 
-    const threadTarget: ComposerTarget = { roomId, threadRootId: v7() };
+    const threadTarget: ComposerTarget = { roomId, threadRootId: 1 };
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     uploadFileToUrlMock.mockResolvedValue(undefined);

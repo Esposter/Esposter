@@ -29,11 +29,11 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     async (roomId) => {
       const { threadRootIds, threads } = await $trpc.message.readFollowedThreads.query({ roomId });
-      const followedThreads = threads.map((thread) => ({ ...thread, roomId }));
+      const roomThreads = threads.map((thread) => ({ ...thread, roomId }));
       // A row is drawn only once its root's author is known, so the authors the roots name are read with the list, as a
       // Room's messages read theirs, and the list lands with them already known
-      await readMessageCreators(roomId, followedThreads);
-      return { threadRootIds, threads: followedThreads };
+      await readMessageCreators(roomId, roomThreads);
+      return { threadRootIds, threads: roomThreads };
     },
     {
       onSuccess: ({ threadRootIds, threads }, roomId) => {

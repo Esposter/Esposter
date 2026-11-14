@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { RoomReaction } from "@esposter/db-schema";
+
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
@@ -32,7 +33,7 @@ const contextMenuProps = getContextMenuProps(emoji.emojiTag, () => [
     meaning: UiIconMeaning.Group,
     onClick: () => {
       reactionsRoomId.value = roomId;
-      reactionsMessageId.value = emoji.messageId;
+      reactionsMessageId.value = String(emoji.messageId);
     },
     title: "View Reactions",
   },

@@ -43,9 +43,13 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     storeUser(creator);
     const messageDialogStore = useMessageDialogStore();
     const { deletingMessageId } = storeToRefs(messageDialogStore);
-    const deletedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
+    // The delete is sent by the room-assigned id, which an optimistic bubble has not been given
+    const deletedMessage = {
+      ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+      id: 1,
+    };
     getSlice(roomId).items.value = [deletedMessage];
-    deletingMessageId.value = deletedMessage.id;
+    deletingMessageId.value = String(deletedMessage.id);
     await flushPromises();
 
     const deleted = component.getComponent(UiConfirmDialog).props("confirm")();

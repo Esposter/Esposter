@@ -10,10 +10,9 @@ const { getEmojis } = emojiStore;
 // Resolved through the primitive rather than a computed of our own, so a message whose last reaction is
 // Removed while this is open closes with it instead of showing an empty pane
 const { isOpen, item: emojis } = useSingletonDialog(reactionsMessageId, () => {
-  const messageId = reactionsMessageId.value;
-  if (!messageId) return undefined;
+  if (!reactionsMessageId.value) return undefined;
 
-  const messageEmojis = getEmojis(reactionsRoomId.value, messageId);
+  const messageEmojis = getEmojis(reactionsRoomId.value, Number(reactionsMessageId.value));
   return messageEmojis.length > 0 ? messageEmojis : undefined;
 });
 const selectedEmojiTag = ref("");

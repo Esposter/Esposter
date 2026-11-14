@@ -7,9 +7,9 @@ describe(checkIsNewerMessage, () => {
   const roomId = v7();
   const createdAt = new Date(0);
   const laterCreatedAt = new Date(1);
-  const lowerId = "00000000-0000-7000-8000-000000000001";
-  const higherId = "00000000-0000-7000-8000-000000000002";
-  const createMessageWith = (messageCreatedAt: Date, id: string) => ({
+  const lowerId = 1;
+  const higherId = 2;
+  const createMessageWith = (messageCreatedAt: Date, id: number) => ({
     ...createMessage(roomId),
     createdAt: messageCreatedAt,
     id,

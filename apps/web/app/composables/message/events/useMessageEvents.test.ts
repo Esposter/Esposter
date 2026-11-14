@@ -17,7 +17,9 @@ const createRoomMessage = (id: number, message: string): RoomMessage => {
   const now = new Date();
   return {
     appUserId: null,
+    appUserImage: "",
     createdAt: now,
+    deletedAt: null,
     files: [],
     id,
     isEdited: false,
@@ -86,7 +88,12 @@ describe(useMessageEvents, () => {
     onFrame?.(JSON.stringify({ data: [createRoomMessage(messageId, "message")], type: "createMessage" }));
     await flushPromises();
 
-    onFrame?.(JSON.stringify({ data: { id: messageId }, type: "deleteMessage" }));
+    onFrame?.(
+      JSON.stringify({
+        data: { ...createRoomMessage(messageId, "message"), deletedAt: new Date(0) },
+        type: "deleteMessage",
+      }),
+    );
     await flushPromises();
 
     expect(dataStore.getSlice(roomId).items.value).toHaveLength(0);

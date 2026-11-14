@@ -8,7 +8,7 @@ const fileDialogStore = useFileDialogStore();
 const { deletingFileId, deletingMessageId, deletingRoomId } = storeToRefs(fileDialogStore);
 const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
   getSlice(deletingRoomId.value)
-    .items.value.find(({ id }) => id === deletingMessageId.value)
+    .items.value.find(({ id }) => String(id) === deletingMessageId.value)
     ?.files.find(({ id }) => id === deletingFileId.value),
 );
 </script>
@@ -20,7 +20,10 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     confirm-label="Remove"
     title="Remove attachment"
     :confirm="
-      () => file && deletingMessageId && deleteFile({ fileId: file.id, id: deletingMessageId, roomId: deletingRoomId })
+      () =>
+        file &&
+        deletingMessageId &&
+        deleteFile({ fileId: file.id, id: Number(deletingMessageId), roomId: deletingRoomId })
     "
     is-optimistic
   >

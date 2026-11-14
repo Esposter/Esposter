@@ -9,7 +9,7 @@ describe(checkHasRoomDraft, () => {
   test("counts a thread's draft as the draft of the room it is in", () => {
     expect.hasAssertions();
 
-    const threadDraftKey = getComposerKey({ roomId, threadRootId: v7() });
+    const threadDraftKey = getComposerKey({ roomId, threadRootId: 1 });
 
     expect(checkHasRoomDraft([threadDraftKey], roomId)).toBe(true);
   });

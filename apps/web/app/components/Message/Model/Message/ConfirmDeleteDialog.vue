@@ -12,7 +12,7 @@ const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { deletingMessageId } = storeToRefs(messageDialogStore);
 const { isOpen, item: message } = useSingletonDialog(deletingMessageId, () =>
-  items.value.find(({ id }) => id === deletingMessageId.value),
+  items.value.find(({ id }) => String(id) === deletingMessageId.value),
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();

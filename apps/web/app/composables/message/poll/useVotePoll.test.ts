@@ -21,8 +21,11 @@ describe(useVotePoll, () => {
     question: "question",
     votes: {},
   };
-  const createPollMessage = () =>
-    createOptimisticMessage({ message: JSON.stringify(pollContent), roomId, type: MessageType.Poll }, userId);
+  // A vote names the message by its room-assigned id, which an optimistic bubble does not have yet
+  const createPollMessage = (id: number) => ({
+    ...createOptimisticMessage({ message: JSON.stringify(pollContent), roomId, type: MessageType.Poll }, userId),
+    id,
+  });
 
   beforeEach(() => {
     useSession.mockReturnValue({ data: ref({ user: { id: userId } }) });
@@ -32,8 +35,8 @@ describe(useVotePoll, () => {
   test("withdraws with an empty option id", async () => {
     expect.hasAssertions();
 
-    const message = createPollMessage();
-    const votePoll = vi.fn<(input: { id: string; optionId: string; roomId: string }) => void>();
+    const message = createPollMessage(1);
+    const votePoll = vi.fn<(input: { id: number; optionId: string; roomId: string }) => void>();
     trpcMsw.message.votePoll.mutation(({ input }) => {
       votePoll(input);
     });
@@ -53,8 +56,8 @@ describe(useVotePoll, () => {
   test("reports voting only for the poll it is bound to", async () => {
     expect.hasAssertions();
 
-    const message = createPollMessage();
-    const otherMessage = createPollMessage();
+    const message = createPollMessage(1);
+    const otherMessage = createPollMessage(2);
     const { promise: voteReleased, resolve: releaseVote } = Promise.withResolvers<void>();
     trpcMsw.message.votePoll.mutation(async () => {
       await voteReleased;

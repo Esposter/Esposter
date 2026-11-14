@@ -14,7 +14,7 @@ describe(getComposerKey, () => {
   test("round-trips a thread composer through its key", () => {
     expect.hasAssertions();
 
-    const target: ComposerTarget = { roomId, threadRootId: v7() };
+    const target: ComposerTarget = { roomId, threadRootId: 1 };
 
     expect(getComposerTarget(getComposerKey(target))).toStrictEqual(target);
   });
@@ -24,7 +24,7 @@ describe(getComposerKey, () => {
   test("keys a room composer by its room id alone", () => {
     expect.hasAssertions();
 
-    const target: ComposerTarget = { roomId, threadRootId: "" };
+    const target: ComposerTarget = { roomId, threadRootId: 0 };
 
     expect(getComposerKey(target)).toBe(roomId);
     expect(getComposerTarget(roomId)).toStrictEqual(target);

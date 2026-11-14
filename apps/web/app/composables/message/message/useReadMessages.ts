@@ -1,6 +1,5 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { checkIsMessageId } from "@/services/message/checkIsMessageId";
 import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
@@ -68,13 +67,17 @@ export const useReadMessages = () => {
     const { items: roomItems } = getSlice(roomId);
     const hasMoreNewer = getHasMoreNewerRef(roomId);
     const nextCursorNewer = getNextCursorNewerRef(roomId);
-    const { hasMore, items, nextCursor } = await $trpc.message.readMessages.query({
-      cursor: nextCursorNewer.value,
-      order: SortOrder.Asc,
+    // The messages after the cursor come oldest first, so the page is turned newest first to sit where the list
+    // Holds it
+    const { hasMore, items: newerPage } = await $trpc.message.readMessages.query({
+      after: Number(nextCursorNewer.value),
       roomId,
     });
+    const items = newerPage.map((message) => ({ ...message, roomId })).toReversed();
+    // The newest message of the page is what the next read starts after
+    const newestMessage = newerPage.at(-1);
     hasMoreNewer.value = hasMore;
-    nextCursorNewer.value = nextCursor ?? "";
+    nextCursorNewer.value = hasMore && newestMessage ? String(newestMessage.id) : "";
 
     const messageIds = new Set(items.map(({ id }) => id));
     const newerItems: ClientMessage[] = [];

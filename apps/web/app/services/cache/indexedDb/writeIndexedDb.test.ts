@@ -33,7 +33,10 @@ describe(writeIndexedDb, () => {
     expect.hasAssertions();
 
     const { limit } = MessageIndexedDbStoreConfiguration;
-    const messages = Array.from({ length: limit + 1 }, (_value) => createMessage(message1.roomId));
+    const messages = Array.from({ length: limit + 1 }, (_value, index) => ({
+      ...createMessage(message1.roomId),
+      id: index + 1,
+    }));
     await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.roomId);
     const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.roomId);
 

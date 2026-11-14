@@ -49,7 +49,7 @@ const isMenuTarget = computed(
 const isDisabled = computed(
   () => Boolean(optionsMenuMessageId.value || contextMenuRequest.value || contextMenu.value) && !isMenuTarget.value,
 );
-const isDeleting = computed(() => deletingMessageId.value === message.id);
+const isDeleting = computed(() => deletingMessageId.value === String(message.id));
 // Its items are the options bar's to build, so a message with no bar to mount — sending, being edited or being
 // Deleted — asks for no menu
 const contextMenuProps = getContextMenuGestureProps((point) => {
@@ -85,7 +85,7 @@ const isOptionsMenuVisible = computed(
         v-if="isUpdateMode"
         :message
         @update:update-mode="isUpdateMode = $event"
-        @update:delete-mode="deletingMessageId = message.id"
+        @update:delete-mode="deletingMessageId = String(message.id)"
       />
     </component>
     <div v-if="isOptionsMenuVisible" relative z-1>

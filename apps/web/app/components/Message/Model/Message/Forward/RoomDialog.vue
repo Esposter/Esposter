@@ -15,7 +15,7 @@ const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
 const { forwardMessageId, messageInput } = storeToRefs(forwardStore);
 const { isOpen, item: forward } = useSingletonDialog(forwardMessageId, () =>
-  items.value.find((message) => message.id === forwardMessageId.value),
+  items.value.find((message) => String(message.id) === forwardMessageId.value),
 );
 const creator = useCreator(forward);
 const {

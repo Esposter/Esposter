@@ -20,11 +20,11 @@ const cancelScheduledMessageJobToDraft = useCancelScheduledMessageJobToDraft();
 const draftsAndSentScheduleDialogStore = useDraftsAndSentScheduleDialogStore();
 const { open } = draftsAndSentScheduleDialogStore;
 // Only a scheduled message reschedules, and it keeps the thread it was scheduled into. A reminder posts no message to
-// move, so it is set again instead
+// Move, so it is set again instead
 const threadRootId =
   scheduledMessageJob.payload.type === ScheduledMessageJobType.ScheduledMessage
-    ? scheduledMessageJob.payload.replyToId || ""
-    : "";
+    ? scheduledMessageJob.payload.replyToId || 0
+    : 0;
 const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Edit,

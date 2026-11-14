@@ -12,7 +12,7 @@ const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
 const { pinningMessageId } = storeToRefs(messageDialogStore);
 const { isOpen, item: message } = useSingletonDialog(pinningMessageId, () =>
-  items.value.find(({ id }) => id === pinningMessageId.value),
+  items.value.find(({ id }) => String(id) === pinningMessageId.value),
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();

@@ -14,8 +14,8 @@ mockNuxtImport("navigateTo", () => navigateToMock);
 
 describe(useScrollStore, () => {
   const roomId = v7();
-  const messageId = v7();
-  const secondMessageId = v7();
+  const messageId = 1;
+  const secondMessageId = 2;
   const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
 
@@ -48,7 +48,7 @@ describe(useScrollStore, () => {
 
     vi.advanceTimersByTime(1);
 
-    expect(activeMessageId.value).toBe("");
+    expect(activeMessageId.value).toBe(0);
   });
 
   test("setActiveMessageId restarts the clear timer", () => {
@@ -66,7 +66,7 @@ describe(useScrollStore, () => {
 
     vi.advanceTimersByTime(highlightMs - 1);
 
-    expect(activeMessageId.value).toBe("");
+    expect(activeMessageId.value).toBe(0);
   });
 
   // The newer messages a permalink window leaves unloaded are above everything the list holds, so no scroll
