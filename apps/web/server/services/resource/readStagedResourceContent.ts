@@ -8,10 +8,19 @@ import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
-import { promisify } from "node:util";
-import { gunzip } from "node:zlib";
 
-const decompress = promisify(gunzip);
+// The inflation is counted as it streams, so an archive that expands past the content limit stops at the chunk it
+// Crosses rather than filling the heap; leaving the loop cancels the stream, so nothing past it is inflated
+const gunzipWithinLimit = async (compressedContent: Uint8Array) => {
+  const chunks: Uint8Array[] = [];
+  let length = 0;
+  for await (const chunk of new Blob([compressedContent]).stream().pipeThrough(new DecompressionStream("gzip"))) {
+    length += chunk.byteLength;
+    if (length > MAX_RESOURCE_CONTENT_SIZE) throw new RangeError(`inflated past ${MAX_RESOURCE_CONTENT_SIZE} bytes`);
+    chunks.push(chunk);
+  }
+  return new Blob(chunks).text();
+};
 // A write SAS carries no length, so the staged bytes are measured here rather than trusted: the size before the
 // Download is allocated, the hash against what the client says it uploaded, and the inflation capped so a small
 // Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
@@ -53,10 +62,8 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
   );
   if (createHash("sha256").update(compressedContent).digest("hex") !== hash) throw hashMismatchError;
 
-  const serializedContent = await getResultAsync(() =>
-    decompress(compressedContent, { maxOutputLength: MAX_RESOURCE_CONTENT_SIZE }),
-  ).match(
-    (content) => content.toString(),
+  const serializedContent = await getResultAsync(() => gunzipWithinLimit(compressedContent)).match(
+    (content) => content,
     () => {
       throw getInvalidOperationError(
         Operation.Update,
