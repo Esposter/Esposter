@@ -1,20 +1,11 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
-import { serializeEntity } from "@esposter/db";
+import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { createMockDb } from "@esposter/db-mock";
-import {
-  StreamTable,
-  getReverseTickedTimestamp,
-  MessageMetadataType,
-  roomsInMessage,
-  usersInAuth,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
-import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
+import { MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -24,26 +15,20 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
-
-const readUserIdsByRoom = (roomId: string) =>
-  [...(MockTableDatabase.get(StreamTable.MessagesMetadata)?.values() ?? [])]
-    .filter((entity) => entity.partitionKey === roomId)
-    .map(({ userIds }) => jsonDateParse(String(userIds)));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 
 describe(deleteAccountMemberRoomReactions, () => {
+  const emojiTag = "emojiTag";
+  const message = "message";
   const name = "name";
-  const messageRowKey = getReverseTickedTimestamp();
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockRooms();
   });
 
   afterEach(async () => {
-    MockTableDatabase.clear();
+    clearMockRooms();
     await mockDb.delete(usersInAuth);
   });
 
@@ -61,25 +46,36 @@ describe(deleteAccountMemberRoomReactions, () => {
       { roomId: memberRoom.id, userId },
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
-    const reactionClient = getStreamTableClient(StreamTable.MessagesMetadata);
-    const createReaction = (roomId: string, userIds: string[]) => {
-      const reaction = {
-        emojiTag: "",
-        messageRowKey,
-        partitionKey: roomId,
-        rowKey: getReverseTickedTimestamp(),
-        type: MessageMetadataType.Emoji,
-        userIds,
-      };
-      return reactionClient.createEntity(serializeEntity(reaction));
-    };
-    await createReaction(memberRoom.id, [userId]);
-    await createReaction(memberRoom.id, [userId, otherUserId]);
-    await createReaction(nonMemberRoom.id, [userId, otherUserId]);
+
+    // In the member room: a reaction the account holds alone, and one it shares with the other person
+    const memberRoomObject = getRoomObject(memberRoom.id);
+    const soloMessage = await memberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    const sharedMessage = await memberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    await memberRoomObject.addReaction({ emojiTag, messageId: soloMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
+    // In the room the account is not in, a reaction the account shares, which stays as it was
+    const nonMemberRoomObject = getRoomObject(nonMemberRoom.id);
+    const nonMemberMessage = await nonMemberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    await nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId });
+    await nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId: otherUserId });
 
     await deleteAccountMemberRoomReactions(userId);
 
-    expect(readUserIdsByRoom(memberRoom.id)).toStrictEqual([[otherUserId]]);
-    expect(readUserIdsByRoom(nonMemberRoom.id)).toStrictEqual([[userId, otherUserId]]);
+    expect(memberRoomObject.readReactions([soloMessage.id, sharedMessage.id])).toStrictEqual([
+      { emojiTag, messageId: sharedMessage.id, userIds: [otherUserId] },
+    ]);
+    expect(nonMemberRoomObject.readReactions([nonMemberMessage.id])).toStrictEqual([
+      { emojiTag, messageId: nonMemberMessage.id, userIds: [userId, otherUserId] },
+    ]);
   });
 });

@@ -1,4 +1,5 @@
 import type { MockD1Database } from "@esposter/db-mock";
+import type { MockObjectState } from "#src/services/durableObject/createMockObjectState.test";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
 import { createMockObjectState } from "#src/services/durableObject/createMockObjectState.test";
@@ -11,14 +12,14 @@ import { describe } from "vitest";
 let mockCoreDb: MockD1Database | undefined;
 // One room object per room id, each a real RoomObject over the state double its id names. A suite clears them between
 // tests, so every test starts from rooms with nothing in them
-const mockRoomObjects = new Map<string, RoomObject>();
+const mockRooms = new Map<string, { object: RoomObject; state: MockObjectState }>();
 
 export const openMockRooms = async (): Promise<void> => {
   mockCoreDb = (await createMockDb()).coreDatabase;
 };
 
 export const clearMockRooms = (): void => {
-  mockRoomObjects.clear();
+  mockRooms.clear();
 };
 
 // A room's object as the functions Worker reaches it: the same instance for the same room, so a read names what an
@@ -26,16 +27,25 @@ export const clearMockRooms = (): void => {
 export const getRoomObject = (roomId: string): RoomObject => {
   if (!mockCoreDb) throw new InvalidOperationError(Operation.Read, getRoomObject.name, roomId);
 
-  const existingRoomObject = mockRoomObjects.get(roomId);
-  if (existingRoomObject) return existingRoomObject;
+  const existingRoom = mockRooms.get(roomId);
+  if (existingRoom) return existingRoom.object;
 
+  const state = createMockObjectState(roomId);
   const environment = {
     CORE: mockCoreDb,
     USER: { get: getUserObject, idFromName: (userId: string) => userId },
   } as unknown as Cloudflare.Env;
-  const roomObject = new RoomObject(createMockObjectState(roomId).ctx as unknown as DurableObjectState, environment);
-  mockRoomObjects.set(roomId, roomObject);
-  return roomObject;
+  const object = new RoomObject(state.ctx as unknown as DurableObjectState, environment);
+  mockRooms.set(roomId, { object, state });
+  return object;
 };
+
+// The tables a room's storage holds. A room deleted with its object's storage holds none, which a read of its rows cannot show
+export const readMockRoomTableNames = (roomId: string): string[] =>
+  mockRooms
+    .get(roomId)
+    ?.state.database.prepare("select name from sqlite_master where type = 'table'")
+    .all()
+    .map(({ name }) => String(name)) ?? [];
 
 describe.todo("getRoomObject");

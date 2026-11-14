@@ -1,16 +1,14 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
-import { deleteAccountRoomReactions } from "#src/services/account/deleteAccountRoomReactions";
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
-import { StreamTable } from "@esposter/db-schema";
+import { getRoomObject } from "#src/services/room/getRoomObject";
 
-// The reactions the account is on in each room it is a member of. The rooms it owned went first, with their partitions,
-// So the memberships left are the rooms it is still in
+// The reactions the account is on in each room it is a member of. Each room takes the account off the emoji's reactors,
+// and the reaction goes when the account was its only reactor. The rooms it owned went first, so the memberships left
+// are the rooms it is still in
 export const deleteAccountMemberRoomReactions = async (userId: UserInAuth["id"]): Promise<void> => {
   const memberRoomIds = await getAccountMemberRoomIds(userId);
-  const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
   for (const roomId of memberRoomIds)
-    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as the soft delete walks them
-    await deleteAccountRoomReactions(messagesMetadataClient, roomId, userId);
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as the moderation ban walks them
+    await getRoomObject(roomId).deleteUserReactions(userId);
 };

@@ -1,32 +1,26 @@
-import type { Database, StandardMessageEntity } from "@esposter/db-schema";
+import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
-import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
-import { serializeKey } from "@esposter/azure";
 import {
-  chargeStorageLedgerEntry,
-  createMessage,
-  getContentBlobName,
-  serializeEntity,
-  writeJsonBlob,
-} from "@esposter/db";
+  clearMockRooms,
+  getRoomObject,
+  openMockRooms,
+  readMockRoomTableNames,
+} from "#src/services/room/getRoomObject.test";
+import { chargeStorageLedgerEntry, getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
   AdminActionType,
   apiKeysInAuth,
   StorageBucket,
-  StreamTable,
-  getReverseTickedTimestamp,
   getSaveBlobName,
   getUserProfileImageBlobName,
-  MessageMetadataType,
   MessageType,
   moderationLogsInMessage,
   programParticipantsInResource,
@@ -42,10 +36,8 @@ import {
   surveyResponsesInResource,
   usersInAuth,
   usersToRoomsInMessage,
-  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
-import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
+import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -57,6 +49,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 const readBlobNamesUnder = async (containerName: StorageBucket, prefix: string) =>
@@ -88,12 +81,13 @@ const readSurveyResponseRows = (resourceId: string) =>
 describe(deleteAccountHandler, () => {
   const content = JSON.stringify({});
   const countedBytes = 1;
+  const emojiTag = "emojiTag";
   const message = "message";
   const name = "name";
-  const roomTableNames = [StreamTable.Messages, StreamTable.MessagesMetadata];
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockRooms();
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -107,7 +101,7 @@ describe(deleteAccountHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockTableDatabase.clear();
+    clearMockRooms();
     await mockDb.delete(usersInAuth);
   });
 
@@ -134,7 +128,8 @@ describe(deleteAccountHandler, () => {
       .insert(sessionsInAuth)
       .values({ expiresAt: new Date(0), id: crypto.randomUUID(), token: crypto.randomUUID(), userId });
 
-    // The account's owned room, with its own message, a member's membership, a profile image and a charged attachment
+    // The account's owned room, with its own message and reaction, a member's membership, a profile image and a charged
+    // attachment
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${crypto.randomUUID()}`;
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId });
@@ -148,21 +143,25 @@ describe(deleteAccountHandler, () => {
       { roomId: memberRoom.id, userId },
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
-    const messageClient = getStreamTableClient(StreamTable.Messages);
-    await createMessage(messageClient, { message, roomId: ownedRoom.id, type: MessageType.Message, userId });
-    const memberRoomMessage = await createMessage(messageClient, {
-      files: [{ filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 }],
-      message,
-      roomId: memberRoom.id,
-      type: MessageType.Message,
-      userId,
-    });
-    const otherMemberRoomMessage = await createMessage(messageClient, {
-      message,
-      roomId: memberRoom.id,
-      type: MessageType.Message,
-      userId: otherUserId,
-    });
+    const memberRoomObject = getRoomObject(memberRoom.id);
+    const ownedRoomMessage = await getRoomObject(ownedRoom.id).createMessage(
+      { message, type: MessageType.Message },
+      { userId },
+    );
+    const memberRoomMessage = await memberRoomObject.createMessage(
+      {
+        files: [
+          { filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 },
+        ],
+        message,
+        type: MessageType.Message,
+      },
+      { userId },
+    );
+    const otherMemberRoomMessage = await memberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
     const memberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
     const otherMemberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
     await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
@@ -178,25 +177,22 @@ describe(deleteAccountHandler, () => {
       .insert(moderationLogsInMessage)
       .values({ actorUserId: userId, roomId: memberRoom.id, targetUserId: otherUserId, type: AdminActionType.Warn });
 
-    // Reactions are one row per emoji that its reactors share. The account alone holds the first, which goes; it shares
-    // The second with the other account, which keeps its id; the other account alone holds the third, which is kept.
-    // The fourth is the account's in the owned room, which goes with the room's partition
-    const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
-    const createReaction = (roomId: string, reactorUserIds: string[]) => {
-      const reaction = {
-        emojiTag: "",
-        messageRowKey: memberRoomMessage.rowKey,
-        partitionKey: roomId,
-        rowKey: getReverseTickedTimestamp(),
-        type: MessageMetadataType.Emoji,
-        userIds: reactorUserIds,
-      };
-      return messagesMetadataClient.createEntity(serializeEntity(reaction));
-    };
-    await createReaction(memberRoom.id, [userId]);
-    await createReaction(memberRoom.id, [userId, otherUserId]);
-    await createReaction(memberRoom.id, [otherUserId]);
-    await createReaction(ownedRoom.id, [userId]);
+    // Reactions are one row per emoji on a message, holding every reactor to it. In the member room the account alone
+    // reacts to the first message, which the erase takes away; it shares the second with the other account, which keeps
+    // its reactor; the other account alone reacts to the third, which is kept. The owned room's reaction goes with its object
+    const soloReactedMessage = await memberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    const sharedReactedMessage = await memberRoomObject.createMessage(
+      { message, type: MessageType.Message },
+      { userId: otherUserId },
+    );
+    await memberRoomObject.addReaction({ emojiTag, messageId: soloReactedMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedReactedMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedReactedMessage.id }, { userId: otherUserId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: otherMemberRoomMessage.id }, { userId: otherUserId });
+    await getRoomObject(ownedRoom.id).addReaction({ emojiTag, messageId: ownedRoomMessage.id }, { userId });
 
     // The account's owned resource, with a working copy, a version and its activity trail
     const ownedResource = takeOne(
@@ -269,6 +265,7 @@ describe(deleteAccountHandler, () => {
     await expect(readSurveyResponseRows(ownedSurvey.id)).resolves.toHaveLength(1);
     await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
+    expect(readMockRoomTableNames(ownedRoom.id)).not.toStrictEqual([]);
 
     await deleteAccountHandler({ userId });
 
@@ -281,7 +278,7 @@ describe(deleteAccountHandler, () => {
       mockDb.select({ id: sessionsInAuth.id }).from(sessionsInAuth).where(eq(sessionsInAuth.userId, userId)),
     ).resolves.toStrictEqual([]);
 
-    // The owned room, its partitions, its memberships, its profile image and its attachment
+    // The owned room, its object, its memberships, its profile image and its attachment
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
@@ -291,7 +288,7 @@ describe(deleteAccountHandler, () => {
         .from(usersToRoomsInMessage)
         .where(eq(usersToRoomsInMessage.roomId, ownedRoom.id)),
     ).resolves.toStrictEqual([]);
-    expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
+    expect(readMockRoomTableNames(ownedRoom.id)).toStrictEqual([]);
     await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).resolves.toStrictEqual(
       [],
     );
@@ -319,23 +316,26 @@ describe(deleteAccountHandler, () => {
     await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
-    // The account's messages in the room it is a member of are erased and soft-deleted, and its charged attachment is gone
-    const readDeletedAt = async (roomMessage: StandardMessageEntity) =>
-      (await messageClient.getEntity<StandardMessageEntity>(roomMessage.partitionKey, roomMessage.rowKey)).deletedAt;
-    await expect(readDeletedAt(memberRoomMessage)).resolves.toBeInstanceOf(Date);
-    await expect(
-      messageClient.getEntity<StandardMessageEntity>(memberRoomMessage.partitionKey, memberRoomMessage.rowKey),
-    ).resolves.toMatchObject({ files: "[]", message: "" });
+    // The account's messages in the room it is a member of are erased, and its charged attachment is gone. The other
+    // account's messages stay as they were, and the reaction the account held alone is gone while the one it shared
+    // is left with only the other account
+    expect(memberRoomObject.exportUserMessages({ limit: 10, userId })).toStrictEqual([]);
+    expect(memberRoomObject.readMessages({ limit: 10 })).toStrictEqual([
+      sharedReactedMessage,
+      soloReactedMessage,
+      otherMemberRoomMessage,
+    ]);
     await expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoom.id}/`)).resolves.toStrictEqual([
       otherMemberRoomAttachmentBlobName,
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
-    // The reaction the account held alone is gone, and its id is taken out of the reaction it shared
-    expect(
-      readPartitionEntities(StreamTable.MessagesMetadata, memberRoom.id).map(({ userIds }) =>
-        jsonDateParse(String(userIds)),
-      ),
-    ).toStrictEqual([[otherUserId], [otherUserId]]);
+    expect(memberRoomObject.readReactions([soloReactedMessage.id])).toStrictEqual([]);
+    expect(memberRoomObject.readReactions([sharedReactedMessage.id])).toStrictEqual([
+      { emojiTag, messageId: sharedReactedMessage.id, userIds: [otherUserId] },
+    ]);
+    expect(memberRoomObject.readReactions([otherMemberRoomMessage.id])).toStrictEqual([
+      { emojiTag, messageId: otherMemberRoomMessage.id, userIds: [otherUserId] },
+    ]);
 
     // The account's blob prefixes in every container the inventory keys to it
     await expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `${userId}/`)).resolves.toStrictEqual([]);
@@ -367,11 +367,10 @@ describe(deleteAccountHandler, () => {
         .where(eq(resourceActivitiesInResource.resourceId, otherResource.id)),
     ).resolves.toStrictEqual([{ userId: null }]);
 
-    // The other account: its row, its message and its charged attachment are exactly as they were
+    // The other account: its row and its charged attachment are exactly as they were
     await expect(mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId))).resolves.toStrictEqual(
       otherUserRowBefore,
     );
-    await expect(readDeletedAt(otherMemberRoomMessage)).resolves.toBeNull();
     await expect(readLedgerRows(otherUserId)).resolves.toStrictEqual([
       { blobName: otherMemberRoomAttachmentBlobName, containerName: StorageBucket.MessageAssets },
     ]);

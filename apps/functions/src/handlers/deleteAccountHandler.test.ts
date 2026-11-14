@@ -1,19 +1,21 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
-import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import {
+  clearMockRooms,
+  getRoomObject,
+  openMockRooms,
+  readMockRoomTableNames,
+} from "#src/services/room/getRoomObject.test";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { createEntity, getContentBlobName } from "@esposter/db";
+import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
   StorageBucket,
-  StreamTable,
-  createMessageEntity,
   getUserProfileImageBlobName,
   MessageType,
   resourcesInResource,
@@ -24,11 +26,13 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableClient, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
+
+// A bucket binding is a proxy a spy cannot reach, so the blob sweep is failed at its own step instead
+const blobSweepFailure = vi.hoisted(() => ({ error: undefined as Error | undefined }));
 
 vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
@@ -36,21 +40,29 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
+vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
 vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
+vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
+  const { deleteAccountBlobDirectories } = await importOriginal();
+  return {
+    deleteAccountBlobDirectories: async (userId: string) => {
+      if (blobSweepFailure.error) throw blobSweepFailure.error;
+      await deleteAccountBlobDirectories(userId);
+    },
+  };
+});
 
 const readUserRows = (userId: string) =>
   mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
 
 describe(deleteAccountHandler, () => {
+  const message = "message";
   const name = "name";
   const countedBytes = 1;
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
+    await openMockRooms();
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -63,8 +75,9 @@ describe(deleteAccountHandler, () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
+    blobSweepFailure.error = undefined;
     await clearMockBuckets();
-    MockTableDatabase.clear();
+    clearMockRooms();
     await mockDb.delete(usersInAuth);
   });
 
@@ -94,8 +107,7 @@ describe(deleteAccountHandler, () => {
 
     const userId = crypto.randomUUID();
     await mockDb.insert(usersInAuth).values(createUser(userId));
-    // Nothing is seeded for the earlier steps, so the first listing the handler makes is the blob sweep's
-    vi.spyOn(getBucket(StorageBucket.UserAssets), "list").mockRejectedValue(new Error(" "));
+    blobSweepFailure.error = new Error(" ");
 
     await expect(deleteAccountHandler({ userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
@@ -114,14 +126,8 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    await new MockTableClient("", StreamTable.MessagesMetadata).createEntity({
-      partitionKey: ownedRoom.id,
-      rowKey: crypto.randomUUID(),
-    });
-    await createEntity(
-      getStreamTableClient(StreamTable.Messages),
-      createMessageEntity({ message: "message", roomId: memberRoom.id, type: MessageType.Message, userId }),
-    );
+    await getRoomObject(ownedRoom.id).createMessage({ message, type: MessageType.Message }, { userId });
+    await getRoomObject(memberRoom.id).createMessage({ message, type: MessageType.Message }, { userId });
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.MessageAssets, `${ownedRoom.id}/${fileId}`);
@@ -145,6 +151,8 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
+    expect(readMockRoomTableNames(ownedRoom.id)).toStrictEqual([]);
+    expect(getRoomObject(memberRoom.id).readMessages({ limit: 10 })).toStrictEqual([]);
     await expect(readBlobNames(StorageBucket.ResourceAssets)).resolves.toStrictEqual([]);
     await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([]);
     await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([]);
