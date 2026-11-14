@@ -14,6 +14,8 @@ dist
 .nitro
 .cache
 .data
+# Wrangler's local state and the deploy pointer Nitro writes beside the app
+.wrangler
 # The production build of genshin-world's parity page, which `genshin:parity load` builds and serves
 /packages/genshin-world/parity-build
 
@@ -28,9 +30,6 @@ vitest.config.*.timestamp*
 .env
 .env.*
 !.env.example
-
-# Azurite's local blob, queue and table data, which `pnpm dev` keeps beside apps/web
-.azurite
 
 # Logs
 logs
