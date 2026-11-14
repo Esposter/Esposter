@@ -4,6 +4,7 @@ import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ContentTypePhaserMethodMap, PHASER_ROOT_DIRECTORY } from "@@/scripts/phaser/constants";
 import { outputFile } from "@@/scripts/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
+import { parseListBucketResult } from "@esposter/db";
 import {
   CLOUDFLARE_ACCOUNT_ID,
   CloudflareAssetType,
@@ -17,22 +18,13 @@ import { format } from "oxfmt";
 
 import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
-const XML_ENTITY_CHARACTERS: Record<string, string> = { amp: "&", apos: "'", gt: ">", lt: "<", quot: '"' };
-
-// The names of every object in the bucket, one ListObjectsV2 page after another. S3 writes that listing in one fixed
-// Shape, so its tags are read directly, and a name's markup characters come back as the entities they were written as
+// The names of every object in the bucket, one ListObjectsV2 page after another, each page read by the shared listing parser
 const listObjectNames = async (client: AwsClient, bucketUrl: string, continuationToken?: string): Promise<string[]> => {
   const url = new URL(bucketUrl);
   url.searchParams.set("list-type", "2");
   if (continuationToken !== undefined) url.searchParams.set("continuation-token", continuationToken);
-  const xml = await (await client.fetch(url)).text();
-  const names = Array.from(xml.matchAll(/<Key>(?<name>[^<]*)<\/Key>/gu), ({ groups }) =>
-    (groups?.name ?? "").replaceAll(
-      /&(?<entity>amp|apos|gt|lt|quot);/gu,
-      (_match, entity: string) => XML_ENTITY_CHARACTERS[entity] ?? "",
-    ),
-  );
-  const nextContinuationToken = /<NextContinuationToken>([^<]*)<\/NextContinuationToken>/u.exec(xml)?.[1];
+  const { nextContinuationToken, objects } = parseListBucketResult(await (await client.fetch(url)).text());
+  const names = objects.map(({ key }) => key);
   return nextContinuationToken === undefined
     ? names
     : [...names, ...(await listObjectNames(client, bucketUrl, nextContinuationToken))];
@@ -54,9 +46,13 @@ export const createFilePack = async () => {
   // A listing carries no content type, so each object's type is read from its own headers
   for (const name of await listObjectNames(client, bucketUrl)) {
     // oxlint-disable-next-line no-await-in-loop -- Stop at the first: a missing object throws, and the objects behind it are not read
-    const response = await client.fetch(`${bucketUrl}/${name.split("/").map(encodeURIComponent).join("/")}`, {
-      method: "HEAD",
-    });
+    const response = await client.fetch(
+      `${bucketUrl}/${name
+        .split("/")
+        .map((segment) => encodeURIComponent(segment))
+        .join("/")}`,
+      { method: "HEAD" },
+    );
     if (!response.ok) throw new InvalidOperationError(Operation.Read, name, `responds ${response.status}`);
 
     const contentType = response.headers.get("Content-Type");
