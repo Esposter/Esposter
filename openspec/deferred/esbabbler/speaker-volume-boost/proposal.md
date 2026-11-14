@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — >100% speaker volume via LiveKit webAudioMix.
+Deferred — >100% speaker volume through a Web Audio gain stage.
 
 ## What Changes
 

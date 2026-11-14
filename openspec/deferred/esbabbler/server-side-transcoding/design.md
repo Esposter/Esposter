@@ -1,6 +1,6 @@
 # Server-Side Media Transcoding
 
-Re-encode uploaded video/audio server-side (e.g. via Azure Functions + a queue) into web-friendly formats/resolutions.
+Re-encode uploaded video/audio server-side (e.g. as a queue job) into web-friendly formats/resolutions.
 
 **Why deferred:** too much compute and queue orchestration complexity for current scale.
 

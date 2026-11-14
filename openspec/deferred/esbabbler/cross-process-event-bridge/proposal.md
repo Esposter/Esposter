@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — mirror real-time events to Azure Web PubSub for multi-replica fan-out.
+Deferred — carry real-time events between processes through a shared channel, for a consumer no Durable Object can call.
 
 ## What Changes
 
