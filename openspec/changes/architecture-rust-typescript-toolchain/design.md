@@ -16,13 +16,11 @@ Rejected: keeping the flag and passing it through every script. It duplicates a 
 
 The `--fast` preset enables the adaptive checker counts and lazy member resolution. Its side effects are that diagnostics can change in known check-order cases, and that counters differ. The repo accepts that for a typecheck gate because the same program is checked the same way on each run, and a failure reproduces from the source.
 
-### The `azure-mock` false positive
+### A `tsrs` false positive that an annotation clears
 
-`packages/azure-mock/src/models/table/MockTableClient.ts` returns an object literal from a function whose return type is `PagedAsyncIterableIterator`, and its `byPage` member takes a destructured parameter annotated `PageSettings`: `({ maxPageSize }: PageSettings = {})`. The bare form, `({ maxPageSize } = {})`, is what `tsrs` reports as `TS7031` (implicit `any` on the binding element) under both the default mode and `--fast`. `tsc` in this repo reports no error, and stock TypeScript 5.9.3 accepts a minimal reproduction of the same shape. So the diagnostic is a `tsrs` gap, not a defect in the source.
+Where `tsrs` reports a diagnostic that `tsc` accepts, and an explicit annotation of a type the interface already names clears it, the annotation goes into the source and the package stays on the fast path. The reported shape is then a `tsrs` gap rather than a defect in the source, and the owner files the upstream report with that shape, the `tsrs` version and the passing compilers named.
 
-Rejected: keeping `azure-mock` on `tsc` until `tsrs` is fixed. That leaves one package on the old path for a reason the repo can remove in the source. The fix is an explicit `PageSettings` annotation on the parameter, which is the type the interface already names, and it reads more plainly than the inferred form.
-
-The owner files the upstream report. The reproduction is the shape above, with the `tsrs` version and the two passing compilers named.
+Rejected: keeping such a package on `tsc` until `tsrs` is fixed. That leaves one package on the old path for a reason the repo can remove in the source. The mechanism's fallback applies only where no source change clears the diagnostic.
 
 ### Phase 2: `vize` and Vue checks
 
@@ -58,7 +56,6 @@ flowchart TD
 | `package.json`, `pnpm-workspace.yaml`                                    | the `tsrs` root devDependency and its catalog entry                      |
 | `apps/*/package.json`, `packages/*/package.json`, `scripts/package.json` | each package's `typecheck` script, and `apps/web`'s service-worker check |
 | `packages/configuration/tsconfig.base.json`                              | sets `noEmit`, which every swapped script inherits                       |
-| `packages/azure-mock/src/models/table/MockTableClient.ts`                | the source the `tsrs` false positive was reproduced in                   |
 | `openspec/specs/architecture/monorepo-tooling/design.md`                 | owns the TypeScript compiler section, rewritten as built at archive      |
 | `openspec/specs/architecture/lint-toolchain/design.md`                   | owns the type-aware lint pass, out of scope here                         |
 | `scripts/src/services/shared/parseSource.ts`                             | the parser that replaced every in-process `typescript` use in `scripts/` |
