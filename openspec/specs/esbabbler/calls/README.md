@@ -119,7 +119,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | the call socket `/ws/call/[callSessionId]`, frames `joinCall` / `leaveCall` / `muteChanged` / `videoChanged` / `handRaisedChanged` | joined or knocking | the object broadcasts each frame to the call's sockets                               |
 | frames `knockCall` (creator's sockets), `knockerAdmitted` / `knockerDismissed` (the knocker's own session)                         | creator / knocker  | the call socket                                                                      |
 
-A call's events reach a socket only while its session is joined or knocking on the call: the call object refuses any other socket when it opens, and a leave closes that session’s sockets. In a room, a member removed from the room leaves the call the same way a kick or a ban does, through `evictUser`. A standalone call ends for a participant when its own session leaves, by `leaveCall` or by the RealtimeKit webhook that reports the disconnect.
+A call's events reach a socket only while its session is joined or knocking on the call: the call object refuses any other socket when it opens, and a leave closes that session's sockets. In a room, a member removed from the room leaves the call the same way a kick or a ban does, through `evictUser`. A standalone call ends for a participant when its own session leaves, by `leaveCall` or by the RealtimeKit webhook that reports the disconnect.
 
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
