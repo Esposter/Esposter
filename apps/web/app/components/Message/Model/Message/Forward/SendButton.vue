@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useAlertStore } from "@/store/alert";
@@ -7,7 +7,7 @@ import { useForwardStore } from "@/store/message/input/forward";
 import { RoutePath, takeOne } from "@esposter/shared";
 
 interface Props {
-  forward: MessageEntity;
+  forward: ClientMessage;
 }
 
 defineProps<Props>();
@@ -34,13 +34,13 @@ const { executeMutation, isPending } = useMutation();
         await executeMutation(
           () =>
             $trpc.message.forwardMessage.mutate({
+              id: forward.id,
               message: messageInput,
-              partitionKey: forward.partitionKey,
+              roomId: forward.roomId,
               roomIds,
-              rowKey: forward.rowKey,
             }),
           {
-            key: forward.rowKey,
+            key: forward.id,
             onSuccess: async () => {
               const destinationRoomId = roomIds.length === 1 ? takeOne(roomIds) : '';
               resetForward();

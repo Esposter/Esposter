@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 interface Props {
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { message } = defineProps<Props>();

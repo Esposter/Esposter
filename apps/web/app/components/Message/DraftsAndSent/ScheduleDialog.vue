@@ -24,13 +24,13 @@ const scheduleMessage = async () => {
         ? $trpc.message.scheduledMessageJob.rescheduleMessage.mutate({
             id: targetValue.scheduledMessageJobId,
             message: targetValue.content,
-            replyRowKey: targetValue.threadRootRowKey,
+            replyToId: targetValue.threadRootId || null,
             roomId: targetValue.roomId,
             runAt: scheduledAt.value,
           })
         : $trpc.message.scheduledMessageJob.scheduleMessage.mutate({
             message: targetValue.content,
-            replyRowKey: targetValue.threadRootRowKey,
+            replyToId: targetValue.threadRootId || null,
             roomId: targetValue.roomId,
             runAt: scheduledAt.value,
           }),
@@ -38,7 +38,7 @@ const scheduleMessage = async () => {
       key: targetValue.scheduledMessageJobId || Symbol("scheduleMessage"),
       onSuccess: async () => {
         if (!targetValue.scheduledMessageJobId)
-          clearComposer({ roomId: targetValue.roomId, threadRootRowKey: targetValue.threadRootRowKey });
+          clearComposer({ roomId: targetValue.roomId, threadRootId: targetValue.threadRootId });
         // The job is already scheduled by the time this runs, so the refresh reports its own failure rather
         // Than throwing: a rejection here rejects the write's outcome, and the dialog would sit submitting
         // Over a message the server took

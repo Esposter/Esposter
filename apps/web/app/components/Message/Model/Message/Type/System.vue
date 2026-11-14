@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-interface Props extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps {}
 
 const { isPreview = false } = defineProps<Props>();
 </script>

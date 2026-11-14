@@ -13,8 +13,8 @@ const getRow = ({ message, room }: SentMessageWithRoom): UiListItem<string> => (
   description: message.message,
   image: room.image ?? "",
   title: room.name,
-  to: RoutePath.MessagesMessage(message.partitionKey, message.rowKey),
-  value: `${message.partitionKey}${ID_SEPARATOR}${message.rowKey}`,
+  to: RoutePath.MessagesMessage(message.roomId, message.id),
+  value: `${message.roomId}${ID_SEPARATOR}${message.id}`,
 });
 </script>
 

@@ -5,10 +5,10 @@ import { useFileDialogStore } from "@/store/message/file/dialog";
 const dataStore = useDataStore();
 const { deleteFile, getSlice } = dataStore;
 const fileDialogStore = useFileDialogStore();
-const { deletingFileId, deletingRoomId, deletingRowKey } = storeToRefs(fileDialogStore);
+const { deletingFileId, deletingMessageId, deletingRoomId } = storeToRefs(fileDialogStore);
 const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
   getSlice(deletingRoomId.value)
-    .items.value.find(({ rowKey }) => rowKey === deletingRowKey.value)
+    .items.value.find(({ id }) => id === deletingMessageId.value)
     ?.files.find(({ id }) => id === deletingFileId.value),
 );
 </script>
@@ -20,7 +20,8 @@ const { isOpen, item: file } = useSingletonDialog(deletingFileId, () =>
     confirm-label="Remove"
     title="Remove attachment"
     :confirm="
-      () => file && deletingRowKey && deleteFile({ id: file.id, partitionKey: deletingRoomId, rowKey: deletingRowKey })
+      () =>
+        file && deletingMessageId && deleteFile({ id: file.id, messageId: deletingMessageId, roomId: deletingRoomId })
     "
     is-optimistic
   >

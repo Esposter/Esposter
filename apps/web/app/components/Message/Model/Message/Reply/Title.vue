@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Creator } from "@/models/message/Creator";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {
   creator: Creator;
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 defineProps<Props>();
@@ -14,11 +14,7 @@ defineProps<Props>();
 
 <template>
   <div flex flex-col>
-    <MessageModelMessageReply
-      v-if="message.replyRowKey"
-      :room-id="message.partitionKey"
-      :row-key="message.replyRowKey"
-    />
+    <MessageModelMessageReply v-if="message.replyToId" :message-id="message.replyToId" :room-id="message.roomId" />
     <div flex gap-x-2 min-w-0 items-baseline>
       <span truncate ui-heading>{{ creator.name }}</span>
       <MessageModelMessageAppUserBadge v-if="message.type === MessageType.Webhook" self-center />

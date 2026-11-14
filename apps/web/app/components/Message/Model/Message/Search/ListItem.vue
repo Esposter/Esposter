@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { message } = defineProps<Props>();
@@ -22,11 +22,11 @@ const scrollToMessage = useScrollToMessage();
     ui-card
     @click="
       (event: MouseEvent) => {
-        if (!checkIsNestedInteraction(event)) scrollToMessage(message.partitionKey, message.rowKey);
+        if (!checkIsNestedInteraction(event)) scrollToMessage(message.roomId, message.id);
       }
     "
-    @keydown.enter.self.prevent="scrollToMessage(message.partitionKey, message.rowKey)"
-    @keydown.space.self.prevent="scrollToMessage(message.partitionKey, message.rowKey)"
+    @keydown.enter.self.prevent="scrollToMessage(message.roomId, message.id)"
+    @keydown.space.self.prevent="scrollToMessage(message.roomId, message.id)"
   >
     <component :is="MessageComponentMap[message.type]" :creator :message is-preview />
   </div>

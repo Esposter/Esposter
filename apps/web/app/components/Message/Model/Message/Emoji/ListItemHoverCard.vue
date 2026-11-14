@@ -6,12 +6,13 @@ import { useUserStore } from "@/store/message/user";
 
 interface Props {
   emoji: MessageEmojiMetadataEntity;
+  roomId: string;
 }
 
-const { emoji } = defineProps<Props>();
+const { emoji, roomId } = defineProps<Props>();
 const userStore = useUserStore();
 const { getRoomMemberName } = userStore;
-const getReactorName = (userId: string) => getRoomMemberName(emoji.partitionKey, userId);
+const getReactorName = (userId: string) => getRoomMemberName(roomId, userId);
 const { description } = useEmojiTag(() => emoji.emojiTag);
 </script>
 

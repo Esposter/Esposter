@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { FileEntity, MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { FileEntity } from "@esposter/db-schema";
 
 import { getFileCornerStyle } from "@/services/message/file/getFileCornerStyle";
 import { useFileStore } from "@/store/message/file";
@@ -11,7 +12,7 @@ interface Props {
   file: FileEntity;
   index: number;
   isPreview?: boolean;
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { columnLayout, file, index, message } = defineProps<Props>();
@@ -19,11 +20,12 @@ const isCreator = await useIsCreator(() => message);
 const fileStore = useFileStore();
 const { getFileUrlMap, getViewableFiles } = fileStore;
 const fileDialogStore = useFileDialogStore();
-const { deletingFileId, deletingRoomId, deletingRowKey, viewingFileId, viewingRoomId } = storeToRefs(fileDialogStore);
+const { deletingFileId, deletingMessageId, deletingRoomId, viewingFileId, viewingRoomId } =
+  storeToRefs(fileDialogStore);
 // The message's own room, never the one on screen: the thread pane renders a message beside whatever room is open
-const fileUrl = computed(() => getFileUrlMap(message.partitionKey)?.get(file.id));
+const fileUrl = computed(() => getFileUrlMap(message.roomId)?.get(file.id));
 const url = computed(() => fileUrl.value?.url ?? "");
-const isViewable = computed(() => getViewableFiles(message.partitionKey).some(({ id }) => id === file.id));
+const isViewable = computed(() => getViewableFiles(message.roomId).some(({ id }) => id === file.id));
 const cornerStyle = computed(() => getFileCornerStyle(columnLayout, index));
 const isActive = ref(false);
 const isSpoilerRevealed = ref(false);
@@ -37,7 +39,7 @@ const view = () => {
     isSpoilerRevealed.value = true;
     return;
   }
-  viewingRoomId.value = message.partitionKey;
+  viewingRoomId.value = message.roomId;
   viewingFileId.value = file.id;
 };
 </script>
@@ -92,8 +94,8 @@ const view = () => {
       :url
       @delete="
         () => {
-          deletingRoomId = message.partitionKey;
-          deletingRowKey = message.rowKey;
+          deletingRoomId = message.roomId;
+          deletingMessageId = message.id;
           deletingFileId = file.id;
         }
       "

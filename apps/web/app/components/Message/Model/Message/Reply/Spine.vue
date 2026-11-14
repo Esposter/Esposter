@@ -2,7 +2,7 @@
 import { useReplyStore } from "@/store/message/input/reply";
 
 interface Props {
-  replyRowKey: string;
+  replyToId: string;
   roomId: string;
 }
 
@@ -26,7 +26,7 @@ const scrollToMessage = useScrollToMessage();
     cursor-pointer
     @mouseenter="isIndicatorActive = true"
     @mouseleave="isIndicatorActive = false"
-    @click="scrollToMessage(roomId, replyRowKey)"
+    @click="scrollToMessage(roomId, replyToId)"
   />
 </template>
 

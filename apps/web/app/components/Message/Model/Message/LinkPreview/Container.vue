@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { LinkPreviewResponse, MessageEntity } from "@esposter/db-schema";
+import type { LinkPreviewResponse, MessageInMessage } from "@esposter/db-schema";
 
-import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
@@ -10,11 +9,11 @@ import { noop } from "@esposter/shared";
 
 interface Props {
   linkPreviewResponse: LinkPreviewResponse;
-  partitionKey: MessageEntity["partitionKey"];
-  rowKey: MessageEntity["rowKey"];
+  messageId: MessageInMessage["id"];
+  roomId: MessageInMessage["roomId"];
 }
 
-const { partitionKey, rowKey } = defineProps<Props>();
+const { messageId, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { getSlice } = dataStore;
@@ -24,13 +23,13 @@ const isConfirmDialogOpen = ref(false);
 const { executeMutation } = useMutation();
 const deleteLinkPreviewResponse = async () => {
   // The message's own room rather than the one on screen — the thread pane renders another room's messages too
-  const { items } = getSlice(partitionKey);
-  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ partitionKey, rowKey }), {
+  const { items } = getSlice(roomId);
+  await executeMutation(() => $trpc.message.deleteLinkPreviewResponse.mutate({ id: messageId, roomId }), {
     // Apply only the raw reactive change — the subscription echo re-runs MessageHookMap on success. The row and
     // Its embeds are read as the write is sent, so a rejected removal restores what the write ahead of it stored
     // Rather than what was on screen when the user confirmed
     applyOptimistic: () => {
-      const message = items.value.find(getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }));
+      const message = items.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
       if (!message) return noop;
 
       const previousLinkPreviewResponse = message.linkPreviewResponse;
@@ -39,7 +38,7 @@ const deleteLinkPreviewResponse = async () => {
         message.linkPreviewResponse = previousLinkPreviewResponse;
       };
     },
-    key: rowKey,
+    key: messageId,
   });
 };
 </script>

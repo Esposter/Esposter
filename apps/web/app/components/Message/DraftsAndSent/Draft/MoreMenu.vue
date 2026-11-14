@@ -27,7 +27,7 @@ const items = computed<Item[]>(() => [
   {
     meaning: UiIconMeaning.Schedule,
     onClick: () => {
-      open({ content: draftItem.content, roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey });
+      open({ content: draftItem.content, roomId: draftItem.room.id, threadRootId: draftItem.threadRootId });
     },
     title: "Schedule message",
   },
@@ -37,7 +37,7 @@ const items = computed<Item[]>(() => [
 <template>
   <MessageDraftsAndSentMoreMenu
     :actions="items"
-    :confirm-delete="() => clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey })"
+    :confirm-delete="() => clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId })"
     delete-label="Delete draft"
     delete-message="Are you sure you want to delete this draft?"
     label="Draft actions"

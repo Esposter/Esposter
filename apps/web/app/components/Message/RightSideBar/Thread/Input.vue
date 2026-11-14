@@ -3,8 +3,8 @@ import { useInputStore } from "@/store/message/input";
 import { useThreadStore } from "@/store/message/thread";
 
 const threadStore = useThreadStore();
-const { activeRoomId, activeRootRowKey } = storeToRefs(threadStore);
-const target = computed(() => ({ roomId: activeRoomId.value, threadRootRowKey: activeRootRowKey.value }));
+const { activeRoomId, activeThreadRootId } = storeToRefs(threadStore);
+const target = computed(() => ({ roomId: activeRoomId.value, threadRootId: activeThreadRootId.value }));
 const inputStore = useInputStore();
 const { threadInput, threadTarget } = storeToRefs(inputStore);
 // The composer tells the input store which thread it is on, rather than the store reading it back out of the

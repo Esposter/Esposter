@@ -1,7 +1,8 @@
 // @vitest-environment nuxt
 import MessageModelMessageTypeIndex from "@/components/Message/Model/Message/Type/Index.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { createUser } from "@/services/message/user/createUser.test";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -9,16 +10,13 @@ describe("messageModelMessageTypeIndex", () => {
   const roomId = crypto.randomUUID();
   const creator = createUser();
   const editor = "editor";
-  // The `isForward` column is a literal-true optional, so the unforwarded arm leaves it unset rather than false
   const createMessage = (isForward: boolean) => {
-    const message = createMessageEntity({
-      message: "<p>message</p>",
-      roomId,
-      type: MessageType.Message,
-      userId: creator.id,
-    });
+    const message = createOptimisticMessage(
+      { message: "<p>message</p>", roomId, type: MessageType.Message },
+      creator.id,
+    );
     message.isEdited = true;
-    if (isForward) message.isForward = true;
+    message.isForward = isForward;
     return message;
   };
 

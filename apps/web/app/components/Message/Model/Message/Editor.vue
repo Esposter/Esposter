@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { MentionExtension } from "@/services/message/MentionExtension";
@@ -8,7 +8,7 @@ import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 import { Extension } from "@tiptap/vue-3";
 
 interface Props {
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { message } = defineProps<Props>();
@@ -21,7 +21,7 @@ const editedMessageHtml = ref(message.message);
 const saveMessage = useSaveRichTextEdit(
   editedMessageHtml,
   () => message.message,
-  () => updateMessage({ message: editedMessageHtml.value, partitionKey: message.partitionKey, rowKey: message.rowKey }),
+  () => updateMessage({ id: message.id, message: editedMessageHtml.value, roomId: message.roomId }),
   emit,
 );
 const keyboardExtension = new Extension({

@@ -1,13 +1,14 @@
 // @vitest-environment nuxt
 import MessageModelMessageConfirmDeleteDialog from "@/components/Message/Model/Message/ConfirmDeleteDialog.vue";
 import UiConfirmDialog from "@/components/Ui/ConfirmDialog.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useUserStore } from "@/store/message/user";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -40,21 +41,21 @@ describe("messageModelMessageConfirmDeleteDialog", () => {
     // The dialog renders only once the message's author resolves, and the delete is answered from it
     storeUser(creator);
     const messageDialogStore = useMessageDialogStore();
-    const { deletingRowKey } = storeToRefs(messageDialogStore);
-    const deletedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    const { deletingMessageId } = storeToRefs(messageDialogStore);
+    const deletedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     getSlice(roomId).items.value = [deletedMessage];
-    deletingRowKey.value = deletedMessage.rowKey;
+    deletingMessageId.value = deletedMessage.id;
     await flushPromises();
 
     const deleted = component.getComponent(UiConfirmDialog).props("confirm")();
     await deleteRequested;
     // A message a subscription delivered while the delete was in flight
-    const arrivedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    const arrivedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     getSlice(roomId).items.value = [arrivedMessage];
     releaseDelete();
     await deleted;
     await flushPromises();
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([deletedMessage.rowKey, arrivedMessage.rowKey]);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([deletedMessage.id, arrivedMessage.id]);
   });
 });

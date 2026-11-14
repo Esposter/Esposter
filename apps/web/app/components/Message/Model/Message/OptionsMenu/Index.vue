@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Item } from "@/models/shared/Item";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { EmojiMoreMenuItems } from "@/services/message/emoji/EmojiMoreMenuItems";
@@ -8,7 +8,7 @@ import { useMessageStore } from "@/store/message";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
 
 interface Props {
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { message } = defineProps<Props>();
@@ -22,7 +22,7 @@ const { actionMessageItems, deleteMessageItem, updateMessageItems, updateMessage
 );
 const selectEmoji = useSelectEmoji(message);
 const messageStore = useMessageStore();
-const { contextMenuRequest, optionsMenuRowKey } = storeToRefs(messageStore);
+const { contextMenuRequest, optionsMenuMessageId } = storeToRefs(messageStore);
 const contextMenuStore = useContextMenuStore();
 const { openContextMenu } = contextMenuStore;
 // The overflow menu's sections, each opening its own group, which a right-click opens as well; reacting stays on the
@@ -40,10 +40,10 @@ const menuItems = computed(() => {
 
 // The bar mounts over the message a context menu was asked for, and is the one that can say what goes in it
 watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
-  if (newContextMenuRequest?.rowKey !== message.rowKey) return;
-  const { rowKey, ...point } = newContextMenuRequest;
+  if (newContextMenuRequest?.messageId !== message.id) return;
+  const { messageId, ...point } = newContextMenuRequest;
   contextMenuRequest.value = undefined;
-  openContextMenu({ ...point, items: menuItems.value, key: rowKey });
+  openContextMenu({ ...point, items: menuItems.value, key: messageId });
 });
 </script>
 
@@ -70,7 +70,7 @@ watchImmediate(contextMenuRequest, (newContextMenuRequest) => {
       label="More"
       @update:is-open="
         (isOpen) => {
-          optionsMenuRowKey = isOpen ? message.rowKey : '';
+          optionsMenuMessageId = isOpen ? message.id : '';
           emit('update:menu', isOpen);
         }
       "

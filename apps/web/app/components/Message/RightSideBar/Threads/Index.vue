@@ -21,7 +21,7 @@ const { error, isPending, refresh } = useQuery(
   <MessageRightSideBarPane title="Followed Threads" is-body-bare @close="isRightDrawerOpen = false">
     <!-- Each row pads itself, so the rows sit in a plain wrapper that takes neither the body's padding nor its gap -->
     <div>
-      <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.rowKey" :thread />
+      <MessageRightSideBarThreadsListItem v-for="thread of followedThreads" :key="thread.id" :thread />
     </div>
     <template v-if="followedThreads.length === 0">
       <UiErrorState v-if="error" :error @retry="refresh()" />

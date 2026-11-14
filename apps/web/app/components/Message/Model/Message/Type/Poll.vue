@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -8,7 +7,7 @@ import { getOptionIdVoteCountMap } from "@/services/message/poll/getOptionIdVote
 import { getVoteDescription } from "@/services/message/poll/getVoteDescription";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
 
-interface Props extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps {}
 
 const { isPreview = false, message } = defineProps<Props>();
 const { data: session } = await useAuthSession();
@@ -16,7 +15,7 @@ const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const parsedPollContent = pollMessageContentSchema.safeParse(parsedMessage);
   if (parsedPollContent.success) return parsedPollContent.data;
-  else throw new InvalidOperationError(Operation.Read, message.rowKey, parsedPollContent.error.message);
+  else throw new InvalidOperationError(Operation.Read, message.id, parsedPollContent.error.message);
 });
 const totalVoteCount = computed(() => Object.keys(pollContent.value.votes).length);
 const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));

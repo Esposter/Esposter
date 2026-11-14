@@ -1,12 +1,13 @@
 // @vitest-environment nuxt
 import MessageModelMessageConfirmPinDialog from "@/components/Message/Model/Message/ConfirmPinDialog.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useUserStore } from "@/store/message/user";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
@@ -38,10 +39,10 @@ describe("messageModelMessageConfirmPinDialog", () => {
     // The dialog renders only once the message's author resolves, and the confirm is emitted from it
     storeUser(creator);
     const messageDialogStore = useMessageDialogStore();
-    const { pinningRowKey } = storeToRefs(messageDialogStore);
-    const pinnedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    const { pinningMessageId } = storeToRefs(messageDialogStore);
+    const pinnedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
     getSlice(roomId).items.value = [pinnedMessage];
-    pinningRowKey.value = pinnedMessage.rowKey;
+    pinningMessageId.value = pinnedMessage.id;
     await flushPromises();
     // The pin a subscription delivered while the dialog was open
     pinnedMessage.isPinned = true;

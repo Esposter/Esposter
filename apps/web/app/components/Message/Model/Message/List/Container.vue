@@ -8,16 +8,16 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
-// Read once rather than as a computed: `messages/[id]/index` and `messages/[id]/[rowKey]` are separate page
+// Read once rather than as a computed: `messages/[id]/index` and `messages/[id]/[messageId]` are separate page
 // Components with no `key` override, so Nuxt's default per-path key remounts this on either segment changing
 // And the mounted scroll runs again for the message the new path names
-const rowKey = getRouteParam(currentRoute.value.params, "rowKey");
+const messageId = getRouteParam(currentRoute.value.params, "messageId");
 
-if (rowKey) {
+if (messageId) {
   const scrollToMessage = useScrollToMessage();
 
   onMounted(async () => {
-    await scrollToMessage(currentRoomId.value, rowKey);
+    await scrollToMessage(currentRoomId.value, messageId);
   });
 }
 </script>
@@ -25,7 +25,7 @@ if (rowKey) {
 <template>
   <MessageModelMessageListItemContainer
     v-for="(message, index) of items"
-    :key="message.rowKey"
+    :key="message.id"
     :message
     :next-message="items[index + 1]"
   />

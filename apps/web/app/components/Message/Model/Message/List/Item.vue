@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Creator } from "@/models/message/Creator";
-import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
 import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
@@ -13,8 +13,8 @@ import { useContextMenuStore } from "@/store/ui/contextMenu";
 
 interface Props {
   creator: Creator;
-  message: MessageEntity;
-  nextMessage?: MessageEntity;
+  message: ClientMessage;
+  nextMessage?: ClientMessage;
 }
 
 const { message, nextMessage } = defineProps<Props>();
@@ -24,37 +24,37 @@ const { messageDisplayMode } = storeToRefs(appearanceStore);
 // Compact mode halves the batch gap and per-message padding so more messages fit on screen
 const isCompact = computed(() => messageDisplayMode.value === MessageDisplayMode.Compact);
 const messageStore = useMessageStore();
-const { contextMenuRequest, editingRowKey, optionsMenuRowKey } = storeToRefs(messageStore);
+const { contextMenuRequest, editingMessageId, optionsMenuMessageId } = storeToRefs(messageStore);
 const contextMenuStore = useContextMenuStore();
 const { contextMenu } = storeToRefs(contextMenuStore);
 const { checkIsContextMenuOpen, getContextMenuGestureProps } = useContextMenu();
 const messageDialogStore = useMessageDialogStore();
-const { deletingRowKey } = storeToRefs(messageDialogStore);
+const { deletingMessageId } = storeToRefs(messageDialogStore);
 const scrollStore = useScrollStore();
-const { activeRowKey } = storeToRefs(scrollStore);
+const { activeMessageId } = storeToRefs(scrollStore);
 const isUpdateMode = computed({
-  get: () => editingRowKey.value === message.rowKey,
+  get: () => editingMessageId.value === message.id,
   set: (value) => {
-    editingRowKey.value = value ? message.rowKey : "";
+    editingMessageId.value = value ? message.id : "";
   },
 });
 const isHovered = ref(false);
 const isOptionsMenuOpen = ref(false);
 const isMenuTarget = computed(
   () =>
-    optionsMenuRowKey.value === message.rowKey ||
-    contextMenuRequest.value?.rowKey === message.rowKey ||
-    checkIsContextMenuOpen(message.rowKey),
+    optionsMenuMessageId.value === message.id ||
+    contextMenuRequest.value?.messageId === message.id ||
+    checkIsContextMenuOpen(message.id),
 );
 const isDisabled = computed(
-  () => Boolean(optionsMenuRowKey.value || contextMenuRequest.value || contextMenu.value) && !isMenuTarget.value,
+  () => Boolean(optionsMenuMessageId.value || contextMenuRequest.value || contextMenu.value) && !isMenuTarget.value,
 );
-const isDeleting = computed(() => deletingRowKey.value === message.rowKey);
+const isDeleting = computed(() => deletingMessageId.value === message.id);
 // Its items are the options bar's to build, so a message with no bar to mount — sending, being edited or being
 // Deleted — asks for no menu
 const contextMenuProps = getContextMenuGestureProps((point) => {
   if (message.isLoading || isUpdateMode.value || isDeleting.value) return;
-  contextMenuRequest.value = { ...point, rowKey: message.rowKey };
+  contextMenuRequest.value = { ...point, messageId: message.id };
 });
 const isActive = computed(
   () => !isDisabled.value && (isHovered.value || isOptionsMenuOpen.value || isMenuTarget.value || isUpdateMode.value),
@@ -71,11 +71,11 @@ const isOptionsMenuVisible = computed(
   <div contents @mouseenter="isHovered = true" @mouseleave="isHovered = false">
     <component
       :is="MessageComponentMap[message.type]"
-      :id="message.rowKey"
+      :id="message.id"
       :mt="isSameBatch ? undefined : isCompact ? 2 : 4"
       :py="isCompact ? 0.5 : 1"
       :class="message.isLoading ? 'op-loading' : undefined"
-      :active="(isActive || activeRowKey === message.rowKey) && !isDeleting"
+      :active="(isActive || activeMessageId === message.id) && !isDeleting"
       :creator
       :is-same-batch
       :message
@@ -85,7 +85,7 @@ const isOptionsMenuVisible = computed(
         v-if="isUpdateMode"
         :message
         @update:update-mode="isUpdateMode = $event"
-        @update:delete-mode="deletingRowKey = message.rowKey"
+        @update:delete-mode="deletingMessageId = message.id"
       />
     </component>
     <div v-if="isOptionsMenuVisible" relative z-1>

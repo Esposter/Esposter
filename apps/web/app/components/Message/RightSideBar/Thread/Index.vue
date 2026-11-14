@@ -7,7 +7,7 @@ import { useThreadStore } from "@/store/message/thread";
 
 const threadStore = useThreadStore();
 const { closeThread } = threadStore;
-const { activeRootRowKey, isReadThreadPending, threadMessages } = storeToRefs(threadStore);
+const { activeThreadRootId, isReadThreadPending, threadMessages } = storeToRefs(threadStore);
 const actionItems = useThreadActionItems();
 // Oldest first, so the thread reads top-down into the composer below it — the root is the earliest message in
 // Its own thread, so it needs no special case to stay at the top
@@ -21,7 +21,7 @@ const displayThreadMessages = computed(() =>
 <template>
   <div :[THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE]="true" contents>
     <MessageRightSideBarPane title="Thread" is-body-bare @close="closeThread()">
-      <template v-if="activeRootRowKey" #actions>
+      <template v-if="activeThreadRootId" #actions>
         <UiOverflowMenu :items="actionItems" label="Thread actions" />
       </template>
       <template v-if="isReadThreadPending">
@@ -30,7 +30,7 @@ const displayThreadMessages = computed(() =>
       <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
         <template #no-data>
           <UiEmptyState
-            v-if="activeRootRowKey"
+            v-if="activeThreadRootId"
             description="Replies to this message land here."
             :meaning="UiIconMeaning.Reply"
             title="No replies yet"
@@ -46,8 +46,8 @@ const displayThreadMessages = computed(() =>
       <!-- Pinned under the replies, so the composer stays in view while they scroll. Keyed by the thread so opening another
          one starts on an empty editor: tiptap seeds its content once at setup, so a composer that merely rebinds would keep
          showing the reply typed for the previous thread -->
-      <template v-if="activeRootRowKey" #footer>
-        <MessageRightSideBarThreadInput :key="activeRootRowKey" />
+      <template v-if="activeThreadRootId" #footer>
+        <MessageRightSideBarThreadInput :key="activeThreadRootId" />
       </template>
     </MessageRightSideBarPane>
   </div>

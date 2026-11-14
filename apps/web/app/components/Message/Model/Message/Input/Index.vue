@@ -16,7 +16,7 @@ const roomStore = useRoomStore();
 const { currentRoomId } = storeToRefs(roomStore);
 const roomName = useRoomName(currentRoomId);
 // The room's own composer — the thread pane renders its own with the thread as its target
-const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootRowKey: "" }));
+const target = computed((): ComposerTarget => ({ roomId: currentRoomId.value, threadRootId: "" }));
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 // Slash commands are the room composer's alone, so they ride on top of the shared stack rather than in it
@@ -24,9 +24,9 @@ const slashCommandExtension = useSlashCommandExtension();
 const inputStore = useInputStore();
 const { input } = storeToRefs(inputStore);
 const replyStore = useReplyStore();
-const { rowKey } = storeToRefs(replyStore);
+const { replyToId } = storeToRefs(replyStore);
 const replyToMessage = computed(() =>
-  rowKey.value ? items.value.find(({ rowKey: messageRowKey }) => messageRowKey === rowKey.value) : undefined,
+  replyToId.value ? items.value.find(({ id }) => id === replyToId.value) : undefined,
 );
 const slashCommandStore = useSlashCommandStore();
 const { pendingSlashCommand } = storeToRefs(slashCommandStore);
@@ -41,7 +41,7 @@ useCommands(MessageInputCommands);
   <MessageModelMessageFileDropzoneBackground />
   <div flex flex-col gap-1 w-full ui-body>
     <MessageModelMessageInputHeaderSlashCommandParameters />
-    <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="rowKey = ''" />
+    <MessageModelMessageInputHeaderReply v-if="replyToMessage" :message="replyToMessage" @close="replyToId = ''" />
     <MessageModelMessageInputSlashCommandParameters v-if="pendingSlashCommand" />
     <MessageModelMessageInputComposer
       v-else

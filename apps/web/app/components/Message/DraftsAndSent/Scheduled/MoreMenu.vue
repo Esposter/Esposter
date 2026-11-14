@@ -38,9 +38,9 @@ const items = computed<Item[]>(() => [
         content: getScheduledMessageJobText(scheduledMessageJob),
         roomId: scheduledMessageJob.roomId,
         scheduledMessageJobId: scheduledMessageJob.id,
-        threadRootRowKey:
+        threadRootId:
           scheduledMessageJob.payload.type === ScheduledMessageJobType.ScheduledMessage
-            ? scheduledMessageJob.payload.replyRowKey
+            ? scheduledMessageJob.payload.replyToId || ""
             : "",
       });
     },

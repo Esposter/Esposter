@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
-interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "isPreview"> {
+interface Props extends Pick<MessageComponentProps, "isPreview"> {
   active?: boolean;
 }
 

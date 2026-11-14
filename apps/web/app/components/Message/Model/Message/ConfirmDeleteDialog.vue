@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
@@ -11,24 +10,22 @@ const dataStore = useDataStore();
 const { getSlice, storeCreateMessage, storeDeleteMessage } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
-const { deletingRowKey } = storeToRefs(messageDialogStore);
-const { isOpen, item: message } = useSingletonDialog(deletingRowKey, () =>
-  items.value.find(({ rowKey }) => rowKey === deletingRowKey.value),
+const { deletingMessageId } = storeToRefs(messageDialogStore);
+const { isOpen, item: message } = useSingletonDialog(deletingMessageId, () =>
+  items.value.find(({ id }) => id === deletingMessageId.value),
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
 const deleteMessage = async () => {
   if (!message.value) return;
-  const { partitionKey, rowKey } = message.value;
+  const { id: messageId, roomId } = message.value;
   // Resolved as the delete is issued: the optimistic apply runs when the write is sent, by which time the room on
   // Screen can be another one
-  const { items: roomItems } = getSlice(partitionKey);
-  await executeMutation(() => $trpc.message.deleteMessage.mutate({ partitionKey, rowKey }), {
+  const { items: roomItems } = getSlice(roomId);
+  await executeMutation(() => $trpc.message.deleteMessage.mutate({ id: messageId, roomId }), {
     applyOptimistic: async () => {
-      const deletedMessage = roomItems.value.find(
-        getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
-      );
-      await storeDeleteMessage({ partitionKey, rowKey });
+      const deletedMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
+      await storeDeleteMessage({ id: messageId, roomId });
       if (!deletedMessage) return noop;
 
       return () => {
@@ -37,7 +34,7 @@ const deleteMessage = async () => {
         getResultAsync(() => storeCreateMessage(deletedMessage)).match(noop, console.error);
       };
     },
-    key: rowKey,
+    key: messageId,
   });
 };
 </script>

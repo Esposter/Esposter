@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { getColumnLayout } from "@/services/message/file/getColumnLayout";
 
 interface Props {
   isPreview?: boolean;
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { isPreview = false, message } = defineProps<Props>();

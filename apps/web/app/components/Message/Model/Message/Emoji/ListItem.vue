@@ -10,13 +10,14 @@ import { mergeProps } from "vue";
 
 interface Props {
   emoji: MessageEmojiMetadataEntity;
+  roomId: string;
 }
 
-const { emoji } = defineProps<Props>();
+const { emoji, roomId } = defineProps<Props>();
 // Rendered inside a `v-for`, so the bare form keeps this component synchronous rather than suspending the list
 const session = authClient.useSession();
 const messageDialogStore = useMessageDialogStore();
-const { reactionsRoomId, reactionsRowKey } = storeToRefs(messageDialogStore);
+const { reactionsMessageId, reactionsRoomId } = storeToRefs(messageDialogStore);
 const emojiStore = useEmojiStore();
 const { toggleEmoji } = emojiStore;
 const { description } = useEmojiTag(() => emoji.emojiTag);
@@ -27,12 +28,12 @@ const isReacted = computed(() => {
 });
 // Everyone who reacted is a right-click, long press or menu key away, since the tooltip that names them cannot be
 // Clicked through. The gestures stop at the reaction, so the message around it opens nothing of its own
-const contextMenuProps = getContextMenuProps(emoji.rowKey, () => [
+const contextMenuProps = getContextMenuProps(emoji.emojiTag, () => [
   {
     meaning: UiIconMeaning.Group,
     onClick: () => {
-      reactionsRoomId.value = emoji.partitionKey;
-      reactionsRowKey.value = emoji.messageRowKey;
+      reactionsRoomId.value = roomId;
+      reactionsMessageId.value = emoji.messageId;
     },
     title: "View Reactions",
   },
@@ -49,7 +50,7 @@ const contextMenuProps = getContextMenuProps(emoji.rowKey, () => [
         :aria-pressed="isReacted"
         :variant="UiButtonVariant.Field"
         ui-pill
-        @click="toggleEmoji(emoji)"
+        @click="toggleEmoji(roomId, emoji)"
         @contextmenu.stop
         @pointerdown.stop
       >
@@ -58,7 +59,7 @@ const contextMenuProps = getContextMenuProps(emoji.rowKey, () => [
       </UiButton>
     </template>
     <template #content>
-      <MessageModelMessageEmojiListItemHoverCard :emoji />
+      <MessageModelMessageEmojiListItemHoverCard :emoji :room-id />
     </template>
   </UiTooltip>
 </template>

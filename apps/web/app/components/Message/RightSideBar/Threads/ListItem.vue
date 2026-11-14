@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 
 interface Props {
-  thread: MessageEntity;
+  thread: ClientMessage;
 }
 
 const { thread } = defineProps<Props>();
@@ -18,6 +18,6 @@ const openThread = useOpenThread();
     :creator
     :message="thread"
     is-preview
-    @click="openThread(thread.partitionKey, thread.rowKey)"
+    @click="openThread(thread.roomId, thread.id)"
   />
 </template>

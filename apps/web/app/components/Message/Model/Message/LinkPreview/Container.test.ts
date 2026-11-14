@@ -1,9 +1,10 @@
 // @vitest-environment nuxt
 import MessageModelMessageLinkPreviewContainer from "@/components/Message/Model/Message/LinkPreview/Container.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -25,14 +26,10 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
       await deleteGate;
     });
-    const message = createMessageEntity({
-      roomId: otherRoomId,
-      type: MessageType.Message,
-      userId: crypto.randomUUID(),
-    });
+    const message = createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, crypto.randomUUID());
     message.linkPreviewResponse = linkPreviewResponse;
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
-      props: { linkPreviewResponse, partitionKey: message.partitionKey, rowKey: message.rowKey },
+      props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
     });
     setCurrentRoomId(roomId);
     const dataStore = useDataStore();
@@ -52,9 +49,9 @@ describe("messageModelMessageLinkPreviewContainer", () => {
   test("shows the remove button while the pointer is over the embed", async () => {
     expect.hasAssertions();
 
-    const message = createMessageEntity({ roomId, type: MessageType.Message, userId: crypto.randomUUID() });
+    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, crypto.randomUUID());
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
-      props: { linkPreviewResponse, partitionKey: message.partitionKey, rowKey: message.rowKey },
+      props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
     });
     const removeButton = component.get('[aria-label="Remove embeds"]');
 

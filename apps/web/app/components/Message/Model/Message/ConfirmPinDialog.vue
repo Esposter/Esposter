@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
@@ -11,35 +10,32 @@ const dataStore = useDataStore();
 const { getSlice } = dataStore;
 const { items } = storeToRefs(dataStore);
 const messageDialogStore = useMessageDialogStore();
-const { pinningRowKey } = storeToRefs(messageDialogStore);
-const { isOpen, item: message } = useSingletonDialog(pinningRowKey, () =>
-  items.value.find(({ rowKey }) => rowKey === pinningRowKey.value),
+const { pinningMessageId } = storeToRefs(messageDialogStore);
+const { isOpen, item: message } = useSingletonDialog(pinningMessageId, () =>
+  items.value.find(({ id }) => id === pinningMessageId.value),
 );
 const creator = useCreator(message);
 const { executeMutation } = useMutation();
 const pinMessage = async () => {
   if (!message.value) return;
-  const { partitionKey, rowKey } = message.value;
+  const { id: messageId, roomId } = message.value;
   // Resolved as the pin is issued: the optimistic apply runs when the write is sent, by which time the room on
   // Screen can be another one
-  const { items: roomItems } = getSlice(partitionKey);
-  await executeMutation(() => $trpc.message.pinMessage.mutate({ partitionKey, rowKey }), {
+  const { items: roomItems } = getSlice(roomId);
+  await executeMutation(() => $trpc.message.pinMessage.mutate({ id: messageId, roomId }), {
     applyOptimistic: () => {
-      const pinnedMessage = roomItems.value.find(
-        getEntityIdEqualComparator(CompositeAzureKeyPath, { partitionKey, rowKey }),
-      );
+      const pinnedMessage = roomItems.value.find(getEntityIdEqualComparator(["id"], { id: messageId }));
       if (!pinnedMessage) return noop;
       // Read as the write is sent rather than assumed: an unpin that landed — or was itself rolled back — between
-      // The click and this write decides what pinning owes back, and a hard-coded delete would unpin a message
-      // The server still has pinned
+      // The click and this write decides what pinning owes back, and a hard-coded unpin would drop a pin the server
+      // Still has pinned
       const previousIsPinned = pinnedMessage.isPinned;
       pinnedMessage.isPinned = true;
       return () => {
-        if (previousIsPinned) pinnedMessage.isPinned = previousIsPinned;
-        else delete pinnedMessage.isPinned;
+        pinnedMessage.isPinned = previousIsPinned;
       };
     },
-    key: rowKey,
+    key: messageId,
   });
 };
 </script>

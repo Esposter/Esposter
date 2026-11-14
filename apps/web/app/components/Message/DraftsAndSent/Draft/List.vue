@@ -9,7 +9,7 @@ const draftItems = useDraftItems();
 const getRow = (draftItem: DraftItem): UiListItem<string> => ({
   description: draftItem.content,
   image: draftItem.room.image ?? "",
-  title: draftItem.threadRootRowKey ? `${draftItem.room.name} — thread` : draftItem.room.name,
+  title: draftItem.threadRootId ? `${draftItem.room.name} — thread` : draftItem.room.name,
   to: getDraftItemRoute(draftItem),
   value: draftItem.composerKey,
 });

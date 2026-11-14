@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { UiToken } from "@/models/ui/UiToken";
 
-interface Props extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps {}
 
 const { isPreview = false, message } = defineProps<Props>();
 const isCallEnded = computed(() => Boolean(message.message));

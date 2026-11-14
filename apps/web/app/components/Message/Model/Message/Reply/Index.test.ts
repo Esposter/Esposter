@@ -1,12 +1,13 @@
 // @vitest-environment nuxt
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import MessageModelMessageReply from "@/components/Message/Model/Message/Reply/Index.vue";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useReplyStore } from "@/store/message/input/reply";
 import { useUserStore } from "@/store/message/user";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
@@ -17,9 +18,9 @@ describe("messageModelMessageReply", () => {
   const userId = crypto.randomUUID();
   const message = "message";
   // The preview of one replied message, read with `currentRoomId` on screen
-  const readPreviewText = async (repliedMessage: MessageEntity, currentRoomId: string) => {
+  const readPreviewText = async (repliedMessage: ClientMessage, currentRoomId: string) => {
     const component = await mountSuspended(MessageModelMessageReply, {
-      props: { roomId, rowKey: repliedMessage.rowKey },
+      props: { messageId: repliedMessage.id, roomId },
     });
     setCurrentRoomId(currentRoomId);
     const userStore = useUserStore();
@@ -27,7 +28,7 @@ describe("messageModelMessageReply", () => {
     storeUser(createUser({ id: userId }));
     const replyStore = useReplyStore();
     const { getReplyMapRef } = replyStore;
-    getReplyMapRef(roomId).value.set(repliedMessage.rowKey, repliedMessage);
+    getReplyMapRef(roomId).value.set(repliedMessage.id, repliedMessage);
     await flushPromises();
     return component.find(".rich-text-content").text();
   };
@@ -37,7 +38,7 @@ describe("messageModelMessageReply", () => {
   test("previews the replied message from the room it names", async () => {
     expect.hasAssertions();
 
-    const repliedMessage = createMessageEntity({ message, roomId, type: MessageType.Message, userId });
+    const repliedMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
 
     await expect(readPreviewText(repliedMessage, otherRoomId)).resolves.toBe(message);
   });
@@ -48,7 +49,10 @@ describe("messageModelMessageReply", () => {
     expect.hasAssertions();
 
     const markup = "<b>b</b>";
-    const repliedMessage = createMessageEntity({ message: markup, roomId, type: MessageType.System, userId });
+    const repliedMessage = {
+      ...createOptimisticMessage({ message: markup, roomId, type: MessageType.Message }, userId),
+      type: MessageType.System,
+    };
 
     await expect(readPreviewText(repliedMessage, roomId)).resolves.toBe(markup);
   });

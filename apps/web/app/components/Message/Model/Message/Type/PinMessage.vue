@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
-interface Props extends MessageComponentProps<StandardMessageEntity> {}
+interface Props extends MessageComponentProps {}
 
 const { isPreview = false } = defineProps<Props>();
 const scrollToMessage = useScrollToMessage();
@@ -14,7 +13,7 @@ const scrollToMessage = useScrollToMessage();
   <MessageModelMessageTypeSystemLine :active :is-preview :meaning="UiIconMeaning.Pin" :message>
     <span>{{ creator.name }}</span>
     <span text-muted> pinned </span>
-    <UiInlineAction @click="message.replyRowKey && scrollToMessage(message.partitionKey, message.replyRowKey)">
+    <UiInlineAction @click="message.replyToId && scrollToMessage(message.roomId, message.replyToId)">
       a message
     </UiInlineAction>
     <span text-muted> to this room.</span>

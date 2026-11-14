@@ -5,17 +5,17 @@ import { EMPTY_TEXT_REGEX } from "@/util/text/constants";
 import { MessageType } from "@esposter/db-schema";
 
 interface Props {
+  messageId: string;
   roomId: string;
-  rowKey: string;
 }
 
-const { roomId, rowKey } = defineProps<Props>();
+const { messageId, roomId } = defineProps<Props>();
 const replyStore = useReplyStore();
 const { isIndicatorActive } = storeToRefs(replyStore);
 const { getReplyMapRef } = replyStore;
 // The replied message's own room, never the one on screen: the thread pane renders a room beside whichever is open
 const replyMap = getReplyMapRef(() => roomId);
-const reply = computed(() => replyMap.value.get(rowKey));
+const reply = computed(() => replyMap.value.get(messageId));
 const creator = useCreator(reply);
 // Only a body a member or a webhook wrote came through the sanitizer. Every other type is a line the server wrote
 // Itself, carrying member names verbatim, so it is shown as text rather than parsed as markup
@@ -46,7 +46,7 @@ const scrollToMessage = useScrollToMessage();
         italic
         @mouseenter="isIndicatorActive = true"
         @mouseleave="isIndicatorActive = false"
-        @click="scrollToMessage(reply.partitionKey, reply.rowKey)"
+        @click="scrollToMessage(reply.roomId, reply.id)"
       >
         Click to see attachment
       </button>

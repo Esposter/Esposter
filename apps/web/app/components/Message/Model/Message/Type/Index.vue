@@ -8,21 +8,21 @@ const { isPreview = false, isSameBatch: baseIsSameBatch, message } = defineProps
 const isSameBatch = computed(() => baseIsSameBatch && !isPreview);
 const messageHtml = useMessageHtml(
   () => message.message,
-  () => message.partitionKey,
+  () => message.roomId,
 );
 </script>
 
 <template>
   <MessageModelMessageTypeListItem :active :is-preview>
     <template #prepend>
-      <div v-if="message.replyRowKey" flex flex-col items-center relative>
+      <div v-if="message.replyToId" flex flex-col items-center relative>
         <MessageModelMessageReplySpine
           ml-7.5
           mt-2.5
           top-0
           absolute
-          :reply-row-key="message.replyRowKey"
-          :room-id="message.partitionKey"
+          :reply-to-id="message.replyToId"
+          :room-id="message.roomId"
         />
         <UiAvatar mt-6 :image="creator.image ?? ''" :name="creator.name" />
       </div>
@@ -33,7 +33,7 @@ const messageHtml = useMessageHtml(
         {{ getShortTimeLabel(message.createdAt) }}
       </span>
     </template>
-    <MessageModelMessageReplyTitle v-if="message.replyRowKey || !isSameBatch" :creator :message />
+    <MessageModelMessageReplyTitle v-if="message.replyToId || !isSameBatch" :creator :message />
     <!-- A forward only adds the quote rail and its label — the body underneath is the same one every other
       message renders, so the edited marker and the inline editor survive being forwarded -->
     <div v-if="message.isForward" pl-3 ui-guide>

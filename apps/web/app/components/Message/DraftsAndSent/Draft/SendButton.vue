@@ -29,12 +29,12 @@ const { clearComposer } = inputStore;
           await createMessage({
             files: [],
             message: draftItem.content,
-            replyRowKey: draftItem.threadRootRowKey,
+            replyToId: draftItem.threadRootId || null,
             roomId: draftItem.room.id,
             type: MessageType.Message,
           })
         )
-          clearComposer({ roomId: draftItem.room.id, threadRootRowKey: draftItem.threadRootRowKey });
+          clearComposer({ roomId: draftItem.room.id, threadRootId: draftItem.threadRootId });
       }
     "
   />

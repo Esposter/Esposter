@@ -1,7 +1,8 @@
 // @vitest-environment nuxt
 import MessageModelMessageListItem from "@/components/Message/Model/Message/List/Item.vue";
 import MessageModelMessageListItemContainer from "@/components/Message/Model/Message/List/ItemContainer.vue";
-import { createMessageEntity, MessageType } from "@esposter/db-schema";
+import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { MessageType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -14,13 +15,8 @@ describe("messageModelMessageListItemContainer", () => {
     expect.hasAssertions();
 
     const message = "message";
-    const messageEntity = createMessageEntity({
-      message,
-      roomId,
-      type: MessageType.Message,
-      userId: crypto.randomUUID(),
-    });
-    const component = await mountSuspended(MessageModelMessageListItemContainer, { props: { message: messageEntity } });
+    const clientMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, crypto.randomUUID());
+    const component = await mountSuspended(MessageModelMessageListItemContainer, { props: { message: clientMessage } });
 
     expect(component.findComponent(MessageModelMessageListItem).exists()).toBe(true);
     expect(component.text()).toContain(message);

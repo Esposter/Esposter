@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { MessageEntity } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 
 interface Props {
   isPreview?: boolean;
-  message: MessageEntity;
+  message: ClientMessage;
 }
 
 const { isPreview = false } = defineProps<Props>();
@@ -14,8 +14,8 @@ const { isPreview = false } = defineProps<Props>();
   <MessageModelMessageLinkPreviewContainer
     v-if="message.linkPreviewResponse"
     :link-preview-response="message.linkPreviewResponse"
-    :partition-key="message.partitionKey"
-    :row-key="message.rowKey"
+    :message-id="message.id"
+    :room-id="message.roomId"
   />
   <MessageModelMessageEmojiList :is-preview :message />
 </template>

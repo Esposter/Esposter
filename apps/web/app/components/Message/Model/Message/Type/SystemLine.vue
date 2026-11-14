@@ -2,11 +2,10 @@
 import type { MessageComponentProps } from "@/models/message/MessageComponentProps";
 import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import type { UiToken } from "@/models/ui/UiToken";
-import type { StandardMessageEntity } from "@esposter/db-schema";
 
 // The shell every non-authored message line shares: a leading icon, one sentence of content, then the timestamp
 // And the reaction row. Only the icon and the sentence differ between them.
-interface Props extends Pick<MessageComponentProps<StandardMessageEntity>, "active" | "isPreview" | "message"> {
+interface Props extends Pick<MessageComponentProps, "active" | "isPreview" | "message"> {
   // An icon class written whole, for a glyph no meaning names
   icon?: string;
   meaning?: UiIconMeaning;

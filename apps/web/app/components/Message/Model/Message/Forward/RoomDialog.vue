@@ -13,9 +13,9 @@ const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
 const { items } = storeToRefs(dataStore);
 const forwardStore = useForwardStore();
-const { messageInput, rowKey } = storeToRefs(forwardStore);
-const { isOpen, item: forward } = useSingletonDialog(rowKey, () =>
-  items.value.find((message) => message.rowKey === rowKey.value),
+const { forwardMessageId, messageInput } = storeToRefs(forwardStore);
+const { isOpen, item: forward } = useSingletonDialog(forwardMessageId, () =>
+  items.value.find((message) => message.id === forwardMessageId.value),
 );
 const creator = useCreator(forward);
 const {
