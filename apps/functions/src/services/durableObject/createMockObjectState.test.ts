@@ -21,21 +21,29 @@ const createCursor = (rows: unknown[]) => {
 };
 
 // The state an object runs on. The SQLite is a real in-memory database, and the socket registry answers getWebSockets and
-// getTags as the runtime does, so a second object over the same state reads back the first's writes. The alarm is held
-// as the runtime holds it, and deleteAll starts the database again empty
+// getTags as the runtime does, so a second object over the same state reads back the first's writes. A closed socket
+// leaves the registry, so a close handler sees only the sockets still open. The alarm is held as the runtime holds it,
+// and deleteAll starts the database again empty
 export const createMockObjectState = (name: string) => {
   let database = new DatabaseSync(":memory:");
   const socketTags = new Map<MockSocket, string[]>();
+  const pendingWork: Promise<unknown>[] = [];
   let alarm: number | null = null;
   const ctx = {
     acceptWebSocket: (socket: MockSocket, tags: string[]) => {
       socketTags.set(socket, tags);
+      socket.close.mockImplementation(() => {
+        socketTags.delete(socket);
+      });
     },
     blockConcurrencyWhile: <T>(closure: () => Promise<T>) => closure(),
     getTags: (socket: MockSocket) => socketTags.get(socket) ?? [],
     getWebSockets: (tag?: string) =>
       [...socketTags].filter(([, tags]) => tag === undefined || tags.includes(tag)).map(([socket]) => socket),
     id: { name },
+    waitUntil: (promise: Promise<unknown>) => {
+      pendingWork.push(promise);
+    },
     storage: {
       deleteAlarm: async () => {
         alarm = null;
@@ -67,6 +75,8 @@ export const createMockObjectState = (name: string) => {
     get database() {
       return database;
     },
+    // Settles the work an object handed to waitUntil, which the runtime keeps running past the response it answered
+    settleWaitUntil: () => Promise.all(pendingWork.splice(0)),
   };
 };
 
