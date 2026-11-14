@@ -1,40 +1,34 @@
 import type { AgentApiKey } from "#server/models/auth/AgentApiKey";
-import type { ContextInput } from "#server/models/trpc/ContextInput";
 import type { Database } from "@esposter/db-schema";
-import type { Session, User } from "better-auth";
+import type { RequestEvent } from "nuxt/server";
 
 import { db } from "#server/db";
+import { readSession } from "#server/services/auth/readSession";
 import { getIpAddress } from "#server/services/request/getIpAddress";
-import { getRequestHeaders } from "#server/services/request/getRequestHeaders";
 import { getRequestIP } from "nuxt/server";
 
 // Widened to `Database`, which leaves out the D1 binding `drizzle` keeps as `$client`. Every procedure and service reads
 // `Context["db"]`, so this is the one seam that lets the Miniflare handle the tests build stand in without a cast
 const database: Database = db;
-// A request reaches a procedure as web headers whichever transport carried it, so nothing past this seam reads a node
-// Request or response. Only an http request has a response whose headers a procedure can write; a socket's upgrade
-// Response is long gone by the time a procedure runs
-export const createContext = (options: ContextInput) => {
-  if ("info" in options) {
-    const headers = getRequestHeaders(options.req);
-    return { db: database, headers, ipAddress: getIpAddress(headers, options.req.socket.remoteAddress ?? "") };
-  } else {
-    const { headers } = options.req;
-    return {
-      db: database,
-      headers,
-      ipAddress: getIpAddress(headers, getRequestIP(options) ?? ""),
-      responseHeaders: options.res.headers,
-    };
-  }
+// The context of one request, a batch's calls sharing it. The caller is read here, once, from the session cookie: null
+// When signed out. Better-auth extends a session a day after its last extension and sends the extended cookie back, so
+// The read forwards that cookie on the response
+export const createContext = async (event: RequestEvent) => {
+  const { headers } = event.req;
+  const responseHeaders = event.res.headers;
+  const authSession = await readSession(headers, responseHeaders);
+  return {
+    db: database,
+    headers,
+    ipAddress: getIpAddress(headers, getRequestIP(event) ?? ""),
+    responseHeaders,
+    session: authSession?.session ?? null,
+    user: authSession?.user ?? null,
+  };
 };
 
-export type Context = ReturnType<typeof createContext> & {
+export type Context = Awaited<ReturnType<typeof createContext>> & {
   // The key an agent's request came through, absent on a person's own request, so the activity trail can tell the two
   // Apart and name the key
   apiKey?: AgentApiKey;
-  // A caller the route already authenticated another way, as the MCP route does an API key's owner, which the session
-  // Middleware takes instead of reading the session cookie
-  session?: Session;
-  user?: User;
 };

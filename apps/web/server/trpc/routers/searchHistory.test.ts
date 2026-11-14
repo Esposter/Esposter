@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { searchHistoryRouter } from "#server/trpc/routers/searchHistory";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { FilterType, FilterTypeHas, searchHistoriesInMessage } from "@esposter/db-schema";
@@ -56,8 +56,9 @@ describe("searchHistoryRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    await searchHistoryCaller.createSearchHistory({ query, roomId });
+    const memberAuthSession = await createMockAuthSession(mockContext.db, member);
+    const memberCaller = createCallerFactory(searchHistoryRouter)(await createMockContext(memberAuthSession));
+    await memberCaller.createSearchHistory({ query, roomId });
     const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
     expect(searchHistories.items).toHaveLength(0);
@@ -66,9 +67,10 @@ describe("searchHistoryRouter", () => {
   test("fails read search histories with non-existent member", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
+    const nonMemberAuthSession = await createMockAuthSession(mockContext.db);
+    const nonMemberCaller = createCallerFactory(searchHistoryRouter)(await createMockContext(nonMemberAuthSession));
 
-    await expect(searchHistoryCaller.readSearchHistories({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(nonMemberCaller.readSearchHistories({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });

@@ -1,16 +1,15 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { authMocks, createMockSession } from "#server/auth.test";
+import { authMocks } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { trpcRouter } from "#server/trpc/routers";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
@@ -177,10 +176,13 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      dashboardCaller.updateResource({ id: newResource.id, name: updatedName }),
+      createCallerFactory(dashboardRouter)(await createMockContext(otherUserAuthSession)).updateResource({
+        id: newResource.id,
+        name: updatedName,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -229,9 +231,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const dashboard = new Dashboard({ visuals: [new Visual()] });
-    const savingPayload: AuthSession = { session: createMockSession(authMocks.user.id), user: authMocks.user };
     const deviceId = v7();
-    replayMockSession(savingPayload);
     const tabCaller = createCallerFactory(dashboardRouter)({
       ...mockContext,
       headers: new Headers({ [DEVICE_ID_HEADER]: deviceId }),
@@ -445,10 +445,14 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id }),
+      createCallerFactory(dashboardRouter)(await createMockContext(otherUserAuthSession)).saveResourceContent({
+        content: new Dashboard(),
+        contentVersion: 0,
+        id: newResource.id,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -488,10 +492,13 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      dashboardCaller.readPublishedVersionContent({ id: newResource.id, version: 1 }),
+      createCallerFactory(dashboardRouter)(await createMockContext(otherUserAuthSession)).readPublishedVersionContent({
+        id: newResource.id,
+        version: 1,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -743,10 +750,13 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      webpageCaller.generateUploadFileSasEntities({ files: [{ hash, mimetype, size }], id: newResource.id }),
+      createCallerFactory(webpageRouter)(await createMockContext(otherUserAuthSession)).generateUploadFileSasEntities({
+        files: [{ hash, mimetype, size }],
+        id: newResource.id,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

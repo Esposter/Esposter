@@ -6,7 +6,7 @@ import type { RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { ScheduledMessageJobType } from "@esposter/db-schema";
@@ -141,10 +141,13 @@ describe("scheduledMessageJobRouter", () => {
   test("fails to schedule a reminder as non-member", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
+    const nonMemberAuthSession = await createMockAuthSession(mockContext.db);
+    const nonMemberScheduledMessageJobCaller = createCallerFactory(scheduledMessageJobRouter)(
+      await createMockContext(nonMemberAuthSession),
+    );
 
     await expect(
-      scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text }),
+      nonMemberScheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     expect(userObject.addReminder).not.toHaveBeenCalled();
   });

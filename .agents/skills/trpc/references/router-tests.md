@@ -23,11 +23,13 @@ let fooBarCaller: DecorateRouterRecord<TRPCRouter["foo"]["bar"]>;
 
 ## A guard test must get past every guard in front of the one it names
 
-Procedures stack gates — membership, then permission, then ownership/authorship — and they all throw a bare `UNAUTHORIZED`, so a test that fails at the first gate is indistinguishable from one that reached the gate its title claims. `mockSessionOnce(mockContext.db)` alone makes a **brand-new user who never joined the room**: that proves membership and nothing else, whatever the title says. To assert a permission or authorship rule, the caller has to be a member first:
+Procedures stack gates — membership, then permission, then ownership/authorship — and they all throw a bare `UNAUTHORIZED`, so a test that fails at the first gate is indistinguishable from one that reached the gate its title claims. A caller over `createMockAuthSession(mockContext.db)` alone is a **brand-new user who never joined the room**: that proves membership and nothing else, whatever the title says. To assert a permission or authorship rule, the caller has to be a member first:
 
 ```ts
 const user = await createMember(); // the fixture's membership path — this user is actually in the room
-await mockSessionOnce(mockContext.db, user); // replay the same user for the guarded call
+const memberCaller = createCallerFactory(roomRouter)(
+  await createMockContext(await createMockAuthSession(mockContext.db, user)),
+);
 ```
 
 Name the gate the test actually exercises — `fails update for a member without ${RoomPermission.ManageRoom} permission`, `fails update with a member who is not the author` — never "with wrong user", which describes no gate in particular. Two tests that differ only in setup but reach the same gate are one test; an unknown-id case is the exception worth keeping, because it pins `UNAUTHORIZED` over `NOT_FOUND` (no id enumeration).

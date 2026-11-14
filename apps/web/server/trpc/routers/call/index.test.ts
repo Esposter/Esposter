@@ -1,11 +1,8 @@
 import type { Context } from "#server/trpc/context";
-import type { TRPCRouter } from "#server/trpc/routers";
-import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { getCallObject } from "#server/services/message/call/getCallObject";
-import { createCallerFactory } from "#server/trpc";
-import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { callRouter } from "#server/trpc/routers/call";
 import { callSessionsInMessage, DatabaseEntityType } from "@esposter/db-schema";
 import { NotFoundError } from "@esposter/shared";
@@ -18,11 +15,9 @@ vi.mock(import("#server/services/message/call/getCallObject"), () => ({
 
 describe("callRouter", () => {
   let mockContext: Context;
-  let callCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    callCaller = createCallerFactory(callRouter)(mockContext);
   });
 
   afterEach(async () => {
@@ -33,13 +28,13 @@ describe("callRouter", () => {
   test("joinCall refuses a joiner the call object does not admit", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const { callSessionId } = await callCaller.createCall();
-    await mockSessionOnce(mockContext.db);
+    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const { callSessionId } = await creatorCaller.createCall();
+    const joinerCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
     const joinCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
     vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
 
-    await expect(callCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(joinerCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must be admitted to join this call]`,
     );
   });
@@ -47,9 +42,9 @@ describe("callRouter", () => {
   test("joinCall returns the join of the call object, and the creator is the doorkeeper", async () => {
     expect.hasAssertions();
 
-    const creatorPayload = await mockSessionOnce(mockContext.db);
-    const { callSessionId } = await callCaller.createCall();
-    replayMockSession(creatorPayload);
+    const creatorAuthSession = await createMockAuthSession(mockContext.db);
+    const creatorCaller = await createMockCaller(callRouter, creatorAuthSession);
+    const { callSessionId } = await creatorCaller.createCall();
     const joinCall = vi.fn<(input: unknown) => Promise<unknown>>(() =>
       Promise.resolve({
         authToken: "auth-token",
@@ -60,12 +55,12 @@ describe("callRouter", () => {
     );
     vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
 
-    const result = await callCaller.joinCall({ id: callSessionId });
+    const result = await creatorCaller.joinCall({ id: callSessionId });
 
     expect(joinCall).toHaveBeenCalledExactlyOnceWith({
       callSessionId,
       isAdmissionRequired: false,
-      participant: createParticipant(creatorPayload.session, creatorPayload.user),
+      participant: createParticipant(creatorAuthSession.session, creatorAuthSession.user),
     });
     expect(result).toStrictEqual({
       authToken: "auth-token",
@@ -79,13 +74,12 @@ describe("callRouter", () => {
   test("leaveCall reports a call the caller is not in as not found", async () => {
     expect.hasAssertions();
 
-    const creatorPayload = await mockSessionOnce(mockContext.db);
-    const { callSessionId } = await callCaller.createCall();
-    replayMockSession(creatorPayload);
+    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const { callSessionId } = await creatorCaller.createCall();
     const leaveCall = vi.fn<(input: unknown) => Promise<null>>(() => Promise.resolve(null));
     vi.mocked(getCallObject).mockReturnValueOnce({ leaveCall } as unknown as ReturnType<typeof getCallObject>);
 
-    await expect(callCaller.leaveCall({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(creatorCaller.leaveCall({ callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.CallSession, callSessionId).message}]`,
     );
   });
@@ -93,13 +87,12 @@ describe("callRouter", () => {
   test("setMuted refuses a caller whose participant the call object does not hold", async () => {
     expect.hasAssertions();
 
-    const creatorPayload = await mockSessionOnce(mockContext.db);
-    const { callSessionId } = await callCaller.createCall();
-    replayMockSession(creatorPayload);
+    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const { callSessionId } = await creatorCaller.createCall();
     const setMuted = vi.fn<(input: unknown) => Promise<boolean>>(() => Promise.resolve(false));
     vi.mocked(getCallObject).mockReturnValueOnce({ setMuted } as unknown as ReturnType<typeof getCallObject>);
 
-    await expect(callCaller.setMuted({ callSessionId, isMuted: true })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(creatorCaller.setMuted({ callSessionId, isMuted: true })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must join call first]`,
     );
   });

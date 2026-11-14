@@ -7,7 +7,7 @@ import type { SurveyDocument, SurveyTextNode } from "vue-survey-engine-headless"
 
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createPageDocument, createPublishedSurvey, createSurvey } from "#server/trpc/routers/createSurvey.test";
@@ -716,10 +716,13 @@ describe("surveyRouter", () => {
 
     const newResource = await createResponseSurvey();
     const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      caller.deleteSurveyResponse({ id: newResource.id, responseId: newSurveyResponse.id }),
+      createCallerFactory(surveyRouter)(await createMockContext(otherUserAuthSession)).deleteSurveyResponse({
+        id: newResource.id,
+        responseId: newSurveyResponse.id,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 

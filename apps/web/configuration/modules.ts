@@ -1,7 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 import type { ModuleOptions } from "trpc-nuxt-module";
 
-import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "../app/services/trpc/constants.ts";
+import { TRPC_CLIENT_PATH } from "../app/services/trpc/constants.ts";
 
 // The workspace's own modules are registered by their source rather than their package name: `nuxt prepare` loads every
 // Module from the app's `postinstall`, before any workspace package is built, and a name resolves to the `dist` a fresh
@@ -17,7 +17,6 @@ const trpcNuxtModule: [string, ModuleOptions] = [
     createContext: { from: "~~/server/trpc/context", name: "createContext" },
     endpoint: TRPC_CLIENT_PATH,
     router: { from: "~~/server/trpc/routers", name: "trpcRouter" },
-    webSocket: { endpoint: TRPC_WS_PATH, keepAlive: { enabled: true } },
   },
 ];
 // @TODO: https://github.com/vitest-dev/vitest/issues/11842 — add unplugin-pwa-nuxt to the Vitest branch below once a virtual id starting with `/` loads under Vitest on Windows

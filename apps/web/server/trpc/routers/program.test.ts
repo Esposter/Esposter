@@ -7,7 +7,7 @@ import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { AUDIENCE_KEY_COLUMN, createAudienceSheet } from "#server/trpc/routers/createAudienceSheet.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
@@ -233,22 +233,26 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
-    await expect(caller.generateProgramParticipants({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      createCallerFactory(programRouter)(await createMockContext(otherUserAuthSession)).generateProgramParticipants({
+        id: program.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("fails read status with wrong user", async () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram();
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
-    await expect(caller.readProgramStatus({ id: program.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      createCallerFactory(programRouter)(await createMockContext(otherUserAuthSession)).readProgramStatus({
+        id: program.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("reads status joining participants against responses", async () => {
@@ -316,8 +320,10 @@ describe("programRouter", () => {
   test("reads status without another owner's survey responses", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const foreignSurvey = await surveyCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const foreignSurvey = await createCallerFactory(surveyRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
     const program = await createBoundProgram({
       keyValues: [keyValue],
       name,
@@ -380,10 +386,13 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program } = await setupIdentifiedProgram([" "]);
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      datasetCaller.readDataset({ id: program.id, type: DatasetProviderType.ProgramStatus }),
+      createCallerFactory(datasetRouter)(await createMockContext(otherUserAuthSession)).readDataset({
+        id: program.id,
+        type: DatasetProviderType.ProgramStatus,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, program.id).message}]`,
     );

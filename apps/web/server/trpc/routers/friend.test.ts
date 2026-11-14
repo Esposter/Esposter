@@ -4,7 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
 import {
@@ -48,8 +48,9 @@ describe("friendRouter", () => {
     expect.hasAssertions();
 
     const { user, userId } = await createFriendship(mockContext);
-    await mockSessionOnce(mockContext.db, user);
-    const friendUsers = await friendCaller.readFriends();
+    const receiverAuthSession = await createMockAuthSession(mockContext.db, user);
+    const receiverCaller = createCallerFactory(friendRouter)(await createMockContext(receiverAuthSession));
+    const friendUsers = await receiverCaller.readFriends();
 
     expect(friendUsers).toHaveLength(1);
     expect(takeOne(friendUsers).id).toBe(userId);
@@ -92,8 +93,9 @@ describe("friendRouter", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    await mockSessionOnce(mockContext.db);
-    const searchedUsers = await friendCaller.searchUsers(user.name);
+    const searcherAuthSession = await createMockAuthSession(mockContext.db);
+    const searcherCaller = createCallerFactory(friendRouter)(await createMockContext(searcherAuthSession));
+    const searchedUsers = await searcherCaller.searchUsers(user.name);
 
     expect(searchedUsers).toHaveLength(1);
     expect(takeOne(searchedUsers).id).toBe(user.id);

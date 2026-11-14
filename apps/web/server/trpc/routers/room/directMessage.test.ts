@@ -1,3 +1,4 @@
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -6,7 +7,7 @@ import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
@@ -29,6 +30,9 @@ describe("directMessageRouter", () => {
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
+  // A context acting as the given user on a session of their own, or as a new user when none is given
+  const createUserContext = async (user?: AuthSession["user"]) =>
+    createMockContext(await createMockAuthSession(mockContext.db, user));
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -100,8 +104,8 @@ describe("directMessageRouter", () => {
     const initialUser = getMockSession().user;
     const userB = await createMockUser(mockContext.db);
     await createFriends(mockContext, initialUser, userB);
-    await mockSessionOnce(mockContext.db, userB);
-    const directMessage1 = await directMessageCaller.createDirectMessage([initialUser.id]);
+    const userBDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext(userB));
+    const directMessage1 = await userBDirectMessageCaller.createDirectMessage([initialUser.id]);
     const directMessage2 = await directMessageCaller.createDirectMessage([userB.id]);
 
     expect(directMessage1.id).toBe(directMessage2.id);
@@ -131,11 +135,11 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
-    await mockSessionOnce(mockContext.db);
+    const nonMemberDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext());
 
-    await expect(directMessageCaller.hideDirectMessage(directMessage.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      nonMemberDirectMessageCaller.hideDirectMessage(directMessage.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("unhides direct message on re-open", async () => {
@@ -237,10 +241,10 @@ describe("directMessageRouter", () => {
     const addedUser = await createMockUser(mockContext.db);
     await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
-    await mockSessionOnce(mockContext.db, user);
+    const userDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext(user));
 
     await expect(
-      directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id }),
+      userDirectMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -290,9 +294,9 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const { directMessage } = await createDirectMessageWithFriend(mockContext);
-    await mockSessionOnce(mockContext.db);
+    const nonMemberDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext());
 
-    const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
+    const participantsData = await nonMemberDirectMessageCaller.readDirectMessageParticipants([directMessage.id]);
 
     expect(participantsData).toHaveLength(0);
   });
@@ -332,9 +336,9 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const nonMemberDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext());
 
-    await expect(directMessageCaller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(nonMemberDirectMessageCaller.hideDirectMessage(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });

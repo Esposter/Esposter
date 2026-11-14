@@ -4,7 +4,13 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
-import { consumeMockSessionOnce, createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import {
+  createMockAuthSession,
+  createMockCaller,
+  createMockContext,
+  createMockUser,
+  getMockSession,
+} from "#server/trpc/context.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
 import {
@@ -22,12 +28,10 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("friendRequestRouter", () => {
   let mockContext: Context;
-  let blockCaller: DecorateRouterRecord<TRPCRouter["block"]>;
   let friendRequestCaller: DecorateRouterRecord<TRPCRouter["friendRequest"]>;
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    blockCaller = createCallerFactory(blockRouter)(mockContext);
     friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
   });
 
@@ -42,8 +46,8 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    await mockSessionOnce(mockContext.db);
-    const friendRequest = await friendRequestCaller.sendFriendRequest(userId);
+    const senderCaller = await createMockCaller(friendRequestRouter, await createMockAuthSession(mockContext.db));
+    const friendRequest = await senderCaller.sendFriendRequest(userId);
 
     expect(friendRequest.receiverId).toBe(userId);
   });
@@ -52,10 +56,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    const firstFriendRequest = await friendRequestCaller.sendFriendRequest(userId);
-    await mockSessionOnce(mockContext.db, user);
-    const secondFriendRequest = await friendRequestCaller.sendFriendRequest(userId);
+    const senderCaller = await createMockCaller(friendRequestRouter, await createMockAuthSession(mockContext.db));
+    const firstFriendRequest = await senderCaller.sendFriendRequest(userId);
+    const secondFriendRequest = await senderCaller.sendFriendRequest(userId);
 
     expect(firstFriendRequest.id).toBe(secondFriendRequest.id);
   });
@@ -74,8 +77,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
     const senderUser = await friendRequestCaller.acceptFriendRequest(user.id);
 
     expect(senderUser.id).toBe(user.id);
@@ -85,13 +89,14 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    const senderCaller = await createMockCaller(friendRequestRouter, senderAuthSession);
+    await senderCaller.sendFriendRequest(userId);
     await friendRequestCaller.acceptFriendRequest(user.id);
-    await mockSessionOnce(mockContext.db, user);
     const friendshipId = getFriendshipId(userId, user.id);
 
-    await expect(friendRequestCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(senderCaller.sendFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
     );
   });
@@ -100,10 +105,13 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
     const friendshipId = getFriendshipId(userId, user.id);
 
-    await expect(friendRequestCaller.acceptFriendRequest(userId)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      (await createMockCaller(friendRequestRouter, senderAuthSession)).acceptFriendRequest(userId),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Friend, friendshipId).message}]`,
     );
   });
@@ -122,9 +130,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.createBlock(receiverUser.id);
-    await consumeMockSessionOnce();
+    const blockerAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: blockerUser } = blockerAuthSession;
+    await (await createMockCaller(blockRouter, blockerAuthSession)).createBlock(receiverUser.id);
 
     await expect(friendRequestCaller.sendFriendRequest(blockerUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, blockerUser.id).message}]`,
@@ -135,11 +143,12 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const blockedUser = getMockSession().user;
-    const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.createBlock(blockedUser.id);
-    await mockSessionOnce(mockContext.db, blockerUser);
+    const blockerAuthSession = await createMockAuthSession(mockContext.db);
+    await (await createMockCaller(blockRouter, blockerAuthSession)).createBlock(blockedUser.id);
 
-    await expect(friendRequestCaller.sendFriendRequest(blockedUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      (await createMockCaller(friendRequestRouter, blockerAuthSession)).sendFriendRequest(blockedUser.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Friend, blockedUser.id).message}]`,
     );
   });
@@ -148,8 +157,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: senderUser } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
     const friendshipId = getFriendshipId(userId, senderUser.id);
 
     await expect(friendRequestCaller.sendFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -171,9 +181,8 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
+    const user = await createMockUser(mockContext.db);
     const friendshipId = getFriendshipId(userId, user.id);
-    await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.declineFriendRequest(user.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.FriendRequest, friendshipId).message}]`,
@@ -184,10 +193,10 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: senderUser } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(receiverUser.id);
     await mockContext.db.delete(usersInAuth).where(eq(usersInAuth.id, senderUser.id));
-    await consumeMockSessionOnce();
 
     await expect(friendRequestCaller.acceptFriendRequest(senderUser.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.User, senderUser.id).message}]`,
@@ -198,8 +207,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
     await friendRequestCaller.declineFriendRequest(user.id);
 
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
@@ -211,8 +221,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(userId);
     const allFriendRequests = await friendRequestCaller.readFriendRequests();
 
     expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
@@ -224,10 +235,11 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const userId = getMockSession().user.id;
-    const { user } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(userId);
-    await mockSessionOnce(mockContext.db, user);
-    const allFriendRequests = await friendRequestCaller.readFriendRequests();
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user } = senderAuthSession;
+    const senderCaller = await createMockCaller(friendRequestRouter, senderAuthSession);
+    await senderCaller.sendFriendRequest(userId);
+    const allFriendRequests = await senderCaller.readFriendRequests();
 
     expect(allFriendRequests.map(({ receiverId, senderId }) => ({ receiverId, senderId }))).toStrictEqual([
       { receiverId: userId, senderId: user.id },
@@ -238,8 +250,11 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    const friendRequest = await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: senderUser } = senderAuthSession;
+    const friendRequest = await (
+      await createMockCaller(friendRequestRouter, senderAuthSession)
+    ).sendFriendRequest(receiverUser.id);
 
     expect(userObjectCalls).toStrictEqual([
       { args: [friendRequest], method: "sendFriendRequest", userId: receiverUser.id },
@@ -251,8 +266,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: senderUser } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(receiverUser.id);
     const acceptedSenderUser = await friendRequestCaller.acceptFriendRequest(senderUser.id);
     const acceptedReceiverUser = await mockContext.db.query.usersInAuth.findFirst({
       columns: PublicUserColumns,
@@ -270,8 +286,9 @@ describe("friendRequestRouter", () => {
     expect.hasAssertions();
 
     const receiverUser = getMockSession().user;
-    const { user: senderUser } = await mockSessionOnce(mockContext.db);
-    await friendRequestCaller.sendFriendRequest(receiverUser.id);
+    const senderAuthSession = await createMockAuthSession(mockContext.db);
+    const { user: senderUser } = senderAuthSession;
+    await (await createMockCaller(friendRequestRouter, senderAuthSession)).sendFriendRequest(receiverUser.id);
     await friendRequestCaller.declineFriendRequest(senderUser.id);
 
     const declinedFriendRequest = { receiverId: receiverUser.id, senderId: senderUser.id };

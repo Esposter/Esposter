@@ -11,7 +11,6 @@ import {
   getMockRevokeOtherSessions,
   getMockRevokeSession,
   getMockSession,
-  replayMockSession,
 } from "#server/trpc/context.test";
 import { sessionRouter } from "#server/trpc/routers/session";
 import { sessionsInAuth } from "@esposter/db-schema";
@@ -19,6 +18,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 
 describe("sessionRouter", () => {
   let mockContext: Context;
+  let requestContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["session"]>;
   let currentSession: Session;
   let otherSession: Session;
@@ -45,7 +45,6 @@ describe("sessionRouter", () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    caller = createCallerFactory(sessionRouter)(mockContext);
     ({
       user: { id: userId },
     } = getMockSession());
@@ -61,8 +60,9 @@ describe("sessionRouter", () => {
     otherSession = createMockSession(userId);
     await insertSession(currentSession);
     await insertSession(otherSession);
-    // The session the request runs as, queued for the auth middleware's own read
-    replayMockSession({ session: currentSession, user: getMockSession().user });
+    // The request runs as the current session, so its context names that session and the user it belongs to
+    requestContext = await createMockContext({ session: currentSession, user: getMockSession().user });
+    caller = createCallerFactory(sessionRouter)(requestContext);
   });
 
   afterEach(() => {
@@ -92,7 +92,7 @@ describe("sessionRouter", () => {
 
     expect(getMockRevokeSession()).toHaveBeenCalledExactlyOnceWith({
       body: { token: otherSession.token },
-      headers: mockContext.headers,
+      headers: requestContext.headers,
     });
   });
 
@@ -111,7 +111,7 @@ describe("sessionRouter", () => {
 
     await caller.deleteOtherSessions();
 
-    expect(getMockRevokeOtherSessions()).toHaveBeenCalledExactlyOnceWith({ headers: mockContext.headers });
+    expect(getMockRevokeOtherSessions()).toHaveBeenCalledExactlyOnceWith({ headers: requestContext.headers });
   });
 
   test("closes the sockets of the session it revokes on the person's object", async () => {

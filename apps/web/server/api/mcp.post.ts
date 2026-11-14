@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
     return { message: error?.message ?? "Invalid API key." };
   }
 
-  const ctx = createContext(event);
+  const ctx = await createContext(event);
   const user = await ctx.db.query.usersInAuth.findFirst({ where: { id: { eq: apiKey.referenceId } } });
   if (!user) {
     event.res.status = 401;

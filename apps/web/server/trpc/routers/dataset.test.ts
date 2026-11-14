@@ -7,7 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { insertSurveyResponses } from "#server/services/survey/insertSurveyResponses.test";
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import {
   createPageDocument,
   createPublishedSurvey,
@@ -199,10 +199,13 @@ describe("datasetRouter", () => {
     expect.hasAssertions();
 
     const newSurvey = await setupSurvey();
-    await mockSessionOnce(mockContext.db);
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      caller.readDataset({ id: newSurvey.id, type: DatasetProviderType.SurveyResponses }),
+      createCallerFactory(datasetRouter)(await createMockContext(otherUserAuthSession)).readDataset({
+        id: newSurvey.id,
+        type: DatasetProviderType.SurveyResponses,
+      }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newSurvey.id).message}]`,
     );

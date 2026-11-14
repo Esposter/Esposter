@@ -17,7 +17,7 @@ import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/ge
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
@@ -395,8 +395,8 @@ describe("resourceRouter", () => {
   test("counts grouped by type only for the caller's own resources", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    await dashboardCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(dashboardRouter)(await createMockContext(otherUserAuthSession)).createResource({ name });
     await sheetCaller.createResource({ name });
 
     const resourceTypeCounts = await caller.readResourceTypeCounts();
@@ -456,8 +456,10 @@ describe("resourceRouter", () => {
   test("does not delete other users' resources in bulk", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserResource = await dashboardCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(dashboardRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
     const ownResource = await sheetCaller.createResource({ name });
     const deletedResources = await caller.deleteResources({ ids: [otherUserResource.id, ownResource.id] });
 
@@ -491,8 +493,10 @@ describe("resourceRouter", () => {
   test("reads no consumer another owner holds", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserConsumer = await dashboardCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserConsumer = await createCallerFactory(dashboardRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
     const source = await sheetCaller.createResource({ name });
     await mockContext.db
       .insert(resourceLinksInResource)
@@ -507,8 +511,10 @@ describe("resourceRouter", () => {
   test("reads the references a resource holds", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserTarget = await sheetCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserTarget = await createCallerFactory(sheetRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
     const resource = await dashboardCaller.createResource({ name });
     const target = await sheetCaller.createResource({ name });
     const binnedTarget = await sheetCaller.createResource({ name });
@@ -622,8 +628,10 @@ describe("resourceRouter", () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    await mockSessionOnce(mockContext.db);
-    const otherUserResource = await webpageCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(webpageRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
 
     await expect(
       callAgentTool("resource_readCritique", { id: otherUserResource.id }),
@@ -1248,8 +1256,10 @@ describe("resourceRouter", () => {
   test("does not read publish history for another user's resource", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserResource = await webpageCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(webpageRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
 
     await expect(caller.readSnapshotHistory({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
@@ -1259,8 +1269,10 @@ describe("resourceRouter", () => {
   test("does not restore a version of another user's resource", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserResource = await webpageCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(webpageRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
 
     await expect(
       caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: otherUserResource.id, version: 1 }),
@@ -1597,8 +1609,10 @@ describe("resourceRouter", () => {
   test("does not read or patch another user's content", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const otherUserResource = await todoListCaller.createResource({ name });
+    const otherUserAuthSession = await createMockAuthSession(mockContext.db);
+    const otherUserResource = await createCallerFactory(todoListRouter)(
+      await createMockContext(otherUserAuthSession),
+    ).createResource({ name });
 
     await expect(caller.readResourceContent({ id: otherUserResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,

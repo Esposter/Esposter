@@ -4,7 +4,7 @@ import type { CreateWebhookInput } from "#shared/models/db/webhook/CreateWebhook
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
@@ -21,10 +21,11 @@ describe("webhookRouter", () => {
   const name = "name";
   const updatedName = "updatedName";
   const updatedIsActive = false;
-  // A member of the room who holds no permission, replayed as the caller of the guarded call
-  const mockMemberSessionOnce = async () => {
+  // A member of the room who holds no permission, as the caller of the guarded call the test makes next
+  const createMemberWebhookCaller = async () => {
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberAuthSession = await createMockAuthSession(mockContext.db, member);
+    return createCallerFactory(webhookRouter)(await createMockContext(memberAuthSession));
   };
 
   beforeAll(() => {
@@ -82,9 +83,9 @@ describe("webhookRouter", () => {
   test(`fails create for a member without ${RoomPermission.ManageWebhooks} permission`, async () => {
     expect.hasAssertions();
 
-    await mockMemberSessionOnce();
+    const memberWebhookCaller = await createMemberWebhookCaller();
 
-    await expect(webhookCaller.createWebhook({ name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(memberWebhookCaller.createWebhook({ name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -132,10 +133,10 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    await mockMemberSessionOnce();
+    const memberWebhookCaller = await createMemberWebhookCaller();
 
     await expect(
-      webhookCaller.updateWebhook({ id: newWebhook.id, name: updatedName, roomId }),
+      memberWebhookCaller.updateWebhook({ id: newWebhook.id, name: updatedName, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -156,10 +157,10 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    await mockMemberSessionOnce();
+    const memberWebhookCaller = await createMemberWebhookCaller();
 
     await expect(
-      webhookCaller.regenerateToken({ id: newWebhook.id, roomId }),
+      memberWebhookCaller.regenerateToken({ id: newWebhook.id, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -180,11 +181,11 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    await mockMemberSessionOnce();
+    const memberWebhookCaller = await createMemberWebhookCaller();
 
-    await expect(webhookCaller.deleteWebhook({ id: newWebhook.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
+    await expect(
+      memberWebhookCaller.deleteWebhook({ id: newWebhook.id, roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
   test("reads app users by ids", async () => {
@@ -200,10 +201,11 @@ describe("webhookRouter", () => {
     expect.hasAssertions();
 
     const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
-    await mockSessionOnce(mockContext.db);
+    const nonMemberAuthSession = await createMockAuthSession(mockContext.db);
+    const nonMemberWebhookCaller = createCallerFactory(webhookRouter)(await createMockContext(nonMemberAuthSession));
 
     await expect(
-      webhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId }),
+      nonMemberWebhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

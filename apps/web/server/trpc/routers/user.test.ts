@@ -14,13 +14,12 @@ import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { createCallerFactory } from "#server/trpc";
 import {
+  createMockAuthSession,
   createMockContext,
   createMockUser,
   getMockCreateApiKey,
   getMockRevokeSession,
   getMockSession,
-  mockNoSessionOnce,
-  mockSessionOnce,
 } from "#server/trpc/context.test";
 import { userRouter } from "#server/trpc/routers/user";
 import { MimeType } from "#shared/models/file/MimeType";
@@ -262,8 +261,12 @@ describe("userRouter", () => {
   test("updates", async () => {
     expect.hasAssertions();
 
-    await mockSessionOnce(mockContext.db);
-    const updatedUser = await caller.updateUser({ biography, image, name: ` ${name} ` });
+    const authSession = await createMockAuthSession(mockContext.db);
+    const updatedUser = await createCallerFactory(userRouter)(await createMockContext(authSession)).updateUser({
+      biography,
+      image,
+      name: ` ${name} `,
+    });
 
     expect(updatedUser.biography).toBe(biography);
     expect(updatedUser.image).toBe(image);
@@ -273,10 +276,10 @@ describe("userRouter", () => {
   test("clears biography", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    await caller.updateUser({ biography });
-    await mockSessionOnce(mockContext.db, user);
-    const updatedUser = await caller.updateUser({ biography: "" });
+    const authSession = await createMockAuthSession(mockContext.db);
+    const authSessionCaller = createCallerFactory(userRouter)(await createMockContext(authSession));
+    await authSessionCaller.updateUser({ biography });
+    const updatedUser = await authSessionCaller.updateUser({ biography: "" });
 
     expect(updatedUser.biography).toBe("");
   });
@@ -284,9 +287,9 @@ describe("userRouter", () => {
   test("reads user", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    await caller.updateUser({ biography, image, name });
-    const publicUser = await caller.readUser(user.id);
+    const authSession = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(userRouter)(await createMockContext(authSession)).updateUser({ biography, image, name });
+    const publicUser = await caller.readUser(authSession.user.id);
 
     // Only the allowlisted columns are projected — private fields (email) never leave the database
     expect(publicUser).toStrictEqual({ biography, image, name });
@@ -295,10 +298,10 @@ describe("userRouter", () => {
   test("reads user unauthenticated", async () => {
     expect.hasAssertions();
 
-    const { user } = await mockSessionOnce(mockContext.db);
-    await caller.updateUser({ biography, image, name });
-    mockNoSessionOnce();
-    const publicUser = await caller.readUser(user.id);
+    const authSession = await createMockAuthSession(mockContext.db);
+    await createCallerFactory(userRouter)(await createMockContext(authSession)).updateUser({ biography, image, name });
+    const signedOutCaller = createCallerFactory(userRouter)(await createMockContext(null));
+    const publicUser = await signedOutCaller.readUser(authSession.user.id);
 
     expect(publicUser).toStrictEqual({ biography, image, name });
   });

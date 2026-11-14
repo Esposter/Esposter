@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { filterRouter } from "#server/trpc/routers/room/filter";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { RoomPermission, WordFilterAction } from "@esposter/db-schema";
@@ -89,9 +89,12 @@ describe("filterRouter", () => {
 
     await roomFilterCaller.upsertRoomFilter({ roomId, words });
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomFilterCaller = await createMockCaller(
+      filterRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
 
-    await expect(roomFilterCaller.readRoomFilter({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(memberRoomFilterCaller.readRoomFilter({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -100,9 +103,12 @@ describe("filterRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomFilterCaller = await createMockCaller(
+      filterRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
 
-    await expect(roomFilterCaller.upsertRoomFilter({ roomId, words })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(memberRoomFilterCaller.upsertRoomFilter({ roomId, words })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -111,8 +117,11 @@ describe("filterRouter", () => {
     expect.hasAssertions();
 
     const { member } = await setupMemberWithRole(RoomPermission.ManageRoom, position);
-    await mockSessionOnce(mockContext.db, member);
-    const upsertedRoomFilter = await roomFilterCaller.upsertRoomFilter({ roomId, words });
+    const memberRoomFilterCaller = await createMockCaller(
+      filterRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
+    const upsertedRoomFilter = await memberRoomFilterCaller.upsertRoomFilter({ roomId, words });
 
     expect(upsertedRoomFilter.words).toStrictEqual(words);
   });

@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
 import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
-import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockContext, createMockUser } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import {
   MAX_THUMBNAIL_BYTES,
@@ -36,9 +36,7 @@ describe(generateReservedMessageFileSasEntities, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ({
-      user: { id: userId },
-    } = await mockSessionOnce(mockContext.db));
+    userId = (await createMockUser(mockContext.db)).id;
   });
 
   afterEach(async () => {

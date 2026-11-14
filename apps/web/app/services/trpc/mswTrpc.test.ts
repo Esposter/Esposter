@@ -2,7 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 
 import { rootConfig } from "#server/trpc/rootConfig";
 import { trpcRouter } from "#server/trpc/routers";
-import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
+import { TRPC_CLIENT_PATH } from "@/services/trpc/constants";
 import { initTRPC } from "@trpc/server";
 import { Headers as HappyDomHeaders } from "happy-dom";
 import { setupServer } from "msw/node";
@@ -19,7 +19,6 @@ export const setupMswTrpc = () => {
     // Every mocked call passes the real procedure's input parsers, so a test sending what the server rejects fails
     router: trpcRouter,
     t: initTRPC.create(rootConfig),
-    webSocketUrl: `ws://${window.location.host}${TRPC_WS_PATH}`,
   });
   const server = setupServer(...handlers);
   const nuxtFetch = globalThis.fetch;

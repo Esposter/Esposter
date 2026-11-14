@@ -8,10 +8,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
+import { roomRouter } from "#server/trpc/routers/room";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import { pinMessageInputSchema } from "#shared/models/db/message/PinMessageInput";
@@ -251,10 +252,10 @@ describe("messageRouter", () => {
     // The member is in the room, so the guard that refuses them is authorship and not membership
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberCaller = await createMockCaller(messageRouter, await createMockAuthSession(mockContext.db, member));
 
     await expect(
-      messageCaller.updateMessage({ id: messageId, message: updatedText, roomId }),
+      memberCaller.updateMessage({ id: messageId, message: updatedText, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     expect(roomObject.updateMessage).not.toHaveBeenCalled();
   });
@@ -473,8 +474,9 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     // The room belongs to another person, so the sender is not in it and the forward is refused before any room is written
-    await mockSessionOnce(mockContext.db);
-    const otherRoom = await roomCaller.createRoom({ name });
+    const otherAuthSession = await createMockAuthSession(mockContext.db);
+    const otherRoomCaller = createCallerFactory(roomRouter)(await createMockContext(otherAuthSession));
+    const otherRoom = await otherRoomCaller.createRoom({ name });
 
     await expect(
       messageCaller.forwardMessage({ id: messageId, message: text, roomId, roomIds: [otherRoom.id] }),
@@ -495,13 +497,13 @@ describe("messageRouter", () => {
     // Each join writes a line to its room, which is not the forward this test is about
     useRoomObjectMock.mockClear();
     roomObject.createMessage.mockClear();
-    await mockSessionOnce(mockContext.db, member);
+    const memberCaller = await createMockCaller(messageRouter, await createMockAuthSession(mockContext.db, member));
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: filteredMessage })]);
     roomObject.createMessage.mockResolvedValue(createRoomMessage());
 
     await expect(
-      messageCaller.forwardMessage({ id: messageId, message: "", roomId, roomIds: [blockedRoom.id, openRoom.id] }),
+      memberCaller.forwardMessage({ id: messageId, message: "", roomId, roomIds: [blockedRoom.id, openRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Message contains blocked content.]`);
 
     expect(useRoomObjectMock).not.toHaveBeenCalledWith(blockedRoom.id);

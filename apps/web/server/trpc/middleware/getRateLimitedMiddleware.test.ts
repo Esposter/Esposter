@@ -4,7 +4,7 @@ import { authMocks } from "#server/auth.test";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getAgentSession } from "#server/services/auth/getAgentSession";
 import { createCallerFactory, publicProcedure, router } from "#server/trpc";
-import { createMockContext, getMockSession, mockNoSessionOnce } from "#server/trpc/context.test";
+import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getRateLimitedMiddleware } from "#server/trpc/middleware/getRateLimitedMiddleware";
 import { noop } from "@esposter/shared";
 import { env } from "cloudflare:workers";
@@ -68,9 +68,9 @@ describe(getRateLimitedMiddleware, () => {
       .fn<(options: RateLimitOptions) => Promise<RateLimitOutcome>>()
       .mockResolvedValue({ success: true });
     env.RATE_LIMITER_STANDARD = { limit };
-    mockNoSessionOnce();
+    const anonymousContext = await createMockContext(null);
 
-    await expect(createTestCaller({ ...mockContext, ipAddress: "203.0.113.5" }).ping()).resolves.toBe(true);
+    await expect(createTestCaller({ ...anonymousContext, ipAddress: "203.0.113.5" }).ping()).resolves.toBe(true);
 
     expect(limit).toHaveBeenCalledExactlyOnceWith({ key: "ping|203.0.113.5" });
   });
@@ -83,9 +83,9 @@ describe(getRateLimitedMiddleware, () => {
       .mockResolvedValue({ success: false });
     env.RATE_LIMITER_STANDARD = { limit };
     vi.spyOn(console, "warn").mockImplementation(noop);
-    mockNoSessionOnce();
+    const anonymousContext = await createMockContext(null);
 
-    await caller.ping();
+    await createTestCaller({ ...anonymousContext, ipAddress: "" }).ping();
 
     expect(limit).not.toHaveBeenCalled();
   });
@@ -100,7 +100,9 @@ describe(getRateLimitedMiddleware, () => {
       .mockResolvedValue({ success: true });
     env.RATE_LIMITER_STANDARD = { limit };
 
-    await createTestCaller({ ...mockContext, session: getAgentSession(user, ""), user }).ping();
+    const agentContext = await createMockContext({ session: getAgentSession(user, ""), user });
+
+    await createTestCaller({ ...agentContext, ipAddress: "" }).ping();
 
     expect(limit).toHaveBeenCalledExactlyOnceWith({ key: user.id });
     expect(authMocks.getSession).not.toHaveBeenCalled();

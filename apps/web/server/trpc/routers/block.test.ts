@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { createFriendship } from "#server/trpc/routers/createFriendship.test";
 import { friendRouter } from "#server/trpc/routers/friend";
@@ -134,11 +134,13 @@ describe("blockRouter", () => {
     expect.hasAssertions();
 
     const user = getMockSession().user;
-    const { user: blockerUser } = await mockSessionOnce(mockContext.db);
-    await blockCaller.createBlock(user.id);
-    await mockSessionOnce(mockContext.db, user);
+    const blockerAuthSession = await createMockAuthSession(mockContext.db);
+    const blockerCaller = createCallerFactory(blockRouter)(await createMockContext(blockerAuthSession));
+    await blockerCaller.createBlock(user.id);
+    const userAuthSession = await createMockAuthSession(mockContext.db, user);
+    const userCaller = createCallerFactory(friendRouter)(await createMockContext(userAuthSession));
 
-    const searchedUsers = await friendCaller.searchUsers(blockerUser.name);
+    const searchedUsers = await userCaller.searchUsers(blockerAuthSession.user.name);
 
     expect(searchedUsers).toStrictEqual([]);
   });

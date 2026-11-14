@@ -1,14 +1,13 @@
 import type { auth as realAuth } from "#server/auth";
-import type { Context } from "#server/trpc/context";
 import type { AuthSession } from "#server/models/auth/AuthSession";
+import type { Context } from "#server/trpc/context";
 import type { ApiKeyPermissions } from "@esposter/db-schema";
-import type { Session, User } from "better-auth";
 
 import { sessionsInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, vi } from "vitest";
 
-export const createMockSession = (userId: string): Session => {
+export const createMockSession = (userId: string): AuthSession["session"] => {
   const createdAt = new Date();
   return {
     createdAt,
@@ -22,7 +21,8 @@ export const createMockSession = (userId: string): Session => {
 };
 
 const createdAt = new Date();
-const user: User = {
+const user: AuthSession["user"] = {
+  biography: "",
   createdAt,
   email: "",
   emailVerified: true,

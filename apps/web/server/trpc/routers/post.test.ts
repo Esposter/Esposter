@@ -5,7 +5,7 @@ import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
@@ -95,9 +95,11 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    await mockSessionOnce(mockContext.db);
+    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(postCaller.updatePost({ description, id: newPost.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(
+      wrongUserCaller.updatePost({ description, id: newPost.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Post, newPost.id).message}]`,
     );
   });
@@ -129,9 +131,9 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    await mockSessionOnce(mockContext.db);
+    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(postCaller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(wrongUserCaller.deletePost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Post, newPost.id).message}]`,
     );
   });
@@ -178,10 +180,10 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    await mockSessionOnce(mockContext.db);
+    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
     await expect(
-      postCaller.updateComment({ description, id: newComment.id }),
+      wrongUserCaller.updateComment({ description, id: newComment.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
     );
@@ -259,9 +261,9 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
-    await mockSessionOnce(mockContext.db);
+    const wrongUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(postCaller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(wrongUserCaller.deleteComment(newComment.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, newComment.id).message}]`,
     );
   });
@@ -293,8 +295,8 @@ describe("postRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    await mockSessionOnce(mockContext.db);
-    const post = await postCaller.readPost(newPost.id);
+    const otherUserCaller = await createMockCaller(postRouter, await createMockAuthSession(mockContext.db));
+    const post = await otherUserCaller.readPost(newPost.id);
 
     expect(post.viewerLike).toBeUndefined();
   });
@@ -302,10 +304,11 @@ describe("postRouter", () => {
   test("reads posts excluding blocked users' posts", async () => {
     expect.hasAssertions();
 
-    const { user: blockedUser } = await mockSessionOnce(mockContext.db);
-    await postCaller.createPost({ title });
+    const blockedAuthSession = await createMockAuthSession(mockContext.db);
+    const blockedCaller = await createMockCaller(postRouter, blockedAuthSession);
+    await blockedCaller.createPost({ title });
     const newPost = await postCaller.createPost({ title });
-    await blockCaller.createBlock(blockedUser.id);
+    await blockCaller.createBlock(blockedAuthSession.user.id);
     const { items } = await postCaller.readPosts();
 
     expect(items.map(({ id }) => id)).toStrictEqual([newPost.id]);
@@ -315,9 +318,10 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { user: blockedUser } = await mockSessionOnce(mockContext.db);
-    await postCaller.createComment({ description, parentId: newPost.id });
-    await blockCaller.createBlock(blockedUser.id);
+    const blockedAuthSession = await createMockAuthSession(mockContext.db);
+    const blockedCaller = await createMockCaller(postRouter, blockedAuthSession);
+    await blockedCaller.createComment({ description, parentId: newPost.id });
+    await blockCaller.createBlock(blockedAuthSession.user.id);
     const { items: comments } = await postCaller.readPosts({ parentId: newPost.id });
     const post = await postCaller.readPost(newPost.id);
 
@@ -330,11 +334,11 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const { user: author } = await mockSessionOnce(mockContext.db);
-    const authorPost = await postCaller.createPost({ title });
-    await mockSessionOnce(mockContext.db, author);
-    await postCaller.createComment({ description, parentId: newPost.id });
-    const { items } = await postCaller.readPosts({ userId: author.id });
+    const authorAuthSession = await createMockAuthSession(mockContext.db);
+    const authorCaller = await createMockCaller(postRouter, authorAuthSession);
+    const authorPost = await authorCaller.createPost({ title });
+    await authorCaller.createComment({ description, parentId: newPost.id });
+    const { items } = await postCaller.readPosts({ userId: authorAuthSession.user.id });
 
     expect(items.map(({ id }) => id)).toStrictEqual([authorPost.id]);
   });
@@ -342,9 +346,10 @@ describe("postRouter", () => {
   test("reads blocked user's post by id", async () => {
     expect.hasAssertions();
 
-    const { user: blockedUser } = await mockSessionOnce(mockContext.db);
-    const blockedPost = await postCaller.createPost({ title });
-    await blockCaller.createBlock(blockedUser.id);
+    const blockedAuthSession = await createMockAuthSession(mockContext.db);
+    const blockedCaller = await createMockCaller(postRouter, blockedAuthSession);
+    const blockedPost = await blockedCaller.createPost({ title });
+    await blockCaller.createBlock(blockedAuthSession.user.id);
     const post = await postCaller.readPost(blockedPost.id);
 
     expect(post).toStrictEqual(blockedPost);

@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
-import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockContext, createMockUser } from "#server/trpc/context.test";
 import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import {
   QUEUE_DELIVERY_TTL_MS,
@@ -33,9 +33,7 @@ describe(reserveStorageBytes, () => {
 
   beforeAll(async () => {
     mockContext = await createMockContext();
-    ({
-      user: { id: userId },
-    } = await mockSessionOnce(mockContext.db));
+    userId = (await createMockUser(mockContext.db)).id;
   });
 
   beforeEach(() => {

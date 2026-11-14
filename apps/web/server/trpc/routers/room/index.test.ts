@@ -12,7 +12,7 @@ import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProf
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
@@ -124,9 +124,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(strangerRoomCaller.readRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
@@ -166,9 +166,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.readRooms({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(strangerRoomCaller.readRooms({ roomId: newRoom.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -223,10 +223,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
 
     await expect(
-      roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
+      memberRoomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -402,9 +402,9 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
 
-    await expect(roomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(memberRoomCaller.updateRoom({ id: newRoom.id, name })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: UNAUTHORIZED]`,
     );
   });
@@ -493,9 +493,9 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(strangerRoomCaller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Room, newRoom.id).message}]`,
     );
   });
@@ -519,8 +519,8 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    await mockSessionOnce(mockContext.db);
-    const joinedRoom = await roomCaller.joinRoom(newInvite.id);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    const joinedRoom = await strangerRoomCaller.joinRoom(newInvite.id);
 
     expect(joinedRoom).toStrictEqual(newRoom);
   });
@@ -530,8 +530,8 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    await strangerRoomCaller.joinRoom(newInvite.id);
     // `maxUses` is 1, so the invite is now exhausted — read the row directly instead of readMyInvite
     const invite = await mockContext.db.query.invitesInMessage.findFirst({ where: { id: { eq: newInvite.id } } });
 
@@ -543,11 +543,11 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
-    await mockSessionOnce(mockContext.db);
+    const firstRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    await firstRoomCaller.joinRoom(newInvite.id);
+    const lateRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(lateRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
   });
@@ -558,9 +558,9 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await inviteCaller.createInvite({ expireAfterMinutes, maxUses: 0, roomId: newRoom.id });
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: expireAfterMinutes + 1 }));
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(strangerRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
 
@@ -581,16 +581,16 @@ describe("roomRouter", () => {
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Invite, newRoom.id).message}]`,
     );
 
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
-    await expect(roomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(strangerRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
 
     // The link the paused room refused is live again the moment it resumes, and it never spent the use
     await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: false });
-    await mockSessionOnce(mockContext.db);
-    const joinedRoom = await roomCaller.joinRoom(newInvite.id);
+    const laterRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    const joinedRoom = await laterRoomCaller.joinRoom(newInvite.id);
 
     expect(joinedRoom.id).toBe(newRoom.id);
   });
@@ -672,8 +672,9 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const session = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
+    const session = await createMockAuthSession(mockContext.db);
+    const sessionRoomCaller = await createMockCaller(roomRouter, session);
+    await sessionRoomCaller.joinRoom(newInvite.id);
 
     const user = await mockContext.db.query.usersInAuth.findFirst({
       columns: PublicUserColumns,
@@ -689,13 +690,15 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const onlineSession = await mockSessionOnce(mockContext.db);
+    const onlineSession = await createMockAuthSession(mockContext.db);
     await mockContext.db.insert(userStatusesInMessage).values({ isConnected: true, userId: onlineSession.user.id });
-    await roomCaller.joinRoom(newInvite.id);
+    const onlineRoomCaller = await createMockCaller(roomRouter, onlineSession);
+    await onlineRoomCaller.joinRoom(newInvite.id);
     const offlineInvite = await createUnlimitedInvite(newRoom.id);
-    const offlineSession = await mockSessionOnce(mockContext.db);
+    const offlineSession = await createMockAuthSession(mockContext.db);
     await mockContext.db.insert(userStatusesInMessage).values({ isConnected: false, userId: offlineSession.user.id });
-    await roomCaller.joinRoom(offlineInvite.id);
+    const offlineRoomCaller = await createMockCaller(roomRouter, offlineSession);
+    await offlineRoomCaller.joinRoom(offlineInvite.id);
 
     const attachedUserIds = roomObjectCalls
       .filter(({ method }) => method === "attachMember")
@@ -709,8 +712,8 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    await mockSessionOnce(mockContext.db, member);
-    const leftRoomId = await roomCaller.leaveRoom(newRoom.id);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    const leftRoomId = await memberRoomCaller.leaveRoom(newRoom.id);
 
     expect(leftRoomId).toStrictEqual(newRoom.id);
   });
@@ -732,8 +735,8 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    await mockSessionOnce(mockContext.db, member);
-    await roomCaller.leaveRoom(newRoom.id);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    await memberRoomCaller.leaveRoom(newRoom.id);
 
     const leaveEvent = { data: { roomId: newRoom.id, userId: member.id }, type: "leaveRoom" };
     expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
@@ -816,8 +819,8 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await mockSessionOnce(mockContext.db, member);
-    await roomCaller.leaveRoom(newRoom.id);
+    const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db, member));
+    await memberRoomCaller.leaveRoom(newRoom.id);
     const users = await roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [member.id] });
 
     expect(takeOne(users).id).toBe(member.id);
@@ -830,10 +833,10 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const userId = getMockSession().user.id;
-    await mockSessionOnce(mockContext.db);
+    const strangerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
 
     await expect(
-      roomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [userId] }),
+      strangerRoomCaller.readUsersByIds({ roomId: newRoom.id, userIds: [userId] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 });

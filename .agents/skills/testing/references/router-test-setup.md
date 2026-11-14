@@ -15,27 +15,23 @@ Read when a test drives tRPC callers, queues mock sessions, seeds rows into the 
 - **Declaration order in `describe`** — `let mockContext: Context` → caller `let`s → `const` test constants.
 - **`beforeAll` body order** — `mockContext` first, then callers. Never extract sub-properties (no `let db = mockContext.db`); always access via `mockContext.db`.
 
-## Mock sessions
+## Who the caller is
 
-The default mock session is always the **base user** (inserted by `createMockContext`). This user is the owner for all rooms created in tests.
+A caller is its context. `createMockContext(authSession?)` acts as the default identity, the **base user** that `createMockContext` inserts and every test's rooms and resources belong to, and `createMockContext(null)` is signed out. A context's caller is fixed for its life, as a request's is, so a test acting as two people holds two contexts and two callers. Nothing is queued and nothing is consumed: production reads the session once, in `createContext`, and a test hands its context the caller instead.
 
-- **Owner = base user, always** — never use `mockSessionOnce(db)` to create a different user just to be a room owner. Applies to `beforeEach` and helpers like `setupRoomSuite`.
-- **`getMockSession()`** — returns the base user session (stable `user.id`, new `session.id` each call). Assign before use: `const owner = getMockSession().user`.
-- **Default session is owner** — API calls with no queued `mockSessionOnce` run as the base owner. Never call `mockSessionOnce(db, owner)` before owner operations; use it only to consume a queued non-owner session.
-- **`mockSessionOnce(db)`** — creates a new user in the DB AND queues their session for the next API call. After that call, the default owner resumes.
-- **`createMockUser(db)`** — a second user for the test to _act on_ rather than _act as_. It is the consume pattern already named, so write it instead of the two-step: `mockSessionOnce` creates the user but also queues their session, and `createMockUser` spends that queued slot on the caller's behalf so setup carries on as the default owner.
+- **Owner = base user, always.** The suite's default caller (`createCallerFactory(router)(mockContext)` in `beforeAll`) is the owner. Never mint another user just to own a room.
+- **`getMockSession()`** is the default identity, one user and one session for the whole run.
+- **`createMockAuthSession(db, existingUser?)`** is a fresh user with a session row of their own. Given a user the test already has, it is a second device of theirs. Build a caller over it to act as that user:
 
   ```ts
-  const member = await createMockUser(mockContext.db); // not: await mockSessionOnce(db); const { user } = getMockSession();
-  await roomCaller.createMembers({ roomId, userIds: [member.id] }); // still the owner
+  const memberAuthSession = await createMockAuthSession(mockContext.db);
+  const memberRoomCaller = createCallerFactory(roomRouter)(await createMockContext(memberAuthSession));
   ```
 
-  Reach for the raw pair only when the test needs the whole `AuthSession` (a `replayMockSession` that turns on `session.id`) rather than the user.
+  A suite that does this often keeps a local `createRoomCaller(authSession)` helper.
 
-- **`mockSessionOnce(db, existingUser)`** — requeues an existing user's session without re-inserting. Use for non-owner member operations.
-- **Target: 1 `mockSessionOnce` per test** — one for non-owner user creation; all owner operations use the default.
-- **`replayMockSession`** — only when the exact same auth session must be reused across multiple calls, especially when `session.id` is part of the behavior under test. If only the same user matters, prefer `mockSessionOnce(db, user)` so the test does not couple itself to session identity. If the auth session comes from a newly created `mockSessionOnce(db)` user and setup should continue as the default owner, first consume the queued slot with `getMockSession()`.
-- **`getMockSession().session.id` is unstable** (new UUID each call); `user.id` is stable.
+- **`createMockUser(db)`** is a second user for the test to _act on_ rather than _act as_: it returns the user alone.
+- **Two devices of one person** are two auth sessions of one user, each its own context. A test whose behaviour turns on `session.id` builds them explicitly rather than expecting a fresh session per call.
 
 ## DB cleanup and setup
 

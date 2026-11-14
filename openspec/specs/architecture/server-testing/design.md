@@ -38,17 +38,19 @@ No cloud client is mocked. A service takes the binding it uses as a parameter, s
 
 `apps/web/server/trpc/context.test.ts` is the central test utility file. It exports the session helpers and the mock context consumed by every tRPC router test. The auth mock itself is registered once, by the shared test setup file.
 
-**The auth session is mocked once, in `shared/test/setup.ts`, not here.** A registration written in a helper module reaches the router path but not a suite's own direct import of the module, while one in the setup file covers both — the hoisting rule behind that is `.agents/skills/testing/references/colocated-mocks.md`.
+**A test names its caller through its context.** Production reads the session once per request, in `createContext`, into `ctx.user` and `ctx.session`. A test builds the context itself, so it hands the caller in rather than mocking a session read: there is no queue, and a context's caller is fixed for its life.
 
-**`createMockContext()`** builds a full `Context`: the Miniflare database + mocked auth. The default user (base user) is inserted into the database and always available via `getMockSession()` — this user becomes the owner for all rooms/resources created in tests.
+**`createMockContext(authSession?)`** builds a full `Context` over the Miniflare database: the default identity when no caller is named, and signed out for `null`. The default user (base user) is inserted into the database and always available via `getMockSession()`; this user owns every room and resource a test creates.
 
-**Session helpers:**
+**Identity helpers:**
 
-| Helper                           | What it does                                                                                                                                                                 |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `getMockSession()`               | Returns the default identity the test acts as: one user and one session for the whole run. A queued session does not change it, and reading it consumes nothing.             |
-| `mockSessionOnce(db, user?)`     | Inserts a new test user into the database (if no `user` given) and queues their session for the **next** API call only. After that call the default (owner) session resumes. |
-| `replayMockSession(authSession)` | Re-queues an existing auth session without inserting a new user. Use when the same non-owner user must make multiple sequential calls.                                       |
+| Helper                             | What it does                                                                                                                  |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `getMockSession()`                 | The default identity the test acts as: one user and one session for the whole run.                                            |
+| `createMockAuthSession(db, user?)` | A fresh user with a session row, or, given a user, a second session (device) of theirs. A context built over it acts as them. |
+| `createMockUser(db)`               | A second user for the test to act on rather than act as.                                                                      |
+
+Better-auth's own session read is still mocked in `shared/test/setup.ts` for the routes that read the cookie themselves (the socket routes and the asset route); the tRPC suites never reach it.
 
 ### 4. tRPC caller
 
@@ -72,7 +74,7 @@ beforeEach
   └─ per-test setup only     ← vi.useFakeTimers(), fixture rows (e.g. a fresh room)
 
 [ test body ]
-  └─ mockSessionOnce(db)     ← when a non-owner user is needed
+  └─ a context over createMockAuthSession(db)   ← when a non-owner caller is needed
   └─ caller.someProc(input)
 
 afterEach
@@ -84,10 +86,10 @@ All cleanup — the database and its buckets — lives in `afterEach`, never `be
 
 ## Key files
 
-| File                                   | Role                                                   |
-| -------------------------------------- | ------------------------------------------------------ |
-| `packages/db-mock/src/createMockDb.ts` | Miniflare setup, migrations and bindings               |
-| `apps/web/server/trpc/context.test.ts` | `createMockContext`, session helpers, `vi.mock` wiring |
+| File                                   | Role                                         |
+| -------------------------------------- | -------------------------------------------- |
+| `packages/db-mock/src/createMockDb.ts` | Miniflare setup, migrations and bindings     |
+| `apps/web/server/trpc/context.test.ts` | `createMockContext` and the identity helpers |
 
 ## Adding a new router test
 
@@ -95,5 +97,5 @@ All cleanup — the database and its buckets — lives in `afterEach`, never `be
 2. Import `createMockContext`, session helpers, and your router from their canonical locations.
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.
-5. Use `mockSessionOnce(db)` only when a non-owner perspective is needed.
+5. Build a second context over `createMockAuthSession(db)` only when a non-owner caller is needed.
 6. Reset the database in `afterEach` (not `beforeEach`).

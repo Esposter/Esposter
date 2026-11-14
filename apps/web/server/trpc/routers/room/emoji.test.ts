@@ -8,7 +8,7 @@ import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
-import { mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller } from "#server/trpc/context.test";
 import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
@@ -171,10 +171,13 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomEmojiCaller = await createMockCaller(
+      emojiRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
 
     await expect(
-      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
+      memberRoomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -182,11 +185,13 @@ describe("emojiRouter", () => {
     expect.hasAssertions();
 
     const { member } = await setupMemberWithRole(RoomPermission.ManageEmojis, position);
-    await mockSessionOnce(mockContext.db, member);
-    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const memberRoomEmojiCaller = await createMockCaller(
+      emojiRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
+    const { id } = await memberRoomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
     await uploadRoomEmojiBlob(id);
-    await mockSessionOnce(mockContext.db, member);
-    const roomEmoji = await roomEmojiCaller.createRoomEmoji({ id, name, roomId });
+    const roomEmoji = await memberRoomEmojiCaller.createRoomEmoji({ id, name, roomId });
 
     expect(roomEmoji.name).toBe(name);
   });
@@ -256,10 +261,13 @@ describe("emojiRouter", () => {
 
     const roomEmoji = await createRoomEmoji();
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberRoomEmojiCaller = await createMockCaller(
+      emojiRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
 
     await expect(
-      roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId }),
+      memberRoomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -268,8 +276,11 @@ describe("emojiRouter", () => {
 
     const roomEmoji = await createRoomEmoji();
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
-    const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
+    const memberRoomEmojiCaller = await createMockCaller(
+      emojiRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
+    const roomEmojis = await memberRoomEmojiCaller.readRoomEmojis({ roomId });
 
     expect(roomEmojis).toHaveLength(1);
     expect(takeOne(roomEmojis).sasUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));

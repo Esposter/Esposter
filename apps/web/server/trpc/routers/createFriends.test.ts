@@ -1,21 +1,29 @@
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
-import type { User } from "better-auth";
 
 import { createCallerFactory } from "#server/trpc";
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
 import { friendRequestRouter } from "#server/trpc/routers/friendRequest";
-import { describe } from "vitest";
+import { assert, describe } from "vitest";
 
-// An accepted friendship is a request sent as one user and accepted as the other, so it can only be set up by
-// Driving both sessions — the caller is left on whatever session it had. Either user omitted is the default
-// Identity: the requester is minted fresh, and the accepter is the session user, who needs no queued session
-export const createFriends = async (mockContext: Context, requester?: User, accepter?: User) => {
-  const friendRequestCaller = createCallerFactory(friendRequestRouter)(mockContext);
-  const { user } = await mockSessionOnce(mockContext.db, requester);
-  await friendRequestCaller.sendFriendRequest(accepter?.id ?? getMockSession().user.id);
-  if (accepter) await mockSessionOnce(mockContext.db, accepter);
-  await friendRequestCaller.acceptFriendRequest(user.id);
-  return user;
+// An accepted friendship is a request sent as one user and accepted as the other. The requester omitted is a fresh
+// User, and the accepter omitted is the context's own caller
+export const createFriends = async (
+  mockContext: Context,
+  requester?: AuthSession["user"],
+  accepter?: AuthSession["user"],
+) => {
+  const requesterAuthSession = await createMockAuthSession(mockContext.db, requester);
+  const accepterContext = accepter
+    ? await createMockContext(await createMockAuthSession(mockContext.db, accepter))
+    : mockContext;
+  const accepterId = accepterContext.user?.id;
+  assert.exists(accepterId);
+  await createCallerFactory(friendRequestRouter)(await createMockContext(requesterAuthSession)).sendFriendRequest(
+    accepterId,
+  );
+  await createCallerFactory(friendRequestRouter)(accepterContext).acceptFriendRequest(requesterAuthSession.user.id);
+  return requesterAuthSession.user;
 };
 
 describe.todo("createFriends");

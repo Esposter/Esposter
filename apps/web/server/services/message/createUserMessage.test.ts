@@ -1,6 +1,6 @@
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
-import type { Context } from "#server/trpc/context";
 import type { AuthSession } from "#server/models/auth/AuthSession";
+import type { Context } from "#server/trpc/context";
 import type { RoomObjectRpc } from "@esposter/db-schema";
 
 import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
@@ -8,7 +8,7 @@ import { createUserMessage } from "#server/services/message/createUserMessage";
 import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createThreadFollow } from "@esposter/db";
 import {
   MessageType,
@@ -47,7 +47,7 @@ describe(createUserMessage, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     rootAuthor = getMockSession();
-    replier = await mockSessionOnce(mockContext.db);
+    replier = await createMockAuthSession(mockContext.db);
   });
 
   afterEach(async () => {

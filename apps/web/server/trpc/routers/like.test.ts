@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
 import { DatabaseEntityType } from "@esposter/db-schema";
@@ -65,9 +65,10 @@ describe("likeRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    await mockSessionOnce(mockContext.db);
+    const otherAuthSession = await createMockAuthSession(mockContext.db);
+    const otherLikeCaller = createCallerFactory(likeRouter)(await createMockContext(otherAuthSession));
 
-    await expect(likeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(otherLikeCaller.updateLike({ postId: newPost.id, value })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });
@@ -90,9 +91,10 @@ describe("likeRouter", () => {
 
     const newPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: newPost.id, value });
-    await mockSessionOnce(mockContext.db);
+    const otherAuthSession = await createMockAuthSession(mockContext.db);
+    const otherLikeCaller = createCallerFactory(likeRouter)(await createMockContext(otherAuthSession));
 
-    await expect(likeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(otherLikeCaller.deleteLike(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Like, newPost.id).message}]`,
     );
   });

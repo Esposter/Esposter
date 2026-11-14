@@ -1,4 +1,4 @@
-/* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join consumes the next queued session (createRoomMember); Each step reads the last: each note takes the clock set just before it */
+/* oxlint-disable no-await-in-loop -- Each step reads the last: each member's join replaces the room's invite (createRoomMember); Each step reads the last: each note takes the clock set just before it */
 import type { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
@@ -8,10 +8,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createCallerFactory } from "#server/trpc";
-import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
+import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
@@ -42,11 +43,12 @@ vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
 }));
 
+type ModerationCaller = DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
+
 describe("moderationRouter", () => {
-  const { createMember, getMockContext, getRoomCaller, getRoomId, setupMemberWithRole } = setupRoomSuite();
+  const { createMember, getMockContext, getRoomId, setupMemberWithRole } = setupRoomSuite();
   let mockContext: Context;
-  let moderationCaller: DecorateRouterRecord<TRPCRouter["message"]["moderation"]>;
-  let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
+  let moderationCaller: ModerationCaller;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
   let roomId: string;
   const durationMs = 1;
@@ -64,7 +66,6 @@ describe("moderationRouter", () => {
     mockContext = getMockContext();
     moderationCaller = createCallerFactory(moderationRouter)(mockContext);
     inviteCaller = createCallerFactory(inviteRouter)(mockContext);
-    roomCaller = getRoomCaller();
   });
 
   beforeEach(() => {
@@ -106,9 +107,10 @@ describe("moderationRouter", () => {
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
     const invite = await inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId });
-    await mockSessionOnce(mockContext.db, member);
+    const memberAuthSession = await createMockAuthSession(mockContext.db, member);
+    const memberRoomCaller = createCallerFactory(roomRouter)(await createMockContext(memberAuthSession));
 
-    await expect(roomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(memberRoomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: You are banned from this room]`,
     );
   });
@@ -120,10 +122,10 @@ describe("moderationRouter", () => {
 
     const ownerId = getMockSession().user.id;
     const { member } = await setupMemberWithRole(RoomPermission.BanMembers, position);
-    await mockSessionOnce(mockContext.db, member);
+    const memberCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, member));
 
     await expect(
-      moderationCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
+      memberCaller.executeAdminAction({ roomId, targetUserId: ownerId, type: AdminActionType.CreateBan }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -281,7 +283,7 @@ describe("moderationRouter", () => {
   test("readModerationLog filters by targetUserId", async () => {
     expect.hasAssertions();
 
-    // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+    // Sequential: `createMember` replaces the room's invite for its caller,
     // So the two cannot overlap
     const firstMember = await createMember();
     const secondMember = await createMember();
@@ -379,7 +381,7 @@ describe("moderationRouter", () => {
   test("readModerationNotes returns only the target member's notes", async () => {
     expect.hasAssertions();
 
-    // Sequential: `createMember` replaces the room's invite for its caller and consumes a one-shot session,
+    // Sequential: `createMember` replaces the room's invite for its caller,
     // So the two cannot overlap
     const firstMember = await createMember();
     const secondMember = await createMember();
@@ -446,32 +448,32 @@ describe("moderationRouter", () => {
 
   // Every procedure here is permission-gated and a plain member holds none of them
   test.each([
-    [RoomPermission.BanMembers, "readBans", () => moderationCaller.readBans({ roomId })],
+    [RoomPermission.BanMembers, "readBans", (caller: ModerationCaller) => caller.readBans({ roomId })],
     [
       RoomPermission.BanMembers,
       "executeAdminAction",
-      (targetUserId: string) =>
-        moderationCaller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
+      (caller: ModerationCaller, targetUserId: string) =>
+        caller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
     ],
     [
       RoomPermission.BanMembers,
       "deleteBan",
-      (targetUserId: string) => moderationCaller.deleteBan({ roomId, userId: targetUserId }),
+      (caller: ModerationCaller, targetUserId: string) => caller.deleteBan({ roomId, userId: targetUserId }),
     ],
     [
       RoomPermission.ManageRoom,
       "readModerationLog",
-      () => moderationCaller.readModerationLog({ ...emptyFilters, roomId }),
+      (caller: ModerationCaller) => caller.readModerationLog({ ...emptyFilters, roomId }),
     ],
     [
       RoomPermission.KickMembers,
       "createModerationNote",
-      (targetUserId: string) => moderationCaller.createModerationNote({ note, roomId, targetUserId }),
+      (caller: ModerationCaller, targetUserId: string) => caller.createModerationNote({ note, roomId, targetUserId }),
     ],
     [
       RoomPermission.KickMembers,
       "readModerationNotes",
-      (targetUserId: string) => moderationCaller.readModerationNotes({ roomId, targetUserId }),
+      (caller: ModerationCaller, targetUserId: string) => caller.readModerationNotes({ roomId, targetUserId }),
     ],
   ])("member without %s permission cannot %s — throws UNAUTHORIZED", async (_permission, _procedureName, moderate) => {
     expect.hasAssertions();
@@ -479,9 +481,11 @@ describe("moderationRouter", () => {
     // A separate target, because moderating yourself is rejected before any permission is read
     const target = await createMember();
     const member = await createMember();
-    await mockSessionOnce(mockContext.db, member);
+    const memberCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, member));
 
-    await expect(moderate(target.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+    await expect(moderate(memberCaller, target.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
   });
 
   // Holding the permission is not enough: the target has to sit below the actor, and equal is not below. Each row
@@ -490,18 +494,18 @@ describe("moderationRouter", () => {
     [
       RoomPermission.BanMembers,
       "executeAdminAction",
-      (targetUserId: string) =>
-        moderationCaller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
+      (caller: ModerationCaller, targetUserId: string) =>
+        caller.executeAdminAction({ roomId, targetUserId, type: AdminActionType.CreateBan }),
     ],
     [
       RoomPermission.KickMembers,
       "createModerationNote",
-      (targetUserId: string) => moderationCaller.createModerationNote({ note, roomId, targetUserId }),
+      (caller: ModerationCaller, targetUserId: string) => caller.createModerationNote({ note, roomId, targetUserId }),
     ],
     [
       RoomPermission.KickMembers,
       "readModerationNotes",
-      (targetUserId: string) => moderationCaller.readModerationNotes({ roomId, targetUserId }),
+      (caller: ModerationCaller, targetUserId: string) => caller.readModerationNotes({ roomId, targetUserId }),
     ],
   ])(
     "isManageable: %s cannot %s against a member at equal position — throws UNAUTHORIZED",
@@ -510,9 +514,11 @@ describe("moderationRouter", () => {
 
       const { member: actor } = await setupMemberWithRole(permission, position);
       const { member: target } = await setupMemberWithRole(0n, position);
-      await mockSessionOnce(mockContext.db, actor);
+      const actorCaller = await createMockCaller(moderationRouter, await createMockAuthSession(mockContext.db, actor));
 
-      await expect(moderate(target.id)).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
+      await expect(moderate(actorCaller, target.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: UNAUTHORIZED]`,
+      );
     },
   );
 });

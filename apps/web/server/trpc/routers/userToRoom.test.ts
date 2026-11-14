@@ -1,10 +1,10 @@
+import type { AuthSession } from "#server/models/auth/AuthSession";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
-import type { User } from "better-auth";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
@@ -41,14 +41,17 @@ describe("userToRoomRouter", () => {
     await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id, timeZone });
     return { member, roomId: newRoom.id };
   };
-  const readMemberMentionCount = async (member: User, roomId: string) => {
-    await mockSessionOnce(mockContext.db, member);
-    const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
+  // A context acting as the given user on a session of their own, or as a new user when none is given
+  const createUserContext = async (user?: AuthSession["user"]) =>
+    createMockContext(await createMockAuthSession(mockContext.db, user));
+  const readMemberMentionCount = async (member: AuthSession["user"], roomId: string) => {
+    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
+    const myUsersToRooms = await memberUserToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
     return takeOne(myUsersToRooms).mentionCount;
   };
-  const readMemberCategoryId = async (member: User, roomId: string) => {
-    await mockSessionOnce(mockContext.db, member);
-    const myUsersToRooms = await userToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
+  const readMemberCategoryId = async (member: AuthSession["user"], roomId: string) => {
+    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
+    const myUsersToRooms = await memberUserToRoomCaller.readMyUsersToRooms({ roomIds: [roomId] });
     return takeOne(myUsersToRooms).categoryId;
   };
 
@@ -85,10 +88,10 @@ describe("userToRoomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    await mockSessionOnce(mockContext.db);
+    const nonMemberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext());
 
     await expect(
-      userToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }),
+      nonMemberUserToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -105,10 +108,9 @@ describe("userToRoomRouter", () => {
     expect.hasAssertions();
 
     const { member, roomId } = await setupMentionedMember();
-    await mockSessionOnce(mockContext.db, member);
-    await userToRoomCaller.clearMentionCount({ roomId });
-    await mockSessionOnce(mockContext.db, member);
-    await userToRoomCaller.clearMentionCount({ roomId });
+    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(member));
+    await memberUserToRoomCaller.clearMentionCount({ roomId });
+    await memberUserToRoomCaller.clearMentionCount({ roomId });
     const mentionCount = await readMemberMentionCount(member, roomId);
 
     expect(mentionCount).toBe(0);
@@ -164,8 +166,8 @@ describe("userToRoomRouter", () => {
       roomId: newRoom.id,
     });
     await roleCaller.assignRole({ roleId: role.id, roomId: newRoom.id, userId: moderator.id });
-    await mockSessionOnce(mockContext.db, moderator);
-    const updatedUserToRoom = await userToRoomCaller.updateUserToRoom({
+    const moderatorUserToRoomCaller = createCallerFactory(userToRoomRouter)(await createUserContext(moderator));
+    const updatedUserToRoom = await moderatorUserToRoomCaller.updateUserToRoom({
       displayName,
       roomId: newRoom.id,
       targetUserId: member.id,
@@ -202,17 +204,16 @@ describe("userToRoomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const ownerCategory = await categoryCaller.createRoomCategory({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await mockSessionOnce(mockContext.db, member);
-    const memberCategory = await categoryCaller.createRoomCategory({ name });
-    await mockSessionOnce(mockContext.db, member);
-    const updatedUserToRoom = await userToRoomCaller.updateUserToRoom({
+    const memberContext = await createUserContext(member);
+    const memberCategory = await createCallerFactory(categoryRouter)(memberContext).createRoomCategory({ name });
+    const memberUserToRoomCaller = createCallerFactory(userToRoomRouter)(memberContext);
+    const updatedUserToRoom = await memberUserToRoomCaller.updateUserToRoom({
       categoryId: memberCategory.id,
       roomId: newRoom.id,
     });
-    await mockSessionOnce(mockContext.db, member);
 
     await expect(
-      userToRoomCaller.updateUserToRoom({ categoryId: ownerCategory.id, roomId: newRoom.id }),
+      memberUserToRoomCaller.updateUserToRoom({ categoryId: ownerCategory.id, roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.RoomCategory, ownerCategory.id).message}]`,
     );
@@ -228,14 +229,18 @@ describe("userToRoomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const firstMember = await createRoomMember(mockContext, newRoom.id);
     const secondMember = await createRoomMember(mockContext, newRoom.id);
-    await mockSessionOnce(mockContext.db, firstMember);
-    const firstCategory = await categoryCaller.createRoomCategory({ name });
-    await mockSessionOnce(mockContext.db, secondMember);
-    const secondCategory = await categoryCaller.createRoomCategory({ name });
-    await mockSessionOnce(mockContext.db, firstMember);
-    await userToRoomCaller.updateUserToRoom({ categoryId: firstCategory.id, roomId: newRoom.id });
-    await mockSessionOnce(mockContext.db, secondMember);
-    await userToRoomCaller.updateUserToRoom({ categoryId: secondCategory.id, roomId: newRoom.id });
+    const firstMemberContext = await createUserContext(firstMember);
+    const secondMemberContext = await createUserContext(secondMember);
+    const firstCategory = await createCallerFactory(categoryRouter)(firstMemberContext).createRoomCategory({ name });
+    const secondCategory = await createCallerFactory(categoryRouter)(secondMemberContext).createRoomCategory({ name });
+    await createCallerFactory(userToRoomRouter)(firstMemberContext).updateUserToRoom({
+      categoryId: firstCategory.id,
+      roomId: newRoom.id,
+    });
+    await createCallerFactory(userToRoomRouter)(secondMemberContext).updateUserToRoom({
+      categoryId: secondCategory.id,
+      roomId: newRoom.id,
+    });
 
     await expect(readMemberCategoryId(firstMember, newRoom.id)).resolves.toStrictEqual(firstCategory.id);
     await expect(readMemberCategoryId(secondMember, newRoom.id)).resolves.toStrictEqual(secondCategory.id);

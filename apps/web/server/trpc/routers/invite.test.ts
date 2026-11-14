@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { roomRouter } from "#server/trpc/routers/room";
@@ -33,9 +33,10 @@ describe("inviteRouter", () => {
   const name = "name";
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
-  // A link that never lapses, which is what every test not about expiry or exhaustion reads through
-  const createUnlimitedInvite = (inviteRoomId: string) =>
-    inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
+  // A link that never lapses, which is what every test not about expiry or exhaustion reads through. It creates as the
+  // Default caller unless a test names the one acting
+  const createUnlimitedInvite = (inviteRoomId: string, caller = inviteCaller) =>
+    caller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -75,10 +76,10 @@ describe("inviteRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
-    await mockSessionOnce(mockContext.db);
-    const invite = await inviteCaller.readInvite(newInvite.id);
+    const joinerRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
+    await joinerRoomCaller.joinRoom(newInvite.id);
+    const strangerInviteCaller = await createMockCaller(inviteRouter, await createMockAuthSession(mockContext.db));
+    const invite = await strangerInviteCaller.readInvite(newInvite.id);
 
     assert.exists(invite);
 
@@ -187,9 +188,12 @@ describe("inviteRouter", () => {
     const member = await createRoomMember(mockContext, newRoom.id);
     const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
     assert(myInvite);
-    await mockSessionOnce(mockContext.db, member);
+    const memberInviteCaller = await createMockCaller(
+      inviteRouter,
+      await createMockAuthSession(mockContext.db, member),
+    );
     generateSecretTokenMock.mockReturnValueOnce(myInvite.id);
-    const invite = await createUnlimitedInvite(newRoom.id);
+    const invite = await createUnlimitedInvite(newRoom.id, memberInviteCaller);
 
     expect(generateSecretTokenMock).toHaveReturnedWith(myInvite.id);
     expect(invite.id).not.toBe(myInvite.id);
@@ -214,12 +218,13 @@ describe("inviteRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
     // The member who joined through the link holds no link of their own, so revoking that one matches no row
-    const { user: member } = await mockSessionOnce(mockContext.db);
-    await roomCaller.joinRoom(newInvite.id);
-    await mockSessionOnce(mockContext.db, member);
+    const memberAuthSession = await createMockAuthSession(mockContext.db);
+    const memberRoomCaller = await createMockCaller(roomRouter, memberAuthSession);
+    await memberRoomCaller.joinRoom(newInvite.id);
+    const memberInviteCaller = await createMockCaller(inviteRouter, memberAuthSession);
 
     await expect(
-      inviteCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id }),
+      memberInviteCaller.revokeInvite({ id: newInvite.id, roomId: newRoom.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Delete, DatabaseEntityType.Invite, newInvite.id).message}]`,
     );
