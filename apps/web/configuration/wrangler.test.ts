@@ -1,6 +1,6 @@
-import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+import { CloudflareEnvironment } from "../../../packages/db-schema/src/models/cloudflare/CloudflareEnvironment.ts";
 import { getBuildCloudflareEnvironment } from "./wrangler.ts";
 
 describe(getBuildCloudflareEnvironment, () => {
@@ -29,6 +29,8 @@ describe(getBuildCloudflareEnvironment, () => {
 
     vi.stubEnv("CLOUDFLARE_ENV", "staging");
 
-    expect(() => getBuildCloudflareEnvironment()).toThrow("CLOUDFLARE_ENV");
+    expect(() => getBuildCloudflareEnvironment()).toThrowErrorMatchingInlineSnapshot(
+      `[Error: CLOUDFLARE_ENV must be one of dev, prod, got staging]`,
+    );
   });
 });

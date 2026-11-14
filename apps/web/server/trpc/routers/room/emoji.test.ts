@@ -63,7 +63,7 @@ describe("emojiRouter", () => {
 
   beforeEach(() => {
     roomId = getRoomId();
-    roomObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
   });
 
   afterEach(() => {
@@ -102,7 +102,9 @@ describe("emojiRouter", () => {
       roomId,
     }));
     // Each row binds five parameters and a D1 statement binds at most a hundred, so the rows go in statements of ten
-    for (const batch of chunk(roomEmojiRows, 10)) await mockContext.db.insert(roomEmojisInMessage).values(batch);
+    await Promise.all(
+      chunk(roomEmojiRows, 10).map((batch) => mockContext.db.insert(roomEmojisInMessage).values(batch)),
+    );
 
     await expect(
       roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
