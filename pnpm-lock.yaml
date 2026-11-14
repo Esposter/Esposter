@@ -1091,9 +1091,6 @@ importers:
       three:
         specifier: 'catalog:'
         version: 0.187.0
-      trpc-nuxt-module:
-        specifier: workspace:*
-        version: link:../../packages/trpc-nuxt-module
       unicode-emoji-json:
         specifier: 'catalog:'
         version: 0.9.0
@@ -1242,6 +1239,9 @@ importers:
       trpc-msw:
         specifier: workspace:*
         version: link:../../packages/trpc-msw
+      trpc-nuxt-module:
+        specifier: workspace:*
+        version: link:../../packages/trpc-nuxt-module
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
