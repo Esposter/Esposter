@@ -6,15 +6,15 @@ import type { BlobDeletionQueueMessage, StandardMessageEntity } from "@esposter/
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { deleteDirectory, getPartitionClauses } from "@esposter/db";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
@@ -35,6 +35,7 @@ import {
   roomsInMessage,
   StorageBucket,
   StreamTable,
+  userStatusesInMessage,
   usersToRoomsInMessage,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
@@ -83,6 +84,8 @@ describe("roomRouter", () => {
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
+    roomObjectCalls.splice(0);
+    userObjectCalls.splice(0);
   });
 
   afterEach(async () => {
@@ -255,11 +258,7 @@ describe("roomRouter", () => {
     const seededBlob = await publicUserAssets.head(blobName);
     assert.exists(seededBlob);
     vi.setSystemTime(seededBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS + 1);
-    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
-    );
+    const data = await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
@@ -409,17 +408,17 @@ describe("roomRouter", () => {
     );
   });
 
-  test("on updates", async () => {
+  test("announces a rename to the room's online members", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roomCaller.updateRoom({ id: newRoom.id, name: updatedName }),
-    );
+    await roomCaller.updateRoom({ id: newRoom.id, name: updatedName });
 
-    expect(data.name).toBe(updatedName);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { id: newRoom.id, name: updatedName }, type: "updateRoom" }],
+      method: "notifyOnlineMembers",
+      roomId: newRoom.id,
+    });
   });
 
   test("deletes", async () => {
@@ -497,17 +496,18 @@ describe("roomRouter", () => {
     );
   });
 
-  test("on deletes", async () => {
+  test("announces a delete to the room's online members and empties its object", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const subscription = await roomCaller.onDeleteRoom([newRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roomCaller.deleteRoom(newRoom.id),
-    );
+    await roomCaller.deleteRoom(newRoom.id);
 
-    expect(data).toBe(newRoom.id);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { roomId: newRoom.id, userId: getMockSession().user.id }, type: "deleteRoom" }],
+      method: "notifyOnlineMembers",
+      roomId: newRoom.id,
+    });
+    expect(roomObjectCalls).toContainEqual({ args: [], method: "deleteAll", roomId: newRoom.id });
   });
 
   test("joins", async () => {
@@ -663,26 +663,40 @@ describe("roomRouter", () => {
     });
   });
 
-  test("on joins", async () => {
+  test("announces a join to the joiner and to the room's online members", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const newInvite = await createUnlimitedInvite(newRoom.id);
-    const subscription = await roomCaller.onJoinRoom([newRoom.id]);
     const session = await mockSessionOnce(mockContext.db);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roomCaller.joinRoom(newInvite.id),
-    );
+    await roomCaller.joinRoom(newInvite.id);
 
     const user = await mockContext.db.query.usersInAuth.findFirst({
       columns: PublicUserColumns,
       where: { id: { eq: session.user.id } },
     });
-    // The room travels with the member: the client subscribes for every room it is in at once, so a payload
-    // Without it can only be applied to the room that happens to be open. Every member receives it, so the member
-    // Rides along as what anyone may see of them, with the name the room shows for them: a new member has no display name
-    expect(data).toStrictEqual({ roomId: newRoom.id, user: { ...user, displayName: user?.name } });
+    const joinEvent = { data: { roomId: newRoom.id, user }, type: "joinRoom" };
+    expect(userObjectCalls).toContainEqual({ args: [joinEvent], method: "broadcastEvent", userId: session.user.id });
+    expect(roomObjectCalls).toContainEqual({ args: [joinEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
+  });
+
+  test("attaches a joiner who is online to the room, and no one who is not", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const onlineSession = await mockSessionOnce(mockContext.db);
+    await mockContext.db.insert(userStatusesInMessage).values({ isConnected: true, userId: onlineSession.user.id });
+    await roomCaller.joinRoom(newInvite.id);
+    const offlineInvite = await createUnlimitedInvite(newRoom.id);
+    const offlineSession = await mockSessionOnce(mockContext.db);
+    await mockContext.db.insert(userStatusesInMessage).values({ isConnected: false, userId: offlineSession.user.id });
+    await roomCaller.joinRoom(offlineInvite.id);
+
+    const attachedUserIds = roomObjectCalls
+      .filter(({ method }) => method === "attachMember")
+      .map(({ args }) => args[0]);
+    expect(attachedUserIds).toStrictEqual([onlineSession.user.id]);
   });
 
   test("leaves", async () => {
@@ -708,85 +722,19 @@ describe("roomRouter", () => {
     );
   });
 
-  test("on leaves", async () => {
+  test("announces a departure to the leaver, the room's online members, and drops the leaver's sockets", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
     vi.advanceTimersByTime(1);
-    const subscription = await roomCaller.onLeaveRoom([newRoom.id]);
-    const session = await mockSessionOnce(mockContext.db, member);
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roomCaller.leaveRoom(newRoom.id),
-    );
-
-    expect(data).toStrictEqual({ roomId: newRoom.id, userId: session.user.id });
-  });
-
-  test("on leaves yields the member's own departure to its other device", async () => {
-    expect.hasAssertions();
-
-    const newRoom = await roomCaller.createRoom({ name });
-    const member = await createRoomMember(mockContext, newRoom.id);
     await mockSessionOnce(mockContext.db, member);
-    const subscription = await roomCaller.onLeaveRoom([newRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      async () => {
-        await mockSessionOnce(mockContext.db, member);
-        await roomCaller.leaveRoom(newRoom.id);
-      },
-    );
+    await roomCaller.leaveRoom(newRoom.id);
 
-    expect(data).toStrictEqual({ roomId: newRoom.id, userId: member.id });
-  });
-
-  // The stream was opened while the member was in both rooms, so the room it listed is still in its list. What the
-  // Member may see is decided by the member's current rooms, and the room it has left stops reaching it
-  test("on updates stops yielding a room the subscriber has left", async () => {
-    expect.hasAssertions();
-
-    const firstRoom = await roomCaller.createRoom({ name });
-    const secondRoom = await roomCaller.createRoom({ name });
-    const member = await createRoomMember(mockContext, firstRoom.id);
-    await createRoomMember(mockContext, secondRoom.id, member);
-    await mockSessionOnce(mockContext.db, member);
-    const subscription = await roomCaller.onUpdateRoom([firstRoom.id, secondRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      async () => {
-        await mockSessionOnce(mockContext.db, member);
-        await roomCaller.leaveRoom(firstRoom.id);
-        roomEventEmitter.emit("updateRoom", { id: firstRoom.id, name });
-        roomEventEmitter.emit("updateRoom", { id: secondRoom.id, name });
-      },
-    );
-
-    expect(data).toStrictEqual({ id: secondRoom.id, name });
-  });
-
-  // A room the member joins while the stream is open is one it delivers for, from the join on
-  test("on updates yields a room the subscriber joins while it is open", async () => {
-    expect.hasAssertions();
-
-    const listedRoom = await roomCaller.createRoom({ name });
-    const joinedRoom = await roomCaller.createRoom({ name });
-    const joinedInvite = await createUnlimitedInvite(joinedRoom.id);
-    const member = await createRoomMember(mockContext, listedRoom.id);
-    await mockSessionOnce(mockContext.db, member);
-    const subscription = await roomCaller.onUpdateRoom([listedRoom.id]);
-    const data = await getFirstEmit(
-      () => subscription,
-      async () => {
-        await mockSessionOnce(mockContext.db, member);
-        await roomCaller.joinRoom(joinedInvite.id);
-        roomEventEmitter.emit("updateRoom", { id: joinedRoom.id, name });
-        roomEventEmitter.emit("updateRoom", { id: listedRoom.id, name });
-      },
-    );
-
-    expect(data).toStrictEqual({ id: joinedRoom.id, name });
+    const leaveEvent = { data: { roomId: newRoom.id, userId: member.id }, type: "leaveRoom" };
+    expect(roomObjectCalls).toContainEqual({ args: [member.id], method: "removeMember", roomId: newRoom.id });
+    expect(roomObjectCalls).toContainEqual({ args: [leaveEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
+    expect(userObjectCalls).toContainEqual({ args: [leaveEvent], method: "broadcastEvent", userId: member.id });
   });
 
   test("counts members", async () => {

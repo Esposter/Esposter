@@ -1,27 +1,33 @@
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { ownedBy } from "#server/services/db/ownedBy";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
+import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { StorageBucket, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
-import { noop, Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
 
-export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
+export const deleteRoom = async (db: Context["db"], { user }: GetSessionPayload, id: string) => {
   const deletedRooms = await db
     .delete(roomsInMessage)
     .where(ownedBy(roomsInMessage, id, user.id))
     .returning();
   const deletedRoom = requireMutation(deletedRooms[0], Operation.Delete, DatabaseEntityType.Room, id);
 
-  roomEventEmitter.emit("deleteRoom", { roomId: deletedRoom.id, sessionId: session.id, userId: user.id });
+  // The members the room has online are told before its object is emptied, since emptying it forgets who they are. The
+  // Object then closes every socket still open on the room
+  await notifyOnlineRoomMembers(id, { data: { roomId: id, userId: user.id }, type: "deleteRoom" });
+  await getResultAsync(() => useRoomObject(id).deleteAll()).match(noop, (error) => {
+    console.error("A deleted room's object failed to close its sockets", { error, roomId: id });
+  });
   // A dropped listing or publish leaves orphaned room assets, never the deletion that already landed — which is
-  // Also why both run after the broadcast (openspec/specs/architecture/persist-then-notify/design.md): the room is gone
-  // The moment the row is, so making every member's UI wait on a blob listing and two Event Grid POSTs buys them
+  // Also why both run after the notification (openspec/specs/architecture/persist-then-notify/design.md): the room is
+  // Gone the moment the row is, so making every member's UI wait on a blob listing and two queue publishes buys them
   // Nothing.
   await Promise.all([
     // A room's attachments have no ceiling, so the prefix goes to the handler rather than being walked here —

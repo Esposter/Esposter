@@ -41,7 +41,7 @@ sequenceDiagram
 
 ### A removal is a departure
 
-Kick, ban and soft ban all delete a membership row, and a deleted membership row that nobody is told about leaves every other client rendering a member the room no longer has. So each of them ends in the same announcement a voluntary leave makes — the room-left event every member list prunes from, and the system line naming who went — through one `announceRoomMemberRemoval`, best-effort after the removal has committed ([persist then notify](../../architecture/persist-then-notify/design.md)). The same announcement closes the removed member's sockets on the room's object, since a socket checks membership only when it opens and a client that kept one would otherwise go on receiving the room. The room-level events a member's sockets carry are delivered only while the member is in the room: a room they left stops reaching their sockets, and a room they join reaches them from the join on (`trackMemberRoomIds`). A member's own leave still reaches its other devices that listed the room, since the device it did not leave from still shows the room.
+Kick, ban and soft ban all delete a membership row, and a deleted membership row that nobody is told about leaves every other client rendering a member the room no longer has. So each of them ends in the same announcement a voluntary leave makes — the room-left event every member list prunes from, and the system line naming who went — through one `announceRoomMemberRemoval`, best-effort after the removal has committed ([persist then notify](../../architecture/persist-then-notify/design.md)). The same announcement closes the removed member's sockets on the room's object, since a socket checks membership only when it opens and a client that kept one would otherwise go on receiving the room. The room-level events a member's sockets carry are delivered only while the member is in the room: a room they left stops reaching their sockets, because the departure closes them on that room's object, and a room they join reaches them from the join on, since a joiner who is online is attached to the room at once (`announceRoomMembersJoined`). A member's own leave still reaches its other devices that listed the room, since the device it did not leave from still shows the room.
 
 **A removed member's messages keep their name.** A kick or a ban leaves the member's messages in the room, as their own leave does; a soft ban marks them deleted instead. The messages that stay are named by their author through `room.readUsersByIds`, which returns a user who is no longer a member too, with `isMember` false, so the room shows the name the author had rather than dropping the messages.
 
@@ -70,23 +70,23 @@ The **Bans** tab searches by the banned user's name, over the join that already 
 
 ## Key files
 
-| File                                                                               | Role                                                                       |
-| :--------------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                                                           |
-| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                                                          |
-| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                                               |
-| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line                                          |
-| `apps/web/server/services/room/announceRoomMemberDeparture.ts`                     | the room-left event, then the member's sockets closed on the room's object |
-| `apps/web/server/services/room/trackMemberRoomIds.ts`                              | the rooms a multi-room stream delivers for, per event                      |
-| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls                                        |
-| `apps/functions/src/durableObjects/CallObject.ts`                                  | publish revokes: the preset update, kick and rejoin                        |
-| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                                                  |
-| `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target                            |
-| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers                                            |
-| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate                                               |
-| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects                                              |
-| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender                                            |
-| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                                                           |
+| File                                                                               | Role                                                                                      |
+| :--------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/models/message/AdminActionType.ts`                         | action type enum                                                                          |
+| `apps/web/server/trpc/routers/message/moderation.ts`                               | moderation router                                                                         |
+| `apps/web/server/services/message/moderation/AdminActionPermissionMap.ts`          | action → required permission                                                              |
+| `apps/web/server/services/room/announceRoomMemberRemoval.ts`                       | the departure event + system line                                                         |
+| `apps/web/server/services/room/announceRoomMemberDeparture.ts`                     | the member's sockets closed on the room's object, then the room-left event                |
+| `apps/web/server/services/room/announceRoomMembersJoined.ts`                       | the join to the room's online members, then the joiner, and the joiner attached if online |
+| `apps/web/server/services/message/call/evictRoomCallParticipants.ts`               | a removal reaching the room's calls                                                       |
+| `apps/functions/src/durableObjects/CallObject.ts`                                  | publish revokes: the preset update, kick and rejoin                                       |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.ts`                  | discriminated union input                                                                 |
+| `apps/web/shared/models/db/moderation/UnparameterizedAdminActionType.ts`           | the actions that take nothing past their target                                           |
+| `apps/web/app/composables/message/moderation/useAdminActionMap.ts`                 | client-side per-action handlers                                                           |
+| `packages/db/src/services/message/moderation/getMessageCreationRejection.ts`       | shared message-creation gate                                                              |
+| `apps/web/server/services/message/moderation/assertCanCreateMessage.ts`            | tRPC face — applies + rejects                                                             |
+| `apps/web/server/services/message/moderation/MessageCreationRejectionReasonMap.ts` | what each rule tells the sender                                                           |
+| `apps/web/server/trpc/routers/room/filter.ts`                                      | word filter CRUD                                                                          |
 
 ## Notes
 

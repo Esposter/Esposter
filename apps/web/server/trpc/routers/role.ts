@@ -2,10 +2,11 @@ import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPerm
 import type { MemberPermissionOverrideEntry } from "#shared/models/db/role/MemberPermissionOverrideEntry";
 import type { MyRoomPermissions } from "#shared/models/db/role/MyRoomPermissions";
 import type { RoomRoleInMessage, UserToRoomRoleInMessageWithRelations } from "@esposter/db-schema";
-import { getDevice } from "#server/services/auth/getDevice";
 import { inRoom } from "#server/services/db/inRoom";
-import { roleEventEmitter } from "#server/services/role/events/roleEventEmitter";
+import { getRoomActor } from "#server/services/realtime/getRoomActor";
+import { getRoleEventData } from "#server/services/role/getRoleEventData";
 import { assertIsMember } from "#server/services/room/assertIsMember";
+import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { assertCanGrantPermissions } from "#server/services/room/rbac/assertCanGrantPermissions";
 import { assertCanManageMemberRole } from "#server/services/room/rbac/assertCanManageMemberRole";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -20,7 +21,6 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
-import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { assignRoleInputSchema } from "#shared/models/db/role/AssignRoleInput";
 import { createRoleInputSchema } from "#shared/models/db/role/CreateRoleInput";
@@ -68,13 +68,16 @@ export const roleRouter = router({
 
     await assertCanManageMemberRole(ctx.db, actorAuthority, role.position, roomId, userId);
 
-    const device = getDevice(ctx.getSessionPayload);
     const [userToRoomRole] = await ctx.db
       .insert(usersToRoomRolesInMessage)
       .values({ roleId, roomId, userId })
       .onConflictDoNothing()
       .returning();
-    if (userToRoomRole) roleEventEmitter.emit("assignRole", [{ ...role, userId }, device]);
+    if (userToRoomRole) {
+      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+      const roleData = getRoleEventData(role);
+      await broadcastRoomEvent(roomId, { data: { ...roleData, userId }, type: "assignRole" }, actor);
+    }
     return role;
   }),
   createRole: getPermissionsProcedure(
@@ -96,7 +99,9 @@ export const roleRouter = router({
       JSON.stringify({ name, roomId }),
     );
 
-    roleEventEmitter.emit("createRole", [newRole, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const roleData = getRoleEventData(newRole);
+    await broadcastRoomEvent(roomId, { data: roleData, type: "createRole" }, actor);
     return newRole;
   }),
   deleteMemberPermissionOverride: getPermissionsProcedure(
@@ -109,10 +114,12 @@ export const roleRouter = router({
     await ctx.db
       .delete(roomMemberPermissionsInMessage)
       .where(and(eq(roomMemberPermissionsInMessage.roomId, roomId), eq(roomMemberPermissionsInMessage.userId, userId)));
-    roleEventEmitter.emit("updateMemberPermissionOverride", [
-      { allow: 0n, deny: 0n, roomId, userId },
-      getDevice(ctx.getSessionPayload),
-    ]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(
+      roomId,
+      { data: { allow: "0", deny: "0", roomId, userId }, type: "updateMemberPermissionOverride" },
+      actor,
+    );
   }),
   deleteRole: getPermissionsProcedure(
     RoomPermission.ManageRoles,
@@ -140,19 +147,10 @@ export const roleRouter = router({
       "NOT_FOUND",
     );
 
-    roleEventEmitter.emit("deleteRole", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRole" }, actor);
     return deletedRole;
   }),
-  onAssignRole: getRoomEventSubscription(roleEventEmitter, "assignRole", ({ roomId }) => roomId),
-  onCreateRole: getRoomEventSubscription(roleEventEmitter, "createRole", ({ roomId }) => roomId),
-  onDeleteRole: getRoomEventSubscription(roleEventEmitter, "deleteRole", ({ roomId }) => roomId),
-  onRevokeRole: getRoomEventSubscription(roleEventEmitter, "revokeRole", ({ roomId }) => roomId),
-  onUpdateMemberPermissionOverride: getRoomEventSubscription(
-    roleEventEmitter,
-    "updateMemberPermissionOverride",
-    ({ roomId }) => roomId,
-  ),
-  onUpdateRole: getRoomEventSubscription(roleEventEmitter, "updateRole", ({ roomId }) => roomId),
   // Visible to the room as readMemberRoles is: a role assignment is already public to every member, and an override
   // Is the same kind of fact about the same member
   readMemberPermissionOverrides: getMemberProcedure(readMemberPermissionOverridesInputSchema, "roomId").query<
@@ -215,7 +213,8 @@ export const roleRouter = router({
             eq(usersToRoomRolesInMessage.roleId, roleId),
           ),
         );
-      roleEventEmitter.emit("revokeRole", [{ roleId, roomId, userId }, getDevice(ctx.getSessionPayload)]);
+      const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+      await broadcastRoomEvent(roomId, { data: { roleId, roomId, userId }, type: "revokeRole" }, actor);
     },
   ),
   updateRole: getPermissionsProcedure(
@@ -248,7 +247,9 @@ export const roleRouter = router({
       id,
       "NOT_FOUND",
     );
-    roleEventEmitter.emit("updateRole", [updatedRole, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    const roleData = getRoleEventData(updatedRole);
+    await broadcastRoomEvent(roomId, { data: roleData, type: "updateRole" }, actor);
     return updatedRole;
   }),
   upsertMemberPermissionOverride: getPermissionsProcedure(
@@ -275,10 +276,15 @@ export const roleRouter = router({
     // A member may give an override only what they hold themselves, as a role may carry only what its author holds
     await assertCanGrantPermissions(ctx.db, actorUserId, roomId, allow, isOwner);
     const override = await setMemberPermissionOverride(ctx.db, { allow, deny, inherit, roomId, userId });
-    roleEventEmitter.emit("updateMemberPermissionOverride", [
-      { ...override, roomId, userId },
-      getDevice(ctx.getSessionPayload),
-    ]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(
+      roomId,
+      {
+        data: { allow: override.allow.toString(), deny: override.deny.toString(), roomId, userId },
+        type: "updateMemberPermissionOverride",
+      },
+      actor,
+    );
     return override;
   }),
 });

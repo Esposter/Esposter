@@ -1,6 +1,5 @@
 import type { RoomEmojiInMessage, RoomEmojiWithSasUrl } from "@esposter/db-schema";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
-import { getDevice } from "#server/services/auth/getDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
@@ -8,7 +7,8 @@ import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsU
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
-import { roomEmojiEventEmitter } from "#server/services/message/events/roomEmojiEventEmitter";
+import { getRoomActor } from "#server/services/realtime/getRoomActor";
+import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
@@ -16,7 +16,6 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
-import { getRoomEventSubscription } from "#server/trpc/procedure/room/getRoomEventSubscription";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
 import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
 import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
@@ -92,7 +91,8 @@ export const emojiRouter = router({
       roomEmojiContext,
     );
     const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
-    roomEmojiEventEmitter.emit("createRoomEmoji", [roomEmojiWithSasUrl, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: roomEmojiWithSasUrl, type: "createRoomEmoji" }, actor);
     return roomEmojiWithSasUrl;
   }),
   deleteRoomEmoji: getPermissionsProcedure(
@@ -111,7 +111,8 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    roomEmojiEventEmitter.emit("deleteRoomEmoji", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: { id, roomId }, type: "deleteRoomEmoji" }, actor);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
     await publishBlobDeletion(StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
@@ -147,9 +148,6 @@ export const emojiRouter = router({
     );
     return { id, sasUrl };
   }),
-  onCreateRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "createRoomEmoji", ({ roomId }) => roomId),
-  onDeleteRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "deleteRoomEmoji", ({ roomId }) => roomId),
-  onUpdateRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "updateRoomEmoji", ({ roomId }) => roomId),
   // Membership rather than the `ManageEmojis` its panel is gated on: the picker and every rendered message read
   // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
   readRoomEmojis: getMemberProcedure(roomIdSchema, "roomId").query<RoomEmojiWithSasUrl[]>(
@@ -182,7 +180,8 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       id,
     );
-    roomEmojiEventEmitter.emit("updateRoomEmoji", [updatedRoomEmoji, getDevice(ctx.getSessionPayload)]);
+    const actor = getRoomActor(ctx.getSessionPayload, ctx.headers);
+    await broadcastRoomEvent(roomId, { data: updatedRoomEmoji, type: "updateRoomEmoji" }, actor);
     return updatedRoomEmoji;
   }),
 });

@@ -6,9 +6,9 @@ import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
+import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
@@ -75,11 +75,12 @@ export const directMessageRouter = router({
       const participantKey = getDirectMessageParticipantKey(allUserIds);
       const participantRoomId = sql`(select ${roomsInMessage.id} from ${roomsInMessage} where ${roomsInMessage.participantKey} = ${participantKey})`;
       // Each membership row binds its room's key and its user, so a statement takes as many rows as that leaves room for
-      await ctx.db.batch([
+      const [insertedRoomRows] = await ctx.db.batch([
         ctx.db
           .insert(roomsInMessage)
           .values({ participantKey, type: RoomType.DirectMessage, userId })
-          .onConflictDoNothing({ target: roomsInMessage.participantKey }),
+          .onConflictDoNothing({ target: roomsInMessage.participantKey })
+          .returning({ id: roomsInMessage.id }),
         ...chunk(allUserIds, Math.floor(D1_MAX_BOUND_PARAMETERS / 2)).map((userIdChunk) =>
           ctx.db
             .insert(usersToRoomsInMessage)
@@ -91,12 +92,21 @@ export const directMessageRouter = router({
           .set({ isHidden: false })
           .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, participantRoomId))),
       ]);
-      return requireMutation(
+      const room = requireMutation(
         await ctx.db.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }),
         Operation.Create,
         DerivedDatabaseEntityType.DirectMessage,
         participantKey,
       );
+      // Only a room the batch created is new to its participants. One that already held the set is returned as it was
+      if (insertedRoomRows.length > 0) {
+        const participants = await ctx.db.query.usersInAuth.findMany({
+          columns: PublicUserColumns,
+          where: { id: { in: allUserIds } },
+        });
+        await announceRoomMembersJoined(ctx.db, room.id, participants);
+      }
+      return room;
     }),
   createDirectMessageParticipants: getMemberProcedure(createDirectMessageParticipantsInputSchema, "roomId").mutation<
     PublicUser[]
@@ -135,16 +145,9 @@ export const directMessageRouter = router({
           }),
       ),
     ]);
-    const updatedRoom = requireMutation(
-      updatedRoomRows[0],
-      Operation.Update,
-      DerivedDatabaseEntityType.DirectMessage,
-      roomId,
-    );
+    requireMutation(updatedRoomRows[0], Operation.Update, DerivedDatabaseEntityType.DirectMessage, roomId);
 
-    for (const targetUser of addedUsers)
-      roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user: targetUser });
-    roomEventEmitter.emit("updateRoom", updatedRoom);
+    await announceRoomMembersJoined(ctx.db, roomId, addedUsers);
     await Promise.all(
       addedUsers.map((targetUser) =>
         createSystemRoomMessage(
@@ -205,14 +208,9 @@ export const directMessageRouter = router({
       DatabaseEntityType.UserToRoom,
       JSON.stringify({ roomId, userId }),
     );
-    const updatedRoom = requireMutation(
-      updatedRoomRows[0],
-      Operation.Update,
-      DerivedDatabaseEntityType.DirectMessage,
-      roomId,
-    );
-    announceRoomMemberDeparture({ roomId, userId }, ctx.getSessionPayload.session.id);
-    roomEventEmitter.emit("updateRoom", updatedRoom);
+    requireMutation(updatedRoomRows[0], Operation.Update, DerivedDatabaseEntityType.DirectMessage, roomId);
+
+    await announceRoomMemberDeparture({ roomId, userId });
     await createSystemRoomMessage(
       roomId,
       actorUser.id,

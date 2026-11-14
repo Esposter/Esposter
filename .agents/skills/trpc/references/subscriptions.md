@@ -33,7 +33,5 @@ onCreateFoo: getRoomEventSubscription(fooEventEmitter, "createFoo", ({ partition
 
 A stream that ends on a departure announced by another emitter composes `onUntilDeparture` (`server/services/events/`), which takes the `onDeparture` subscription that ends it. `onWhileMember` is that composition for a room's leave.
 
-A subscription over several rooms takes `getMemberRoomsProcedure()` (`server/trpc/procedure/room/`), which owns the member check and the per-event room tracking and hands the body `ctx.memberRoomIds`. Its body stays written out, since each multi-room event differs in destructure and yield.
-
 - Event map shape must be `[[Data, Device]]`; yield types stay exact per event via `TEventMap[TKey][0][0]` indexed access.
 - **Deliberately not abstracted**: the bodies of multi-room (room/userToRoom), callSession, typing/moderation/achievement subscriptions — their bodies differ in destructure, device-id construction and yield, so a builder would need as many lambdas as the body has lines. Don't force them in.

@@ -1,12 +1,23 @@
-import type { UserToRoomInMessage } from "@esposter/db-schema";
+import type { UserEvent, UserToRoomInMessage } from "@esposter/db-schema";
 
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
+import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { callUserObjects } from "#server/services/realtime/callUserObjects";
+import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
+import { getResultAsync, noop } from "@esposter/shared";
 
-// Every departure from a room, a leave or a removal, announces `leaveRoom`: the leaver's own subscriptions to the room
-// end on it (`onWhileMember`), and every other client prunes the member from its list
-export const announceRoomMemberDeparture = (
-  { roomId, userId }: Pick<UserToRoomInMessage, "roomId" | "userId">,
-  sessionId: string,
-): void => {
-  roomEventEmitter.emit("leaveRoom", { roomId, sessionId, userId });
+// Every departure from a room, a leave or a removal, drops the member's sockets on the room's object, then tells the
+// members the room has online and the member's own tabs. The member is dropped first, so the members the room reaches
+// are the ones who stayed
+export const announceRoomMemberDeparture = async ({
+  roomId,
+  userId,
+}: Pick<UserToRoomInMessage, "roomId" | "userId">): Promise<void> => {
+  await getResultAsync(() => useRoomObject(roomId).removeMember(userId)).match(noop, (error) => {
+    console.error("A departed member's sockets failed to close", { error, roomId, userId });
+  });
+  const event = { data: { roomId, userId }, type: "leaveRoom" } satisfies UserEvent;
+  await Promise.all([
+    notifyOnlineRoomMembers(roomId, event),
+    callUserObjects([userId], (userObject) => userObject.broadcastEvent(event)),
+  ]);
 };

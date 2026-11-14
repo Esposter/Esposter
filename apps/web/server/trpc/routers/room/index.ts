@@ -4,18 +4,16 @@ import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
-import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { containsLike } from "#server/services/db/containsLike";
-import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
+import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
@@ -23,6 +21,7 @@ import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJ
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
+import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -36,7 +35,6 @@ import { addProfanityFilterMiddleware } from "#server/trpc/middleware/addProfani
 import { assertIsRoomMiddleware } from "#server/trpc/middleware/assertIsRoomMiddleware";
 import { getProfanityFilterProcedure } from "#server/trpc/procedure/getProfanityFilterProcedure";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
-import { getMemberRoomsProcedure } from "#server/trpc/procedure/room/getMemberRoomsProcedure";
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { categoryRouter } from "#server/trpc/routers/room/category";
@@ -219,7 +217,7 @@ export const baseRoomRouter = router({
       userToRoomContext,
     );
 
-    roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
+    await announceRoomMembersJoined(ctx.db, roomId, [user]);
     await createSystemRoomMessage(
       roomId,
       user.id,
@@ -248,7 +246,7 @@ export const baseRoomRouter = router({
         input,
       );
 
-      announceRoomMemberDeparture(userToRoom, ctx.getSessionPayload.session.id);
+      await announceRoomMemberDeparture(userToRoom);
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
       // A failure costs the room one "X left" line, never the leave that already landed.
       await getResultAsync(async () => {
@@ -267,43 +265,6 @@ export const baseRoomRouter = router({
 
       return userToRoom.roomId;
     }),
-  onDeleteRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
-    for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "deleteRoom", { signal })) {
-      if (!ctx.memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
-      yield roomId;
-    }
-  }),
-  onJoinRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
-    for await (const [{ roomId, sessionId, user }] of on(roomEventEmitter, "joinRoom", { signal })) {
-      if (!ctx.memberRoomIds.has(roomId) || checkIsSameDevice({ sessionId, userId: user.id }, ctx.getSessionPayload))
-        continue;
-      // One subscription spans every room the client is in, so the room the event happened in travels with it.
-      // Dropping it leaves the client to infer which room a join belongs to, and the only thing it can infer
-      // From is the room that happens to be open
-      // A user who has just joined holds no displayName: leaving removes the membership that carried one, so the name
-      // The room shows for them is their global name
-      yield { roomId, user: { ...user, displayName: user.name } };
-    }
-  }),
-  onLeaveRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, input, signal }) {
-    const { user } = ctx.getSessionPayload;
-
-    for await (const [{ roomId, sessionId, userId }] of on(roomEventEmitter, "leaveRoom", { signal })) {
-      // The member's own departure still reaches its other devices as long as they listed the room: the device it
-      // Did not leave from still shows the room, and the removal of the membership is what this event tells it
-      const isReachable = userId === user.id ? input.includes(roomId) : ctx.memberRoomIds.has(roomId);
-      if (!isReachable || checkIsSameDevice({ sessionId, userId }, ctx.getSessionPayload)) continue;
-      // Yielded with its room for the same reason a join is: a departure applied to the room the user happens
-      // To be looking at removes a member who never left it
-      yield { roomId, userId };
-    }
-  }),
-  onUpdateRoom: getMemberRoomsProcedure().subscription(async function* ({ ctx, signal }) {
-    for await (const [data] of on(roomEventEmitter, "updateRoom", { signal })) {
-      if (!ctx.memberRoomIds.has(data.id)) continue;
-      yield data;
-    }
-  }),
   readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
     ({ ctx, input: { roomId } }) => {
       // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
@@ -323,7 +284,7 @@ export const baseRoomRouter = router({
         .where(eq(usersToRoomRolesInMessage.roomId, roomId))
         .as("rankedRoles");
       // Only role groups are returned — the roleless trailing group is derived client-side from the
-      // Total member count so join/leave subscription updates keep it current without a refetch
+      // Total member count, which the join and leave events keep current without a refetch
       return ctx.db
         .select({ count: count(), roleId: rankedRoles.roleId })
         .from(rankedRoles)
@@ -506,7 +467,7 @@ export const baseRoomRouter = router({
     const previousRoom = previousRoomRows[0];
     const updatedRoom = requireMutation(updatedRoomRows[0], Operation.Update, DatabaseEntityType.Room, id);
     const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
-    roomEventEmitter.emit("updateRoom", updatedRoom);
+    await notifyOnlineRoomMembers(id, { data: { id, ...rest }, type: "updateRoom" });
     // The rename line is the server's to write, like every other line in the room's voice, so no member can post
     // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
     // Rename. Best-effort behind the update, which has already landed

@@ -2,12 +2,13 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { createMockUser, mockSessionOnce } from "#server/trpc/context.test";
-import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
+import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("roleRouter", () => {
   const { createMember, getEveryoneRole, getMockContext, getRoleCaller, getRoomId, setupMemberWithRole } =
@@ -26,6 +27,11 @@ describe("roleRouter", () => {
 
   beforeEach(() => {
     roomId = getRoomId();
+    roomObjectCalls.splice(0);
+  });
+
+  afterEach(() => {
+    getMockContext().headers.delete(DEVICE_ID_HEADER);
   });
 
   test("reads only the @everyone role", async () => {
@@ -55,6 +61,28 @@ describe("roleRouter", () => {
     expect(role.name).toBe(name);
     expect(role.permissions).toBe(RoomPermission.ManageMessages);
     expect(role.roomId).toBe(roomId);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { ...role, permissions: role.permissions.toString() }, type: "createRole" }, {}],
+      method: "broadcastEvent",
+      roomId,
+    });
+  });
+
+  test("excludes the writing tab's device from the echo of a role it creates", async () => {
+    expect.hasAssertions();
+
+    const deviceId = crypto.randomUUID();
+    getMockContext().headers.set(DEVICE_ID_HEADER, deviceId);
+    const role = await roleCaller.createRole({ name, roomId });
+
+    expect(roomObjectCalls).toContainEqual({
+      args: [
+        { data: { ...role, permissions: role.permissions.toString() }, type: "createRole" },
+        { excludeTag: `device:${deviceId}` },
+      ],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
   test("updates", async () => {
@@ -67,6 +95,11 @@ describe("roleRouter", () => {
     expect(updatedRole.id).toBe(createdRole.id);
     expect(updatedRole.permissions).toBe(createdRole.permissions);
     expect(updatedRole.position).toBe(createdRole.position);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { ...updatedRole, permissions: updatedRole.permissions.toString() }, type: "updateRole" }, {}],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
   test("deletes", async () => {
@@ -76,6 +109,11 @@ describe("roleRouter", () => {
     const deletedRole = await roleCaller.deleteRole({ id: createdRole.id, roomId });
 
     expect(deletedRole.id).toBe(createdRole.id);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { id: createdRole.id, roomId }, type: "deleteRole" }, {}],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
   test("fails delete with the @everyone role", async () => {
@@ -104,10 +142,21 @@ describe("roleRouter", () => {
 
     const targetMember = await createMember();
     const role = await roleCaller.createRole({ name, roomId });
-    await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
+    const assignedRole = await roleCaller.assignRole({ roleId: role.id, roomId, userId: targetMember.id });
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles.map(({ roleId }) => roleId)).toStrictEqual([role.id]);
+    expect(roomObjectCalls).toContainEqual({
+      args: [
+        {
+          data: { ...assignedRole, permissions: assignedRole.permissions.toString(), userId: targetMember.id },
+          type: "assignRole",
+        },
+        {},
+      ],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
   test("fails assignRole with a target who is not a room member", async () => {
@@ -184,6 +233,11 @@ describe("roleRouter", () => {
     const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds: [targetMember.id] });
 
     expect(memberRoles).toStrictEqual([]);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { roleId: role.id, roomId, userId: targetMember.id }, type: "revokeRole" }, {}],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
   test("revokes a role the member never held", async () => {
@@ -288,19 +342,6 @@ describe("roleRouter", () => {
     expect(memberPermissions.permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
   });
 
-  test("subscription emits the created role", async () => {
-    expect.hasAssertions();
-
-    const subscription = await roleCaller.onCreateRole({ roomId });
-    const data = await getFirstEmit(
-      () => subscription,
-      () => roleCaller.createRole({ name, roomId }),
-    );
-
-    expect(data.name).toBe(name);
-    expect(data.roomId).toBe(roomId);
-  });
-
   test("writes an override's three states, each bit in one of them at a time", async () => {
     expect.hasAssertions();
 
@@ -401,25 +442,38 @@ describe("roleRouter", () => {
     await roleCaller.deleteMemberPermissionOverride({ roomId, userId: member.id });
 
     await expect(roleCaller.readMemberPermissionOverrides({ roomId })).resolves.toStrictEqual([]);
+    expect(roomObjectCalls).toContainEqual({
+      args: [
+        { data: { allow: "0", deny: "0", roomId, userId: member.id }, type: "updateMemberPermissionOverride" },
+        {},
+      ],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 
-  test("subscription emits the override state a write left", async () => {
+  test("announces the override state a write left, as decimal permissions", async () => {
     expect.hasAssertions();
 
     const member = await createMember();
-    const subscription = await roleCaller.onUpdateMemberPermissionOverride({ roomId });
-    const data = await getFirstEmit(
-      () => subscription,
-      () =>
-        roleCaller.upsertMemberPermissionOverride({
-          allow: RoomPermission.ManageMessages,
-          deny: 0n,
-          inherit: 0n,
-          roomId,
-          userId: member.id,
-        }),
-    );
+    await roleCaller.upsertMemberPermissionOverride({
+      allow: RoomPermission.ManageMessages,
+      deny: 0n,
+      inherit: 0n,
+      roomId,
+      userId: member.id,
+    });
 
-    expect(data).toStrictEqual({ allow: RoomPermission.ManageMessages, deny: 0n, roomId, userId: member.id });
+    expect(roomObjectCalls).toContainEqual({
+      args: [
+        {
+          data: { allow: RoomPermission.ManageMessages.toString(), deny: "0", roomId, userId: member.id },
+          type: "updateMemberPermissionOverride",
+        },
+        {},
+      ],
+      method: "broadcastEvent",
+      roomId,
+    });
   });
 });

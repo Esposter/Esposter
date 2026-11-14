@@ -16,7 +16,7 @@ export const announceRoomMemberRemoval = async (
   sessionId: string,
   action: RoomMemberRemovalAction,
 ): Promise<void> => {
-  announceRoomMemberDeparture({ roomId, userId }, sessionId);
+  await announceRoomMemberDeparture({ roomId, userId });
   // Best-effort after the membership delete — the name lookup only exists to word the system message, so a
   // Failure costs the room one line, never the removal that already landed
   await getResultAsync(async () => {
