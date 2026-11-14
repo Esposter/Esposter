@@ -28,6 +28,8 @@ sequenceDiagram
 
 The client sends `watch` and `unwatch` frames over the user socket it already holds, from the query cache: a query mounting watches its topics, the last query on a topic unmounting unwatches it. The user object records each socket's topics in the socket's attachment, so the record survives hibernation, and subscribes itself to a topic's object on the first of its tabs watching it and unsubscribes on the last. A `TopicObject`, one per topic, holds its subscribers in storage and, on publish, calls each subscriber's user object once per short window however many writes landed in it, so a burst of edits costs one refetch per reader. The tRPC middleware publishes after a mutation resolves, never before its write commits, and never for a failed one.
 
+A reconnecting user socket re-sends its watches and refetches every watched query, because an invalidation sent while it was away was never delivered; that one rule replaces every per-feature re-read on reconnect.
+
 The frame carries only the topic, never data, so the reader refetches through the same query with the same permission checks it ran the first time: liveness can never show a reader something the query would refuse them. A refetch is cheap because D1 reads are, and only queries on screen refetch.
 
 ## What stays pushed as data
