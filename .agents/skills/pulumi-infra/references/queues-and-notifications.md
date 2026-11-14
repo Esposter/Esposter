@@ -32,4 +32,6 @@ Pulumi owns every queue consumer, as it does for the job queues. `apps/jobs/wran
 
 ## A rename replaces what it names
 
-A queue's name is its Pulumi logical name, so renaming a queue replaces it and every consumer and notification that names it. A queue holds messages, so the rename takes the two-phase sequence in `references/migrations.md`, and the consumer's `scriptName` is corrected in place by the preview like any other string a resource's properties point at.
+A queue's name is its Pulumi logical name, so renaming a queue replaces it and every consumer and notification that names it. A queue holds messages, so the rename takes the two-phase sequence in `references/migrations.md`.
+
+A consumer's Worker is fixed once the consumer exists. The Queues API answers a `scriptName` change with success and leaves the old script in place, and the provider plans it as an in-place update, so the preview and the apply both read clean while the queue still delivers to the old Worker. Moving a consumer to another Worker is a delete and a create: delete the consumer through the API (`DELETE /queues/<queue id>/consumers/<consumer id>`), unprotect and `pulumi state delete` its URN, then a targeted `up` creates it on the new script. A queue has one consumer at a time, so the create cannot run before the delete. Check the result with `GET /queues`, whose `consumers[].script` is the truth, before deleting the old Worker.
