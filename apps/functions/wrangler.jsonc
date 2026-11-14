@@ -11,16 +11,6 @@
       "vars": { "BASE_URL": "https://esposter.com", "CLOUDFLARE_ENVIRONMENT": "prod" },
       "triggers": { "crons": ["0 3 * * *"] },
       "queues": {
-        "consumers": [
-          { "max_retries": 5, "queue": "prod-dlq-esposter-delete-account", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-delete-orphaned-profile-image", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-export-user-data", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-process-blob-deletion", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-process-notification", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-process-scheduled-message-job", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-process-webhook", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "prod-dlq-esposter-reconcile-storage-ledger-entry", "retry_delay": 30 },
-        ],
         "producers": [
           { "binding": "DELETE_ACCOUNT_QUEUE", "queue": "prod-q-esposter-delete-account" },
           {
@@ -78,16 +68,6 @@
       "vars": { "BASE_URL": "https://dev.esposter.com", "CLOUDFLARE_ENVIRONMENT": "dev" },
       "triggers": { "crons": ["0 3 * * *"] },
       "queues": {
-        "consumers": [
-          { "max_retries": 5, "queue": "dev-dlq-esposter-delete-account", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-delete-orphaned-profile-image", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-export-user-data", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-process-blob-deletion", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-process-notification", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-process-scheduled-message-job", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-process-webhook", "retry_delay": 30 },
-          { "max_retries": 5, "queue": "dev-dlq-esposter-reconcile-storage-ledger-entry", "retry_delay": 30 },
-        ],
         "producers": [
           { "binding": "DELETE_ACCOUNT_QUEUE", "queue": "dev-q-esposter-delete-account" },
           { "binding": "DELETE_ORPHANED_PROFILE_IMAGE_QUEUE", "queue": "dev-q-esposter-delete-orphaned-profile-image" },

@@ -19,7 +19,7 @@ interface WranglerEnvironment {
   durable_objects: { bindings: { class_name: string; name: string; script_name?: string }[] };
   migrations: { new_sqlite_classes: string[]; tag: string }[];
   name: string;
-  queues: { consumers: { queue: string }[]; producers: { binding: string; queue: string }[] };
+  queues: { producers: { binding: string; queue: string }[] };
   r2_buckets: { bucket_name: string }[];
   triggers: { crons: string[] };
   vars: { CLOUDFLARE_ENVIRONMENT: string };
@@ -53,16 +53,6 @@ describe.each([{ environment: CloudflareEnvironment.Development }, { environment
           binding: QueueJobBindingNameMap[job],
           queue: getCloudflareResourceName(environment, CloudflareAssetType.Queue, job),
         })),
-      );
-    });
-
-    test("consumes every job's dead-letter queue, which its replay drains", () => {
-      expect.hasAssertions();
-
-      expect(wrangler.queues.consumers.map(({ queue }) => queue)).toStrictEqual(
-        Object.values(QueueJob).map((job) =>
-          getCloudflareResourceName(environment, CloudflareAssetType.DeadLetterQueue, job),
-        ),
       );
     });
 
