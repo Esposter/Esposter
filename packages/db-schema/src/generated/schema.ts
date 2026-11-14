@@ -1,20 +1,18 @@
-import { achievementSchema } from "#src/schema/achievement/achievementSchema";
-import { achievementNameEnum, achievementsInAchievement } from "#src/schema/achievement/achievementsInAchievement";
+import { achievementsInAchievement } from "#src/schema/achievement/achievementsInAchievement";
 import { userAchievementsInAchievement } from "#src/schema/achievement/userAchievementsInAchievement";
-import { appSchema } from "#src/schema/app/appSchema";
 import { bookmarksInApp } from "#src/schema/app/bookmarksInApp";
 import { rateLimiterFlexibleInApp } from "#src/schema/app/rateLimiterFlexibleInApp";
 import { accountsInAuth } from "#src/schema/auth/accountsInAuth";
 import { apiKeysInAuth } from "#src/schema/auth/apiKeysInAuth";
-import { authSchema } from "#src/schema/auth/authSchema";
 import { sessionsInAuth } from "#src/schema/auth/sessionsInAuth";
-import { storageTierEnum, usersInAuth } from "#src/schema/auth/usersInAuth";
+import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { verificationsInAuth } from "#src/schema/auth/verificationsInAuth";
 import { appUsersInMessage } from "#src/schema/message/appUsersInMessage";
 import { bansInMessage } from "#src/schema/message/bansInMessage";
 import { callSessionsInMessage } from "#src/schema/message/callSessionsInMessage";
 import { invitesInMessage } from "#src/schema/message/invitesInMessage";
-import { messageSchema } from "#src/schema/message/messageSchema";
+import { messageEmojisInMessage } from "#src/schema/message/messageEmojisInMessage";
+import { messagesInMessage } from "#src/schema/message/messagesInMessage";
 import { roomCategoriesInMessage } from "#src/schema/message/roomCategoriesInMessage";
 import { roomEmojisInMessage } from "#src/schema/message/roomEmojisInMessage";
 import { roomFiltersInMessage } from "#src/schema/message/roomFiltersInMessage";
@@ -29,75 +27,49 @@ import { userStatusesInMessage } from "#src/schema/message/userStatusesInMessage
 import { usersToRoomRolesInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
 import { usersToRoomsInMessage } from "#src/schema/message/usersToRoomsInMessage";
 import { webhooksInMessage } from "#src/schema/message/webhooksInMessage";
-import { notificationSchema } from "#src/schema/notification/notificationSchema";
-import {
-  appNotificationTypeEnum,
-  notificationSeverityEnum,
-  notificationsInNotification,
-} from "#src/schema/notification/notificationsInNotification";
+import { notificationsInNotification } from "#src/schema/notification/notificationsInNotification";
 import { pushSubscriptionsInNotification } from "#src/schema/notification/pushSubscriptionsInNotification";
 import { likesInPost } from "#src/schema/post/likesInPost";
-import { postSchema } from "#src/schema/post/postSchema";
 import { postsInPost } from "#src/schema/post/postsInPost";
 import { resourceAccessesInResource } from "#src/schema/resource/resourceAccessesInResource";
 import { resourceFavoritesInResource } from "#src/schema/resource/resourceFavoritesInResource";
-import { resourceLinksInResource, resourceLinkTypeEnum } from "#src/schema/resource/resourceLinksInResource";
+import { resourceLinksInResource } from "#src/schema/resource/resourceLinksInResource";
 import { resourcePublicationsInResource } from "#src/schema/resource/resourcePublicationsInResource";
-import { resourceSchema } from "#src/schema/resource/resourceSchema";
-import { resourcesInResource, resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
+import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
 import { resourceVersionAssetsInResource } from "#src/schema/resource/resourceVersionAssetsInResource";
-import {
-  resourceVersionsInResource,
-  snapshotChannelEnum,
-  snapshotReasonEnum,
-} from "#src/schema/resource/resourceVersionsInResource";
+import { resourceVersionsInResource } from "#src/schema/resource/resourceVersionsInResource";
 import { resourceWorkingAssetsInResource } from "#src/schema/resource/resourceWorkingAssetsInResource";
 import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
-import { socialSchema } from "#src/schema/social/socialSchema";
-import { storageBucketEnum, storageLedgerInStorage } from "#src/schema/storage/storageLedgerInStorage";
-import { storageSchema } from "#src/schema/storage/storageSchema";
-import { dataExportsInUser, dataExportStatusEnum } from "#src/schema/user/dataExportsInUser";
-import { userSchema } from "#src/schema/user/userSchema";
+import { storageLedgerInStorage } from "#src/schema/storage/storageLedgerInStorage";
+import { dataExportsInUser } from "#src/schema/user/dataExportsInUser";
 
 export const schema = {
   accountsInAuth,
-  achievementNameEnum,
-  achievementSchema,
   achievementsInAchievement,
   apiKeysInAuth,
-  appNotificationTypeEnum,
-  appSchema,
   appUsersInMessage,
-  authSchema,
-  storageBucketEnum,
   bansInMessage,
   blocksInSocial,
   bookmarksInApp,
   callSessionsInMessage,
   dataExportsInUser,
-  dataExportStatusEnum,
   friendRequestsInSocial,
   friendsInSocial,
   invitesInMessage,
   likesInPost,
-  messageSchema,
-  notificationSchema,
-  notificationSeverityEnum,
+  messageEmojisInMessage,
+  messagesInMessage,
   notificationsInNotification,
-  postSchema,
   postsInPost,
   pushSubscriptionsInNotification,
   rateLimiterFlexibleInApp,
   resourceAccessesInResource,
   resourceFavoritesInResource,
   resourceLinksInResource,
-  resourceLinkTypeEnum,
   resourcePublicationsInResource,
-  resourceSchema,
   resourcesInResource,
-  resourceTypeEnum,
   resourceVersionAssetsInResource,
   resourceVersionsInResource,
   resourceWorkingAssetsInResource,
@@ -110,15 +82,9 @@ export const schema = {
   scheduledMessageJobsInMessage,
   searchHistoriesInMessage,
   sessionsInAuth,
-  snapshotChannelEnum,
-  snapshotReasonEnum,
-  socialSchema,
   storageLedgerInStorage,
-  storageSchema,
-  storageTierEnum,
   threadFollowsInMessage,
   userAchievementsInAchievement,
-  userSchema,
   userSettingsInMessage,
   usersInAuth,
   userStatusesInMessage,

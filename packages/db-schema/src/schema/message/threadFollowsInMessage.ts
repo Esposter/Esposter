@@ -1,7 +1,6 @@
-import type { ReverseTickedTimestamp } from "#src/models/streams/ReverseTickedTimestamp";
-
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
+import { messagesInMessage } from "#src/schema/message/messagesInMessage";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { sqliteTable } from "#src/sqliteTable";
 import { integer, primaryKey, text } from "drizzle-orm/sqlite-core";
@@ -17,14 +16,16 @@ export const threadFollowsInMessage = sqliteTable(
     roomId: text()
       .notNull()
       .references(() => roomsInMessage.id, { onDelete: "cascade" }),
-    threadRootRowKey: text().$type<ReverseTickedTimestamp>().notNull(),
+    threadRootId: text()
+      .notNull()
+      .references(() => messagesInMessage.id, { onDelete: "cascade" }),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
-    extraConfig: ({ roomId, threadRootRowKey, userId }) => [
-      primaryKey({ columns: [userId, roomId, threadRootRowKey] }),
+    extraConfig: ({ roomId, threadRootId, userId }) => [
+      primaryKey({ columns: [userId, roomId, threadRootId] }),
     ],
     schema: messageSchema,
   },
