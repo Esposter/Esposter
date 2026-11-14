@@ -4,18 +4,19 @@ export const useSubscribables = async () => {
   if (checkIsServer()) return;
 
   useCallSubscribables();
-  useDirectMessageSubscribables();
-  useEmojiSubscribables();
+  useCreateTyping();
+  useEmojiEvents();
   useMemberCache();
   useMessageCache();
-  useModerationSubscribables();
-  useMessageSubscribables();
+  useMessageEvents();
+  useModerationEvents();
   usePushSubscription();
-  useRoleSubscribables();
+  useRoleEvents();
   useRoomCache();
-  useRoomEmojiSubscribables();
-  useRoomSubscribables();
-  useTypingSubscribables();
+  useRoomEmojiEvents();
+  useRoomListEvents();
+  useRoomSocket();
+  useTypingEvents();
   useUserToRoomSubscribables();
   await Promise.all([useFriendSubscribables(), useUserSubscribables()]);
 };

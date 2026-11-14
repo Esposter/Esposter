@@ -33,9 +33,11 @@ export const useFoo = async () => {
 - Watchers created after an `await` are not auto-disposed — keep the `stop` handle and call it in `onUnmounted`.
 - Subscribable composables use `getOnlineSubscribableContext()` (the `esbabbler` skill, `references/client-state.md`), which packages this capture.
 
-## Subscribable composables (`use*Subscribables`)
+## Subscribable composables (`use*Subscribables`) and event composables (`use*Events`)
 
 Composables managing tRPC subscriptions for a feature are named `use{Feature}Subscribables` and live in `composables/<domain>/subscribables/`. They are self-registering (no return value) and called from the aggregating `useSubscribables()`.
+
+A room's or a person's live events are not tRPC subscriptions: they arrive as frames on a socket the connection store holds, and a feature's handlers are registered with `onRoomEvent` or `onUserEvent` in a `use{Feature}Events` composable (`composables/<domain>/events/`). Each registration is disposed with its scope, `onScopeDispose(onRoomEvent(...))`, and the socket itself is opened by a source through `useOnlineSubscribable`.
 
 ```ts
 // composables/<domain>/subscribables/useFooSubscribables.ts

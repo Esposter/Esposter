@@ -2,25 +2,22 @@
 
 Read when a composable sets up subscriptions from a reactive list, or resumes one after an `await`.
 
-When subscriptions only need to react to **membership changes** (rooms added/removed), watch a stable primitive instead of the full reactive array. A `toSorted()` array produces a new reference on every `updatedAt` change, causing needless subscription teardown/rebuild on every incoming message.
+When a subscription only needs to react to the reader moving to another room, watch the room id, which changes only then. A `toSorted()` array produces a new reference on every `updatedAt` change, causing needless teardown and rebuild on every incoming message.
 
 ```ts
 // WRONG — re-subscribes on every updatedAt bump (every incoming message)
 useOnlineSubscribable(directMessages, (newDirectMessages) => { ... });
 
-// CORRECT — stable string via getIdsKey; only changes when the set of IDs changes
-useOnlineSubscribable(
-  () => getIdsKey(directMessages.value),
-  (roomIdsString) => {
-    if (!roomIdsString) return undefined;
-    const roomIds = getIdsFromKey(roomIdsString);
-    // set up subscriptions…
-  },
-);
+// CORRECT — the room id changes only when the reader moves to another room
+useOnlineSubscribable(currentRoomId, (roomId) => {
+  if (!roomId) return undefined;
+  // open the socket or read the room's list…
+});
 ```
 
-- **`getIdsKey(items)`** (`apps/web/app/services/message/subscribables/getIdsKey.ts`) is the canonical order-insensitive membership key (`map(id).toSorted().join(ID_SEPARATOR)`) — never hand-roll it. **`getIdsFromKey(key)`** (same folder) is its inverse and the only way back to the ids: a hand-written `split(",")` reads a `|`-joined key as one id, which every id-list subscription then rejects as a malformed uuid.
+The room list is not a subscription input any more: the person's own socket carries every room-list event, so no id list is watched.
+
+- Room and user events do not need a source at all: `use*Events` composables register their handlers with `onRoomEvent` or `onUserEvent` and dispose each one with its scope (`composables/message/events/`).
 - A plain getter `() => expr` is equivalent to `computed(() => expr)` as a watch source and is preferred — no extra ref allocation.
 - **`getOnlineSubscribableContext()`** (`apps/web/app/composables/shared/getOnlineSubscribableContext.ts`) captures `getCurrentInstance()`/`getCurrentScope()` for async subscribable composables — call it into a `const` BEFORE any `await` (context is lost after suspension); never inline the two calls.
 - **`requirePartitionKey(value, name)`** (`apps/web/app/services/message/requirePartitionKey.ts`) is the guard for room-scoped reads needing a non-empty current room id (or user id): `const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);` — never hand-write the `InvalidOperationError` throw.
-- **No lint rule bans `split(",")` here — settled.** The rule would have to know a `split` receives a `getIdsKey` result, which a syntax selector cannot see, and a ban on every `split(",")` would hit the dozens of legitimate comma lists across the repo. The drift that caused the bug — the key's join changed and its splits did not — is held by the round trip in `getIdsFromKey.test.ts` (the tested rung), and every subscriber goes through the helper (the structural one).
