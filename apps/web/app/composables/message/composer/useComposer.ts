@@ -1,5 +1,5 @@
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { StandardCreateMessageInput } from "@esposter/db-schema";
+import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { Editor } from "@tiptap/core";
 
 import { MentionExtension } from "@/services/message/MentionExtension";
@@ -31,10 +31,10 @@ export const useComposer = async (target: MaybeRefOrGetter<ComposerTarget>) => {
     const { roomId, threadRootId } = composerTarget;
     if (!roomId || !checkIsInputValid(composerTarget, editor, true)) return;
 
-    const input: StandardCreateMessageInput = {
+    const input: CreateMessageInput = {
       files: getComposerFiles(composerTarget),
       message: getComposerInput(composerTarget),
-      replyToId: threadRootId || replyStore.replyToId,
+      replyToId: threadRootId || replyStore.replyToId || null,
       roomId,
       type: MessageType.Message,
     };

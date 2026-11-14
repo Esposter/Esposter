@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ReadMessagesByRowKeysInput } from "#shared/models/db/message/ReadMessagesByRowKeysInput";
+import type { ReadMessagesByIdsInput } from "#shared/models/db/message/ReadMessagesByIdsInput";
 
 import { useReadMessageMetadata } from "@/composables/message/message/useReadMessageMetadata";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
@@ -21,9 +21,9 @@ describe(useReadMessageMetadata, () => {
     const reply = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
     const replyingMessage = createOptimisticMessage({ replyToId: reply.id, roomId, type: MessageType.Message }, userId);
     const message = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
-    const readMessagesByRowKeysInputs: ReadMessagesByRowKeysInput[] = [];
-    trpcMsw.message.readMessagesByRowKeys.query(({ input }) => {
-      readMessagesByRowKeysInputs.push(input);
+    const readMessagesByIdsInputs: ReadMessagesByIdsInput[] = [];
+    trpcMsw.message.readMessagesByIds.query(({ input }) => {
+      readMessagesByIdsInputs.push(input);
       return [reply];
     });
     trpcMsw.room.readUsersByIds.query(() => []);
@@ -38,6 +38,6 @@ describe(useReadMessageMetadata, () => {
     );
     await readMessageMetadata(roomId, [replyingMessage, message]);
 
-    expect(readMessagesByRowKeysInputs).toStrictEqual([{ messageIds: [reply.id], roomId }]);
+    expect(readMessagesByIdsInputs).toStrictEqual([{ messageIds: [reply.id], roomId }]);
   });
 });

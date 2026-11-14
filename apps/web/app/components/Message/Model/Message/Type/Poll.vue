@@ -15,7 +15,7 @@ const pollContent = computed(() => {
   const parsedMessage = jsonDateParse(message.message);
   const parsedPollContent = pollMessageContentSchema.safeParse(parsedMessage);
   if (parsedPollContent.success) return parsedPollContent.data;
-  else throw new InvalidOperationError(Operation.Read, message.id, parsedPollContent.error.message);
+  else throw new InvalidOperationError(Operation.Read, `${message.id}`, parsedPollContent.error.message);
 });
 const totalVoteCount = computed(() => Object.keys(pollContent.value.votes).length);
 const optionIdVoteCountMap = computed(() => getOptionIdVoteCountMap(pollContent.value.votes));

@@ -3,6 +3,12 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useConnectionStore } from "@/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
+// A role's permission bitfield is a bigint, which JSON cannot carry, so an event names it by its decimal digits
+const parseRole = <TRole extends { permissions: string }>({ permissions, ...role }: TRole) => ({
+  ...role,
+  permissions: BigInt(permissions),
+});
+
 export const useRoleEvents = () => {
   const roleStore = useRoleStore();
   const {
@@ -23,14 +29,16 @@ export const useRoleEvents = () => {
 
   onScopeDispose(
     onRoomEvent("assignRole", ({ userId, ...role }) => {
-      const existingMemberRoles = getMemberRoles(role.roomId, userId);
-      if (!existingMemberRoles.some(({ id }) => id === role.id))
-        mutateMemberRoles(role.roomId, userId, [...existingMemberRoles, role]);
+      const parsedRole = parseRole(role);
+      const existingMemberRoles = getMemberRoles(parsedRole.roomId, userId);
+      if (!existingMemberRoles.some(({ id }) => id === parsedRole.id))
+        mutateMemberRoles(parsedRole.roomId, userId, [...existingMemberRoles, parsedRole]);
     }),
   );
   onScopeDispose(
     onRoomEvent("createRole", (newRole) => {
-      setRoles(newRole.roomId, [newRole, ...getRoles(newRole.roomId)]);
+      const parsedRole = parseRole(newRole);
+      setRoles(parsedRole.roomId, [parsedRole, ...getRoles(parsedRole.roomId)]);
     }),
   );
   onScopeDispose(
@@ -60,7 +68,7 @@ export const useRoleEvents = () => {
   );
   onScopeDispose(
     onRoomEvent("updateMemberPermissionOverride", ({ allow, deny, roomId: eventRoomId, userId }) => {
-      setMemberPermissionOverride(eventRoomId, userId, { allow, deny });
+      setMemberPermissionOverride(eventRoomId, userId, { allow: BigInt(allow), deny: BigInt(deny) });
       // A member's own bitfield is what every permission gate reads, so their change re-reads it rather than
       // Recomputing it here from the roles the client may not hold in full
       if (userId === session.value.data?.user.id) readMyPermissionsInBackground(eventRoomId);
@@ -68,9 +76,10 @@ export const useRoleEvents = () => {
   );
   onScopeDispose(
     onRoomEvent("updateRole", (updatedRole) => {
+      const parsedRole = parseRole(updatedRole);
       setRoles(
-        updatedRole.roomId,
-        getRoles(updatedRole.roomId).map((role) => (role.id === updatedRole.id ? updatedRole : role)),
+        parsedRole.roomId,
+        getRoles(parsedRole.roomId).map((role) => (role.id === parsedRole.id ? parsedRole : role)),
       );
     }),
   );

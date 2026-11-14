@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SerializableValue } from "@esposter/db-schema";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { useRoomStore } from "@/store/message/room";

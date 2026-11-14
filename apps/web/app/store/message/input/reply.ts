@@ -25,7 +25,10 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   const dataStore = useDataStore();
   // These are all the messages that have been replied to. Every read and write names the room the message is in —
   // A hook or a read response can land after a switch, and the thread pane renders a room beside the one on screen
-  const { getDataRef: getReplyMapRef } = useDataMap(() => roomStore.currentRoomId, new Map<string, ClientMessage>());
+  const { getDataRef: getReplyMapRef } = useDataMap(
+    () => roomStore.currentRoomId,
+    new Map<ClientMessage["id"], ClientMessage>(),
+  );
   MessageHookMap[Operation.Create].register(({ replyToId: repliedMessageId, roomId }) => {
     if (!repliedMessageId) return;
     const reply = dataStore.getSlice(roomId).items.value.find(({ id }) => id === repliedMessageId);

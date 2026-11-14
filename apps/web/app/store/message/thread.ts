@@ -12,7 +12,7 @@ export const useThreadStore = defineStore("message/thread", () => {
   // Response can never land on the thread the user asked for next
   const readThreadKey = Symbol("readThread");
   const { executeQuery, isPending: isReadThreadPending } = useMutation();
-  const activeThreadRootId = ref<"" | ClientMessage["id"]>("");
+  const activeThreadRootId = ref<0 | ClientMessage["id"]>(0);
   const activeRoomId = ref<ClientMessage["roomId"]>("");
   const threadMessages = ref<ClientMessage[]>([]);
   const layoutStore = useLayoutStore();
@@ -56,7 +56,7 @@ export const useThreadStore = defineStore("message/thread", () => {
     ]);
   };
   const closeThread = () => {
-    activeThreadRootId.value = "";
+    activeThreadRootId.value = 0;
     activeRoomId.value = "";
     threadMessages.value = [];
     // A split exists to hold the thread beside another pane, so it goes with the thread — and the drawer keeps

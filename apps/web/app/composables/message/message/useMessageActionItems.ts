@@ -188,7 +188,7 @@ export const useMessageActionItems = (message: ClientMessage, isEditable: Ref<bo
       case MessageType.Webhook:
         return [copyTextItem, ...pinMessageItems.value, markUnreadFromHereItem, copyMessageLinkItem];
       default:
-        return exhaustiveGuard(message);
+        return exhaustiveGuard(message.type);
     }
   });
   const deleteMessageItem = computed<Item | undefined>(() =>

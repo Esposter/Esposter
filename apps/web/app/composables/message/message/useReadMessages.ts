@@ -1,11 +1,10 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_SORT_BY } from "#shared/services/pagination/constants";
-import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { checkIsMessageId } from "@/services/message/checkIsMessageId";
 import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
+import { toMessagePage } from "@/services/message/toMessagePage";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
@@ -30,35 +29,34 @@ export const useReadMessages = () => {
       // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
       const messageId = getRouteParam(currentRoute.value.params, "messageId");
       if (checkIsMessageId(messageId)) {
-        const messages = await $trpc.message.readMessagesByRowKeys.query({ messageIds: [Number(messageId)], roomId });
-        if (messages.length > 0) {
-          const messageCursor = serialize(takeOne(messages), MESSAGE_SORT_BY);
-          const cursorPaginationData = await $trpc.message.readMessages.query({
-            cursor: messageCursor,
-            isIncludeValue: true,
+        const [message] = await $trpc.message.readMessagesByIds.query({ messageIds: [Number(messageId)], roomId });
+        if (message) {
+          // A page older than the message, the message itself first: the newer side is not read, so it stays unloaded
+          const page = toMessagePage(
             roomId,
-          });
+            await $trpc.message.readMessages.query({ before: message.id + 1, roomId }),
+          );
           hasMoreNewer.value = true;
-          nextCursorNewer.value = messageCursor;
-          await readMetadata(roomId, cursorPaginationData.items);
-          return cursorPaginationData;
+          nextCursorNewer.value = String(message.id);
+          await readMetadata(roomId, page.items);
+          return page;
         }
       }
 
-      const cursorPaginationData = await $trpc.message.readMessages.query({ roomId });
+      const page = toMessagePage(roomId, await $trpc.message.readMessages.query({ roomId }));
       hasMoreNewer.value = false;
       nextCursorNewer.value = "";
-      await readMetadata(roomId, cursorPaginationData.items);
-      return cursorPaginationData;
+      await readMetadata(roomId, page.items);
+      return page;
     });
   };
 
   const readMoreMessages = (onComplete: () => void) => {
     const roomId = requirePartitionKey(currentRoomId.value, readMoreMessages.name);
     return readMoreItems(async (cursor) => {
-      const cursorPaginationData = await $trpc.message.readMessages.query({ cursor, roomId });
-      await readMetadata(roomId, cursorPaginationData.items);
-      return cursorPaginationData;
+      const page = toMessagePage(roomId, await $trpc.message.readMessages.query({ before: Number(cursor), roomId }));
+      await readMetadata(roomId, page.items);
+      return page;
     }, onComplete);
   };
 

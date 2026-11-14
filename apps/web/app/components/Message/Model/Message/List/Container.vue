@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { checkIsMessageId } from "@/services/message/checkIsMessageId";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
@@ -13,11 +14,11 @@ const { items } = storeToRefs(dataStore);
 // And the mounted scroll runs again for the message the new path names
 const messageId = getRouteParam(currentRoute.value.params, "messageId");
 
-if (messageId) {
+if (checkIsMessageId(messageId)) {
   const scrollToMessage = useScrollToMessage();
 
   onMounted(async () => {
-    await scrollToMessage(currentRoomId.value, messageId);
+    await scrollToMessage(currentRoomId.value, Number(messageId));
   });
 }
 </script>

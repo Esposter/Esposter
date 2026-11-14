@@ -1,6 +1,9 @@
 /* oxlint-disable no-await-in-loop -- Order is the contract: each row lands in the order the window holds it */
+import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
-import type { DeleteMessageInput, StandardCreateMessageInput, Typing, UpdateMessageInput } from "@esposter/db-schema";
+import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
+import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
+import type { Typing } from "@esposter/db-schema";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
@@ -14,7 +17,7 @@ import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
-import { AzureEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
@@ -29,7 +32,7 @@ export const useDataStore = defineStore("message/data", () => {
   // Always carries as its `roomId`: a subscription echo, a rejected edit's rollback and an attachment
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
   const getRoomOperationData = (roomId: ClientMessage["roomId"]) =>
-    createOperationData(getSlice(roomId).items, ["id"], AzureEntityType.Message);
+    createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.Message);
   // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
   // And a global one would still be pointing at that room's window after the switch — so the next room renders
   // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
@@ -54,7 +57,7 @@ export const useDataStore = defineStore("message/data", () => {
   // They typed once the editor is cleared. It is handed the attachments this send took, so the composer stops
   // Offering them to the next Enter while it waits for `CommitSend` to drop them for good
   const createMessage = async (
-    input: StandardCreateMessageInput,
+    input: CreateMessageInput,
     onOptimisticCreate?: (sentFileIds: string[]) => Promise<void>,
     // Whose attachments this send took, so the commit and the rollback reach the composer that is holding them
     target: ComposerTarget = { roomId: input.roomId, threadRootId: 0 },
@@ -198,7 +201,7 @@ export const useDataStore = defineStore("message/data", () => {
       const loadedMessages = roomItems.value.filter(({ isLoading }) => !isLoading);
       if (loadedMessages.length === 0) return;
 
-      const liveMessages = await $trpc.message.readMessagesByRowKeys.query({
+      const liveMessages = await $trpc.message.readMessagesByIds.query({
         messageIds: loadedMessages.map(({ id }) => id),
         roomId,
       });
@@ -213,7 +216,7 @@ export const useDataStore = defineStore("message/data", () => {
   );
 
   const sendMessage = async (
-    input: StandardCreateMessageInput,
+    input: CreateMessageInput,
     editor?: Editor,
     // Everything that composes outside a composer — a slash command, a poll, a draft sent from the drafts page —
     // Is the room's own send, and its reset finds nothing of the thread pane's to clear

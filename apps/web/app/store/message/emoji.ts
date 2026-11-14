@@ -1,8 +1,9 @@
-import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
-import type { DeleteEmojiInput, RoomReaction, UpdateEmojiInput } from "@esposter/db-schema";
+import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
+import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
+import type { RoomReaction } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
-import { checkIsOnlyReactor, getOrCreate, getUpdatedUserIds, ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
 
 // A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair
 const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
@@ -12,7 +13,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
   const { executeMutation: executeCreateEmojiMutation } = useMutation();
-  const { executeMutation: executeUpdateEmojiMutation } = useMutation();
   const { executeMutation: executeDeleteEmojiMutation } = useMutation();
   // A message's reactions, filed under the room they belong to and then under the message. Every write names both,
   // Since a read response, a subscription echo and a rollback all land after an await, when the room on screen may have moved on
@@ -23,58 +23,62 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const setEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
     getOrCreate(emojiMap.value, roomId, () => new Map<number, RoomReaction[]>()).set(messageId, emojis);
   };
-  const createEmoji = async (input: CreateEmojiInput) => {
+  const findEmoji = (roomId: string, emoji: Pick<RoomReaction, "emojiTag" | "messageId">) =>
+    getEmojis(roomId, emoji.messageId).find(getEntityIdEqualComparator(["emojiTag"], emoji));
+  // Puts the reaction in place of the one it identifies, or adds it, and returns what was there before for a rollback
+  // A room event carries the whole row as the room holds it after a create or an update, so both are one write here
+  const storeEmoji = (roomId: string, emoji: RoomReaction) => {
+    const previousEmoji = findEmoji(roomId, emoji);
+    const emojis = getEmojis(roomId, emoji.messageId);
+    setEmojis(
+      roomId,
+      emoji.messageId,
+      previousEmoji ? emojis.map((item) => (item === previousEmoji ? emoji : item)) : [...emojis, emoji],
+    );
+  };
+  // Puts the caller in or takes them out of the reaction as it stands now, so what other members did while the write was
+  // in flight is kept. The reaction goes with its last reactor
+  const storeReactor = (
+    roomId: string,
+    { emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">,
+    userId: string,
+    isReactor: boolean,
+  ) => {
+    const userIds = (findEmoji(roomId, { emojiTag, messageId })?.userIds ?? []).filter(
+      (reactorId) => reactorId !== userId,
+    );
+    if (isReactor) userIds.push(userId);
+    if (userIds.length > 0) storeEmoji(roomId, { emojiTag, messageId, userIds });
+    else storeDeleteEmoji(roomId, { emojiTag, messageId });
+  };
+  const createEmoji = async (input: AddReactionInput) => {
     if (!session.value.data) return;
-    const newEmoji = reactive({
-      emojiTag: input.emojiTag,
-      messageId: input.messageId,
-      userIds: [session.value.data.user.id],
-    });
-    await executeCreateEmojiMutation(() => $trpc.message.emoji.createEmoji.mutate(input), {
+
+    const { id: userId } = session.value.data.user;
+    await executeCreateEmojiMutation(() => $trpc.message.emoji.addReaction.mutate(input), {
       applyOptimistic: () => {
-        storeCreateEmoji(input.roomId, newEmoji);
+        storeReactor(input.roomId, input, userId, true);
         return () => {
-          storeDeleteEmoji(input.roomId, newEmoji);
+          storeReactor(input.roomId, input, userId, false);
         };
       },
       // Keyed per emoji identity so reacting with two emojis in quick succession never queues behind the other
-      // The first one's rollback or server-entity assignment
-      key: getEmojiKey(newEmoji),
-      onSuccess: (result) => {
-        Object.assign(newEmoji, result);
-      },
-    });
-  };
-  const updateEmoji = async (input: Pick<RoomReaction, "messageId" | "userIds"> & UpdateEmojiInput) => {
-    if (!session.value.data) return;
-    const { id: userId } = session.value.data.user;
-    const updatedInput = { ...input, userIds: getUpdatedUserIds(input.userIds, userId) };
-    await executeUpdateEmojiMutation(() => $trpc.message.emoji.updateEmoji.mutate(updatedInput), {
-      applyOptimistic: () => {
-        storeUpdateEmoji(input.roomId, updatedInput);
-        return () => {
-          // Toggle this user back out of the reaction as it stands
-          const currentEmoji = getEmojis(input.roomId, input.messageId).find((emoji) =>
-            getEntityIdEqualComparator(["emojiTag"], input)(emoji),
-          );
-          if (!currentEmoji) return;
-
-          storeUpdateEmoji(input.roomId, { ...input, userIds: getUpdatedUserIds(currentEmoji.userIds, userId) });
-        };
-      },
       key: getEmojiKey(input),
+      // The room does not echo a write back to the device that made it, so the row the server settled is applied here
+      onSuccess: (result) => {
+        storeEmoji(input.roomId, result);
+      },
     });
   };
-  const deleteEmoji = async (input: DeleteEmojiInput) => {
-    await executeDeleteEmojiMutation(() => $trpc.message.emoji.deleteEmoji.mutate(input), {
-      // Read as the write is sent, so a rejected removal puts back the reaction as the write ahead of it left it
+  const deleteEmoji = async (input: RemoveReactionInput) => {
+    if (!session.value.data) return;
+
+    const { id: userId } = session.value.data.user;
+    await executeDeleteEmojiMutation(() => $trpc.message.emoji.removeReaction.mutate(input), {
       applyOptimistic: () => {
-        const deletedEmoji = getEmojis(input.roomId, input.messageId).find((emoji) =>
-          getEntityIdEqualComparator(["emojiTag"], input)(emoji),
-        );
-        storeDeleteEmoji(input.roomId, input);
+        storeReactor(input.roomId, input, userId, false);
         return () => {
-          if (deletedEmoji) storeCreateEmoji(input.roomId, deletedEmoji);
+          storeReactor(input.roomId, input, userId, true);
         };
       },
       key: getEmojiKey(input),
@@ -84,29 +88,11 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const toggleEmoji = async (roomId: string, emoji: RoomReaction) => {
     if (!session.value.data) return;
 
-    const { emojiTag, messageId, userIds } = emoji;
-    if (checkIsOnlyReactor(userIds, session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
-    else await updateEmoji({ emojiTag, messageId, roomId, userIds });
+    const { emojiTag, messageId } = emoji;
+    if (emoji.userIds.includes(session.value.data.user.id)) await deleteEmoji({ emojiTag, messageId, roomId });
+    else await createEmoji({ emojiTag, messageId, roomId });
   };
 
-  const storeCreateEmoji = (roomId: string, newEmoji: RoomReaction) => {
-    const emojis = getEmojis(roomId, newEmoji.messageId);
-    emojis.push(newEmoji);
-    setEmojis(roomId, newEmoji.messageId, emojis);
-  };
-  // The fields written ride along with the identity — every caller updates `userIds`, which the identity alone
-  // Cannot name, and the assign below is what applies them
-  const storeUpdateEmoji = (
-    roomId: string,
-    input: Partial<RoomReaction> & Pick<RoomReaction, "messageId"> & UpdateEmojiInput,
-  ) => {
-    const emojis = getEmojis(roomId, input.messageId);
-    const index = emojis.findIndex((emoji) => getEntityIdEqualComparator(["emojiTag"], input)(emoji));
-    if (index === -1) return;
-
-    Object.assign(takeOne(emojis, index), input);
-    setEmojis(roomId, input.messageId, emojis);
-  };
   const storeDeleteEmoji = (roomId: string, input: Pick<RoomReaction, "emojiTag" | "messageId">) => {
     const emojis = getEmojis(roomId, input.messageId);
     setEmojis(
@@ -116,15 +102,5 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     );
   };
 
-  return {
-    createEmoji,
-    deleteEmoji,
-    getEmojis,
-    setEmojis,
-    storeCreateEmoji,
-    storeDeleteEmoji,
-    storeUpdateEmoji,
-    toggleEmoji,
-    updateEmoji,
-  };
+  return { createEmoji, deleteEmoji, getEmojis, setEmojis, storeDeleteEmoji, storeEmoji, toggleEmoji };
 });

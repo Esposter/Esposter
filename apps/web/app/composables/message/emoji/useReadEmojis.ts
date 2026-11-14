@@ -10,7 +10,7 @@ export const useReadEmojis = () => {
   return async (roomId: RoomInMessage["id"], messageIds: ClientMessage["id"][]) => {
     if (messageIds.length === 0) return [];
 
-    const emojis = await $trpc.message.emoji.readEmojis.query({ messageIds, roomId });
+    const emojis = await $trpc.message.emoji.readReactions.query({ messageIds, roomId });
     for (const messageId of messageIds)
       setEmojis(
         roomId,

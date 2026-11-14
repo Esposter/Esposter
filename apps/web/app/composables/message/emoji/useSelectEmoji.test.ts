@@ -1,4 +1,4 @@
-import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
+import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
 import type { MessageEmojiMetadataEntity } from "@esposter/db-schema";
 import { useSelectEmoji } from "@/composables/message/emoji/useSelectEmoji";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Hoisted above the imports by `vi.mock`, so unlike a plain constant these cannot live inside the describe
 const { createEmoji, emojis, toggleEmoji } = vi.hoisted(() => ({
-  createEmoji: vi.fn<(input: CreateEmojiInput) => Promise<void>>(),
+  createEmoji: vi.fn<(input: AddReactionInput) => Promise<void>>(),
   // Only the two fields the composable matches on, so the double states its own contract
   emojis: new Array<Pick<MessageEmojiMetadataEntity, "emojiTag" | "userIds">>(),
   toggleEmoji: vi.fn<(roomId: string, emoji: MessageEmojiMetadataEntity) => Promise<void>>(),

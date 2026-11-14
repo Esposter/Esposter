@@ -28,11 +28,12 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   // A caller handed nothing renders an unfollowed star for a thread the user follows
   const { read: readFollowedThreads, refetch: refetchFollowedThreads } = useCachedRead(
     async (roomId) => {
-      const followedThreadsResult = await $trpc.message.readFollowedThreads.query({ roomId });
+      const { threadRootIds, threads } = await $trpc.message.readFollowedThreads.query({ roomId });
+      const followedThreads = threads.map((thread) => ({ ...thread, roomId }));
       // A row is drawn only once its root's author is known, so the authors the roots name are read with the list, as a
       // Room's messages read theirs, and the list lands with them already known
-      await readMessageCreators(roomId, followedThreadsResult.threads);
-      return followedThreadsResult;
+      await readMessageCreators(roomId, followedThreads);
+      return { threadRootIds, threads: followedThreads };
     },
     {
       onSuccess: ({ threadRootIds, threads }, roomId) => {

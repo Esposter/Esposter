@@ -3,18 +3,18 @@ import { useEmojiStore } from "@/store/message/emoji";
 
 export const useEmojiEvents = () => {
   const emojiStore = useEmojiStore();
-  const { storeCreateEmoji, storeDeleteEmoji, storeUpdateEmoji } = emojiStore;
+  const { storeDeleteEmoji, storeEmoji } = emojiStore;
   const connectionStore = useConnectionStore();
   const { onRoomEvent } = connectionStore;
 
   onScopeDispose(
     onRoomEvent("createEmoji", (newEmoji, roomId) => {
-      storeCreateEmoji(roomId, newEmoji);
+      storeEmoji(roomId, newEmoji);
     }),
   );
   onScopeDispose(
     onRoomEvent("updateEmoji", (updatedEmoji, roomId) => {
-      storeUpdateEmoji(roomId, updatedEmoji);
+      storeEmoji(roomId, updatedEmoji);
     }),
   );
   onScopeDispose(

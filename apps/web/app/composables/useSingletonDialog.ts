@@ -18,7 +18,8 @@ const checkIsPresent = (value: unknown) => (Array.isArray(value) ? value.length 
 // Outlives the page, so a dialog left open by a navigation would otherwise re-open over its row on the way back.
 // A dialog over a set of rows — a selection's delete — targets their ids and resolves the rows still present, and an
 // Empty set is no target and no item, so the same reconciling drops a selection whose rows are all gone
-export const useSingletonDialog = <TTarget extends string | string[], TItem>(
+// A target is the identity of its item, a string or an integer id, and the cleared target is the empty string
+export const useSingletonDialog = <TTarget extends string | number | (string | number)[], TItem>(
   target: Ref<TTarget>,
   item?: MaybeRefOrGetter<TItem | undefined>,
 ) => {

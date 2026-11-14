@@ -1,8 +1,10 @@
+import type { ClientMessage } from "@/models/message/ClientMessage";
+
 import { useRoomStore } from "@/store/message/room";
 
 export const useForwardStore = defineStore("message/input/forward", () => {
   const roomStore = useRoomStore();
-  const { data: forwardMessageId } = useDataMap(() => roomStore.currentRoomId, "");
+  const { data: forwardMessageId } = useDataMap<"" | ClientMessage["id"]>(() => roomStore.currentRoomId, "");
   const { data: roomIds } = useDataMap<string[]>(() => roomStore.currentRoomId, []);
   const { data: messageInput } = useDataMap(() => roomStore.currentRoomId, "");
   const resetForward = () => {

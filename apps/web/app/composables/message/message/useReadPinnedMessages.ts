@@ -1,4 +1,5 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
+import { toMessagePage } from "@/services/message/toMessagePage";
 import { usePinStore } from "@/store/message/pin";
 import { useRoomStore } from "@/store/message/room";
 
@@ -9,14 +10,17 @@ export const useReadPinnedMessages = () => {
   const { readItems, readMoreItems } = pinStore;
   const { $trpc } = useNuxtApp();
   const readPinnedMessages = () =>
-    readItems(() => {
+    readItems(async () => {
       const roomId = requirePartitionKey(currentRoomId.value, readPinnedMessages.name);
-      return $trpc.message.readMessages.query({ filter: { isPinned: true }, roomId });
+      return toMessagePage(roomId, await $trpc.message.readMessages.query({ filter: { isPinned: true }, roomId }));
     });
   const readMorePinnedMessages = (onComplete: () => void) =>
-    readMoreItems((cursor) => {
+    readMoreItems(async (cursor) => {
       const roomId = requirePartitionKey(currentRoomId.value, readMorePinnedMessages.name);
-      return $trpc.message.readMessages.query({ cursor, filter: { isPinned: true }, roomId });
+      return toMessagePage(
+        roomId,
+        await $trpc.message.readMessages.query({ before: Number(cursor), filter: { isPinned: true }, roomId }),
+      );
     }, onComplete);
   return { readMorePinnedMessages, readPinnedMessages };
 };

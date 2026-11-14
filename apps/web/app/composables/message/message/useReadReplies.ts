@@ -10,8 +10,8 @@ export const useReadReplies = () => {
   return async (roomId: RoomInMessage["id"], replyToIds: ClientMessage["id"][]) => {
     if (replyToIds.length === 0) return;
 
-    const messages = await $trpc.message.readMessagesByRowKeys.query({ messageIds: replyToIds, roomId });
+    const messages = await $trpc.message.readMessagesByIds.query({ messageIds: replyToIds, roomId });
     const replyMap = getReplyMapRef(roomId);
-    for (const message of messages) replyMap.value.set(message.id, message);
+    for (const message of messages) replyMap.value.set(message.id, { ...message, roomId });
   };
 };

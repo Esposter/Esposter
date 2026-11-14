@@ -17,6 +17,6 @@ export const useScrollToMessage = () => {
     }
 
     setActiveMessageId(messageId);
-    window.document.getElementById(messageId)?.scrollIntoView({ block: "center" });
+    window.document.getElementById(`${messageId}`)?.scrollIntoView({ block: "center" });
   };
 };

@@ -94,7 +94,7 @@ export const executeSlashCommand = async (
   if (message)
     await sendMessage({
       message: marked.parse(message, { async: false }),
-      replyToId: replyToId.value,
+      replyToId: replyToId.value || null,
       roomId,
       type: MessageType.Message,
     });
