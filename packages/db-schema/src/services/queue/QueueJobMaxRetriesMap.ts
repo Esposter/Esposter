@@ -2,8 +2,8 @@ import { QueueJob } from "#src/models/queue/QueueJob";
 
 // How many times a job's queue redelivers a message its handler threw on, before the message goes to the job's dead-letter
 // queue. Exhaustive over QueueJob on purpose: a new job has to state its answer here rather than inherit a default that
-// silently retries it. Event Grid made ten delivery attempts, and a queue's max_retries counts the retries after the first.
-const MAX_IDEMPOTENT_QUEUE_JOB_RETRIES = 9;
+// silently retries it. apps/infra's QueueConsumerRetry declares each consumer with this same count, so the two change together.
+const MAX_IDEMPOTENT_QUEUE_JOB_RETRIES = 5;
 
 export const QueueJobMaxRetriesMap = {
   // Each sweep treats a gone target as done and the user row goes last, so a rerun finds only what a failed run left.
