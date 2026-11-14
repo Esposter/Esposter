@@ -89,10 +89,15 @@ export const baseCallRouter = router({
     signal,
   }) {
     const events = await onWhileJoinedCall(ctx, "joinCall", input, signal);
+    const sessionId = ctx.getSessionPayload.session.id;
 
-    for await (const [{ callSessionId, participant, sessionId }] of events) {
-      if (callSessionId !== input || sessionId === ctx.getSessionPayload.session.id) continue;
-      yield participant;
+    for await (const [event] of events) {
+      if (event.callSessionId !== input) continue;
+      // A rejoin is for its own connection alone, so nobody else in the call hears of a connection being replaced
+      if (event.type === "rejoin") {
+        if (event.sessionId === sessionId)
+          yield { authToken: event.authToken, canPublishMicrophone: event.canPublishMicrophone, type: "rejoin" };
+      } else if (event.sessionId !== sessionId) yield { participant: event.participant, type: "join" };
     }
   }),
   onLeaveCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({

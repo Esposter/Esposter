@@ -18,7 +18,7 @@ export const joinCallAsParticipant = async (
   const isFirstJoiner = !callSessionParticipantMap.has(callSessionId);
   const participant = { ...callParticipant, isCameraEnabled: false };
   const participantMap = createCallParticipant(callSessionId, participant);
-  callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId });
+  callEventEmitter.emit("joinCall", { callSessionId, participant, sessionId, type: "join" });
 
   if (isFirstJoiner) {
     callStartTimeMap.set(callSessionId, new Date());

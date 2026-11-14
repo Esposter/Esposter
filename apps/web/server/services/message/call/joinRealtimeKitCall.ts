@@ -38,6 +38,7 @@ export const joinRealtimeKitCall = async (
   const joinedCall = await joinCallAsParticipant(callSession, participant, participant.id, userId);
   getOrCreate(realtimeKitParticipantMap, callSession.id, () => new Map()).set(participant.id, {
     id: realtimeKitParticipant.id,
+    isRejoining: false,
     publishSources: [...JOIN_PUBLISH_SOURCES],
   });
   return { ...joinedCall, authToken: realtimeKitParticipant.token, meetingId };

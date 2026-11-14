@@ -5,9 +5,10 @@ import { createCallParticipant } from "#server/services/message/call/createCallP
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
 import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
+import { realtimeKitParticipantMap } from "#server/services/realtimeKit/realtimeKitParticipantMap";
 import { removeRealtimeKitParticipant } from "#server/services/realtimeKit/removeRealtimeKitParticipant";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
-import { getResultAsync } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 import { defineEventHandler } from "nuxt/server";
 import { z } from "zod";
 
@@ -44,6 +45,9 @@ export default defineEventHandler(async (event) => {
       const callSessionId = callSession.id;
 
       if (webhookEvent.event === "meeting.participantLeft") {
+        // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving: the
+        // Replacement is added under the same session, so the participant stays in the call
+        if (realtimeKitParticipantMap.get(callSessionId)?.get(sessionId)?.isRejoining) return { ok: true };
         const userId = callSessionParticipantMap.get(callSessionId)?.get(sessionId)?.userId ?? "";
         await leaveCallAsParticipant(db, callSessionId, sessionId, userId);
         return { ok: true };
@@ -55,13 +59,16 @@ export default defineEventHandler(async (event) => {
       });
       if (!session) return { ok: true };
       else if (!(await checkIsCallConnectionAdmitted(db, callSessionId, session.userId))) {
-        await removeRealtimeKitParticipant(webhookEvent.meeting.id, sessionId);
+        await getResultAsync(() => removeRealtimeKitParticipant(webhookEvent.meeting.id, sessionId)).match(
+          noop,
+          console.error,
+        );
         return { ok: true };
       }
 
       const callParticipant = createParticipant(session, session.usersInAuth);
       createCallParticipant(callSessionId, callParticipant);
-      callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId });
+      callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId, type: "join" });
       return { ok: true };
     },
     (error) => {
