@@ -52,10 +52,10 @@ The exclusion is by resource type, so it holds for every instance of the type. E
 
 ## Key files
 
-| File                                                                      | Role                                                                |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------ |
-| `apps/infra/src/cloudflare/resources/`                                    | One file per Cloudflare resource, folders by resource type          |
-| `apps/infra/src/cloudflare/constants/CloudflareAccountId.ts`              | The account id every Cloudflare resource is declared under          |
-| `apps/infra/src/github/`                                                  | GitHub repository settings, labels, environments, rulesets, secrets |
-| `apps/infra/docs/cloudflare/naming-conventions.md`                        | The Cloudflare naming shape and its tokens                          |
-| `packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts` | The name function the program and the Workers both call             |
+| File                                                                      | Role                                                                 |
+| :------------------------------------------------------------------------ | :------------------------------------------------------------------- |
+| `apps/infra/src/cloudflare/resources/`                                    | One file per Cloudflare resource, folders by resource type           |
+| `packages/db-schema/src/services/cloudflare/constants.ts`                 | The committed account id every Cloudflare resource is declared under |
+| `apps/infra/src/github/`                                                  | GitHub repository settings, labels, environments, rulesets, secrets  |
+| `apps/infra/docs/cloudflare/naming-conventions.md`                        | The Cloudflare naming shape and its tokens                           |
+| `packages/db-schema/src/services/cloudflare/getCloudflareResourceName.ts` | The name function the program and the Workers both call              |

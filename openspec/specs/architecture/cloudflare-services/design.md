@@ -114,27 +114,27 @@ The decisions behind this split, and the alternatives they beat, are recorded in
 
 ## Key files
 
-| File                                                                      | Role                                                                |
-| :------------------------------------------------------------------------ | :------------------------------------------------------------------ |
-| `apps/web/configuration/nitro.ts`                                         | the web Worker's Nitro build                                        |
-| `apps/web/configuration/wrangler.ts`                                      | the web Worker's wrangler configuration, from its bindings          |
-| `apps/web/server/db/index.ts`                                             | the Drizzle client over the `core` binding                          |
-| `apps/web/server/routes/ws/`                                              | the three socket routes: user, room and call                        |
-| `apps/web/server/services/realtime/forwardSocket.ts`                      | authorises an upgrade and forwards it to the owning object          |
-| `apps/functions/src/worker.ts`                                            | the functions Worker: queue handler, Cron Trigger, exported objects |
-| `apps/functions/src/durableObjects/RealtimeObject.ts`                     | the socket behaviour the three objects share                        |
-| `apps/functions/src/durableObjects/RoomObject.ts`                         | a room's messages, search, scheduled messages and online members    |
-| `apps/functions/src/durableObjects/CallObject.ts`                         | a call's participants, knockers and admissions                      |
-| `apps/functions/src/durableObjects/UserObject.ts`                         | a person's sockets, indexes, reminders and online status            |
-| `apps/functions/src/handlers/`                                            | the handler each queue job runs                                     |
-| `apps/functions/wrangler.jsonc`                                           | the functions Worker's bindings, queues and Cron Trigger            |
-| `packages/db-schema/src/models/queue/QueueJob.ts`                         | the job names, one queue each                                       |
-| `packages/db-schema/src/models/storage/StorageBucket.ts`                  | the bucket names, one R2 bucket each                                |
-| `packages/db-schema/src/models/realtime/`                                 | the `RoomEvent`, `CallEvent` and `UserEvent` unions                 |
-| `packages/db-schema/src/models/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                   |
-| `packages/db-mock/src/createMockDb.ts`                                    | Miniflare's D1 for tests                                            |
-| `apps/infra/src/cloudflare/`                                              | the Cloudflare resources the Pulumi program declares                |
-| `.github/workflows/CI.yaml`                                               | the checks and the deploy that runs on `main`                       |
+| File                                                                        | Role                                                                |
+| :-------------------------------------------------------------------------- | :------------------------------------------------------------------ |
+| `apps/web/configuration/nitro.ts`                                           | the web Worker's Nitro build                                        |
+| `apps/web/configuration/wrangler.ts`                                        | the web Worker's wrangler configuration, from its bindings          |
+| `apps/web/server/db/index.ts`                                               | the Drizzle client over the `core` binding                          |
+| `apps/web/server/routes/ws/`                                                | the three socket routes: user, room and call                        |
+| `apps/web/server/services/realtime/forwardSocket.ts`                        | authorises an upgrade and forwards it to the owning object          |
+| `apps/functions/src/worker.ts`                                              | the functions Worker: queue handler, Cron Trigger, exported objects |
+| `apps/functions/src/durableObjects/RealtimeObject.ts`                       | the socket behaviour the three objects share                        |
+| `apps/functions/src/durableObjects/RoomObject.ts`                           | a room's messages, search, scheduled messages and online members    |
+| `apps/functions/src/durableObjects/CallObject.ts`                           | a call's participants, knockers and admissions                      |
+| `apps/functions/src/durableObjects/UserObject.ts`                           | a person's sockets, indexes, reminders and online status            |
+| `apps/functions/src/handlers/`                                              | the handler each queue job runs                                     |
+| `apps/functions/wrangler.jsonc`                                             | the functions Worker's bindings, queues and Cron Trigger            |
+| `packages/db-schema/src/models/queue/QueueJob.ts`                           | the job names, one queue each                                       |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`                    | the bucket names, one R2 bucket each                                |
+| `packages/db-schema/src/models/realtime/`                                   | the `RoomEvent`, `CallEvent` and `UserEvent` unions                 |
+| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | each environment's D1 database id                                   |
+| `packages/db-mock/src/createMockDb.ts`                                      | Miniflare's D1 for tests                                            |
+| `apps/infra/src/cloudflare/`                                                | the Cloudflare resources the Pulumi program declares                |
+| `.github/workflows/CI.yaml`                                                 | the checks and the deploy that runs on `main`                       |
 
 ## Sources
 

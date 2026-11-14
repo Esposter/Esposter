@@ -28,9 +28,9 @@ No secret value is in the code, in a wrangler configuration or in a stack file. 
 
 ## Key files
 
-| File                                                                      | Role                                                                   |
-| :------------------------------------------------------------------------ | :--------------------------------------------------------------------- |
-| `apps/web/configuration/wrangler.ts`                                      | The web Worker's wrangler block per environment, its vars and bindings |
-| `apps/functions/wrangler.jsonc`                                           | The functions Worker's configuration                                   |
-| `.github/worker-secrets.json`                                             | The secret names each Worker takes                                     |
-| `packages/db-schema/src/models/cloudflare/CloudflareCoreDatabaseIdMap.ts` | Each environment's `core` database id                                  |
+| File                                                                        | Role                                                                   |
+| :-------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| `apps/web/configuration/wrangler.ts`                                        | The web Worker's wrangler block per environment, its vars and bindings |
+| `apps/functions/wrangler.jsonc`                                             | The functions Worker's configuration                                   |
+| `.github/worker-secrets.json`                                               | The secret names each Worker takes                                     |
+| `packages/db-schema/src/services/cloudflare/CloudflareCoreDatabaseIdMap.ts` | Each environment's `core` database id                                  |
