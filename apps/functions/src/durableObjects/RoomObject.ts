@@ -33,10 +33,12 @@ import {
 } from "#src/services/room/constants";
 import { applyPollVote } from "#src/services/room/applyPollVote";
 import { getRoomSearchConditions } from "#src/services/room/getRoomSearchConditions";
-import { getMessageCreationRejection } from "@esposter/db";
+import { createReplyThreadFollows, getMessageCreationRejection } from "@esposter/db";
 import {
+  AppNotificationType,
   appUsersInMessage,
   MessageType,
+  publishNotification,
   MESSAGE_BATCH_MAX_LENGTH,
   relations,
   roomsInMessage,
@@ -600,6 +602,13 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       .get();
   }
 
+  // The author of a reply's thread root, which its follows name. A deleted root, or a webhook root, names nobody
+  private readThreadRootUserId(threadRootId: number | null): string | undefined {
+    if (threadRootId === null) return undefined;
+
+    return this.readLiveMessage(threadRootId)?.userId ?? undefined;
+  }
+
   private readReaction(messageId: number, emojiTag: string): RoomReaction | undefined {
     return this.db
       .select()
@@ -654,6 +663,27 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       await this.notifyUser(userId, (user) =>
         user.addSentMessage({ createdAt: now, messageId: sentMessage.id, roomId: this.roomId }),
       );
+      // What a live reply owes after its write, in its order: the thread follows, strictly before the notification that
+      // resolves the thread's followers. Both are best-effort, since the message already landed
+      await getResultAsync(() =>
+        createReplyThreadFollows(this.core, {
+          message: sentMessage,
+          roomId: this.roomId,
+          threadRootUserId: this.readThreadRootUserId(sentMessage.replyToId),
+        }),
+      ).match(noop, console.error);
+      await getResultAsync(() =>
+        publishNotification(this.env.PROCESS_NOTIFICATION_QUEUE, {
+          message: {
+            id: sentMessage.id,
+            message: sentMessage.message,
+            roomId: this.roomId,
+            userId: sentMessage.userId,
+          },
+          threadRootId: sentMessage.replyToId,
+          type: AppNotificationType.Message,
+        }),
+      ).match(noop, console.error);
       // A scheduled send advances the sender's slowmode clock as a live one does, so it cannot slip past the room's gate
       await getResultAsync(async () =>
         this.core

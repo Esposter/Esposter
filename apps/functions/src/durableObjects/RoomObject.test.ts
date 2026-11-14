@@ -3,12 +3,14 @@ import type { Mock } from "vitest";
 
 import { createMockDb } from "@esposter/db-mock";
 import {
+  AppNotificationType,
   appUsersInMessage,
   MessageType,
   roomRolesInMessage,
   roomsInMessage,
   RoomPermission,
   SOCKET_IDENTITY_HEADER,
+  threadFollowsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -294,6 +296,49 @@ describe(RoomObject, () => {
     expect(object.readScheduledMessages(userId)).toStrictEqual([later]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(due.id);
     expect(await state.ctx.storage.getAlarm()).toBe(later.runAt.getTime());
+  });
+
+  test("a scheduled reply follows its thread for its sender and for the root's author", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const root = await sendMessage(object, "root", otherActor);
+    const reply = await object.createScheduledMessage(
+      { id: crypto.randomUUID(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+
+    vi.setSystemTime(reply.runAt);
+    await object.alarm();
+
+    const follows = await mockDatabase.db
+      .select({ userId: threadFollowsInMessage.userId })
+      .from(threadFollowsInMessage)
+      .where(and(eq(threadFollowsInMessage.roomId, roomId), eq(threadFollowsInMessage.threadRootId, root.id)));
+    expect(follows.map(({ userId: followerId }) => followerId).sort()).toStrictEqual([userId, otherUserId].sort());
+  });
+
+  test("a scheduled reply is notified to its thread's followers once it is sent", async () => {
+    expect.hasAssertions();
+
+    const queue = { send: vi.fn<(message: unknown) => Promise<void>>(() => Promise.resolve()) };
+    environment = { ...environment, PROCESS_NOTIFICATION_QUEUE: queue } as unknown as Cloudflare.Env;
+    const { object } = createRoomObject();
+    const root = await sendMessage(object, "root", otherActor);
+    const reply = await object.createScheduledMessage(
+      { id: crypto.randomUUID(), message: "reply", replyToId: root.id, runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+
+    vi.setSystemTime(reply.runAt);
+    await object.alarm();
+
+    const sentReply = takeOne(object.readMessages({ limit: 1 }));
+    expect(queue.send).toHaveBeenCalledExactlyOnceWith({
+      message: { id: sentReply.id, message: "reply", roomId, userId },
+      threadRootId: root.id,
+      type: AppNotificationType.Message,
+    });
   });
 
   test("a scheduled message is dropped, not sent, when its sender has left the room by the time it comes due", async () => {
