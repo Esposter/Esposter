@@ -1,7 +1,10 @@
 import { deleteDirectory } from "#src/services/storage/deleteDirectory";
 import { listBlobNames } from "#src/services/storage/listBlobNames";
 import { createMockBucket } from "@esposter/db-mock";
+import { settleAll } from "@esposter/shared";
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
+
+const MOCK_BUCKET_CONCURRENCY = 50;
 
 describe(deleteDirectory, () => {
   const prefix = "prefix";
@@ -12,7 +15,11 @@ describe(deleteDirectory, () => {
 
   beforeAll(async () => {
     ({ bucket, dispose } = await createMockBucket("resource-assets"));
-    await Promise.all(blobNames.map((blobName) => bucket.put(blobName, "")));
+    // Miniflare's proxy refuses a thousand requests opened at once, so the objects are written in waves
+    await settleAll(
+      blobNames.map((blobName) => () => bucket.put(blobName, "")),
+      MOCK_BUCKET_CONCURRENCY,
+    );
   });
 
   afterAll(async () => {
