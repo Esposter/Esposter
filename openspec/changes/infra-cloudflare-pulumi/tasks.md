@@ -2,7 +2,7 @@
 
 ## 1.
 
-- [ ] 1.1 Declare the Cloudflare resources under `apps/infra/src/cloudflare`. Verified by `pnpm infra:preview` listing them as creates.
+- [x] 1.1 Declare the Cloudflare resources under `apps/infra/src/cloudflare`. Verified by `pnpm infra:preview` listing as creates only the production queue consumers and custom domains, which wait for the production Workers.
 
 ## 2.
 
