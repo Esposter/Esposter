@@ -1,6 +1,6 @@
+import { AzureContainer } from "#src/azure/models/AzureContainer";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
-import { AzureContainer } from "#src/azure/models/AzureContainer";
 import * as azure_native from "@pulumi/azure-native";
 
 const containerName = AzureContainer.DeadLetter;

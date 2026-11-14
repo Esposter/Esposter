@@ -1,8 +1,8 @@
 import type { EventSubscriptionGuardTarget } from "#src/azure/models/EventSubscriptionGuardTarget";
 
+import { AzureFunction } from "#src/azure/models/AzureFunction";
 import { prodEvgsEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe001";
 import { prodEvgsEsposterAe002 } from "#src/azure/resources/Microsoft.EventGrid/eventSubscriptions/prodEvgsEsposterAe002";
-import { AzureFunction } from "#src/azure/models/AzureFunction";
 
 const ProdEventSubscriptionGuardTargets: EventSubscriptionGuardTarget[] = [
   { azureFunction: AzureFunction.ProcessNotification, eventSubscription: prodEvgsEsposterAe002 },
