@@ -15,7 +15,7 @@ Where the member list, the settings Members panel and the @-mention list name a 
 
 Room display names are stored as `usersToRooms.displayName`, a `text().notNull().default("")` column, where empty means "no room-specific name". Every query that returns a member's name for display goes through `getDisplayNameExpression`, which is `coalesce(nullif(displayName, ''), name)`, so the server never hands back an empty display name in those. So the client takes the value it is given with `??`, and the one fallback to the account name lives in `getRoomMemberName`, which takes the account name a caller already holds, or reads it from the account map. Two reads return the raw column on purpose: `readMyUsersToRooms` returns the current user's own display name, where empty is the "no display name" state the My Profile field edits; and the typing broadcast reads its own row's raw value and applies `||` to the account name at the call site.
 
-Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/List`), the @-mention suggestion list (`Suggestion/MentionList`), the push notification title (queried server-side before the EventGrid publish), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
+Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/List`), the @-mention suggestion list (`Suggestion/MentionList`), the push notification title (queried server-side before the notification job is sent), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
 
 **`useCreator` resolves the display name itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getRoomMemberName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no room display name to overlay. An author nobody resolves, one the reader has never loaded, is drawn under the placeholder name rather than dropped.
 
@@ -42,8 +42,8 @@ One column: `usersToRooms.displayName` — `text`, NOT NULL DEFAULT `""`, length
 
 Two internal maps, both keyed by `roomId`, deliberately split for privacy:
 
-- **`myUserToRoom`** — `Map<roomId, UserToRoomInMessage | undefined>` — the **current user's own** full row for that room (notificationType, lastReadAt, isHidden…), reached per room through `getMyUserToRoom` / `setMyUserToRoom`; populated by `readMyUsersToRooms` and the `onUpdateUserToRoom` subscription. There is no per-user inner map here — nobody else's row is ever held. What the store **exports** under that name is `useDataMap`'s current-key ref, not the map — one row, the room in view's — so it is named for the row rather than for the map behind it.
-- **Room member map** — `getRoomMemberMap(roomId)`, held by `useUserStore` as `Map<roomId, Map<userId, MemberInRoom>>` — **all members'** rows as the room shows them (including self); filled from each row's server-resolved `displayName` as `readMembers` pages it in, and kept current by the same subscription. `getRoomMemberName` reads it, and falls back to the account name where the room has no row for the user.
+- **`myUserToRoom`** — `Map<roomId, UserToRoomInMessage | undefined>` — the **current user's own** full row for that room (notificationType, lastReadAt, isHidden…), reached per room through `getMyUserToRoom` / `setMyUserToRoom`; populated by `readMyUsersToRooms` and the `updateUserToRoom` event. There is no per-user inner map here — nobody else's row is ever held. What the store **exports** under that name is `useDataMap`'s current-key ref, not the map — one row, the room in view's — so it is named for the row rather than for the map behind it.
+- **Room member map** — `getRoomMemberMap(roomId)`, held by `useUserStore` as `Map<roomId, Map<userId, MemberInRoom>>` — **all members'** rows as the room shows them (including self); filled from each row's server-resolved `displayName` as `readMembers` pages it in, and kept current by the same socket events. `getRoomMemberName` reads it, and falls back to the account name where the room has no row for the user.
 
 ## Procedures
 
@@ -59,7 +59,7 @@ The quick switcher needs to search and page direct messages by the same name it 
 
 ## Setting your display name
 
-Room settings → **My Profile** tab (visible to all members, no permission required). The field is labeled **Display name** in the UI; it edits `displayName`, and an empty value falls back to the account name. Saves via `updateUserToRoom({ roomId, displayName })`; the update propagates via the `onUpdateUserToRoom` subscription into both maps.
+Room settings → **My Profile** tab (visible to all members, no permission required). The field is labeled **Display name** in the UI; it edits `displayName`, and an empty value falls back to the account name. Saves via `updateUserToRoom({ roomId, displayName })`; the update reaches both maps through the `updateUserToRoom` event on the person's user socket.
 
 ## Setting another member's display name
 
@@ -67,7 +67,7 @@ A member holding `ManageDisplayNames` sets the name of a member they outrank fro
 
 The save is `updateUserToRoom` with `targetUserId`. The server checks the permission alongside `assertIsManageable`, the hierarchy guard the moderation and role procedures share, so a refused target is `UNAUTHORIZED` whatever the client shows. The input rule admits a targeted write only when it sets a display name and nothing else. A self-edit needs no permission and carries the caller's own id, or none.
 
-After the write the dialog reads the target's row back with `room.readUsersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives the row on `onUpdateUserToRoom` and takes it the same way.
+After the write the dialog reads the target's row back with `room.readUsersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives the row as an `updateUserToRoom` event on its sockets and takes it the same way.
 
 ```mermaid
 sequenceDiagram
@@ -76,8 +76,8 @@ sequenceDiagram
   participant D as DisplayName dialog
   participant R as userToRoom.updateUserToRoom
   participant G as assertIsManageable
-  participant DB as usersToRoomsInMessage
-  participant E as Target's User object
+  participant DB as D1 core, usersToRooms
+  participant E as Target's UserObject
   participant Q as room.readUsersByIds
   participant T as Renamed member's client
   A->>M: opens a member's menu
@@ -90,7 +90,7 @@ sequenceDiagram
     G-->>A: UNAUTHORIZED
   else allowed
     R->>DB: set displayName on the target's row
-    DB->>E: updated row
+    R->>E: push the updated row to the target's object
     E-->>T: updateUserToRoom UserEvent, to the target's sockets only
     D->>Q: read the target's row back
     Q-->>D: resolved displayName
@@ -117,6 +117,6 @@ sequenceDiagram
 
 ## Notes
 
-- **Other members see a moderator's rename when they next read the room's members, not at once.** The caller's list and the renamed member's list are current when the write lands, but no subscription carries the change to the rest of the room: `onUpdateUserToRoom` reaches only the row's own member, and a row already held is not read again. A self-service rename reaches the room the same way.
+- **Other members see a moderator's rename when they next read the room's members, not at once.** The caller's list and the renamed member's list are current when the write lands, but no socket event carries the change to the rest of the room: the `updateUserToRoom` event reaches only the row's own member's sockets, and a row already held is not read again. A self-service rename reaches the room the same way.
 - **A rename is in neither the moderation log nor the audit log.** A display name is not a sanction, and a moderation action type would be enumerated across the [moderation design](../moderation/design.md). An audit entry is a follow-up for the moderation owner if the room asks for one.
 - **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one the room sees.

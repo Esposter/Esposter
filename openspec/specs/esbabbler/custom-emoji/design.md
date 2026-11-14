@@ -9,20 +9,20 @@ Stickers are a different feature and deliberately not this one — a sticker is 
 ```mermaid
 flowchart TD
   footer["Picker footer — Add Emoji, on ManageEmojis"] --> dialog["Add Emoji dialog"]
-  dialog -->|"generateUploadRoomEmojiSasEntity"| sas["Write SAS for {roomId}/emoji/{id} — mime signed as the content type"]
-  sas --> put["Client PUTs the image to Azure Blob"]
-  put -->|"createRoomEmoji — id, name"| guard{"blob landed, name free, under the cap?"}
+  dialog -->|"generateUploadRoomEmojiSasEntity"| sas["Presigned PUT for {roomId}/emoji/{id} — mime signed as the content type"]
+  sas --> put["Client PUTs the image to the message-assets bucket"]
+  put -->|"createRoomEmoji — id, name"| guard{"object landed, name free, under the cap?"}
   guard -->|no| reject["Invalid operation — nothing is stored"]
   guard -->|yes| row[("roomEmojis row")]
-  row --> emit["roomEmojiEventEmitter"]
-  emit --> subscription["onCreateRoomEmoji — every member in the room"]
-  subscription --> store["roomEmoji store — the row plus a read SAS"]
+  row --> emit["the room's object pushes createRoomEmoji"]
+  emit --> subscription["createRoomEmoji event — every viewer of the room"]
+  subscription --> store["roomEmoji store — the row plus a presigned GET"]
   read["readRoomEmojis — on entering the room"] --> store
   store --> picker["Picker category, ':' autocomplete, reaction chips"]
   store --> render["Message render — the content node resolves to its image"]
   picker -->|"pick"| tag["Reaction — emojiTag = custom:{id}"]
   del["deleteRoomEmoji"] --> gone[("row deleted")]
-  gone -->|"publishBlobDeletion"| eventgrid["ProcessBlobDeletion function"]
+  gone -->|"publishBlobDeletion"| jobq["ProcessBlobDeletion queue job"]
   gone -.->|"nothing resolves the id any more"| fallback["Reactions show a placeholder, content shows its shortcode"]
 ```
 
@@ -38,7 +38,7 @@ The footer button is gated on `ManageEmojis` and simply absent for a member with
 
 ## Data model
 
-One table, `roomEmojis`, holding an `id`, a `name`, and its `roomId`. The blob is **derived** from the id — `{roomId}/emoji/{id}` in the message-assets container — so there is no url column to keep in step with storage, nothing to migrate if the layout changes, and no second answer to where the image is.
+One table, `roomEmojis`, holding an `id`, a `name`, and its `roomId`. The object is **derived** from the id — `{roomId}/emoji/{id}` in the `message-assets` bucket — so there is no url column to keep in step with storage, nothing to migrate if the layout changes, and no second answer to where the image is.
 
 Two constraints carry the whole shortcode contract:
 
@@ -61,46 +61,46 @@ Room emoji are room-owned, so they sit outside the personal [storage quota](../.
 
 The cap is the whole accounting story: a room's worst case is a fixed number rather than an open-ended one, with nothing to meter, no ledger row per emoji, and no usage figure for a room owner to act on. It is checked twice on purpose — once when the write target is minted, so a full room never receives one it cannot use, and again inside the transaction that inserts, which is what stops two uploads racing the last slot.
 
-The **size cap is the blob's real byte length**, read back before the row is created. A write SAS constrains only the name it may be PUT to — never the bytes that arrive through it, and not their type either, since the content type it is signed with is a response override carried by that url rather than a condition on the PUT. So the size the client declared when it asked for the target is an early no rather than the guarantee, and the mime type is the same ([upload content validation](../../../deferred/architecture/upload-content-validation/design.md)).
+The **size cap is the object's real byte length**, read back before the row is created. A presigned PUT constrains only the key it may be PUT to and the `Content-Type` header it was signed with — never the bytes that arrive through it. So the size the client declared when it asked for the target is an early no rather than the guarantee, and the mime type is the same: the header is the client's word, not a check on the content ([upload content validation](../../../deferred/architecture/upload-content-validation/design.md)).
 
-The cap counts **rows**, so a member with `ManageEmojis` who mints write targets and never creates the rows leaves blobs the cap cannot see, swept only when the room is deleted and unbounded in size because the check that reads the bytes belongs to the create that never ran. That is the known limit of counting rows rather than reservations; if abandoned uploads ever appear in a room's storage figures, the answer is a pending row that counts toward the cap and expires, not a sweeper.
+The cap counts **rows**, so a member with `ManageEmojis` who mints write targets and never creates the rows leaves objects the cap cannot see, swept only when the room is deleted and unbounded in size because the check that reads the bytes belongs to the create that never ran. That is the known limit of counting rows rather than reservations; if abandoned uploads ever appear in a room's storage figures, the answer is a pending row that counts toward the cap and expires, not a sweeper.
 
 ## Identity: the id, never the name
 
 **A reaction stores `custom:{id}`.** A Unicode tag is a sequence of code points and can never contain a colon, so the two namespaces cannot collide, and `emojiTag` stays a single opaque string compared by equality — nothing about storing, matching or delivering a reaction knows that custom emoji exist.
 
-**Message content stores a node** carrying the id and the name, and no url: the image is a short-lived read SAS, so serializing one would persist a credential that expires. The node's own text is the shortcode, which is what the composer shows while typing and what a reader sees when the emoji is gone.
+**Message content stores a node** carrying the id and the name, and no url: the image is a short-lived presigned GET, so serializing one would persist a credential that expires. The node's own text is the shortcode, which is what the composer shows while typing and what a reader sees when the emoji is gone.
 
 Both are keyed by **id**, which is the one deliberate divergence from Discord's `name:id`: renaming an emoji leaves every existing reaction and every message that used it intact.
 
 ## Resolution, and what a deleted emoji does
 
-A room's set is read when the room is entered and kept current by its subscription, so every surface resolves an id through one store map. The subscription has started before that read, and every write that lands while the read is in flight is replayed over its answer by `apps/web/app/composables/shared/useReadingPushes.ts` (merged by `apps/web/app/services/shared/mergeSnapshot.ts`) rather than overwritten by it, so an emoji removed or added in the gap between the two is neither lost nor written back. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
+A room's set is read when the room is entered and kept current by the room socket's events, so every surface resolves an id through one store map. The socket has started delivering before that read, and every write that lands while the read is in flight is replayed over its answer by `apps/web/app/composables/shared/useReadingPushes.ts` (merged by `apps/web/app/services/shared/mergeSnapshot.ts`) rather than overwritten by it, so an emoji removed or added in the gap between the two is neither lost nor written back. Rendering follows [content token rewriting](../../architecture/content-token-rewriting/design.md): the message is parsed once, and each custom-emoji node is replaced in that same tree with an `<img>` sized in `em` so it follows the line's own text size.
 
 An id that resolves to nothing is **data, not an error**. A reaction to a deleted emoji still counts and renders a placeholder rather than disappearing; a content node keeps the shortcode it was authored with; and one unresolvable emoji never fails the render of the message around it.
 
 ## Teardown
 
-Deleting an emoji removes the row first and then publishes the blob deletion, best-effort and post-persist like every other attachment delete ([file & media](../file-media/design.md)). An abandoned upload — a write SAS that was used but whose create never ran — leaves a blob no row reaches, under the `{roomId}/…` prefix the room's own deletion sweeps, and it is invisible until then because every read goes through the row.
+Deleting an emoji removes the row first and then sends the object deletion, best-effort and post-persist like every other attachment delete ([file & media](../file-media/design.md)). An abandoned upload — a presigned PUT that was used but whose create never ran — leaves an object no row reaches, under the `{roomId}/…` prefix the room's own deletion sweeps, and it is invisible until then because every read goes through the row.
 
 ## Key files
 
-| File                                                                      | Role                                                       |
-| :------------------------------------------------------------------------ | :--------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/roomEmojisInMessage.ts`            | the table, the name charset, and the per-room unique index |
-| `apps/web/server/trpc/routers/room/emoji.ts`                              | upload SAS, create, rename, delete, read, subscriptions    |
-| `packages/db-schema/src/services/azure/container/getRoomEmojiBlobName.ts` | the one place the blob name is spelled                     |
-| `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts`       | the shadowing guard                                        |
-| `apps/web/app/store/message/room/emoji.ts`                                | the room's set, its upload action, and the id-keyed map    |
-| `apps/web/app/models/message/emoji/CustomEmoji.ts`                        | what a picking surface sees                                |
-| `apps/web/app/components/Styled/Emoji.vue`                                | one glyph component — a character or an image              |
-| `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`             | a stored reaction tag, resolved or placeheld               |
-| `apps/web/app/composables/message/emoji/useCustomEmojiExtension.ts`       | the content node, carrying id and name and no url          |
-| `apps/web/app/composables/message/useMessageHtml.ts`                      | the render pass — mentions and emoji, one parse            |
-| `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue`       | the Add Emoji dialog the picker footer opens               |
-| `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`          | the one name field — colons as chrome, one rule set        |
-| `apps/web/app/components/Message/Model/Message/Emoji/Picker.vue`          | the room's picker — its set, and Add Emoji for who may     |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji/`         | the settings panel: the whole set, rename, delete          |
+| File                                                                | Role                                                       |
+| :------------------------------------------------------------------ | :--------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/roomEmojisInMessage.ts`      | the table, the name charset, and the per-room unique index |
+| `apps/web/server/trpc/routers/room/emoji.ts`                        | upload target, create, rename, delete, read                |
+| `packages/db-schema/src/services/storage/getRoomEmojiBlobName.ts`   | the one place the blob name is spelled                     |
+| `apps/web/server/services/message/emoji/checkIsUnicodeEmojiSlug.ts` | the shadowing guard                                        |
+| `apps/web/app/store/message/room/emoji.ts`                          | the room's set, its upload action, and the id-keyed map    |
+| `apps/web/app/models/message/emoji/CustomEmoji.ts`                  | what a picking surface sees                                |
+| `apps/web/app/components/Styled/Emoji.vue`                          | one glyph component — a character or an image              |
+| `apps/web/app/components/Message/Model/Message/Emoji/Tag.vue`       | a stored reaction tag, resolved or placeheld               |
+| `apps/web/app/composables/message/emoji/useCustomEmojiExtension.ts` | the content node, carrying id and name and no url          |
+| `apps/web/app/composables/message/useMessageHtml.ts`                | the render pass — mentions and emoji, one parse            |
+| `apps/web/app/components/Message/Model/Room/Emoji/CreateDialog.vue` | the Add Emoji dialog the picker footer opens               |
+| `apps/web/app/components/Message/Model/Room/Emoji/NameField.vue`    | the one name field — colons as chrome, one rule set        |
+| `apps/web/app/components/Message/Model/Message/Emoji/Picker.vue`    | the room's picker — its set, and Add Emoji for who may     |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Emoji/`   | the settings panel: the whole set, rename, delete          |
 
 ## Notes
 

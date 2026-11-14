@@ -12,7 +12,7 @@ Each override bitfield names the permissions one state covers. The write path ta
 - a bit in `deny` is set in `deny` and cleared from `allow`;
 - a bit in `inherit` is cleared from both, so the roles decide it again.
 
-A bit set in both fields would be a state the model does not have, so the writer holds `(allow & deny) = 0`. The bitfields are decimal text, which no `CHECK` can test, so the merge in `mergeMemberPermissionOverride` clears every bit a write names from both fields before it sets them, and a write that names a bit in both `allow` and `deny` is refused. A row left with neither field set is removed rather than kept as an empty entry.
+A bit set in both fields would be a state the model does not have, so the writer holds `(allow & deny) = 0`. The bitfields are decimal text, which a `CHECK` could test only through a cast, so the merge in `mergeMemberPermissionOverride` clears every bit a write names from both fields before it sets them, and a write that names a bit in both `allow` and `deny` is refused. A row left with neither field set is removed rather than kept as an empty entry.
 
 ```mermaid
 flowchart TD
@@ -30,7 +30,7 @@ The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermission
 
 `readMemberPermissionOverrides` lists the room's rows to any member, as `readMemberRoles` does: a role assignment is already public to the room, and an override is the same kind of fact about the same member.
 
-Each write publishes `updateMemberPermissionOverride` on the role event path, carrying the state it left. `onUpdateMemberPermissionOverride` forwards it to every open client of the room, which applies it to its override map; the member whose override changed re-reads their own permissions, since every permission gate reads that bitfield.
+Each write pushes an `updateMemberPermissionOverride` room event from the room's object, carrying the state it left, to every viewer of the room. Each client applies it to its override map; the member whose override changed re-reads their own permissions, since every permission gate reads that bitfield.
 
 Leaving a room deletes the row with the membership, through the composite foreign key's cascade.
 
@@ -61,7 +61,7 @@ The member editor leaves out the Administrator bit, which no override can hold.
 | `packages/db/src/services/room/rbac/getPermissions.ts`                                          | folds the member's row into the effective bitfield                    |
 | `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`                             | the three-state write, the empty-row removal and the state it returns |
 | `apps/web/server/trpc/routers/role.ts`                                                          | the upsert, delete and read procedures, and the override event        |
-| `apps/web/server/services/role/events/roleEventEmitter.ts`                                      | `updateMemberPermissionOverride`                                      |
+| `packages/db-schema/src/models/realtime/RoomEvent.ts`                                           | the `updateMemberPermissionOverride` room event and its schema        |
 | `apps/web/app/store/message/room/role.ts`                                                       | the override map, its reads and writes                                |
 | `apps/web/app/composables/message/subscribables/useRoleSubscribables.ts`                        | applies the override event and re-reads the member's own permissions  |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Role/MemberEditor.vue`                | the member editor                                                     |

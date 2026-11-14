@@ -15,31 +15,31 @@ The pairing is enforced by construction. `createWebhook` inserts both rows in on
 ```mermaid
 sequenceDiagram
   participant Ext as External system
-  participant Nitro as App route for the webhook url
-  participant Push as PushWebhook function
-  participant Grid as Event Grid
-  participant Proc as ProcessWebhook function
-  participant Table as Azure Table messages
-  participant Client as Room clients
+  participant Route as web Worker route, POST /api/webhooks/:id/:token
+  participant D1 as D1 core
+  participant Q as ProcessWebhook queue
+  participant F as functions Worker consumer
+  participant R as RoomObject
+  participant N as ProcessNotification queue
+  participant Client as Room viewers
 
-  Ext->>Nitro: POST the payload to the secret url
-  Nitro->>Nitro: addressRateLimiter.consume on the address — 429 when over budget
-  Nitro->>Nitro: webhookRateLimiter.consume on the webhook id — 429 when over budget
-  Nitro->>Push: forward with the function key header
-  Push->>Push: find an active webhook matching id and token — 404 otherwise
-  Push->>Grid: publish a ProcessWebhook event
-  Push-->>Ext: 202 accepted
-  Grid->>Proc: deliver the event
-  Proc->>Table: createMessage with MessageType.Webhook
-  Proc->>Client: Web PubSub broadcast — best effort
-  Proc->>Grid: publishNotification — best effort
+  Ext->>Route: POST the payload to the secret url
+  Route->>Route: addressRateLimiter.consume on the address — 429 when over budget
+  Route->>Route: webhookRateLimiter.consume on the webhook id — 429 when over budget
+  Route->>D1: find the active webhook matching id and token — 404 otherwise
+  Route->>Route: parse the body against webhookPayloadSchema — 400 otherwise
+  Route->>Q: send the payload and the webhook
+  Route-->>Ext: 202 accepted
+  Q->>F: deliver the job
+  F->>R: createWebhookMessage — persisted, then broadcast to the room's viewers
+  F->>N: publishNotification — best effort
 ```
 
-The url a member copies points at the **app**, not at Azure: `server/api/webhooks/[id]/[token].post.ts` validates the two route parameters against the schema shapes, spends a point from the address budget and then from the per-webhook budget, both described in [rate limiting](../../architecture/rate-limiting/design.md), and forwards the body to the Function App with the function key. It forwards the **answer** as faithfully as the request: the function's own `Response` is returned as it came back, status and body included, because the statuses below are its to give and a proxy that turned each of them into a 500 would leave a sender unable to tell a rotated token from an Esposter outage. Keying the budget on the webhook id rather than on a caller is the point — a webhook is a machine identity, and one misconfigured integration should exhaust only its own allowance. The id is still the caller's to choose, though, so the address is spent first: without it, every id matching no webhook would arrive with a fresh allowance and nothing would cap the route across ids.
+The url a member copies points at the **app**, at the web Worker's own route `POST /api/webhooks/:id/:token` in `server/api/webhooks/[id]/[token].post.ts`, with no forwarder in between. The route validates the two route parameters against the schema shapes, spends a point from the address budget and then from the per-webhook budget, both described in [rate limiting](../../architecture/rate-limiting/design.md), and answers each refusal with its own status. Keying the budget on the webhook id rather than on a caller is the point — a webhook is a machine identity, and one misconfigured integration should exhaust only its own allowance. The id is still the caller's to choose, though, so the address is spent first: without it, every id matching no webhook would arrive with a fresh allowance and nothing would cap the route across ids.
 
-`PushWebhook` is an Azure Function HTTP trigger, mounted at `webhooks/{id}/{token}` with `authLevel: "function"`, so the Functions host refuses any call without the app's function key, which only the app's own route sends. **The token in the url is the credential**: the handler looks for a webhook row whose id and token both match and whose `isActive` is true, and answers 404 when there is none — an inactive webhook and a wrong token are indistinguishable from outside. It then parses the body against `webhookPayloadSchema` (a Discord-shaped `content` / `username` / `avatar_url` payload with `content` required — and sanitized by `sanitizeTextHtml` before its length bound applies, since it renders as message markup like every other body — and strict: a key it does not declare fails the request with 400 — Discord's `embeds` among them, beside `content` or alone, since a message has nowhere to store one and a field accepted but never stored would be dropped silently), publishes an Event Grid event, and answers 202 without waiting for the message to exist. Every string in the payload carries a length, `avatar_url` included, which a test over the schema's JSON Schema holds (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). That split is deliberate: the sender gets a fast, cheap acknowledgement, and the work that can fail happens behind a retrying event.
+**The token in the url is the credential**: the route looks for a webhook row whose id and token both match and whose `isActive` is true, and answers 404 when there is none — an inactive webhook and a wrong token are indistinguishable from outside. It then parses the body against `webhookPayloadSchema` (a Discord-shaped `content` / `username` / `avatar_url` payload with `content` required — and sanitized by `sanitizeTextHtml` before its length bound applies, since it renders as message markup like every other body — and strict: a key it does not declare fails the request with 400 — Discord's `embeds` among them, beside `content` or alone, since a message has nowhere to store one and a field accepted but never stored would be dropped silently). The payload is checked before anything is queued, so a malformed one is answered with its status rather than failing its job. The route then sends one `ProcessWebhook` job and answers 202 without waiting for the message to exist. Every string in the payload carries a length, `avatar_url` included, which a test over the schema's JSON Schema holds (`apps/web/server/services/request/webhookPayloadSchema.test.ts`). That split is deliberate: the sender gets a fast, cheap acknowledgement, and the work that can fail happens behind the queue.
 
-`ProcessWebhook` turns the payload into a `MessageType.Webhook` message — the payload's `username` and `avatar_url` override the stored bot name and image for that message — writes it to Azure Table, broadcasts over Web PubSub, and publishes a [push notification](../push-notifications/design.md) event titled with the bot's name. Both of those last two steps are best-effort, as [persist then notify](../../architecture/persist-then-notify/design.md) requires of every step after the write.
+The job is not idempotent, so its queue does not retry it: each accepted push is delivered once. `ProcessWebhook` turns the payload into a `MessageType.Webhook` message — the payload's `username` and `avatar_url` override the stored bot name and image for that message — and calls the room's object to persist it, which broadcasts the message to the room's viewers as part of the same call. It then sends a [push notification](../push-notifications/design.md) job titled with the bot's name. The notification is best-effort, as [persist then notify](../../architecture/persist-then-notify/design.md) requires of every step after the write.
 
 ## Rendering
 
@@ -68,20 +68,18 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 Paths are relative to `apps/web`, except those under `apps/functions/` and `packages/`, which are relative to the repository root.
 
-| File                                                                  | Role                                                        |
-| --------------------------------------------------------------------- | ----------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/webhooksInMessage.ts`          | the webhook row — room, creator, token, active flag         |
-| `packages/db-schema/src/schema/message/appUsersInMessage.ts`          | the bot identity a webhook message is authored by           |
-| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`     | the accepted request body                                   |
-| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`       | message entity carrying `appUser` in place of `userId`      |
-| `server/trpc/routers/webhook.ts`                                      | create, read, update, rotate, delete, and identity lookup   |
-| `server/api/webhooks/[id]/[token].post.ts`                            | the public url — rate limits, then forwards to the function |
-| `apps/functions/src/functions/pushWebhook.ts`                         | the HTTP trigger registration and its route                 |
-| `apps/functions/src/handlers/pushWebhookHandler.ts`                   | token validation, payload parsing, event publish            |
-| `apps/functions/src/handlers/processWebhookHandler.ts`                | message creation, broadcast, push notification              |
-| `apps/functions/src/services/message/getWebhookCreateMessageInput.ts` | payload to `MessageType.Webhook` message input              |
-| `app/store/message/room/webhook.ts`                                   | client store for the settings tab                           |
-| `app/store/message/user/appUser.ts`                                   | cache of bot identities for the message list                |
-| `app/composables/message/room/useCreator.ts`                          | resolves a message's author, app user or user               |
-| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue`   | the Integrations tab content                                |
-| `app/components/Message/Model/Message/AppUserBadge.vue`               | the "app" badge on a webhook message                        |
+| File                                                                  | Role                                                                                |
+| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/webhooksInMessage.ts`          | the webhook row — room, creator, token, active flag                                 |
+| `packages/db-schema/src/schema/message/appUsersInMessage.ts`          | the bot identity a webhook message is authored by                                   |
+| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`     | the accepted request body                                                           |
+| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`       | message entity carrying `appUser` in place of `userId`                              |
+| `server/trpc/routers/webhook.ts`                                      | create, read, update, rotate, delete, and identity lookup                           |
+| `server/api/webhooks/[id]/[token].post.ts`                            | the public url — rate limits, token and payload checks, then the ProcessWebhook job |
+| `apps/functions/src/handlers/processWebhookHandler.ts`                | the ProcessWebhook job — message creation on the room, push notification job        |
+| `apps/functions/src/services/message/getWebhookCreateMessageInput.ts` | payload to `MessageType.Webhook` message input                                      |
+| `app/store/message/room/webhook.ts`                                   | client store for the settings tab                                                   |
+| `app/store/message/user/appUser.ts`                                   | cache of bot identities for the message list                                        |
+| `app/composables/message/room/useCreator.ts`                          | resolves a message's author, app user or user                                       |
+| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue`   | the Integrations tab content                                                        |
+| `app/components/Message/Model/Message/AppUserBadge.vue`               | the "app" badge on a webhook message                                                |
