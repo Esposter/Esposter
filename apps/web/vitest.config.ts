@@ -1,5 +1,6 @@
 import { getVitestConfiguration } from "@esposter/configuration";
 import { defineVitestProject } from "@nuxt/test-utils/config";
+import { mergeAlias } from "vite";
 
 import { getNuxtEnvironmentOptions } from "./configuration/nuxtEnvironmentOptions.ts";
 
@@ -38,7 +39,7 @@ vitestConfig.test.environment = "node";
 // `env` `createMockDb` fills with the file's Miniflare bindings
 vitestConfig.resolve = {
   ...vitestConfig.resolve,
-  alias: { ...vitestConfig.resolve?.alias, "cloudflare:workers": "@esposter/db-mock" },
+  alias: mergeAlias(vitestConfig.resolve?.alias, { "cloudflare:workers": "@esposter/db-mock" }),
 };
 
 export default vitestConfig;

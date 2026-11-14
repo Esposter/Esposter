@@ -10,18 +10,18 @@ import type { NuxtConfig } from "nuxt/schema";
 // `vize` is the content mapper that turns `.vue` files into TypeScript for `tsrs -b`, and `useTemplateRef` is named as
 // Vue's because the auto-import declaration is ambient
 export const typescript: NuxtConfig["typescript"] = {
+  // The Workers globals are the server's alone, because loaded into the browser program their `Request` and `Response`
+  // Replace the DOM's, so the server tsconfig names the package and the app and shared code never see it
+  serverTsConfig: { compilerOptions: { types: ["@cloudflare/workers-types"] } },
   tsConfig: {
     compilerOptions: { customConditions: ["source"], noUnusedLocals: true },
     contentMappers: [{ extensions: [".vue"], package: "vize" }],
     exclude: ["../app/assets/**/*.tsx"],
     vueCompilerOptions: { composables: { useTemplateRef: ["useTemplateRef"] } },
   },
-  // The Workers globals are the server's alone: loaded into the browser program, their `Request` and `Response` replace
-  // the DOM's, so the server tsconfig names the package and the app and shared code never see it
-  serverTsConfig: { compilerOptions: { types: ["@cloudflare/workers-types"] } },
 };
-// Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` the Workers globals
-// do, and `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take them away.
+// Nuxt gives the server the webworker and DOM libs, which declare the same `Headers` and `Response` as the Workers globals.
+// `defu` concatenates a config's arrays rather than replacing them, so `serverTsConfig` cannot take them away.
 // The hook sets the server's lib once Nuxt has computed it
 export const typescriptHooks: NuxtConfig["hooks"] = {
   "prepare:types": ({ serverTsConfig }) => {
