@@ -1,4 +1,6 @@
-import { PublishSource, REALTIMEKIT_PRESET_NAME } from "#server/services/realtimeKit/constants";
+import { PublishSource } from "@esposter/db-schema";
+
+import { REALTIMEKIT_PRESET_NAME } from "#src/services/realtimeKit/constants";
 
 export const getRealtimeKitPresetName = (publishSources: PublishSource[]): string => {
   const isMicrophoneAllowed = publishSources.includes(PublishSource.Microphone);

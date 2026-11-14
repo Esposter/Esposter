@@ -1,21 +1,18 @@
 import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
-import { callAdmittedParticipantMap } from "#server/services/message/call/callAdmittedParticipantMap";
-import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { createStandaloneCallSessionId } from "#server/services/message/call/createStandaloneCallSessionId";
-import { joinRealtimeKitCall } from "#server/services/message/call/joinRealtimeKitCall";
-import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
-import { onWhileJoinedCall } from "#server/services/message/call/onWhileJoinedCall";
+import { getCallObject } from "#server/services/message/call/getCallObject";
 import { readCallSessionId } from "#server/services/message/call/readCallSessionId";
-import { requireCallParticipant } from "#server/services/message/call/requireCallParticipant";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { requireJoinedCallSession } from "#server/services/message/call/requireJoinedCallSession";
 import { requireReadableCallSession } from "#server/services/message/call/requireReadableCallSession";
 import { requireThreadRoot } from "#server/services/message/call/requireThreadRoot";
-import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
+import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
+import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -29,7 +26,8 @@ import { setCameraEnabledInputSchema } from "#shared/models/db/call/SetCameraEna
 import { setHandRaisedInputSchema } from "#shared/models/db/call/SetHandRaisedInput";
 import { setMutedInputSchema } from "#shared/models/db/call/SetMutedInput";
 import { checkHasPermission } from "@esposter/db";
-import { callSessionIdSchema, DatabaseEntityType, RoomPermission } from "@esposter/db-schema";
+import { callSessionIdSchema, DatabaseEntityType, MessageType, RoomPermission } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const baseCallRouter = router({
@@ -45,13 +43,19 @@ export const baseCallRouter = router({
 
       const { session, user } = ctx.getSessionPayload;
       const isCreator = callSession.userId === user.id;
-      const isAdmitted = callAdmittedParticipantMap.get(id)?.has(session.id) ?? false;
-      if (!isCreator && !isAdmitted) throw getForbiddenError("Must be admitted to join this call");
+      const join = await getCallObject(id).joinCall({
+        callSessionId: id,
+        isAdmissionRequired: !isCreator,
+        participant: createParticipant(session, user),
+      });
+      if (!join) throw getForbiddenError("Must be admitted to join this call");
 
-      callAdmittedParticipantMap.get(id)?.delete(session.id);
       return {
-        ...(await joinRealtimeKitCall(ctx.db, callSession, createParticipant(session, user), user.id)),
+        authToken: join.authToken,
+        callSessionId: id,
         isDoorkeeper: isCreator,
+        meetingId: join.meetingId,
+        participantMap: join.participantMap,
       };
     }),
   joinCallByRoomId: getMemberProcedure(roomCallInputSchema, "roomId").mutation<JoinCallResult>(
@@ -63,94 +67,43 @@ export const baseCallRouter = router({
       // So a member timed out of the room is refused a token rather than handed one the webhook then disconnects
       if (!(await checkIsCallConnectionAdmitted(ctx.db, callSessionId, user.id)))
         throw getForbiddenError("You are timed out of this room");
+
+      const join = await getCallObject(callSessionId).joinCall({
+        callSessionId,
+        isAdmissionRequired: false,
+        participant: createParticipant(session, user),
+      });
+      if (!join) throw getForbiddenError("You are timed out of this room");
+      // A call's first join announces it in the thread the call is in, or the room, as a line with no duration yet
+      if (join.isFirstJoiner)
+        await createSystemRoomMessage(roomId, user.id, "", session.id, {
+          replyRowKey: threadRootRowKey,
+          type: MessageType.Call,
+        }).match(noop, console.error);
+
       return {
-        ...(await joinRealtimeKitCall(
-          ctx.db,
-          { id: callSessionId, roomId, threadRootRowKey },
-          createParticipant(session, user),
-          user.id,
-        )),
+        authToken: join.authToken,
+        callSessionId,
         isDoorkeeper: false,
+        meetingId: join.meetingId,
+        participantMap: join.participantMap,
       };
     },
   ),
   leaveCall: standardAuthedProcedure
     .input(callSessionIdSchema)
     .mutation<void>(async ({ ctx, input: { callSessionId } }) => {
-      const { session, user } = ctx.getSessionPayload;
-      const isDeleted = await leaveCallAsParticipant(ctx.db, callSessionId, session.id, user.id);
-      if (!isDeleted) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
+      const { session } = ctx.getSessionPayload;
+      const leave = await getCallObject(callSessionId).leaveCall({ callSessionId, sessionId: session.id });
+      if (!leave) throw getNotFoundError(DatabaseEntityType.CallSession, callSessionId);
+
+      await writeCallSummary(ctx.db, callSessionId, leave);
     }),
-  onJoinCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileJoinedCall(ctx, "joinCall", input, signal);
-    const sessionId = ctx.getSessionPayload.session.id;
-
-    for await (const [event] of events) {
-      if (event.callSessionId !== input) continue;
-      // A rejoin is for its own connection alone, so nobody else in the call hears of a connection being replaced
-      if (event.type === "rejoin") {
-        if (event.sessionId === sessionId)
-          yield { authToken: event.authToken, canPublishMicrophone: event.canPublishMicrophone, type: "rejoin" };
-      } else if (event.sessionId !== sessionId) yield { participant: event.participant, type: "join" };
-    }
-  }),
-  onLeaveCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileJoinedCall(ctx, "leaveCall", input, signal);
-
-    for await (const [{ callSessionId, id }] of events) {
-      if (callSessionId !== input || id === ctx.getSessionPayload.session.id) continue;
-      yield id;
-    }
-  }),
-  onSetCameraEnabled: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileJoinedCall(ctx, "videoChanged", input, signal);
-
-    for await (const [{ callSessionId, id, isCameraEnabled }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isCameraEnabled };
-    }
-  }),
-  onSetHandRaised: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileJoinedCall(ctx, "handRaisedChanged", input, signal);
-
-    for await (const [{ callSessionId, id, isHandRaised }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isHandRaised };
-    }
-  }),
-  onSetMuted: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileJoinedCall(ctx, "muteChanged", input, signal);
-
-    for await (const [{ callSessionId, id, isMuted }] of events) {
-      if (callSessionId !== input) continue;
-      yield { id, isMuted };
-    }
-  }),
   readCallParticipantMap: standardAuthedProcedure
     .input(callSessionIdSchema)
     .query<Map<string, CallParticipant>>(async ({ ctx, input: { callSessionId } }) => {
       await requireJoinedCallSession(ctx.db, ctx.getSessionPayload, callSessionId);
-      return callSessionParticipantMap.get(callSessionId) ?? new Map();
+      return getCallObject(callSessionId).readParticipantMap();
     }),
   readCallSession: standardAuthedProcedure
     .input(callSessionInputSchema)
@@ -163,11 +116,14 @@ export const baseCallRouter = router({
   ),
   setCameraEnabled: standardAuthedProcedure
     .input(setCameraEnabledInputSchema)
-    .mutation<void>(({ ctx, input: { callSessionId, isCameraEnabled } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, isCameraEnabled } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
-      requireCallParticipant(callSessionId, sessionId).isCameraEnabled = isCameraEnabled;
-
-      callEventEmitter.emit("videoChanged", { callSessionId, id: sessionId, isCameraEnabled });
+      const isUpdated = await getCallObject(callSessionId).setCameraEnabled({
+        callSessionId,
+        isCameraEnabled,
+        sessionId,
+      });
+      if (!isUpdated) throw getForbiddenError("Must join call first");
     }),
   setHandRaised: standardAuthedProcedure
     .input(setHandRaisedInputSchema)
@@ -187,17 +143,19 @@ export const baseCallRouter = router({
         if (!hasMuteMembersPermission) throw getForbiddenError("Missing permission to lower another hand");
       }
 
-      requireCallParticipant(callSessionId, targetSessionId).isHandRaised = isHandRaised;
-
-      callEventEmitter.emit("handRaisedChanged", { callSessionId, id: targetSessionId, isHandRaised });
+      const isUpdated = await getCallObject(callSessionId).setHandRaised({
+        callSessionId,
+        isHandRaised,
+        sessionId: targetSessionId,
+      });
+      if (!isUpdated) throw getForbiddenError("Must join call first");
     }),
   setMuted: standardAuthedProcedure
     .input(setMutedInputSchema)
-    .mutation<void>(({ ctx, input: { callSessionId, isMuted } }) => {
+    .mutation<void>(async ({ ctx, input: { callSessionId, isMuted } }) => {
       const sessionId = ctx.getSessionPayload.session.id;
-      requireCallParticipant(callSessionId, sessionId).isMuted = isMuted;
-
-      callEventEmitter.emit("muteChanged", { callSessionId, id: sessionId, isMuted });
+      const isUpdated = await getCallObject(callSessionId).setMuted({ callSessionId, isMuted, sessionId });
+      if (!isUpdated) throw getForbiddenError("Must join call first");
     }),
 });
 

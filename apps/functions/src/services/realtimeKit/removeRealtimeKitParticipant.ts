@@ -1,5 +1,5 @@
-import { getRealtimeKitCredentials } from "#server/services/realtimeKit/getRealtimeKitCredentials";
-import { requestRealtimeKit } from "#server/services/realtimeKit/requestRealtimeKit";
+import { getRealtimeKitCredentials } from "#src/services/realtimeKit/getRealtimeKitCredentials";
+import { requestRealtimeKit } from "#src/services/realtimeKit/requestRealtimeKit";
 import { z } from "zod";
 
 // Disconnects one connection at RealtimeKit, for a departure the server decides rather than the departing client. A

@@ -1,14 +1,10 @@
 import { db } from "#server/db";
-import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
-import { createCallParticipant } from "#server/services/message/call/createCallParticipant";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { leaveCallAsParticipant } from "#server/services/message/call/leaveCallAsParticipant";
-import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
-import { realtimeKitParticipantMap } from "#server/services/realtimeKit/realtimeKitParticipantMap";
-import { removeRealtimeKitParticipant } from "#server/services/realtimeKit/removeRealtimeKitParticipant";
+import { getCallObject } from "#server/services/message/call/getCallObject";
+import { writeCallSummary } from "#server/services/message/call/writeCallSummary";
 import { verifyRealtimeKitWebhook } from "#server/services/realtimeKit/verifyRealtimeKitWebhook";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResultAsync } from "@esposter/shared";
 import { defineEventHandler } from "nuxt/server";
 import { z } from "zod";
 
@@ -43,13 +39,11 @@ export default defineEventHandler(async (event) => {
       const sessionId = webhookEvent.participant.customParticipantId;
       if (!callSession) return { ok: true };
       const callSessionId = callSession.id;
+      const callObject = getCallObject(callSessionId);
 
       if (webhookEvent.event === "meeting.participantLeft") {
-        // A connection a revoke is replacing is kicked by that revoke, and the kick is not its user leaving: the
-        // Replacement is added under the same session, so the participant stays in the call
-        if (realtimeKitParticipantMap.get(callSessionId)?.get(sessionId)?.isRejoining) return { ok: true };
-        const userId = callSessionParticipantMap.get(callSessionId)?.get(sessionId)?.userId ?? "";
-        await leaveCallAsParticipant(db, callSessionId, sessionId, userId);
+        const leave = await callObject.participantLeft({ callSessionId, sessionId });
+        if (leave) await writeCallSummary(db, callSessionId, leave);
         return { ok: true };
       }
 
@@ -59,16 +53,14 @@ export default defineEventHandler(async (event) => {
       });
       if (!session) return { ok: true };
       else if (!(await checkIsCallConnectionAdmitted(db, callSessionId, session.userId))) {
-        await getResultAsync(() => removeRealtimeKitParticipant(webhookEvent.meeting.id, sessionId)).match(
-          noop,
-          console.error,
-        );
+        await callObject.removeConnection({ sessionId });
         return { ok: true };
       }
 
-      const callParticipant = createParticipant(session, session.usersInAuth);
-      createCallParticipant(callSessionId, callParticipant);
-      callEventEmitter.emit("joinCall", { callSessionId, participant: callParticipant, sessionId, type: "join" });
+      await callObject.participantJoined({
+        callSessionId,
+        participant: createParticipant(session, session.usersInAuth),
+      });
       return { ok: true };
     },
     (error) => {

@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
-import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
+import { getCallObject } from "#server/services/message/call/getCallObject";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 
@@ -14,8 +14,8 @@ export const requireCallDoorkeeper = async (
   action: string,
 ) => {
   const { session: callerSession, user: callerUser } = sessionPayload;
-  if (!callSessionParticipantMap.get(callSessionId)?.has(callerSession.id))
-    throw getForbiddenError(`Must be in call to ${action} knockers`);
+  const { isJoined } = await getCallObject(callSessionId).readAccess({ sessionId: callerSession.id });
+  if (!isJoined) throw getForbiddenError(`Must be in call to ${action} knockers`);
 
   const callSession = await requireCallSession(db, callSessionId);
   if (callSession.userId !== callerUser.id) throw getForbiddenError(`Must be call creator to ${action} knockers`);

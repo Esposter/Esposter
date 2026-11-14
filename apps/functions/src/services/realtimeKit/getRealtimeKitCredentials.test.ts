@@ -1,4 +1,4 @@
-import { getRealtimeKitCredentials } from "#server/services/realtimeKit/getRealtimeKitCredentials";
+import { getRealtimeKitCredentials } from "#src/services/realtimeKit/getRealtimeKitCredentials";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(getRealtimeKitCredentials, () => {

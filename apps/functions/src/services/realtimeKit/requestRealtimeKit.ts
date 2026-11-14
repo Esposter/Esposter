@@ -1,7 +1,6 @@
-import type { RealtimeKitCredentials } from "#server/models/realtimeKit/RealtimeKitCredentials";
+import type { RealtimeKitCredentials } from "#src/models/realtimeKit/RealtimeKitCredentials";
 
-import { REALTIMEKIT_API_ORIGIN } from "#server/services/realtimeKit/constants";
-import { MimeType } from "#shared/models/file/MimeType";
+import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
 import { z } from "zod";
 
 // Every RealtimeKit REST call goes through here: the account's API token, and the reply's `data` checked against the
@@ -12,7 +11,7 @@ export const requestRealtimeKit = async <Schema extends z.ZodType>(
 ): Promise<z.output<Schema>> => {
   const response = await fetch(`${REALTIMEKIT_API_ORIGIN}/accounts/${accountId}/realtime/kit/${appId}${path}`, {
     body: JSON.stringify(body),
-    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": MimeType.Json },
+    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
     method,
   });
   if (!response.ok) throw new Error(`RealtimeKit ${method} ${path} failed with ${response.status}`);

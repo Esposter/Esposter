@@ -12,7 +12,8 @@ import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAc
 import { containsLike } from "#server/services/db/containsLike";
 import { on } from "#server/services/events/on";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
-import { readRoomCallParticipantMaps } from "#server/services/message/call/readRoomCallParticipantMaps";
+import { getCallObject } from "#server/services/message/call/getCallObject";
+import { readRoomCallSessionIds } from "#server/services/message/call/readRoomCallSessionIds";
 import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
 import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNameMap";
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
@@ -22,8 +23,6 @@ import { readModerationNotesCount } from "#server/services/message/moderation/re
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
-import { PublishSource } from "#server/services/realtimeKit/constants";
-import { updateRealtimeKitParticipantPreset } from "#server/services/realtimeKit/updateRealtimeKitParticipantPreset";
 import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMemberRemoval";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
@@ -53,6 +52,7 @@ import {
   getPublicUserColumns,
   moderationLogsInMessage,
   moderationNotesInMessage,
+  PublishSource,
   roomIdSchema,
   RoomPermission,
   usersInAuth,
@@ -159,17 +159,15 @@ export const moderationRouter = router({
         case AdminActionType.StopScreenShare: {
           const sources =
             input.type === AdminActionType.StopScreenShare ? [PublishSource.Screenshare] : [PublishSource.Microphone];
-          const roomCallParticipantMaps = await readRoomCallParticipantMaps(ctx.db, roomId);
+          const callSessionIds = await readRoomCallSessionIds(ctx.db, roomId);
           await Promise.all(
-            roomCallParticipantMaps.map(({ callSessionId, meetingId, participantMap }) =>
-              updateRealtimeKitParticipantPreset(
+            callSessionIds.map((callSessionId) =>
+              getCallObject(callSessionId).updatePresets({
                 callSessionId,
-                meetingId,
-                participantMap,
-                targetUserId,
+                isGranted: input.type === AdminActionType.ForceUnmute,
                 sources,
-                input.type === AdminActionType.ForceUnmute,
-              ),
+                userId: targetUserId,
+              }),
             ),
           );
           break;

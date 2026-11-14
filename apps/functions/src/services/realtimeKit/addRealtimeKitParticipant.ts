@@ -1,6 +1,7 @@
-import type { RealtimeKitCredentials } from "#server/models/realtimeKit/RealtimeKitCredentials";
+import type { RealtimeKitCredentials } from "#src/models/realtimeKit/RealtimeKitCredentials";
 import type { CallParticipant } from "@esposter/db-schema";
-import { requestRealtimeKit } from "#server/services/realtimeKit/requestRealtimeKit";
+
+import { requestRealtimeKit } from "#src/services/realtimeKit/requestRealtimeKit";
 import { z } from "zod";
 
 // Adds a connection to the meeting with the preset that matches what it may publish, and returns the token the client

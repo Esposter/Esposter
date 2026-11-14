@@ -1,87 +1,35 @@
-import type { CallParticipant } from "@esposter/db-schema";
-import { on } from "#server/services/events/on";
-import { callAdmittedParticipantMap } from "#server/services/message/call/callAdmittedParticipantMap";
-import { callKnockerMap } from "#server/services/message/call/callKnockerMap";
 import { createParticipant } from "#server/services/message/call/createParticipant";
-import { onWhileCallRoomMember } from "#server/services/message/call/onWhileCallRoomMember";
+import { getCallObject } from "#server/services/message/call/getCallObject";
 import { requireCallDoorkeeper } from "#server/services/message/call/requireCallDoorkeeper";
 import { requireCallSession } from "#server/services/message/call/requireCallSession";
-import { requireKnockerCallSession } from "#server/services/message/call/requireKnockerCallSession";
-import { yieldCallerKnockerEvents } from "#server/services/message/call/yieldCallerKnockerEvents";
-import { callEventEmitter } from "#server/services/message/events/callEventEmitter";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
 import { callSessionInputSchema } from "#shared/models/db/call/CallSessionInput";
 import { knockerInputSchema } from "#shared/models/db/call/KnockerInput";
-import { getOrCreate } from "@esposter/shared";
 
 export const knockerRouter = router({
   admitKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, callSessionId, "admit");
-
-      if (!callKnockerMap.get(callSessionId)?.delete(knockerSessionId)) return;
-      getOrCreate(callAdmittedParticipantMap, callSessionId, () => new Set<string>()).add(knockerSessionId);
-
-      callEventEmitter.emit("knockerAdmitted", { callSessionId, knockerSessionId });
+      await getCallObject(callSessionId).admitKnocker({ callSessionId, knockerSessionId });
     }),
   dismissKnocker: standardAuthedProcedure
     .input(knockerInputSchema)
     .mutation<void>(async ({ ctx, input: { callSessionId, sessionId: knockerSessionId } }) => {
       await requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, callSessionId, "dismiss");
-
-      if (!callKnockerMap.get(callSessionId)?.delete(knockerSessionId)) return;
-
-      callEventEmitter.emit("knockerDismissed", { callSessionId, knockerSessionId });
+      await getCallObject(callSessionId).dismissKnocker({ callSessionId, knockerSessionId });
     }),
   knockCall: standardAuthedProcedure.input(callSessionInputSchema).mutation<void>(async ({ ctx, input: { id } }) => {
     const callSession = await requireCallSession(ctx.db, id);
     if (callSession.roomId) throw getForbiddenError("Room calls cannot be knocked — join via joinCallByRoomId");
 
     const { session, user } = ctx.getSessionPayload;
-    const knocker = createParticipant(session, user);
-
-    getOrCreate(callKnockerMap, id, () => new Map<string, CallParticipant>()).set(session.id, knocker);
-
-    callEventEmitter.emit("knockCall", { callSessionId: id, knocker });
-  }),
-  onKnockCall: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = await onWhileCallRoomMember(ctx.db, "knockCall", {
-      callSessionId: input,
-      gate: () => requireCallDoorkeeper(ctx.db, ctx.getSessionPayload, input, "watch"),
-      sessionId: ctx.getSessionPayload.session.id,
-      signal,
-      userId: ctx.getSessionPayload.user.id,
+    await getCallObject(id).knockCall({
+      callSessionId: id,
+      doorkeeperUserId: callSession.userId,
+      knocker: createParticipant(session, user),
     });
-
-    for await (const [{ callSessionId, knocker }] of events) {
-      if (callSessionId !== input) continue;
-      yield knocker;
-    }
-  }),
-  onKnockerAdmitted: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "knockerAdmitted", { signal });
-    await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
-    yield* yieldCallerKnockerEvents(events, input, ctx.getSessionPayload.session.id);
-  }),
-  onKnockerDismissed: standardAuthedProcedure.input(callSessionIdInputSchema).subscription(async function* ({
-    ctx,
-    input,
-    signal,
-  }) {
-    const events = on(callEventEmitter, "knockerDismissed", { signal });
-    await requireKnockerCallSession(ctx.db, ctx.getSessionPayload, input);
-    yield* yieldCallerKnockerEvents(events, input, ctx.getSessionPayload.session.id);
   }),
 });

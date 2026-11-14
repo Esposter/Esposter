@@ -15,7 +15,8 @@
   },
   "type": "module",
   "imports": {
-    "#src/*": "./src/*.ts"
+    "#src/*": "./src/*.ts",
+    "#src/durableObjects/*/migrations/migrations.js": "./src/durableObjects/*/migrations/migrations.js"
   },
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist --env prod",
