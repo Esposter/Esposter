@@ -11,7 +11,6 @@ export const QueueJobBindingNameMap = {
   [QueueJob.ProcessScheduledMessageJob]: "PROCESS_SCHEDULED_MESSAGE_JOB_QUEUE",
   [QueueJob.ProcessWebhook]: "PROCESS_WEBHOOK_QUEUE",
   [QueueJob.ReconcileStorageLedgerEntry]: "RECONCILE_STORAGE_LEDGER_ENTRY_QUEUE",
-  [QueueJob.SendTodoReminder]: "SEND_TODO_REMINDER_QUEUE",
 } as const satisfies Record<QueueJob, string>;
 
 export type QueueJobBindingName = (typeof QueueJobBindingNameMap)[QueueJob];

@@ -1,25 +1,21 @@
+import type { TodoReminder } from "@esposter/db-schema";
+
 import { todoReminderContentSchema } from "#src/models/todoReminder/TodoReminderContent";
 import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import {
-  AppNotificationType,
-  StorageBucket,
-  QueueJob,
-  publishNotification,
-  ResourceType,
-  todoReminderQueueMessageSchema,
-} from "@esposter/db-schema";
+import { AppNotificationType, StorageBucket, QueueJob, publishNotification, ResourceType } from "@esposter/db-schema";
 
-export const sendTodoReminderHandler = async (message: unknown): Promise<void> => {
-  const { dueAt, itemId, resourceId } = todoReminderQueueMessageSchema.parse(message);
-  console.log(`${QueueJob.SendTodoReminder} dequeued reminder`, { itemId, resourceId });
+// Sends one due reminder through the notification queue, unless the item it was set for no longer stands. A failure
+// that is not a missing item throws, so the owning object keeps the reminder and retries it
+export const sendTodoReminder = async ({ dueAt, itemId, resourceId }: TodoReminder): Promise<void> => {
+  console.log(`${QueueJob.ProcessNotification} todo reminder due`, { itemId, resourceId });
   const resource = await db.query.resourcesInResource.findFirst({
     where: { deletedAt: { isNull: true }, id: { eq: resourceId }, type: { eq: ResourceType.TodoList } },
   });
   if (!resource) {
-    console.log(`${QueueJob.SendTodoReminder} skipped: resource gone`, { resourceId });
+    console.log("TodoReminder skipped: resource gone", { resourceId });
     return;
   }
 
@@ -28,7 +24,7 @@ export const sendTodoReminderHandler = async (message: unknown): Promise<void> =
   // Failures surface for a retry instead of being swallowed as "no content".
   const buffer = await readJsonBlob(bucket, getContentBlobName(resourceId));
   if (!buffer) {
-    console.log(`${QueueJob.SendTodoReminder} skipped: no content`, { resourceId });
+    console.log("TodoReminder skipped: no content", { resourceId });
     return;
   }
   // oxlint-disable-next-line no-restricted-properties -- todoReminderContentSchema coerces dueAt itself
@@ -38,7 +34,7 @@ export const sendTodoReminderHandler = async (message: unknown): Promise<void> =
   // Have been deleted or re-dated (a re-dated item enqueued its own fresh reminder), or completed since the
   // Reminder was enqueued, any of which makes this stale reminder a silent no-op.
   if (item?.dueAt?.getTime() !== dueAt.getTime() || item?.completedAt) {
-    console.log(`${QueueJob.SendTodoReminder} skipped: item deleted, re-dated or completed`, { itemId, resourceId });
+    console.log("TodoReminder skipped: item deleted, re-dated or completed", { itemId, resourceId });
     return;
   }
 

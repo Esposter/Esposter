@@ -25,5 +25,4 @@ export const QueueJobMaxRetriesMap = {
   // Sets the ledger row's counted bytes to what storage reports and moves the counter by the difference it observed, so
   // a redelivery computes a zero delta rather than double-counting.
   [QueueJob.ReconcileStorageLedgerEntry]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
-  [QueueJob.SendTodoReminder]: MAX_IDEMPOTENT_QUEUE_JOB_RETRIES,
 } as const satisfies Record<QueueJob, number>;

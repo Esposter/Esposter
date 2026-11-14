@@ -31,7 +31,6 @@ declare global {
       RESOURCE_ASSETS: R2Bucket;
       ROOM: DurableObjectNamespace<RoomObject>;
       SCHEDULER: DurableObjectNamespace<Rpc.DurableObjectBranded & SchedulerObject>;
-      SEND_TODO_REMINDER_QUEUE: Queue;
       SERVER: DurableObjectNamespace;
       USER: DurableObjectNamespace<UserObject>;
       USER_ASSETS: R2Bucket;

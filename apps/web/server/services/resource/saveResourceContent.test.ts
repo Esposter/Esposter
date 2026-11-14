@@ -3,7 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
@@ -143,10 +143,18 @@ describe(saveResourceContent, () => {
   // Storage's own per-blob ordering value, as the first save's event would carry it
   const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
-  const createReminder = (resourceId: ResourceInResource["id"]) => ({
-    job: { payload: { dueAt, itemId: item.id, resourceId }, queueJob: QueueJob.SendTodoReminder },
-    runAt: dueAt.getTime(),
+  const createReminderCall = (resource: Pick<ResourceInResource, "id" | "userId">) => ({
+    args: [
+      {
+        cancelledItemIds: [],
+        reminders: [{ dueAt, itemId: item.id, resourceId: resource.id }],
+        resourceId: resource.id,
+      },
+    ],
+    method: "reconcileTodoReminders",
+    userId: resource.userId,
   });
+  const getReminderCalls = () => userObjectCalls.filter(({ method }) => method === "reconcileTodoReminders");
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
   const assetBytes = new Uint8Array(1);
@@ -197,7 +205,7 @@ describe(saveResourceContent, () => {
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
-    scheduledJobMap.clear();
+    userObjectCalls.length = 0;
     await mockContext.db.delete(resourcesInResource);
     // The ledger is keyed by user, not by resource, so it outlives the rows above — and every test here saves
     // Content, which now charges the counter
@@ -287,7 +295,7 @@ describe(saveResourceContent, () => {
     // Names the resource alone: the content is re-read by whoever hears it
     expect(saveEvent).toStrictEqual({ apiKeyName: "", contentVersion: savedResource.contentVersion, id: resource.id });
     await expect(readActivityTypes()).resolves.toStrictEqual([ResourceActivityType.ContentSaved]);
-    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
+    expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });
 
   // Every save rewrites the same blob name and raises its own `BlobCreated` behind it, which settles that name
@@ -355,7 +363,7 @@ describe(saveResourceContent, () => {
     await waitForSynchronizedFunctions();
 
     // The second write repeats an unchanged due date, so it schedules nothing on top of the first
-    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
+    expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });
 
   // `content` arrives as `unknown`, so a caller that never parsed it — blueprint deploy reads every manifest
@@ -382,7 +390,7 @@ describe(saveResourceContent, () => {
     await saveResourceContent(ctx, { content: unrevivedContent, resource });
     await waitForSynchronizedFunctions();
 
-    expect([...scheduledJobMap.values()]).toStrictEqual([createReminder(resource.id)]);
+    expect(getReminderCalls()).toStrictEqual([createReminderCall(resource)]);
   });
 
   // The blob is not transactional, so a transaction failing after the upload cannot be rolled back to match it:

@@ -1,10 +1,143 @@
+import type { ReconcileTodoRemindersInput, SentMessageCursor, UserObjectRpc } from "@esposter/db-schema";
+
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
+import userMigrations from "#src/durableObjects/user/migrations/migrations";
+import { scheduledMessagesInUser, sentMessagesInUser, todoRemindersInUser } from "#src/durableObjects/user/schema";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
+import { TODO_REMINDER_RETRY_DELAY_MS } from "#src/services/todoReminder/constants";
+import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
+import { getResultAsync } from "@esposter/shared";
+import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
-// The User object's migrations, which drizzle-kit writes into its folder as its first table is added
-const migrations: Record<string, string> = {};
+// One User object per person: its SQLite holds the index of the messages they sent, their pending scheduled messages and
+// their TodoList reminders, and its one alarm is set to the earliest reminder still ahead, or a retry for one that failed
+export class UserObject extends RealtimeObject implements UserObjectRpc {
+  protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
 
-// One User object per user: its state lives in its own SQLite, and its methods are added with its domain
-export class UserObject extends RealtimeObject {
-  protected readonly db = createDurableObjectDatabase(this.ctx, migrations);
+  // A reminder whose send failed is retried this long after the failure. The alarm is re-armed here and in the alarm
+  // itself, so a row that stays overdue is never left without one
+  override async alarm(): Promise<void> {
+    const now = new Date();
+    const dueReminders = await this.db
+      .select()
+      .from(todoRemindersInUser)
+      .where(lte(todoRemindersInUser.dueAt, now))
+      .orderBy(asc(todoRemindersInUser.dueAt));
+    // Each reminder is removed only once its notification is queued, so a failed send is retried rather than dropped
+    for (const reminder of dueReminders) {
+      const isSent = await getResultAsync(() => sendTodoReminder(reminder)).match(
+        () => true,
+        (error) => {
+          console.error("TodoReminder failed to send", { error, itemId: reminder.itemId });
+          return false;
+        },
+      );
+      if (isSent)
+        await this.db
+          .delete(todoRemindersInUser)
+          .where(
+            and(
+              eq(todoRemindersInUser.resourceId, reminder.resourceId),
+              eq(todoRemindersInUser.itemId, reminder.itemId),
+            ),
+          );
+    }
+    await this.armAlarm();
+  }
+
+  async addScheduledMessage(scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }): Promise<void> {
+    await this.db
+      .insert(scheduledMessagesInUser)
+      .values(scheduledMessage)
+      .onConflictDoUpdate({ set: { runAt: scheduledMessage.runAt }, target: scheduledMessagesInUser.scheduledId });
+  }
+
+  async addSentMessage(sentMessage: { createdAt: Date; messageId: number; roomId: string }): Promise<void> {
+    await this.db.insert(sentMessagesInUser).values(sentMessage).onConflictDoNothing();
+  }
+
+  // Ordered newest first, and a page is the rows strictly before the cursor, so a message sent at the same instant to
+  // many rooms is neither repeated nor skipped across a page boundary
+  async readSentMessages(input: { before?: SentMessageCursor; limit: number }) {
+    const { before, limit } = input;
+    return this.db
+      .select()
+      .from(sentMessagesInUser)
+      .where(
+        before
+          ? or(
+              lt(sentMessagesInUser.createdAt, before.createdAt),
+              and(
+                eq(sentMessagesInUser.createdAt, before.createdAt),
+                or(
+                  lt(sentMessagesInUser.roomId, before.roomId),
+                  and(eq(sentMessagesInUser.roomId, before.roomId), lt(sentMessagesInUser.messageId, before.messageId)),
+                ),
+              ),
+            )
+          : undefined,
+      )
+      .orderBy(
+        sql`${sentMessagesInUser.createdAt} DESC`,
+        sql`${sentMessagesInUser.roomId} DESC`,
+        sql`${sentMessagesInUser.messageId} DESC`,
+      )
+      .limit(limit);
+  }
+
+  async readScheduledMessages() {
+    return this.db.select().from(scheduledMessagesInUser).orderBy(asc(scheduledMessagesInUser.runAt));
+  }
+
+  async reconcileTodoReminders(input: ReconcileTodoRemindersInput): Promise<void> {
+    const { cancelledItemIds, reminders, resourceId } = input;
+    if (reminders.length > 0)
+      await this.db
+        .insert(todoRemindersInUser)
+        .values(reminders.map(({ dueAt, itemId }) => ({ dueAt, itemId, resourceId })))
+        .onConflictDoUpdate({
+          set: { dueAt: sql`excluded.dueAt` },
+          target: [todoRemindersInUser.resourceId, todoRemindersInUser.itemId],
+        });
+    if (cancelledItemIds.length > 0)
+      await this.db
+        .delete(todoRemindersInUser)
+        .where(
+          and(eq(todoRemindersInUser.resourceId, resourceId), inArray(todoRemindersInUser.itemId, cancelledItemIds)),
+        );
+    await this.armAlarm();
+  }
+
+  async removeScheduledMessage(scheduledId: string): Promise<void> {
+    await this.db.delete(scheduledMessagesInUser).where(eq(scheduledMessagesInUser.scheduledId, scheduledId));
+  }
+
+  async removeSentMessage(input: { messageId: number; roomId: string }): Promise<void> {
+    await this.db
+      .delete(sentMessagesInUser)
+      .where(and(eq(sentMessagesInUser.roomId, input.roomId), eq(sentMessagesInUser.messageId, input.messageId)));
+  }
+
+  // The alarm is the earliest reminder still ahead, or a retry for one that is overdue: the rows the alarm could not
+  // send are still here, so the next run sends them, and the earlier of the two wins
+  private async armAlarm(): Promise<void> {
+    const now = new Date();
+    const [overdue] = await this.db
+      .select({ dueAt: todoRemindersInUser.dueAt })
+      .from(todoRemindersInUser)
+      .where(lte(todoRemindersInUser.dueAt, now))
+      .limit(1);
+    const [upcoming] = await this.db
+      .select({ dueAt: todoRemindersInUser.dueAt })
+      .from(todoRemindersInUser)
+      .where(gt(todoRemindersInUser.dueAt, now))
+      .orderBy(asc(todoRemindersInUser.dueAt))
+      .limit(1);
+    const runAts = [
+      ...(overdue ? [now.getTime() + TODO_REMINDER_RETRY_DELAY_MS] : []),
+      ...(upcoming ? [upcoming.dueAt.getTime()] : []),
+    ];
+    if (runAts.length > 0) await this.ctx.storage.setAlarm(Math.min(...runAts));
+    else await this.ctx.storage.deleteAlarm();
+  }
 }

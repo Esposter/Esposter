@@ -10,7 +10,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
@@ -48,7 +48,6 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
-  QueueJob,
   apiKeysInAuth,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
@@ -168,7 +167,7 @@ describe("resourceRouter", () => {
     vi.restoreAllMocks();
     vi.useRealTimers();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
-    scheduledJobMap.clear();
+    userObjectCalls.length = 0;
   });
 
   test("reads a single resource by id", async () => {
@@ -842,16 +841,15 @@ describe("resourceRouter", () => {
     await waitForSynchronizedFunctions();
     const reminder = { dueAt, itemId: item.id };
 
-    expect([...scheduledJobMap.values()]).toStrictEqual([
-      {
-        job: { payload: { ...reminder, resourceId: todoListResource.id }, queueJob: QueueJob.SendTodoReminder },
-        runAt: dueAt.getTime(),
-      },
-      {
-        job: { payload: { ...reminder, resourceId: duplicatedResource.id }, queueJob: QueueJob.SendTodoReminder },
-        runAt: dueAt.getTime(),
-      },
-    ]);
+    expect(userObjectCalls.filter(({ method }) => method === "reconcileTodoReminders")).toStrictEqual(
+      [todoListResource, duplicatedResource].map((resource) => ({
+        args: [
+          { cancelledItemIds: [], reminders: [{ ...reminder, resourceId: resource.id }], resourceId: resource.id },
+        ],
+        method: "reconcileTodoReminders",
+        userId: resource.userId,
+      })),
+    );
   });
 
   test("duplicates a resource without content", async () => {

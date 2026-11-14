@@ -53,6 +53,11 @@ vi.mock(
   () => import("#server/composables/scheduler/useScheduler.test"),
 );
 
+vi.mock(
+  import("#server/composables/realtime/useUserObject"),
+  () => import("#server/composables/realtime/useUserObject.test"),
+);
+
 // A bucket binding is read through the Worker's env, which Node does not have. Its buckets are made by the suite that
 // Uses them, into the mock's own record, so the read stays synchronous as the binding is
 vi.mock(import("#server/services/storage/getBucket"), () => import("#server/services/storage/getBucket.test"));

@@ -1,5 +1,5 @@
 /// <reference types="@cloudflare/workers-types" />
-import type { AzureFunction, CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
+import type { AzureFunction, CloudflareEnvironment, StorageBucket, UserObjectRpc } from "@esposter/db-schema";
 import type { KebabCase } from "type-fest";
 
 // The binding names `nitro.ts` derives from the same enums: a bucket or job is bound under its SCREAMING_SNAKE name
@@ -18,7 +18,7 @@ interface Bindings extends BucketBindings, QueueBindings {
   ROOM: DurableObjectNamespace;
   SCHEDULER: DurableObjectNamespace;
   STREAMS: D1Database;
-  USER: DurableObjectNamespace;
+  USER: DurableObjectNamespace<Rpc.DurableObjectBranded & UserObjectRpc>;
 }
 
 declare global {

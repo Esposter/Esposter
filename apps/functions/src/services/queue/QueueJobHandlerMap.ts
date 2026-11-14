@@ -8,7 +8,6 @@ import { processNotificationHandler } from "#src/handlers/processNotificationHan
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
-import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
 
 // Each job's handler, keyed by the job the queue delivers. Exhaustive over QueueJob, so a new job has to name its handler
 export const QueueJobHandlerMap = {
@@ -20,5 +19,4 @@ export const QueueJobHandlerMap = {
   [QueueJob.ProcessScheduledMessageJob]: processScheduledMessageJobHandler,
   [QueueJob.ProcessWebhook]: processWebhookHandler,
   [QueueJob.ReconcileStorageLedgerEntry]: reconcileStorageLedgerEntryHandler,
-  [QueueJob.SendTodoReminder]: sendTodoReminderHandler,
 } satisfies Record<QueueJob, (body: unknown) => Promise<void>>;

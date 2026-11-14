@@ -12,7 +12,6 @@ export const QueueJob = {
   ProcessScheduledMessageJob: "process-scheduled-message-job",
   ProcessWebhook: "process-webhook",
   ReconcileStorageLedgerEntry: "reconcile-storage-ledger-entry",
-  SendTodoReminder: "send-todo-reminder",
 } as const;
 export type QueueJob = (typeof QueueJob)[keyof typeof QueueJob];
 

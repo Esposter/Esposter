@@ -14,6 +14,6 @@ export const handleCutoverRequest = async (request: Request, env: Cloudflare.Env
   const database = drizzle(env.CORE);
   const now = Date.now();
   const scheduledMessageJobs = await rescheduleCutoverJobs(database, env.SCHEDULER, now);
-  const scheduledTodoReminders = await rescheduleTodoReminders(database, env.RESOURCE_ASSETS, env.SCHEDULER, now);
+  const scheduledTodoReminders = await rescheduleTodoReminders(database, env.RESOURCE_ASSETS, env.USER, now);
   return Response.json({ scheduledMessageJobs, scheduledTodoReminders });
 };

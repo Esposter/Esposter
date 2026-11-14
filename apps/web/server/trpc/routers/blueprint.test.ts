@@ -2,7 +2,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
 import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { programRouter } from "#server/trpc/routers/program";
@@ -10,7 +10,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { QueueJob, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
+import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -46,7 +46,7 @@ describe("blueprintRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    scheduledJobMap.clear();
+    userObjectCalls.length = 0;
   });
 
   const createBlueprint = async (manifest: BlueprintResource) => {
@@ -100,13 +100,17 @@ describe("blueprintRouter", () => {
     const deployment = takeOne(deployments);
     await waitForSynchronizedFunctions();
 
-    expect([...scheduledJobMap.values()]).toStrictEqual([
+    expect(userObjectCalls.filter(({ method }) => method === "reconcileTodoReminders")).toStrictEqual([
       {
-        job: {
-          payload: { dueAt, itemId: item.id, resourceId: deployment.resource.id },
-          queueJob: QueueJob.SendTodoReminder,
-        },
-        runAt: dueAt.getTime(),
+        args: [
+          {
+            cancelledItemIds: [],
+            reminders: [{ dueAt, itemId: item.id, resourceId: deployment.resource.id }],
+            resourceId: deployment.resource.id,
+          },
+        ],
+        method: "reconcileTodoReminders",
+        userId: deployment.resource.userId,
       },
     ]);
   });

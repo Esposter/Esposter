@@ -1,6 +1,6 @@
 import type { Database } from "@esposter/db-schema";
 
-import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
+import { sendTodoReminder } from "#src/services/todoReminder/sendTodoReminder";
 import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
@@ -37,7 +37,7 @@ const seedContent = async (
   return writeJsonBlob(bucket, getContentBlobName(resourceId), JSON.stringify({ items }));
 };
 
-describe(sendTodoReminderHandler, () => {
+describe(sendTodoReminder, () => {
   const name = "name";
   const userId = crypto.randomUUID();
   const dueAt = new Date(0);
@@ -68,7 +68,7 @@ describe(sendTodoReminderHandler, () => {
     const resource = await insertResource();
     const itemId = crypto.randomUUID();
     await seedContent(resource.id, [{ dueAt: dueAt.toISOString(), id: itemId, name }]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
+    await sendTodoReminder({ dueAt, itemId, resourceId: resource.id });
 
     expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
       { itemName: name, resourceId: resource.id, type: AppNotificationType.TodoReminder, userId },
@@ -78,7 +78,7 @@ describe(sendTodoReminderHandler, () => {
   test("skips when the resource is gone", async () => {
     expect.hasAssertions();
 
-    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() });
+    await sendTodoReminder({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
@@ -88,7 +88,7 @@ describe(sendTodoReminderHandler, () => {
 
     const resource = await insertResource();
     await seedContent(resource.id, []);
-    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id });
+    await sendTodoReminder({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
@@ -100,7 +100,7 @@ describe(sendTodoReminderHandler, () => {
     const itemId = crypto.randomUUID();
     const reDatedAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
+    await sendTodoReminder({ dueAt, itemId, resourceId: resource.id });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
@@ -114,7 +114,7 @@ describe(sendTodoReminderHandler, () => {
     await seedContent(resource.id, [
       { completedAt: dueAt.toISOString(), dueAt: dueAt.toISOString(), id: itemId, name },
     ]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
+    await sendTodoReminder({ dueAt, itemId, resourceId: resource.id });
 
     expect(MockJobQueueDatabase.size).toBe(0);
   });
