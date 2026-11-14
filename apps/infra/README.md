@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-[Pulumi](https://github.com/pulumi/pulumi) infrastructure-as-code for Esposter's Azure and GitHub resources. Every cloud resource is declared in TypeScript, through the Azure Native and GitHub providers.
+[Pulumi](https://github.com/pulumi/pulumi) infrastructure-as-code for Esposter's Cloudflare and GitHub resources. Every resource is declared in TypeScript, through the Cloudflare and GitHub providers.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra).
 
@@ -39,6 +39,8 @@ Install the Pulumi CLI before you run a stack command. The `@pulumi/pulumi` depe
 
 ### Stack Setup
 
+Secrets come only from the `esposter-infra/prod` Pulumi ESC environment, which `Pulumi.prod.yaml` imports. Do not run `pulumi config set --secret`: it writes the ciphertext into that tracked file.
+
 1. Authenticate to Azure on the local machine:
 
    ```bash
@@ -57,12 +59,12 @@ Install the Pulumi CLI before you run a stack command. The `@pulumi/pulumi` depe
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run these commands from `apps/infra/`:
+Run these commands from `apps/infra/`. The program still declares the Azure resources, so an untargeted `pulumi up` changes them too: pass `--target` for the Cloudflare or GitHub resources.
 
 ```bash
 pnpm build             # regenerate the barrel and compile the Pulumi program to dist/
 pnpm infra:preview     # preview Pulumi changes
-pnpm infra:refresh     # refresh Pulumi state from Azure
+pnpm infra:refresh     # refresh Pulumi state
 pnpm infra:up          # apply Pulumi changes
 ```
 

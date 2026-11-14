@@ -47,12 +47,12 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 - Node.js: the version in the root `.node-version` file.
 - pnpm: the version in the `packageManager` field of the root `package.json`.
-- [PostgreSQL](https://www.postgresql.org/download) and PgAdmin, for the local database.
-- Azure credentials in `.env` for Table Storage and Blob. Locally, `azure-mock` mocks these services.
+- Cloudflare values in `.env` for R2 presigned URLs and RealtimeKit: `CLOUDFLARE_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `REALTIMEKIT_APP_ID` and `REALTIMEKIT_API_TOKEN`.
+- The local D1 database needs no account. `pnpm dev` applies its migrations with wrangler.
 
 ### Database
 
-Migrations are in `server/db/migrations/`. They are generated from `packages/db-schema`. Run these commands from `packages/db-schema/`:
+Migrations are in `server/db/migrations/core/`. They are generated from `packages/db-schema`. Run these commands from `packages/db-schema/`:
 
 ```bash
 # From packages/db-schema/
@@ -61,7 +61,7 @@ pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI
 ```
 
-Pending migrations are applied by `pnpm --filter @esposter/db-schema db:migrate`. `pnpm dev` runs this command first. It is also the deploy's pre-deploy step.
+`pnpm dev` applies pending migrations to the local D1 with wrangler. CI's deploy job applies them to the remote D1 with `pnpm --filter @esposter/db-schema db:migrate`.
 
 ## <a name="commands">⌨️ Commands</a>
 
@@ -71,7 +71,7 @@ Run these commands from `apps/web/`:
 pnpm build            # production build
 pnpm dev              # start dev server (http://localhost:3000)
 pnpm preview          # preview production build locally
-pnpm start            # run the built server (.output), reading .env when present
+pnpm start            # run the built Worker (.output) with wrangler dev, reading .env
 ```
 
 ## <a name="license">⚖️ License</a>

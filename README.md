@@ -146,20 +146,6 @@
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.svg" />
-        </a>
-      </td>
-      <td valign="top">
-        <h3><a href="https://www.postgresql.org/docs/current/">PostgreSQL</a></h3>
-        <p>
-          PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
         <a href="https://trpc.io">
           <img src="./.github/assets/trpc/logo.svg" />
         </a>
@@ -187,6 +173,15 @@
     </tr>
   </tbody>
 </table>
+
+### Cloudflare
+
+- [Workers](https://developers.cloudflare.com/workers/): the web Worker and the functions Worker.
+- [D1](https://developers.cloudflare.com/d1/): the relational database.
+- [R2](https://developers.cloudflare.com/r2/): files.
+- [Queues](https://developers.cloudflare.com/queues/): async jobs, each with its own dead-letter queue.
+- [Durable Objects](https://developers.cloudflare.com/durable-objects/): live state for each room, call and person.
+- [RealtimeKit](https://realtime.cloudflare.com): calls.
 
 ### Infrastructure
 
@@ -239,20 +234,6 @@
         </p>
       </td>
     </tr>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
-        <a href="https://railway.app">
-          <img src="./.github/assets/railway/logo.svg" />
-        </a>
-      </td>
-      <td valign="top">
-        <h3><a href="https://docs.railway.com/">Railway</a></h3>
-        <p>
-          Infrastructure, Instantly.
-        </p>
-      </td>
-    </tr>
   </tbody>
 </table>
 
@@ -288,13 +269,11 @@ pnpm i
 
 Check: `pnpm i` exits with code 0.
 
-4. **PostgreSQL.** Install [PostgreSQL + PgAdmin](https://www.postgresql.org/download). On macOS, run `brew install postgresql@18`. Run `brew install --cask pgadmin4` for PgAdmin. Then run `brew services start postgresql@18`. It keeps the server running across logins and reboots. Its binaries are in `/opt/homebrew/opt/postgresql@18/bin`. That folder is not on `PATH` until you add it. Check: the server answers on `localhost:5432`. The `esposter` database holds no data worth keeping, and `pnpm dev` runs its migrations.
-
-5. **Environment.** Create `apps/web/.env` from `apps/web/.env.example`.
+4. **Environment.** Create `apps/web/.env` from `apps/web/.env.example`.
 
 Check: the file `apps/web/.env` exists.
 
-6. **Machine check.** The command prints a table of the tools and logins that this machine still lacks. Each row gives its install or login command. It prints the full table on every run. Run what the table lists, and rerun until the command exits with code 0:
+5. **Machine check.** The command prints a table of the tools and logins that this machine still lacks. Each row gives its install or login command. It prints the full table on every run. Run what the table lists, and rerun until the command exits with code 0:
 
 ```bash
 pnpm ai:setup
@@ -302,13 +281,15 @@ pnpm ai:setup
 
 Check: `pnpm ai:setup` exits with code 0.
 
-7. **Run the app.** Build the workspace packages, then start the dev server on <http://localhost:3000>:
+6. **Run the app.** Build the workspace packages, then start the dev server on <http://localhost:3000>:
 
 ```bash
 vp run build:packages
 cd apps/web
 pnpm dev
 ```
+
+`pnpm dev` first applies the core D1 migrations to a local D1 database with wrangler, then starts the dev server.
 
 Check: <http://localhost:3000> answers.
 
@@ -346,14 +327,14 @@ pnpm graph:gen
 
 | Package                                                                                                                     | Description                                                                                                                                                                                                                                 | Published |
 | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------: |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                                           | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                                                                                                                                                                |     —     |
-| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                                                   | Pulumi infrastructure code and migration tools for Azure resources                                                                                                                                                                          |     —     |
+| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                                           | Cloudflare Worker that consumes the queues, runs the Cron Trigger and exports the Durable Object classes `RoomObject`, `CallObject` and `UserObject`                                                                                        |     —     |
+| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                                                   | Pulumi program for the Cloudflare estate (Azure resources still declared until teardown)                                                                                                                                                    |     —     |
 | [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                                       | Main Nuxt web application — frontend, server routes, tRPC API                                                                                                                                                                               |     —     |
-| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                                           | Azure wire conventions — OData filter clauses, entity key casing, service limits                                                                                                                                                            |     ✓     |
+| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                                           | Azure wire conventions, being deleted with the Azure teardown                                                                                                                                                                               |     ✓     |
 | [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)                           | Shared ESLint, TSConfig, and tsdown build configurations                                                                                                                                                                                    |     —     |
-| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                                                 | Database connection utilities for Drizzle ORM, Azure Table, and Blob                                                                                                                                                             |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                                                 | Server-side helpers over D1 and R2: the stream table client, blob reads and writes, and the message, moderation, notification, resource and RBAC services                                                                                   |     —     |
 | [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                                       | In-memory D1, R2 and Queues on Miniflare for tests                                                                                                                                                                                          |     —     |
-| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)                                   | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                                                                                                                                                                             |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)                                   | Drizzle SQLite schemas and migrations (D1 source of truth)                                                                                                                                                                                  |     —     |
 | [`packages/follow-ups`](https://github.com/Esposter/Esposter/tree/main/packages/follow-ups)                                 | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left                                                                                                                               |     —     |
 | [`packages/genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine)                         | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music                                                                                                                         |     ✓     |
 | [`packages/genshin-interface`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-interface)                   | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                                                                                                                                    |     ✓     |
