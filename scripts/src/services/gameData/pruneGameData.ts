@@ -1,6 +1,6 @@
-import type { R2ListedObject } from "#src/models/cloudflare/R2ListedObject";
 import type { GameDataPruneResult } from "#src/models/gameData/GameDataPruneResult";
 import type { PruneGameDataOptions } from "#src/models/gameData/PruneGameDataOptions";
+import type { R2ListedObject } from "@esposter/db";
 
 import { checkIsGameDataset } from "#src/services/gameData/checkIsGameDataset";
 import { GAME_DATA_RETENTION_MS, MAX_CONCURRENT_OBJECT_REQUESTS } from "#src/services/gameData/constants";

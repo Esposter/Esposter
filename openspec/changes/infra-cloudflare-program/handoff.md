@@ -75,7 +75,6 @@ In flight when the lead handed off; each one pushes to `ai/cloudflare` when it f
    - The subscription pages of the `trpc` skill.
    - The `persistThenNotify` lint rule, which becomes "publish after write".
    - The Azure rows of the package build bench.
-   - The XML listing parse duplicated between `apps/web/scripts/phaser/filePack/createFilePack.ts` and `scripts/src/services/cloudflare/parseListBucketResult.ts`.
 5. Section 9 in its order. At the end, write the local env files by script, never printing a value: `apps/web/.env` with dev values, `apps/web/.env.production` with prod values, and one per split Worker with only the variables it reads. All are gitignored.
 
 ## Owner rules for this program

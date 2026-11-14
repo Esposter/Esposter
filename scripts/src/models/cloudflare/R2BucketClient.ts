@@ -1,5 +1,5 @@
-import type { R2ListedObject } from "#src/models/cloudflare/R2ListedObject";
 import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
+import type { R2ListedObject } from "@esposter/db";
 
 // One bucket of the account's R2, as a script reads and writes it. Every stored object goes through it, so a test stands an
 // In-memory bucket in its place without a network. A missing object reads as undefined, never as an error

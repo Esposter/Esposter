@@ -1,11 +1,11 @@
 import type { R2BucketClient } from "#src/models/cloudflare/R2BucketClient";
-import type { R2ListedObject } from "#src/models/cloudflare/R2ListedObject";
 import type { R2PutOptions } from "#src/models/cloudflare/R2PutOptions";
+import type { R2ListedObject } from "@esposter/db";
 import type { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 
 import { R2_REQUEST_TIMEOUT_MS } from "#src/services/cloudflare/constants";
 import { createR2Transport } from "#src/services/cloudflare/createR2Transport";
-import { parseListBucketResult } from "#src/services/cloudflare/parseListBucketResult";
+import { parseListBucketResult } from "@esposter/db";
 import { CloudflareAssetType, getCloudflareResourceName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
