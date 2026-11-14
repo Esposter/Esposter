@@ -7,7 +7,6 @@ import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipW
 import { router } from "#server/trpc";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
-import { roomIdsInputSchema } from "#shared/models/db/room/RoomIdsInput";
 import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
 import { roomIdSchema, usersToRoomsInMessage } from "@esposter/db-schema";

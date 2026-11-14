@@ -19,7 +19,6 @@ import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { knockerRouter } from "#server/trpc/routers/call/knocker";
-import { callSessionIdInputSchema } from "#shared/models/db/call/CallSessionIdInput";
 import { callSessionInputSchema } from "#shared/models/db/call/CallSessionInput";
 import { roomCallInputSchema } from "#shared/models/db/call/RoomCallInput";
 import { setCameraEnabledInputSchema } from "#shared/models/db/call/SetCameraEnabledInput";
