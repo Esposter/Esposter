@@ -1,5 +1,7 @@
 # Tasks
 
+A session taking the program up cold, on any machine, starts from [the handoff](handoff.md): the machine setup, the hand deploy of the develop estate, and what is in flight.
+
 ## 1. Parts
 
 - [ ] 1.1 Ship [runtime](../infra-cloudflare-runtime/tasks.md). Verified by its tasks all ticked.
