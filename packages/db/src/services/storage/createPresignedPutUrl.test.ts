@@ -1,4 +1,4 @@
-import { StorageBucket } from "@esposter/db-schema";
+import { CloudflareEnvironment, StorageBucket } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutUrl";
@@ -7,7 +7,7 @@ describe(createPresignedPutUrl, () => {
   const credentials = {
     accessKeyId: "accessKeyId",
     accountId: "accountId",
-    bucketPrefix: "",
+    environment: CloudflareEnvironment.Production,
     secretAccessKey: "secretAccessKey",
   };
 
@@ -19,24 +19,24 @@ describe(createPresignedPutUrl, () => {
     );
 
     expect(url.origin).toBe("https://accountId.r2.cloudflarestorage.com");
-    expect(url.pathname).toBe("/message-assets/room/id%7Ca%23b%3Fc");
+    expect(url.pathname).toBe("/prod-r2-esposter-message-assets/room/id%7Ca%23b%3Fc");
     expect(url.searchParams.get("X-Amz-Expires")).toBe("3600");
     expect(url.searchParams.get("X-Amz-SignedHeaders")).toContain("content-type");
   });
 
-  // A development account's buckets carry a prefix, and the signed url has to name the bucket the account really has
-  test("names the bucket with the environment's prefix", async () => {
+  // A development account's buckets carry the development environment's name, and the signed url has to name that bucket
+  test("names the bucket of the environment the credentials are for", async () => {
     expect.hasAssertions();
 
     const url = new URL(
       await createPresignedPutUrl(
-        { ...credentials, bucketPrefix: "dev-" },
+        { ...credentials, environment: CloudflareEnvironment.Development },
         StorageBucket.MessageAssets,
         "key",
         "image/png",
       ),
     );
 
-    expect(url.pathname).toBe("/dev-message-assets/key");
+    expect(url.pathname).toBe("/dev-r2-esposter-message-assets/key");
   });
 });
