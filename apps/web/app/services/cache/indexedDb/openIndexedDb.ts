@@ -44,8 +44,8 @@ export const openIndexedDb = () => {
         MessageIndexedDbStoreConfiguration,
         RoomIndexedDbStoreConfiguration,
       ];
-      // A store an earlier version created was keyed by a different key path, and a cache is refilled from the server,
-      // so it is cleared rather than migrated
+      // A store an earlier version created was keyed by a different key path.
+      // A cache is refilled from the server, so it is cleared rather than migrated
       if (oldVersion > 0) for (const { storeName } of configurations) database.deleteObjectStore(storeName);
       for (const { indexName, keyPath, storeName } of configurations) {
         const objectStore = database.createObjectStore(storeName, { keyPath });

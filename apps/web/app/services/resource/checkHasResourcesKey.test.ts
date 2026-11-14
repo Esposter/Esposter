@@ -1,5 +1,5 @@
-import { McpScope } from "@esposter/db-schema";
 import { checkHasResourcesKey } from "@/services/resource/checkHasResourcesKey";
+import { McpScope } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(checkHasResourcesKey, () => {

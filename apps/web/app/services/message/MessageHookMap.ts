@@ -1,9 +1,10 @@
-import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { Editor } from "@tiptap/core";
 import type { Promisable } from "type-fest";
+
 import { MessageHook } from "@/models/message/MessageHook";
 import { createHookRegistry } from "@/services/shared/createHookRegistry";
 import { Operation } from "@esposter/shared";

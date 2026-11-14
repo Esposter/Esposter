@@ -1,4 +1,5 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
+
 import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { MessageType } from "@esposter/db-schema";
 

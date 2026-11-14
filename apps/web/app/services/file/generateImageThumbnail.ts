@@ -19,8 +19,8 @@ export const generateImageThumbnail = (file: File): Promise<Blob | undefined> =>
       context.drawImage(bitmap, 0, 0, width, height);
       bitmap.close();
       const encoded = await canvas.convertToBlob({ quality: 0.8, type: THUMBNAIL_CONTENT_TYPE });
-      // A browser that cannot encode the requested type returns a PNG instead, and the upload sends the blob's own type,
-      // which the write url was signed for as THUMBNAIL_CONTENT_TYPE. The bytes are an image either way
+      // A browser that cannot encode the requested type returns a PNG instead, so the upload sends the blob's own type.
+      // The write url was signed for as THUMBNAIL_CONTENT_TYPE, and the bytes are an image either way
       return new Blob([encoded], { type: THUMBNAIL_CONTENT_TYPE });
     }).unwrapOr(undefined);
   else return Promise.resolve(undefined);

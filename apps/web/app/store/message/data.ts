@@ -3,11 +3,12 @@ import type { CreateMessageInput } from "#shared/models/db/message/CreateMessage
 import type { DeleteFileInput } from "#shared/models/db/message/DeleteFileInput";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
-import type { Typing } from "@esposter/db-schema";
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { Typing } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
+
 import { MessageHook } from "@/models/message/MessageHook";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
@@ -194,7 +195,7 @@ export const useDataStore = defineStore("message/data", () => {
   };
   // A reconnect replays the messages it missed but not the edits or deletes, so the loaded window is read again by id.
   // A row the room no longer returns was deleted while the socket was closed, and one whose `updatedAt` has moved was
-  // edited, and each goes through the same funnel its live event would have
+  // Edited, and each goes through the same funnel its live event would have
   const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
       const { items: roomItems } = getSlice(roomId);

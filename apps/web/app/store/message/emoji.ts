@@ -1,6 +1,7 @@
 import type { AddReactionInput } from "#shared/models/db/message/reaction/AddReactionInput";
 import type { RemoveReactionInput } from "#shared/models/db/message/reaction/RemoveReactionInput";
 import type { RoomReaction } from "@esposter/db-schema";
+
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { getOrCreate, ID_SEPARATOR } from "@esposter/shared";
@@ -37,7 +38,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     );
   };
   // Puts the caller in or takes them out of the reaction as it stands now, so what other members did while the write was
-  // in flight is kept. The reaction goes with its last reactor
+  // In flight is kept. The reaction goes with its last reactor
   const storeReactor = (
     roomId: string,
     { emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">,

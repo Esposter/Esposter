@@ -52,7 +52,7 @@ describe(useEmojiStore, () => {
   });
 
   // Reacting again removes the caller's own reaction, and adds it otherwise. The reaction row is shared, so leaving it is
-  // only ever a removal: the row goes with its last reactor and stays for everyone else
+  // Only ever a removal: the row goes with its last reactor and stays for everyone else
   test.each([
     { expectedProcedure: "removeReaction", isReactor: true },
     { expectedProcedure: "addReaction", isReactor: false },
@@ -79,7 +79,7 @@ describe(useEmojiStore, () => {
   });
 
   // The toggle's rollback takes the caller off the reaction as it stands, so another member's reaction delivered while
-  // the rejected write was in flight is kept
+  // The rejected write was in flight is kept
   test("keeps a reaction delivered while the rejected toggle was in flight", async () => {
     expect.hasAssertions();
 

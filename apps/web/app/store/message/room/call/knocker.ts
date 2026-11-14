@@ -1,5 +1,5 @@
-import type { CallParticipant } from "@esposter/db-schema";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
+import type { CallParticipant } from "@esposter/db-schema";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";

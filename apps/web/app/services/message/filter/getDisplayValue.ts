@@ -1,8 +1,9 @@
+import type { SerializableValue } from "@esposter/db-schema";
+
 import { getInvalidValueError } from "@/services/message/filter/getInvalidValueError";
 import { useRoomStore } from "@/store/message/room";
 import { useUserStore } from "@/store/message/user";
 import { FilterType, filterTypeAuthorTypeSchema } from "@esposter/db-schema";
-import type { SerializableValue } from "@esposter/db-schema";
 import { exhaustiveGuard, uncapitalize } from "@esposter/shared";
 
 // `functionName` is the public function the value was read for, so a refused value names the caller's function

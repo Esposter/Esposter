@@ -5,7 +5,6 @@ import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-
 import { toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = async <

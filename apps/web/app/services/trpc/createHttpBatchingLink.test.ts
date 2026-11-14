@@ -59,7 +59,7 @@ describe(createHttpBatchingLink, () => {
   test("names the tab that sent the request in the device header", async () => {
     expect.hasAssertions();
 
-    const deviceIds: (string | null)[] = [];
+    const deviceIds: (null | string)[] = [];
     server.events.on("request:start", ({ request }) => {
       deviceIds.push(request.headers.get(DEVICE_ID_HEADER));
     });

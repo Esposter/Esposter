@@ -1,5 +1,4 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
