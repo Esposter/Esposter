@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/require-await -- An AsyncIterable is what uploadArchive reads, and only an async generator yields one */
 import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, KIBIBYTE, Operation } from "@esposter/shared";

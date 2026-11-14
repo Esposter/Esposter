@@ -405,7 +405,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
-    interceptHead(async () => ({ etag: '"measured"', size: MAX_RESOURCE_CONTENT_SIZE + 1 }) as R2Object);
+    interceptHead(() => Promise.resolve({ etag: '"measured"', size: MAX_RESOURCE_CONTENT_SIZE + 1 } as R2Object));
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),

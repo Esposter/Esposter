@@ -96,8 +96,8 @@ describe(writeSnapshotVersion, () => {
     const digests = Array.from({ length: 5 }, (_value, index) => `${index}`.repeat(64));
     const blobNames = digests.map((digest) => getResourceFileBlobName(resource.id, digest));
     const serializedContent = JSON.stringify({ text: digests.join(" ") });
-    await Promise.all(blobNames.map(async (blobName) => bucket.put(blobName, "value")));
-    const readTouchedAts = async () =>
+    await Promise.all(blobNames.map((blobName) => bucket.put(blobName, "value")));
+    const readTouchedAts = () =>
       Promise.all(blobNames.map(async (blobName) => (await bucket.head(blobName))?.customMetadata?.touchedAt));
 
     await writeSnapshotVersion(

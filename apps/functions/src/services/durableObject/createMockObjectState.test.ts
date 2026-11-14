@@ -45,16 +45,19 @@ export const createMockObjectState = (name: string) => {
       pendingWork.push(promise);
     },
     storage: {
-      deleteAlarm: async () => {
+      deleteAlarm: () => {
         alarm = null;
+        return Promise.resolve();
       },
-      deleteAll: async () => {
+      deleteAll: () => {
         database = new DatabaseSync(":memory:");
         alarm = null;
+        return Promise.resolve();
       },
-      getAlarm: async () => alarm,
-      setAlarm: async (time: number) => {
+      getAlarm: () => Promise.resolve(alarm),
+      setAlarm: (time: number) => {
         alarm = time;
+        return Promise.resolve();
       },
       sql: {
         exec: (query: string, ...bindings: SQLInputValue[]) => {
