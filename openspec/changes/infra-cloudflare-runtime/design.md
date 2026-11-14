@@ -1,6 +1,6 @@
 # Cloudflare runtime
 
-Part of the [Cloudflare program](../infra-cloudflare-program/design.md). The app builds with Nitro's `cloudflare_module` preset and runs as one Worker, with its stateful half — tRPC, its WebSockets and every module-scope map — in Nitro's own Durable Object.
+Part of the [Cloudflare program](../infra-cloudflare-program/design.md). The app builds with Nitro's `cloudflare_module` preset and runs as one stateless Worker; live state and sockets belong to the per-room, per-call and per-person objects of the [realtime](../infra-cloudflare-realtime/design.md) design.
 
 ## How a request is served
 
@@ -8,20 +8,15 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). The app
 flowchart TD
   REQ["request"] --> A{"public asset?"}
   A -->|"yes"| SA["Workers Static Assets, no Worker invocation"]
-  A -->|"no"| U{"/ws upgrade or /api/trpc?"}
-  U -->|"yes"| FWD["forward to env.$DurableObject, instance 'server'"]
-  FWD --> DO["the object's fetch runs nitroApp.fetch:<br/>the tRPC handler, emitters and call maps"]
-  U -->|"no"| SSR["the Worker runs nitroApp.fetch:<br/>SSR pages and stateless server routes"]
-  SSR -->|"a page's tRPC query"| FWD
+  A -->|"no"| U{"/ws/user, /ws/room/:id or /ws/call/:id?"}
+  U -->|"yes"| AUTH["session and membership read from D1"]
+  AUTH -->|"allowed"| OBJ["upgrade forwarded to the owning object's stub"]
+  AUTH -->|"refused"| R401["401 / 403, no socket"]
+  U -->|"no"| SSR["any isolate runs nitroApp.fetch:<br/>SSR, tRPC over HTTP, webhooks, MCP"]
+  SSR -->|"live state"| RPC["RPC on the owning object"]
 ```
 
-The preset already sends a WebSocket upgrade to the object when the `$DurableObject` binding is declared, and the object's `fetch` already runs the whole Nitro app for any other request it receives. What the app adds is the forward of `/api/trpc`: a Nitro middleware that, when the request is not already inside the object, returns `stub.fetch(request)`. Inside the object, `event.req.runtime.cloudflare.context` is the object's state, which is how the middleware tells the two apart.
-
-A page rendered on the server calls tRPC through the module's server-side link. That link resolves procedures in the same isolate, so in the Worker it would read the Worker's own empty call maps; the server-side link is pointed at the object's stub instead, so a page and a client read the same state.
-
-## The object stays awake
-
-tRPC keeps each subscription as an async generator in memory, so the object cannot hibernate its sockets: crossws's hibernation hooks are unused, and the object is evicted only when its last socket closes. The program design prices that. When it is evicted, every in-memory map is lost exactly as a Railway restart loses it, and the clients' reconnect path is the one they already have.
+Nothing the app holds lives in a Worker isolate between requests, so SSR, tRPC, the RealtimeKit webhook and the MCP route all run wherever the request lands and reach live state the same way, through the owning object's RPC methods. Nitro's own `$DurableObject` binding and its WebSocket handling are not declared.
 
 ## Node APIs
 
@@ -51,13 +46,12 @@ Each Worker declares every variable it reads in its schema, and [the environment
 
 ## Key files
 
-| File                                                                         | Role after the change                                                   |
-| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `apps/web/configuration/nitro.ts`                                            | the `cloudflare_module` preset, its `$DurableObject` binding, no brotli |
-| `apps/web/configuration/modules.ts`                                          | the tRPC module's WebSocket endpoint, unchanged path                    |
-| `packages/trpc-nuxt-module/src/runtime/server/createTRPCWebSocketHandler.ts` | the WebSocket handler, run inside the object                            |
-| `apps/web/server/plugins/webpush.ts`                                         | removed; VAPID details set where a push is sent                         |
-| `apps/web/server/plugins/environment.ts`                                     | environment validated per isolate                                       |
-| `apps/web/server/services/resource/readResourceContentDelta.ts`              | zstd decoded without `node:zlib`                                        |
-| `apps/web/server/services/resource/readStagedResourceContent.ts`             | gunzip through `DecompressionStream`                                    |
-| `apps/web/package.json`                                                      | `wrangler` as a dev dependency; `start` is `wrangler dev`               |
+| File                                                             | Role after the change                                     |
+| :--------------------------------------------------------------- | :-------------------------------------------------------- |
+| `apps/web/configuration/nitro.ts`                                | the `cloudflare_module` preset, no brotli                 |
+| `apps/web/configuration/modules.ts`                              | the tRPC module's WebSocket endpoint, unchanged path      |
+| `apps/web/server/plugins/webpush.ts`                             | removed; VAPID details set where a push is sent           |
+| `apps/web/server/plugins/environment.ts`                         | environment validated per isolate                         |
+| `apps/web/server/services/resource/readResourceContentDelta.ts`  | zstd decoded without `node:zlib`                          |
+| `apps/web/server/services/resource/readStagedResourceContent.ts` | gunzip through `DecompressionStream`                      |
+| `apps/web/package.json`                                          | `wrangler` as a dev dependency; `start` is `wrangler dev` |

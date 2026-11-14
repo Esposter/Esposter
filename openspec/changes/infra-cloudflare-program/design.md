@@ -1,70 +1,69 @@
 # Cloudflare program
 
-Esposter moves from Railway and Azure onto Cloudflare's developer platform: one Worker serves the app, one Durable Object holds what needs a single long-lived process, D1 holds every row, R2 every file, Queues and alarms the async work, and RealtimeKit the calls. This page holds the decisions every part shares and the conventions each part's code follows; each part's own design holds its mechanics.
+Esposter moves from Railway and Azure onto Cloudflare's developer platform: a stateless Worker serves the app, one Durable Object per room, call and person holds live state and sockets, D1 holds every row, R2 every file, Queues and alarms the async work, and RealtimeKit the calls. This page holds the decisions every part shares and the conventions each part's code follows; each part's own design holds its mechanics.
 
 ## Target architecture
 
 ```mermaid
 flowchart TD
   B["Browser"] -->|"static asset"| ASSETS["Workers Static Assets"]
-  B -->|"page request"| W["web Worker<br/>(Nitro cloudflare_module, SSR)"]
-  B -->|"/api/trpc and /ws"| W
-  W -->|"forwards tRPC and WebSocket upgrades"| DO["$DurableObject 'server'<br/>tRPC router, EventEmitters, call maps"]
-  W -->|"stateless routes"| D1[("D1: core")]
-  DO --> D1
-  DO -->|"send job"| Q["Queues, one per job"]
-  DO -->|"setAlarm(runAt)"| SCH["Scheduler Durable Object<br/>one per scheduled job"]
-  SCH -->|"alarm fires: send job"| Q
-  Q --> F["functions Worker<br/>queue consumers + Cron Trigger"]
+  B -->|"pages, /api/trpc"| W["web Worker, stateless<br/>(Nitro cloudflare_module, SSR, tRPC)"]
+  B -->|"/ws/user, /ws/room/:id, /ws/call/:id"| W
+  W -->|"session + membership checked, upgrade forwarded"| OBJ["RoomObject · CallObject · UserObject<br/>one per room, call, person"]
+  W -->|"RPC: createMessage, joinCall, …"| OBJ
+  W --> D1[("D1: core")]
+  OBJ -->|"room messages, reactions, search"| OSQL[("each object's own SQLite")]
+  OBJ --> D1
+  OBJ -->|"alarm: scheduled message, reminder"| OBJ
+  W -->|"send job"| Q["Queues, one per job"]
+  Q --> F["functions Worker<br/>queue consumers, Cron Trigger, exports the objects"]
+  F -->|"RPC on the owning object"| OBJ
   F --> D1
-  F -->|"RPC publish(event)"| DO
   B -->|"presigned PUT"| R2[("R2 buckets")]
   R2 -->|"object-create notification"| Q
   F --> R2
-  DO -->|"REST: meeting, participant token"| RTK["RealtimeKit"]
+  W -->|"REST: meeting, participant token"| RTK["RealtimeKit"]
   RTK -->|"participant webhooks"| W
   B -->|"media"| RTK
   Q -->|"after max retries"| DLQ["dead-letter queue per job"]
 ```
 
-The order that matters is the publish path. A mutation runs inside the Durable Object, so its `emit` reaches every subscription held there exactly as it does in the one Railway process today. Work done elsewhere — a queue consumer, a scheduled job, a webhook — reaches the same subscriptions by calling the object's `publish` method, which re-emits the event on the named emitter. That one entry point replaces Azure Web PubSub's two hubs.
+The order that matters is the live path. The web Worker authorises against D1 and calls the object that owns the state; the object writes its storage and pushes a typed event to the sockets it holds, and only a room's online members hear about it beyond the room. A queue consumer reaches live state the same way, by calling the owning object. The mechanics are in [realtime](../infra-cloudflare-realtime/design.md).
 
 ## Service map
 
-| Today                                        | On Cloudflare                                                 | Part                                               |
-| :------------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------- |
-| Railway Node process (`node-server` preset)  | web Worker, `cloudflare_module` preset, Workers Static Assets | [runtime](../infra-cloudflare-runtime/design.md)   |
-| In-process EventEmitters and call maps       | Nitro's `$DurableObject` instance `server`                    | [runtime](../infra-cloudflare-runtime/design.md)   |
-| Railway Postgres                             | D1 database `core`                                            | [database](../infra-cloudflare-database/design.md) |
-| Azure Table Storage                          | typed tables in D1 `core`                                     | [database](../infra-cloudflare-database/design.md) |
-| Azure AI Search `messages-index`             | FTS5 table over `messages`, kept by triggers                  | [database](../infra-cloudflare-database/design.md) |
-| PGlite in tests, `azure-mock`                | Miniflare's D1, R2 and Queues                                 | [database](../infra-cloudflare-database/design.md) |
-| Azure Blob Storage                           | R2, one bucket per container                                  | [storage](../infra-cloudflare-storage/design.md)   |
-| Event Grid custom topic + Functions          | one Queue per job, the functions Worker consuming them        | [jobs](../infra-cloudflare-jobs/design.md)         |
-| Event Grid storage system topic              | R2 event notifications to a Queue                             | [jobs](../infra-cloudflare-jobs/design.md)         |
-| Service Bus delayed messages                 | a Scheduler Durable Object per job, its alarm at the due time | [jobs](../infra-cloudflare-jobs/design.md)         |
-| Functions timer trigger                      | a Cron Trigger on the functions Worker                        | [jobs](../infra-cloudflare-jobs/design.md)         |
-| Web PubSub hubs                              | RPC `publish` on the `server` Durable Object                  | [jobs](../infra-cloudflare-jobs/design.md)         |
-| Event Grid dead-letter container and replay  | each Queue's dead-letter queue                                | [jobs](../infra-cloudflare-jobs/design.md)         |
-| LiveKit server, monitor and Redis on Railway | RealtimeKit                                                   | [calls](../infra-cloudflare-calls/design.md)       |
-| `@pulumi/azure-native`, Logic App guards     | `@pulumi/cloudflare`, billing notification policies           | [pulumi](../infra-cloudflare-pulumi/design.md)     |
-| Railway deploy of `main`                     | `wrangler deploy` from CI on `main`                           | [pulumi](../infra-cloudflare-pulumi/design.md)     |
+| Today                                        | On Cloudflare                                                    | Part                                               |
+| :------------------------------------------- | :--------------------------------------------------------------- | :------------------------------------------------- |
+| Railway Node process (`node-server` preset)  | web Worker, `cloudflare_module` preset, Workers Static Assets    | [runtime](../infra-cloudflare-runtime/design.md)   |
+| In-process EventEmitters and call maps       | a Room, Call or User Durable Object per room, call and person    | [realtime](../infra-cloudflare-realtime/design.md) |
+| Railway Postgres                             | D1 database `core`                                               | [database](../infra-cloudflare-database/design.md) |
+| Azure Table Storage                          | messages in each room's object, the rest typed tables in D1      | [database](../infra-cloudflare-database/design.md) |
+| Azure AI Search `messages-index`             | FTS5 in each room's object, written in the message's transaction | [realtime](../infra-cloudflare-realtime/design.md) |
+| PGlite in tests, `azure-mock`                | Miniflare's D1, R2 and Queues                                    | [database](../infra-cloudflare-database/design.md) |
+| Azure Blob Storage                           | R2, one bucket per container                                     | [storage](../infra-cloudflare-storage/design.md)   |
+| Event Grid custom topic + Functions          | one Queue per job, the functions Worker consuming them           | [jobs](../infra-cloudflare-jobs/design.md)         |
+| Event Grid storage system topic              | R2 event notifications to a Queue                                | [jobs](../infra-cloudflare-jobs/design.md)         |
+| Service Bus delayed messages                 | an alarm on the room's or person's object                        | [realtime](../infra-cloudflare-realtime/design.md) |
+| Functions timer trigger                      | a Cron Trigger on the functions Worker                           | [jobs](../infra-cloudflare-jobs/design.md)         |
+| Web PubSub hubs                              | typed events over each object's hibernating WebSockets           | [realtime](../infra-cloudflare-realtime/design.md) |
+| Event Grid dead-letter container and replay  | each Queue's dead-letter queue                                   | [jobs](../infra-cloudflare-jobs/design.md)         |
+| LiveKit server, monitor and Redis on Railway | RealtimeKit                                                      | [calls](../infra-cloudflare-calls/design.md)       |
+| `@pulumi/azure-native`, Logic App guards     | `@pulumi/cloudflare`, billing notification policies              | [pulumi](../infra-cloudflare-pulumi/design.md)     |
+| Railway deploy of `main`                     | `wrangler deploy` from CI on `main`                              | [pulumi](../infra-cloudflare-pulumi/design.md)     |
 
 ## Decisions
 
-**The app's stateful half runs in Nitro's own Durable Object.** The installed Nitro's `cloudflare_module` preset exports a `$DurableObject` class with one instance, `server`, whose `fetch` runs the whole Nitro app and which takes every WebSocket upgrade once its binding is declared. The web Worker forwards `/api/trpc` and `/ws` to that instance, so every tRPC procedure, every subscription, every module-scope EventEmitter and every in-memory call map lives in one isolate, as it does in the one Railway process. Rejected: running tRPC in the stateless Worker and bridging each emitter across isolates — the [cross-process event bridge](../../deferred/esbabbler/cross-process-event-bridge/design.md) idea — because it rewrites fourteen emitters, thirty-nine subscriptions and four call maps into a distributed protocol for a scale the app does not have. The object cannot hibernate while tRPC holds subscription generators in memory, so it stays awake while anyone is connected. One object awake all month at 128 MB is about a third of a million GB-seconds, inside the 400,000 the paid plan includes.
-
-**Sharding waits for a measured ceiling.** One Durable Object runs one thread, and Cloudflare documents its soft ceiling in the order of a thousand requests a second. When the object's CPU or request rate approaches that, rooms move to an object each, keyed by room id, and the emitters become per-room. Until then a second object is a second process, with nothing to coordinate it.
+**Live state lives in one object per room, call and person.** A room's object owns its messages, reactions, search and the sockets viewing it; a call's object its participants; a person's object their sockets and personal events. Live updates are typed events over hibernating WebSockets, so an idle socket costs no duration. Rejected: running the whole Nitro app in one global object to keep the in-process EventEmitters — one thread and one location for every socket, unable to hibernate, every event filtered by every subscription in memory. The [realtime](../infra-cloudflare-realtime/design.md) design holds the rest.
 
 **Every row moves to D1, Postgres is retired.** D1 is SQLite in the same account, reached by a binding with no connection to pool, billed inside the paid plan. One database, `core`, holds the relational schema and the data Azure Table holds today as typed tables, so a message and its room are joined, foreign-keyed and written in one batch. Rejected: Postgres on PlanetScale behind Hyperdrive, which keeps the schema but adds a second vendor, a connection pool and a per-request driver; Cloudflare also states that Drizzle with the `postgres` driver is not supported over Hyperdrive, so the driver would change anyway. Rejected: the Durable Object's own SQLite as the database, which makes every reader — the functions Worker, every SSR request — a client of one object, and caps the whole store at one object's storage.
 
 **D1 has no interactive transaction, so a transaction becomes a batch or a constraint.** `db.batch([...])` runs its statements atomically; a transaction that reads and then decides becomes a single conditional statement (`INSERT ... ON CONFLICT`, `UPDATE ... WHERE` with a returning clause) or a unique constraint that makes the losing write fail. The [database part](../infra-cloudflare-database/design.md) lists every transaction and its replacement.
 
-**Search cannot lag the message.** The FTS5 table reads `messages` as its content and SQLite triggers keep it in step with every write, so a sent message is searchable at once, where the Azure indexer took up to five minutes. This replaces the [search index capacity](../../deferred/infra/search-index-capacity/design.md) concern with D1's per-database limit.
+**Search cannot lag the message.** A room's FTS5 table is written in the same SQLite transaction as the message, inside the room's object, so a sent message is searchable at once, where the Azure indexer took up to five minutes.
 
 **One Queue per job, named after it.** The `AzureFunction` enum already names each job and its idempotency; each becomes a `QueueJob` with its own queue and dead-letter queue, so retries and failures stay per job as Event Grid subscriptions kept them. Rejected: one queue with a discriminated payload, which shares one retry policy and one dead-letter queue across jobs with different idempotency.
 
-**Delays are alarms, never queue delays.** A Queue delays a message by at most a day, and a scheduled message or a TodoList reminder has no upper bound. A Scheduler Durable Object, one per job id, sets its alarm at the due time and sends the job to its queue when the alarm fires; rescheduling sets a new alarm and cancelling deletes it.
+**Delays are alarms, never queue delays.** A Queue delays a message by at most a day, and a scheduled message or a TodoList reminder has no upper bound. Each is a row in the storage of the object that owns it — the room, the person — whose one alarm is set to its earliest due row and re-armed after each run.
 
 **Calls move to RealtimeKit.** The paid plan's account includes ten thousand audio-and-video participant minutes a month and RealtimeKit runs the SFU, TURN and signalling, so nothing of ours routes UDP. Rejected: LiveKit Cloud, which keeps the client but is a second vendor with half the free minutes and a fifty-dollar next tier. Rejected: the raw Realtime SFU with our own signalling in the Durable Object, which rebuilds what RealtimeKit already is. RealtimeKit's general-availability status and its server-side participant removal are unconfirmed, so the [calls part](../infra-cloudflare-calls/design.md) opens with a check of both.
 

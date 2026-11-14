@@ -98,3 +98,7 @@ Once the window closes: the Railway services are deleted, the one step done in a
 | `scripts/package.json`                                 | the `cutover` script while it exists |
 | `openspec/specs/architecture/azure-services/design.md` | rewritten for Cloudflare             |
 | `openspec/specs/infra/README.md`                       | the shipped log line for the program |
+
+## Ids and messages after the realtime change
+
+The [realtime](../infra-cloudflare-realtime/design.md) design changes two things the copy does. Every D1 row is re-keyed to a UUIDv7 built from its own `createdAt` and a random tail, recorded in the id map, and one rewrite pass replaces each old UUID through the map wherever it appears — key and foreign-key columns, JSON columns, R2 object keys and object contents — since a UUID is a collision-free token. Each room’s messages and reactions are imported into the room’s object, numbered in `createdAt` order, which is deterministic, so messages need no map; a reply or forward is remapped to the new number through the same ordering.
