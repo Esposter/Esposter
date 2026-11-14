@@ -1,6 +1,6 @@
 ## Purpose
 
-Room roles with a bigint permission bitfield, role hierarchy, and tRPC procedure guards. Covers who holds which permission in a room, how roles and per-member overrides combine, the rule that a member can act only on members ranked below them, and which reads are guarded.
+Room roles with a permission bitfield, role hierarchy, and tRPC procedure guards. Covers who holds which permission in a room, how roles and per-member overrides combine, the rule that a member can act only on members ranked below them, and which reads are guarded.
 
 ## Requirements
 

@@ -4,7 +4,7 @@ Discord-complexity role-based access control per room. Every privileged operatio
 
 ## How it works
 
-Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** of `RoomPermission` flags. `bigint` (not `number`) lets the field grow past 32 bits; since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`, then their own [overrides](../member-permission-overrides/design.md) are folded in: allowed bits are added and denied bits removed, so a member's row is the last word over their roles and never over Administrator.
+Each room has roles (`roomRoles`) carrying a `permissions` **bitfield** of `RoomPermission` flags. The field is read and written as a `bigint` through `createBitfieldColumn`, which stores it as decimal text: a JS number loses bits past 2^53 on the way out of D1, so the column is never read as a number. Since TypeScript enums cannot hold bigints, `RoomPermission` is a `const` object of `1n << n` values. A user's effective permissions are the bitwise OR of the room's `@everyone` role plus every role assigned to them in `usersToRoomRoles`, then their own [overrides](../member-permission-overrides/design.md) are folded in: allowed bits are added and denied bits removed, so a member's row is the last word over their roles and never over Administrator.
 
 ```mermaid
 flowchart TD
@@ -42,15 +42,15 @@ A bitfield bounds **permissions**, never roles. A role is a `roomRoles` row and 
 
 This is the same shape Discord uses, and for the same reason: a room is a **flat scope over a fixed vocabulary**, so a permission check is one aggregate and one `AND` rather than a join per action name. Azure's RBAC solves a different problem — role definitions listing action strings (`Microsoft.Storage/*/read`) evaluated against a scope tree — which is what an open-ended, hierarchical resource surface needs and what a room does not have. Adopting it here would buy a wildcard syntax nobody would write and pay for it in a string match per check.
 
-The one real limit is width: `permissions` is a signed 64-bit `bigint`, so bit 62 is the highest a stored value can carry. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the storage, not the model: the column becomes arbitrary-precision (`numeric`) and the wire format a decimal string. Nothing about the roles, the grants or the checks changes with it.
+The one real limit is width: bit 62 is the highest bit the vocabulary uses. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the read path, not the model: the text column already holds any width, and `createBitfieldColumn` is the one place a wider value would be parsed. Nothing about the roles, the grants or the checks changes with it.
 
 ## Data model
 
-| Table                   | Key facts                                                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `roomRoles`             | `roomId` FK, `name`, `color`, `position` (higher = more authority), `permissions` bigint, `isEveryone`                            |
-| `usersToRoomRoles`      | `(userId, roomId, roleId)` composite PK — explicit role assignments                                                               |
-| `roomMemberPermissions` | `(userId, roomId)` PK — one member's `allow` and `deny` bits, disjoint; see [overrides](../member-permission-overrides/design.md) |
+| Table                   | Key facts                                                                                                                                                             |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `roomRoles`             | `roomId` FK, `name`, `color`, `position` (higher = more authority), `permissions` bitfield, `isEveryone`                                                              |
+| `usersToRoomRoles`      | `(userId, roomId, roleId)` composite PK — explicit role assignments                                                                                                   |
+| `roomMemberPermissions` | `(userId, roomId)` PK — one member's `allow` and `deny` bits, disjoint by the writer rather than a `CHECK`; see [overrides](../member-permission-overrides/design.md) |
 
 ## Service layer & guards
 
@@ -58,7 +58,7 @@ The functions are split across three homes by who needs them. The two permission
 
 | Function                                                           | Home                         | Purpose                                            |
 | ------------------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
-| `getPermissions(db, userId, roomId)`                               | `@esposter/db`               | bitwise OR → bigint                                |
+| `getPermissions(db, userId, roomId)`                               | `@esposter/db`               | bitwise OR of the bitfields, as `bigint`s in JS    |
 | `checkHasPermission(db, userId, roomId, perm)`                     | `@esposter/db`               | Owner bypass → Administrator bit → specific bit    |
 | `getTopRolePosition(db, userId, roomId)`                           | `server/services/room/rbac/` | Max assigned-role position                         |
 | `getRoomMemberAuthority(db, userId, roomId)`                       | `server/services/room/rbac/` | One side of a comparison: top position + ownership |

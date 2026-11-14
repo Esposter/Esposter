@@ -13,7 +13,7 @@ flowchart TD
   WF -->|match| A{"filter.action"}
   A -->|Reject| ERR["reject the message"]
   A -->|Warn| W["executeAutomodAction — log Warn"]
-  A -->|Timeout| T["executeAutomodAction — extend timeoutUntil via GREATEST, plus log TimeoutUser"]
+  A -->|Timeout| T["executeAutomodAction — extend timeoutUntil via `max`, plus log TimeoutUser"]
   W --> EM["emit onAdminAction"]
   T --> EM
   W --> ERR

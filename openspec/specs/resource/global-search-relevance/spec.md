@@ -1,50 +1,50 @@
 ## Purpose
 
-pg_trgm typo tolerance for resource name search — extension, GIN trigram index, and similarity() ranking. A misspelled query still finds the resource it was meant for, and exact substring matches still appear, including on very short queries.
+Full-text search over resource names and tags. Each word of a query finds the resources whose name or tags hold it as a whole word, the last word also finds what it starts, and a name match ranks ahead of a resource matched only by a tag.
 
 ## Requirements
 
-### Requirement: A misspelled query still finds the resource
+### Requirement: Each word finds the resource by its name or its tags
 
-The resource search SHALL find resources whose names are close to the query, so that a typo still returns the intended resource.
+The resource search SHALL find the owner's resources whose name or tag keys and values hold each query word as a whole word.
 
-#### Scenario: A transposed letter still finds the resource
+#### Scenario: A word finds the name that holds it
 
-- **GIVEN** the owner has a resource named "Survey"
-- **WHEN** they search for "survye"
-- **THEN** "Survey" is listed in the results
+- **GIVEN** the owner has a resource named "Email campaign"
+- **WHEN** they search for "campaign"
+- **THEN** "Email campaign" is listed in the results
 
-#### Scenario: An unrelated name is not found
+#### Scenario: A word finds a resource by its tag
 
-- **GIVEN** the owner has a resource named "Sheet"
-- **WHEN** they search for "zebra"
-- **THEN** "Sheet" is not listed in the results
+- **GIVEN** the owner has a resource named "Notes" tagged with "budget" set to "2026"
+- **WHEN** they search for "budget"
+- **THEN** "Notes" is listed in the results
 
-### Requirement: Exact matches still appear on short queries
+### Requirement: The last word matches what it starts
 
-The resource search SHALL keep listing every resource whose name contains the query, including on a query of two characters.
+The resource search SHALL match the last word of a query as a prefix, so a word still being typed finds its completions.
 
-#### Scenario: A two-character query finds names containing it
+#### Scenario: A partial last word finds the name
+
+- **GIVEN** the owner has a resource named "Monthly sales"
+- **WHEN** they search for "monthly sal"
+- **THEN** "Monthly sales" is listed in the results
+
+#### Scenario: A fragment inside a word does not match
 
 - **GIVEN** the owner has a resource named "Email campaign"
 - **WHEN** they search for "ai"
-- **THEN** "Email campaign" is listed in the results
+- **THEN** "Email campaign" is not listed in the results
 
-### Requirement: The closest name ranks first, then prefixes, then the newest
+### Requirement: A name match ranks first, then the closest match, then the order asked for
 
-The resource search SHALL order results by how closely the name matches, then by names that start with the query, then by most recently updated.
+The resource search SHALL order results so that a resource matched by its name comes before one matched only by a tag, then by how closely the words match, then by the sort the owner asked for, which defaults to most recently updated.
 
-#### Scenario: A typo's match is listed first
+#### Scenario: A name match ranks above a tag-only match
 
-- **GIVEN** the owner has resources named "Survey" and "Surveys archive"
-- **WHEN** they search for "survye"
-- **THEN** "Survey" is listed before "Surveys archive"
-
-#### Scenario: Prefix matches come before other substring matches
-
-- **GIVEN** the owner has resources named "Monthly sales" and "Sales"
-- **WHEN** they search for "sales"
-- **THEN** "Sales" is listed before "Monthly sales"
+- **GIVEN** a resource named for the query and another resource that matches the query only through a tag
+- **WHEN** the owner searches for the query
+- **THEN** the resource named for the query is listed first
 
 #### Scenario: Equal matches list the newest first
 
@@ -62,27 +62,11 @@ The resource search SHALL report a result count that matches the results it list
 - **WHEN** the owner sees the count
 - **THEN** the count equals the number of resources listed
 
-### Requirement: A resource matched only by a tag ranks below every resource matched by its name
+### Requirement: Query characters are words, never search syntax
 
-The search SHALL list a resource matched only by one of its tags after every resource matched by its name.
+The search SHALL treat every character of the query as text to find, so a query cannot open an operator or a wildcard.
 
-#### Scenario: A name match ranks above a tag-only match
-
-- **GIVEN** a resource named for the query and another resource that matches the query only through a tag
-- **WHEN** the owner searches for the query
-- **THEN** the resource named for the query is listed first
-
-#### Scenario: Tag-only matches list newest first
-
-- **GIVEN** two resources that match the query only through a tag, one updated more recently
-- **WHEN** the owner searches for the query
-- **THEN** the more recently updated one is listed first
-
-### Requirement: A wildcard in the query matches only itself
-
-The search SHALL treat a percent sign or an underscore in the query as an ordinary character.
-
-#### Scenario: A wildcard in the query matches only itself
+#### Scenario: A percent sign matches only itself
 
 - **GIVEN** the owner has a resource whose name and tags contain no percent sign
 - **WHEN** the owner searches for a percent sign

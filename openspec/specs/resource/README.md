@@ -32,7 +32,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [TodoList steps](todolist-steps/design.md) — a flat checklist inside a todo, ticked in its dialog and counted on its row
 - [TodoList task rows](todolist-task-rows/design.md) — a title, one metadata line and the notes in full, in place of the Items table
 - [Global search](global-search/design.md) — grouped as-you-type in the `Ctrl+K` command palette, keyboard chords, relevance-ranked results
-- [Global search relevance](global-search-relevance/design.md) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
+- [Global search relevance](global-search-relevance/design.md) — a full-text index (FTS5) and `bm25` ranking, so a word of a name or a tag finds its resource
 - [Favorites & recents](favorites-and-recents/design.md) — server-side stars and server-side opens, as Home tabs and as full list routes
 - [Resource tags](tags/design.md) — name:value pairs in Essentials, edited in place, filterable on `/all`
 - [Recycle bin](recycle-bin/design.md) — soft delete with restore, permanent purge, and a timer sweep past `RECYCLE_BIN_RETENTION_MS`
@@ -115,7 +115,7 @@ Azure service at any point.
 
 - **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
-- **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
+- **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its full-text ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email.
 - **Datasets** — the read contract one resource consumes another through: dashboard visual binding, email merge fields, and the Program funnel status, with the row cap surfaced wherever a read hits it, and one Export CSV over every dataset provider.
 - **TodoList to a todo product** — Microsoft To Do's lean core over the TodoList: task rows, completion, quick add, importance, manual order, steps, print list and recurrence, each an optional field or a view so no stored list needed a backfill.

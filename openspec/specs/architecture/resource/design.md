@@ -38,7 +38,7 @@ Drizzle table `resources` (`packages/db-schema/src/schema/resource/resourcesInRe
 | ---------------- | ---------------------- | ------------------------------------------------------------------------------------ |
 | `id`             | uuid PK                | becomes the blob path prefix                                                         |
 | `type`           | `ResourceType` pg enum | one value per type in `ResourceDefinitionMap`                                        |
-| `name`           | text + length check    | `createNameSchema` pattern; a trigram GIN index backs similarity ranking in search   |
+| `name`           | text + length check    | `createNameSchema` pattern; a full-text index backs ranked search                    |
 | `tags`           | jsonb, not null, `{}`  | free-form key/value labels; a GIN index backs the `tags @> input` containment filter |
 | `userId`         | FK → users, cascade    | owner; resources are single-owner                                                    |
 | `contentVersion` | integer                | optimistic concurrency on content saves                                              |

@@ -7,7 +7,7 @@ cases where the casing is contested and the one where the name should not exist.
 ## A scalar against a lookup table
 
 **A module-scope constant holding a fixed scalar is SCREAMING_SNAKE_CASE** — `MAX_INVITE_ID_RETRIES`,
-`SEARCH_SIMILARITY_THRESHOLD`, `DUPLICATE_NAME_SUFFIX`, `CLOSED_SURVEY_ERROR_REASON`. The casing is what separates
+`RATE_LIMITER_DURATION_SECONDS`, `DUPLICATE_NAME_SUFFIX`, `CLOSED_SURVEY_ERROR_REASON`. The casing is what separates
 the value that is fixed for the life of the process from the local that happens to be `const`, and a camelCase one
 reads as the latter at every use site.
 

@@ -34,8 +34,8 @@ the whole table. The rule, applied to every table a read touches:
 - **Lead each composite with the column the hottest reader filters on**, and add an index for any other filter a reader
   uses. `usersToRooms` keeps its primary key on `(userId, roomId)` for "this user's rooms", and gets
   `usersToRooms_roomId_index` for "this room's members".
-- **Order the trailing columns by the read's `ORDER BY`**, with a `DISTINCT ON` key first, so the planner needs no sort:
-  `usersToRoomRoles_roomId_userId_index` serves the top-role query's `DISTINCT ON (userId)`.
+- **Order the trailing columns by the read's `ORDER BY`**, with the window's partition key first, so the planner needs no sort:
+  `usersToRoomRoles_roomId_userId_index` serves the top-role query's `row_number() over (partition by userId ...)`.
 - **A foreign key gets no index in Postgres.** Index every foreign key whose parent's delete cascades through it, or whose
   children a read filters by: `posts_userId_ranking_index` serves an author's feed and the cascade of a user's deletion.
 - **A composite that starts with a column another index already leads with is redundant.** Replace the single-column

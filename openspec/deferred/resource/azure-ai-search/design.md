@@ -6,7 +6,7 @@ Index `resources` (name, tags, eventually content extracts) into Azure AI Search
 
 Not for want of a search service — one is already running. Azure AI Search is provisioned on the Free SKU and already carries the esbabbler messages index, so a resources index is an additional index on infrastructure that exists, not new service spend. What it does cost is a slot: the Free SKU allows three indexes, and a resources index takes one of them ([search index capacity](../../infra/search-index-capacity/design.md)).
 
-The reason to wait is that nothing needs it. Postgres covers current volumes, and [`pg_trgm` relevance](../../../specs/resource/global-search-relevance/design.md) already bought typo tolerance for free — the cheap 80% of what a search index would buy, without spending a slot or adding a second indexer to operate.
+The reason to wait is that nothing needs it. Postgres covers current volumes, and [full-text relevance](../../../specs/resource/global-search-relevance/design.md) already bought ranked word and prefix search for free — the cheap 80% of what a search index would buy, without spending a slot or adding a second indexer to operate.
 
 ## Revisit when
 

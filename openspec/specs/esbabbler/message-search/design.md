@@ -76,7 +76,7 @@ sequenceDiagram
   Read->>Store: bind the tab's result slice, totals and page
   Note over Read: filters and query are read before the first await,<br/>so the response is filed under the search that ran
   Read->>Trpc: getSearchableFilters(filters) plus the query
-  Trpc->>Search: getSearchFilterConditions plus the room and not-deleted conditions, and MATCH over getMessageSearchExpression
+  Trpc->>Search: getSearchFilterConditions plus the room and not-deleted conditions, and MATCH over getSearchExpression
   Search-->>Trpc: page of documents and a total
   Trpc-->>Read: results and count
   Read->>Store: write results, count and page 1
@@ -118,8 +118,8 @@ A deleted account's messages keep their place in their rooms, but not their text
 | `app/composables/message/message/useReadMessageCreators.ts`              | The authors a page of messages names, read before the page lands                                                |
 | `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
 | `server/services/message/searchMessages.ts`                              | Condition assembly and the paged FTS5 read                                                                      |
-| `server/services/message/search/getSearchFilterConditions.ts`            | Each filter type's SQL condition                                                                                 |
-| `server/services/message/search/getMessageSearchExpression.ts`           | The user text as literal FTS5 words                                                                             |
+| `server/services/message/search/getSearchFilterConditions.ts`            | Each filter type's SQL condition                                                                                |
+| `server/services/search/getSearchExpression.ts`                          | The user text as literal FTS5 words                                                                             |
 
 ## Sources
 

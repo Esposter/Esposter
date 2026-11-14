@@ -12,7 +12,7 @@ Each override bitfield names the permissions one state covers. The write path ta
 - a bit in `deny` is set in `deny` and cleared from `allow`;
 - a bit in `inherit` is cleared from both, so the roles decide it again.
 
-A bit set in both fields would be a state the model does not have, so the table holds `(allow & deny) = 0` as a `CHECK`, and a write that names a bit in both `allow` and `deny` is refused. A row left with neither field set is removed rather than kept as an empty entry.
+A bit set in both fields would be a state the model does not have, so the writer holds `(allow & deny) = 0`. The bitfields are decimal text, which no `CHECK` can test, so the merge in `mergeMemberPermissionOverride` clears every bit a write names from both fields before it sets them, and a write that names a bit in both `allow` and `deny` is refused. A row left with neither field set is removed rather than kept as an empty entry.
 
 ```mermaid
 flowchart TD
@@ -49,14 +49,14 @@ The member editor leaves out the Administrator bit, which no override can hold.
 - **Overrides do not change a member's top role position.** Position decides hierarchy for role assignments; an override is a statement about permissions, so `getRoomMemberAuthority` is unchanged and the grant check covers what an actor may give.
 - **An override never reaches Administrator.** Both the `allow` and `deny` bits exclude it at the write and at the fold, the same rule that keeps an owner from being locked out of their own room.
 - **Only the actor's held permissions may be granted.** Discord's rule for a channel entry, and the one `createRole` already applies to a role.
-- **Writes are a transaction, and an empty row is deleted.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show.
+- **Writes are compare-and-set, and an empty row is deleted.** Clearing a bit can empty both fields, and an empty row would appear in the entry list as a member with nothing to show.
 - **Overrides are visible to the room, as role assignments are.** Reads and events take the member procedure, not the permission procedure, because the roles panel's data is already the room's own; a stricter read would hide from members a fact the roles already show them.
 
 ## Key files
 
 | File                                                                                            | Role                                                                  |
 | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/roomMemberPermissionsInMessage.ts`                       | the table and its disjointness `CHECK`                                |
+| `packages/db-schema/src/schema/message/roomMemberPermissionsInMessage.ts`                       | the table; disjointness is held by the writer, not a `CHECK`          |
 | `packages/db-schema/src/relations/message/roomMemberPermissionsInMessageRelation.ts`            | the room relation the relational read takes                           |
 | `packages/db/src/services/room/rbac/getPermissions.ts`                                          | folds the member's row into the effective bitfield                    |
 | `apps/web/server/services/room/rbac/setMemberPermissionOverride.ts`                             | the three-state write, the empty-row removal and the state it returns |
