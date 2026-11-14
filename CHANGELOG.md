@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.11.0](https://github.com/Esposter/Esposter/compare/v4.10.1...v4.11.0) (2026-11-14)
+
+### Bug Fixes
+
+* **knip:** apps/web's tresjs-nuxt is a module registered by its source path, so knip stops flagging it unused ([057d2e1](https://github.com/Esposter/Esposter/commit/057d2e1abc85590eec047125a0aba30dd86cbd47))
+* lint ([3901bf4](https://github.com/Esposter/Esposter/commit/3901bf4809cca033e21b5ded171d3b694e693636))
+* **web:** the dependency graph draws apps/web's new edge to tresjs-nuxt ([53da7a7](https://github.com/Esposter/Esposter/commit/53da7a7981fac2cdca867ad55c4c33b7699418f3))
+
+### Features
+
+* **scripts:** ai:precheck fails on a stale dependency-graph.svg after a manifest change, and --fix redraws it ([fd71d64](https://github.com/Esposter/Esposter/commit/fd71d6443cdd4eb43d668d8cfe67e4200e1b4f04))
+
 ## [4.10.1](https://github.com/Esposter/Esposter/compare/v4.10.0...v4.10.1) (2026-11-13)
 
 ### Bug Fixes
