@@ -68,18 +68,18 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 Paths are relative to `apps/web`, except those under `apps/functions/` and `packages/`, which are relative to the repository root.
 
-| File                                                                  | Role                                                                                |
-| --------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/webhooksInMessage.ts`          | the webhook row — room, creator, token, active flag                                 |
-| `packages/db-schema/src/schema/message/appUsersInMessage.ts`          | the bot identity a webhook message is authored by                                   |
-| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`     | the accepted request body                                                           |
-| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`       | message entity carrying `appUser` in place of `userId`                              |
-| `server/trpc/routers/webhook.ts`                                      | create, read, update, rotate, delete, and identity lookup                           |
-| `server/api/webhooks/[id]/[token].post.ts`                            | the public url — rate limits, token and payload checks, then the ProcessWebhook job |
-| `apps/functions/src/handlers/processWebhookHandler.ts`                | the ProcessWebhook job — message creation on the room, push notification job        |
-| `apps/functions/src/services/message/getWebhookCreateMessageInput.ts` | payload to `MessageType.Webhook` message input                                      |
-| `app/store/message/room/webhook.ts`                                   | client store for the settings tab                                                   |
-| `app/store/message/user/appUser.ts`                                   | cache of bot identities for the message list                                        |
-| `app/composables/message/room/useCreator.ts`                          | resolves a message's author, app user or user                                       |
-| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue`   | the Integrations tab content                                                        |
-| `app/components/Message/Model/Message/AppUserBadge.vue`               | the "app" badge on a webhook message                                                |
+| File                                                                | Role                                                                                |
+| ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/webhooksInMessage.ts`        | the webhook row — room, creator, token, active flag                                 |
+| `packages/db-schema/src/schema/message/appUsersInMessage.ts`        | the bot identity a webhook message is authored by                                   |
+| `packages/db-schema/src/models/message/webhook/WebhookPayload.ts`   | the accepted request body                                                           |
+| `packages/db-schema/src/models/message/WebhookMessageEntity.ts`     | message entity carrying `appUser` in place of `userId`                              |
+| `server/trpc/routers/webhook.ts`                                    | create, read, update, rotate, delete, and identity lookup                           |
+| `server/api/webhooks/[id]/[token].post.ts`                          | the public url — rate limits, token and payload checks, then the ProcessWebhook job |
+| `apps/functions/src/handlers/processWebhookHandler.ts`              | the ProcessWebhook job — message creation on the room, push notification job        |
+| `apps/functions/src/durableObjects/RoomObject.ts`                   | the webhook payload as a `MessageType.Webhook` message                              |
+| `app/store/message/room/webhook.ts`                                 | client store for the settings tab                                                   |
+| `app/store/message/user/appUser.ts`                                 | cache of bot identities for the message list                                        |
+| `app/composables/message/room/useCreator.ts`                        | resolves a message's author, app user or user                                       |
+| `app/components/Message/Model/Room/Settings/Type/Webhook/Index.vue` | the Integrations tab content                                                        |
+| `app/components/Message/Model/Message/AppUserBadge.vue`             | the "app" badge on a webhook message                                                |

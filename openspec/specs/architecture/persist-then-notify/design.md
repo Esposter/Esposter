@@ -79,16 +79,16 @@ Server-side (tRPC routers, services, Nitro routes) the terminal handler is `cons
 
 ## Key files
 
-| File                                                               | Role                                                                            |
-| ------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
-| `apps/web/server/services/message/createUserMessage.ts`            | Canonical shape — guards, slowmode clock, write, notify, best-effort tail       |
-| `apps/web/server/trpc/routers/message/index.ts`                    | `forwardMessage` — the same shape per room, under `Promise.allSettled`          |
-| `apps/web/server/services/message/createSystemRoomMessage.ts`      | A write and its notify as one unit, handed back as a `ResultAsync` to terminate |
-| `apps/functions/src/durableObjects/RoomObject.ts`                  | `removeMember` closes a departed member's sockets on the room's object          |
-| `apps/web/server/trpc/plugins/achievementPlugin.ts`                | Post-mutation work that always returns the original mutation's result           |
-| `apps/web/server/services/resource/writeResourceActivity.ts`       | Best-effort activity write behind every resource mutation                       |
-| `apps/web/server/services/queue/publishBlobDeletion.ts`            | The one chunked best-effort blob-cleanup publish every delete funnels through   |
-| `apps/functions/src/services/message/createAndBroadcastMessage.ts` | Handler-side write then best-effort broadcast                                   |
+| File                                                          | Role                                                                            |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `apps/web/server/services/message/createUserMessage.ts`       | Canonical shape — guards, slowmode clock, write, notify, best-effort tail       |
+| `apps/web/server/trpc/routers/message/index.ts`               | `forwardMessage` — the same shape per room, under `Promise.allSettled`          |
+| `apps/web/server/services/message/createSystemRoomMessage.ts` | A write and its notify as one unit, handed back as a `ResultAsync` to terminate |
+| `apps/functions/src/durableObjects/RoomObject.ts`             | `removeMember` closes a departed member's sockets on the room's object          |
+| `apps/web/server/trpc/plugins/achievementPlugin.ts`           | Post-mutation work that always returns the original mutation's result           |
+| `apps/web/server/services/resource/writeResourceActivity.ts`  | Best-effort activity write behind every resource mutation                       |
+| `apps/web/server/services/queue/publishBlobDeletion.ts`       | The one chunked best-effort blob-cleanup publish every delete funnels through   |
+| `apps/functions/src/handlers/processWebhookHandler.ts`        | The webhook handler's call to the room's object, which writes and broadcasts    |
 
 ## Notes
 
