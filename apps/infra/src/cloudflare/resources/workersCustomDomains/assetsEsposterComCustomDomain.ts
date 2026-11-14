@@ -1,5 +1,5 @@
 import CloudflareAccountId from "#src/cloudflare/constants/CloudflareAccountId";
-import CloudflareZoneId from "#src/cloudflare/constants/CloudflareZoneId";
+import { esposterCom } from "#src/cloudflare/resources/zones/esposterCom";
 import {
   CloudflareAssetType,
   CloudflareEnvironment,
@@ -17,6 +17,6 @@ const service = getCloudflareResourceName(
 
 export const assetsEsposterComCustomDomain: cloudflare.WorkersCustomDomain = new cloudflare.WorkersCustomDomain(
   hostname,
-  { accountId: CloudflareAccountId, hostname, service, zoneId: CloudflareZoneId },
-  { protect: true },
+  { accountId: CloudflareAccountId, hostname, service, zoneId: esposterCom.id },
+  { parent: esposterCom, protect: true },
 );
