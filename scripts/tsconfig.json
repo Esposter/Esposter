@@ -1,6 +1,7 @@
 {
   "extends": "../packages/configuration/tsconfig.node.json",
-  "compilerOptions": { "types": ["node", "@webgpu/types"] },
+  // The scripts are a private tool that nothing consumes as declarations, so their exports are not annotated for isolatedDeclarations
+  "compilerOptions": { "isolatedDeclarations": false, "types": ["node", "@webgpu/types"] },
   "include": [
     "../packages/configuration/types/*.d.ts",
     "../packages/genshin-world/auto-imports.d.ts",
