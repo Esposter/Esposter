@@ -52,6 +52,7 @@
     "uuid": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",

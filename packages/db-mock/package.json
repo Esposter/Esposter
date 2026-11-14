@@ -46,6 +46,7 @@
     "miniflare": "catalog:"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "tsdown": "catalog:",
