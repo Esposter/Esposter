@@ -24,7 +24,7 @@ export const createOperationData = <
   const createItem = (newItem: TItem, isReversed?: true) => {
     const checkIsNewItem = getEntityIdEqualComparator(idKeys as (keyof TItem & string)[], newItem);
     // Guard against duplicate delivery from transport reconnections (e.g. SSE Last-Event-ID catch-up
-    // Re-yielding stored events, WebPubSub reconnect buffering).
+    // Re-yielding stored events).
     if (items.value.some((item) => checkIsNewItem(item))) return;
     else if (isReversed) items.value.unshift(newItem);
     else items.value.push(newItem);

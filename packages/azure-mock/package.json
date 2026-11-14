@@ -10,8 +10,7 @@
     "blob-storage",
     "eventgrid",
     "mock",
-    "testing",
-    "web-pubsub"
+    "testing"
   ],
   "homepage": "https://github.com/Esposter/Esposter/blob/main/packages/azure-mock#readme",
   "bugs": {

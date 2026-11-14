@@ -45,8 +45,6 @@
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
-    "@azure/web-pubsub": "catalog:",
-    "@azure/web-pubsub-client": "catalog:",
     "@better-auth/api-key": "catalog:",
     "@better-auth/drizzle-adapter": "catalog:",
     "@cloudflare/realtimekit": "catalog:",

@@ -198,7 +198,7 @@ export const directMessageRouter = router({
       );
       return { targetUser: removedUser, updatedRoom: updatedRoomRow };
     });
-    await announceRoomMemberDeparture(ctx.db, { roomId, userId }, ctx.getSessionPayload.session.id);
+    announceRoomMemberDeparture({ roomId, userId }, ctx.getSessionPayload.session.id);
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await createSystemRoomMessage(
       roomId,

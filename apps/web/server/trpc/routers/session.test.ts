@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { Device } from "#shared/models/auth/Device";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { Session } from "better-auth";
 
@@ -16,14 +15,6 @@ import {
 import { sessionRouter } from "#server/trpc/routers/session";
 import { sessionsInAuth } from "@esposter/db-schema";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-
-const mocks = vi.hoisted(() => ({ closeDeviceConnections: vi.fn<(device: Device) => Promise<void>>() }));
-
-// Closing a revoked session's live connections is the one part of a revoke that leaves the auth tables, so it is
-// Asserted as the intent it is rather than through a Web PubSub hub
-vi.mock(import("#server/services/auth/closeDeviceConnections"), () => ({
-  closeDeviceConnections: mocks.closeDeviceConnections,
-}));
 
 describe("sessionRouter", () => {
   let mockContext: Context;
@@ -101,7 +92,6 @@ describe("sessionRouter", () => {
       body: { token: otherSession.token },
       headers: mockContext.headers,
     });
-    expect(mocks.closeDeviceConnections).toHaveBeenCalledExactlyOnceWith({ sessionId: otherSession.id, userId });
   });
 
   test("rejects a session the account does not hold", async () => {
@@ -114,12 +104,11 @@ describe("sessionRouter", () => {
     expect(getMockRevokeSession()).not.toHaveBeenCalled();
   });
 
-  test("closes the connections of every session but the current one", async () => {
+  test("revokes every session but the current one", async () => {
     expect.hasAssertions();
 
     await caller.deleteOtherSessions();
 
     expect(getMockRevokeOtherSessions()).toHaveBeenCalledExactlyOnceWith({ headers: mockContext.headers });
-    expect(mocks.closeDeviceConnections).toHaveBeenCalledExactlyOnceWith({ sessionId: otherSession.id, userId });
   });
 });

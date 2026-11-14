@@ -48,7 +48,7 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 - Node.js: the version in the root `.node-version` file.
 - pnpm: the version in the `packageManager` field of the root `package.json`.
 - [PostgreSQL](https://www.postgresql.org/download) and PgAdmin, for the local database.
-- Azure credentials in `.env` for Table Storage, Blob, WebPubSub and EventGrid. Locally, `azure-mock` mocks these services.
+- Azure credentials in `.env` for Table Storage, Blob and EventGrid. Locally, `azure-mock` mocks these services.
 
 ### Database
 

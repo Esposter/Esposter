@@ -2,13 +2,13 @@ import type { Device } from "#shared/models/auth/Device";
 import type { DeleteMessageInput } from "#shared/models/db/message/DeleteMessageInput";
 import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessageInput";
 import type { Typing } from "#shared/models/message/Typing";
-import type { StandardMessageEntity } from "@esposter/db-schema";
+import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
 // Every event is a `[data, device?]` envelope, so the room subscriptions share one shape. An event no single
 // Client caused carries no device, and reaches everyone in the room
 export interface MessageEvents {
-  createMessage: [[StandardMessageEntity[], Pick<Device, "sessionId"> & { isSendToSelf?: true }]];
+  createMessage: [[MessageEntity[], (Pick<Device, "sessionId"> & { isSendToSelf?: true })?]];
   // Typing propagates to the account's other devices too, unlike every other event
   createTyping: [[Typing, Device]];
   deleteMessage: [[DeleteMessageInput]];

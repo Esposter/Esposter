@@ -50,7 +50,6 @@ Replace each real Azure client with its mock equivalent. Make the replacement in
 | `MockQueueClient`              | `QueueClient`              | In-memory Azure Storage Queue                                                              |
 | `MockSearchClient`             | `SearchClient`             | In-memory Azure AI Search index                                                            |
 | `MockTableClient`              | `TableClient`              | In-memory Azure Table Storage                                                              |
-| `MockWebPubSubServiceClient`   | `WebPubSubServiceClient`   | In-memory group membership: `group().addUser` and `removeUser`; `sendToAll` reaches nobody |
 
 Each client stores its state in an exported `Mock*Database` map, such as `MockTableDatabase` or `MockContainerDatabase`. To reset a test, clear the map that the test seeded.
 

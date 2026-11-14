@@ -232,7 +232,7 @@ export const baseRoomRouter = router({
         input,
       );
 
-      await announceRoomMemberDeparture(ctx.db, userToRoom, ctx.getSessionPayload.session.id);
+      announceRoomMemberDeparture(userToRoom, ctx.getSessionPayload.session.id);
       // Best-effort after the membership delete — the name lookup only exists to word the system message, so
       // A failure costs the room one "X left" line, never the leave that already landed.
       await getResultAsync(async () => {

@@ -7,7 +7,6 @@ export const sharedEnvironmentVariablesShape: {
   AZURE_EVENT_GRID_TOPIC_KEY: z.ZodString;
   AZURE_SEARCH_BASE_URL: z.ZodURL;
   AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: z.ZodString;
-  AZURE_WEB_PUBSUB_CONNECTION_STRING: z.ZodString;
   BASE_URL: z.ZodURL;
   DATABASE_URL: z.ZodURL;
   VAPID_PRIVATE_KEY: z.ZodString;
@@ -17,7 +16,6 @@ export const sharedEnvironmentVariablesShape: {
   AZURE_EVENT_GRID_TOPIC_KEY: z.string().min(1),
   AZURE_SEARCH_BASE_URL: z.url(),
   AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: z.string().min(1),
-  AZURE_WEB_PUBSUB_CONNECTION_STRING: z.string().min(1),
   BASE_URL: z.url(),
   DATABASE_URL: z.url(),
   VAPID_PRIVATE_KEY: z.string().min(1),

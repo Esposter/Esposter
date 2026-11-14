@@ -1,4 +1,4 @@
-import type { BlobCreatedEventGridData, Database } from "@esposter/db-schema";
+import type { BlobCreatedEventGridData, Database, PublishEvent } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
 import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
@@ -7,7 +7,13 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import {
+  StorageBucket,
+  getBlobSubjectPrefix,
+  PublishEventType,
+  storageLedgerInStorage,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase, MockRestError } from "azure-mock";
 import { createHash } from "node:crypto";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -23,21 +29,12 @@ vi.mock(import("#src/services/shared/db"), () => ({
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 // The meter lives in the app process, so publishing is the only thing this handler can do about it — which
-// Makes the group it publishes to the assertable half: it has to be the owner whose counter moved
-const { groupMock, sendToAllMock } = vi.hoisted(() => ({
-  groupMock: vi.fn<(group: string) => void>(),
-  sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
+// Makes the event it publishes the assertable half: it has to be the owner whose counter moved
+const { publishMock } = vi.hoisted(() => ({
+  publishMock: vi.fn<(event: PublishEvent) => Promise<void>>(),
 }));
 
-vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
-  getWebPubSubServiceClient: () =>
-    ({
-      group: (group: string) => {
-        groupMock(group);
-        return { sendToAll: sendToAllMock };
-      },
-    }) as never,
-}));
+vi.mock(import("#src/services/server/publishToServer"), () => ({ publishToServer: publishMock }));
 
 const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
 const readResourceAssetNames = () => {
@@ -98,8 +95,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
-    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
+    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
   });
 
   // A message attachment is named by its room and its id, with the filename after the separator.
@@ -117,7 +113,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
     expect(downloadSpy).not.toHaveBeenCalled();
   });
 
@@ -133,7 +129,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await reconcileStorageLedgerEntryHandler(event, context);
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(sendToAllMock).not.toHaveBeenCalled();
+    expect(publishMock).not.toHaveBeenCalled();
   });
 
   test("recovers a blob name storage percent-encoded into the subject", async () => {
@@ -146,7 +142,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     );
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
+    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
   });
 
   // A lone `%` is legal in a filename and decodes to nothing valid. The blob is simply one nobody reserved —

@@ -1,27 +1,17 @@
 import type { StorageUsage } from "#shared/models/storage/StorageUsage";
 
-import { generateWebPubSubClientAccessUrl } from "#server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
 import { on } from "#server/services/events/on";
 import { storageEventEmitter } from "#server/services/storage/events/storageEventEmitter";
 import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
-import { AzureWebPubSubHub, DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const storageRouter = router({
-  // The counter's other writer is the Functions host, which shares no event emitter with this process — so the
-  // Blob events that settle a save or a deletion reach the meter through Web PubSub instead. The group is the
-  // Account, not the device: a quota belongs to the user, and every device of theirs is stale by the same
-  // Amount. See openspec/specs/resource/storage-quotas/design.md
-  generateWebPubSubClientAccessUrl: standardAuthedProcedure.query<string>(({ ctx, signal }) =>
-    generateWebPubSubClientAccessUrl(
-      AzureWebPubSubHub.Storage,
-      ctx.getSessionPayload.user.id,
-      ctx.getSessionPayload,
-      signal,
-    ),
-  ),
+  // The Functions host settles the counter too, and reports each change through the server object's publish route,
+  // Which re-emits it on this emitter. The usage is read per account, so the meter is stale by no more than one event.
+  // See openspec/specs/resource/storage-quotas/design.md
   onUpdateUsage: standardAuthedProcedure.subscription(async function* ({ ctx, signal }) {
     const userId = ctx.getSessionPayload.user.id;
     const events = on(storageEventEmitter, "updateUsage", { signal });

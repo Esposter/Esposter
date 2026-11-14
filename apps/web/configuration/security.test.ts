@@ -42,7 +42,6 @@ describe("security", () => {
         "https://container.blob.core.windows.net",
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
-        "wss://*.webpubsub.azure.com",
       ]),
     );
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(
@@ -65,7 +64,6 @@ describe("security", () => {
       "blob:",
       "https://*.realtime.cloudflare.com",
       "wss://*.realtime.cloudflare.com",
-      "wss://*.webpubsub.azure.com",
     ]);
     expect(contentSecurityPolicy?.["media-src"]).toStrictEqual(["'self'", "blob:"]);
   });

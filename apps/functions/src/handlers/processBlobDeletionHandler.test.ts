@@ -1,4 +1,4 @@
-import type { BlobDeletionEventGridData, Database } from "@esposter/db-schema";
+import type { BlobDeletionEventGridData, Database, PublishEvent } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
 import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
@@ -6,7 +6,7 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, PublishEventType, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -22,22 +22,13 @@ vi.mock(import("#src/services/shared/db"), () => ({
 
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
-// Released bytes are published to the owner's meter, which lives in the app process — so the group published
-// To is the only observable this handler has for the half of a deletion the owner actually watches
-const { groupMock, sendToAllMock } = vi.hoisted(() => ({
-  groupMock: vi.fn<(group: string) => void>(),
-  sendToAllMock: vi.fn<(message: unknown) => Promise<void>>(),
+// Released bytes are published to the owner's meter, which lives in the app process — so the event published
+// Is the only observable this handler has for the half of a deletion the owner actually watches
+const { publishMock } = vi.hoisted(() => ({
+  publishMock: vi.fn<(event: PublishEvent) => Promise<void>>(),
 }));
 
-vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
-  getWebPubSubServiceClient: () =>
-    ({
-      group: (group: string) => {
-        groupMock(group);
-        return { sendToAll: sendToAllMock };
-      },
-    }) as never,
-}));
+vi.mock(import("#src/services/server/publishToServer"), () => ({ publishToServer: publishMock }));
 
 const readContainer = () => {
   const container = MockContainerDatabase.get(StorageBucket.MessageAssets);
@@ -157,8 +148,7 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(createEvent([blobName]), context);
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
-    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
-    expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
+    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
   });
 
   // A deletion whose blobs were never charged to anyone releases nothing, so there is no meter to tell
@@ -168,7 +158,7 @@ describe(processBlobDeletionHandler, () => {
     await seedBlob(blobName);
     await processBlobDeletionHandler(createEvent([blobName]), context);
 
-    expect(sendToAllMock).not.toHaveBeenCalled();
+    expect(publishMock).not.toHaveBeenCalled();
   });
 
   test("processBlobDeletionHandler is idempotent", async () => {

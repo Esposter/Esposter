@@ -12,7 +12,6 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
-import { generateWebPubSubClientAccessUrl } from "#server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
@@ -85,7 +84,6 @@ import {
   StorageBucket,
   AzureEntityType,
   AzureTable,
-  AzureWebPubSubHub,
   DatabaseEntityType,
   FileEntity,
   FilterType,
@@ -345,10 +343,6 @@ export const baseMessageRouter = router({
       }),
     );
   }),
-  generateWebPubSubClientAccessUrl: getMemberProcedure(roomIdSchema, "roomId").query<string>(
-    ({ ctx, input: { roomId }, signal }) =>
-      generateWebPubSubClientAccessUrl(AzureWebPubSubHub.Messages, roomId, ctx.getSessionPayload, signal),
-  ),
   onCreateMessage: getMemberProcedure(onCreateMessageInputSchema, "roomId").subscription<
     AsyncGenerator<TrackedEnvelope<MessageEntity[]>, void, unknown>
   >(async function* ({ ctx, input: { lastEventId, roomId }, signal }) {
@@ -379,11 +373,15 @@ export const baseMessageRouter = router({
       if (messages.length > 0) yield tracked(takeOne(messages, messages.length - 1).rowKey, messages);
     }
 
-    for await (const [[data, { isSendToSelf, sessionId }]] of createdMessages) {
+    for await (const [[data, device]] of createdMessages) {
+      // A message no device sent, a webhook's among them, is for every subscriber
       const dataToYield = data.filter(
         (newMessage) =>
           newMessage.partitionKey === roomId &&
-          (isSendToSelf || !checkIsSameDevice({ sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
+          (!device ||
+            device.isSendToSelf ||
+            newMessage.userId === undefined ||
+            !checkIsSameDevice({ sessionId: device.sessionId, userId: newMessage.userId }, ctx.getSessionPayload)),
       );
       if (dataToYield.length > 0) yield tracked(takeOne(dataToYield, dataToYield.length - 1).rowKey, dataToYield);
     }

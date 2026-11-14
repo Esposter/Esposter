@@ -2,13 +2,10 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { readUserDeviceIds } from "#server/services/auth/readUserDeviceIds";
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, createMockUser, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
-import { joinRoomGroup } from "#server/trpc/routers/joinRoomGroup.test";
-import { readRoomGroupMembers } from "#server/trpc/routers/readRoomGroupMembers.test";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { directMessageRouter } from "#server/trpc/routers/room/directMessage";
@@ -174,20 +171,6 @@ describe("directMessageRouter", () => {
 
     expect(takeOne(participantsData).participants.map(({ id }) => id)).toStrictEqual([user.id]);
     expect(takeOne(directMessages.items).participantKey).toBe(getDirectMessageParticipantKey([mainUser.id, user.id]));
-  });
-
-  test("takes a deleted participant's devices out of the direct message's group", async () => {
-    expect.hasAssertions();
-
-    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
-    const addedUser = await createMockUser(mockContext.db);
-    await createFriends(mockContext, mainUser, addedUser);
-    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
-    await joinRoomGroup(mockContext.db, directMessage.id, user.id);
-    await joinRoomGroup(mockContext.db, directMessage.id, addedUser.id);
-    await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
-
-    expect(readRoomGroupMembers(directMessage.id)).toStrictEqual(await readUserDeviceIds(mockContext.db, user.id));
   });
 
   test("fails delete of another participant by a participant who does not own the direct message", async () => {

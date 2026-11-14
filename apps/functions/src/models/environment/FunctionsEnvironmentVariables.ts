@@ -6,7 +6,6 @@ export interface FunctionsEnvironmentVariables {
   AZURE_EVENT_GRID_TOPIC_KEY: string;
   AZURE_SEARCH_BASE_URL: string;
   AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
-  AZURE_WEB_PUBSUB_CONNECTION_STRING: string;
   BASE_URL: string;
   DATABASE_URL: string;
   VAPID_PRIVATE_KEY: string;

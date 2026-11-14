@@ -1,11 +1,7 @@
-import type { MessageEntity } from "@esposter/db-schema";
-
-import { startWebPubSubClient } from "@/services/azure/webPubSub/startWebPubSubClient";
 import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
-import { MessageType, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, jsonDateParse, noop } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
 export const useMessageSubscribables = () => {
   const { $trpc } = useNuxtApp();
@@ -15,26 +11,9 @@ export const useMessageSubscribables = () => {
   const { storeCreateMessage, storeDeleteMessage, storeUpdateMessage } = dataStore;
   const readUsersByIds = useReadUsersByIds();
 
-  useOnlineSubscribable(currentRoomId, async (roomId) => {
+  useOnlineSubscribable(currentRoomId, (roomId) => {
     if (!roomId) return undefined;
 
-    // The only step that can reject is the WebPubSub start, so it runs before any tRPC subscription is opened: a
-    // Rejected start then leaves nothing open for the next attempt to stack another set beside
-    const stopWebPubSubClient = await startWebPubSubClient(
-      (signal) => $trpc.message.generateWebPubSubClientAccessUrl.query({ roomId }, { signal }),
-      getSynchronizedFunction(({ message: { data } }) =>
-        getResultAsync(async () => {
-          // Data arrives as a pre-parsed object (dataType: "json") from WebPubSub — re-stringify so
-          // `jsonDateParse` can revive ISO date strings back to Date instances
-          const parsedData = jsonDateParse<MessageEntity>(JSON.stringify(data));
-          const entity =
-            parsedData.type === MessageType.Webhook
-              ? new WebhookMessageEntity(parsedData)
-              : new StandardMessageEntity(parsedData);
-          await storeCreateMessage(entity);
-        }).match(noop, console.error),
-      ),
-    );
     const unsubscribe = getUnsubscribe(
       $trpc.message.onCreateMessage.subscribe(
         { roomId },
@@ -74,9 +53,6 @@ export const useMessageSubscribables = () => {
       ),
     );
 
-    return () => {
-      unsubscribe();
-      stopWebPubSubClient();
-    };
+    return unsubscribe;
   });
 };

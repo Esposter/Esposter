@@ -22,8 +22,6 @@ export const security: NuxtConfig["security"] = {
         // RealtimeKit: its REST and signalling API, and the virtual background's models at its asset host
         "https://*.realtime.cloudflare.com",
         "wss://*.realtime.cloudflare.com",
-        // Azure Web PubSub: the WebSocket its client access URL names
-        "wss://*.webpubsub.azure.com",
         // An unset env var, as in CI, leaves its host out: the security module refuses an undefined source
       ].filter((source) => source !== undefined),
       // No page frames the app: its own frames are `srcdoc` documents, which no response header governs

@@ -16,7 +16,6 @@ export interface WebEnvironmentVariables {
   AZURE_SEARCH_API_KEY: string;
   AZURE_SEARCH_BASE_URL: string;
   AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
-  AZURE_WEB_PUBSUB_CONNECTION_STRING: string;
   BASE_URL: string;
   BETTER_AUTH_SECRET: string;
   BETTER_AUTH_URL: string;

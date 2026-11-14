@@ -4,7 +4,6 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
-import { readUserDeviceIds } from "#server/services/auth/readUserDeviceIds";
 import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { createCallParticipant } from "#server/services/message/call/createCallParticipant";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
@@ -13,9 +12,7 @@ import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
-import { joinRoomGroup } from "#server/trpc/routers/joinRoomGroup.test";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
-import { readRoomGroupMembers } from "#server/trpc/routers/readRoomGroupMembers.test";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
@@ -165,23 +162,6 @@ describe("moderationRouter", () => {
     expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
     expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
   });
-
-  // A removed member keeps every device connected to the room's group until it is taken out, and the group is what
-  // Carries the room's messages, so a removal takes out each of their devices and no one else's
-  test.each([AdminActionType.KickFromRoom, AdminActionType.CreateBan] as const)(
-    "executeAdminAction %s takes every device of the removed member out of the room's group",
-    async (type) => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-      const otherMember = await createMember();
-      await joinRoomGroup(mockContext.db, roomId, member.id);
-      await joinRoomGroup(mockContext.db, roomId, otherMember.id);
-      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
-
-      expect(readRoomGroupMembers(roomId)).toStrictEqual(await readUserDeviceIds(mockContext.db, otherMember.id));
-    },
-  );
 
   // Moderating yourself is not a hierarchy question, and the comparison cannot answer it — an owner outranks
   // Themselves under every rule it knows

@@ -12,6 +12,7 @@ declare global {
       ProcessScheduledMessageJob: Queue;
       SCHEDULER: DurableObjectNamespace<Rpc.DurableObjectBranded & SchedulerObject>;
       SendTodoReminder: Queue;
+      SERVER: DurableObjectNamespace;
     }
   }
 }
