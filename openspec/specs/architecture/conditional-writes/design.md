@@ -4,51 +4,57 @@ A procedure that reads an entity, computes something from it, and writes the res
 
 Nothing surfaces. There is no error, no log, and the caller whose write landed first was already told it succeeded. The change is simply gone, and the only witness is a user who watches their edit revert.
 
-So: **a write derived from what the procedure just read is conditional on the version it read.** This is [Persist Then Notify](../persist-then-notify/design.md)'s persist phase under concurrency — the guard/persist/notify ordering is unchanged, the persist step just carries the version it depends on.
+So: **a write derived from what the procedure just read is conditional on the state it read.** This is [Persist Then Notify](../persist-then-notify/design.md)'s persist phase under concurrency — the guard/persist/notify ordering is unchanged, the persist step just carries the state it depends on.
 
 ## Which writes this covers
 
 A write is a read-modify-write whenever the value it stores could not have been computed without first reading the entity:
 
-| Write                              | Why it qualifies                                                                                                        |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| A map or array rewritten wholesale | `votePoll` stores the whole votes map; `deleteFile` stores the whole surviving `files` array                            |
-| Any `"Replace"`                    | Merge cannot unset a property, so clearing one (`deleteLinkPreviewResponse`, `unpinMessage`) has to write the full body |
-| A counter or accumulator           | The new value is the old value plus one                                                                                 |
+| Write                              | Why it qualifies                                                                                                 |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| A map or array rewritten wholesale | `votePoll` stores the whole votes map; `deleteFile` stores the whole surviving `files` array                     |
+| A full rewrite of a computed value | Clearing a field that the write must also unset (`deleteLinkPreview`, `unpinMessage`) has to write the full body |
+| A counter or accumulator           | The new value is the old value plus one                                                                          |
 
-A `"Merge"` of fields taken straight from the caller's input is **not** one — `updateMessage` writing the text the user typed, or `pinMessage` setting `isPinned: true`, depends on nothing it read.
+A write of fields taken straight from the caller's input is **not** one — `updateMessage` writing the text the user typed, or `pinMessage` setting `isPinned: true`, depends on nothing it read.
 
-The `"Replace"` row is the one that gets missed, and it is the worst of the three: the write carries every property, so replaying it from a stale read reverts _all_ concurrent changes to that entity, not just the field the procedure meant to touch.
+The full-rewrite row is the one that gets missed, and it is the worst of the three: the write carries every property, so replaying it from a stale read reverts _all_ concurrent changes to that entity, not just the field the procedure meant to touch.
 
-## The lifecycle
+## The D1 guarded write
+
+D1 has no interactive transaction: nothing holds a row open across an `await`. So the read and the write it decides cannot be split by a round trip and be safe. The precondition goes into the `WHERE` of the `UPDATE` instead, and the database evaluates it atomically with the write. A multi-statement write is one `db.batch`, which applies all of its statements or none.
+
+A guard is lost when the guarded `UPDATE` changes no row: it returns no row, which is a batch whose `meta.changes` is `0`. That is not an error. The database did what it was asked, and the answer is that the row no longer holds the state the write was computed from.
 
 ```mermaid
 flowchart TD
-  R["read the entity and its version"] --> D["apply the intent to this version"]
-  D --> W["Conditional write<br/>the WHERE names the version read"]
-  W -->|"accepted"| N["Notify<br/>emit the delta, never the replaced body"]
-  W -->|"rejected — any error, not only a lost race"| RR["Re-read the entity"]
-  RR -->|"gone"| NF["NOT_FOUND<br/>the entity was deleted under the write"]
+  R["read the row and the state the write depends on"] --> D["compute the write from that state"]
+  D --> W["batch: UPDATE ... WHERE names the state read"]
+  W -->|"a row returned, meta.changes is 1"| N["Notify<br/>emit the delta, never the replaced body"]
+  W -->|"no row returned, the guard lost"| RR["Re-read the row"]
+  RR -->|"gone"| NF["NOT_FOUND<br/>the row was deleted under the write"]
   RR -->|"the read itself failed"| RF["Log it, then CONFLICT<br/>the attempt could not be classified"]
-  RR -->|"version unchanged"| PE["Rethrow<br/>the write failed for something a retry cannot fix"]
-  RR -->|"version moved"| B{"Attempts left?"}
-  B -->|"yes"| D
-  B -->|"no"| C["CONFLICT<br/>the caller sends it again"]
+  RR -->|"state moved"| B{"Does the caller retry?"}
+  B -->|"no: a claim"| C["Refuse<br/>the claim was taken by another writer"]
+  B -->|"yes, attempts left"| D
+  B -->|"yes, no attempts left"| CF["CONFLICT<br/>the caller sends it again"]
 ```
 
-The loop back to applying the intent is the whole design: **the retry re-applies the intent, it does not replay the body.** "Record this vote", "drop this file", "clear this field" are all still valid after losing a race — only the body computed against the version that moved is stale. Writing that body again is the bug the conditional write exists to prevent.
+A lost guard is decided by a re-read, and the re-read is what tells the cases apart. A row that is gone is `NOT_FOUND`. A failed read is logged with its cause and answered `CONFLICT`, since the attempt could not be classified. A row whose state moved is a lost race, and the caller either refuses it, when the write is a claim another writer can win, or re-applies its intent to the state it re-read, a bounded number of times.
 
-`updateEntityConditionally` (`apps/web/server/services/streams/`) owns this loop. A caller supplies a function that receives the **fresh** entity on every attempt, and a write that decides the mode and whether the write stamps message metadata. Do not hand-roll the loop per procedure.
+The loop back to applying the intent is the whole design: **the retry re-applies the intent, it does not replay the body.** "Record this vote", "drop this file", "clear this field" are all still valid after losing a race — only the body computed against the state that moved is stale. Writing that body again is the bug the guard exists to prevent.
+
+No helper owns this loop. A caller writes its own guarded statement and reads whether it changed a row, because the decision about a lost guard is the caller's: a claim refuses, a vote retries, a save reloads. A shared helper is worth its place only once a second caller needs the same classification.
 
 ## Rules that fall out of it
 
-The lifecycle above is one helper, and the rules it holds every caller to are these: the intent is re-applied to the version re-read rather than to the body first computed; the retry is bounded; exhaustion is an outcome the call chooses; only a lost race retries; the delta is the payload; and follow-up work is derived from the attempt that won. A caller reads the version in the same statement as the entity wherever a shared procedure already reads it.
+The lifecycle above is a pattern rather than a helper, and the rules it holds every caller to are these: the guard is a predicate in the `WHERE` over the state read; the intent is re-applied to the state re-read rather than to the body first computed; the retry is bounded; exhaustion is an outcome the call chooses; only a lost race retries; the delta is the payload; and follow-up work is derived from the attempt that won. A caller reads the state in the same statement as the entity wherever a shared procedure already reads it.
 
 One rule is the page's own because it is about what a status code cannot say: **an absent entity and a failed read are different facts.** A read returns nothing only when no row or object exists, and every other fault propagates — collapsing them is how a throttled re-read gets reported to a voter as `NOT_FOUND` for the message they are looking straight at, where `CONFLICT`, logged with its real cause, tells them to send it again.
 
 ## The same hazard, without a version on the row
 
-The hazard the version answers is general: **a write derived from a view that another writer can invalidate before it lands.** There are three ways to be safe from it, and they are not the same mechanism.
+The hazard the guard answers is general: **a write derived from a view that another writer can invalidate before it lands.** There are three ways to be safe from it, and they are not the same mechanism.
 
 **Serialize**, so no stale view can exist. A read and the write it decides are one synchronous transaction inside a room's object, with no await between them, so nothing else can run in the gap: the second writer reads after the first has committed rather than beside it. Nothing is compared and nothing is rejected — the read and the write are simply not interleaved. D1 has no interactive transaction to hold a row open across a round trip, so a read that must not interleave with another writer's is never split from its write.
 
@@ -82,4 +88,14 @@ The delivery order is an argument, so the test is the two calls in the wrong ord
 
 ## Testing it
 
-Miniflare's D1 and R2 honour the condition, so the loop is testable against them. A test that makes its two writes one after the other, each awaited before the next starts, never overlaps them: it has to hold the first write open with a promise the test resolves itself, so the second write runs against a version the first has not yet landed. A green `Promise.all` that never interleaved reports the hazard as covered.
+Miniflare's D1 and R2 honour the condition, so a guarded statement is testable against them. A test that makes its two writes one after the other, each awaited before the next starts, never overlaps them: it has to hold the first write open with a promise the test resolves itself, so the second write runs against a state the first has not yet changed. A green `Promise.all` that never interleaved reports the hazard as covered.
+
+## Key files
+
+| File                                                              | Role                                                                                     |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `apps/web/server/services/storage/reserveStorageBytes.ts`         | the quota gate: one guarded batch that takes every reservation or none                   |
+| `packages/db/src/services/storage/reconcileStorageLedgerEntry.ts` | the ledger's claim: the counter update applies only while the ledger row holds its state |
+| `packages/db/src/services/storage/checkIsNewerSequencer.ts`       | the ordering check the storage ledger makes before it applies a blob event               |
+| `apps/functions/src/durableObjects/RoomObject.ts`                 | a room's reads and writes, serialized in the object's synchronous transaction            |
+| `apps/web/server/services/blobState/writeBlobState.ts`            | a save blob's write, conditional on the object's `etag` through R2's `onlyIf`            |
