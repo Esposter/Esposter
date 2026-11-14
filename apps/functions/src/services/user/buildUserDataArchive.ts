@@ -1,8 +1,8 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getBucket } from "#src/services/storage/getBucket";
-import { DATA_EXPORT_CONTENT_TYPE } from "#src/services/user/constants";
 import { createUserDataArchive } from "#src/services/user/createUserDataArchive";
+import { uploadArchive } from "#src/services/user/uploadArchive";
 import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
 import { writeCallSessionEntry } from "#src/services/user/writeCallSessionEntry";
 import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
@@ -22,7 +22,6 @@ import { writeSearchHistoryEntry } from "#src/services/user/writeSearchHistoryEn
 import { writeThreadFollowEntry } from "#src/services/user/writeThreadFollowEntry";
 import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { Readable } from "node:stream";
 
 // Streams one person's archive into the object named for it.
 // The groups write the archive while the upload reads it.
@@ -37,9 +36,7 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
     archive.output.destroy();
     throw error;
   };
-  const uploading = getResultAsync(() =>
-    bucket.put(blobName, Readable.toWeb(archive.output), { httpMetadata: { contentType: DATA_EXPORT_CONTENT_TYPE } }),
-  ).match(noop, (error) => {
+  const uploading = getResultAsync(() => uploadArchive(bucket, blobName, archive.output)).match(noop, (error) => {
     throw error;
   });
   const writing = getResultAsync(async () => {

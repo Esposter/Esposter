@@ -57,11 +57,11 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { strFromU8, unzipSync } from "fflate";
 import { afterAll, afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
+let resetMockDb: () => Promise<void>;
 
 vi.mock(import("#src/services/shared/db"), () => ({
   get db() {
@@ -106,7 +106,9 @@ describe(buildUserDataArchive, () => {
   };
 
   beforeAll(async () => {
-    mockDb = (await createMockDb()).db;
+    const mockDatabase = await createMockDb();
+    mockDb = mockDatabase.db;
+    resetMockDb = mockDatabase.reset;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,
@@ -120,7 +122,7 @@ describe(buildUserDataArchive, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockTableDatabase.clear();
+    await resetMockDb();
   });
 
   afterAll(async () => {
