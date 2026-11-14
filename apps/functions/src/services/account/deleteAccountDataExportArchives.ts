@@ -3,7 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { deleteBlobs } from "@esposter/db";
-import { StorageBucket, dataExportsInUser } from "@esposter/db-schema";
+import { dataExportsInUser, StorageBucket } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // The export archive sits under no user prefix, so it is found by the row that names it, before the user row's cascade

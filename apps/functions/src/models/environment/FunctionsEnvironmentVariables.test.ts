@@ -1,4 +1,5 @@
 import { functionsEnvironmentVariablesSchema } from "#src/models/environment/FunctionsEnvironmentVariables";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
@@ -15,7 +16,7 @@ describe("the Functions environment", () => {
   test("uploads as Worker secrets exactly the variables it marks secret", () => {
     expect.hasAssertions();
 
-    const workerSecrets: { functions: string[] } = JSON.parse(
+    const workerSecrets = jsonDateParse<{ functions: string[] }>(
       readFileSync(join(import.meta.dirname, "../../../../../.github/worker-secrets.json"), "utf8"),
     );
     const secretNames = Object.entries(functionsEnvironmentVariablesSchema.shape)

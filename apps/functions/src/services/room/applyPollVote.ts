@@ -5,7 +5,7 @@ interface PollBody {
   votes: Record<string, string>;
 }
 
-const isPollBody = (value: unknown): value is PollBody =>
+const checkPollBody = (value: unknown): value is PollBody =>
   typeof value === "object" &&
   value !== null &&
   "options" in value &&
@@ -18,7 +18,7 @@ const isPollBody = (value: unknown): value is PollBody =>
 // Only the votes change: every other field of the poll is written back exactly as it was read
 export const applyPollVote = (message: string, userId: string, optionId: string | undefined): string | undefined => {
   const body = getResult(() => jsonDateParse<unknown>(message)).unwrapOr(undefined);
-  if (!isPollBody(body) || (optionId !== undefined && !body.options.some(({ id }) => id === optionId)))
+  if (!checkPollBody(body) || (optionId !== undefined && !body.options.some(({ id }) => id === optionId)))
     return undefined;
 
   const votes = { ...body.votes };

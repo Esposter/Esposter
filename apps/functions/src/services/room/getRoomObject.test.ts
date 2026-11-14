@@ -1,5 +1,5 @@
-import type { MockD1Database } from "@esposter/db-mock";
 import type { MockObjectState, MockSocket } from "#src/services/durableObject/createMockObjectState.test";
+import type { MockD1Database } from "@esposter/db-mock";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
 import { createMockObjectState } from "#src/services/durableObject/createMockObjectState.test";
@@ -10,8 +10,8 @@ import { describe } from "vitest";
 
 // The core database a suite opened, which each room object reads its D1 rows through, as production binds it to CORE
 let mockCoreDb: MockD1Database | undefined;
-// One room object per room id, each a real RoomObject over the state double its id names. A suite clears them between
-// tests, so every test starts from rooms with nothing in them
+// One room object per room id, each a real RoomObject over the state double its id names.
+// A suite clears them between tests, so every test starts from rooms with nothing in them
 const mockRooms = new Map<string, { object: RoomObject; state: MockObjectState }>();
 
 export const openMockRooms = async (): Promise<void> => {

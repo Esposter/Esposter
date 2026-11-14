@@ -10,9 +10,9 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   resourceActivitiesInResource,
   ResourceActivityType,
-  StorageBucket,
   resourcesInResource,
   ResourceType,
+  StorageBucket,
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";

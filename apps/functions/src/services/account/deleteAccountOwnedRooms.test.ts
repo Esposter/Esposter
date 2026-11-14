@@ -3,24 +3,24 @@ import type { Database } from "@esposter/db-schema";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
-import { createUser } from "#src/services/shared/createUser.test";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
-import { userObjectCalls } from "#src/services/user/getUserObject.test";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import {
   clearMockRooms,
   getRoomObject,
   openMockRooms,
   readMockRoomTableNames,
 } from "#src/services/room/getRoomObject.test";
+import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
+import { userObjectCalls } from "#src/services/user/getUserObject.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
   MessageType,
   moderationLogsInMessage,
   moderationNotesInMessage,
-  StorageBucket,
   roomsInMessage,
+  StorageBucket,
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -114,7 +114,7 @@ describe(deleteAccountOwnedRooms, () => {
     const memberUserId = v7();
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-    getRoomObject(ownedRoom.id).attachMember(memberUserId, createOnlineStatus(memberUserId));
+    await getRoomObject(ownedRoom.id).attachMember(memberUserId, createOnlineStatus(memberUserId));
     userObjectCalls.length = 0;
 
     await deleteAccountOwnedRooms(userId);

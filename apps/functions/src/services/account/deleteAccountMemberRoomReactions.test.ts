@@ -1,8 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
-import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
+import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import { MessageType, roomsInMessage, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -58,17 +58,17 @@ describe(deleteAccountMemberRoomReactions, () => {
       { message, type: MessageType.Message },
       { userId: otherUserId },
     );
-    memberRoomObject.addReaction({ emojiTag, messageId: soloMessage.id }, { userId });
-    memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
-    memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: soloMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId });
+    await memberRoomObject.addReaction({ emojiTag, messageId: sharedMessage.id }, { userId: otherUserId });
     // In the room the account is not in, a reaction the account shares, which stays as it was
     const nonMemberRoomObject = getRoomObject(nonMemberRoom.id);
     const nonMemberMessage = await nonMemberRoomObject.createMessage(
       { message, type: MessageType.Message },
       { userId: otherUserId },
     );
-    nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId });
-    nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId: otherUserId });
+    await nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId });
+    await nonMemberRoomObject.addReaction({ emojiTag, messageId: nonMemberMessage.id }, { userId: otherUserId });
 
     await deleteAccountMemberRoomReactions(userId);
 

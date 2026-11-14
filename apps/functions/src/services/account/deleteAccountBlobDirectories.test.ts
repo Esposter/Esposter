@@ -2,7 +2,7 @@ import { deleteAccountBlobDirectories } from "#src/services/account/deleteAccoun
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { StorageBucket, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
+import { getSaveBlobName, getUserProfileImageBlobName, StorageBucket } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 

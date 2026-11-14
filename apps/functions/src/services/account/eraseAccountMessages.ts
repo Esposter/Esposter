@@ -9,10 +9,11 @@ import { getBucket } from "#src/services/storage/getBucket";
 import { deleteStorageBlobs, getFilesBlobNames } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
 
-// The account's messages are erased in every room it is a member of, and so are the messages it has scheduled there. An
-// erased message loses its text, files and link preview, and its row stays as a tombstone, so a reply still names a root.
-// The blobs its files named go through the release a blob deletion runs. The rooms it owned were deleted by the step before,
-// along with their memberships, so the memberships left are the rooms it is still in
+// The account's messages are erased in every room it is a member of, and so are the messages it has scheduled there.
+// An erased message loses its text, files and link preview, and its row stays as a tombstone.
+// So a reply still names a root. The blobs its files named go through the release a blob deletion runs.
+// The rooms it owned were deleted by the step before, along with their memberships.
+// So the memberships left are the rooms it is still in
 export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<void> => {
   const memberRoomIds = await getAccountMemberRoomIds(userId);
   const bucket = getBucket(StorageBucket.MessageAssets);

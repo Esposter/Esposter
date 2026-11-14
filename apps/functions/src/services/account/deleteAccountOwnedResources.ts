@@ -3,7 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
-import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
+import { resourcesInResource, StorageBucket } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // Each resource the account owns goes through the purge the recycle bin's timer runs for an expired one, so its

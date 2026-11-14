@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
-import { createSocket } from "#src/services/durableObject/createMockObjectState.test";
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
+import { createSocket } from "#src/services/durableObject/createMockObjectState.test";
 import { ROOM_MEMBER_REMOVED_CODE } from "#src/services/room/constants";
 import { createOnlineStatus } from "#src/services/room/createOnlineStatus.test";
 import { acceptRoomSocket, clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
@@ -50,7 +50,9 @@ describe(removeAccountFromMemberRooms, () => {
     const roomObject = getRoomObject(room.id);
     const erasedSocket = createSocket();
     acceptRoomSocket(room.id, erasedSocket, [`user:${userId}`]);
-    for (const memberId of [userId, otherUserId]) roomObject.attachMember(memberId, createOnlineStatus(memberId));
+    await Promise.all(
+      [userId, otherUserId].map((memberId) => roomObject.attachMember(memberId, createOnlineStatus(memberId))),
+    );
     userObjectCalls.length = 0;
 
     await removeAccountFromMemberRooms(userId);

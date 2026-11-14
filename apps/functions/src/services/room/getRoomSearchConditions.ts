@@ -42,16 +42,15 @@ const getDateValue = (name: string, value: Filter["value"]): Date => {
   return value;
 };
 
-// Each filter adds one condition on the message row, and the conditions are and-joined. A second filter of a type narrows
-// alongside the first, so one list of conditions is the whole answer. A room searches only itself: a filter that names
-// another room is the caller's to fan out, so it is refused here
+// Each filter adds one condition on the message row, and the conditions are and-joined.
+// A second filter of a type narrows alongside the first, so one list of conditions is the whole answer.
+// A room searches only itself: a filter that names another room is the caller's to fan out, so it is refused here
 export const getRoomSearchConditions = (filters: Filter[]): SQL[] => {
   const conditions: SQL[] = [];
-  for (const [type, typeFilters] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType))) {
+  for (const [type, typeFilters] of Object.entries(Object.groupBy(filters, ({ type: filterType }) => filterType)))
     if (type === FilterType.Mentions)
       conditions.push(getMentionsCondition((typeFilters ?? []).map(({ value }) => getStringValue(type, value))));
     else for (const { value } of typeFilters ?? []) conditions.push(...getFilterConditions(type, value));
-  }
 
   return conditions;
 };
@@ -83,7 +82,7 @@ const getFilterConditions = (type: string, value: Filter["value"]): SQL[] => {
     case FilterType.From:
       return [eq(messagesInRoom.userId, getStringValue(type, value))];
     case FilterType.Has:
-      return [getHasCondition(getStringValue(type, value))];
+      return [getFilterHasCondition(getStringValue(type, value))];
     case FilterType.Pinned:
       if (typeof value !== "boolean") throw getInvalidValueError(type, value);
       return [eq(messagesInRoom.isPinned, value)];
@@ -92,22 +91,22 @@ const getFilterConditions = (type: string, value: Filter["value"]): SQL[] => {
   }
 };
 
-const getHasCondition = (value: string): SQL => {
+const getFilterHasCondition = (value: string): SQL => {
   switch (value) {
-    case FilterTypeHas.Link:
     case FilterTypeHas.Embed:
+    case FilterTypeHas.Link:
       // A link preview is only ever made for a message with a link or an embed in it
       return isNotNull(messagesInRoom.linkPreviewResponse);
+    case FilterTypeHas.File:
+      return sql`json_array_length(${messagesInRoom.files}) > 0`;
+    case FilterTypeHas.Forward:
+      return eq(messagesInRoom.isForward, true);
     case FilterTypeHas.Image:
     case FilterTypeHas.Sound:
     case FilterTypeHas.Video: {
       const mimetypes = MimeCategoryContentTypesMap[FilterTypeHasMimeCategoryMap[value]] ?? [];
       return sql`exists (select 1 from json_each(${messagesInRoom.files}) where ${inArray(sql`json_extract(json_each.value, '$.mimetype')`, mimetypes)})`;
     }
-    case FilterTypeHas.File:
-      return sql`json_array_length(${messagesInRoom.files}) > 0`;
-    case FilterTypeHas.Forward:
-      return eq(messagesInRoom.isForward, true);
     default:
       throw new NotFoundError(getRoomSearchConditions.name, value);
   }

@@ -3,10 +3,10 @@ import type { Database } from "@esposter/db-schema";
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
-import { createUser } from "#src/services/shared/createUser.test";
-import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createSocket, readFrames } from "#src/services/durableObject/createMockObjectState.test";
 import { acceptRoomSocket, clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
+import { createUser } from "#src/services/shared/createUser.test";
+import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getFileBlobNames } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { MessageType, roomsInMessage, StorageBucket, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -132,9 +132,10 @@ describe(eraseAccountMessages, () => {
 
     await eraseAccountMessages(userId);
 
-    expect(readFrames(viewerSocket).at(-1)).toStrictEqual({
-      data: expect.objectContaining({ deletedAt: new Date(0).toISOString(), id: erasedMessage.id, message: "" }),
-      type: "deleteMessage",
-    });
+    const erasedFrame = readFrames(viewerSocket).at(-1);
+    expect(erasedFrame.type).toBe("deleteMessage");
+    expect(erasedFrame.data.deletedAt).toStrictEqual(new Date(0).toISOString());
+    expect(erasedFrame.data.id).toStrictEqual(erasedMessage.id);
+    expect(erasedFrame.data.message).toBe("");
   });
 });

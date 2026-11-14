@@ -7,7 +7,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
+import { dataExportsInUser, DataExportStatus, StorageBucket, usersInAuth } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
