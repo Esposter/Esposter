@@ -4,6 +4,7 @@ export const CloudflareAssetType = {
   DeadLetterQueue: "dlq",
   Queue: "q",
   R2Bucket: "r2",
+  RealtimeKitApp: "rtk",
   Token: "tok",
   Worker: "wkr",
 } as const;

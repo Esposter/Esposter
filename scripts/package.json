@@ -76,6 +76,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "outdated:dependencies": "vpx src/outdatedDependencies/index.ts",
+    "realtimekit:provision": "vpx src/realtimeKit/provision/index.ts",
     "test": "vitest",
     "typecheck": "tsrs --fast",
     "update:node": "node src/updateNode/index.ts"

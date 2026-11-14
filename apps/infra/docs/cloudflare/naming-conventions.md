@@ -43,19 +43,21 @@ Asset type (`CloudflareAssetType`):
 | `dlq` | dead-letter queue |
 | `q`   | queue             |
 | `r2`  | R2 bucket         |
+| `rtk` | RealtimeKit app   |
 | `tok` | API token         |
 | `wkr` | Worker script     |
 
 ## Examples
 
-| Resource          | Production                              | Development                        |
-| :---------------- | :-------------------------------------- | :--------------------------------- |
-| R2 bucket         | `prod-r2-esposter-message-assets`       | `dev-r2-esposter-message-assets`   |
-| D1 database       | `prod-d1-esposter-core`                 | `dev-d1-esposter-core`             |
-| Queue             | `prod-q-esposter-delete-account`        | `dev-q-esposter-process-webhook`   |
-| Dead-letter queue | `prod-dlq-esposter-delete-account`      | `dev-dlq-esposter-process-webhook` |
-| Worker            | `prod-wkr-esposter-web`                 | `dev-wkr-esposter-functions`       |
-| API token         | `tok-esposter-infra`, `tok-esposter-r2` | —                                  |
+| Resource          | Production                                                               | Development                        |
+| :---------------- | :----------------------------------------------------------------------- | :--------------------------------- |
+| R2 bucket         | `prod-r2-esposter-message-assets`                                        | `dev-r2-esposter-message-assets`   |
+| D1 database       | `prod-d1-esposter-core`                                                  | `dev-d1-esposter-core`             |
+| Queue             | `prod-q-esposter-delete-account`                                         | `dev-q-esposter-process-webhook`   |
+| Dead-letter queue | `prod-dlq-esposter-delete-account`                                       | `dev-dlq-esposter-process-webhook` |
+| Worker            | `prod-wkr-esposter-web`                                                  | `dev-wkr-esposter-functions`       |
+| RealtimeKit app   | `prod-rtk-esposter-calls`                                                | `dev-rtk-esposter-calls`           |
+| API token         | `tok-esposter-infra`, `tok-esposter-r2`, `prod-tok-esposter-realtimekit` | `dev-tok-esposter-realtimekit`     |
 
 The longest name, `prod-dlq-esposter-reconcile-storage-ledger-entry`, is well inside the 63-character limit buckets and queues share.
 
