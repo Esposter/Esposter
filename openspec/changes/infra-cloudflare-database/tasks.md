@@ -2,7 +2,7 @@
 
 ## 1.
 
-- [ ] 1.1 Convert every table under `packages/db-schema/src/schema` to SQLite with the column mapping in `design.md`, and the check-SQL helpers with them. Verified by `db:gen` producing a first migration for `core`.
+- [x] 1.1 Convert every table under `packages/db-schema/src/schema` to SQLite with the column mapping in `design.md`, and the check-SQL helpers with them. Verified by `db:gen` producing a first migration for `core`.
 
 ## 2.
 
@@ -16,4 +16,4 @@
 
 ## 4.
 
-- [ ] 4.1 Build `createMockDb` on Miniflare's D1 and delete `azure-mock` and PGlite. Verified by the database tests passing on it.
+- [x] 4.1 Build `createMockDb` on Miniflare's D1 and delete `azure-mock` and PGlite. Verified by the database tests passing on it.

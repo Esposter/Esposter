@@ -6,4 +6,4 @@
 
 ## 2.
 
-- [ ] 2.1 Add the deploy job and its token secret. Verified by the workflow's lint.
+- [x] 2.1 Add the deploy job and its token secret. Verified by the workflow's lint.

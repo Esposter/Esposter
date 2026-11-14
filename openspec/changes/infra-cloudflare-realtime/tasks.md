@@ -7,13 +7,13 @@
 
 ## 2.
 
-- [ ] 2.1 Build `UserObject`: hibernating sockets tagged by session and device, attach and detach on the first and last socket, online status, the sent-message and scheduled-message index, TodoList reminders on its alarm. Verified by its Miniflare tests.
-- [ ] 2.2 Build `RoomObject`: messages with integer ids, reactions and the external-content FTS5 table in one transaction per write, the replay after a message id, viewers' sockets, online members, the debounced room-activity fan-out, scheduled messages on its alarm, erase, export and delete. Verified by its Miniflare tests.
-- [ ] 2.3 Build `CallObject`: the participant, knocker, admitted and RealtimeKit maps and the preset queue in its storage, call sockets, the revoke's rejoin event. Verified by its Miniflare tests.
+- [x] 2.1 Build `UserObject`: hibernating sockets tagged by session and device, attach and detach on the first and last socket, online status, the sent-message and scheduled-message index, TodoList reminders on its alarm. Verified by its Miniflare tests.
+- [x] 2.2 Build `RoomObject`: messages with integer ids, reactions and the external-content FTS5 table in one transaction per write, the replay after a message id, viewers' sockets, online members, the debounced room-activity fan-out, scheduled messages on its alarm, erase, export and delete. Verified by its Miniflare tests.
+- [x] 2.3 Build `CallObject`: the participant, knocker, admitted and RealtimeKit maps and the preset queue in its storage, call sockets, the revoke's rejoin event. Verified by its Miniflare tests.
 
 ## 3.
 
-- [ ] 3.1 Route `/ws/user`, `/ws/room/:roomId` and `/ws/call/:callSessionId` through the web Worker's session and membership check to the objects. Verified by the socket route tests.
+- [x] 3.1 Route `/ws/user`, `/ws/room/:roomId` and `/ws/call/:callSessionId` through the web Worker's session and membership check to the objects. Verified by the socket route tests.
 - [ ] 3.2 Move every mutation that emitted an event to the owning object's RPC method, and every queue consumer that published to it; delete the EventEmitters, the `server` object forward, `/_internal/publish`, the `Scheduler` object and its two queues. Verified by the router and consumer tests.
 - [ ] 3.3 Replace the client's subscribables with one connection manager and the event dispatch into the existing store handlers. Verified by the store tests.
 
