@@ -7,7 +7,8 @@ import { defineCommand } from "citty";
 export const copyCoreCommand: SubCommandsDef[string] = defineCommand({
   args: { ...environmentArgs },
   meta: {
-    description: "Copy every Postgres table into D1 core in foreign-key order, then remove rows the source no longer holds",
+    description:
+      "Copy every Postgres table into D1 core in foreign-key order, upserting, then remove the rows the source no longer holds, children first. Run live before copy-tables, and again in full inside the freeze before copy-tables --delta",
     name: "copy-core",
   },
   run: async () => {

@@ -17,6 +17,8 @@ export const AZURE_PAGE_SIZE = 1000;
 // A multipart part is buffered in memory before it is sent, so it is sized for that, and every part but the last is at
 // least R2's five mebibyte minimum
 export const R2_MULTIPART_PART_BYTES = 64 * 1024 * 1024;
+// The FTS5 table over the messages' text, kept by triggers, so it holds one row per message
+export const MESSAGES_SEARCH_TABLE_NAME = "messages_search";
 // The temporary internal route on the functions Worker the reschedule step calls, and the header its secret travels in
 export const RESCHEDULE_PATH = "/_internal/cutover/reschedule";
 export const CUTOVER_SECRET_HEADER = "x-cutover-secret";

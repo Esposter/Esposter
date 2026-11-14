@@ -1,5 +1,6 @@
 import { copyCoreCommand } from "#src/services/cutover/commands/copyCoreCommand";
 import { copyObjectsCommand } from "#src/services/cutover/commands/copyObjectsCommand";
+import { copyTablesCommand } from "#src/services/cutover/commands/copyTablesCommand";
 import { inventoryCommand } from "#src/services/cutover/commands/inventoryCommand";
 import { rescheduleCommand } from "#src/services/cutover/commands/rescheduleCommand";
 import { rewriteUrlsCommand } from "#src/services/cutover/commands/rewriteUrlsCommand";
@@ -11,12 +12,14 @@ import { defineCommand } from "citty";
 // the command is deleted at teardown (openspec/changes/infra-cloudflare-cutover/design.md)
 export const cutoverCommand = defineCommand({
   meta: {
-    description: "Move the Railway and Azure data onto Cloudflare: each step idempotent, with a checkpoint in the archive bucket",
+    description:
+      "Move the Railway and Azure data onto Cloudflare, each step idempotent with a checkpoint in the archive bucket. Live, in order: snapshot, copy-objects, copy-core, copy-tables. Freeze, in order: copy-objects --delta, copy-core, copy-tables --delta, rewrite-urls, reschedule, verify",
     name: "cutover",
   },
   subCommands: {
     "copy-core": copyCoreCommand,
     "copy-objects": copyObjectsCommand,
+    "copy-tables": copyTablesCommand,
     inventory: inventoryCommand,
     reschedule: rescheduleCommand,
     "rewrite-urls": rewriteUrlsCommand,

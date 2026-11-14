@@ -4,6 +4,7 @@ import { createBlobServiceClient } from "#src/services/cutover/azure/createBlobS
 import { createCoreExecutor } from "#src/services/cutover/cloudflare/d1/createCoreExecutor";
 import { createR2Client } from "#src/services/cutover/cloudflare/r2/createR2Client";
 import { getCopyBuckets } from "#src/services/cutover/getCopyBuckets";
+import { getCutoverArchiveBucketName } from "#src/services/cutover/getCutoverArchiveBucketName";
 import { getCoreTables } from "#src/services/cutover/core/getCoreTables";
 import { orderCoreTables } from "#src/services/cutover/core/orderCoreTables";
 import { getR2BucketName } from "#src/services/cutover/getR2BucketName";
@@ -14,6 +15,7 @@ import { verifyBucketObjects } from "#src/services/cutover/verify/verifyBucketOb
 import { verifyCoreTable } from "#src/services/cutover/verify/verifyCoreTable";
 import { verifyForeignKeys } from "#src/services/cutover/verify/verifyForeignKeys";
 import { verifyStorageLedger } from "#src/services/cutover/verify/verifyStorageLedger";
+import { verifyTypedTables } from "#src/services/cutover/verify/verifyTypedTables";
 
 // Checks the copy against the source and fails on the first difference, naming its key. Nothing is written
 export const runVerify = async (environment: CutoverEnvironment): Promise<void> => {
@@ -31,6 +33,12 @@ export const runVerify = async (environment: CutoverEnvironment): Promise<void> 
   }
   await source.end();
   await verifyForeignKeys(executor);
+  await verifyTypedTables({
+    archiveBucket: getCutoverArchiveBucketName(environment),
+    client,
+    connectionString: variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING,
+    executor,
+  });
   const azure = createBlobServiceClient(variables.SOURCE_AZURE_STORAGE_CONNECTION_STRING);
   const objectSizes = new Map<string, number>();
   for (const bucket of getCopyBuckets()) {
