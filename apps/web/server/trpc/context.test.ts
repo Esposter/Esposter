@@ -3,7 +3,7 @@ import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Session, User } from "better-auth";
 
 import { authMocks, createMockSession, insertMockSession } from "#server/auth.test";
-import { createMockDb as baseCreateMockDb } from "@esposter/db-mock";
+import { createMockDb as baseCreateMockDb, emptyD1Database } from "@esposter/db-mock";
 import { usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe } from "vitest";
@@ -72,6 +72,10 @@ export const getMockRevokeOtherSessions = () => authMocks.revokeOtherSessions;
 
 export const getMockCreateApiKey = () => authMocks.createApiKey;
 
+// Empties the streams database, where the tables a message or a room write lands, and leaves the core rows the context was
+// seeded with in place
+export const clearStreamTables = async () => emptyD1Database((await baseCreateMockDb()).streamsDb);
+
 export const createMockContext = async (): Promise<Context> => ({
   db: await createMockDb(),
   headers: new Headers(),
@@ -79,12 +83,19 @@ export const createMockContext = async (): Promise<Context> => ({
   responseHeaders: new Headers(),
 });
 
-const createMockDb = async () => {
+const seedMockDb = async () => {
   const { db } = await baseCreateMockDb();
   authMocks.state.insert = db.insert.bind(db);
   await db.insert(usersInAuth).values({ ...authMocks.user, image: authMocks.user.image ?? "" });
   await insertMockSession(getMockSession());
   return db;
+};
+
+// A file's contexts share one database, so the default user and session are written once, by the first context it makes
+let seededDatabase: Promise<Context["db"]> | undefined;
+const createMockDb = async () => {
+  seededDatabase ??= seedMockDb();
+  return seededDatabase;
 };
 
 describe.todo("context");

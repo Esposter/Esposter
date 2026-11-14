@@ -11,7 +11,7 @@ import { describe } from "vitest";
 // A better-auth instance over the in-memory database, which the session route's suite registers in place of
 // `#server/auth`, so the session the route mints is read back by the app's own reader and not by a fake. The secret and
 // Base url are the mock environment's, passed in because the module loads before the suite stubs its environment
-export const db = await createMockDb();
+export const { db } = await createMockDb();
 
 export const auth = betterAuth({
   ...authModelOptions,

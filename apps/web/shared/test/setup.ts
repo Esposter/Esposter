@@ -72,6 +72,9 @@ vi.mock(import("#server/services/storage/getBucket"), () => import("#server/serv
 // The better-auth session is registered here rather than beside the context helpers: it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
+// The global database reads its Worker binding when its module loads, before a suite has made the mock database that
+// fills the binding, so it is registered over a double that reads the binding on first use
+vi.mock(import("#server/db"), () => import("#server/db/index.test"));
 // The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
 const EmptyGridEngine = function () {};
 // `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Every dungeon suite that
