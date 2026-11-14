@@ -2,7 +2,6 @@ import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/Index
 
 import { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
-import { CompositeKeyPropertyNames } from "@esposter/azure";
 
 export const MessageIndexedDbStoreConfiguration = {
   indexName: CompositeKeyPropertyNames.partitionKey,

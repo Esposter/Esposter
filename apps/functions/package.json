@@ -48,7 +48,6 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/functions": "catalog:",
     "@azure/identity": "catalog:",
@@ -88,7 +87,6 @@
     "@azure/core-tracing": "1.4.0",
     "@azure/core-util": "1.14.0",
     "@azure/core-xml": "1.6.1",
-    "@azure/data-tables": "13.3.2",
     "@azure/eventgrid": "5.12.0",
     "@azure/identity": "4.14.1",
     "@azure/logger": "1.4.0",

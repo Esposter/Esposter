@@ -1,9 +1,9 @@
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { eraseRoomMessagesByUser } from "@esposter/db";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 // The account's messages are erased in every room it is a member of, through the erase a moderation ban does not run:
@@ -11,7 +11,7 @@ import { noop } from "@esposter/shared";
 // Memberships, so the memberships left are the rooms it is still in
 export const eraseAccountMessages = async (userId: UserInAuth["id"]): Promise<void> => {
   const memberRoomIds = await getAccountMemberRoomIds(userId);
-  const messageClient = await getTableClient(AzureTable.Messages);
+  const messageClient = getStreamTableClient(StreamTable.Messages);
   for (const roomId of memberRoomIds)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as the moderation ban runs
     await eraseRoomMessagesByUser(messageClient, roomId, userId, noop);

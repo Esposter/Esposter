@@ -1,7 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { readLiveMessageWithEtag } from "#server/services/message/readLiveMessageWithEtag";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -12,7 +12,7 @@ import { checkIsMessageAuthor } from "#shared/services/message/checkIsMessageAut
 import { checkIsMessageOperationPermitted } from "#shared/services/message/checkIsMessageOperationPermitted";
 import { getMessageOperationPermission } from "#shared/services/message/getMessageOperationPermission";
 import { checkHasPermission } from "@esposter/db";
-import { AzureEntityType, AzureTable, RoomPermission } from "@esposter/db-schema";
+import { AzureEntityType, StreamTable, RoomPermission } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -24,7 +24,7 @@ export const getMessageProcedure = <T extends z.ZodType<Pick<MessageEntity, "par
   operation: MessageOperation,
 ) =>
   getMemberProcedure(schema, "partitionKey").use(async ({ ctx, input, next }) => {
-    const messageClient = await useTableClient(AzureTable.Messages);
+    const messageClient = useStreamTableClient(StreamTable.Messages);
     // Read with its version: a procedure whose write echoes back the whole message blob makes that write
     // Conditional on it (see votePoll)
     const messageEntityWithEtag = await readLiveMessageWithEtag(messageClient, input.partitionKey, input.rowKey);

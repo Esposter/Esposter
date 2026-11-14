@@ -1,17 +1,17 @@
-import type { CompositeKey } from "@esposter/azure";
 import type {
-  AzureTable,
-  AzureTableEntityMap,
-  CustomTableClient,
+  StreamTable,
+  StreamTableEntityMap,
   ReverseTickedTimestamp,
   RoomInMessage,
   UserInAuth,
+  CompositeKey,
 } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
-import { readRoomEntitiesByClause } from "#src/services/azure/readRoomEntitiesByClause";
-import { BinaryOperator } from "@esposter/azure";
+import { readRoomEntitiesByClause } from "#src/services/streams/readRoomEntitiesByClause";
+
 import { updateEntity } from "@esposter/db";
-import { MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
+import { MessageMetadataType, userIdsSchema, BinaryOperator } from "@esposter/db-schema";
 import { checkIsOnlyReactor, getUpdatedUserIds, jsonDateParse } from "@esposter/shared";
 
 // One row holds every member who reacted with one emoji, so the account is taken out of a shared row's
@@ -19,7 +19,7 @@ import { checkIsOnlyReactor, getUpdatedUserIds, jsonDateParse } from "@esposter/
 // Reaction another member changed meanwhile fails the step, and the redelivery reads it again rather than
 // Overwriting that change
 export const deleteAccountRoomReactions = async (
-  messagesMetadataClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesMetadata]>,
+  messagesMetadataClient: StreamTableClient<StreamTableEntityMap[StreamTable.MessagesMetadata]>,
   roomId: RoomInMessage["id"],
   userId: UserInAuth["id"],
 ): Promise<void> => {

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SearchFilterOption } from "@/models/message/filter/SearchFilterOption";
 import type { UiListItem } from "@/models/ui/UiListItem";
-import type { SerializableValue } from "@esposter/azure";
 
 interface Props {
   items: SearchFilterOption[];

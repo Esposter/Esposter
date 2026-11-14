@@ -2,12 +2,12 @@ import type { InvocationContext } from "@azure/functions";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { getSearchClient } from "#src/services/azure/getSearchClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { db } from "#src/services/shared/db";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
 import { getPartitionKeyFilter } from "@esposter/azure";
 import { deleteSearchDocumentsByFilter, deleteTablePartitionEntities } from "@esposter/db";
-import { StorageBucket, AzureTable, roomsInMessage, SearchIndex } from "@esposter/db-schema";
+import { StorageBucket, StreamTable, roomsInMessage, SearchIndex } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // An owner's departure deletes the room for everyone, and account deletion does the same to each room its account owns.
@@ -19,12 +19,11 @@ export const deleteAccountOwnedRoom = async (
 ): Promise<void> => {
   await Promise.all(
     [
-      AzureTable.Messages,
-      AzureTable.MessagesAscending,
-      AzureTable.MessagesMetadata,
-      AzureTable.ModerationLog,
-      AzureTable.ModerationNotes,
-    ].map(async (tableName) => deleteTablePartitionEntities(await getTableClient(tableName), roomId)),
+      StreamTable.Messages,
+      StreamTable.MessagesMetadata,
+      StreamTable.ModerationLog,
+      StreamTable.ModerationNotes,
+    ].map(async (tableName) => deleteTablePartitionEntities(getStreamTableClient(tableName), roomId)),
   );
   // The index is fed from the Messages partition just cleared, so the room's documents are removed once that partition is
   await deleteSearchDocumentsByFilter(getSearchClient(SearchIndex.Messages), getPartitionKeyFilter(roomId));

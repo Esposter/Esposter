@@ -1,6 +1,6 @@
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";
 import { filtersToClauses } from "#src/services/azure/search/filtersToClauses";
-import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator } from "@esposter/azure";
+import { SearchOperator } from "@esposter/azure";
 import {
   FileEntityPropertyNames,
   FilterType,
@@ -10,6 +10,8 @@ import {
   MessageType,
   MimeCategory,
   StandardMessageEntityPropertyNames,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";

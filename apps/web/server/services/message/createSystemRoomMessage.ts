@@ -1,7 +1,7 @@
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
-import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { createMessage } from "@esposter/db";
 import { MessageType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -19,13 +19,7 @@ export const createSystemRoomMessage = (
   { replyRowKey = "", type = MessageType.System }: Partial<Pick<StandardMessageEntity, "replyRowKey" | "type">> = {},
 ) =>
   getResultAsync(async () => {
-    const [messageClient, messageAscendingClient] = await getMessageTableClients();
-    const systemMessage = await createMessage(messageClient, messageAscendingClient, {
-      message,
-      replyRowKey,
-      roomId,
-      type,
-      userId,
-    });
+    const messageClient = useStreamTableClient(StreamTable.Messages);
+    const systemMessage = await createMessage(messageClient, { message, replyRowKey, roomId, type, userId });
     messageEventEmitter.emit("createMessage", [[systemMessage], { isSendToSelf: true, sessionId }]);
   });

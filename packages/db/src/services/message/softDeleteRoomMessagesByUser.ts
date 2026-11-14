@@ -1,16 +1,17 @@
-import type { AzureTable, AzureTableEntityMap, CustomTableClient, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 import type { Promisable } from "type-fest";
 
-import { getLivePartitionClauses } from "#src/services/azure/table/getLivePartitionClauses";
+import { getLivePartitionClauses } from "#src/services/streams/getLivePartitionClauses";
 import { updateRoomMessagesByUser } from "#src/services/message/updateRoomMessagesByUser";
-import { BinaryOperator } from "@esposter/azure";
-import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+
+import { StandardMessageEntityPropertyNames, BinaryOperator } from "@esposter/db-schema";
 
 // Soft-deletes every message a user still has visible in a room, one Table batch at a time. `onBatchSoftDeleted`
 // Runs as soon as each batch commits, so a purge that stops partway still hides everything it managed to write, and
 // Every batch it did hide is handed to the caller to announce
 export const softDeleteRoomMessagesByUser = (
-  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageClient: StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
   roomId: string,
   targetUserId: string,
   onBatchSoftDeleted: (batch: StandardMessageEntity[]) => Promisable<void>,

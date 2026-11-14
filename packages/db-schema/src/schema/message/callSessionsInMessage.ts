@@ -1,4 +1,4 @@
-import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
+import type { ReverseTickedTimestamp } from "#src/models/streams/ReverseTickedTimestamp";
 
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";

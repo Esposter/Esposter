@@ -7,7 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { MockInstance } from "vitest";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
@@ -36,7 +36,7 @@ import {
   StorageBucket,
   AzureEntityType,
   AzureFunction,
-  AzureTable,
+  StreamTable,
   getReverseTickedTimestamp,
   MAX_THUMBNAIL_BYTES,
   MessageCreationRejectionType,
@@ -316,7 +316,7 @@ describe("messageRouter", () => {
     const firstMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     const secondMessage = await messageCaller.createMessage({ message, roomId, timeZone });
     // The state between createMessage's two table writes
-    const messageClient = await useTableClient(AzureTable.Messages);
+    const messageClient = useStreamTableClient(StreamTable.Messages);
     await messageClient.deleteEntity(roomId, firstMessage.rowKey);
     const messages = await messageCaller.readMessages({ limit: 1, order: SortOrder.Asc, roomId });
 

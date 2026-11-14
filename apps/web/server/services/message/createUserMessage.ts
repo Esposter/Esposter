@@ -6,7 +6,7 @@ import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
-import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -46,8 +46,8 @@ export const createUserMessage = async (
     return messageCreationRejection;
   });
   await rejectMessageCreation(db, user.id, input.roomId, rejection);
-  const [messageClient, messageAscendingClient] = await getMessageTableClients();
-  const newMessageEntity = await createMessage(messageClient, messageAscendingClient, { ...input, userId: user.id });
+  const messageClient = useStreamTableClient(StreamTable.Messages);
+  const newMessageEntity = await createMessage(messageClient, { ...input, userId: user.id });
   messageEventEmitter.emit("createMessage", [[newMessageEntity], { sessionId: session.id }]);
   // Best-effort after the Table write — a failed increment loses one badge count, never a message.
   const mentionedUsersToRooms = await getResultAsync(() => incrementMentionCounts(db, newMessageEntity))

@@ -2,7 +2,7 @@ import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import {
@@ -20,7 +20,7 @@ import {
   AdminActionType,
   AppNotificationType,
   StorageBucket,
-  AzureTable,
+  StreamTable,
   blocksInSocial,
   bookmarksInApp,
   callSessionsInMessage,
@@ -73,7 +73,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 
 const readArchiveEntries = (blobName: string) => {
   const archiveBytes = MockContainerDatabase.get(StorageBucket.UserAssets)?.get(blobName);
@@ -142,16 +142,15 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    const messageClient = await getTableClient(AzureTable.Messages);
-    const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
-    await createMessage(messageClient, messageAscendingClient, {
+    const messageClient = getStreamTableClient(StreamTable.Messages);
+    await createMessage(messageClient, {
       files: [file],
       message,
       roomId: room.id,
       type: MessageType.Message,
       userId,
     });
-    await createMessage(messageClient, messageAscendingClient, {
+    await createMessage(messageClient, {
       message: otherMessage,
       roomId: room.id,
       type: MessageType.Message,
@@ -161,7 +160,7 @@ describe(buildUserDataArchive, () => {
 
     // A room the person has left, whose message is not in the archive
     const leftRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await createMessage(messageClient, messageAscendingClient, {
+    await createMessage(messageClient, {
       message,
       roomId: leftRoom.id,
       type: MessageType.Message,
@@ -186,7 +185,7 @@ describe(buildUserDataArchive, () => {
     await resourceContainerClient
       .getBlockBlobClient(getResourceFileBlobName(resource.id, assetHash))
       .upload(attachmentBytes, attachmentBytes.length);
-    await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
+    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: room.id,
       targetUserId: userId,
@@ -305,7 +304,7 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     const messageRowKey = getReverseTickedTimestamp();
-    const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+    const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
     // A variable, not a literal: the table's entity type has no userIds, so a literal fails the excess-property check
     const createReaction = (reactorUserIds: string[]) => {
       const reaction = {
@@ -548,7 +547,7 @@ describe(buildUserDataArchive, () => {
     const actionTime = new Date(
       Temporal.Duration.from({ hours: 1, milliseconds: 3, seconds: 2 }).total("milliseconds"),
     );
-    const moderationLogClient = await getTableClient(AzureTable.ModerationLog);
+    const moderationLogClient = getStreamTableClient(StreamTable.ModerationLog);
     const actions = [
       {
         actorUserId: userId,
@@ -734,7 +733,7 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     const attachmentBlobName = getFileBlobNames(room.id, file.id, file.filename).blobName;
-    await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
+    await createMessage(getStreamTableClient(StreamTable.Messages), {
       files: [file],
       message,
       roomId: room.id,

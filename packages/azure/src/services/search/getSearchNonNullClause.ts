@@ -1,8 +1,8 @@
-import type { Clause } from "#src/models/shared/Clause";
+import type { SearchClause } from "#src/models/search/SearchClause";
 
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
+import { BinaryOperator } from "@esposter/db-schema";
 
-export const getSearchNonNullClause = <T extends object>(key: keyof T & string): Clause<T> => ({
+export const getSearchNonNullClause = <T extends object>(key: keyof T & string): SearchClause<T> => ({
   key,
   operator: BinaryOperator.Ne,
   value: null,

@@ -6,7 +6,7 @@
 
 ## 2.
 
-- [ ] 2.1 Build the D1 stream table client and its OData filter compiler, and rename `AzureTable`. Verified by the client's tests over Miniflare's D1.
+- [ ] 2.1 Build the D1 stream table client and its clause-to-SQL compiler, and rename `AzureTable`. Verified by the client's tests over Miniflare's D1.
 - [ ] 2.2 Write `messages_search` with each message and read it in `searchMessages` and `readMySentMessages`. Verified by a sent message being found by search at once.
 
 ## 3.

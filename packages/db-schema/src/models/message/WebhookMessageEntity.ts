@@ -1,4 +1,4 @@
-import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
 import type { AppUserInMessage } from "#src/schema/message/appUsersInMessage";
 import type { ToData } from "@esposter/shared";
 import type { Except, SetOptional } from "type-fest";

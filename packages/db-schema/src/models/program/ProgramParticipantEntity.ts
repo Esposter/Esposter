@@ -1,7 +1,7 @@
-import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/streams/AzureEntity";
 
 // One row per person in a program's audience: PartitionKey = program id, rowKey = the key value's hash.
 // The key is the participant's identity, so storage itself rejects a second row for someone who already

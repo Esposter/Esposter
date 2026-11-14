@@ -2,7 +2,7 @@ import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
@@ -24,7 +24,7 @@ import {
   AdminActionType,
   apiKeysInAuth,
   StorageBucket,
-  AzureTable,
+  StreamTable,
   getReverseTickedTimestamp,
   getSaveBlobName,
   getUserProfileImageBlobName,
@@ -59,7 +59,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
   import("#src/services/server/publishToServer"),
   () => import("#src/services/server/publishToServer.test"),
@@ -83,11 +83,10 @@ describe(deleteAccountHandler, () => {
   const message = "message";
   const name = "name";
   const roomTableNames = [
-    AzureTable.Messages,
-    AzureTable.MessagesAscending,
-    AzureTable.MessagesMetadata,
-    AzureTable.ModerationLog,
-    AzureTable.ModerationNotes,
+    StreamTable.Messages,
+    StreamTable.MessagesMetadata,
+    StreamTable.ModerationLog,
+    StreamTable.ModerationNotes,
   ];
 
   beforeAll(async () => {
@@ -135,22 +134,21 @@ describe(deleteAccountHandler, () => {
       { roomId: memberRoom.id, userId },
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
-    const messageClient = await getTableClient(AzureTable.Messages);
-    const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
-    await createMessage(messageClient, messageAscendingClient, {
+    const messageClient = getStreamTableClient(StreamTable.Messages);
+    await createMessage(messageClient, {
       message,
       roomId: ownedRoom.id,
       type: MessageType.Message,
       userId,
     });
-    const memberRoomMessage = await createMessage(messageClient, messageAscendingClient, {
+    const memberRoomMessage = await createMessage(messageClient, {
       files: [{ filename: "", hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "", size: 0 }],
       message,
       roomId: memberRoom.id,
       type: MessageType.Message,
       userId,
     });
-    const otherMemberRoomMessage = await createMessage(messageClient, messageAscendingClient, {
+    const otherMemberRoomMessage = await createMessage(messageClient, {
       message,
       roomId: memberRoom.id,
       type: MessageType.Message,
@@ -162,7 +160,7 @@ describe(deleteAccountHandler, () => {
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
 
     // The moderation record names the account in a room the account does not own, so it is kept
-    await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
+    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: memberRoom.id,
       targetUserId: userId,
@@ -172,7 +170,7 @@ describe(deleteAccountHandler, () => {
     // Reactions are one row per emoji that its reactors share. The account alone holds the first, which goes; it shares
     // The second with the other account, which keeps its id; the other account alone holds the third, which is kept.
     // The fourth is the account's in the owned room, which goes with the room's partition
-    const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+    const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
     const createReaction = (roomId: string, reactorUserIds: string[]) => {
       const reaction = {
         emojiTag: "",
@@ -211,7 +209,7 @@ describe(deleteAccountHandler, () => {
         storedBytes: versionSize,
         version: 0,
       });
-    const resourceActivityClient = await getTableClient(AzureTable.ResourceActivity);
+    const resourceActivityClient = getStreamTableClient(StreamTable.ResourceActivity);
     await createEntity(
       resourceActivityClient,
       new ResourceActivityEntity({
@@ -228,14 +226,14 @@ describe(deleteAccountHandler, () => {
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Survey, userId }).returning(),
     );
     await createEntity(
-      await getTableClient(AzureTable.SurveyResponses),
+      getStreamTableClient(StreamTable.SurveyResponses),
       new SurveyResponseEntity({ partitionKey: ownedSurvey.id, rowKey: crypto.randomUUID() }),
     );
     const ownedProgram = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Program, userId }).returning(),
     );
     await createEntity(
-      await getTableClient(AzureTable.ProgramParticipants),
+      getStreamTableClient(StreamTable.ProgramParticipants),
       new ProgramParticipantEntity({ partitionKey: ownedProgram.id, rowKey: crypto.randomUUID() }),
     );
     await mockDb
@@ -280,8 +278,8 @@ describe(deleteAccountHandler, () => {
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
     // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
-    expect(readPartitionEntities(AzureTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
-    expect(readPartitionEntities(AzureTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
+    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
+    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
     await deleteAccountHandler(context, userId);
 
@@ -323,12 +321,12 @@ describe(deleteAccountHandler, () => {
         .where(eq(resourceVersionsInResource.resourceId, ownedResource.id)),
     ).resolves.toStrictEqual([]);
     expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).toStrictEqual([]);
-    expect(readPartitionEntities(AzureTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
+    expect(readPartitionEntities(StreamTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
 
     // The owned survey's responses and the owned program's participants go with their resources
     // The API key goes with the user row
-    expect(readPartitionEntities(AzureTable.SurveyResponses, ownedSurvey.id)).toStrictEqual([]);
-    expect(readPartitionEntities(AzureTable.ProgramParticipants, ownedProgram.id)).toStrictEqual([]);
+    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toStrictEqual([]);
+    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toStrictEqual([]);
     await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
 
     // The account's messages in the room it is a member of are erased and soft-deleted, and its charged attachment is gone
@@ -344,7 +342,7 @@ describe(deleteAccountHandler, () => {
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
     // The reaction the account held alone is gone, and its id is taken out of the reaction it shared
     expect(
-      readPartitionEntities(AzureTable.MessagesMetadata, memberRoom.id).map(({ userIds }) =>
+      readPartitionEntities(StreamTable.MessagesMetadata, memberRoom.id).map(({ userIds }) =>
         jsonDateParse(String(userIds)),
       ),
     ).toStrictEqual([[otherUserId], [otherUserId]]);
@@ -357,10 +355,10 @@ describe(deleteAccountHandler, () => {
 
     // Kept: the moderation record that names the account, and the account's activity on a resource it does not own
     expect(
-      readPartitionEntities(AzureTable.ModerationLog, memberRoom.id).map(({ targetUserId }) => targetUserId),
+      readPartitionEntities(StreamTable.ModerationLog, memberRoom.id).map(({ targetUserId }) => targetUserId),
     ).toStrictEqual([userId]);
     expect(
-      readPartitionEntities(AzureTable.ResourceActivity, otherResource.id).map(
+      readPartitionEntities(StreamTable.ResourceActivity, otherResource.id).map(
         ({ userId: activityUserId }) => activityUserId,
       ),
     ).toStrictEqual([userId]);

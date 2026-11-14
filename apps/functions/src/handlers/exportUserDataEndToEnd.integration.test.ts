@@ -2,7 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
@@ -18,7 +18,7 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
   StorageBucket,
-  AzureTable,
+  StreamTable,
   dataExportsInUser,
   DataExportStatus,
   friendsInSocial,
@@ -51,7 +51,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});
@@ -100,7 +100,7 @@ describe(exportUserDataHandler, () => {
       mimetype: "mimetype",
       size: 0,
     };
-    await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
+    await createMessage(getStreamTableClient(StreamTable.Messages), {
       files: [file],
       message: "message",
       roomId: room.id,
@@ -129,7 +129,7 @@ describe(exportUserDataHandler, () => {
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
     await writeJsonBlob(await getContainerClient(StorageBucket.GenshinAssets), getSaveBlobName(userId), content);
-    await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
+    await writeModerationLogEntry(getStreamTableClient(StreamTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: room.id,
       targetUserId: userId,

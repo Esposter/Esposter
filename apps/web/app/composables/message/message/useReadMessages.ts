@@ -1,7 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_OLDEST_FIRST_SORT_ITEM, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
 import { useDataStore } from "@/store/message/data";
@@ -39,7 +39,7 @@ export const useReadMessages = () => {
             roomId,
           });
           hasMoreNewer.value = true;
-          nextCursorNewer.value = serialize({ rowKey: getReverseTickedTimestamp(rowKey) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
+          nextCursorNewer.value = serialize({ rowKey }, [MESSAGE_OLDEST_FIRST_SORT_ITEM]);
           await readMetadata(roomId, cursorPaginationData.items);
           return cursorPaginationData;
         }

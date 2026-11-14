@@ -2,14 +2,14 @@ import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { readFollowedThreadRootRowKeys } from "#server/services/message/thread/readFollowedThreadRootRowKeys";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMessage, createThreadFollow } from "@esposter/db";
 import {
-  AzureTable,
+  StreamTable,
   MessageType,
   RoomPermission,
   roomRolesInMessage,
@@ -126,9 +126,8 @@ describe(createUserMessage, () => {
 
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
     const room = await createRoom();
-    const messageClient = await useTableClient(AzureTable.Messages);
-    const messageAscendingClient = await useTableClient(AzureTable.MessagesAscending);
-    const root = await createMessage(messageClient, messageAscendingClient, {
+    const messageClient = useStreamTableClient(StreamTable.Messages);
+    const root = await createMessage(messageClient, {
       appUser: { id: crypto.randomUUID() },
       message,
       roomId: room.id,

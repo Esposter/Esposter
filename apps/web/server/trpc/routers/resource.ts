@@ -16,11 +16,11 @@ import type { Clause } from "@esposter/azure";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
-import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
+import { readCursorPaginationDataStreamTable } from "#server/services/pagination/cursor/readCursorPaginationDataStreamTable";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
@@ -80,7 +80,7 @@ import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { purgeResource } from "@esposter/db";
 import {
   StorageBucket,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   getResourceOwnedTableNames,
   RESOURCE_NAME_MAX_LENGTH,
@@ -188,7 +188,7 @@ export const resourceRouter = router({
       const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
       const tableClients = await Promise.all(
-        getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useTableClient(tableName)),
+        getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useStreamTableClient(tableName)),
       );
       await purgeResource(ctx.db, containerClient, tableClients, id);
       // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
@@ -212,8 +212,8 @@ export const resourceRouter = router({
       const clauses: Clause<ResourceActivityEntity>[] = [
         { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
       ];
-      const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-      return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
+      const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
+      return readCursorPaginationDataStreamTable(resourceActivityClient, ResourceActivityEntity, {
         clauses,
         cursor,
         limit,

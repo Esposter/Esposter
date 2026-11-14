@@ -1,7 +1,7 @@
-import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/streams/AzureEntity";
 
 // `partitionKey` is the resource id and `rowKey` the UTC date bucket — daily buckets keep entities small
 // And make a partition range scan ("views this week") possible without a reshape

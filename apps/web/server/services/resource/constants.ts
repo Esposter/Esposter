@@ -10,7 +10,6 @@ export const RESOURCE_ASSET_SAS_DURATION_MS = Temporal.Duration.from({ minutes: 
 // Just under the SAS life so a browser-cached redirect can never outlive its signature
 export const RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS = Temporal.Duration.from({ minutes: 14 }).total("seconds");
 // Bounded so a hot resource's concurrent increments cannot spin the read path; on exhaustion the count drops
-export const MAX_VIEW_COUNT_ETAG_RETRIES = 3;
 // Appended to a duplicated resource's name; the base name is truncated so the whole stays within the length check
 export const DUPLICATE_NAME_SUFFIX = " (copy)";
 // A content update that loses to a save made in between is read again and reapplied this many times in all, and then

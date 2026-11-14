@@ -5,7 +5,7 @@ import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
 import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { InvocationContext } from "@azure/functions";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
@@ -13,7 +13,10 @@ vi.mock(
   import("#src/services/azure/eventGridPublisherClient"),
   () => import("#src/services/azure/eventGridPublisherClient.test"),
 );
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 vi.mock(
   import("#src/services/server/publishToServer"),
   () => import("#src/services/server/publishToServer.test"),
@@ -44,7 +47,7 @@ describe(processWebhookHandler, () => {
 
     expect(response).toBeUndefined();
 
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
 
     expect(messagesTable.size).toBe(1);

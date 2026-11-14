@@ -2,8 +2,8 @@ import type { SearchClient } from "@azure/search-documents";
 import type { SearchIndexDocumentMap } from "@esposter/db-schema";
 
 import { deleteSearchDocumentsByFilter } from "#src/services/azure/search/deleteSearchDocumentsByFilter";
-import { AZURE_MAX_PAGE_SIZE, CompositeKeyPropertyNames, getPartitionKeyFilter, serializeKey } from "@esposter/azure";
-import { SearchIndex } from "@esposter/db-schema";
+import { AZURE_MAX_PAGE_SIZE, getPartitionKeyFilter, serializeKey } from "@esposter/azure";
+import { SearchIndex, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { MockSearchClient, MockSearchDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 

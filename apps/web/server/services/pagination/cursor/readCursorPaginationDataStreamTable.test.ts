@@ -1,0 +1,87 @@
+import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+
+import type { ReverseTickedTimestamp, Clause } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
+
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { readCursorPaginationDataStreamTable } from "#server/services/pagination/cursor/readCursorPaginationDataStreamTable";
+import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+
+import { createEntity } from "@esposter/db";
+import {
+  AdminActionType,
+  StreamTable,
+  ModerationLogEntity,
+  reverseTickedTimestampSchema,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
+} from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { MockTableDatabase } from "azure-mock";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
+
+describe(readCursorPaginationDataStreamTable, () => {
+  const partitionKey = crypto.randomUUID();
+  const otherPartitionKey = crypto.randomUUID();
+  const rowKeys = ["0", "1"].map((rowKey) => reverseTickedTimestampSchema.parse(rowKey));
+  const sortBy: SortItem<keyof ModerationLogEntity>[] = [MESSAGE_ROW_KEY_SORT_ITEM];
+  const clauses: Clause<ModerationLogEntity>[] = [
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
+  ];
+  let moderationLogClient: StreamTableClient<ModerationLogEntity>;
+  const createModerationLogEntity = (entityPartitionKey: string, rowKey: ReverseTickedTimestamp) =>
+    createEntity(
+      moderationLogClient,
+      new ModerationLogEntity({
+        actorUserId: "",
+        partitionKey: entityPartitionKey,
+        rowKey,
+        targetUserId: "",
+        type: AdminActionType.Warn,
+      }),
+    );
+  const readPage = (cursor: string, limit: number) =>
+    readCursorPaginationDataStreamTable(moderationLogClient, ModerationLogEntity, { clauses, cursor, limit, sortBy });
+
+  beforeEach(async () => {
+    moderationLogClient = useStreamTableClient(StreamTable.ModerationLog);
+    await Promise.all([
+      ...rowKeys.map((rowKey) => createModerationLogEntity(partitionKey, rowKey)),
+      createModerationLogEntity(otherPartitionKey, takeOne(rowKeys)),
+    ]);
+  });
+
+  afterEach(() => {
+    MockTableDatabase.clear();
+  });
+
+  test("returns only the entities the clauses match when the limit covers them", async () => {
+    expect.hasAssertions();
+
+    const page = await readPage("", rowKeys.length);
+
+    expect(page.hasMore).toBe(false);
+    expect(page.items.map(({ rowKey }) => rowKey)).toStrictEqual(rowKeys);
+  });
+
+  test("caps the page at the limit and reports there is more", async () => {
+    expect.hasAssertions();
+
+    const page = await readPage("", 1);
+
+    expect(page.hasMore).toBe(true);
+    expect(page.items.map(({ rowKey }) => rowKey)).toStrictEqual([takeOne(rowKeys)]);
+  });
+
+  // The two reads share one `clauses` array, so a helper that appended the cursor clause to it in place would
+  // Carry the first page's cursor into the second and return nothing
+  test("resumes after the previous page's cursor", async () => {
+    expect.hasAssertions();
+
+    const firstPage = await readPage("", 1);
+    const secondPage = await readPage(firstPage.nextCursor, 1);
+
+    expect(secondPage.hasMore).toBe(false);
+    expect(secondPage.items.map(({ rowKey }) => rowKey)).toStrictEqual([takeOne(rowKeys, 1)]);
+  });
+});

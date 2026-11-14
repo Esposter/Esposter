@@ -1,7 +1,7 @@
 import type { MessageEntity } from "#src/models/message/MessageEntity";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
+import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
 import { webhookMessageEntitySchema } from "#src/models/message/WebhookMessageEntity";
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";

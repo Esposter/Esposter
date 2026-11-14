@@ -41,7 +41,6 @@
     "zstd:gen": "vpx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
-    "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",

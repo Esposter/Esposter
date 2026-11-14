@@ -1,19 +1,20 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause } from "@esposter/azure";
-import type { MessageEntity } from "@esposter/db-schema";
+
+import type { MessageEntity, Clause } from "@esposter/db-schema";
 
 import { readMessageSearchDocuments } from "#server/services/message/readMessageSearchDocuments";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
+import { getSearchNullClause, serializeSearchClauses } from "@esposter/azure";
+import { filtersToClauses } from "@esposter/db";
 import {
+  FilterType,
+  SearchIndex,
+  SearchIndexSearchableFieldsMap,
   BinaryOperator,
   CompositeKeyPropertyNames,
-  getSearchNullClause,
-  serializeSearchClauses,
-} from "@esposter/azure";
-import { filtersToClauses } from "@esposter/db";
-import { FilterType, SearchIndex, SearchIndexSearchableFieldsMap } from "@esposter/db-schema";
+} from "@esposter/db-schema";
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {

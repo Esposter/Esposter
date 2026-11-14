@@ -1,7 +1,8 @@
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { CompositeKey } from "@esposter/azure";
+
 import type { ItemMetadata } from "@esposter/shared";
+import type { CompositeKey } from "@esposter/db-schema";
 
 import { getNextCursor } from "#server/services/pagination/cursor/getNextCursor";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";

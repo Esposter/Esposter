@@ -1,5 +1,6 @@
 import type { ExecutedAutomodAction } from "#src/models/message/moderation/ExecutedAutomodAction";
-import type { CustomTableClient, Database, ModerationLogEntity, RoomFilterInMessage } from "@esposter/db-schema";
+import type { Database, ModerationLogEntity, RoomFilterInMessage } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
 import { writeModerationLogEntry } from "#src/services/message/moderation/writeModerationLogEntry";
 import { AdminActionType, AUTOMOD_USER_ID, usersToRoomsInMessage, WordFilterAction } from "@esposter/db-schema";
@@ -13,7 +14,7 @@ import { and, eq, sql } from "drizzle-orm";
 export const executeAutomodAction = async (
   db: Database,
   // Resolved lazily so a Reject filter — the common case, which has no follow-up action — never builds a client
-  getModerationLogClient: () => Promise<CustomTableClient<ModerationLogEntity>>,
+  getModerationLogClient: () => Promise<StreamTableClient<ModerationLogEntity>>,
   {
     action,
     roomId,

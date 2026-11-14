@@ -2,10 +2,11 @@ import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDb
 import type { IndexedDbStoreConfiguration } from "@/models/cache/indexedDb/IndexedDbStoreConfiguration";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
 import type { DatabaseIndexKey, DatabaseIndexName } from "@esposter/shared";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 import { getCachedItems } from "@/services/cache/indexedDb/getCachedItems";
 import { openIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
-import { CompositeKeyPropertyNames } from "@esposter/azure";
+
 import { toRawDeep } from "@esposter/shared";
 
 export const writeIndexedDb = async <

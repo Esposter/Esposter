@@ -1,0 +1,69 @@
+import type { ConditionalEntityUpdateOptions } from "#server/models/streams/ConditionalEntityUpdateOptions";
+import type { AzureEntity, AzureUpdateEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
+import type { Class } from "type-fest";
+
+import { MAX_ENTITY_ETAG_RETRIES } from "#server/services/streams/constants";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
+import { getEntityWithEtag } from "@esposter/db";
+import { getResultAsync } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
+
+// A read-modify-write of an entity body, made conditional on the version it was computed against. Two callers
+// Otherwise both derive their write from the same version and the later one echoes back a body that never saw the
+// Earlier change, erasing it with nothing surfaced to either caller
+// The write it returns is the one the caller's guard computed, so a caller reads its own shape back, not a generic one
+export const updateEntityConditionally = async <
+  TTableEntity extends AzureEntity,
+  TEntity extends TTableEntity,
+  TUpdateEntity extends AzureUpdateEntity<TTableEntity>,
+>(
+  tableClient: StreamTableClient<TTableEntity>,
+  entityClass: Class<TEntity>,
+  {
+    entityType,
+    entityWithEtag,
+    getUpdateEntity,
+    writeEntity,
+  }: ConditionalEntityUpdateOptions<TTableEntity, TEntity, TUpdateEntity>,
+): Promise<TUpdateEntity> => {
+  // The version under write travels as one value so each attempt destructures it into its own consts — the
+  // Conditional write closes over them, and a closure over a variable the loop reassigns is exactly the bug
+  // Optimistic concurrency exists to avoid
+  let entityVersion = entityWithEtag;
+
+  for (let attempt = 0; attempt < MAX_ENTITY_ETAG_RETRIES; attempt++) {
+    const { entity, etag } = entityVersion;
+    const { partitionKey, rowKey } = entity;
+    const updatedEntity = getUpdateEntity(entity);
+    // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
+    const updateError = await getResultAsync(() => writeEntity(updatedEntity, etag)).match(
+      () => undefined,
+      (error) => error,
+    );
+    if (!updateError) return updatedEntity;
+    // The re-read is the only thing that classifies the failed write, and whatever rejected the write routinely
+    // Rejects the read behind it — so a read that FAILED must not arrive here as the entity being gone. It
+    // Leaves the attempt unclassified, which is what CONFLICT already means: the write did not land, the caller
+    // Sends it again, and the fault itself is logged rather than renamed into a deletion for the user
+    // oxlint-disable-next-line no-await-in-loop -- Retry: an attempt runs only because the last one lost the race
+    const rereadEntityVersion = await getResultAsync(() =>
+      getEntityWithEtag(tableClient, entityClass, partitionKey, rowKey),
+    ).match(
+      (readEntityVersion) => readEntityVersion,
+      (error) => {
+        console.error(error);
+        throw new TRPCError({ code: "CONFLICT" });
+      },
+    );
+    if (!rereadEntityVersion) throw getNotFoundError(entityType, JSON.stringify({ partitionKey, rowKey }));
+    // Only a lost race is retried, and the re-read is what tells the two apart without a status code: a version
+    // That moved is the concurrent write this one was rejected for, while an unchanged version means the write
+    // Failed for a reason retrying cannot fix, so that error propagates as itself
+    else if (rereadEntityVersion.etag === etag) throw updateError;
+
+    entityVersion = rereadEntityVersion;
+  }
+
+  throw new TRPCError({ code: "CONFLICT" });
+};

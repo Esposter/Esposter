@@ -19,7 +19,7 @@ import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType"
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import {
   AzureEntityType,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   ResourceType,
   SnapshotChannel,
@@ -201,12 +201,12 @@ describe("surveyRouter", () => {
     // Delete is soft, so responses survive the Recycle bin window and restore keeps them intact
     await caller.deleteResource({ id: newResource.id });
 
-    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(1);
+    expect(MockTableDatabase.get(StreamTable.SurveyResponses)?.size).toBe(1);
 
     // Respondents' answers are the survey's own data, so purge destroys them instead of orphaning forever
     await resourceCaller.purgeResource({ id: newResource.id });
 
-    expect(MockTableDatabase.get(AzureTable.SurveyResponses)?.size).toBe(0);
+    expect(MockTableDatabase.get(StreamTable.SurveyResponses)?.size).toBe(0);
   });
 
   test("hides unpublished surveys from respondents", async () => {

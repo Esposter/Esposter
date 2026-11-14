@@ -58,10 +58,7 @@
     "type-fest": "catalog:"
   },
   "peerDependencies": {
-    "@azure/data-tables": "catalog:",
+    "@esposter/db-schema": "workspace:*",
     "zod": "catalog:"
-  },
-  "inlinedDependencies": {
-    "type-fest": "5.10.0"
   }
 }

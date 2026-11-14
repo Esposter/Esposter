@@ -1,20 +1,12 @@
-import type { Clause } from "@esposter/azure";
-import type {
-  AzureTable,
-  AzureTableEntityMap,
-  CustomTableClient,
-  RoomInMessage,
-  UserInAuth,
-} from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap, RoomInMessage, UserInAuth, Clause } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, serializeClauses } from "@esposter/azure";
 import { deserializeEntity, getLivePartitionClauses } from "@esposter/db";
-import { StandardMessageEntity, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+import { StandardMessageEntity, StandardMessageEntityPropertyNames, BinaryOperator } from "@esposter/db-schema";
 
-// The person's live messages in one room, read a page at a time.
-// A soft-deleted message is left out, as it is for every reader of the room.
+// The person's live messages in one room. A soft-deleted message is left out, as it is for every reader of the room.
 export const readRoomMessagesByUser = async (
-  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageClient: StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
   roomId: RoomInMessage["id"],
   userId: UserInAuth["id"],
 ): Promise<StandardMessageEntity[]> => {
@@ -22,12 +14,7 @@ export const readRoomMessagesByUser = async (
     ...getLivePartitionClauses<StandardMessageEntity>(roomId),
     { key: StandardMessageEntityPropertyNames.userId, operator: BinaryOperator.Eq, value: userId },
   ];
-  const filter = serializeClauses(clauses);
-  const messages: StandardMessageEntity[] = [];
-  for await (const page of messageClient
-    .listEntities<StandardMessageEntity>({ queryOptions: { filter } })
-    .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    // Listed entities carry their properties in serialized form, so `files` is only an array once deserialized
-    messages.push(...page.map(({ etag: _etag, ...entity }) => deserializeEntity(entity, StandardMessageEntity)));
-  return messages;
+  const rows = await messageClient.list(clauses);
+  // Listed rows carry their properties in stored form, so `files` is only an array once deserialized
+  return rows.map(({ etag: _etag, ...entity }) => deserializeEntity(entity, StandardMessageEntity));
 };

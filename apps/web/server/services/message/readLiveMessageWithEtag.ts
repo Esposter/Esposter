@@ -1,4 +1,5 @@
-import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
 import { getEntityWithEtag } from "@esposter/db";
 import { StandardMessageEntity } from "@esposter/db-schema";
@@ -7,7 +8,7 @@ import { StandardMessageEntity } from "@esposter/db-schema";
 // Answers a deleted one as absent here, the way `getLivePartitionClauses` answers it for every listing, so no
 // Procedure can edit, pin, vote on or forward a message its author already removed
 export const readLiveMessageWithEtag = async (
-  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageClient: StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
   partitionKey: StandardMessageEntity["partitionKey"],
   rowKey: StandardMessageEntity["rowKey"],
 ) => {

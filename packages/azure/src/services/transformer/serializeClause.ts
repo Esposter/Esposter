@@ -1,12 +1,12 @@
-import type { Clause } from "#src/models/shared/Clause";
+import type { SearchClause } from "#src/models/search/SearchClause";
 
 import { SearchOperator } from "#src/models/search/SearchOperator";
-import { UnaryOperator } from "#src/models/shared/UnaryOperator";
 import { serializeKey } from "#src/services/table/serializeKey";
 import { serializeValue } from "#src/services/transformer/serializeValue";
+import { UnaryOperator } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-export const serializeClause = (clause: Clause<Record<string, unknown>>, isTableFilter = false): string => {
+export const serializeClause = (clause: SearchClause<Record<string, unknown>>): string => {
   // Each path segment is serialized on its own rather than the joined key, and the result is a local: a clause
   // Is the caller's object, and writing the serialized key back onto it makes the same array serialize
   // Differently the second time anything reads it
@@ -24,6 +24,6 @@ export const serializeClause = (clause: Clause<Record<string, unknown>>, isTable
   }
 
   const { not, operator, value } = clause;
-  const baseClause = `${clauseKey} ${operator} ${serializeValue(value, isTableFilter)}`;
+  const baseClause = `${clauseKey} ${operator} ${serializeValue(value)}`;
   return not ? `${UnaryOperator.Not}(${baseClause})` : baseClause;
 };

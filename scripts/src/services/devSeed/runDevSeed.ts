@@ -6,7 +6,7 @@ import { getDatabaseName } from "#src/services/devSeed/getDatabaseName";
 import { getSeedRefusal } from "#src/services/devSeed/getSeedRefusal";
 import { seedDevDataset } from "#src/services/devSeed/seedDevDataset";
 import { getTableClient } from "@esposter/db";
-import { AzureTable, relations } from "@esposter/db-schema";
+import { StreamTable, relations } from "@esposter/db-schema";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -24,15 +24,8 @@ export const runDevSeed = async (
   const client = postgres(databaseUrl);
   const db = drizzle({ client, relations });
   await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
-  const messageClient = await getTableClient(storageConnectionString, AzureTable.Messages);
-  const messageAscendingClient = await getTableClient(storageConnectionString, AzureTable.MessagesAscending);
-  const seedRefusal = await seedDevDataset({
-    databaseUrl,
-    db,
-    messageAscendingClient,
-    messageClient,
-    storageConnectionString,
-  });
+  const messageClient = await getTableClient(storageConnectionString, StreamTable.Messages);
+  const seedRefusal = await seedDevDataset({ databaseUrl, db, messageClient, storageConnectionString });
   await client.end();
   return seedRefusal;
 };

@@ -3,7 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { callSessionParticipantMap } from "#server/services/message/call/callSessionParticipantMap";
 import { createCallParticipant } from "#server/services/message/call/createCallParticipant";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
@@ -18,7 +18,7 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
   AdminActionType,
-  AzureTable,
+  StreamTable,
   bansInMessage,
   DatabaseEntityType,
   RoomPermission,
@@ -156,8 +156,8 @@ describe("moderationRouter", () => {
       () =>
         moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.KickFromRoom }),
     );
-    const messagesClient = await useTableClient(AzureTable.Messages);
-    const messages = await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>());
+    const messagesClient = useStreamTableClient(StreamTable.Messages);
+    const messages = (await messagesClient.list()) as StandardMessageEntity[];
 
     expect(leaveRoom).toStrictEqual({ roomId, userId: member.id });
     expect(messages.map(({ message }) => message)).toContain(`${member.name} was kicked from the room.`);
@@ -201,10 +201,10 @@ describe("moderationRouter", () => {
     const member = await createMember();
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
 
-    const messagesClient = await useTableClient(AzureTable.Messages);
+    const messagesClient = useStreamTableClient(StreamTable.Messages);
     // The room's own lines are not the member's — their join and the ban that removed them both stay, so the
     // Purge is asserted against what the member wrote
-    const memberMessages = (await Array.fromAsync(messagesClient.listEntities<StandardMessageEntity>())).filter(
+    const memberMessages = ((await messagesClient.list()) as StandardMessageEntity[]).filter(
       ({ userId }) => userId === member.id,
     );
 

@@ -1,8 +1,8 @@
 import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { SurveyResponseRecords } from "#shared/models/resource/survey/SurveyResponseRecords";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
-import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { openSurveyResponseWrite } from "#server/services/survey/openSurveyResponseWrite";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
@@ -23,7 +23,7 @@ import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/Delete
 import { readSurveyResponseInputSchema } from "#shared/models/db/survey/ReadSurveyResponseInput";
 import { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
 import { createEntity, getEntity, getEntityWithEtag, updateEntity } from "@esposter/db";
-import { AzureEntityType, AzureTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
+import { AzureEntityType, StreamTable, ResourceType, SurveyResponseEntity } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // A respondent's procedures answer for the person filling the survey in, never for the owner acting on it
@@ -47,7 +47,7 @@ export const surveyRouter = router({
   deleteSurveyResponse: getOwnerProcedure(ResourceType.Survey, deleteSurveyResponseInputSchema, "id")
     .meta({ humanOnly: "Deletes a respondent's answer outright, data the owner holds on someone else's behalf" })
     .mutation<void>(async ({ ctx, input: { rowKey } }) => {
-      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
       // Existence is proven before deleting so a second delete of the same key errors rather than silently passing
       await requireSurveyResponse(surveyResponseClient, ctx.resource.id, rowKey);
       await surveyResponseClient.deleteEntity(ctx.resource.id, rowKey);
@@ -56,7 +56,7 @@ export const surveyRouter = router({
     .input(readSurveyResponseInputSchema)
     .query<SurveyResponseEntity | undefined>(async ({ ctx, input: { participantToken, partitionKey, rowKey } }) => {
       const resolvedParticipantToken = await resolveSurveyResponseRead(ctx.db, partitionKey, participantToken);
-      const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+      const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
       const surveyResponse = await getEntity(surveyResponseClient, SurveyResponseEntity, partitionKey, rowKey);
       if (!surveyResponse) return undefined;
       // A resume must present the identity the response was started with, so another participant's row is

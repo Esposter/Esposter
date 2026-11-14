@@ -8,17 +8,16 @@ import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
 import type { TrackedEnvelope } from "@trpc/server";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
-import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
+import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
 import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
-import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { readLiveMessageWithEtag } from "#server/services/message/readLiveMessageWithEtag";
 import { readMessages } from "#server/services/message/readMessages";
@@ -65,9 +64,9 @@ import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { pollMessageContentSchema } from "#shared/models/message/poll/PollMessageContent";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { MESSAGE_OLDEST_FIRST_SORT_ITEM } from "#shared/services/pagination/constants";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import {
   cloneFiles,
   createMessage,
@@ -83,7 +82,7 @@ import {
 import {
   StorageBucket,
   AzureEntityType,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   FileEntity,
   FilterType,
@@ -209,12 +208,8 @@ export const baseMessageRouter = router({
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
-      // Every client provisions its own table/container, so acquiring them together costs one round trip
-      // Instead of three
-      const [[messageClient, messageAscendingClient], containerClient] = await Promise.all([
-        getMessageTableClients(),
-        useContainerClient(StorageBucket.MessageAssets),
-      ]);
+      const messageClient = useStreamTableClient(StreamTable.Messages);
+      const containerClient = await useContainerClient(StorageBucket.MessageAssets);
       const { entity: messageEntity } = await requireEntity(
         readLiveMessageWithEtag(messageClient, partitionKey, rowKey),
         AzureEntityType.Message,
@@ -249,7 +244,7 @@ export const baseMessageRouter = router({
             messageEntity.partitionKey,
             roomId,
           );
-          const forward = await createMessage(messageClient, messageAscendingClient, {
+          const forward = await createMessage(messageClient, {
             files: messageEntity.files.map(
               // oxlint-disable-next-line typescript/no-misused-spread -- the row write wants the entity's own fields, not its prototype
               (file, index) => new FileEntity({ ...file, ...takeOne(clonedFiles, index) }),
@@ -266,7 +261,7 @@ export const baseMessageRouter = router({
 
           if (message)
             messages.push(
-              await createMessage(messageClient, messageAscendingClient, {
+              await createMessage(messageClient, {
                 message,
                 roomId,
                 type: MessageType.Message,
@@ -347,18 +342,16 @@ export const baseMessageRouter = router({
     AsyncGenerator<TrackedEnvelope<MessageEntity[]>, void, unknown>
   >(async function* ({ ctx, input: { lastEventId, roomId }, signal }) {
     // Listening starts BEFORE the catch-up, and the two overlap by design. `on` attaches its listener when it is
-    // Called and queues what it receives until this loop consumes it, so a message committed while the catch-up
-    // Is still paging is held rather than missed — the catch-up reads MessagesAscending, whose index row lands
-    // Ahead of the entity every read serves (see createMessage), so a page can step past a message whose entity
-    // Has not landed yet and never come back for it. Overlapping instead delivers such a message twice, which
-    // The client's create handler already absorbs by id — the same guard reconnect catch-up needs anyway
+    // Called and queues what it receives until this loop consumes it, so a message committed while the catch-up is still
+    // Paging is held rather than missed. The overlap can deliver a message twice, which the client's create handler
+    // Already absorbs by id, the same guard reconnect catch-up needs anyway
     const createdMessages = onWhileMember(messageEventEmitter, "createMessage", {
       roomId,
       signal,
       userId: ctx.getSessionPayload.user.id,
     });
     if (lastEventId) {
-      let cursor = serialize({ rowKey: getReverseTickedTimestamp(lastEventId) }, [MESSAGE_ROW_KEY_SORT_ITEM]);
+      let cursor = serialize({ rowKey: lastEventId }, [MESSAGE_OLDEST_FIRST_SORT_ITEM]);
       let hasMore = true;
       const messages: MessageEntity[] = [];
 
@@ -428,16 +421,14 @@ export const baseMessageRouter = router({
     ),
   readThread: getMemberProcedure(readThreadInputSchema, "roomId").query<MessageEntity[]>(
     async ({ input: { roomId, threadRootRowKey } }) => {
-      const messageClient = await useTableClient(AzureTable.Messages);
+      const messageClient = useStreamTableClient(StreamTable.Messages);
       const replyClauses: Clause<StandardMessageEntity>[] = [
         ...getLivePartitionClauses<StandardMessageEntity>(roomId),
         { key: StandardMessageEntityPropertyNames.replyRowKey, operator: BinaryOperator.Eq, value: threadRootRowKey },
       ];
       const [rootMessageWithEtag, replies] = await Promise.all([
         readLiveMessageWithEtag(messageClient, roomId, threadRootRowKey),
-        getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageTypeEntityMap, {
-          filter: serializeClauses(replyClauses),
-        }),
+        getTopNEntitiesByType(messageClient, MAX_READ_LIMIT, MessageTypeEntityMap, replyClauses),
       ]);
       if (rootMessageWithEtag) return [rootMessageWithEtag.entity, ...replies];
       else return replies;

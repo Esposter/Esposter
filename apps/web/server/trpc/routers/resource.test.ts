@@ -46,7 +46,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
   AzureFunction,
-  AzureTable,
+  StreamTable,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
   ResourceActivityType,
@@ -1296,7 +1296,7 @@ describe("resourceRouter", () => {
     const deletedCount = await caller.readDeletedResourcesCount();
     // The row is gone, so the blade can no longer resolve it — the partition is swept at purge time,
     // Read straight from the table because no procedure can reach a purged resource any more
-    const activityEntities = [...(MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [])];
+    const activityEntities = [...(MockTableDatabase.get(StreamTable.ResourceActivity)?.values() ?? [])];
 
     expect(deletedCount).toBe(0);
     expect(activityEntities).toStrictEqual([]);

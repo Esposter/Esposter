@@ -1,5 +1,5 @@
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test } from "vitest";
@@ -20,7 +20,7 @@ describe(createSystemRoomMessage, () => {
         (error) => error,
       ),
     ).resolves.toBeUndefined();
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
 
     expect(takeOne([...messagesTable.values()]).replyRowKey).toBe("");

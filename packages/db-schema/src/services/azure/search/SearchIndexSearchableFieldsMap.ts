@@ -1,5 +1,5 @@
 import { SearchIndex } from "#src/models/azure/search/SearchIndex";
-import { FileEntityPropertyNames } from "#src/models/azure/table/FileEntity";
+import { FileEntityPropertyNames } from "#src/models/streams/FileEntity";
 import { StandardMessageEntityPropertyNames } from "#src/models/message/StandardMessageEntity";
 
 export const SearchIndexSearchableFieldsMap = {

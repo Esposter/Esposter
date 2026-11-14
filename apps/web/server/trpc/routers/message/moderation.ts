@@ -3,11 +3,11 @@ import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogIn
 import type { ModerationNoteInRoom } from "#shared/models/db/room/ModerationNoteInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause } from "@esposter/azure";
-import type { BanInMessage } from "@esposter/db-schema";
+
+import type { BanInMessage, Clause } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { on } from "#server/services/events/on";
@@ -21,7 +21,7 @@ import { publishSoftDeletedMessages } from "#server/services/message/moderation/
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
+import { readCursorPaginationDataStreamTable } from "#server/services/pagination/cursor/readCursorPaginationDataStreamTable";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { PublishSource } from "#server/services/realtimeKit/constants";
 import { updateRealtimeKitParticipantPreset } from "#server/services/realtimeKit/updateRealtimeKitParticipantPreset";
@@ -43,11 +43,11 @@ import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadM
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { BinaryOperator } from "@esposter/azure";
+
 import { checkHasPermission, createEntity, getLivePartitionClauses, softDeleteRoomMessagesByUser } from "@esposter/db";
 import {
   AdminActionType,
-  AzureTable,
+  StreamTable,
   bansInMessage,
   DatabaseEntityType,
   getDisplayNameExpression,
@@ -61,6 +61,7 @@ import {
   RoomPermission,
   usersInAuth,
   usersToRoomsInMessage,
+  BinaryOperator,
 } from "@esposter/db-schema";
 import { exhaustiveGuard, getResultAsync, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -75,7 +76,7 @@ export const moderationRouter = router({
   ).mutation<ModerationNoteEntity>(async ({ ctx, input: { note, roomId, targetUserId } }) => {
     const actorUserId = ctx.getSessionPayload.user.id;
     const [moderationNotesClient] = await Promise.all([
-      useTableClient(AzureTable.ModerationNotes),
+      useStreamTableClient(StreamTable.ModerationNotes),
       assertIsManageable(ctx.db, actorUserId, targetUserId, roomId),
     ]);
 
@@ -158,7 +159,7 @@ export const moderationRouter = router({
           // Durable version belongs on the event pipeline
           if (input.type === AdminActionType.SoftBan)
             await getResultAsync(async () => {
-              const messageClient = await useTableClient(AzureTable.Messages);
+              const messageClient = useStreamTableClient(StreamTable.Messages);
               await softDeleteRoomMessagesByUser(messageClient, roomId, targetUserId, (batch) =>
                 publishSoftDeletedMessages(roomId, batch),
               );
@@ -297,8 +298,8 @@ export const moderationRouter = router({
       });
     if (type) clauses.push({ key: ModerationLogEntityPropertyNames.type, operator: BinaryOperator.Eq, value: type });
 
-    const moderationLogClient = await useTableClient(AzureTable.ModerationLog);
-    const page = await readCursorPaginationDataAzureTable(moderationLogClient, ModerationLogEntity, {
+    const moderationLogClient = useStreamTableClient(StreamTable.ModerationLog);
+    const page = await readCursorPaginationDataStreamTable(moderationLogClient, ModerationLogEntity, {
       clauses,
       cursor,
       limit,
@@ -327,7 +328,7 @@ export const moderationRouter = router({
   ).query<CursorPaginationData<ModerationNoteInRoom>>(
     async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
       const [moderationNotesClient] = await Promise.all([
-        useTableClient(AzureTable.ModerationNotes),
+        useStreamTableClient(StreamTable.ModerationNotes),
         assertIsManageable(ctx.db, ctx.getSessionPayload.user.id, targetUserId, roomId),
       ]);
 
@@ -335,7 +336,7 @@ export const moderationRouter = router({
         ...getLivePartitionClauses<ModerationNoteEntity>(roomId),
         { key: ModerationNoteEntityPropertyNames.targetUserId, operator: BinaryOperator.Eq, value: targetUserId },
       ];
-      const page = await readCursorPaginationDataAzureTable(moderationNotesClient, ModerationNoteEntity, {
+      const page = await readCursorPaginationDataStreamTable(moderationNotesClient, ModerationNoteEntity, {
         clauses,
         cursor,
         limit,

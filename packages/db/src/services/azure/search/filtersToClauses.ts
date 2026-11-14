@@ -1,18 +1,12 @@
 /* eslint-disable perfectionist/sort-switch-case -- cases grouped by the clause each builds */
 import type { SelectFields } from "@azure/search-documents";
-import type { Clause } from "@esposter/azure";
-import type { Filter, MessageEntity } from "@esposter/db-schema";
+
+import type { Filter, MessageEntity, Clause } from "@esposter/db-schema";
 
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";
 import { getInvalidValueError } from "#src/services/azure/search/getInvalidValueError";
 import { getStartOfDay } from "#src/util/date/getStartOfDay";
-import {
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-  getSearchNonNullClause,
-  SearchOperator,
-  serializeValue,
-} from "@esposter/azure";
+import { getSearchNonNullClause, SearchOperator, serializeValue } from "@esposter/azure";
 import {
   FileEntityPropertyNames,
   FilterType,
@@ -24,6 +18,8 @@ import {
   MessageTypes,
   MimeCategory,
   StandardMessageEntityPropertyNames,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { getEndOfDay, NotFoundError } from "@esposter/shared";
 

@@ -1,7 +1,7 @@
 import type { ServiceBusQueueHandler } from "@azure/functions";
 
 import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
 import { getScheduler } from "#src/services/scheduler/getScheduler";
@@ -11,7 +11,7 @@ import { createReplyThreadFollows } from "@esposter/db";
 import {
   AppNotificationType,
   AzureFunction,
-  AzureTable,
+  StreamTable,
   MessageType,
   publishNotification,
   roomsInMessage,
@@ -162,7 +162,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
       // Owes them before the publish that reads them
       await getResultAsync(async () =>
-        createReplyThreadFollows(db, await getTableClient(AzureTable.Messages), newMessage),
+        createReplyThreadFollows(db, getStreamTableClient(StreamTable.Messages), newMessage),
       ).match(noop, logFailure("follow the thread"));
       await getResultAsync(() =>
         publishNotification(eventGridPublisherClient, {

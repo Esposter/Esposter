@@ -1,9 +1,9 @@
 import type { InvocationContext } from "@azure/functions";
 
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { db } from "#src/services/shared/db";
 import { executeAutomodAction, getMessageCreationRejection } from "@esposter/db";
-import { AzureFunction, AzureTable, DatabaseEntityType, MessageCreationRejectionType } from "@esposter/db-schema";
+import { AzureFunction, StreamTable, DatabaseEntityType, MessageCreationRejectionType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, WordFilteredError } from "@esposter/shared";
 
 // The worker's face of the shared message-creation rules — the decision itself lives in `@esposter/db`, so a
@@ -28,7 +28,7 @@ export const assertCanCreateMessage = async (
   // Warn/Timeout is applied and audited here, since this is where the message is rejected.
   await executeAutomodAction(
     db,
-    () => getTableClient(AzureTable.ModerationLog),
+    () => getStreamTableClient(StreamTable.ModerationLog),
     { action: rejection.filter.action, roomId, timeoutDurationMs: rejection.filter.timeoutDurationMs, userId },
     // Best-effort, but attributable: the timeout still applies, so a lost audit row is a moderator looking at a
     // Timed-out member with nothing explaining it — through the invocation's own sink, never bare console

@@ -1,15 +1,15 @@
-import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
-import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
+import type { ReverseTickedTimestamp } from "#src/models/streams/ReverseTickedTimestamp";
 import type { ResourceActivityType } from "#src/models/resource/ResourceActivityType";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity } from "#src/models/azure/table/AzureEntity";
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
+import { AzureEntity } from "#src/models/streams/AzureEntity";
+import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
-import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
+import { createAzureEntitySchema } from "#src/services/streams/createAzureEntitySchema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import type { SerializableValue } from "@esposter/azure";
 
 import AuthorTypePicker from "@/components/Message/RightSideBar/Search/Filter/AuthorTypePicker.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { FilterTypeAuthorType } from "@esposter/db-schema";
+import type { SerializableValue } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { assert, describe, expect, test } from "vitest";

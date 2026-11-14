@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
@@ -10,7 +10,7 @@ import { createMessage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   StorageBucket,
-  AzureTable,
+  StreamTable,
   dataExportsInUser,
   DataExportStatus,
   MessageType,
@@ -31,7 +31,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 
 const readExportRow = async (dataExportId: string) =>
   takeOne(
@@ -77,7 +77,7 @@ describe(exportUserDataHandler, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The message attaches a file whose blob was never written, so reading that entry fails
-    await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
+    await createMessage(getStreamTableClient(StreamTable.Messages), {
       files: [
         { filename, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: "mimetype", size: 0 },
       ],

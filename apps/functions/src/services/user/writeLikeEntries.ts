@@ -3,10 +3,10 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { db } from "#src/services/shared/db";
 import { readRoomEmojiReactionsByUser } from "#src/services/user/readRoomEmojiReactionsByUser";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 
 // The person's likes and dislikes of posts, and their emoji reactions in the rooms they are a member of.
 // Each entry names its target and carries no counts, and no other person's reaction is listed.
@@ -17,7 +17,7 @@ export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInA
     columns: { createdAt: true, postId: true, value: true },
     where: { userId: { eq: userId } },
   });
-  const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+  const messagesMetadataClient = getStreamTableClient(StreamTable.MessagesMetadata);
   const roomIds = await getAccountMemberRoomIds(userId);
   const emojiReactions = [];
   for (const roomId of roomIds)

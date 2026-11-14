@@ -1,8 +1,6 @@
-import type { Clause } from "@esposter/azure";
-
-import { useMessageEmojiMetadataClient } from "#server/composables/azure/table/useMessageEmojiMetadataClient";
+import { useMessageEmojiMetadataClient } from "#server/composables/streams/useMessageEmojiMetadataClient";
 import { getDevice } from "#server/services/auth/getDevice";
-import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
+import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { getEmojiMetadataClauses } from "#server/services/message/emoji/getEmojiMetadataClauses";
 import { emojiEventEmitter } from "#server/services/message/events/emojiEventEmitter";
 import { router } from "#server/trpc";
@@ -19,9 +17,10 @@ import {
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import type { Clause } from "@esposter/db-schema";
 import { createEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
-import { MessageMetadataType } from "@esposter/db-schema";
+import { MessageMetadataType, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { checkIsOnlyReactor, getUpdatedUserIds, Operation } from "@esposter/shared";
 
 export const emojiRouter = router({
@@ -39,11 +38,7 @@ export const emojiRouter = router({
       },
       { key: MessageEmojiMetadataEntityPropertyNames.emojiTag, operator: BinaryOperator.Eq, value: input.emojiTag },
     ];
-    const existingEmoji = (
-      await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, {
-        filter: serializeClauses(clauses),
-      })
-    )[0];
+    const existingEmoji = (await getTopNEntities(messagesMetadataClient, 1, MessageEmojiMetadataEntity, clauses))[0];
     if (existingEmoji)
       throw getInvalidOperationError(Operation.Create, MessageMetadataType.Emoji, JSON.stringify(existingEmoji));
 
@@ -82,9 +77,7 @@ export const emojiRouter = router({
           value: messageRowKey,
         })),
       ];
-      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, {
-        filter: serializeClauses(clauses),
-      });
+      return getTopNEntities(messagesMetadataClient, AZURE_MAX_PAGE_SIZE, MessageEmojiMetadataEntity, clauses);
     },
   ),
   updateEmoji: getMemberProcedure(updateEmojiInputSchema, CompositeKeyPropertyNames.partitionKey).mutation<void>(

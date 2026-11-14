@@ -1,6 +1,7 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { CompositeKey } from "@esposter/azure";
-import type { CustomTableClient, Database, ResourceInResource, UserInAuth } from "@esposter/db-schema";
+
+import type { Database, ResourceInResource, UserInAuth, CompositeKey } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
 import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
 import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
@@ -19,7 +20,7 @@ import { eq } from "drizzle-orm";
 export const purgeResource = async (
   db: Database,
   containerClient: ContainerClient,
-  tableClients: CustomTableClient<CompositeKey>[],
+  tableClients: StreamTableClient<CompositeKey>[],
   resourceId: ResourceInResource["id"],
 ): Promise<UserInAuth["id"][]> => {
   await deleteDirectory(containerClient, resourceId);

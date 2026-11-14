@@ -1,6 +1,6 @@
 import type { SearchOperator } from "#src/models/search/SearchOperator";
 
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
+import { BinaryOperator } from "@esposter/db-schema";
 
 export const RangeOperators: (BinaryOperator | SearchOperator)[] = [
   BinaryOperator.Ge,

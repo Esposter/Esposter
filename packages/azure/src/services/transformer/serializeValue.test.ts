@@ -15,10 +15,4 @@ describe(serializeValue, () => {
     expect(serializeValue(0)).toBe("0");
     expect(serializeValue(Number.NaN)).toBe(String(Number.NaN));
   });
-
-  test("wraps a Date in a datetime literal for a table filter", () => {
-    expect.hasAssertions();
-
-    expect(serializeValue(epoch, true)).toBe(`datetime'${epoch.toISOString()}'`);
-  });
 });

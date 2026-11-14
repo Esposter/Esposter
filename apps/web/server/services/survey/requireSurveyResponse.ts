@@ -1,11 +1,10 @@
-import type { CustomTableClient } from "@esposter/db-schema";
-
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getEntity } from "@esposter/db";
 import { AzureEntityType, SurveyResponseEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
 export const requireSurveyResponse = (
-  surveyResponseClient: CustomTableClient<SurveyResponseEntity>,
+  surveyResponseClient: StreamTableClient<SurveyResponseEntity>,
   partitionKey: SurveyResponseEntity["partitionKey"],
   rowKey: SurveyResponseEntity["rowKey"],
 ): Promise<SurveyResponseEntity> =>

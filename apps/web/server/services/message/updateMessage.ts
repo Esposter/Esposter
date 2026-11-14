@@ -1,15 +1,16 @@
-import type { AzureUpdateEntity, CustomTableClient, MessageEntity } from "@esposter/db-schema";
+import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 import type { ArrayTail } from "type-fest";
 
 import { addMessageMetadata, updateEntity } from "@esposter/db";
 import { Operation } from "@esposter/shared";
 
 export const updateMessage = async (
-  tableClient: CustomTableClient<MessageEntity>,
+  tableClient: StreamTableClient<MessageEntity>,
   entity: AzureUpdateEntity<MessageEntity>,
   // Mode and request options pass straight through, so a caller conditioning its write on the version it read
   // Reaches for this rather than dropping to updateEntity and losing the metadata stamp
-  ...args: ArrayTail<Parameters<CustomTableClient<MessageEntity>["updateEntity"]>>
+  ...args: ArrayTail<Parameters<StreamTableClient<MessageEntity>["updateEntity"]>>
 ) => {
   await addMessageMetadata(entity, Operation.Update);
   return updateEntity(tableClient, entity, ...args);

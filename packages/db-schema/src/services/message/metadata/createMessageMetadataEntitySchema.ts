@@ -1,6 +1,6 @@
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
+import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { standardMessageEntitySchema } from "#src/models/message/StandardMessageEntity";
-import { createAzureMetadataEntitySchema } from "#src/services/azure/table/createAzureMetadataEntitySchema";
+import { createAzureMetadataEntitySchema } from "#src/services/streams/createAzureMetadataEntitySchema";
 import { z } from "zod";
 
 export const createMessageMetadataEntitySchema = <T extends z.ZodType<string>>(typeSchema: T) =>

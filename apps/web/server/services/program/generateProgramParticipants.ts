@@ -3,7 +3,7 @@ import type { GeneratedProgramParticipants } from "#shared/models/resource/progr
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
@@ -13,8 +13,8 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { programResourceSchema } from "#shared/models/resource/program/ProgramResource";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
-import { checkIsConflict, createEntity, getEntity, serializeEntity } from "@esposter/db";
-import { AzureTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
+import { checkIsStreamTableError, createEntity, getEntity, serializeEntity } from "@esposter/db";
+import { StreamTable, ProgramParticipantEntity, ResourceType } from "@esposter/db-schema";
 import { chunk, getResultAsync } from "@esposter/shared";
 
 // A create whose row already exists is the one rejection this path expects — it means a concurrent run
@@ -24,7 +24,7 @@ const checkIsCreated = (create: () => Promise<unknown>): Promise<boolean> =>
   getResultAsync(create).match(
     () => true,
     (error) => {
-      if (checkIsConflict(error)) return false;
+      if (checkIsStreamTableError(error, "exists")) return false;
       throw error;
     },
   );
@@ -51,7 +51,7 @@ export const generateProgramParticipants = async (
   // The capped page is a warm cache, never the source of truth — a participant past the cap is simply one
   // This read did not see, and the insert below still refuses to issue them a second token
   const existingParticipants = await readProgramParticipantEntities(programId);
-  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+  const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
   const keyValueParticipantMap = new Map<string, ProgramParticipant>(
     existingParticipants.map(({ keyValue, token }) => [keyValue, { keyValue, token }]),
   );

@@ -26,7 +26,7 @@ export default [
     message:
       "Import `RestError` from `@azure/core-rest-pipeline`, never a storage SDK's re-export — an `instanceof` against one stops matching the other SDK's errors the day their copies split. See the azure-table skill.",
     selector:
-      "ImportDeclaration[source.value=/^@azure.(data-tables|storage-blob|storage-queue)$/] > ImportSpecifier[imported.name='RestError']",
+      "ImportDeclaration[source.value=/^@azure.(storage-blob|storage-queue)$/] > ImportSpecifier[imported.name='RestError']",
   },
   {
     // `drizzle-zod` is the v1 package; the v2 relations API the repo is on ships its own schema builders, and the two

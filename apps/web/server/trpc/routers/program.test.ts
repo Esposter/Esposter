@@ -1,11 +1,11 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
-import type { Clause } from "@esposter/azure";
+
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
 import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
@@ -27,16 +27,19 @@ import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import type { Clause } from "@esposter/db-schema";
 import { createEntity, getTopNEntities } from "@esposter/db";
 import {
   AzureEntityType,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   ProgramParticipantEntity,
   ResourceType,
   SurveyResponseEntity,
   SurveyResponseMode,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
@@ -50,10 +53,8 @@ const readStoredParticipants = async (programId: string) => {
   const clauses: Clause<ProgramParticipantEntity>[] = [
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: programId },
   ];
-  const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
-  return getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, {
-    filter: serializeClauses(clauses),
-  });
+  const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
+  return getTopNEntities(programParticipantClient, AZURE_MAX_PAGE_SIZE, ProgramParticipantEntity, clauses);
 };
 
 const sortByKeyValue = <T extends { keyValue: string }>(items: T[]) =>
@@ -335,7 +336,7 @@ describe("programRouter", () => {
     });
     // Generating refuses a survey the owner cannot resolve, so the participant is stored as an earlier run left it
     const token = crypto.randomUUID();
-    const programParticipantClient = await useTableClient(AzureTable.ProgramParticipants);
+    const programParticipantClient = useStreamTableClient(StreamTable.ProgramParticipants);
     await createEntity(
       programParticipantClient,
       new ProgramParticipantEntity({
@@ -346,7 +347,7 @@ describe("programRouter", () => {
         token,
       }),
     );
-    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
       new SurveyResponseEntity({
@@ -365,7 +366,7 @@ describe("programRouter", () => {
 
     const { program, survey } = await setupIdentifiedProgram([" "]);
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
-    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
       new SurveyResponseEntity({
@@ -527,7 +528,7 @@ describe("programRouter", () => {
     const responderToken = takeOne(
       participants.filter(({ keyValue: participantKeyValue }) => participantKeyValue === "a"),
     ).token;
-    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
     await createEntity(
       surveyResponseClient,
       new SurveyResponseEntity({

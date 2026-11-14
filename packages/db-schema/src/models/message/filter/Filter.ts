@@ -1,8 +1,8 @@
 import type { FilterType } from "#src/models/message/filter/FilterType";
-import type { SerializableValue } from "@esposter/azure";
+import type { SerializableValue } from "#src/models/streams/SerializableValue";
 
 import { filterTypeSchema } from "#src/models/message/filter/FilterType";
-import { serializableValueSchema } from "@esposter/azure";
+import { serializableValueSchema } from "#src/models/streams/SerializableValue";
 import { z } from "zod";
 
 export interface Filter {

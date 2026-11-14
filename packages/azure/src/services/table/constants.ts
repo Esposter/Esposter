@@ -1,4 +1,4 @@
-import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { capitalize } from "@esposter/shared";
 
 // Azure Table spells its two key properties capitalized, where JavaScript camel-cases them

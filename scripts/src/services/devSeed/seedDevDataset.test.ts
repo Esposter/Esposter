@@ -1,4 +1,5 @@
-import type { AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
+import type { StreamTableEntityMap } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
 import { SeedRefusal } from "#src/models/devSeed/SeedRefusal";
 import {
@@ -8,18 +9,18 @@ import {
 } from "#src/services/devSeed/constants";
 import { seedDevDataset } from "#src/services/devSeed/seedDevDataset";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
+import { StreamTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { DRIVEN_USER_ID, ZERO_UUID } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
 import { describe, expect, test } from "vitest";
 
 // The two message tables as in-memory clients, so the seed writes entities the suite can read back
 const createMessageClients = () => ({
-  messageAscendingClient: new MockTableClient("", AzureTable.MessagesAscending) as unknown as CustomTableClient<
-    AzureTableEntityMap[AzureTable.MessagesAscending]
+  messageAscendingClient: new MockTableClient("", StreamTable.MessagesAscending) as unknown as StreamTableClient<
+    StreamTableEntityMap[StreamTable.MessagesAscending]
   >,
-  messageClient: new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-    AzureTableEntityMap[AzureTable.Messages]
+  messageClient: new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+    StreamTableEntityMap[StreamTable.Messages]
   >,
 });
 

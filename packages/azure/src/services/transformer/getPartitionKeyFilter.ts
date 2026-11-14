@@ -1,11 +1,10 @@
-import type { CompositeKey } from "#src/models/table/CompositeKey";
+import type { CompositeKey } from "@esposter/db-schema";
 
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
-import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
-import { serializeClauses } from "#src/services/transformer/serializeClauses";
+import { serializeSearchClauses } from "#src/services/transformer/serializeSearchClauses";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 
-// Every table partitions on its owning entity's id, so "everything under this key" is the filter a read,
-// A count and a purge all start from. Written once here so those three can never disagree about it —
-// A feature that also filters on its own columns builds its clause array instead
+// The search filter of everything under one partition key, for the search index delete that clears a room
 export const getPartitionKeyFilter = (partitionKey: CompositeKey["partitionKey"]): string =>
-  serializeClauses([{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey }]);
+  serializeSearchClauses([
+    { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: partitionKey },
+  ]);

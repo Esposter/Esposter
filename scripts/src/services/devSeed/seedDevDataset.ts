@@ -14,7 +14,6 @@ import { writeSeedUsers } from "#src/services/devSeed/writeSeedUsers";
 export const seedDevDataset = async ({
   databaseUrl,
   db,
-  messageAscendingClient,
   messageClient,
   storageConnectionString,
 }: SeedDevDatasetInput): Promise<SeedRefusal | undefined> => {
@@ -25,6 +24,6 @@ export const seedDevDataset = async ({
   await writeSeedRooms(db);
   await writeSeedRoles(db);
   await writeSeedResources(db);
-  await writeSeedMessages(messageClient, messageAscendingClient);
+  await writeSeedMessages(messageClient);
   return undefined;
 };

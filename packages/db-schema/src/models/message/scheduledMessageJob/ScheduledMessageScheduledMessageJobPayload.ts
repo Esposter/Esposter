@@ -1,7 +1,7 @@
-import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTickedTimestamp";
+import type { ReverseTickedTimestamp } from "#src/models/streams/ReverseTickedTimestamp";
 import type { ItemEntityType } from "@esposter/shared";
 
-import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
+import { reverseTickedTimestampSchema } from "#src/models/streams/ReverseTickedTimestamp";
 import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { ScheduledMessageJobType } from "#src/models/message/ScheduledMessageJobType";
 import { MESSAGE_MAX_LENGTH } from "#src/services/message/constants";

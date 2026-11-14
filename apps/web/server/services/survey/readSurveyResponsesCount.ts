@@ -1,11 +1,11 @@
 import type { ReadSurveyResponsesCountResult } from "#shared/models/resource/survey/ReadSurveyResponsesCountResult";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getSurveyResponsesFilter } from "#server/services/survey/getSurveyResponsesFilter";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { readEntitiesCount } from "@esposter/db";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 
 // The one response count, for the overview blade and the Responses dataset alike. It counts keys-only rows up
 // To one past the cap — that extra key is what distinguishes exactly-cap from beyond-cap, which is the only
@@ -18,10 +18,10 @@ import { AzureTable } from "@esposter/db-schema";
 export const readSurveyResponsesCount = async (
   surveyId: ResourceInResource["id"],
 ): Promise<ReadSurveyResponsesCountResult> => {
-  const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+  const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
   const count = await readEntitiesCount(
     surveyResponseClient,
-    { filter: getSurveyResponsesFilter(surveyId) },
+    getSurveyResponsesFilter(surveyId),
     DATASET_MAX_COUNTED_ROWS + 1,
   );
   return count > DATASET_MAX_COUNTED_ROWS

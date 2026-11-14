@@ -1,5 +1,5 @@
-import type { CompositeKey } from "@esposter/azure";
 import type { ItemMetadata } from "@esposter/shared";
+import type { CompositeKey } from "@esposter/db-schema";
 
 export interface IndexedDbStoreSchema<TItem extends CompositeKey | ItemMetadata> {
   // Index keys are strings so a partition doubles as a `useMutation` target verbatim — a wider `IDBValidKey`

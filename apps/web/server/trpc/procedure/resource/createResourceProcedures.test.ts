@@ -1,12 +1,12 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-import type { Clause } from "@esposter/azure";
+
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks, createMockSession } from "#server/auth.test";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
@@ -29,18 +29,21 @@ import {
 } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
+import type { Clause } from "@esposter/db-schema";
 import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
   StorageBucket,
   AzureFunction,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   getResourceFilesDirectoryName,
   resourcesInResource,
   ResourceType,
   ResourceViewEntity,
   storageLedgerInStorage,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import {
@@ -739,10 +742,8 @@ describe(createResourceProcedures, () => {
     const clauses: Clause<ResourceViewEntity>[] = [
       { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: newResource.id },
     ];
-    const resourceViewClient = await useTableClient(AzureTable.ResourceViews);
-    const resourceViews = await getTopNEntities(resourceViewClient, AZURE_MAX_PAGE_SIZE, ResourceViewEntity, {
-      filter: serializeClauses(clauses),
-    });
+    const resourceViewClient = useStreamTableClient(StreamTable.ResourceViews);
+    const resourceViews = await getTopNEntities(resourceViewClient, AZURE_MAX_PAGE_SIZE, ResourceViewEntity, clauses);
 
     expect(resourceViews).toStrictEqual([]);
   });

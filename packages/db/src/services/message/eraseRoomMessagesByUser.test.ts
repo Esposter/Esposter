@@ -1,9 +1,10 @@
-import type { AzureTableEntityMap, CustomTableClient, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableEntityMap, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
-import { createEntity } from "#src/services/azure/table/createEntity";
-import { updateEntity } from "#src/services/azure/table/updateEntity";
+import { createEntity } from "#src/services/streams/createEntity";
+import { updateEntity } from "#src/services/streams/updateEntity";
 import { eraseRoomMessagesByUser } from "#src/services/message/eraseRoomMessagesByUser";
-import { AzureTable, createMessageEntity, MessageType } from "@esposter/db-schema";
+import { StreamTable, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -24,8 +25,8 @@ describe(eraseRoomMessagesByUser, () => {
     const otherRoomId = crypto.randomUUID();
     const targetUserId = crypto.randomUUID();
     const otherUserId = crypto.randomUUID();
-    const messageClient = new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.Messages]
+    const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+      StreamTableEntityMap[StreamTable.Messages]
     >;
     const file = {
       filename: "",
@@ -65,8 +66,8 @@ describe(eraseRoomMessagesByUser, () => {
 
     const roomId = crypto.randomUUID();
     const targetUserId = crypto.randomUUID();
-    const messageClient = new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.Messages]
+    const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+      StreamTableEntityMap[StreamTable.Messages]
     >;
     const message = createMessageEntity({
       message: "message",
@@ -89,8 +90,8 @@ describe(eraseRoomMessagesByUser, () => {
 
     const roomId = crypto.randomUUID();
     const targetUserId = crypto.randomUUID();
-    const messageClient = new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.Messages]
+    const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+      StreamTableEntityMap[StreamTable.Messages]
     >;
     const message = createMessageEntity({
       message: "message",
@@ -122,8 +123,8 @@ describe(eraseRoomMessagesByUser, () => {
 
     const roomId = crypto.randomUUID();
     const targetUserId = crypto.randomUUID();
-    const messageClient = new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.Messages]
+    const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+      StreamTableEntityMap[StreamTable.Messages]
     >;
     const message = createMessageEntity({
       message: "message",

@@ -1,8 +1,8 @@
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
 import { DATASET_MAX_COUNTED_ROWS } from "#shared/services/dataset/constants";
 import { createEntity } from "@esposter/db";
-import { AzureTable, SurveyResponseEntity } from "@esposter/db-schema";
+import { StreamTable, SurveyResponseEntity } from "@esposter/db-schema";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -11,7 +11,7 @@ import { afterEach, describe, expect, test } from "vitest";
 describe(readSurveyResponsesCount, () => {
   const surveyId = crypto.randomUUID();
   const createSurveyResponses = async (count: number) => {
-    const surveyResponseClient = await useTableClient(AzureTable.SurveyResponses);
+    const surveyResponseClient = useStreamTableClient(StreamTable.SurveyResponses);
     await Promise.all(
       Array.from({ length: count }, () =>
         createEntity(

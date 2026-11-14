@@ -28,7 +28,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
   AzureFunction,
-  AzureTable,
+  StreamTable,
   getResourceFileBlobName,
   ResourceActivityType,
   resourceLinksInResource,
@@ -69,7 +69,7 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 // The one with a registered after-save hook
 const readActivityTypes = () =>
   Array.from(
-    MockTableDatabase.get(AzureTable.ResourceActivity)?.values() ?? [],
+    MockTableDatabase.get(StreamTable.ResourceActivity)?.values() ?? [],
     ({ activityType }) => activityType as ResourceActivityType,
   );
 // Each page names an image by the url of its own blob, so the content and the blobs are built from one resource id

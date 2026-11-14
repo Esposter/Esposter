@@ -1,24 +1,24 @@
-import type { CompositeKey } from "@esposter/azure";
 import type {
-  AzureTable,
-  AzureTableEntityMap,
-  CustomTableClient,
+  StreamTable,
+  StreamTableEntityMap,
   ReverseTickedTimestamp,
   RoomInMessage,
   UserInAuth,
+  CompositeKey,
 } from "@esposter/db-schema";
+import type { StreamTableClient } from "@esposter/db";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
-import { readRoomEntitiesByClause } from "#src/services/azure/readRoomEntitiesByClause";
-import { BinaryOperator } from "@esposter/azure";
-import { MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
+import { readRoomEntitiesByClause } from "#src/services/streams/readRoomEntitiesByClause";
+
+import { MessageMetadataType, userIdsSchema, BinaryOperator } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
 // The person's emoji reactions in one room. A row holds every reactor to one emoji on one message, so the reaction is the
 // Person's when their id is on the row. The row carries no time that is the person's own: its time is its first
 // Reactor's, so the reaction is written without one
 export const readRoomEmojiReactionsByUser = async (
-  messagesMetadataClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesMetadata]>,
+  messagesMetadataClient: StreamTableClient<StreamTableEntityMap[StreamTable.MessagesMetadata]>,
   roomId: RoomInMessage["id"],
   userId: UserInAuth["id"],
 ) => {

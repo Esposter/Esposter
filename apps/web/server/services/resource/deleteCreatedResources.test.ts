@@ -1,12 +1,12 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { createEntity } from "@esposter/db";
 import {
   StorageBucket,
-  AzureTable,
+  StreamTable,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
   ResourceActivityType,
@@ -28,15 +28,15 @@ const createContext = () => {
 };
 
 const readActivityCount = async () => {
-  const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-  return (await Array.fromAsync(resourceActivityClient.listEntities())).length;
+  const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
+  return (await resourceActivityClient.list()).length;
 };
 
 describe(deleteCreatedResources, () => {
   const resourceId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const createActivity = async () => {
-    const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
+    const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
     await createEntity(
       resourceActivityClient,
       new ResourceActivityEntity({

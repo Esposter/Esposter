@@ -1,8 +1,9 @@
-import type { AzureTableEntityMap, CustomTableClient, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableEntityMap, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
-import { createEntity } from "#src/services/azure/table/createEntity";
+import { createEntity } from "#src/services/streams/createEntity";
 import { softDeleteRoomMessagesByUser } from "#src/services/message/softDeleteRoomMessagesByUser";
-import { AzureTable, createMessageEntity, MessageType } from "@esposter/db-schema";
+import { StreamTable, createMessageEntity, MessageType } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { MockTableClient } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -23,8 +24,8 @@ describe(softDeleteRoomMessagesByUser, () => {
     const otherRoomId = crypto.randomUUID();
     const targetUserId = crypto.randomUUID();
     const otherUserId = crypto.randomUUID();
-    const messageClient = new MockTableClient("", AzureTable.Messages) as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.Messages]
+    const messageClient = new MockTableClient("", StreamTable.Messages) as unknown as StreamTableClient<
+      StreamTableEntityMap[StreamTable.Messages]
     >;
     const createRoomMessage = async (messageRoomId: string, userId: string) => {
       const message = createMessageEntity({

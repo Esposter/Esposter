@@ -1,5 +1,4 @@
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
-import { CompositeKeyPropertyNames } from "#src/models/table/CompositeKey";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { serializeKey } from "#src/services/table/serializeKey";
 import { serializeSearchClauses } from "#src/services/transformer/serializeSearchClauses";
 import { describe, expect, test } from "vitest";

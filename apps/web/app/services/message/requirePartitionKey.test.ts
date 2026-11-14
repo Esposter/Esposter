@@ -1,6 +1,7 @@
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { CompositeKeyPropertyNames } from "@esposter/azure";
+
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(requirePartitionKey, () => {

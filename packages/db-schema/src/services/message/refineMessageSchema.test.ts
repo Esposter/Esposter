@@ -1,6 +1,6 @@
-import type { FileEntity } from "#src/models/azure/table/FileEntity";
+import type { FileEntity } from "#src/models/streams/FileEntity";
 
-import { fileEntitySchema } from "#src/models/azure/table/FileEntity";
+import { fileEntitySchema } from "#src/models/streams/FileEntity";
 import { refineMessageSchema } from "#src/services/message/refineMessageSchema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";

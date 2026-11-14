@@ -1,18 +1,19 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { WriteResourceActivityInput } from "#server/models/resource/WriteResourceActivityInput";
-import type { Clause } from "@esposter/azure";
-import type { ResourceActivityEntity as BaseResourceActivityEntity } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import type { ResourceActivityEntity as BaseResourceActivityEntity, Clause } from "@esposter/db-schema";
+
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS } from "#server/services/resource/constants";
-import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { createEntity, getTopNEntities } from "@esposter/db";
 import {
-  AzureTable,
+  StreamTable,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
   ResourceActivityEntityPropertyNames,
   ResourceActivityType,
+  BinaryOperator,
+  CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { getResultAsync, ItemMetadataPropertyNames, noop } from "@esposter/shared";
 
@@ -22,7 +23,7 @@ export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest 
   getResultAsync(async () => {
     const userId = ctx.getSessionPayload.user.id;
     const apiKeyId = ctx.apiKey?.id ?? "";
-    const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
+    const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
     if (rest.activityType === ResourceActivityType.ContentSaved) {
       // Coalesce on existence rather than on the partition head, so the answer does not depend on the order
       // Entities come back in. Two saves racing inside the window both read empty and both write, which costs the
@@ -43,9 +44,7 @@ export const writeResourceActivity = (ctx: AuthedContext, { resourceId, ...rest 
           value: new Date(Date.now() - CONTENT_SAVED_COALESCE_WINDOW_MS),
         },
       ];
-      const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, {
-        filter: serializeClauses(clauses),
-      });
+      const recentEntries = await getTopNEntities(resourceActivityClient, 1, ResourceActivityEntity, clauses);
       if (recentEntries.length > 0) return;
     }
 

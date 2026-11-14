@@ -11,7 +11,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
-import { StorageBucket, AzureTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
+import { StorageBucket, StreamTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
@@ -192,7 +192,7 @@ describe("emailRouter", () => {
     const readResourceBlobNames = () => [...container.keys()].filter((key) => key.startsWith(`${newResource.id}/`));
     const storedBlobNamesBeforePurge = readResourceBlobNames();
     // The partitions and ledger rows keyed by this email, each read before the purge so it is proved populated
-    const readPartitionEntities = (tableName: AzureTable) =>
+    const readPartitionEntities = (tableName: StreamTable) =>
       [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter(
         ({ partitionKey }) => partitionKey === newResource.id,
       );
@@ -201,8 +201,8 @@ describe("emailRouter", () => {
         blobName.startsWith(`${newResource.id}/`),
       );
     await incrementResourceViewCount(newResource.id);
-    const activityBeforePurge = readPartitionEntities(AzureTable.ResourceActivity);
-    const viewsBeforePurge = readPartitionEntities(AzureTable.ResourceViews);
+    const activityBeforePurge = readPartitionEntities(StreamTable.ResourceActivity);
+    const viewsBeforePurge = readPartitionEntities(StreamTable.ResourceViews);
     const ledgerBeforePurge = await readLedgerEntries();
     // Deleting is soft, so the purge is what removes the directory and gives its bytes back
     await caller.deleteResource({ id: newResource.id });
@@ -216,8 +216,8 @@ describe("emailRouter", () => {
     expect(viewsBeforePurge).not.toStrictEqual([]);
     expect(ledgerBeforePurge).not.toStrictEqual([]);
     expect(readResourceBlobNames()).toStrictEqual([]);
-    expect(readPartitionEntities(AzureTable.ResourceActivity)).toStrictEqual([]);
-    expect(readPartitionEntities(AzureTable.ResourceViews)).toStrictEqual([]);
+    expect(readPartitionEntities(StreamTable.ResourceActivity)).toStrictEqual([]);
+    expect(readPartitionEntities(StreamTable.ResourceViews)).toStrictEqual([]);
     await expect(readLedgerEntries()).resolves.toStrictEqual([]);
     await expect(readStorageBytesUsed(newResource.userId)).resolves.toBe(storageBytesUsedBeforePublish);
   });

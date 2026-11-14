@@ -7,7 +7,7 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, AzureTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, StreamTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -21,24 +21,24 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
   import("#src/services/server/publishToServer"),
   () => import("#src/services/server/publishToServer.test"),
 );
 
 // A partition's rows are only ever read by their partition key, so one row keyed by the room is the whole fixture
-const seedPartitionRow = (tableName: AzureTable, partitionKey: string) =>
+const seedPartitionRow = (tableName: StreamTable, partitionKey: string) =>
   new MockTableClient("", tableName).createEntity({ partitionKey, rowKey: crypto.randomUUID() });
 
 describe(deleteAccountOwnedRooms, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
   const roomTableNames = [
-    AzureTable.Messages,
-    AzureTable.MessagesMetadata,
-    AzureTable.ModerationLog,
-    AzureTable.ModerationNotes,
+    StreamTable.Messages,
+    StreamTable.MessagesMetadata,
+    StreamTable.ModerationLog,
+    StreamTable.ModerationNotes,
   ];
 
   beforeAll(async () => {

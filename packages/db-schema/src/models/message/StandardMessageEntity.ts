@@ -1,4 +1,4 @@
-import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
+import type { CompositeKeyEntity } from "#src/models/streams/CompositeKeyEntity";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 import type { Except } from "type-fest";

@@ -1,42 +1,31 @@
-import type { CompositeKey } from "@esposter/azure";
-import type { CustomTableClient } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
+import type { CompositeKey } from "@esposter/db-schema";
 
 import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
-import { getPartitionKeyFilter } from "@esposter/azure";
-import { AzureTable } from "@esposter/db-schema";
-import { MockTableClient } from "azure-mock";
+import { getPartitionClauses } from "#src/services/streams/getPartitionClauses";
+import { AZURE_MAX_BATCH_SIZE } from "@esposter/azure";
 import { describe, expect, test, vi } from "vitest";
 
 describe(deleteTablePartitionEntities, () => {
-  test("deletes a partition whose row another delete removed after it was listed", async () => {
+  test("deletes every row the partition lists, one batch of rows at a time", async () => {
     expect.hasAssertions();
 
     const partitionKey = crypto.randomUUID();
-    const firstRowKey = crypto.randomUUID();
-    const removedRowKey = crypto.randomUUID();
-    const lastRowKey = crypto.randomUUID();
-    const tableClient = new MockTableClient(
-      "",
-      AzureTable.ResourceActivity,
-    ) as unknown as CustomTableClient<CompositeKey>;
-    await Promise.all(
-      [firstRowKey, removedRowKey, lastRowKey].map((rowKey) => tableClient.createEntity({ partitionKey, rowKey })),
+    const rows = Array.from({ length: AZURE_MAX_BATCH_SIZE + 1 }, () => ({
+      partitionKey,
+      rowKey: crypto.randomUUID(),
+    }));
+    const tableClient = { list: vi.fn(() => Promise.resolve(rows)), submitTransaction: vi.fn(() => Promise.resolve()) };
+
+    await deleteTablePartitionEntities(tableClient as unknown as StreamTableClient<CompositeKey>, partitionKey);
+
+    expect(tableClient.list).toHaveBeenCalledExactlyOnceWith(getPartitionClauses(partitionKey));
+    expect(tableClient.submitTransaction.mock.calls.map(([actions]) => actions.length)).toStrictEqual([
+      AZURE_MAX_BATCH_SIZE,
+      1,
+    ]);
+    expect(tableClient.submitTransaction.mock.calls.flatMap(([actions]) => actions)).toStrictEqual(
+      rows.map(({ partitionKey: rowPartitionKey, rowKey }) => ["delete", { partitionKey: rowPartitionKey, rowKey }]),
     );
-
-    // Another delete takes a row between the pass listing the partition and the batch holding that row submitting
-    const submitTransaction = tableClient.submitTransaction.bind(tableClient);
-    vi.spyOn(tableClient, "submitTransaction").mockImplementationOnce(async (actions) => {
-      await tableClient.deleteEntity(partitionKey, removedRowKey);
-      return submitTransaction(actions);
-    });
-
-    await deleteTablePartitionEntities(tableClient, partitionKey);
-
-    const remainingRowKeys: string[] = [];
-    for await (const { rowKey } of tableClient.listEntities<CompositeKey>({
-      queryOptions: { filter: getPartitionKeyFilter(partitionKey) },
-    }))
-      remainingRowKeys.push(rowKey);
-    expect(remainingRowKeys).toStrictEqual([]);
   });
 });

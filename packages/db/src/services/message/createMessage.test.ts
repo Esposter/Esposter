@@ -1,50 +1,36 @@
-import type { TableEntity } from "@azure/data-tables";
-import type { CompositeKey } from "@esposter/azure";
-import type {
-  AzureTable,
-  AzureTableEntityMap,
-  CreateMessageInput,
-  CustomTableClient,
-  StandardMessageType,
-} from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap, CreateMessageInput, StandardMessageType } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
 import { createMessage } from "#src/services/message/createMessage";
-import { getReverseTickedTimestamp, MessageType } from "@esposter/db-schema";
+import { MessageType } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-// The two clients as the sole seam this service has: the ascending index is written first and must be taken back
-// When the entity write rejects, which is what these assert.
-const createTableClients = (createEntityError?: Error) => {
-  const messageAscendingClient = {
-    createEntity: vi.fn<(entity: CompositeKey) => Promise<object>>(() => Promise.resolve({})),
-    deleteEntity: vi.fn<() => Promise<object>>(() => Promise.resolve({})),
-  };
+const createTableClient = (createEntityError?: Error) => {
   const messageClient = {
-    createEntity: vi.fn<(entity: TableEntity) => Promise<object>>(() =>
+    createEntity: vi.fn<(entity: object) => Promise<object>>(() =>
       createEntityError ? Promise.reject(createEntityError) : Promise.resolve({}),
     ),
   };
   return {
-    messageAscendingClient: messageAscendingClient as unknown as CustomTableClient<
-      AzureTableEntityMap[AzureTable.MessagesAscending]
-    >,
-    messageAscendingMock: messageAscendingClient,
-    messageClient: messageClient as unknown as CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+    messageClient: messageClient as unknown as StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
     messageMock: messageClient,
   };
 };
 
 const storeAndReadDefaults = async (messageInput: CreateMessageInput) => {
-  const { messageAscendingClient, messageClient, messageMock } = createTableClients();
-  await createMessage(messageClient, messageAscendingClient, messageInput);
-  const [storedEntity] = takeOne(messageMock.createEntity.mock.calls);
+  const { messageClient, messageMock } = createTableClient();
+  await createMessage(messageClient, messageInput);
+  const [storedEntity] = takeOne(messageMock.createEntity.mock.calls) as [
+    { mentions: unknown; message: unknown; replyRowKey: unknown },
+  ];
 
   return { mentions: storedEntity.mentions, message: storedEntity.message, replyRowKey: storedEntity.replyRowKey };
 };
 
 describe(createMessage, () => {
   const ROOM_ID = crypto.randomUUID();
+  const storedDefaults = { mentions: [], message: "", replyRowKey: "" };
 
   // No url in the message, so the entity needs no link-preview fetch
   const input = {
@@ -54,46 +40,22 @@ describe(createMessage, () => {
     userId: crypto.randomUUID(),
   } as const;
 
-  test("writes the index row before the entity", async () => {
+  test("writes the message as one row and returns it", async () => {
     expect.hasAssertions();
 
-    const { messageAscendingClient, messageAscendingMock, messageClient, messageMock } = createTableClients();
-    const messageEntity = await createMessage(messageClient, messageAscendingClient, input);
+    const { messageClient, messageMock } = createTableClient();
+    const messageEntity = await createMessage(messageClient, input);
 
-    // The order is the behaviour, not an implementation detail: it is what makes a rejection mean nothing is
-    // Readable, so asserting only the index arguments would pass just as well against the reverse order
-    expect(takeOne(messageAscendingMock.createEntity.mock.invocationCallOrder)).toBeLessThan(
-      takeOne(messageMock.createEntity.mock.invocationCallOrder),
-    );
-    // The index is keyed by the real timestamp, the entity by its reverse tick — the two must address one message
-    expect(messageAscendingMock.createEntity).toHaveBeenCalledExactlyOnceWith(
-      { partitionKey: ROOM_ID, rowKey: getReverseTickedTimestamp(messageEntity.rowKey) },
-      undefined,
-    );
-    expect(messageEntity.partitionKey).toBe(ROOM_ID);
+    expect(messageMock.createEntity).toHaveBeenCalledExactlyOnceWith(messageEntity);
   });
 
-  // Ascending reads join through the index and skip what they cannot match — they must, since a soft delete leaves
-  // The same shape — so an index row whose entity never lands is a row every page reads and discards forever
-  test("removes the index row again when the entity write fails", async () => {
+  test("rejects when the row write fails, so nothing is left readable", async () => {
     expect.hasAssertions();
 
-    const createMessageEntityError = new Error(" ");
-    const { messageAscendingClient, messageAscendingMock, messageClient } =
-      createTableClients(createMessageEntityError);
+    const { messageClient } = createTableClient(new Error("write failed"));
 
-    await expect(
-      createMessage(messageClient, messageAscendingClient, input),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
-    // The row taken back is the row written, not merely some row
-    const [indexEntity] = takeOne(messageAscendingMock.createEntity.mock.calls);
-
-    expect(messageAscendingMock.deleteEntity).toHaveBeenCalledExactlyOnceWith(ROOM_ID, indexEntity.rowKey);
+    await expect(createMessage(messageClient, input)).rejects.toThrow("write failed");
   });
-
-  // The defaults a row carries whatever its writer leaves out, as the Table stores them: an undefined field is no
-  // Property at all, so a row would read back without it
-  const storedDefaults = { mentions: "[]", message: "", replyRowKey: "" };
 
   test.each<StandardMessageType>([
     MessageType.Call,

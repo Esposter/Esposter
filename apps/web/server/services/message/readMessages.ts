@@ -1,23 +1,29 @@
 import type { ReadMessagesInput } from "#shared/models/db/message/ReadMessagesInput";
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { Clause } from "@esposter/azure";
+
 import type { MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhereAzureTable } from "#server/services/pagination/cursor/getCursorWhereAzureTable";
+import { getCursorWhereStreamTable } from "#server/services/pagination/cursor/getCursorWhereStreamTable";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { DEFAULT_READ_LIMIT, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { BinaryOperator, CompositeKey, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getLivePartitionClauses, getTopNEntities, getTopNEntitiesByType } from "@esposter/db";
 import {
-  AzureTable,
-  getReverseTickedTimestamp,
+  DEFAULT_READ_LIMIT,
+  MESSAGE_OLDEST_FIRST_SORT_ITEM,
+  MESSAGE_ROW_KEY_SORT_ITEM,
+} from "#shared/services/pagination/constants";
+import { getLivePartitionClauses, getTopNEntitiesByType } from "@esposter/db";
+import {
+  BinaryOperator,
+  CompositeKey,
   MessageTypeEntityMap,
   StandardMessageEntityPropertyNames,
+  StreamTable,
 } from "@esposter/db-schema";
 
+// A message's rowKey is reverse-ticked, so newest-first is the rowKey ascending and oldest-first the same rowKey
+// descending. The cursor names a rowKey, so one page's last message is the next page's exclusive bound either way
 export const readMessages = async ({
   cursor,
   filter: inputFilter,
@@ -26,57 +32,17 @@ export const readMessages = async ({
   order,
   roomId,
 }: SetOptional<ReadMessagesInput, "limit">) => {
-  const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...MESSAGE_ROW_KEY_SORT_ITEM }];
+  const isOldestFirst = order === SortOrder.Asc;
+  const sortItem = isOldestFirst ? MESSAGE_OLDEST_FIRST_SORT_ITEM : MESSAGE_ROW_KEY_SORT_ITEM;
+  const sortBy: SortItem<keyof CompositeKey>[] = [{ isIncludeValue, ...sortItem }];
   const clauses = getLivePartitionClauses<MessageEntity>(roomId);
   if (inputFilter?.isPinned)
     clauses.push({ key: StandardMessageEntityPropertyNames.isPinned, operator: BinaryOperator.Eq, value: true });
+  if (cursor) clauses.push(...getCursorWhereStreamTable(cursor, sortBy));
 
-  if (order === SortOrder.Asc) {
-    const indexClauses: Clause<MessageEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
-    ];
-    if (cursor) indexClauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-    const indexClient = await useTableClient(AzureTable.MessagesAscending);
-    const indices = await getTopNEntities(indexClient, limit + 1, CompositeKey, {
-      filter: serializeClauses(indexClauses),
-    });
-    const { hasMore, items, nextCursor } = getCursorPaginationData(indices, limit, sortBy);
-    // No index row is no page, and the join below reads every rowKey the page named — with none to name, its
-    // Filter would degrade to the whole partition
-    if (items.length === 0) return { hasMore, items: [], nextCursor };
-
-    const messageClient = await useTableClient(AzureTable.Messages);
-    for (const { rowKey } of items)
-      clauses.push({
-        key: CompositeKeyPropertyNames.rowKey,
-        operator: BinaryOperator.Eq,
-        value: getReverseTickedTimestamp(rowKey),
-      });
-    // The index table already decided the pagination metadata, so this join fetches no extra row
-    const messages = await getTopNEntitiesByType(messageClient, limit, MessageTypeEntityMap, {
-      filter: serializeClauses(clauses),
-    });
-    // The Messages table scans newest-first on its reverse-ticked rowKey, so the rows are re-projected onto the
-    // Ascending sequence the index established rather than trusting the join's scan order.
-    //
-    // An index row the join cannot match is dropped and the cursor still advances past it, and the cursor must
-    // Never be held on such a row: a soft delete produces the same shape — `deleteMessage` stamps `deletedAt`,
-    // Which the join filters, and leaves the index row — so a hole says nothing about whether an entity is
-    // Coming, and every caller advances only by `nextCursor` while `hasMore` is set, making a returned incoming
-    // Cursor a hot loop rather than a wait. The write-side window is bounded instead: `createMessage` drops the
-    // Index row when the entity write fails, so a hole outlives one in-flight write only when that compensating
-    // Delete also fails ([messaging](openspec/specs/esbabbler/messaging/design.md))
-    const messageMap = new Map(messages.map((message) => [message.rowKey, message]));
-    const ascendingMessages = items.flatMap((index) => {
-      const message = messageMap.get(getReverseTickedTimestamp(index.rowKey));
-      return message ? [message] : [];
-    });
-    return { hasMore, items: ascendingMessages, nextCursor };
-  }
-  if (cursor) clauses.push(...getCursorWhereAzureTable(cursor, sortBy));
-  const messageClient = await useTableClient(AzureTable.Messages);
-  const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageTypeEntityMap, {
-    filter: serializeClauses(clauses),
+  const messageClient = useStreamTableClient(StreamTable.Messages);
+  const messages = await getTopNEntitiesByType(messageClient, limit + 1, MessageTypeEntityMap, clauses, {
+    orderBy: isOldestFirst ? "desc" : "asc",
   });
   return getCursorPaginationData(messages, limit, sortBy);
 };

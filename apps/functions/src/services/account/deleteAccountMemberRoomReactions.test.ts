@@ -1,12 +1,12 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { serializeEntity } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  AzureTable,
+  StreamTable,
   getReverseTickedTimestamp,
   MessageMetadataType,
   roomsInMessage,
@@ -24,10 +24,13 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 
 const readUserIdsByRoom = (roomId: string) =>
-  [...(MockTableDatabase.get(AzureTable.MessagesMetadata)?.values() ?? [])]
+  [...(MockTableDatabase.get(StreamTable.MessagesMetadata)?.values() ?? [])]
     .filter((entity) => entity.partitionKey === roomId)
     .map(({ userIds }) => jsonDateParse(String(userIds)));
 
@@ -58,7 +61,7 @@ describe(deleteAccountMemberRoomReactions, () => {
       { roomId: memberRoom.id, userId },
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
-    const reactionClient = await getTableClient(AzureTable.MessagesMetadata);
+    const reactionClient = getStreamTableClient(StreamTable.MessagesMetadata);
     const createReaction = (roomId: string, userIds: string[]) => {
       const reaction = {
         emojiTag: "",

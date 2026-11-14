@@ -4,7 +4,8 @@ import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
 import type { BlobDeletionEventGridData, StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { getPartitionClauses } from "@esposter/db";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { createCallerFactory } from "#server/trpc";
@@ -18,10 +19,9 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { getPartitionKeyFilter } from "@esposter/azure";
 import {
   StorageBucket,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   friendsInSocial,
   MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
@@ -217,12 +217,8 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newName = "newName";
     await roomCaller.updateRoom({ id: newRoom.id, name: newName });
-    const messagesClient = await useTableClient(AzureTable.Messages);
-    const messages = await Array.fromAsync(
-      messagesClient.listEntities<StandardMessageEntity>({
-        queryOptions: { filter: getPartitionKeyFilter(newRoom.id) },
-      }),
-    );
+    const messagesClient = useStreamTableClient(StreamTable.Messages);
+    const messages = (await messagesClient.list(getPartitionClauses(newRoom.id))) as StandardMessageEntity[];
 
     expect(messages.map(({ message, type }) => ({ message, type }))).toStrictEqual([
       { message: newName, type: MessageType.EditRoom },

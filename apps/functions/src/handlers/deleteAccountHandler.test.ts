@@ -1,7 +1,7 @@
 import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
@@ -11,7 +11,7 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
   StorageBucket,
-  AzureTable,
+  StreamTable,
   createMessageEntity,
   getUserProfileImageBlobName,
   MessageType,
@@ -36,7 +36,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
   import("#src/services/server/publishToServer"),
   () => import("#src/services/server/publishToServer.test"),
@@ -105,12 +105,12 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    await new MockTableClient("", AzureTable.MessagesMetadata).createEntity({
+    await new MockTableClient("", StreamTable.MessagesMetadata).createEntity({
       partitionKey: ownedRoom.id,
       rowKey: crypto.randomUUID(),
     });
     await createEntity(
-      await getTableClient(AzureTable.Messages),
+      getStreamTableClient(StreamTable.Messages),
       createMessageEntity({ message: "message", roomId: memberRoom.id, type: MessageType.Message, userId }),
     );
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));

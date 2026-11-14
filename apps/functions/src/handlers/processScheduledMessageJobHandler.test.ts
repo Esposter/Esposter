@@ -8,7 +8,7 @@ import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureFunction,
-  AzureTable,
+  StreamTable,
   DatabaseEntityType,
   getReverseTickedTimestamp,
   roomFiltersInMessage,
@@ -50,7 +50,7 @@ vi.mock(
   () => import("#src/services/azure/eventGridPublisherClient.test"),
 );
 vi.mock(import("#src/services/scheduler/getScheduler"), () => ({ getScheduler: () => ({ schedule: mocks.schedule }) }));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
   import("#src/services/server/publishToServer"),
   () => import("#src/services/server/publishToServer.test"),
@@ -137,7 +137,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
 
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
     expect(mocks.schedule).not.toHaveBeenCalled();
   });
 
@@ -178,7 +178,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, {
       id: job.id,
     });
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
   });
 
   test("requeues when job is visible before runAt", async () => {
@@ -207,7 +207,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
     expect(processedJob?.processingStartedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
   });
 
   test("records processing start and creates message for scheduled message job", async () => {
@@ -220,7 +220,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
     expect(processedJob?.processingStartedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
+    expect(MockTableDatabase.get(StreamTable.Messages)?.size).toBe(1);
   });
 
   // The payload stores a room-level send as the "" sentinel, but a message's replyRowKey is absent when it replies
@@ -231,7 +231,7 @@ describe(processScheduledMessageJobHandler, () => {
     const job = await insertJob(scheduledMessagePayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
 
     expect(takeOne([...messagesTable.values()]).replyRowKey).toBe("");
@@ -245,7 +245,7 @@ describe(processScheduledMessageJobHandler, () => {
     const job = await insertJob(threadReplyPayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
-    const messagesTable = MockTableDatabase.get(AzureTable.Messages);
+    const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
 
     expect(takeOne([...messagesTable.values()]).replyRowKey).toBe(replyRowKey);
@@ -300,7 +300,7 @@ describe(processScheduledMessageJobHandler, () => {
     const processedJob = await getJob(job.id);
 
     expect(processedJob?.completedAt).toStrictEqual(new Date(0));
-    expect(MockTableDatabase.get(AzureTable.Messages)?.size).toBe(1);
+    expect(MockTableDatabase.get(StreamTable.Messages)?.size).toBe(1);
   });
 
   // The slowmode clock gates the NEXT send, so it advances with the guards rather than inside the best-effort
@@ -346,7 +346,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(cancelledJob?.processingStartedAt).toStrictEqual(new Date(0));
     expect(cancelledJob?.cancelledAt).toStrictEqual(new Date(0));
     expect(member?.timeoutUntil).toStrictEqual(new Date(timeoutDurationMs));
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
   });
 
   test("releases the claim when delivery precondition rejects", async () => {
@@ -362,6 +362,6 @@ describe(processScheduledMessageJobHandler, () => {
 
     expect(failedJob?.completedAt).toBeNull();
     expect(failedJob?.processingStartedAt).toBeNull();
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
   });
 });

@@ -1,9 +1,10 @@
-import type { AzureTable, AzureTableEntityMap, CustomTableClient, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap, StandardMessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 import type { Promisable } from "type-fest";
 
 import { updateRoomMessagesByUser } from "#src/services/message/updateRoomMessagesByUser";
-import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
-import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+
+import { StandardMessageEntityPropertyNames, BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 // Erases what a user said in a room and soft-deletes it, live or already soft-deleted: a moderation ban hides a message
 // Without clearing its text, so a pass that read only live rows would leave that text behind. The text, the files and
@@ -11,7 +12,7 @@ import { StandardMessageEntityPropertyNames } from "@esposter/db-schema";
 // It, so the room's ascending index keeps joining to it. The write is a Replace, because a Merge cannot clear the link
 // Preview and would leave it standing; a null preview in the Replace leaves no property behind, as the router's clear does
 export const eraseRoomMessagesByUser = (
-  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageClient: StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
   roomId: string,
   targetUserId: string,
   onBatchErased: (batch: StandardMessageEntity[]) => Promisable<void>,

@@ -1,9 +1,9 @@
-import type { Clause } from "#src/models/shared/Clause";
+import type { SearchClause } from "#src/models/search/SearchClause";
 
-import { BinaryOperator } from "#src/models/shared/BinaryOperator";
+import { BinaryOperator } from "@esposter/db-schema";
 
-// Azure Search compares a field with null directly, where Azure Table needs the NaN comparison of `getTableNullClause`
-export const getSearchNullClause = <T extends object>(key: keyof T & string): Clause<T> => ({
+// Azure Search compares a field with null directly
+export const getSearchNullClause = <T extends object>(key: keyof T & string): SearchClause<T> => ({
   key,
   operator: BinaryOperator.Eq,
   value: null,

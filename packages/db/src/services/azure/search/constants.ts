@@ -1,6 +1,7 @@
 import type { MessageEntity } from "@esposter/db-schema";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
-import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
+import { serializeKey } from "@esposter/azure";
 
 // The key every search document is stored under. The index is fed from the Table, whose key is `RowKey`, while the
 // Document model spells it `rowKey`, so the service matches on the serialized name. That name is not a property of the

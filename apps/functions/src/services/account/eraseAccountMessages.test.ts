@@ -1,12 +1,12 @@
 import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createEntity } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  AzureTable,
+  StreamTable,
   createMessageEntity,
   MessageType,
   roomsInMessage,
@@ -24,7 +24,10 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 
 describe(eraseAccountMessages, () => {
   const name = "name";
@@ -57,7 +60,7 @@ describe(eraseAccountMessages, () => {
       { roomId: memberRoom.id, userId },
       { roomId: memberRoom.id, userId: otherUserId },
     ]);
-    const messageClient = await getTableClient(AzureTable.Messages);
+    const messageClient = getStreamTableClient(StreamTable.Messages);
     const createRoomMessage = async (roomId: string, messageUserId: string) => {
       const message = createMessageEntity({
         message: "message",

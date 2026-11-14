@@ -1,10 +1,10 @@
 import type { Context } from "#server/trpc/context";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
-import { useTableClient } from "#server/composables/azure/table/useTableClient";
+import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { moderationEventEmitter } from "#server/services/message/events/moderationEventEmitter";
 import { executeAutomodAction as baseExecuteAutomodAction } from "@esposter/db";
-import { AzureTable } from "@esposter/db-schema";
+import { StreamTable } from "@esposter/db-schema";
 
 // The in-process wrapper around the shared automod core: it fans the executed action out to the moderation
 // Subscriptions, which only exist in the app process — the scheduled-delivery function calls the core directly.
@@ -14,7 +14,7 @@ export const executeAutomodAction = async (
 ): Promise<void> => {
   const executedAutomodAction = await baseExecuteAutomodAction(
     db,
-    () => useTableClient(AzureTable.ModerationLog),
+    () => useStreamTableClient(StreamTable.ModerationLog),
     input,
     console.error,
   );

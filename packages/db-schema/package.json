@@ -38,6 +38,7 @@
   "scripts": {
     "build": "pnpm registry:gen && tsdown",
     "db:gen": "pnpm registry:gen && drizzle-kit generate",
+    "db:gen:streams": "drizzle-kit generate --config drizzle.streams.config.ts",
     "db:migrate": "node --env-file-if-exists=../../apps/web/.env node_modules/drizzle-kit/bin.cjs migrate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
@@ -56,7 +57,6 @@
     "type-fest": "catalog:"
   },
   "peerDependencies": {
-    "@azure/data-tables": "catalog:",
     "@azure/eventgrid": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@esposter/azure": "workspace:*",

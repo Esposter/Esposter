@@ -1,6 +1,7 @@
-import type { AzureTable, AzureTableEntityMap, CustomTableClient, Database, MessageEntity } from "@esposter/db-schema";
+import type { StreamTable, StreamTableEntityMap, Database, MessageEntity } from "@esposter/db-schema";
+import type { StreamTableClient } from "#src/models/streams/StreamTableClient";
 
-import { getEntity } from "#src/services/azure/table/getEntity";
+import { getEntity } from "#src/services/streams/getEntity";
 import { createThreadFollow } from "#src/services/message/thread/createThreadFollow";
 import { StandardMessageEntity } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
@@ -11,7 +12,7 @@ import { getResultAsync } from "@esposter/shared";
 // Follower set one reply out of date.
 export const createReplyThreadFollows = async (
   db: Database,
-  messageClient: CustomTableClient<AzureTableEntityMap[AzureTable.Messages]>,
+  messageClient: StreamTableClient<StreamTableEntityMap[StreamTable.Messages]>,
   { partitionKey, replyRowKey, userId }: Pick<MessageEntity, "partitionKey" | "replyRowKey" | "userId">,
 ): Promise<void> => {
   if (!(replyRowKey && userId)) return;

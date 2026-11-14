@@ -1,6 +1,6 @@
 import type { CreateMessageInput } from "#src/models/message/CreateMessageInput";
 
-import { getReverseTickedTimestamp } from "#src/services/azure/table/getReverseTickedTimestamp";
+import { getReverseTickedTimestamp } from "#src/services/streams/getReverseTickedTimestamp";
 import { MessageTypeEntityMap } from "#src/services/message/MessageTypeEntityMap";
 
 // Which class a message type instantiates is MessageTypeEntityMap's answer, so it is read here rather than

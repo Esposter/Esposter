@@ -8,7 +8,7 @@ import { mockSessionOnce } from "#server/trpc/context.test";
 import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import {
-  AzureTable,
+  StreamTable,
   MessageCreationRejectionType,
   roomFiltersInMessage,
   scheduledMessageJobsInMessage,
@@ -310,7 +310,7 @@ describe("scheduledMessageJobRouter", () => {
       `[TRPCError: Invalid operation: Update, name: ScheduledMessageJob, ${scheduledMessageJob.id}]`,
     );
 
-    expect(MockTableDatabase.get(AzureTable.Messages)).toBeUndefined();
+    expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
   });
 
   test("fails read scheduled jobs with non-member", async () => {
