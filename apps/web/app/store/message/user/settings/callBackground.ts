@@ -3,7 +3,7 @@ import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { CALL_BACKGROUND_UPLOAD_KEY } from "@/services/message/room/call/constants";
 import { getCallBackgroundKey } from "@/services/message/room/call/getCallBackgroundKey";
@@ -40,7 +40,10 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
           size: file.size,
           slot,
         });
-        await uploadFileToSas({ files: [file], generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl) });
+        await uploadFilesToPresignedUrls({
+          files: [file],
+          generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+        });
       },
       {
         key: CALL_BACKGROUND_UPLOAD_KEY,

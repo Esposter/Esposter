@@ -1,6 +1,6 @@
 import { StorageBucket } from "@esposter/db-schema";
 
 export const useLogoImageUrl = () => {
-  const containerBaseUrl = useContainerBaseUrl();
-  return `${containerBaseUrl}/${StorageBucket.PublicAppAssets}/logo.png`;
+  const assetsBaseUrl = usePublicAssetsBaseUrl();
+  return `${assetsBaseUrl}/${StorageBucket.PublicAppAssets}/logo.png`;
 };

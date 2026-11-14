@@ -1,5 +1,5 @@
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { withFinalizerAsync } from "@esposter/shared";
 
 // Mints a SAS for the single file, puts it there, and hands back the public url — returned rather than written,
@@ -11,7 +11,10 @@ export const useUploadImage = (generateUploadUrl: () => Promise<{ publicUrl: str
       async () => {
         isLoading.value = true;
         const { publicUrl, sasUrl } = await generateUploadUrl();
-        await uploadFileToSas({ files: [file], generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl) });
+        await uploadFilesToPresignedUrls({
+          files: [file],
+          generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+        });
         return publicUrl;
       },
       () => {

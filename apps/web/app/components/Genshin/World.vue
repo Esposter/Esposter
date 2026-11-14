@@ -28,8 +28,8 @@ interface Props {
 
 const { save } = defineProps<Props>();
 const emit = defineEmits<{ grant: []; load: []; ready: []; save: [save: GenshinSave] }>();
-const containerBaseUrl = useContainerBaseUrl();
-const gameDataBaseUrl = getGenshinGameDataBaseUrl(containerBaseUrl);
+const assetsBaseUrl = usePublicAssetsBaseUrl();
+const gameDataBaseUrl = getGenshinGameDataBaseUrl(assetsBaseUrl);
 // The signed-in player's picture and name, which the world's profile card shows
 const session = authClient.useSession();
 // The developer surface sits in a DevOnly block of the template, which a production build strips out, and its registry is

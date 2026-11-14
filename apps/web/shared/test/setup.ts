@@ -85,7 +85,7 @@ vi.mock("nuxt/server", async (importOriginal) => ({
     // Nuxt's generated `#internal/nuxt/paths` reads `useRuntimeConfig().app.baseURL` at module scope
     // (via `#build/fetch`'s eager `$fetch.create`), so the mock must carry the standard `app` defaults.
     app: { baseURL: "/", buildAssetsDir: "/_nuxt/", cdnURL: "" },
-    public: {},
+    public: { assets: { baseUrl: "https://assets.example.com" } },
   }),
 }));
 // The first mountSuspended in a worker pays a one-time cold cost: the Nuxt app graph is evaluated and its

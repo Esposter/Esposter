@@ -3,7 +3,7 @@ import type { ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 
 // A document too large for one request body goes to Blob Storage first and is committed by reference: gzipped,
@@ -18,7 +18,7 @@ export const saveStagedResourceContent = async (
   const compressedContent = new Uint8Array(await new Response(compressedStream).arrayBuffer());
   const hash = await getSha256Hex(compressedContent);
   const sasUrl = await resourceRouter.generateUploadContentSasUrl.query({ id, size: compressedContent.byteLength });
-  await uploadFileToSas({
+  await uploadFilesToPresignedUrls({
     files: [new File([compressedContent], `${id}.json.gz`, { type: MimeType.Gzip })],
     generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
   });

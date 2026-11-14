@@ -1,22 +1,22 @@
 // @vitest-environment nuxt
-import type { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import type { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
-import { BlobStorageStatusError } from "@/models/azure/container/BlobStorageStatusError";
+import { StorageStatusError } from "@/models/file/StorageStatusError";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 import { describe, expect, test, vi } from "vitest";
 
-const { getSha256HexMock, uploadBlocksMock } = vi.hoisted(() => ({
+const { getSha256HexMock, uploadFileToUrlMock } = vi.hoisted(() => ({
   getSha256HexMock: vi.fn<typeof getSha256Hex>(),
-  uploadBlocksMock: vi.fn<typeof uploadBlocks>(),
+  uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(),
 }));
 
-vi.mock(import("@/services/azure/container/uploadBlocks"), () => ({ uploadBlocks: uploadBlocksMock }));
+vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 vi.mock(import("@/services/shared/getSha256Hex"), async (importOriginal) => {
   const { getSha256Hex: hashBytes } = await importOriginal();
   getSha256HexMock.mockImplementation(hashBytes);
@@ -41,7 +41,7 @@ describe(useUploadResourceFile, () => {
     expect.hasAssertions();
 
     generateUploadFileSasEntities();
-    uploadBlocksMock.mockRejectedValue(new BlobStorageStatusError(Operation.Create, "requestBlobStorage", 412));
+    uploadFileToUrlMock.mockRejectedValue(new StorageStatusError(Operation.Create, "uploadFileToUrl", 412));
     const file = createFile();
     const hash = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
     const assetUrl = await useUploadResourceFile(ResourceType.Webpage, resourceId)(file);
@@ -53,7 +53,7 @@ describe(useUploadResourceFile, () => {
     expect.hasAssertions();
 
     generateUploadFileSasEntities();
-    uploadBlocksMock.mockResolvedValue();
+    uploadFileToUrlMock.mockResolvedValue();
     const hash = "a".repeat(64);
     const assetUrl = await useUploadResourceFile(ResourceType.Webpage, resourceId)(createFile(), hash);
 
@@ -66,12 +66,12 @@ describe(useUploadResourceFile, () => {
     expect.hasAssertions();
 
     generateUploadFileSasEntities();
-    uploadBlocksMock.mockRejectedValue(new BlobStorageStatusError(Operation.Create, "requestBlobStorage", 403));
+    uploadFileToUrlMock.mockRejectedValue(new StorageStatusError(Operation.Create, "uploadFileToUrl", 403));
 
     const uploadResourceFile = useUploadResourceFile(ResourceType.Webpage, resourceId);
 
     await expect(uploadResourceFile(createFile())).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+      `[StorageStatusError: Invalid operation: Create, name: uploadFileToUrl, Storage answered 403]`,
     );
   });
 
@@ -80,10 +80,10 @@ describe(useUploadResourceFile, () => {
     expect.hasAssertions();
 
     generateUploadFileSasEntities();
-    uploadBlocksMock.mockResolvedValue();
+    uploadFileToUrlMock.mockResolvedValue();
     const file = createFile();
     await useUploadResourceFile(ResourceType.Webpage, resourceId)(file);
 
-    expect(uploadBlocksMock).toHaveBeenCalledExactlyOnceWith(file, sasUrl, undefined, { isCreateOnly: true });
+    expect(uploadFileToUrlMock).toHaveBeenCalledExactlyOnceWith(file, sasUrl, { isCreateOnly: true });
   });
 });

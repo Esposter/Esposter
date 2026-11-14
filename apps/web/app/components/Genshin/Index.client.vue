@@ -47,7 +47,7 @@ const { start: startStallWarning } = useTimeoutFn(
 watch(isDoorOpened, () => startStallWarning(), { once: true });
 const gameText = await useGameText();
 // The account the page reads, whose hosted game data the opening reads its title logo and its login screen from
-const containerBaseUrl = useContainerBaseUrl();
+const assetsBaseUrl = usePublicAssetsBaseUrl();
 // The player's save, which the world starts from once it is loaded, and the lease the page holds for it. A start that
 // Fails is retried until it takes, the page waiting on its save meanwhile
 const {
@@ -118,7 +118,7 @@ const progress = computed(() =>
     <div v-if="isOpeningShown" :lang="GameLanguageTagMap[gameText.language]" inset-0 absolute z-1>
       <GameOpening
         ref="opening"
-        :game-data-base-url="getGenshinGameDataBaseUrl(containerBaseUrl)"
+        :game-data-base-url="getGenshinGameDataBaseUrl(assetsBaseUrl)"
         :game-text="gameText.text"
         :language="gameText.language"
         :music-recording-base-url="GENSHIN_LOGIN_MUSIC_RECORDING_BASE_URL"

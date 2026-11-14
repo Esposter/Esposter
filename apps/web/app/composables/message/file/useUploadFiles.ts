@@ -2,9 +2,9 @@ import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFi
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
-import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { generateImageThumbnail } from "@/services/file/generateImageThumbnail";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
+import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { validateFileWithAlert } from "@/services/file/validateFileWithAlert";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
@@ -67,7 +67,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
     await withFinalizerAsync(
       () =>
         getResultAsync(async () => {
-          const fileSasEntities = await uploadFileToSas({
+          const fileSasEntities = await uploadFilesToPresignedUrls({
             files: newFiles,
             generateUploadFileSasEntities: (uploadFiles) =>
               $trpc.message.generateUploadFileSasEntities.mutate({ files: uploadFiles, roomId }),
@@ -96,7 +96,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
           const thumbnailIds = (
             await Promise.all(
               thumbnailUploads.map(({ id, sasUrl, thumbnail }) =>
-                getResultAsync(() => uploadBlocks(thumbnail, sasUrl))
+                getResultAsync(() => uploadFileToUrl(thumbnail, sasUrl))
                   .map(() => [id])
                   .orTee(console.error)
                   .unwrapOr([]),

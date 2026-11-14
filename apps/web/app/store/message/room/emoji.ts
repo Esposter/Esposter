@@ -8,7 +8,7 @@ import type { Except } from "type-fest";
 
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
-import { uploadFileToSas } from "@/services/file/uploadFileToSas";
+import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
 import { useRoomStore } from "@/store/message/room";
@@ -82,7 +82,10 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
           roomId,
           size: file.size,
         });
-        await uploadFileToSas({ files: [file], generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl) });
+        await uploadFilesToPresignedUrls({
+          files: [file],
+          generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+        });
         return $trpc.room.emoji.createRoomEmoji.mutate({ id, name, roomId });
       },
       {

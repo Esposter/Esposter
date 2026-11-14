@@ -15,11 +15,11 @@ import { noop, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { uploadBlocksMock } = vi.hoisted(() => ({
-  uploadBlocksMock: vi.fn<(blob: Blob, sasUrl: string) => Promise<void>>(),
+const { uploadFileToUrlMock } = vi.hoisted(() => ({
+  uploadFileToUrlMock: vi.fn<(blob: Blob, sasUrl: string) => Promise<void>>(),
 }));
 
-vi.mock(import("@/services/azure/container/uploadBlocks"), () => ({ uploadBlocks: uploadBlocksMock }));
+vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
 // Thumbnail generation downscales through a canvas the test env has no renderer for, and every case here
 // Drives the upload outcome directly — so resolve it to a fixed blob rather than standing up a DOM.
 vi.mock(import("@/services/file/generateImageThumbnail"), () => ({
@@ -68,7 +68,7 @@ describe(useUploadFiles, () => {
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
-    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+    uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
       url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);
@@ -86,7 +86,7 @@ describe(useUploadFiles, () => {
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
-    uploadBlocksMock.mockRejectedValue(new Error(filename));
+    uploadFileToUrlMock.mockRejectedValue(new Error(filename));
     await useUploadFiles(target)([createFile()]);
 
     expect(getComposerFiles(target)).toHaveLength(0);
@@ -125,7 +125,7 @@ describe(useUploadFiles, () => {
     const { getComposerFiles } = uploadFileStore;
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
-    uploadBlocksMock.mockImplementation(() => {
+    uploadFileToUrlMock.mockImplementation(() => {
       setCurrentRoomId(otherRoomId);
       return Promise.reject(new Error(filename));
     });
@@ -149,7 +149,7 @@ describe(useUploadFiles, () => {
     const threadTarget: ComposerTarget = { roomId, threadRootRowKey: getReverseTickedTimestamp() };
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
-    uploadBlocksMock.mockResolvedValue(undefined);
+    uploadFileToUrlMock.mockResolvedValue(undefined);
     await useUploadFiles(threadTarget)([createFile()]);
 
     expect(getComposerFiles(threadTarget)).toHaveLength(1);
@@ -169,7 +169,7 @@ describe(useUploadFiles, () => {
     ]);
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
-    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+    uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
       url === slowSasUrl
         ? new Promise<void>((resolve) => {
             setTimeout(() => {
@@ -199,7 +199,7 @@ describe(useUploadFiles, () => {
 
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
-    uploadBlocksMock.mockResolvedValue(undefined);
+    uploadFileToUrlMock.mockResolvedValue(undefined);
     await useUploadFiles(target)([createFile()]);
 
     expect(takeOne(getComposerFiles(target)).hasThumbnail).toBe(true);
@@ -210,7 +210,7 @@ describe(useUploadFiles, () => {
 
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
-    uploadBlocksMock.mockImplementation((_blob: Blob, url: string) =>
+    uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
       url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);

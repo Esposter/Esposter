@@ -1,4 +1,3 @@
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { db } from "#server/db";
 import { readSession } from "#server/services/auth/readSession";
 import { assetRateLimiter } from "#server/services/rateLimiter/assetRateLimiter";
@@ -11,16 +10,17 @@ import {
   RESOURCE_ASSET_SAS_DURATION_MS,
 } from "#server/services/resource/constants";
 import { readResourceAccess } from "#server/services/resource/readResourceAccess";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
-import { generateReadSasUrl } from "@esposter/db";
+import { createPresignedGetUrl } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { createError, defineEventHandler, getRequestIP, sendRedirect } from "nuxt/server";
 
 // Serves the stable asset urls content embeds (/api/resource-assets/{blobName}) by authorizing the caller
-// And 302-redirecting to a freshly signed minutes-scale SAS — content never carries a signature, so nothing
+// And 302-redirecting to a freshly presigned minutes-scale url — content never carries a signature, so nothing
 // In it can expire or leak a long-lived grant
 export default defineEventHandler(async (event) => {
   // Read off the request url's path, which stays percent-encoded: the form `parseResourceAssetPath` needs, since it
@@ -53,15 +53,14 @@ export default defineEventHandler(async (event) => {
   const resourceAccess = await readResourceAccess(db, resourceAssetPath.resourceId, userId);
   if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, resourceAccess)))
     throw createError({ status: userId ? 404 : 401 });
-  // No existence probe — Azure itself 404s a missing blob when the redirect is followed
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-  // The blob's content type is the uploader's and its name carries no extension, so a navigation to the asset would
-  // Render whatever the uploader sent on the blob origin. An attachment downloads on navigation, and an <img> or
+  // No existence probe — R2 itself answers a missing object with a 404 when the redirect is followed
+  // The object's content type is the uploader's and its name carries no extension, so a navigation to the asset would
+  // Render whatever the uploader sent on the bucket's origin. An attachment downloads on navigation, and an <img> or
   // <video> still embeds it, since those ignore Content-Disposition
-  const sasUrl = await generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
+  const presignedUrl = await createPresignedGetUrl(getStorageCredentials(), StorageBucket.ResourceAssets, blobName, {
     contentDisposition: "attachment",
-    expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
+    expiresInMs: RESOURCE_ASSET_SAS_DURATION_MS,
   });
   event.res.headers.set("Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);
-  return sendRedirect(event, sasUrl, 302);
+  return sendRedirect(event, presignedUrl, 302);
 });
