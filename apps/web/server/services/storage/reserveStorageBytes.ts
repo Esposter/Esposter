@@ -124,7 +124,7 @@ export const reserveStorageBytes = async (
     .select({ pendingBytes: sql<number>`COALESCE(SUM(${storageLedgerInStorage.declaredBytes}), 0)` })
     .from(storageLedgerInStorage)
     .where(pendingWhere);
-  const pendingTotal = Number(pendingTotals?.pendingBytes ?? 0);
+  const pendingTotal = pendingTotals?.pendingBytes ?? 0;
   if (user.storageBytesUsed + pendingTotal + declaredBytes > StorageTierQuotaMap[user.storageTier])
     throw getForbiddenError(STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE);
   throw new TRPCError({
