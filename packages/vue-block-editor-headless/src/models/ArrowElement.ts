@@ -42,7 +42,7 @@ export const arrowElementSchema: z.ZodObject<{
   color: elementColorSchema.default(""),
   dashPattern: dashPatternSchema.default(DashPattern.Solid),
   end: arrowEndSchema,
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   label: z.string(),
   pathKind: arrowPathKindSchema,
   sketchLevel: sketchLevelSchema.default(SketchLevel.Artist),

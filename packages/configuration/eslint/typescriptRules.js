@@ -195,15 +195,15 @@ export default {
       // `z.object()` they refine, since `date`, `time` and `url` are ordinary method names everywhere else — so the
       // Node reported is that opening call
       message:
-        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuidv4()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
+        "Use the Zod 4 top-level builder — `z.email()`, `z.url()`, `z.uuidv7()`, `z.int()`, `z.iso.datetime()`, `z.strictObject()`, `z.looseObject()`, `z.enum(SomeEnum)` — never the Zod 3 chain or `z.nativeEnum`. See the zod skill.",
       selector:
         "MemberExpression[object.name='z'][property.name='nativeEnum'], CallExpression[callee.property.name=/^(base64|base64url|cidr|cuid|cuid2|date|datetime|duration|email|emoji|guid|ip|ipv4|ipv6|nanoid|time|ulid|url|uuid)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='string'], CallExpression[callee.property.name='int'] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='number'], CallExpression[callee.property.name=/^(passthrough|strict)$/] > MemberExpression.callee CallExpression[callee.object.name='z'][callee.property.name='object']",
     },
     {
-      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v4, so a field written with it
-      // Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of a uuid column is
-      // The same lenient form, which no selector sees, and `id-validation`'s design names it
-      message: "Validate an id with `z.uuidv4()`, never `z.uuid()`. See the zod skill.",
+      // `z.uuid()` accepts versions 1 to 8 and the nil UUID while every id the repo holds is a v7, so a field written with it
+      // Would validate more than the data is, and nothing else would fail. The drizzle-zod mapping of an id column is
+      // A plain string, which no selector sees, and `id-validation`'s design names it
+      message: "Validate an id with `z.uuidv7()`, never `z.uuid()`. See the zod skill.",
       selector: "CallExpression[callee.object.name='z'][callee.property.name='uuid']",
     },
     {

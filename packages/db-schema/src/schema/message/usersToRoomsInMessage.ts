@@ -58,9 +58,9 @@ export const usersToRoomsInMessage = sqliteTable(
 export type UserToRoomInMessage = typeof usersToRoomsInMessage.$inferSelect;
 
 export const selectUserToRoomInMessageSchema = createSelectSchema(usersToRoomsInMessage, {
-  categoryId: () => z.uuidv4(),
+  categoryId: () => z.uuidv7(),
   displayName: (schema) => createNormalizedStringSchema(DISPLAY_NAME_MAX_LENGTH, schema),
   mentionCount: (schema) => schema.nonnegative(),
   notificationType: notificationTypeSchema,
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

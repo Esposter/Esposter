@@ -12,7 +12,7 @@ import { definePlugin } from "@oxlint/plugins";
 // What it deliberately cannot see is why a wrapper is kept, so four shapes are exempted here rather than
 // Reported and disabled everywhere they occur:
 //
-// - A member call on an UPPER_SNAKE object (`UUIDV4_REGEX.test(uuid)`) supplies the constant its callers would
+// - A member call on an UPPER_SNAKE object (`UUIDV7_REGEX.test(uuid)`) supplies the constant its callers would
 //   Otherwise restate, which is the textbook earned extraction.
 // - A parameter with a default (`(a, b = X) => f(a, b)`) supplies that default.
 // - A non-identifier argument — a literal, an `as`, an arrow, a member access — is something the caller did not

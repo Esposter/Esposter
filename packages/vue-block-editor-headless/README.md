@@ -50,7 +50,7 @@ import { applyBlockEdit, insertBlockNode } from "vue-block-editor-headless";
 
 // The registry, children port and document schema are the consumer's own, the schema made by createBlockDocumentSchema
 const operations = insertBlockNode(document, registry, children, "/content/0/props/children", 1, {
-  props: { id: crypto.randomUUID(), text: "" },
+  props: { id: v7(), text: "" },
   type: "heading",
 });
 // A neverthrow Result: its document is the schema's typed output, and its inverses undo the edit

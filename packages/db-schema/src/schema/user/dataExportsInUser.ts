@@ -51,4 +51,4 @@ export const dataExportsInUser = sqliteTable(
 
 export type DataExportInUser = typeof dataExportsInUser.$inferSelect;
 
-export const selectDataExportInUserSchema = createSelectSchema(dataExportsInUser, { id: () => z.uuidv4() });
+export const selectDataExportInUserSchema = createSelectSchema(dataExportsInUser, { id: () => z.uuidv7() });

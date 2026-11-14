@@ -32,6 +32,6 @@ export const likesInPost = sqliteTable(
 export type LikeInPost = typeof likesInPost.$inferSelect;
 
 export const selectLikeInPostSchema = createSelectSchema(likesInPost, {
-  postId: () => z.uuidv4(),
+  postId: () => z.uuidv7(),
   value: z.literal([1, -1]),
 });

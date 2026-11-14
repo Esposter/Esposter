@@ -2,7 +2,7 @@ import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.t
 import { describe } from "vitest";
 
 describe("passThroughHelper", () => {
-  const CONSTANT = "UUIDV4_REGEX";
+  const CONSTANT = "UUIDV7_REGEX";
   const RULE = "pass-through-helper/no-forwarding-wrapper";
   const FIXTURES = [
     { name: "forwardsEveryParameter", source: `export const a = (b: string) => f(b);`, violations: 1 },
@@ -35,7 +35,7 @@ describe("passThroughHelper", () => {
     { name: "reordersArguments", source: `export const a = (b: string, c: string) => f(c, b);`, violations: 0 },
     { name: "dropsArgument", source: `export const a = (b: string, _c: string) => f(b);`, violations: 0 },
     { name: "suppliesDefault", source: `export const a = (b: string, c = "") => f(b, c);`, violations: 0 },
-    // The receiver is the constant the wrapper exists to hold — the `UUIDV4_REGEX.test(uuid)` shape.
+    // The receiver is the constant the wrapper exists to hold — the `UUIDV7_REGEX.test(uuid)` shape.
     { name: "suppliesConstantReceiver", source: `export const a = (b: string) => ${CONSTANT}.test(b);`, violations: 0 },
     // A destructured parameter is a shape the caller did not have to know.
     { name: "destructuresParameter", source: `export const a = ({ b }: { b: string }) => f(b);`, violations: 0 },

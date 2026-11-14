@@ -30,7 +30,7 @@ export const messageEmojiMetadataEntitySchema = z.object({
       .emoji()
       .max(UNICODE_EMOJI_TAG_MAX_LENGTH)
       .refine((emojiTag) => [...EN_US_GRAPHEME_SEGMENTER.segment(emojiTag)].length === 1),
-    z.templateLiteral([CUSTOM_EMOJI_TAG_PREFIX, z.uuidv4()]),
+    z.templateLiteral([CUSTOM_EMOJI_TAG_PREFIX, z.uuidv7()]),
   ]),
   ...userIdsSchema.shape,
 }) satisfies z.ZodType<ToData<MessageEmojiMetadataEntity>>;

@@ -11,6 +11,6 @@ export interface TodoListStep {
 
 export const todoListStepSchema = z.object({
   completedAt: z.coerce.date().optional(),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   name: createNameSchema(ITEM_NAME_MAX_LENGTH),
 }) satisfies z.ZodType<TodoListStep>;

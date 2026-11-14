@@ -56,7 +56,7 @@ describe("trpcRouter", () => {
       z.object({
         bounded: z.url().max(1),
         email: z.email(),
-        fixed: z.uuidv4(),
+        fixed: z.uuidv7(),
         open: z.string().regex(/^a+$/u),
         url: z.url(),
       }),

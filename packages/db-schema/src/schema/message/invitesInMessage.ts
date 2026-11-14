@@ -37,5 +37,5 @@ export type InviteInMessage = typeof invitesInMessage.$inferSelect;
 
 export const selectInviteInMessageSchema = createSelectSchema(invitesInMessage, {
   id: (schema) => schema.length(INVITE_ID_LENGTH).regex(INVITE_ID_REGEX),
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

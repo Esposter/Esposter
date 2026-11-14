@@ -1,7 +1,7 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
 import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
-import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
 import { getDecodedUriComponent } from "#shared/util/text/getDecodedUriComponent";
 import { FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 
@@ -26,7 +26,7 @@ export const parseResourceAssetPath = (encodedPath: string): ResourceAssetPath |
 
   const [resourceId, directoryName, hash] = decodedSegments;
   if (decodedSegments.length !== 3 || directoryName !== FILES_DIRECTORY_SEGMENT) return undefined;
-  if (!resourceId || !checkIsUuidV4(resourceId)) return undefined;
+  if (!resourceId || !checkIsUuidV7(resourceId)) return undefined;
   if (!hash || !ASSET_HASH_REGEX.test(hash)) return undefined;
 
   return { blobName: decodedSegments.join("/"), hash, resourceId };

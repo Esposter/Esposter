@@ -8,7 +8,7 @@ import { describe, expect, test } from "vitest";
 describe(requireUuid, () => {
   const name = "name";
 
-  test("returns the value when it is a v4 uuid", () => {
+  test("returns the value when it is a v7 uuid", () => {
     expect.hasAssertions();
 
     const uuid = v7();
@@ -16,7 +16,7 @@ describe(requireUuid, () => {
     expect(requireUuid(uuid, name)).toBe(uuid);
   });
 
-  test("throws TRPCError with code BAD_REQUEST when the value is not a v4 uuid", () => {
+  test("throws TRPCError with code BAD_REQUEST when the value is not a v7 uuid", () => {
     expect.hasAssertions();
 
     getResult(() => requireUuid("", name)).match(noop, (error) => {

@@ -57,5 +57,5 @@ export const notificationsInNotification = sqliteTable(
 export type NotificationInNotification = typeof notificationsInNotification.$inferSelect;
 
 export const selectNotificationInNotificationSchema = createSelectSchema(notificationsInNotification, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
 });

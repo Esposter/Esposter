@@ -13,5 +13,5 @@ export interface GenshinJournal {
 
 export const genshinJournalSchema = z.object({
   save: genshinSaveSchema,
-  sessionId: z.uuidv4(),
+  sessionId: z.uuidv7(),
 }) satisfies z.ZodType<GenshinJournal>;

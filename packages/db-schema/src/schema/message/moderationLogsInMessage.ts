@@ -46,6 +46,6 @@ export type ModerationLogInMessage = typeof moderationLogsInMessage.$inferSelect
 
 export const selectModerationLogInMessageSchema = createSelectSchema(moderationLogsInMessage, {
   durationMs: z.int().positive().nullable(),
-  id: () => z.uuidv4(),
-  roomId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  roomId: () => z.uuidv7(),
 });

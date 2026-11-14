@@ -48,7 +48,7 @@ export const scheduledMessageJobsInMessage = sqliteTable(
 export type ScheduledMessageJobInMessage = typeof scheduledMessageJobsInMessage.$inferSelect;
 
 export const selectScheduledMessageJobInMessageSchema = createSelectSchema(scheduledMessageJobsInMessage, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   payload: scheduledMessageJobPayloadSchema,
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

@@ -9,5 +9,5 @@ export interface ExportUserDataQueueMessage {
 
 export const exportUserDataQueueMessageSchema = z.object({
   ...queueMessageEnvelopeSchema.shape,
-  dataExportId: z.uuidv4(),
+  dataExportId: z.uuidv7(),
 }) satisfies z.ZodType<ExportUserDataQueueMessage>;

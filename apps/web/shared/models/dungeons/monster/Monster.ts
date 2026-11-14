@@ -30,7 +30,7 @@ export class Monster {
 export const monsterSchema = z.object({
   asset: assetSchema,
   attackIds: createUniqueArraySchema(attackIdSchema).max(attackIdSchema.options.length),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   key: monsterKeySchema,
   statistics: statisticsSchema,
   status: statusSchema,

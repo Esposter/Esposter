@@ -38,8 +38,8 @@ export const programParticipantsInResource = sqliteTable(
 export type ProgramParticipantInResource = typeof programParticipantsInResource.$inferSelect;
 
 export const selectProgramParticipantInResourceSchema = createSelectSchema(programParticipantsInResource, {
-  id: () => z.uuidv4(),
-  publicId: () => z.uuidv4(),
-  resourceId: () => z.uuidv4(),
-  token: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  publicId: () => z.uuidv7(),
+  resourceId: () => z.uuidv7(),
+  token: () => z.uuidv7(),
 });

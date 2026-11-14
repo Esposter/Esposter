@@ -47,10 +47,10 @@ export type RoomRoleInMessage = typeof roomRolesInMessage.$inferSelect;
 
 export const selectRoomRoleInMessageSchema = createSelectSchema(roomRolesInMessage, {
   color: (schema) => createNormalizedStringSchema(ROOM_ROLE_COLOR_MAX_LENGTH, schema),
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   name: (schema) => createNameSchema(ROOM_ROLE_NAME_MAX_LENGTH, schema),
   // A custom column has no zod type of its own, so the bigint it reads back as is named here
   permissions: () => z.bigint(),
   position: (schema) => schema.nonnegative(),
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

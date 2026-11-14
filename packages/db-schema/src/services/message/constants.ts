@@ -1,7 +1,7 @@
 import { ZERO_UUID } from "@esposter/shared";
 
 // Reserved user id used as the actor for automatic moderation actions (word-filter Warn/Timeout).
-// It is the all-zero v4 UUID, which passes user-id validation as a v4 and is given to no real user, since a user's id is
+// It is the all-zero v7 UUID, which passes user-id validation as a v7 and is given to no real user, since a user's id is
 // Minted at random, and it lets the audit log render "AutoMod" instead of resolving a member display name.
 export const AUTOMOD_USER_ID = ZERO_UUID;
 // Caps the follow list read so resolving thread roots never fans out an unbounded number of

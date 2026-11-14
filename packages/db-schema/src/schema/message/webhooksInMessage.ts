@@ -45,8 +45,8 @@ export const webhooksInMessage = sqliteTable(
 export type WebhookInMessage = typeof webhooksInMessage.$inferSelect;
 
 export const selectWebhookInMessageSchema = createSelectSchema(webhooksInMessage, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   name: (schema) => createNameSchema(WEBHOOK_NAME_MAX_LENGTH, schema),
-  roomId: () => z.uuidv4(),
-  userId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
+  userId: () => z.uuidv7(),
 });

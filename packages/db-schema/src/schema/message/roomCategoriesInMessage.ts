@@ -36,7 +36,7 @@ export const roomCategoriesInMessage = sqliteTable(
 export type RoomCategoryInMessage = typeof roomCategoriesInMessage.$inferSelect;
 
 export const selectRoomCategoryInMessageSchema = createSelectSchema(roomCategoriesInMessage, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   name: (schema) => createNameSchema(ROOM_CATEGORY_NAME_MAX_LENGTH, schema),
   position: (schema) => schema.nonnegative(),
 });

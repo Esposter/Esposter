@@ -8,9 +8,6 @@ import { z } from "zod";
 // The `deletedAt` of `ItemMetadata`, which mirrors the soft-deletable rows of Postgres and Azure Table
 export class AItemEntity extends Serializable {
   createdAt = new Date();
-  // Widened deliberately: inferred, `crypto.randomUUID()` types the field as a `${string}-…` template literal,
-  // Which `z.uuidv4()`'s plain `string` output then fails to satisfy in every `satisfies z.ZodType<ToData<…>>`
-  // Below this class
   id: string = v7();
   updatedAt = new Date();
 }
@@ -21,6 +18,6 @@ export const AItemEntityPropertyNames = getPropertyNames<AItemEntity>();
 // On blanket ISO-string revival, which would also mis-revive genuine string fields (e.g. Sheet cells).
 export const aItemEntitySchema = z.object({
   createdAt: z.coerce.date(),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   updatedAt: z.coerce.date(),
 }) satisfies z.ZodType<ToData<AItemEntity>>;

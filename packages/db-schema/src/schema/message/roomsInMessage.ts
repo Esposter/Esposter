@@ -69,7 +69,7 @@ export type RoomInMessage = typeof roomsInMessage.$inferSelect;
 export const selectRoomInMessageSchema = createSelectSchema(roomsInMessage, {
   // Unique over an enum, so the enum's size is the most it can hold
   allowedMimeCategories: createUniqueArraySchema(mimeCategorySchema).max(mimeCategorySchema.options.length),
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   image: (schema) => schema.max(URL_MAX_LENGTH),
   maxFileSizeBytes: (schema) => schema.nonnegative(),
   name: (schema) => createNormalizedStringSchema(ROOM_NAME_MAX_LENGTH, schema),

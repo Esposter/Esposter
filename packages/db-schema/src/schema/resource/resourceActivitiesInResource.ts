@@ -47,7 +47,7 @@ export type ResourceActivityInResource = typeof resourceActivitiesInResource.$in
 
 export const selectResourceActivityInResourceSchema = createSelectSchema(resourceActivitiesInResource, {
   apiKeyId: (schema) => schema.nullable(),
-  id: () => z.uuidv4(),
-  resourceId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  resourceId: () => z.uuidv7(),
   userId: (schema) => schema.nullable(),
 });

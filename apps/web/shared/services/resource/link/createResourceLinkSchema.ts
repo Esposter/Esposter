@@ -4,7 +4,7 @@ import { resourceLinkRegistry } from "#shared/services/resource/link/resourceLin
 import { z } from "zod";
 
 // The one way a content shape holds another resource's id. The declaration is the link: the resource-link index
-// Reads every type's link fields off its content schema, so a field written as a bare `z.uuidv4()` is a reference
+// Reads every type's link fields off its content schema, so a field written as a bare `z.uuidv7()` is a reference
 // Nothing can find (openspec/specs/architecture/resource-links/design.md)
 export const createResourceLinkSchema = (resourceLinkType: ResourceLinkType) =>
-  z.uuidv4().register(resourceLinkRegistry, { resourceLinkType });
+  z.uuidv7().register(resourceLinkRegistry, { resourceLinkType });

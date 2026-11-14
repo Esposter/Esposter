@@ -38,5 +38,5 @@ export type CallSessionInMessage = typeof callSessionsInMessage.$inferSelect;
 
 export const selectCallSessionInMessageSchema = createSelectSchema(callSessionsInMessage, {
   id: (schema) => schema.length(CALL_ID_LENGTH).regex(CALL_ID_REGEX),
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

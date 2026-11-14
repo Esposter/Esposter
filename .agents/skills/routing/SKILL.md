@@ -26,7 +26,7 @@ const { id } = route.params;
 
 - **Outside a page, a segment is read by name — `getRouteParam(params, name)`** — never a property access or an `as string` cast. Params read without naming the route are the union of every page's, so a property access does not typecheck, and the name is checked against the route map instead; a route without the segment answers `""`. A `definePageMeta` callback's `route` is that union too, so it takes `getRouteParam`. The room a message surface reads for is the room store's `currentRoomId`, never a fresh route read. A query value goes through `getRouteParamString`.
 - **A page hands its segment down** rather than a composable re-reading the route: `useReadUser(route.params.id)`, never a `*FromRoute` composable.
-- **Guard before spending a request** (`checkIsUuidV4(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
+- **Guard before spending a request** (`checkIsUuidV7(id)`) where a read can race a navigation — it resolves the route after the user has left the page that named it, and the lint rule cannot see that.
 - Why the ban holds outside pages, the `definePageMeta` callbacks that are not a `useRoute()` call, and the one component test that may `mockNuxtImport("useRoute")`: `references/route-reads.md`.
 
 ## Where Navigation State Lives — `references/navigation-state.md`

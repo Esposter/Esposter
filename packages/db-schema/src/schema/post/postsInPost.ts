@@ -56,15 +56,15 @@ export const postsInPost = sqliteTable(
 export type PostInPost = typeof postsInPost.$inferSelect;
 
 export const selectPostInPostSchema = createSelectSchema(postsInPost, {
-  ancestorIds: () => z.array(z.uuidv4()),
+  ancestorIds: () => z.array(z.uuidv7()),
   description: (schema) => createPostDescriptionSchema(schema, 0),
-  id: () => z.uuidv4(),
-  parentId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  parentId: () => z.uuidv7(),
   title: (schema) => createNameSchema(POST_TITLE_MAX_LENGTH, schema),
 });
 export const selectCommentInPostSchema = createSelectSchema(postsInPost, {
-  ancestorIds: () => z.array(z.uuidv4()),
+  ancestorIds: () => z.array(z.uuidv7()),
   description: (schema) => createPostDescriptionSchema(schema, 1),
-  id: () => z.uuidv4(),
-  parentId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  parentId: () => z.uuidv7(),
 });

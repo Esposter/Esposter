@@ -16,5 +16,6 @@ export interface TodoListItemOrigin {
 export const todoListItemOriginSchema = z.object({
   handedBackAt: z.coerce.date().optional(),
   repository: z.string().max(TODO_LIST_ITEM_REPOSITORY_MAX_LENGTH).regex(TODO_LIST_ITEM_REPOSITORY_REGEX),
+  // Claude Code mints the session id outside the repo in the v4 layout, so this is the one id validator that is not a v7
   sessionId: z.uuidv4(),
 }) satisfies z.ZodType<TodoListItemOrigin>;

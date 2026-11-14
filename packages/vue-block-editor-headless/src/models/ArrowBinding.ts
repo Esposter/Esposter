@@ -8,5 +8,5 @@ export interface ArrowBinding {
 
 export const arrowBindingSchema: z.ZodObject<{ connectionPointIndex: z.ZodNumber; elementId: z.ZodUUID }> = z.object({
   connectionPointIndex: z.int().nonnegative(),
-  elementId: z.uuidv4(),
+  elementId: z.uuidv7(),
 }) satisfies z.ZodType<ArrowBinding>;

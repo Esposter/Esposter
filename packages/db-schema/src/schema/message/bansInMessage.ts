@@ -18,4 +18,4 @@ export const bansInMessage = sqliteTable(
 
 export type BanInMessage = typeof bansInMessage.$inferSelect;
 
-export const selectBanInMessageSchema = createSelectSchema(bansInMessage, { roomId: () => z.uuidv4() });
+export const selectBanInMessageSchema = createSelectSchema(bansInMessage, { roomId: () => z.uuidv7() });

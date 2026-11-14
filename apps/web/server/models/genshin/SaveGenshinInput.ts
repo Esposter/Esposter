@@ -14,5 +14,5 @@ export interface SaveGenshinInput {
 export const saveGenshinInputSchema = z.object({
   etag: z.string().max(MAX_ETAG_LENGTH),
   save: genshinSaveSchema,
-  sessionId: z.uuidv4(),
+  sessionId: z.uuidv7(),
 }) satisfies z.ZodType<SaveGenshinInput>;

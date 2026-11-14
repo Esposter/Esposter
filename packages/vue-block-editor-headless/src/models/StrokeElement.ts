@@ -24,7 +24,7 @@ export const strokeElementSchema: z.ZodObject<{
   type: z.ZodLiteral<PositionedElementType.Stroke>;
 }> = z.object({
   color: elementColorSchema.default(""),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   points: z.array(pointSchema).min(1),
   strokeWidth: strokeWidthSchema,
   type: z.literal(PositionedElementType.Stroke),

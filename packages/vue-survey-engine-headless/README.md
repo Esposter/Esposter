@@ -36,8 +36,8 @@ const document = surveyDocumentSchema.parse({
   content: [
     {
       props: {
-        children: [{ props: { id: crypto.randomUUID(), isRequired: true, name: "email" }, type: SurveyNodeType.Text }],
-        id: crypto.randomUUID(),
+        children: [{ props: { id: v7(), isRequired: true, name: "email" }, type: SurveyNodeType.Text }],
+        id: v7(),
       },
       type: SurveyNodeType.Page,
     },

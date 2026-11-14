@@ -80,14 +80,11 @@ const document = createMjmlDocumentSchema(registry, bodyChildrenSchema, Number.M
       props: {
         children: [
           {
-            props: {
-              children: [{ props: { content: { text: "Hello" }, id: crypto.randomUUID() }, type: "mj-text" }],
-              id: crypto.randomUUID(),
-            },
+            props: { children: [{ props: { content: { text: "Hello" }, id: v7() }, type: "mj-text" }], id: v7() },
             type: "mj-column",
           },
         ],
-        id: crypto.randomUUID(),
+        id: v7(),
       },
       type: "mj-section",
     },

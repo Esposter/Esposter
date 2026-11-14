@@ -39,7 +39,7 @@ export type SearchHistoryInMessage = typeof searchHistoriesInMessage.$inferSelec
 export const selectSearchHistoryInMessageSchema = createSelectSchema(searchHistoriesInMessage, {
   // A row records the filters its search ran with, which are not unique by type — two `has:` narrow together
   filters: filterSchema.array().max(MAX_READ_LIMIT),
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   query: (schema) => schema.max(MESSAGE_MAX_LENGTH),
-  roomId: () => z.uuidv4(),
+  roomId: () => z.uuidv7(),
 });

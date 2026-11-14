@@ -25,7 +25,7 @@ export const fileEntitySchema = z.object({
   // The upload SAS target and every delete that names this file interpolate it into a blob name
   filename: z.string().min(1).max(FILENAME_MAX_LENGTH).regex(BLOB_SEGMENT_REGEX),
   hasThumbnail: z.boolean(),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   isSpoiler: z.boolean(),
   mimetype: z.string().max(MIMETYPE_MAX_LENGTH),
   size: z.int().positive(),

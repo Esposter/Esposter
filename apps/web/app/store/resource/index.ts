@@ -14,7 +14,7 @@ import { ResourceOperationTitleMap } from "#shared/services/notification/Resourc
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { checkIsUuidV7 } from "#shared/util/id/uuid/checkIsUuidV7";
 import { CacheTag } from "@/models/cache/CacheTag";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -136,7 +136,7 @@ export const useResourceStore = defineStore("resource", () => {
     const id = getRouteParam(currentRoute.value.params, "id");
     // A route with no resource segment — a list view, or one this read raced a navigation to — names nothing to
     // Read, and the empty sentinel would reach the server as a uuid that fails validation
-    if (!checkIsUuidV4(id)) return;
+    if (!checkIsUuidV7(id)) return;
 
     isPending.value = true;
     await withFinalizerAsync(

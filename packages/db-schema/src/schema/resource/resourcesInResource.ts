@@ -63,7 +63,7 @@ export const resourcesInResource = sqliteTable(
 export type ResourceInResource = typeof resourcesInResource.$inferSelect;
 
 export const selectResourceInResourceSchema = createSelectSchema(resourcesInResource, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   name: (schema) => createNameSchema(RESOURCE_NAME_MAX_LENGTH, schema),
   tags: resourceTagsSchema,
 });

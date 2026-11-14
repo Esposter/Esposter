@@ -28,6 +28,6 @@ export const appUsersInMessage = sqliteTable(
 export type AppUserInMessage = typeof appUsersInMessage.$inferSelect;
 
 export const selectAppUserInMessageSchema = createSelectSchema(appUsersInMessage, {
-  id: () => z.uuidv4(),
+  id: () => z.uuidv7(),
   name: (schema) => createNameSchema(APP_USER_NAME_MAX_LENGTH, schema),
 });

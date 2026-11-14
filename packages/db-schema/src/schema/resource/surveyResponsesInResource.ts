@@ -40,6 +40,6 @@ export const surveyResponsesInResource = sqliteTable(
 export type SurveyResponseInResource = typeof surveyResponsesInResource.$inferSelect;
 
 export const selectSurveyResponseInResourceSchema = createSelectSchema(surveyResponsesInResource, {
-  id: () => z.uuidv4(),
-  resourceId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  resourceId: () => z.uuidv7(),
 });

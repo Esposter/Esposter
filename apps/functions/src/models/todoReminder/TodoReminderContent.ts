@@ -18,7 +18,7 @@ export const todoReminderContentSchema: z.ZodObject<{
     z.object({
       completedAt: z.coerce.date().optional(),
       dueAt: z.coerce.date().optional(),
-      id: z.uuidv4(),
+      id: z.uuidv7(),
       name: z.string(),
     }),
   ),

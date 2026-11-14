@@ -39,6 +39,6 @@ export type ModerationNoteInMessage = typeof moderationNotesInMessage.$inferSele
 
 export const selectModerationNoteInMessageSchema = createSelectSchema(moderationNotesInMessage, {
   actorUserId: (schema) => schema.nullable(),
-  id: () => z.uuidv4(),
-  roomId: () => z.uuidv4(),
+  id: () => z.uuidv7(),
+  roomId: () => z.uuidv7(),
 });

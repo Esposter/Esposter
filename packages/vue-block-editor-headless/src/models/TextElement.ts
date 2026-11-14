@@ -35,7 +35,7 @@ export const textElementSchema: z.ZodObject<{
 }> = z.object({
   color: elementColorSchema.default(""),
   horizontalAlignment: horizontalAlignmentSchema.optional(),
-  id: z.uuidv4(),
+  id: z.uuidv7(),
   isWrapped: z.boolean().default(true),
   text: z.string(),
   textSize: textSizeSchema.default(TextSize.Small),
