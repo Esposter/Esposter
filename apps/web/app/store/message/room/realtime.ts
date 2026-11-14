@@ -30,6 +30,8 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
 
+const getRemoteAudioKey = (identity: string, source: RemoteAudioSource) => `${identity}${ID_SEPARATOR}${source}`;
+
 export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let activeMeeting: RealtimeKitClient | undefined;
   let disconnectHandler: (() => Promise<void>) | undefined;
@@ -55,7 +57,6 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // The browser refused to play the call's sound without a gesture of the reader's own: it stays silent until they
   // Press the notice's button, whose click is the gesture play() needs
   const isAudioPlaybackBlocked = ref(false);
-  const getRemoteAudioKey = (identity: string, source: RemoteAudioSource) => `${identity}${ID_SEPARATOR}${source}`;
   const clearRemoteAudio = () => {
     for (const { element } of remoteAudioElements.values()) element.remove();
     remoteAudioElements.clear();

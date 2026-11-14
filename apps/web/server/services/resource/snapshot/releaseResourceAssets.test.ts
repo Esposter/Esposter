@@ -32,6 +32,12 @@ import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
 
+// R2 stamps an upload with its own clock, not the one a test fakes, so the grace window is passed by moving the
+// Clock on from the real time the asset was uploaded at
+const setGraceElapsed = () => {
+  vi.setSystemTime(Date.now() + ASSET_GRACE_MS);
+};
+
 describe(releaseResourceAssets, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
@@ -54,11 +60,6 @@ describe(releaseResourceAssets, () => {
   // Uploaded at the moment the clock reads, which is what a re-upload stamps onto the object
   const uploadAsset = async (hash: string) => {
     await bucket.put(getResourceFileBlobName(resource.id, hash), assetBytes);
-  };
-  // R2 stamps an upload with its own clock, not the one a test fakes, so the grace window is passed by moving the
-  // Clock on from the real time the asset was uploaded at
-  const setGraceElapsed = () => {
-    vi.setSystemTime(Date.now() + ASSET_GRACE_MS);
   };
   const deleteVersion = async (version: number) => {
     const [referenceRows, deletedVersions] = await mockContext.db.batch(

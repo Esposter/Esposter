@@ -67,6 +67,8 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 
 // The one place a resource's content blob is written, so its whole tail — the save event, the activity entry
 // And the type's registered after-save hook — is asserted here once. TodoList is the representative type: it is
+const getReminderCalls = () => userObjectCalls.filter(({ method }) => method === "reconcileTodoReminders");
+
 // The one with a registered after-save hook
 // Each page names an image by the url of its own blob, so the content and the blobs are built from one resource id
 const createWebpageContent = (resourceId: ResourceInResource["id"], hashes: string[]) =>
@@ -154,7 +156,6 @@ describe(saveResourceContent, () => {
     method: "reconcileTodoReminders",
     userId: resource.userId,
   });
-  const getReminderCalls = () => userObjectCalls.filter(({ method }) => method === "reconcileTodoReminders");
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
   const assetBytes = new Uint8Array(1);

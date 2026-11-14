@@ -41,6 +41,14 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
   return { dispatch, on };
 };
 
+const createSocketUrl = (path: string, after?: number) => {
+  const url = new URL(path, window.location.href);
+  url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+  url.searchParams.set("deviceId", getDeviceId());
+  if (after !== undefined) url.searchParams.set("after", String(after));
+  return url.href;
+};
+
 // The one place the app's live sockets are opened and closed: the person's own socket, the socket of the room a page
 // shows and the socket of the call a person is in. Each frame is dispatched to the handlers registered for its type
 export const useConnectionStore = defineStore("realtime/connection", () => {
@@ -52,14 +60,6 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   let closeCallSocket: (() => void) | undefined;
   let closeRoomSocket: (() => void) | undefined;
   let closeUserSocket: (() => void) | undefined;
-
-  const createSocketUrl = (path: string, after?: number) => {
-    const url = new URL(path, window.location.href);
-    url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
-    url.searchParams.set("deviceId", getDeviceId());
-    if (after !== undefined) url.searchParams.set("after", String(after));
-    return url.href;
-  };
 
   const closeCall = () => {
     closeCallSocket?.();

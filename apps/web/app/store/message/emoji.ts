@@ -4,6 +4,10 @@ import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { checkIsOnlyReactor, getOrCreate, getUpdatedUserIds, ID_SEPARATOR, takeOne } from "@esposter/shared";
 
+// A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair
+const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
+  `${messageId}${ID_SEPARATOR}${emojiTag}`;
+
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
   const { $trpc } = useNuxtApp();
@@ -19,9 +23,6 @@ export const useEmojiStore = defineStore("message/emoji", () => {
   const setEmojis = (roomId: string, messageId: number, emojis: RoomReaction[]) => {
     getOrCreate(emojiMap.value, roomId, () => new Map<number, RoomReaction[]>()).set(messageId, emojis);
   };
-  // A reaction is one emoji on one message, so its identity is the pair, and every write queues on that pair
-  const getEmojiKey = ({ emojiTag, messageId }: Pick<RoomReaction, "emojiTag" | "messageId">) =>
-    `${messageId}${ID_SEPARATOR}${emojiTag}`;
   const createEmoji = async (input: CreateEmojiInput) => {
     if (!session.value.data) return;
     const newEmoji = reactive({

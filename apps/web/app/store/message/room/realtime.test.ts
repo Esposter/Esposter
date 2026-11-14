@@ -10,66 +10,66 @@ import { useCallBackgroundStore } from "@/store/message/user/settings/callBackgr
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
+// The SDK's meeting is replaced by an emitter holding the methods the store calls, so each test drives the events
+// The SDK would emit and reads the spies it needs
+const createMeeting = () => {
+  const joinedEvents = new EventEmitter();
+  const joined = Object.assign(new Map<string, EventEmitter>(), {
+    on: (event: string, listener: (...args: unknown[]) => void) => {
+      joinedEvents.on(event, listener);
+    },
+  });
+  const self = Object.assign(new EventEmitter(), {
+    addAudioMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
+    addVideoMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
+    disableAudio: vi.fn(() => Promise.resolve()),
+    disableScreenShare: vi.fn(() => Promise.resolve()),
+    disableVideo: vi.fn(() => Promise.resolve()),
+    enableAudio: vi.fn(() => Promise.resolve()),
+    enableScreenShare: vi.fn(() => Promise.resolve()),
+    enableVideo: vi.fn(() => Promise.resolve()),
+    rawAudioTrack: { applyConstraints: vi.fn(() => Promise.resolve()) },
+    removeAllVideoMiddlewares: vi.fn(() => Promise.resolve({ message: "", success: true })),
+    setDevice: vi.fn(() => Promise.resolve()),
+    videoEnabled: false,
+    videoTrack: {} as MediaStreamTrack,
+  });
+  // The camera's state follows the calls that switch it, as the SDK's does
+  self.enableVideo.mockImplementation(() => {
+    self.videoEnabled = true;
+    return Promise.resolve();
+  });
+  self.disableVideo.mockImplementation(() => {
+    self.videoEnabled = false;
+    return Promise.resolve();
+  });
+  const meeting = {
+    join: vi.fn(() => Promise.resolve()),
+    leave: vi.fn(() => Promise.resolve()),
+    meta: new EventEmitter(),
+    participants: Object.assign(new EventEmitter(), { joined }),
+    self,
+  };
+  return { joinedEvents, meeting };
+};
+
+// A participant is the emitter the SDK hands out, carrying the fields the store reads on attach
+const createParticipant = (customParticipantId: string) =>
+  Object.assign(new EventEmitter(), {
+    audioEnabled: true,
+    audioTrack: {} as MediaStreamTrack,
+    customParticipantId,
+    screenShareEnabled: false,
+    screenShareTracks: {},
+    videoEnabled: false,
+    videoTrack: {} as MediaStreamTrack,
+  });
+
+const useMeeting = (meeting: ReturnType<typeof createMeeting>["meeting"]) =>
+  vi.spyOn(RealtimeKitClient, "init").mockResolvedValue(meeting as unknown as RealtimeKitClient);
+
 describe(useRealtimeStore, () => {
   const imagePath = "imagePath";
-
-  // The SDK's meeting is replaced by an emitter holding the methods the store calls, so each test drives the events
-  // The SDK would emit and reads the spies it needs
-  const createMeeting = () => {
-    const joinedEvents = new EventEmitter();
-    const joined = Object.assign(new Map<string, EventEmitter>(), {
-      on: (event: string, listener: (...args: unknown[]) => void) => {
-        joinedEvents.on(event, listener);
-      },
-    });
-    const self = Object.assign(new EventEmitter(), {
-      addAudioMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
-      addVideoMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
-      disableAudio: vi.fn(() => Promise.resolve()),
-      disableScreenShare: vi.fn(() => Promise.resolve()),
-      disableVideo: vi.fn(() => Promise.resolve()),
-      enableAudio: vi.fn(() => Promise.resolve()),
-      enableScreenShare: vi.fn(() => Promise.resolve()),
-      enableVideo: vi.fn(() => Promise.resolve()),
-      rawAudioTrack: { applyConstraints: vi.fn(() => Promise.resolve()) },
-      removeAllVideoMiddlewares: vi.fn(() => Promise.resolve({ message: "", success: true })),
-      setDevice: vi.fn(() => Promise.resolve()),
-      videoEnabled: false,
-      videoTrack: {} as MediaStreamTrack,
-    });
-    // The camera's state follows the calls that switch it, as the SDK's does
-    self.enableVideo.mockImplementation(() => {
-      self.videoEnabled = true;
-      return Promise.resolve();
-    });
-    self.disableVideo.mockImplementation(() => {
-      self.videoEnabled = false;
-      return Promise.resolve();
-    });
-    const meeting = {
-      join: vi.fn(() => Promise.resolve()),
-      leave: vi.fn(() => Promise.resolve()),
-      meta: new EventEmitter(),
-      participants: Object.assign(new EventEmitter(), { joined }),
-      self,
-    };
-    return { joinedEvents, meeting };
-  };
-
-  // A participant is the emitter the SDK hands out, carrying the fields the store reads on attach
-  const createParticipant = (customParticipantId: string) =>
-    Object.assign(new EventEmitter(), {
-      audioEnabled: true,
-      audioTrack: {} as MediaStreamTrack,
-      customParticipantId,
-      screenShareEnabled: false,
-      screenShareTracks: {},
-      videoEnabled: false,
-      videoTrack: {} as MediaStreamTrack,
-    });
-
-  const useMeeting = (meeting: ReturnType<typeof createMeeting>["meeting"]) =>
-    vi.spyOn(RealtimeKitClient, "init").mockResolvedValue(meeting as unknown as RealtimeKitClient);
 
   afterEach(() => {
     for (const element of document.querySelectorAll("audio")) element.remove();

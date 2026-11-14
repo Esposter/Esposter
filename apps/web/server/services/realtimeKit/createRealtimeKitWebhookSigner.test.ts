@@ -1,10 +1,11 @@
 import { REALTIMEKIT_WEBHOOK_ALGORITHM } from "#server/services/realtimeKit/constants";
 import { describe } from "vitest";
 
+const toBase64 = (bytes: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(bytes)));
+
 // Signs deliveries the way RealtimeKit does: an RSA key pair, whose public half is the PEM RealtimeKit serves at its
 // well-known URL, and an RSASSA-PKCS1-v1_5 signature over a delivery's raw body
 export const createRealtimeKitWebhookSigner = async () => {
-  const toBase64 = (bytes: ArrayBuffer) => btoa(String.fromCharCode(...new Uint8Array(bytes)));
   const keyPair = await crypto.subtle.generateKey(
     { ...REALTIMEKIT_WEBHOOK_ALGORITHM, modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]) },
     true,

@@ -25,6 +25,12 @@ const createParticipant = (): CallParticipant => ({
 
 const respondWith = (data: unknown) => new Response(JSON.stringify({ data }));
 
+const setRejoining = (state: MockObjectState, sessionId: string, isRejoining: boolean) => {
+  state.database
+    .prepare("UPDATE realtimeKitParticipants SET isRejoining = ? WHERE sessionId = ?")
+    .run(Number(isRejoining), sessionId);
+};
+
 describe(CallObject, () => {
   const callSessionId = v7();
   const credentials = { apiToken: v7(), appId: v7() };
@@ -37,12 +43,6 @@ describe(CallObject, () => {
   // The meeting the call's first join would make, seeded so the join reads it rather than creating one
   const seedMeeting = (state: MockObjectState) => {
     state.database.prepare("INSERT INTO callState (meetingId) VALUES (?)").run(meetingId);
-  };
-
-  const setRejoining = (state: MockObjectState, sessionId: string, isRejoining: boolean) => {
-    state.database
-      .prepare("UPDATE realtimeKitParticipants SET isRejoining = ? WHERE sessionId = ?")
-      .run(Number(isRejoining), sessionId);
   };
 
   // RealtimeKit answers an added participant with a token, and every other call with no data
