@@ -45,7 +45,7 @@ export const moderationLogsInMessage = sqliteTable(
 export type ModerationLogInMessage = typeof moderationLogsInMessage.$inferSelect;
 
 export const selectModerationLogInMessageSchema = createSelectSchema(moderationLogsInMessage, {
-  durationMs: z.int().positive().nullable(),
+  durationMs: () => z.int().positive(),
   id: () => z.uuidv7(),
   roomId: () => z.uuidv7(),
 });

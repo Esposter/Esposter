@@ -14,7 +14,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const createParticipant = (): CallParticipant => ({
   id: v7(),
-  image: null,
+  image: "",
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,

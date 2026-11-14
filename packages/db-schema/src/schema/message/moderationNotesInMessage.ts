@@ -38,7 +38,6 @@ export const moderationNotesInMessage = sqliteTable(
 export type ModerationNoteInMessage = typeof moderationNotesInMessage.$inferSelect;
 
 export const selectModerationNoteInMessageSchema = createSelectSchema(moderationNotesInMessage, {
-  actorUserId: (schema) => schema.nullable(),
   id: () => z.uuidv7(),
   roomId: () => z.uuidv7(),
 });

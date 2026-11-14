@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export interface CallParticipant extends Pick<UserInAuth, "name"> {
   id: string;
-  image: null | UserInAuth["image"];
+  image: UserInAuth["image"];
   isCameraEnabled: boolean;
   isHandRaised: boolean;
   isMuted: boolean;
@@ -16,7 +16,7 @@ export interface CallParticipant extends Pick<UserInAuth, "name"> {
 
 export const callParticipantSchema = z.object({
   id: sessionIdSchema.shape.sessionId,
-  image: selectUserInAuthSchema.shape.image.nullable(),
+  image: selectUserInAuthSchema.shape.image,
   isCameraEnabled: z.boolean(),
   isHandRaised: z.boolean(),
   isMuted: z.boolean(),

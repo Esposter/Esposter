@@ -6,7 +6,7 @@ export const createParticipant = (
   user: Pick<User, "id" | "image" | "name">,
 ): CallParticipant => ({
   id: session.id,
-  image: user.image ?? null,
+  image: user.image ?? "",
   isCameraEnabled: false,
   isHandRaised: false,
   isMuted: false,

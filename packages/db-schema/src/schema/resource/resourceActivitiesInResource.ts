@@ -48,8 +48,6 @@ export const resourceActivitiesInResource = sqliteTable(
 export type ResourceActivityInResource = typeof resourceActivitiesInResource.$inferSelect;
 
 export const selectResourceActivityInResourceSchema = createSelectSchema(resourceActivitiesInResource, {
-  apiKeyId: (schema) => schema.nullable(),
   id: () => z.uuidv7(),
   resourceId: () => z.uuidv7(),
-  userId: (schema) => schema.nullable(),
 });
