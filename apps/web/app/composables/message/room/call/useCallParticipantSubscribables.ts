@@ -2,9 +2,8 @@ import type { OnlineSubscribableContext } from "@/models/shared/OnlineSubscribab
 
 import { useCallStore } from "@/store/message/room/call";
 
-// The joined call's five participant events, subscribed by whichever surface the call is shown on: the messages layout
-// For a room's call, the call page for a standalone one. The viewed room yields to it while both are the same session,
-// So a session is subscribed by exactly one of them
+// The joined call's participant frames, registered while the call is joined by whichever surface shows it: the messages
+// Layout for a room's call, the call page for a standalone one
 export const useCallParticipantSubscribables = (onlineSubscribableContext: OnlineSubscribableContext) => {
   const callStore = useCallStore();
   const { activeCallSessionId } = storeToRefs(callStore);
@@ -15,8 +14,7 @@ export const useCallParticipantSubscribables = (onlineSubscribableContext: Onlin
     async (callSessionId) => {
       if (!callSessionId) return undefined;
 
-      const { unsubscribe } = await subscribeCallParticipants(callSessionId);
-      return unsubscribe;
+      return subscribeCallParticipants(callSessionId);
     },
     onlineSubscribableContext,
   );

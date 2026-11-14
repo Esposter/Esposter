@@ -16,6 +16,7 @@ import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
+vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
 
 const createParticipant = (id: string): CallParticipant => ({
   id,

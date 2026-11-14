@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { Unsubscribable } from "@trpc/server/observable";
 import type { VueWrapper } from "@vue/test-utils";
 
 import { createId } from "#shared/util/math/random/createId";
@@ -14,11 +13,10 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The nuxt test environment does not run the WebSocket a subscription rides, so the seam that opens a session's
-// Participant subscription is replaced by a recorder. Each call is one open of that session, and the read a real open
-// Makes of its participants is the one it stands for
+// The participant frames and their read are the seam, since the nuxt test environment does not run the call socket.
+// Each call is one registration for a session, and its returned teardown is the release
 const { subscribeCallParticipants } = vi.hoisted(() => ({
-  subscribeCallParticipants: vi.fn<(callSessionId: string) => Promise<Unsubscribable>>(),
+  subscribeCallParticipants: vi.fn<(callSessionId: string) => Promise<() => void>>(),
 }));
 vi.mock(import("@/composables/message/room/call/useSubscribeCallParticipants"), () => ({
   useSubscribeCallParticipants: () => subscribeCallParticipants,
@@ -52,10 +50,8 @@ describe(useCallSubscribables, () => {
     roomReads = createCounter();
     subscribeCallParticipants.mockImplementation(() => {
       opened.increment();
-      return Promise.resolve({
-        unsubscribe: () => {
-          closed.increment();
-        },
+      return Promise.resolve(() => {
+        closed.increment();
       });
     });
     trpcMsw.callSession.readCallSessionId.query(({ input }) => {
@@ -69,42 +65,18 @@ describe(useCallSubscribables, () => {
     wrapper = undefined;
   });
 
-  // Viewing a room whose call the user has joined opens the session once: the joined call holds it, and the viewed room
-  // Yields to it rather than opening a second subscription and a second read
-  test("opens a joined call's participants once when its room is viewed", async () => {
+  // The joined call's participants are registered once when the call is joined, and released when it is left
+  test("registers a joined call's participants once, and releases them when the call is left", async () => {
     expect.hasAssertions();
 
     wrapper = await mountCallSubscribables();
     const callStore = useCallStore();
     callStore.activeCallSessionId = callSessionId;
-    setCurrentRoomId(roomId);
     await opened.reach(1);
-    await flushPromises();
-
-    expect(opened.value).toBe(1);
-  });
-
-  // Joining the call a room is viewed for hands its subscription to the joined call, and leaving that call while the room
-  // Is still viewed hands it back — so the session is open exactly once at every step
-  test("hands a viewed call to the joined call and back when the joined call ends", async () => {
-    expect.hasAssertions();
-
-    wrapper = await mountCallSubscribables();
-    const callStore = useCallStore();
-    setCurrentRoomId(roomId);
-    await opened.reach(1);
-
-    callStore.activeCallSessionId = callSessionId;
-    await opened.reach(2);
+    callStore.activeCallSessionId = "";
     await closed.reach(1);
 
-    expect(opened.value - closed.value).toBe(1);
-
-    callStore.activeCallSessionId = "";
-    await closed.reach(2);
-    await opened.reach(3);
-
-    expect(opened.value - closed.value).toBe(1);
+    expect([opened.value, closed.value]).toStrictEqual([1, 1]);
   });
 
   // The speakers belong to the joined call, so a viewed room changing leaves them in place

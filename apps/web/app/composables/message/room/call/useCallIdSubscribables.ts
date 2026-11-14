@@ -1,6 +1,7 @@
 import { useCallStore } from "@/store/message/room/call";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { getResultAsync } from "@esposter/shared";
 
 export const useCallIdSubscribables = async (callId: string) => {
@@ -14,6 +15,8 @@ export const useCallIdSubscribables = async (callId: string) => {
   const { cancelKnock } = knockerStore;
   const mediaStore = useMediaStore();
   const { isPoppedOut } = storeToRefs(mediaStore);
+  const connectionStore = useConnectionStore();
+  const { closeCall } = connectionStore;
   // The page renders its own "call not found" for an absent session, so a failed read degrades to the same
   // Screen rather than an error one — but a read that failed is not a call that is missing, and only the log
   // Tells the two apart
@@ -29,6 +32,8 @@ export const useCallIdSubscribables = async (callId: string) => {
     // Popping out keeps a standalone call alive while the user navigates away; the PiP window owns the call surface.
     if (isPoppedOut.value) return;
     if (!activeCallSessionId.value && knockingCallSessionId.value === callId) cancelKnock();
+    // A socket a knock opened has no joined call whose leave would close it
+    if (!activeCallSessionId.value) closeCall();
     await leaveCall();
   }, onlineSubscribableContext.instance);
   return callSession;

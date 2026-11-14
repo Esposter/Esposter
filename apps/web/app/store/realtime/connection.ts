@@ -39,6 +39,8 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const roomHub = createEventHub(roomEventSchema);
   const callHub = createEventHub(callEventSchema);
   const userHub = createEventHub(userEventSchema);
+  let callSocketSessionId = "";
+  let callSocketSettled: Promise<void> = Promise.resolve();
   let closeCallSocket: (() => void) | undefined;
   let closeRoomSocket: (() => void) | undefined;
   let closeUserSocket: (() => void) | undefined;
@@ -54,6 +56,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const closeCall = () => {
     closeCallSocket?.();
     closeCallSocket = undefined;
+    callSocketSessionId = "";
   };
   const closeRoom = () => {
     closeRoomSocket?.();
@@ -64,10 +67,22 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
     closeUserSocket = undefined;
   };
 
-  // A call's socket is the call's own, so it is opened by the call's id and closed when the person leaves
+  // A call's socket is the call's own, so it is opened by the call's id and closed when the person leaves. Opening the
+  // Call the socket already holds is a no-op, so a knock that opened it is not reconnected when the knock is admitted.
+  // The promise settles once the socket's first attempt opens or closes, so a read made after it misses no change
   const openCall = (callSessionId: string) => {
+    if (callSessionId === callSocketSessionId) return callSocketSettled;
+
     closeCall();
-    closeCallSocket = openRealtimeSocket(() => createSocketUrl(`/ws/call/${callSessionId}`), callHub.dispatch);
+    callSocketSessionId = callSessionId;
+    const { promise, resolve } = Promise.withResolvers<void>();
+    callSocketSettled = promise;
+    closeCallSocket = openRealtimeSocket(
+      () => createSocketUrl(`/ws/call/${callSessionId}`),
+      callHub.dispatch,
+      () => resolve(),
+    );
+    return promise;
   };
   // A room's socket replays what it missed after the last message the page holds, read again at every reconnect
   const openRoom = (roomId: string, getLastMessageId: () => number | undefined) => {

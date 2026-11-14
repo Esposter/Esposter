@@ -6,6 +6,7 @@ import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useParticipantStore } from "@/store/message/room/call/participant";
 import { useRealtimeStore } from "@/store/message/room/realtime";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { AdminActionType } from "@esposter/db-schema";
 import { getResultAsync, noop, RoutePath, withFinalizerAsync } from "@esposter/shared";
 
@@ -33,6 +34,8 @@ export const useCallStore = defineStore("message/room/call", () => {
   const realtimeStore = useRealtimeStore();
   const { connect, disconnect, setCamera, setMicrophone, setRemoteAudioMuted, setScreenShare, setVirtualBackground } =
     realtimeStore;
+  const connectionStore = useConnectionStore();
+  const { closeCall, openCall } = connectionStore;
   const callRoomId = ref("");
   // The thread the joined call belongs to, empty for the room's own call — what tells the thread pane whether
   // The call it can start is the one the user is already in
@@ -171,6 +174,9 @@ export const useCallStore = defineStore("message/room/call", () => {
       const { isCameraEnabled, isMicrophoneEnabled } = knockerStore.joinCallOptions;
       await connect(authToken, leaveCall, isMicrophoneEnabled);
       isDoorkeeper.value = newIsDoorkeeper;
+      // The socket opens before the session is joined, because joining starts the participant read, which must not
+      // Begin before the socket can deliver the changes that land after it
+      await openCall(callSessionId);
       activeCallSessionId.value = callSessionId;
       joinedCallSessionId = callSessionId;
       isJoined = true;
@@ -206,6 +212,7 @@ export const useCallStore = defineStore("message/room/call", () => {
       // Would otherwise be overwritten by this snapshot once it resolves
       setParticipantMap(callSessionId, participantMap);
       await connect(authToken, leaveCall, true);
+      await openCall(callSessionId);
       // Only the room's own call is the one the room header offers to join — a thread's call is reached from
       // Its pane, and writing it here would light up the header for a call that is not the room's
       if (!threadRootId) currentRoomCallSessionId.value = callSessionId;
@@ -238,6 +245,7 @@ export const useCallStore = defineStore("message/room/call", () => {
             resetKnockerState();
             isDoorkeeper.value = false;
             activeCallSessionId.value = "";
+            closeCall();
             isCallViewOpen.value = false;
             resetCallMedia();
             // A rejected disconnect is reported rather than thrown, so it cannot strand the call's notices and speakers

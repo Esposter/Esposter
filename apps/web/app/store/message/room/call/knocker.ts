@@ -1,17 +1,22 @@
 import type { CallParticipant } from "@esposter/db-schema";
 import type { JoinCallOptions } from "@/models/message/room/call/JoinCallOptions";
+
+import { MutationStatus } from "@/models/shared/MutationStatus";
 import { getDefaultJoinCallOptions } from "@/services/message/room/call/getDefaultJoinCallOptions";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
+import { useConnectionStore } from "@/store/realtime/connection";
 
 export const useKnockerStore = defineStore("message/room/call/knocker", () => {
   const { $trpc } = useNuxtApp();
+  const connectionStore = useConnectionStore();
+  const { openCall } = connectionStore;
   const knockingCallSessionId = ref("");
   const joinCallOptions = ref<JoinCallOptions>(getDefaultJoinCallOptions());
   const knockers = ref<CallParticipant[]>([]);
   // Knocking targets one call session at a time, so every knock shares one executor and one target
   const { executeMutation: executeKnockCallMutation } = useMutation();
   const knockCall = async (callId: string) => {
-    await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
+    const outcome = await executeKnockCallMutation(() => $trpc.callSession.knocker.knockCall.mutate({ id: callId }), {
       // Read as the write is sent: knocks share one target and queue, so a rejected one must unwind to the
       // Session the knock ahead of it stored rather than to the one held when the user clicked
       applyOptimistic: () => {
@@ -25,6 +30,9 @@ export const useKnockerStore = defineStore("message/room/call/knocker", () => {
       // The other against it
       key: "knockCall",
     });
+    // The call's socket opens once the knock is recorded, since the server takes a knocker's connection only then. The
+    // Admission that follows reuses this socket rather than reconnecting
+    if (outcome.status === MutationStatus.Succeeded) await openCall(callId);
   };
   const cancelKnock = () => {
     knockingCallSessionId.value = "";

@@ -7,10 +7,10 @@ export const useCallSubscribables = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const callStore = useCallStore();
-  const { activeCallSessionId, currentRoomCallSessionId } = storeToRefs(callStore);
   const { setCurrentRoomCallSessionId } = callStore;
-  const subscribeCallParticipants = useSubscribeCallParticipants();
 
+  // Only the joined call's participants are subscribed: the call socket opens to a joined or knocking connection alone,
+  // So a viewed room whose call the user has not joined has no participants to read
   useCallParticipantSubscribables(onlineSubscribableContext);
   useOnlineSubscribable(
     currentRoomId,
@@ -22,18 +22,6 @@ export const useCallSubscribables = () => {
         // The speakers belong to the joined call and leaveCall clears them, so leaving the viewed room leaves them alone
         setCurrentRoomCallSessionId("");
       };
-    },
-    onlineSubscribableContext,
-  );
-  // The viewed room's participants, unless the joined call is that same session: its own subscription holds them, and
-  // They come back here once the user leaves it
-  useOnlineSubscribable(
-    () => (currentRoomCallSessionId.value === activeCallSessionId.value ? "" : currentRoomCallSessionId.value),
-    async (callSessionId) => {
-      if (!callSessionId) return undefined;
-
-      const { unsubscribe } = await subscribeCallParticipants(callSessionId);
-      return unsubscribe;
     },
     onlineSubscribableContext,
   );

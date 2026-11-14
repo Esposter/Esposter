@@ -5,7 +5,9 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useKnockerStore } from "@/store/message/room/call/knocker";
 import { CALL_ID_LENGTH } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+
+vi.mock(import("@/services/realtime/openRealtimeSocket"), () => import("@/services/realtime/openRealtimeSocket.test"));
 
 const createParticipant = (name: string): CallParticipant => ({
   id: crypto.randomUUID(),
