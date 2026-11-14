@@ -19,8 +19,8 @@ export const RoutePath: {
   readonly MessagesFriends: "/messages/friends";
   readonly MessagesIndex: "/messages";
   readonly MessagesInvite: (code: string) => string;
-  readonly MessagesMessage: (id: string, rowKey: string) => string;
-  readonly MessagesThread: (id: string, rowKey: string) => string;
+  readonly MessagesMessage: (id: string, messageId: number) => string;
+  readonly MessagesThread: (id: string, messageId: number) => string;
   readonly Post: (id: string) => string;
   readonly PostCreate: "/post/create";
   readonly PostUpdate: (id: string) => string;
@@ -56,8 +56,8 @@ export const RoutePath: {
   MessagesFriends: "/messages/friends",
   MessagesIndex: "/messages",
   MessagesInvite: (code: string) => `/messages/invite/${code}`,
-  MessagesMessage: (id: string, rowKey: string) => `/messages/${id}/${rowKey}`,
-  MessagesThread: (id: string, rowKey: string) => `/messages/${id}/thread/${rowKey}`,
+  MessagesMessage: (id: string, messageId: number) => `/messages/${id}/${messageId}`,
+  MessagesThread: (id: string, messageId: number) => `/messages/${id}/thread/${messageId}`,
   Post: (id: string) => `/post/${id}`,
   PostCreate: "/post/create",
   PostUpdate: (id: string) => `/post/update/${id}`,

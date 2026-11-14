@@ -35,15 +35,17 @@ export const resolveNotification = async (
       // Cheapest possible rejection first: a message that renders to nothing has no recipients worth resolving
       if (!body) return undefined;
 
-      const { partitionKey, rowKey, userId } = data.message;
+      const { id, message: text, roomId, userId } = data.message;
+      // A webhook message has no member sender, so its absent author is undefined rather than the row's null
+      const senderUserId = userId ?? undefined;
       // Independent reads, so they overlap rather than queue — the author display never depends on who receives it
       const [author, userIds] = await Promise.all([
-        getMessageNotificationAuthor({ appUserId: data.appUserId, roomId: partitionKey, userId }),
+        getMessageNotificationAuthor({ appUserId: data.appUserId, roomId, userId: senderUserId }),
         getMessageRecipientUserIds(db, {
-          message: data.message.message,
-          partitionKey,
-          threadRootRowKey: data.threadRootRowKey,
-          userId,
+          message: text,
+          roomId,
+          threadRootId: data.threadRootId,
+          userId: senderUserId,
         }),
       ]);
       return {
@@ -51,7 +53,7 @@ export const resolveNotification = async (
         icon: author.icon,
         // A reply deep-links to the thread it belongs to rather than to itself: the thread is where the reply is
         // Read, and it is the one destination that is right for a room member and a thread follower alike
-        path: RoutePath.MessagesMessage(partitionKey, data.threadRootRowKey || rowKey),
+        path: RoutePath.MessagesMessage(roomId, data.threadRootId ?? id),
         title: author.title,
         userIds,
       };

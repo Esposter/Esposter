@@ -8,7 +8,6 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
-  getReverseTickedTimestamp,
   notificationsInNotification,
   NotificationType,
   pushSubscriptionsInNotification,
@@ -42,9 +41,10 @@ describe(sendNotification, () => {
   const senderUserId = v7();
   const subscriberUserId = v7();
   const roomId = v7();
-  const rowKey = getReverseTickedTimestamp();
+  const messageId = 1;
+  const replyId = 2;
   const actingSessionId = v7();
-  const standardMessage = { message, partitionKey: roomId, rowKey, userId: senderUserId };
+  const standardMessage = { id: messageId, message, roomId, userId: senderUserId };
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 
   beforeAll(async () => {
@@ -78,7 +78,7 @@ describe(sendNotification, () => {
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
     await sendNotification({
       message: { ...standardMessage, message: "<p></p>" },
-      threadRootRowKey: "",
+      threadRootId: null,
       type: AppNotificationType.Message,
     });
 
@@ -90,14 +90,30 @@ describe(sendNotification, () => {
 
     vi.stubEnv("BASE_URL", "");
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
-    await sendNotification({ message: standardMessage, threadRootRowKey: "", type: AppNotificationType.Message });
+    await sendNotification({ message: standardMessage, threadRootId: null, type: AppNotificationType.Message });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
-    // A message outside a thread carries the empty thread root, so the link falls through to the message itself
+    // A message outside a thread has no thread root, so the link falls through to the message itself
     expect(
       jsonDateParse<PushNotificationPayload>(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url,
-    ).toBe(RoutePath.MessagesMessage(roomId, rowKey));
+    ).toBe(RoutePath.MessagesMessage(roomId, messageId));
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toStrictEqual([]);
+  });
+
+  test("a reply's link is its thread root's", async () => {
+    expect.hasAssertions();
+
+    vi.stubEnv("BASE_URL", "");
+    await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
+    await sendNotification({
+      message: { ...standardMessage, id: replyId },
+      threadRootId: messageId,
+      type: AppNotificationType.Message,
+    });
+
+    expect(
+      jsonDateParse<PushNotificationPayload>(String(vi.mocked(webpush.sendNotification).mock.calls[0]?.[1])).data.url,
+    ).toBe(RoutePath.MessagesMessage(roomId, messageId));
   });
 
   // The bell insert is the last step allowed to fail this handler. Event Grid reads a throw as a retry request
