@@ -1,14 +1,17 @@
 # Scheduled message jobs architecture
 
-Read when scheduling work to run at a future time (scheduled messages, reminders). A scheduled chat message is no longer a queue job: it is a row in its room's `RoomObject` storage, and the room's one alarm sends it when it comes due, holding it to the sender's creation rules as they stand then (`sendDueScheduledMessages` in `apps/functions/src/durableObjects/RoomObject.ts`). A TodoList reminder is a row in its owner's `UserObject`, sent from that object's alarm (`scheduleTodoReminders.ts` in `apps/web/server/services/resource/todoList/`).
+Read when scheduling work to run at a future time: a scheduled chat message or a reminder. Each is held by the object that owns it, and that object's one alarm sends it. There is no queue, no Scheduler object and no timer function.
 
-**What the `ProcessScheduledMessageJob` queue still delivers**: a row in `scheduledMessageJobsInMessage` whose payload is a reminder. The handler (`apps/functions/src/handlers/processScheduledMessageJobHandler.ts`) claims it, publishes the reminder and stamps `completedAt`. A row whose payload is a chat message is skipped untouched, unclaimed, for its owner to retire.
+- **A scheduled message** is a row in its room's `RoomObject`. The room's alarm sends every row that is due (`sendDueScheduledMessages` in `apps/functions/src/durableObjects/RoomObject.ts`), holding it to the sender's creation rules as they stand at that moment. The sender's `UserObject` keeps an index of the rooms they have rows in (`scheduledMessagesInUser`), which the Scheduled tab reads. The index is not what sends anything.
+- **A reminder** is a row in its owner's `UserObject`, in `remindersInUser` (`id`, `roomId`, `runAt`, `text`). The object's alarm (`alarm()` in `apps/functions/src/durableObjects/UserObject.ts`) sends the due reminders and the due TodoList reminders, then arms itself for the earliest row still ahead.
 
-The reminder's flow, for the rows this queue still delivers:
+The reminder's flow:
 
-1. The row is in `scheduledMessageJobsInMessage` with its due time.
-2. Its time is set on a Scheduler object named by the job's id, which sends `{ id }` to the queue at `runAt`. Pass `runAt` as a `Date`: an alarm set in the past fires at once.
-3. The consumer reads the row, atomically claims it on `processingStartedAt IS NULL` (the single-shot claim that makes the handler idempotent under at-least-once delivery), publishes the reminder, and marks `completedAt`. If `job.runAt` is still in the future it schedules the job again instead of executing.
-4. A cancel clears the row, so the handler skips a cancelled row whether or not its alarm was cleared.
+1. `scheduleReminder` calls `addReminder` on the sender's `UserObject`. That inserts the row and arms the alarm for its `runAt`.
+2. At `runAt`, `sendDueReminders` publishes a notification (`AppNotificationType.Reminder`) through `PROCESS_NOTIFICATION_QUEUE`, linked to the room, and deletes the row only once the publish has succeeded.
+3. A failed publish keeps the row. The alarm is re-armed `REMINDER_RETRY_DELAY_MS` later (`apps/functions/src/services/reminder/constants.ts`), so a row that stays overdue is never left without an alarm.
+4. `cancelScheduledMessageJob` on a reminder calls `removeReminder`, which deletes the row and re-arms the alarm, so cancelling the next-due reminder moves the alarm to the one after it.
 
-**No timer function** — the alarm is the due time, so nothing polls for due jobs.
+Delivery is at least once. A crash between the publish and the delete publishes the reminder again on the retry. The notification's own retries and delivery belong to the notification path ([notifications](../../../../openspec/specs/architecture/notifications/design.md)).
+
+The Scheduled tab reads both kinds through `message.scheduledMessageJob.readMyScheduledMessageJobs` and counts them through `readMyScheduledMessageJobsCount`. Both merge the index with the reminders, and a row whose room no longer exists is left out.

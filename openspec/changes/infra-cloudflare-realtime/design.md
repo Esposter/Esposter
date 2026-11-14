@@ -8,7 +8,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). The app
 | :----------- | :----------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------- |
 | `RoomObject` | room         | the room's messages, reactions and message search in its own SQLite; its scheduled messages; the set of members online; the debounced room-activity fan-out | everyone viewing the room                  |
 | `CallObject` | call session | the participant, knocker and admitted maps, the call's start time, the RealtimeKit participant map and the per-participant preset queue, all in its storage | everyone joined to or knocking on the call |
-| `UserObject` | user         | the person's sockets across devices, their sent-message index, their TodoList reminders, their online status                                                | every signed-in tab of the person          |
+| `UserObject` | user         | the person's sockets across devices, their sent-message index, their reminders and TodoList reminders, their online status                                  | every signed-in tab of the person          |
 
 Everything relational — users, rooms, members, roles, resources, friends — stays in D1. The objects are classes exported by the functions Worker, which also consumes the queues and runs the cron; the web Worker binds them by `script_name`. The web Worker holds no state at all: SSR, tRPC queries and mutations, webhooks and the MCP route run in any isolate.
 
@@ -61,7 +61,7 @@ A client holds at most three sockets: its user socket on every signed-in page, a
 
 ## Scheduled work is an alarm on its owner
 
-A scheduled message belongs to a room and a TodoList reminder to a person, so each is a row in its owner's object storage, and the owner's single alarm is set to the earliest row due; on firing it runs every due row and re-arms for the next. The `Scheduler` object, its two queues and the `/_internal/publish` route go: a queue consumer that changes live state calls the owning object's RPC method directly, through the same bindings.
+A scheduled message belongs to a room, and a reminder or a TodoList reminder to a person, so each is a row in its owner's object storage, and the owner's single alarm is set to the earliest row due; on firing it runs every due row and re-arms for the next. The `Scheduler` object, its two queues and the `/_internal/publish` route go: a queue consumer that changes live state calls the owning object's RPC method directly, through the same bindings.
 
 ## Reads across rooms
 
