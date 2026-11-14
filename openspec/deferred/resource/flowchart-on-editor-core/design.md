@@ -8,7 +8,7 @@ The Flowchart resource drew its canvas with Vue Flow (`@vue-flow/core`) and four
 
 ## Decided
 
-The owner chose the second future, removal. The [whiteboard](../../../changes/archive/2026-11-02-resource-whiteboard/proposal.md) takes over the flowchart's work, and the Flowchart type goes with its canvas dependency and every stored flowchart. The removal is designed in [flowchart retirement](../../../changes/archive/2026-11-02-resource-flowchart-retirement/design.md). Its deletion is one migration that deletes the rows before it drops the enum value, because a resource type cannot leave PostgreSQL while a row still holds it. Their blobs are removed first, by the one-time purge that the removal runs through the existing per-resource purge.
+The owner chose the second future, removal. The [whiteboard](../../../changes/archive/2026-11-02-resource-whiteboard/proposal.md) takes over the flowchart's work, and the Flowchart type goes with its canvas dependency and every stored flowchart. The removal is designed in [flowchart retirement](../../../changes/archive/2026-11-02-resource-flowchart-retirement/design.md). Its deletion is one migration, run at app startup by the release that removes the type, that deletes the rows still naming it. D1 holds a resource type as plain text with no database enum, so nothing in the database refuses such a row; the rows go first because code that no longer names the type cannot read them. Their blobs are removed first, by the one-time purge that the removal runs through the existing per-resource purge.
 
 The first future and the third are rejected. A rebuild would need the headless core to gain a graph shape for a type being removed, and keeping Vue Flow keeps the engine the removal drops.
 

@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — Azure's multi-tab create blade (Basics / Tags / Review + create) with a validation summary.
+Deferred — a multi-tab create blade (Basics / Tags / Review + create) with a validation summary.
 
 ## What Changes
 

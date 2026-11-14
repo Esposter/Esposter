@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — Azure Marketplace parity in the create gallery: a search field and category rail over the type tiles.
+Deferred — a search field and category rail over the type tiles in the create gallery.
 
 ## What Changes
 

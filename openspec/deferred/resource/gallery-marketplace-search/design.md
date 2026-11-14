@@ -1,6 +1,6 @@
 # Create gallery search + categories
 
-Azure Marketplace parity in `/resource-explorer/create`: a search field and category rail over the type tiles.
+A search field and category rail over the type tiles in `/resource-explorer/create`.
 
 ## Why deferred
 

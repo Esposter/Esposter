@@ -1,6 +1,6 @@
 # Create wizard tabs (Basics → Review + create)
 
-Azure's multi-tab create blade: Basics / Tags / Review + create with a validation summary before submit.
+A multi-tab create blade: Basics / Tags / Review + create, with a validation summary before submit.
 
 ## Why deferred
 

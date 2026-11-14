@@ -4,7 +4,7 @@ Actually delivering email-editor output (survey invites, personalized campaigns)
 
 ## Why deferred
 
-Needs new infrastructure (Azure Communication Services or SendGrid), a verified sending domain, spam/compliance handling (SPF/DKIM, unsubscribe), and recipient management — a whole subsystem with real cost. The ACS SDK is TypeScript, so feasibility is not the blocker; cost and scope are.
+Needs new infrastructure (a transactional email provider such as SendGrid), a verified sending domain, spam/compliance handling (SPF/DKIM, unsubscribe), and recipient management — a whole subsystem with real cost. Provider SDKs ship TypeScript types, so feasibility is not the blocker; cost and scope are.
 
 ## Revisit when
 
