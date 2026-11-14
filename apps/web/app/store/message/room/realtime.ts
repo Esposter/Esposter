@@ -83,6 +83,10 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
       if (error instanceof DOMException && error.name === "NotAllowedError") isAudioPlaybackBlocked.value = true;
       else console.error(error);
     });
+  const playRemoteAudioInBackground = getSynchronizedFunction(playRemoteAudio);
+  const setSinkIdInBackground = getSynchronizedFunction((element: HTMLAudioElement, outputDeviceId: string) =>
+    getResultAsync(() => element.setSinkId(outputDeviceId)).match(noop, console.error),
+  );
   // A speaker picked mid-call reaches the elements already on the page through the SDK, so an element attached later
   // Takes the picked output here rather than the system default
   const setRemoteAudio = (key: string, identity: string, track: MediaStreamTrack | undefined) => {
@@ -95,10 +99,10 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     element.srcObject = new MediaStream([track]);
     applyRemoteAudioVolume(element, identity);
     const outputDeviceId = voiceDeviceSettingsStore.outputDeviceId;
-    if (outputDeviceId) getResultAsync(() => element.setSinkId(outputDeviceId)).match(noop, console.error);
+    if (outputDeviceId) setSinkIdInBackground(element, outputDeviceId);
     remoteAudioElements.set(key, { element, identity });
     window.document.body.append(element);
-    playRemoteAudio(element);
+    playRemoteAudioInBackground(element);
   };
   const setRemoteScreenShare = (
     identity: string,
