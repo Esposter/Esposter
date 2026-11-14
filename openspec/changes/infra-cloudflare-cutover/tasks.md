@@ -7,7 +7,7 @@
 
 ## 2. The cutover command
 
-- [ ] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-streams`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
+- [ ] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-tables`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
 - [ ] 2.2 Add the maintenance mode to the Railway app on `ai/queue`. Verified by a request answering 503 while it is set.
 
 ## 3. Rehearsal

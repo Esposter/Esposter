@@ -1,6 +1,6 @@
 # Cloudflare database
 
-Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Every row moves to D1: the Postgres schema to the `core` database, the Azure Table data to the `streams` database, and the message search index to an FTS5 table in `streams`. Tests run on Miniflare's D1.
+Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Every row moves to D1: the Postgres schema and the Azure Table data to typed tables in the one `core` database, and the message search index to an FTS5 table over its messages. Tests run on Miniflare's D1.
 
 ## The schema on SQLite
 
@@ -21,7 +21,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Every r
 | `->>`, `?` on jsonb in a check                          | `json_extract(col, '$.key')`, `json_type(col, '$.key') IS NOT NULL`   |
 | `index`, `uniqueIndex`, `.where(...)`                   | the same, partial indexes supported                                   |
 
-The check-SQL helpers under `src/services/shared` keep their names and emit SQLite (`length()` for `char_length()`, no `::` casts). `drizzle.config.ts` uses the `sqlite` dialect with the `d1-http` driver for `db:migrate`, and two configurations — `core` and `streams` — each write their own migrations folder; the Postgres migration history is deleted, since D1 starts from a fresh first migration and the data is copied by the [cutover](../infra-cloudflare-cutover/design.md).
+The check-SQL helpers under `src/services/shared` keep their names and emit SQLite (`length()` for `char_length()`, no `::` casts). `drizzle.config.ts` uses the `sqlite` dialect with the `d1-http` driver for `db:migrate`, writing one migrations folder; the Postgres migration history is deleted, since D1 starts from a fresh first migration and the data is copied by the [cutover](../infra-cloudflare-cutover/design.md).
 
 ## Transactions
 
@@ -37,32 +37,36 @@ A transaction that awaits a non-database call between statements (a blob write, 
 
 `ilike` becomes `like`, which is case-insensitive for ASCII in SQLite; `pg_trgm` similarity on resource search becomes FTS5 over the searched columns in `core`, ranked by `bm25`. `sql` fragments using `now()`, `interval`, `::` casts, `array_agg`, `jsonb_*` or `RETURNING` with Postgres-only syntax are rewritten to SQLite's equivalents. The rate limiter's `rate-limiter-flexible` Drizzle store is created with the SQLite table.
 
-## The streams database
+## The former Azure Table data
 
-Azure Table's model is kept: each `StreamTable` (renamed from `AzureTable`) is a D1 table of `partitionKey`, `rowKey`, `etag` and `entity`, the entity as one JSON text with a `Date` stored as `{ date }`, and the primary key on the first two. A `StreamTableClient<TEntity>` takes its D1 handle as a parameter and implements what the code calls: create, get (null for a missing row), update and upsert with an etag precondition, delete, a list over clauses, and a count. The fifty-odd call sites keep their entity classes and their `serializeEntity`/`deserializeEntity` path, and change only how they get the client. A list is typed `Clause<TEntity>[]` plus `{ orderBy, limit }`, and the clauses compile straight to a `WHERE`: `partitionKey` and `rowKey` map to their columns, any other key to `json_extract(entity, '$.<field>')`, `not` to `NOT (...)`, a `null` value to a real `IS NULL`, and every value is a bound parameter. There is no filter-string grammar: no serializer, parser or tokenizer exists for a query, and every caller passes clauses. A transaction is one `db.batch`, and a conditional update inside it is preceded by a guard that fails the whole batch when its etag is stale. Azure's workarounds go with the service. An oldest-first read is the same `rowKey` ordered descending, a count is `COUNT(*)`, and a page is `LIMIT`. `MessagesAscending`, the reverse index that existed only for that read, is deleted, and a message's write is one row. Entity properties are not flattened, typed or size-checked, so that code is removed. Rejected: one typed Drizzle table per entity class, which rewrites every reader of every message kind for a shape the entity classes already describe.
+Every Azure Table becomes ordinary Drizzle tables in `core`, the one database: messages, their metadata (emoji reactions and the like), moderation logs and notes, program participants, resource activity, resource views and survey responses. A field that is read by a `WHERE`, an `ORDER BY`, a join or a foreign key is a real column with the index its query needs; a reference is a foreign key with its cascade, so deleting a room or a user removes its messages with no sweep; only a nested shape no query reads stays a JSON column. Rows take the schema's own ids and `createdAt`/`updatedAt`/`deletedAt` columns like every other table.
+
+Azure's workarounds go with the service, because SQLite sorts and counts natively. There is no partition key, no row key, no reverse-ticked timestamp, no etag and no entity serializer: newest-first is `ORDER BY createdAt DESC, id DESC` over an index on `(roomId, createdAt, id)`, a page is the app's one cursor pagination over the same columns, a count is `COUNT(*)`, and a view counter is one `INSERT … ON CONFLICT DO UPDATE SET count = count + 1` on a row per resource per day. A write touching messages and the relational tables — sending a message and moving its room's `updatedAt` — is one `db.batch`, since both live in one database.
+
+Rejected: a second `streams` database holding Azure Table's model as generic `partitionKey`/`rowKey`/`entity` JSON rows. It ported Azure's limitations into a database that has none of them, kept a clause compiler and an entity serializer alive only to emulate a key-value store, and made a write spanning messages and rooms two databases with no shared batch. Deferred: splitting messages into their own database or a Durable Object per room, revisited when `core` passes half of D1's per-database size limit.
 
 ## Search
 
-`messages_search` is an FTS5 table in `streams` over `message`, `filename` and `senderName`, with `partitionKey`, `rowKey`, `userId`, `createdAt` and `deletedAt` as unindexed columns. Every write of a message row writes its search row in the same batch; a soft delete sets `deletedAt` in both. `searchMessages` and `readMySentMessages` query it, weighting `message` 3 and `senderName` 1.5 in `bm25`, the `messageBoost` profile's weights. Deleting a room's documents is a delete by `partitionKey`.
+Message search is an FTS5 table declared with `content='messages'`, kept in step by SQLite triggers on insert, update and delete of the message row, so the index can never disagree with the message and no application code writes it. It indexes the message's plain text, its file names and the sender's name; a query is `MATCH` over user terms each quoted as a literal, joined back to `messages` for the room filter and the soft-delete filter, ranked by `bm25` with the message weighted 3 and the sender 1.5.
 
 ## Tests
 
-`packages/db-mock` creates a Miniflare instance with the two D1 databases, applies both migration folders, and returns the Drizzle clients; R2 buckets and Queues come from the same instance. One instance is shared per test file and its databases are emptied between tests. `azure-mock` and the PGlite dependency are deleted.
+`packages/db-mock` creates a Miniflare instance with the D1 database, applies its migration folder, and returns the Drizzle client; R2 buckets and Queues come from the same instance. One instance is shared per test file and its databases are emptied between tests. `azure-mock` and the PGlite dependency are deleted.
 
 ## Key files
 
-| File                                                           | Role after the change                          |
-| :------------------------------------------------------------- | :--------------------------------------------- |
-| `packages/db-schema/src/pgTable.ts`                            | replaced by the SQLite table factory           |
-| `packages/db-schema/src/models/PgTable.ts`                     | replaced by its SQLite type                    |
-| `packages/db-schema/src/createMetadataSchema.ts`               | SQLite timestamps                              |
-| `packages/db-schema/src/services/shared/createNameCheckSql.ts` | SQLite check SQL, as every sibling helper      |
-| `packages/db-schema/drizzle.config.ts`                         | the `core` and `streams` SQLite configurations |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`      | renamed to the stream table enum               |
-| `packages/db/src/services/azure/table/getTableClient.ts`       | replaced by the D1 stream table client         |
-| `packages/db/src/services/azure/search/getSearchClient.ts`     | replaced by FTS5 queries                       |
-| `apps/web/server/db/index.ts`                                  | Drizzle over the `core` binding                |
-| `apps/web/server/services/message/searchMessages.ts`           | reads `messages_search`                        |
-| `apps/web/server/services/rateLimiter/createRateLimiter.ts`    | the SQLite rate limiter table                  |
-| `packages/db-mock/src/createMockDb.ts`                         | Miniflare's D1 with both migration folders     |
-| `packages/azure-mock/package.json`                             | deleted                                        |
+| File                                                           | Role after the change                      |
+| :------------------------------------------------------------- | :----------------------------------------- |
+| `packages/db-schema/src/pgTable.ts`                            | replaced by the SQLite table factory       |
+| `packages/db-schema/src/models/PgTable.ts`                     | replaced by its SQLite type                |
+| `packages/db-schema/src/createMetadataSchema.ts`               | SQLite timestamps                          |
+| `packages/db-schema/src/services/shared/createNameCheckSql.ts` | SQLite check SQL, as every sibling helper  |
+| `packages/db-schema/drizzle.config.ts`                         | the `core` SQLite configuration            |
+| `packages/db-schema/src/models/azure/table/AzureTable.ts`      | renamed to the stream table enum           |
+| `packages/db/src/services/azure/table/getTableClient.ts`       | replaced by the D1 stream table client     |
+| `packages/db/src/services/azure/search/getSearchClient.ts`     | replaced by FTS5 queries                   |
+| `apps/web/server/db/index.ts`                                  | Drizzle over the `core` binding            |
+| `apps/web/server/services/message/searchMessages.ts`           | reads `messages_search`                    |
+| `apps/web/server/services/rateLimiter/createRateLimiter.ts`    | the SQLite rate limiter table              |
+| `packages/db-mock/src/createMockDb.ts`                         | Miniflare's D1 with both migration folders |
+| `packages/azure-mock/package.json`                             | deleted                                    |

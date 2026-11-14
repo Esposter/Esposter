@@ -4,14 +4,14 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md), run aft
 
 ## What moves
 
-| From                                                  | To                             | How                                                              |
-| :---------------------------------------------------- | :----------------------------- | :--------------------------------------------------------------- |
-| Railway Postgres (production and develop)             | D1 `core`                      | rows read in key order, transformed by column type, bulk-written |
-| Azure Table Storage, every `StreamTable`              | D1 `streams`                   | entities read page by page, written as JSON entities             |
-| the `Messages` table                                  | `messages_search` in `streams` | built from the copied messages, never from the Azure index       |
-| every Blob container                                  | its R2 bucket                  | streamed object by object, live pre-copy then a frozen delta     |
-| pending scheduled message jobs and TodoList reminders | Scheduler Durable Objects      | rescheduled from the copied rows, missed ones due at once        |
-| `esposter.com`'s DNS at Namecheap                     | a Cloudflare zone in Pulumi    | every record re-declared, then the nameservers changed           |
+| From                                                  | To                            | How                                                              |
+| :---------------------------------------------------- | :---------------------------- | :--------------------------------------------------------------- |
+| Railway Postgres (production and develop)             | D1 `core`                     | rows read in key order, transformed by column type, bulk-written |
+| Azure Table Storage, every table                      | its typed tables in D1 `core` | entities read page by page, mapped field by field to columns     |
+| Azure AI Search `messages-index`                      | the messages FTS5 table       | rebuilt from the copied messages, never from the Azure index     |
+| every Blob container                                  | its R2 bucket                 | streamed object by object, live pre-copy then a frozen delta     |
+| pending scheduled message jobs and TodoList reminders | Scheduler Durable Objects     | rescheduled from the copied rows, missed ones due at once        |
+| `esposter.com`'s DNS at Namecheap                     | a Cloudflare zone in Pulumi   | every record re-declared, then the nameservers changed           |
 
 Nothing else holds state: call sessions' participants are in memory, Redis holds only LiveKit's room state, the Azure Search index is rebuilt, and Event Grid and Service Bus are drained before the freeze.
 
@@ -60,7 +60,7 @@ One committed command, `pnpm -C scripts cutover <step> --environment <develop|pr
 - **`inventory`** — row counts per table, entity counts per stream table, object counts and bytes per container, and an estimated duration; nothing is written.
 - **`snapshot`** — the dump and exports above.
 - **`copy-objects [--delta]`** — streams each blob to its bucket with its content type and disposition, skipping an object already present with the same size and MD5. The delta lists again, copies what is new or changed since the pre-copy, and deletes from R2 what was deleted from Azure since.
-- **`copy-streams [--delta]`** — writes each entity as its JSON (system properties dropped, a fresh etag) and, for `Messages`, its `messages_search` row. The delta copies entities whose Azure `Timestamp` is after the pre-copy started, then compares the key sets of both sides and deletes what Azure no longer has.
+- **`copy-tables [--delta]`** — maps each Azure Table entity to its typed row: a reverse-ticked row key becomes its `createdAt`, the partition key its foreign key, and the row gets a UUID derived deterministically from the partition and row key (version 5 under one fixed namespace), so a reference to another entity — a reply, a forward, a pin — is remapped by recomputing the same UUID, with no lookup table, and a re-run writes the same ids. After the messages are copied, the FTS5 table is rebuilt with its own `rebuild` command. The delta copies entities whose Azure `Timestamp` is after the pre-copy started, then compares the key sets of both sides and deletes what Azure no longer has.
 - **`copy-core`** — the whole of Postgres, run only inside the freeze: each table in foreign-key order, rows read in primary-key order and transformed by the column's type in the D1 schema (timestamps to epoch milliseconds, booleans to integers, JSON to text, uuids to text), written through D1's HTTP API in batched, parameter-bound inserts — no value is ever spliced into SQL text. A table is cleared before it is written, so a re-run starts it clean.
 - **`rewrite-urls`** — rewrites every stored absolute Azure blob URL (the columns the storage part lists) to its public asset URL.
 - **`reschedule`** — schedules a Scheduler object for every scheduled message job neither completed nor cancelled, and for every incomplete TodoList item with a due date, through the same services the app schedules with; one whose time passed during the freeze is scheduled for now.

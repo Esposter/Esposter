@@ -7,7 +7,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). `apps/i
 `src/cloudflare/resources/` follows the estate's one-resource-per-file rule, foldered by the provider's resource type:
 
 - `r2Buckets/` — one per `StorageBucket`, prod and dev, with the `message-assets` lifecycle rule and the custom domain for the public buckets.
-- `d1Databases/` — `core` and `streams`, prod and dev.
+- `d1Databases/` — `core`, prod and dev.
 - `queues/` — one per `QueueJob` plus its dead-letter queue, prod and dev; the R2 event notifications that feed the reconcile and orphaned-image queues.
 - `workersCustomDomains/` — `esposter.com` to the prod web Worker, the develop hostname to the dev one.
 - `realtimeKitApps/` — the RealtimeKit app, if the provider declares one; otherwise the app is created once by its API and its id is a secret.

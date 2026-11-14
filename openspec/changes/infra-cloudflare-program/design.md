@@ -10,7 +10,7 @@ flowchart TD
   B -->|"page request"| W["web Worker<br/>(Nitro cloudflare_module, SSR)"]
   B -->|"/api/trpc and /ws"| W
   W -->|"forwards tRPC and WebSocket upgrades"| DO["$DurableObject 'server'<br/>tRPC router, EventEmitters, call maps"]
-  W -->|"stateless routes"| D1[("D1: core + streams")]
+  W -->|"stateless routes"| D1[("D1: core")]
   DO --> D1
   DO -->|"send job"| Q["Queues, one per job"]
   DO -->|"setAlarm(runAt)"| SCH["Scheduler Durable Object<br/>one per scheduled job"]
@@ -36,8 +36,8 @@ The order that matters is the publish path. A mutation runs inside the Durable O
 | Railway Node process (`node-server` preset)  | web Worker, `cloudflare_module` preset, Workers Static Assets | [runtime](../infra-cloudflare-runtime/design.md)   |
 | In-process EventEmitters and call maps       | Nitro's `$DurableObject` instance `server`                    | [runtime](../infra-cloudflare-runtime/design.md)   |
 | Railway Postgres                             | D1 database `core`                                            | [database](../infra-cloudflare-database/design.md) |
-| Azure Table Storage                          | D1 database `streams`                                         | [database](../infra-cloudflare-database/design.md) |
-| Azure AI Search `messages-index`             | FTS5 table in `streams`, written with the message             | [database](../infra-cloudflare-database/design.md) |
+| Azure Table Storage                          | typed tables in D1 `core`                                     | [database](../infra-cloudflare-database/design.md) |
+| Azure AI Search `messages-index`             | FTS5 table over `messages`, kept by triggers                  | [database](../infra-cloudflare-database/design.md) |
 | PGlite in tests, `azure-mock`                | Miniflare's D1, R2 and Queues                                 | [database](../infra-cloudflare-database/design.md) |
 | Azure Blob Storage                           | R2, one bucket per container                                  | [storage](../infra-cloudflare-storage/design.md)   |
 | Event Grid custom topic + Functions          | one Queue per job, the functions Worker consuming them        | [jobs](../infra-cloudflare-jobs/design.md)         |
@@ -56,11 +56,11 @@ The order that matters is the publish path. A mutation runs inside the Durable O
 
 **Sharding waits for a measured ceiling.** One Durable Object runs one thread, and Cloudflare documents its soft ceiling in the order of a thousand requests a second. When the object's CPU or request rate approaches that, rooms move to an object each, keyed by room id, and the emitters become per-room. Until then a second object is a second process, with nothing to coordinate it.
 
-**Every row moves to D1, Postgres is retired.** D1 is SQLite in the same account, reached by a binding with no connection to pool, billed inside the paid plan. Two databases split the data the way Postgres and Azure Table split it today: `core` holds the relational schema, `streams` the append-heavy tables Azure Table holds now, so neither nears D1's per-database limit and no query ever joined across the two. Rejected: Postgres on PlanetScale behind Hyperdrive, which keeps the schema but adds a second vendor, a connection pool and a per-request driver; Cloudflare also states that Drizzle with the `postgres` driver is not supported over Hyperdrive, so the driver would change anyway. Rejected: the Durable Object's own SQLite as the database, which makes every reader — the functions Worker, every SSR request — a client of one object, and caps the whole store at one object's storage.
+**Every row moves to D1, Postgres is retired.** D1 is SQLite in the same account, reached by a binding with no connection to pool, billed inside the paid plan. One database, `core`, holds the relational schema and the data Azure Table holds today as typed tables, so a message and its room are joined, foreign-keyed and written in one batch. Rejected: Postgres on PlanetScale behind Hyperdrive, which keeps the schema but adds a second vendor, a connection pool and a per-request driver; Cloudflare also states that Drizzle with the `postgres` driver is not supported over Hyperdrive, so the driver would change anyway. Rejected: the Durable Object's own SQLite as the database, which makes every reader — the functions Worker, every SSR request — a client of one object, and caps the whole store at one object's storage.
 
 **D1 has no interactive transaction, so a transaction becomes a batch or a constraint.** `db.batch([...])` runs its statements atomically; a transaction that reads and then decides becomes a single conditional statement (`INSERT ... ON CONFLICT`, `UPDATE ... WHERE` with a returning clause) or a unique constraint that makes the losing write fail. The [database part](../infra-cloudflare-database/design.md) lists every transaction and its replacement.
 
-**Search is written with the message.** The FTS5 table in `streams` is updated in the same batch as the message row, so a sent message is searchable at once, where the Azure indexer took up to five minutes. This replaces the [search index capacity](../../deferred/infra/search-index-capacity/design.md) concern with D1's per-database limit.
+**Search cannot lag the message.** The FTS5 table reads `messages` as its content and SQLite triggers keep it in step with every write, so a sent message is searchable at once, where the Azure indexer took up to five minutes. This replaces the [search index capacity](../../deferred/infra/search-index-capacity/design.md) concern with D1's per-database limit.
 
 **One Queue per job, named after it.** The `AzureFunction` enum already names each job and its idempotency; each becomes a `QueueJob` with its own queue and dead-letter queue, so retries and failures stay per job as Event Grid subscriptions kept them. Rejected: one queue with a discriminated payload, which shares one retry policy and one dead-letter queue across jobs with different idempotency.
 
@@ -119,7 +119,7 @@ The cutover is the last part and runs after the branch is merged.
 | `apps/web/server/db/index.ts`                                     | the Drizzle client over the `core` D1 binding                 |
 | `packages/db-schema/src/pgTable.ts`                               | replaced by the SQLite table factory                          |
 | `packages/db-schema/drizzle.config.ts`                            | the SQLite dialect and the D1 migrations folder               |
-| `packages/db/src/services/azure/table/getTableClient.ts`          | replaced by the `streams` tables                              |
+| `packages/db/src/services/azure/table/getTableClient.ts`          | replaced by typed tables in `core`                            |
 | `packages/db/src/services/azure/container/generateWriteSasUrl.ts` | replaced by the presigned R2 PUT                              |
 | `packages/db-schema/src/models/azure/function/AzureFunction.ts`   | renamed to the queue job enum                                 |
 | `apps/functions/package.json`                                     | the functions Worker                                          |
