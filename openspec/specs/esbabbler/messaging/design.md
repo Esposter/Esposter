@@ -28,7 +28,7 @@ sequenceDiagram
     T->>T: roomEventEmitter.emit("updateRoom") — bumps room.updatedAt
 ```
 
-Real-time delivery is owned by [Azure services](../../architecture/azure-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. Clients get a scoped access URL via `generateWebPubSubClientAccessUrl`, and a member who leaves or is removed is taken out of the room's group, device by device ([azure services](../../architecture/azure-services/design.md)).
+Real-time delivery is owned by [Cloudflare services](../../architecture/cloudflare-services/design.md), and a [cross-process event bridge](../../../deferred/esbabbler/cross-process-event-bridge/design.md) is decided against for now. Clients get a scoped access URL via `generateWebPubSubClientAccessUrl`, and a member who leaves or is removed is taken out of the room's group, device by device ([azure services](../../architecture/azure-services/design.md)).
 
 Push notification filtering and delivery detail lives in [push notifications](../push-notifications/design.md).
 
@@ -80,8 +80,8 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 | `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                               |
 | `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                              |
 | `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                |
-| `searchMessages`                  | member | Filtered search via the `messages_search` FTS5 index                                                                                                                  |
-| `readMySentMessages`              | authed | Cross-room sent list from the `messages` table                                                                                                                     |
+| `searchMessages`                  | member | Filtered search via the `messages_search` FTS5 index                                                                                                           |
+| `readMySentMessages`              | authed | Cross-room sent list from the `messages` table                                                                                                                 |
 | `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                             |
 | `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
 | `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                            |

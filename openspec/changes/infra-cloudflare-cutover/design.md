@@ -87,17 +87,17 @@ Incoming webhooks change address, from an Azure Function URL to `esposter.com/ap
 
 ## Teardown
 
-Once the window closes: the Railway services are deleted, the one step done in a dashboard; the Azure resource files are deleted from `apps/infra/src/azure` with `protect` removed in the same change, and `pulumi up` deletes them; the `cutover-archive` bucket and the cutover command are deleted; `openspec/specs/architecture/azure-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
+Once the window closes: the Railway services are deleted, the one step done in a dashboard; the Azure resource files are deleted from `apps/infra/src/azure` with `protect` removed in the same change, and `pulumi up` deletes them; the `cutover-archive` bucket and the cutover command are deleted; `openspec/specs/architecture/cloudflare-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
 
 ## Key files
 
-| File                                                   | Role after the change                |
-| :----------------------------------------------------- | :----------------------------------- |
-| `apps/infra/src/azure/resources`                       | deleted at teardown                  |
-| `apps/infra/src/index.ts`                              | exports the zone and its records     |
-| `scripts/package.json`                                 | the `cutover` script while it exists |
-| `openspec/specs/architecture/azure-services/design.md` | rewritten for Cloudflare             |
-| `openspec/specs/infra/README.md`                       | the shipped log line for the program |
+| File                                                        | Role after the change                |
+| :---------------------------------------------------------- | :----------------------------------- |
+| `apps/infra/src/azure/resources`                            | deleted at teardown                  |
+| `apps/infra/src/index.ts`                                   | exports the zone and its records     |
+| `scripts/package.json`                                      | the `cutover` script while it exists |
+| `openspec/specs/architecture/cloudflare-services/design.md` | rewritten for Cloudflare             |
+| `openspec/specs/infra/README.md`                            | the shipped log line for the program |
 
 ## Ids and messages after the realtime change
 

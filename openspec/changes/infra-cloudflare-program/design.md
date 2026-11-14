@@ -129,4 +129,4 @@ The cutover is the last part and runs after the branch is merged.
 | `packages/azure/package.json`                                     | deleted                                                       |
 | `livekit-server/Dockerfile`                                       | deleted                                                       |
 | `livekit-monitor/Dockerfile`                                      | deleted                                                       |
-| `openspec/specs/architecture/azure-services/design.md`            | rewritten as the Cloudflare services page at the cutover      |
+| `openspec/specs/architecture/cloudflare-services/design.md`       | rewritten as the Cloudflare services page at the cutover      |

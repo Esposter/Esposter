@@ -91,8 +91,8 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 
 | Subject                                                                      | Owner                                                       |
 | :--------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| Storage split, Azure service map, Functions, Event Grid, Service Bus, PubSub | `openspec/specs/architecture/azure-services/design.md`      |
-| Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `openspec/specs/architecture/azure-services/design.md`      |
+| Storage split, Azure service map, Functions, Event Grid, Service Bus, PubSub | `openspec/specs/architecture/cloudflare-services/design.md` |
+| Real-time — EventEmitter subscriptions vs Web PubSub fan-out                 | `openspec/specs/architecture/cloudflare-services/design.md` |
 | Notifications — the one event, Function and delivery path                    | `openspec/specs/architecture/notifications/design.md`       |
 | RBAC — permission bitfield, hierarchy, the service functions                 | `openspec/specs/esbabbler/rbac/design.md`                   |
 | Moderation — `AdminActionType` and every place it touches                    | `openspec/specs/esbabbler/moderation/design.md`             |

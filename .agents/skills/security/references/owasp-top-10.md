@@ -56,7 +56,7 @@ Read when reviewing a change or a sweep unit for security. There is one section 
 
 - Does the change rely on the better-auth session, OAuth-only, and not a second login path (`openspec/specs/architecture/auth/design.md`)?
 - Does a token that stands in for a session (a webhook's secret url) stay out of logs and query strings a third party sees, and can it be rotated?
-- Does a realtime connection authorize when it is made and again for each group it joins (`openspec/specs/architecture/azure-services/design.md`)?
+- Does a realtime connection authorize when it is made and again for each group it joins (`openspec/specs/architecture/cloudflare-services/design.md`)?
 
 ## A08 Software or Data Integrity Failures
 
