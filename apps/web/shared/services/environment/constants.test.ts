@@ -1,9 +1,8 @@
 import type { WebEnvironmentVariables } from "#shared/models/environment/WebEnvironmentVariables";
 
-import { CloudflareEnvironment } from "@esposter/db-schema";
-
 import { Environment } from "#shared/models/environment/Environment";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
+import { CloudflareEnvironment } from "@esposter/db-schema";
 
 // Every variable the schema requires, so a test runs against an environment the start-up check would accept and a
 // Variable added to the interface fails here until it is given a value. The optional RealtimeKit ones are left out, which

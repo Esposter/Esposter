@@ -1,4 +1,5 @@
 import type { z } from "zod";
+
 import { refineAtLeastOne, selectUserSettingsInMessageSchema } from "@esposter/db-schema";
 
 const updatableUserSettingsSchema = selectUserSettingsInMessageSchema.pick({

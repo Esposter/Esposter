@@ -7,5 +7,5 @@ import type { PublicUser, RoomMessage } from "@esposter/db-schema";
 // Session at every call site.
 export const checkIsMessageAuthor = (
   message: Pick<RoomMessage, "userId">,
-  userId: PublicUser["id"] | null | undefined,
+  userId: null | PublicUser["id"] | undefined,
 ) => Boolean(message.userId) && message.userId === userId;

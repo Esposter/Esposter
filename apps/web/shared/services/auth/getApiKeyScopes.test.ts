@@ -1,5 +1,5 @@
-import { McpScope } from "@esposter/db-schema";
 import { getApiKeyScopes } from "#shared/services/auth/getApiKeyScopes";
+import { McpScope } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(getApiKeyScopes, () => {

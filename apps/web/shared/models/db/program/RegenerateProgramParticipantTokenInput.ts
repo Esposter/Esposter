@@ -1,7 +1,6 @@
+import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { selectProgramParticipantInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
-
-import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 
 // A participant is named by its key value, the identity the status blade lists it under, within its program
 export const regenerateProgramParticipantTokenInputSchema = z.object({

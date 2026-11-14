@@ -2,8 +2,8 @@
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
-import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
 import type { uploadFileToUrl } from "@/services/file/uploadFileToUrl";
+import type { ResourceInResource, ResourcePublicationInResource, ResourceTags } from "@esposter/db-schema";
 
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { MAX_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -36,7 +36,7 @@ vi.mock(import("@/services/resource/encodeContentDelta"), () => ({
   encodeContentDelta: () => Promise.resolve(new Uint8Array(1)),
 }));
 // The write is an XMLHttpRequest, which the test environment does not answer at the network the way fetch is. The staged
-// path's own steps are what these tests hold, so the PUT is a stored success rather than a request
+// Path's own steps are what these tests hold, so the PUT is a stored success rather than a request
 const { uploadFileToUrlMock } = vi.hoisted(() => ({
   uploadFileToUrlMock: vi.fn<typeof uploadFileToUrl>(() => Promise.resolve()),
 }));
@@ -937,7 +937,7 @@ describe(useResourceStore, () => {
   });
 
   // The user socket names the version and the key only, so every open resource of every type is told of another
-  // device's save through the same store door
+  // Device's save through the same store door
   test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
     "an open resource of any type hears another device's save (%s)",
     async (type) => {

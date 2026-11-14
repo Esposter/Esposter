@@ -2,7 +2,7 @@ import { roomIdSchema, roomMessageSchema, sanitizedMessageSchema } from "@espost
 import { z } from "zod";
 
 // A chat message to send later, from the room it is for, at the time it is due. The room's object sends it and applies
-// the sender's rules when it comes due
+// The sender's rules when it comes due
 export const createScheduledMessageInputSchema = z.object({
   message: sanitizedMessageSchema,
   replyToId: roomMessageSchema.shape.replyToId,

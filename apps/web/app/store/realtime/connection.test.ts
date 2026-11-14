@@ -23,7 +23,7 @@ describe(useConnectionStore, () => {
   });
 
   // A room's frame reaches its handler with the room its socket was opened for, since a message is named by its room and
-  // its integer id and the frame names neither
+  // Its integer id and the frame names neither
   test("dispatches a room frame to the handlers of its type with the room the socket was opened for", async () => {
     expect.hasAssertions();
 

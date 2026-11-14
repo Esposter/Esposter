@@ -25,7 +25,7 @@ describe(useThreadStore, () => {
   const userId = v7();
   const message = "message";
   const threadRootId = 1;
-  const createReply = (replyToId: null | ClientMessage["id"] = null) =>
+  const createReply = (replyToId: ClientMessage["id"] | null = null) =>
     createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
 
   beforeEach(() => {

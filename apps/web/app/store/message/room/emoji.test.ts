@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
+
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { v7 } from "uuid";

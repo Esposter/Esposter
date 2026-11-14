@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
+import { DatabaseEntityType, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Built once and shared between the save procedure and the client save-conflict surface so detection can never drift

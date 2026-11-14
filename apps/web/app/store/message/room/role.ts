@@ -7,9 +7,10 @@ import type { ReadMemberPermissionOverridesInput } from "#shared/models/db/role/
 import type { ReadMemberRolesInput } from "#shared/models/db/role/ReadMemberRolesInput";
 import type { ReadMyPermissionsInput } from "#shared/models/db/role/ReadMyPermissionsInput";
 import type { ReadRolesInput } from "#shared/models/db/role/ReadRolesInput";
-import type { RevokeRoleInput, RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
 import type { UpdateRoleInput } from "#shared/models/db/role/UpdateRoleInput";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
+import type { RevokeRoleInput, RoomPermission, RoomRoleInMessage } from "@esposter/db-schema";
+
 import { checkIsManageable as baseCheckIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
 import { MANAGEMENT_PERMISSIONS } from "@/services/room/rbac/constants";

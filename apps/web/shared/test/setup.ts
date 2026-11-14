@@ -68,7 +68,7 @@ vi.mock(import("#server/services/storage/getBucket"), () => import("#server/serv
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
 // The global database reads its Worker binding when its module loads, before a suite has made the mock database that
-// fills the binding, so it is registered over a double that reads the binding on first use
+// Fills the binding, so it is registered over a double that reads the binding on first use
 vi.mock(import("#server/db"), () => import("#server/db/index.test"));
 // The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
 const EmptyGridEngine = function () {};

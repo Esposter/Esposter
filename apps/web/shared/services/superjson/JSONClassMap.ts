@@ -1,12 +1,12 @@
 import type { Serializable } from "@esposter/shared";
 import type { Class } from "type-fest";
+
 import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { Chart } from "#shared/models/dashboard/data/chart/Chart";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
-import { MessageEmojiMetadataEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
@@ -17,6 +17,7 @@ import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn"
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { MessageEmojiMetadataEntity, StandardMessageEntity, WebhookMessageEntity } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {

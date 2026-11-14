@@ -5,7 +5,7 @@ import { CloudflareEnvironment } from "@esposter/db-schema";
 import { z } from "zod";
 
 // Every variable the web Worker reads. A secret is marked by `.meta({ secret: true })`: a deploy uploads each marked one
-// from Pulumi ESC as a Worker secret, and every other one is a wrangler var nitro.ts writes into its environment's block.
+// From Pulumi ESC as a Worker secret, and every other one is a wrangler var nitro.ts writes into its environment's block.
 // RealtimeKit is optional — a deployment without it runs calls with no media server — so its two variables may be absent
 export interface WebEnvironmentVariables {
   APP_ENV: Environment;

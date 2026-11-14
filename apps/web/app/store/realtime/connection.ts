@@ -1,9 +1,9 @@
-import type { z } from "zod";
 import type { RoomEvent } from "@esposter/db-schema";
+import type { z } from "zod";
 
-import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
 import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
+import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
 type EventData<TEvent extends { data: unknown; type: string }, TType extends TEvent["type"]> = Extract<
@@ -12,9 +12,9 @@ type EventData<TEvent extends { data: unknown; type: string }, TType extends TEv
 >["data"];
 
 // The handlers a scope's frames reach, keyed by the frame's type. A frame is parsed by its scope's schema before any handler
-// sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state, since none is read.
+// Sees it, and a frame that fails the schema is logged and dropped. Handlers are held outside reactive state, since none is read.
 // The context is what the socket that carried the frame was opened for: a room's socket names its room, since a message is
-// named by its room and its integer id, and a frame carries neither
+// Named by its room and its integer id, and a frame carries neither
 const createEventHub = <TEvent extends { data: unknown; type: string }, TContext = undefined>(
   schema: z.ZodType<TEvent>,
 ) => {
@@ -34,8 +34,9 @@ const createEventHub = <TEvent extends { data: unknown; type: string }, TContext
 
   const dispatch = (text: string, context: TContext) => {
     const frame = schema.safeParse(jsonDateParse(text));
-    if (!frame.success) console.error(frame.error);
-    else for (const handler of handlers.get(frame.data.type) ?? []) handler(frame.data.data as never, context);
+    if (frame.success)
+      for (const handler of handlers.get(frame.data.type) ?? []) handler(frame.data.data as never, context);
+    else console.error(frame.error);
   };
 
   return { dispatch, on };
@@ -50,7 +51,7 @@ const createSocketUrl = (path: string, after?: number) => {
 };
 
 // The one place the app's live sockets are opened and closed: the person's own socket, the socket of the room a page
-// shows and the socket of the call a person is in. Each frame is dispatched to the handlers registered for its type
+// Shows and the socket of the call a person is in. Each frame is dispatched to the handlers registered for its type
 export const useConnectionStore = defineStore("realtime/connection", () => {
   const roomHub = createEventHub<RoomEvent, string>(roomEventSchema);
   const callHub = createEventHub(callEventSchema);
@@ -98,7 +99,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   };
   // A room's socket replays what it missed after the last message the page holds, read again at every reconnect, and
   // `onReopen` runs after each reconnect, since an edit made while the socket was closed is not replayed. The promise
-  // settles once the first attempt opens or closes, so a read issued after it misses no change the socket carries
+  // Settles once the first attempt opens or closes, so a read issued after it misses no change the socket carries
   const openRoom = (roomId: string, getLastMessageId: () => number | undefined, onReopen: () => void) => {
     closeRoom();
     const { promise, resolve } = Promise.withResolvers<void>();
