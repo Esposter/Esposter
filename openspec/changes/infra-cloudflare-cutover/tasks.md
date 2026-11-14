@@ -8,7 +8,7 @@
 ## 2. The cutover command
 
 - [ ] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-tables`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
-- [ ] 2.2 Freeze by scaling Railway's web service to no replicas, with no maintenance mode in the old app (design, "The freeze"). Verified in the rehearsal by the develop app answering from Railway's edge rather than the app while frozen, and again after scaling back up.
+- [x] 2.2 Freeze by disconnecting Railway's source and removing its running deployment, with no maintenance mode in the old app (design, "The freeze"). Verified on develop: 404 while frozen, 200 after the abort's pinned redeploy, 404 again once refrozen.
 
 ## 3. Rehearsal
 
