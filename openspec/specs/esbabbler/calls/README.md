@@ -119,7 +119,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | the call socket `/ws/call/[callSessionId]`, frames `joinCall` / `leaveCall` / `muteChanged` / `videoChanged` / `handRaisedChanged` | joined or knocking | the object broadcasts each frame to the call's sockets                               |
 | frames `knockCall` (creator's sockets), `knockerAdmitted` / `knockerDismissed` (the knocker's own session)                         | creator / knocker  | the call socket                                                                      |
 
-The subscriptions above are gated when they open, and then end when the subscriber's access lapses. In a room, a call's subscriptions end when the subscriber leaves that room, by a leave, a kick or a ban, as the room's own streams end (`onWhileCallRoomMember`). A standalone call has no room to leave, so its subscriptions end when the subscriber's own session leaves the call: its `leaveCall`, or the LiveKit disconnect that calls it. Both leave with the same event every participant removal emits.
+A call's events reach a socket only while its session is joined or knocking on the call: the call object refuses any other socket when it opens, and a leave closes that session’s sockets. In a room, a member removed from the room leaves the call the same way a kick or a ban does, through `evictUser`. A standalone call ends for a participant when its own session leaves, by `leaveCall` or by the RealtimeKit webhook that reports the disconnect.
 
 Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAudio]` with `room: callSessionId` and `metadata: { userId }`.
 
@@ -139,18 +139,17 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 ## Key files
 
-| File                                                             | Role                                                                        |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/callSessionsInMessage.ts` | session anchor table                                                        |
-| `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)                           |
-| `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)                            |
-| `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                                    |
-| `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership or a standalone leave |
-| `apps/web/server/services/message/call/onWhileJoinedCall.ts`     | the same stream behind the join gate, for the participant subscriptions     |
-| `apps/web/server/api/webhooks/realtimekit.post.ts`               | webhook backup for join/leave                                               |
-| `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                                 |
-| `apps/web/app/store/message/room/realtime.ts`                    | RealtimeKit meeting bridge                                                  |
-| `apps/web/app/pages/calls/`                                      | standalone lobby (`index.vue`) + call route (`[id].vue`)                    |
+| File                                                             | Role                                                           |
+| :--------------------------------------------------------------- | :------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/callSessionsInMessage.ts` | session anchor table                                           |
+| `apps/web/server/trpc/routers/call/index.ts`                     | all call procedures (registered as `callSession`)              |
+| `apps/web/server/trpc/routers/call/knocker.ts`                   | waiting-room procedures (merged under `knocker`)               |
+| `apps/web/server/services/message/call/`                         | guards, the call object accessor and the summary writer        |
+| `apps/functions/src/durableObjects/CallObject.ts`                | the call's state, its sockets and its RealtimeKit participants |
+| `apps/web/server/api/webhooks/realtimekit.post.ts`               | webhook backup for join/leave                                  |
+| `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                    |
+| `apps/web/app/store/message/room/realtime.ts`                    | RealtimeKit meeting bridge                                     |
+| `apps/web/app/pages/calls/`                                      | standalone lobby (`index.vue`) + call route (`[id].vue`)       |
 
 ## Notes
 
