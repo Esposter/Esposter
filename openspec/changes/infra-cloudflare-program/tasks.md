@@ -48,20 +48,7 @@ A session taking the program up cold, on any machine, starts from [the handoff](
 
 ## 7. Deploy and cutover
 
-- [ ] 7.1 Deploy both Workers to the develop estate with `wrangler deploy`, then run the second `pulumi up` for the queue consumers and custom domains, so `ai/queue` deploys to `dev.esposter.com` and `main` to `esposter.com`; each OAuth app (GitHub, Google, Facebook) lists `https://dev.esposter.com` and `https://esposter.com` callbacks in place of the Railway hosts. Verified by `dev.esposter.com` serving and a sign-in on it.
-      The console settings, each replacing the Railway host (better-auth serves its callbacks under `/api/auth/callback/<provider>`):
-
-  | Provider | Field                         | Dev app                                               | Prod app                                          |
-  | :------- | :---------------------------- | :---------------------------------------------------- | :------------------------------------------------ |
-  | GitHub   | Homepage URL                  | `https://dev.esposter.com`                            | `https://esposter.com`                            |
-  | GitHub   | Authorization callback URL    | `https://dev.esposter.com/api/auth/callback/github`   | `https://esposter.com/api/auth/callback/github`   |
-  | Google   | Authorized JavaScript origins | `https://dev.esposter.com`                            | `https://esposter.com`                            |
-  | Google   | Authorized redirect URIs      | `https://dev.esposter.com/api/auth/callback/google`   | `https://esposter.com/api/auth/callback/google`   |
-  | Facebook | App domains                   | `dev.esposter.com`                                    | `esposter.com`                                    |
-  | Facebook | Website site URL              | `https://dev.esposter.com`                            | `https://esposter.com`                            |
-  | Facebook | Valid OAuth redirect URIs     | `https://dev.esposter.com/api/auth/callback/facebook` | `https://esposter.com/api/auth/callback/facebook` |
-
-  Local development keeps `http://localhost:3000` on the dev apps.
+- [ ] 7.1 Deploy the Workers to the develop estate with `wrangler deploy`, then run the second `pulumi up` for the queue consumers and custom domains, so `ai/queue` deploys to `dev.esposter.com` and `main` to `esposter.com`. The OAuth apps keep production's callbacks alone: better-auth's `oAuthProxy` sends a sign-in on any other origin through production (the [auth design](../../specs/architecture/auth/design.md)), so no provider console changes. Verified by `dev.esposter.com` serving and, once production runs the proxy, a sign-in on it.
 
 - [ ] 7.2 Confirm the deploy job runs migrations before `wrangler deploy`, uploads secrets with `wrangler secret bulk`, and is never cancelled mid-deploy. Verified by one green deploy run.
 - [x] 7.3 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and import each room's messages and pending scheduled messages into its object (realtime 4.1), then rehearse the whole cutover on the develop estate. Verified by `verify` passing on develop.
