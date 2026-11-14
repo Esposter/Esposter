@@ -58,6 +58,9 @@ const knipConfiguration: KnipConfig = {
         // Nothing in the app imports it
         "rollup-plugin-visualizer",
         "temporal-polyfill",
+        // The module is registered by its source path in `configuration/modules.ts`, which `nuxt prepare` loads before any
+        // Workspace package is built, so the app declares it for a narrowed install and nothing imports it
+        "tresjs-nuxt",
       ],
     },
     "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
