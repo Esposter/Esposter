@@ -1,9 +1,6 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { MessageEntity } from "@esposter/db-schema";
-import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-
 import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // One serialised value per sort item, base64-encoded (see serialize) — sized for the longest sort a read accepts
@@ -14,16 +11,6 @@ export const SORT_BY_MAX_LENGTH = 16;
 // Paces waypoint-driven refetches so a permanently failing query can't spin into a hot retry loop
 export const BACKOFF_BASE_DELAY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 export const BACKOFF_MAX_DELAY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
-// rowKeys are reverse-ticked, so ascending is newest-first: the order every paginated read of a message opens on.
-export const MESSAGE_ROW_KEY_SORT_ITEM = {
-  key: CompositeKeyPropertyNames.rowKey,
-  order: SortOrder.Asc,
-} as const satisfies SortItem<keyof MessageEntity>;
-// The same rowKey read descending is oldest-first, the order a reader paging forward through a room takes.
-export const MESSAGE_OLDEST_FIRST_SORT_ITEM = {
-  key: CompositeKeyPropertyNames.rowKey,
-  order: SortOrder.Desc,
-} as const satisfies SortItem<keyof MessageEntity>;
 // Newest-first, the default every paginated read of a timestamped entity opens on.
 export const CREATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.createdAt,
@@ -31,9 +18,6 @@ export const CREATED_AT_DESCENDING_SORT_ITEM = {
 } as const satisfies SortItem<typeof ItemMetadataPropertyNames.createdAt>;
 // The sort of every creation-ordered cursor. An id is a UUIDv7, unique and time-ordered, so it orders rows by creation on its own
 export const ID_DESCENDING_SORT_ITEM = { key: "id", order: SortOrder.Desc } as const satisfies SortItem<"id">;
-// A room's messages are paged newest-first on id, which is creation order. A cursor over them is the values of this
-// Sort, so a page can name a message and read on from it in either direction
-export const MESSAGE_SORT_BY = [ID_DESCENDING_SORT_ITEM];
 // Most-recently-touched first, the default every paginated read of a mutable entity opens on.
 export const UPDATED_AT_DESCENDING_SORT_ITEM = {
   key: ItemMetadataPropertyNames.updatedAt,

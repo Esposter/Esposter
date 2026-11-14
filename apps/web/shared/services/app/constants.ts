@@ -10,7 +10,6 @@ export const RIGHT_DRAWER_WIDTH = 256;
 // Graph (zod, neverthrow, node-html-parser) into config evaluation
 export const KIBIBYTE = 2 ** 10;
 export const MEGABYTE = KIBIBYTE ** 2;
-export const GIBIBYTE = MEGABYTE * KIBIBYTE;
 // The request body limit, which the request size limiter answers with a 413 before reading the body, whatever Content-Type
 // The request claims. A body that can outgrow it — a large resource's content — is committed by reference instead (openspec/specs/architecture/file-uploads/design.md)
 export const MAX_REQUEST_SIZE = 2_000_000;
