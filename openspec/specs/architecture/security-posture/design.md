@@ -2,7 +2,7 @@
 
 The app's runtime hardening is [`nuxt-security-module`](../../nuxt-security-module/README.md) and is registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. The source lists in `configuration/security.ts` are the one part a unit test reaches, through `configuration/security.test.ts`; the headers a running server sends are not.
 
-This page covers the **app**. The Azure estate's posture — network exposure, managed identities, key handling — is owned by the [cost and security posture](../../infra/cost-and-security-posture/design.md).
+This page covers the **app**. The deployed estate's posture — network exposure, credentials, key handling — is owned by the [cost and security posture](../../infra/cost-and-security-posture/design.md).
 
 ## How it works
 
@@ -28,7 +28,7 @@ flowchart TD
 
 `script-src-attr` stays `'none'` for every inline handler but one: `@nuxt/image's` `NuxtImg` server-renders `onerror="this.setAttribute('data-error', 1)"` on each image, which the browser blocked as a violation on every image of a page. The config lists `'unsafe-hashes'` and the `sha256` of that exact string, so no other inline handler runs, and its test reads the module's components for the string, so an upgrade that rewords it fails the test rather than the page (`apps/web/configuration/security.ts`, `apps/web/configuration/security.test.ts`). The module drops a default `'none'` when a source is added beside it, since a browser ignores `'none'` with other sources and warns (`packages/nuxt-security-module/src/services/mergeModuleOptions.ts`). Upstream has an open issue and an open pull request for a handler a policy can allow (nuxt/image#1011, #1884); the hash goes when a release ships it.
 
-`connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names `blob:` for Three.js GLTFLoader's embedded textures, the Azure container, the LiveKit socket and its HTTPS region lookup, Web PubSub, and the two hosts `@livekit/track-processors` fetches its wasm and segmenter model from; `media-src` names the container and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
+`connect-src` and `media-src` are written in the security config as well, since `default-src 'self'` would otherwise cover them: `connect-src` names `blob:` for Three.js GLTFLoader's embedded textures, the R2 endpoint that presigned URLs point at, the public assets host, and RealtimeKit's REST, signalling and socket origins; `media-src` names the R2 endpoint, the public assets host and `blob:`. Each entry carries its reason beside it in `configuration/security.ts`, and `configuration/security.test.ts` pins them.
 
 ### Embedder policy
 
@@ -44,11 +44,11 @@ The module's `sri` is left at its default, so every script the page loads carrie
 
 ### Permissions policy
 
-`permissionsPolicy` scopes `camera`, `microphone`, `display-capture` and `fullscreen` to `self`, and also opens `autoplay`, `clipboard-read`, `clipboard-write` and `gamepad` to `self` for the features that call them, each named beside its entry in `configuration/security.ts`. The first three exist for LiveKit — [voice and video](../../esbabbler/voice-video/design.md) cannot acquire tracks without them — and `fullscreen` for the PDF viewer and the call view's stage. Scoping to `self` rather than leaving them at the module default means an embedded third-party frame cannot inherit the app's grant.
+`permissionsPolicy` scopes `camera`, `microphone`, `display-capture` and `fullscreen` to `self`, and also opens `autoplay`, `clipboard-read`, `clipboard-write` and `gamepad` to `self` for the features that call them, each named beside its entry in `configuration/security.ts`. The first three exist for calls — [voice and video](../../esbabbler/voice-video/design.md) cannot acquire tracks without them — and `fullscreen` for the PDF viewer and the call view's stage. Scoping to `self` rather than leaving them at the module default means an embedded third-party frame cannot inherit the app's grant.
 
 ### Request size
 
-`requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` alone, the constant that bounds the tRPC body. The module reads a request's limit from the route it matches, never from its `Content-Type`, so a request claiming `multipart/form-data` is held to the same limit as any other, and no route names a larger one, since no route reads a multipart body: files travel to Blob Storage by SAS. `MAX_FILE_REQUEST_SIZE` bounds the declared size of an upload and is not a body limit. The upload path is documented in [file uploads](../file-uploads/design.md) — this config is only where the module is told about the body limit.
+`requestSizeLimiter` is wired to `MAX_REQUEST_SIZE` alone, the constant that bounds the tRPC body. The module reads a request's limit from the route it matches, never from its `Content-Type`, so a request claiming `multipart/form-data` is held to the same limit as any other, and no route names a larger one, since no route reads a multipart body: files travel to R2 by presigned URL. `MAX_FILE_REQUEST_SIZE` bounds the declared size of an upload and is not a body limit. The upload path is documented in [file uploads](../file-uploads/design.md) — this config is only where the module is told about the body limit.
 
 ### The image policy
 
@@ -58,7 +58,7 @@ The accepted cost is a privacy one, and it is accepted rather than unnoticed: a 
 
 ## Deliberately off
 
-- **`rateLimiter: false`** — the module ships an in-memory rate limiter, and the app has its own Postgres-backed one that is shared across instances. Two mechanisms would mean two answers to the same question, so the module's is disabled and [rate limiting](../rate-limiting/design.md) is the single mechanism. better-auth is handed the same numbers but keeps its own per-process counters, which that page records.
+- **`rateLimiter: false`** — the module ships an in-memory rate limiter, and the app has its own D1-backed one that is shared across instances. Two mechanisms would mean two answers to the same question, so the module's is disabled and [rate limiting](../rate-limiting/design.md) is the single mechanism. better-auth is handed the same numbers but keeps its own per-process counters, which that page records.
 - **The XSS validator is out of scope** — the upstream's "xssValidator", which runs every request body through `FilterXSS` and rejects the request if the filter would change it, which is the wrong test for this app in both directions. Under its default options it rejects ordinary text a message carries — `i <3 you`, `a < b`, a password containing `<` — and every mention the rich-text editor writes, whose attributes it strips; with `escapeHtml` turned off to let those through, it passes a `<script>` tag. That measurement was taken against the `xss` package the upstream module used, so no test keeps it. What the app does instead is sanitise rich text where it enters, at the Zod schemas every message, webhook body and post description passes through (`packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts`), so what is stored is already what may be rendered. A validator that reads the body also starves the tRPC handler of it, which h3 2.x makes the rule rather than a defect: a request's body is a stream read once, so a middleware that consumes it owns it, and with the validator off nothing in front of the [tRPC module's](../../trpc-nuxt-module/README.md) handler reads it.
 
 ## Key files
