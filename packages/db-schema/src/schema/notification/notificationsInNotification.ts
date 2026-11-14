@@ -47,7 +47,7 @@ export const notificationsInNotification = sqliteTable(
       index("notifications_userId_createdAt_index").on(userId, sql`"createdAt" DESC`),
       index("notifications_userId_isRead_index")
         .on(userId)
-        .where(sql`${isRead} = false`),
+        .where(sql`${isRead} = 0`),
     ],
     schema: notificationSchema,
   },

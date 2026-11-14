@@ -1,7 +1,7 @@
 import { messageSchema } from "#src/schema/message/messageSchema";
 import { roomsInMessage } from "#src/schema/message/roomsInMessage";
 import { ROOM_ROLE_COLOR_MAX_LENGTH, ROOM_ROLE_NAME_MAX_LENGTH } from "#src/services/room/constants";
-import { createBigintColumn } from "#src/services/shared/createBigintColumn";
+import { createBitfieldColumn } from "#src/services/shared/createBitfieldColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
@@ -22,7 +22,7 @@ export const roomRolesInMessage = sqliteTable(
       .$defaultFn(() => crypto.randomUUID()),
     isEveryone: integer({ mode: "boolean" }).notNull().default(false),
     name: text().notNull(),
-    permissions: createBigintColumn().notNull().default(0n),
+    permissions: createBitfieldColumn(),
     position: integer().notNull().default(0),
     roomId: text()
       .notNull()
@@ -36,7 +36,7 @@ export const roomRolesInMessage = sqliteTable(
       index("roomRoles_roomId_position_index").on(roomId, position),
       uniqueIndex("roomRoles_roomId_isEveryone_unique")
         .on(roomId)
-        .where(sql`${isEveryone} = TRUE`),
+        .where(sql`${isEveryone} = 1`),
     ],
     schema: messageSchema,
   },
