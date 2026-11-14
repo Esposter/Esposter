@@ -38,7 +38,9 @@ describe(processWebhookHandler, () => {
     expect(getRoomObject(roomId).readMessages({ limit: 10 })).toStrictEqual([
       {
         appUserId: userId,
+        appUserImage: "",
         createdAt: new Date(0),
+        deletedAt: null,
         files: [],
         id: 1,
         isEdited: false,
