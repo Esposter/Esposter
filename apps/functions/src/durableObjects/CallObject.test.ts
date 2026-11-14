@@ -1,30 +1,17 @@
 import type { CallParticipant } from "@esposter/db-schema";
-import type { SQLInputValue } from "node:sqlite";
 
 import { PublishSource, SOCKET_IDENTITY_HEADER } from "@esposter/db-schema";
-import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { CallObject } from "#src/durableObjects/CallObject";
+import {
+  createMockObjectState,
+  createSocket,
+  readFrames,
+  type MockObjectState,
+  type MockSocket,
+} from "#src/services/durableObject/createMockObjectState.test";
 import { REALTIMEKIT_API_ORIGIN } from "#src/services/realtimeKit/constants";
-
-// A socket the runtime accepted: the two calls the object makes on one are the ones a test reads
-const createSocket = () => ({
-  close: vi.fn<(code: number, reason: string) => void>(),
-  send: vi.fn<(frame: string) => void>(),
-});
-
-type Socket = ReturnType<typeof createSocket>;
-type ObjectState = ReturnType<typeof createObjectState>;
-
-// Each frame a socket was sent, read back as the object wrote it
-const readFrames = (socket: Socket) => socket.send.mock.calls.map(([frame]) => JSON.parse(frame));
-
-// The rows of a statement as the driver reads them: one at a time, whole, or as arrays of column values
-const createCursor = (rows: unknown[]) => {
-  const iterator = rows[Symbol.iterator]();
-  return { next: () => iterator.next(), toArray: () => rows };
-};
 
 const createParticipant = (): CallParticipant => ({
   id: crypto.randomUUID(),
@@ -38,52 +25,21 @@ const createParticipant = (): CallParticipant => ({
 
 const respondWith = (data: unknown) => new Response(JSON.stringify({ data }));
 
-// The state a CallObject runs on. The SQLite is a real in-memory database, and the socket registry answers
-// getWebSockets and getTags as the runtime does, so a second CallObject over the same state reads back the first's writes
-const createObjectState = () => {
-  const database = new DatabaseSync(":memory:");
-  const socketTags = new Map<Socket, string[]>();
-  const ctx = {
-    acceptWebSocket: (socket: Socket, tags: string[]) => {
-      socketTags.set(socket, tags);
-    },
-    blockConcurrencyWhile: <T>(closure: () => Promise<T>) => closure(),
-    getTags: (socket: Socket) => socketTags.get(socket) ?? [],
-    getWebSockets: (tag?: string) =>
-      [...socketTags].filter(([, tags]) => tag === undefined || tags.includes(tag)).map(([socket]) => socket),
-    storage: {
-      sql: {
-        exec: (query: string, ...bindings: SQLInputValue[]) => {
-          const rows = database.prepare(query).all(...bindings) as Record<string, unknown>[];
-          return { ...createCursor(rows), raw: () => createCursor(rows.map((row) => Object.values(row))) };
-        },
-      },
-      transactionSync: <T>(closure: () => T) => {
-        database.exec("BEGIN");
-        const result = closure();
-        database.exec("COMMIT");
-        return result;
-      },
-    },
-  };
-  return { ctx, database };
-};
-
 describe(CallObject, () => {
   const callSessionId = crypto.randomUUID();
   const credentials = { accountId: crypto.randomUUID(), apiToken: crypto.randomUUID(), appId: crypto.randomUUID() };
   const meetingId = crypto.randomUUID();
   const environment = { CORE: {} } as unknown as Cloudflare.Env;
 
-  const createCallObject = (state: ObjectState) =>
+  const createCallObject = (state: MockObjectState) =>
     new CallObject(state.ctx as unknown as DurableObjectState, environment);
 
   // The meeting the call's first join would make, seeded so the join reads it rather than creating one
-  const seedMeeting = (state: ObjectState) => {
+  const seedMeeting = (state: MockObjectState) => {
     state.database.prepare("INSERT INTO callState (meetingId) VALUES (?)").run(meetingId);
   };
 
-  const setRejoining = (state: ObjectState, sessionId: string, isRejoining: boolean) => {
+  const setRejoining = (state: MockObjectState, sessionId: string, isRejoining: boolean) => {
     state.database
       .prepare("UPDATE realtimeKitParticipants SET isRejoining = ? WHERE sessionId = ?")
       .run(Number(isRejoining), sessionId);
@@ -119,7 +75,7 @@ describe(CallObject, () => {
   test("a join tells the other sockets of the call, not the joiner's own session", async () => {
     expect.hasAssertions();
 
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     const joiner = createParticipant();
     const bystander = createParticipant();
@@ -143,7 +99,7 @@ describe(CallObject, () => {
     expect.hasAssertions();
 
     const callDuration = Temporal.Duration.from({ minutes: 1, seconds: 30 });
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     const leaver = createParticipant();
     const remainer = createParticipant();
@@ -176,7 +132,7 @@ describe(CallObject, () => {
   test("a knock reaches only the doorkeeper, and the admission only the knocker", () => {
     expect.hasAssertions();
 
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     const doorkeeper = createParticipant();
     const knocker = createParticipant();
@@ -205,7 +161,7 @@ describe(CallObject, () => {
   test("refuses the socket of a session neither in the call nor knocking on it", async () => {
     expect.hasAssertions();
 
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     const response = await callObject.fetch(
       new Request("http://localhost", {
@@ -225,7 +181,7 @@ describe(CallObject, () => {
     expect.hasAssertions();
 
     const fetchMock = stubRealtimeKit();
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
     const participant = createParticipant();
@@ -272,7 +228,7 @@ describe(CallObject, () => {
   test("a new instance over the same storage reads back the participants the last one wrote", async () => {
     expect.hasAssertions();
 
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     const first = createParticipant();
     const second = createParticipant();
@@ -293,7 +249,7 @@ describe(CallObject, () => {
     expect.hasAssertions();
 
     stubRealtimeKit();
-    const state = createObjectState();
+    const state = createMockObjectState(callSessionId);
     const callObject = createCallObject(state);
     seedMeeting(state);
     const participant = createParticipant();
