@@ -10,27 +10,20 @@ import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { createId } from "#shared/util/math/random/createId";
-import {
-  DatabaseEntityType,
-  friendsInSocial,
-  INVITE_ID_LENGTH,
-  invitesInMessage,
-  roomsInMessage,
-} from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { DatabaseEntityType, friendsInSocial, invitesInMessage, roomsInMessage } from "@esposter/db-schema";
+import { generateSecretToken, InvalidOperationError, Operation, SECRET_TOKEN_LENGTH, takeOne } from "@esposter/shared";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The id generator is the seam a collision is injected at; it delegates to the real one by default, so every
+// The code generator is the seam a collision is injected at; it delegates to the real one by default, so every
 // Other test is unaffected
-const { createIdMock } = vi.hoisted(() => ({
-  createIdMock: vi.fn<typeof import("#shared/util/math/random/createId").createId>(),
+const { generateSecretTokenMock } = vi.hoisted(() => ({
+  generateSecretTokenMock: vi.fn<typeof import("@esposter/shared").generateSecretToken>(),
 }));
 
-vi.mock(import("#shared/util/math/random/createId"), async (importOriginal) => {
+vi.mock(import("@esposter/shared"), async (importOriginal) => {
   const original = await importOriginal();
-  createIdMock.mockImplementation(original.createId);
-  return { createId: createIdMock };
+  generateSecretTokenMock.mockImplementation(original.generateSecretToken);
+  return { ...original, generateSecretToken: generateSecretTokenMock };
 });
 
 describe("inviteRouter", () => {
@@ -97,7 +90,7 @@ describe("inviteRouter", () => {
   test("reads non-existent invite", async () => {
     expect.hasAssertions();
 
-    const invite = await inviteCaller.readInvite(createId(INVITE_ID_LENGTH));
+    const invite = await inviteCaller.readInvite(generateSecretToken());
 
     expect(invite).toBeUndefined();
   });
@@ -145,14 +138,15 @@ describe("inviteRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
-    const usableInviteId = createId(INVITE_ID_LENGTH);
+    const usableInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
     const epoch = new Date(0);
     const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
-    // Newest first, so the two lapsed links are the whole of a two-row page and the usable one sits behind them
+    // Paging sorts by id, so the ids descend in the order the rows are listed: the two lapsed links fill a two-row page
+    // Random codes would make that order a coin flip, and the usable one sits behind them
     await mockContext.db.insert(invitesInMessage).values([
-      { createdAt: twoSecondsIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
-      { createdAt: oneSecondIn, expiresAt: epoch, id: createId(INVITE_ID_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: twoSecondsIn, expiresAt: epoch, id: "c".repeat(SECRET_TOKEN_LENGTH), roomId: newRoom.id, userId },
+      { createdAt: oneSecondIn, expiresAt: epoch, id: "b".repeat(SECRET_TOKEN_LENGTH), roomId: newRoom.id, userId },
       { createdAt: epoch, id: usableInviteId, roomId: newRoom.id, userId },
     ]);
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ minutes: 1 }));
@@ -194,10 +188,10 @@ describe("inviteRouter", () => {
     const myInvite = await inviteCaller.readMyInvite({ roomId: newRoom.id });
     assert(myInvite);
     await mockSessionOnce(mockContext.db, member);
-    createIdMock.mockReturnValueOnce(myInvite.id);
+    generateSecretTokenMock.mockReturnValueOnce(myInvite.id);
     const invite = await createUnlimitedInvite(newRoom.id);
 
-    expect(createIdMock).toHaveReturnedWith(myInvite.id);
+    expect(generateSecretTokenMock).toHaveReturnedWith(myInvite.id);
     expect(invite.id).not.toBe(myInvite.id);
   });
 
@@ -254,5 +248,14 @@ describe("inviteRouter", () => {
     await expect(inviteCaller.readMyInvite({ roomId: directMessage.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
+  });
+
+  test("issues a code of 256 bits, which a link carries as a base64url string", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const invite = await createUnlimitedInvite(newRoom.id);
+
+    expect(invite.id).toHaveLength(SECRET_TOKEN_LENGTH);
   });
 });

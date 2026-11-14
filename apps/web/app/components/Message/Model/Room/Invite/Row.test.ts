@@ -6,7 +6,8 @@ import MessageModelRoomInviteRow from "@/components/Message/Model/Room/Invite/Ro
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
-import { INVITE_ID_LENGTH, RoomPermission } from "@esposter/db-schema";
+import { RoomPermission } from "@esposter/db-schema";
+import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -19,7 +20,7 @@ describe("messageModelRoomInviteRow", () => {
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
-    id: "a".repeat(INVITE_ID_LENGTH),
+    id: "a".repeat(SECRET_TOKEN_LENGTH),
     maxUses: 0,
     roomId,
     updatedAt: new Date(0),

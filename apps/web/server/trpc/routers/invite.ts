@@ -25,12 +25,10 @@ import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvit
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
 import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { createId } from "#shared/util/math/random/createId";
 import { checkHasPermission } from "@esposter/db";
 import {
   DatabaseEntityType,
   getPublicUserColumns,
-  INVITE_ID_LENGTH,
   InviteInMessageRelations,
   invitesInMessage,
   PublicUserColumns,
@@ -40,7 +38,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { generateSecretToken, getResultAsync, Operation } from "@esposter/shared";
 import { and, eq, exists, getColumns, sql } from "drizzle-orm";
 
 export const inviteRouter = router({
@@ -77,7 +75,7 @@ export const inviteRouter = router({
       );
 
       for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
-        const id = createId(INVITE_ID_LENGTH);
+        const id = generateSecretToken();
         // Each attempt is one batch, so a collision refuses the whole batch and the old link comes back with it. Only a
         // Collision is retried — anything else is the database itself, and re-rolling the id through it hides the report
         // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided

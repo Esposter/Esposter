@@ -50,7 +50,7 @@ describe("schema", () => {
       callSessions_id_length_check: LENGTH("message_callSessions"."id") = 12
       friendRequests_senderId_receiverId_check: "social_friendRequests"."senderId" != "social_friendRequests"."receiverId"
       friends_senderId_receiverId_check: "social_friends"."senderId" != "social_friends"."receiverId"
-      invites_id_length_check: LENGTH("message_invites"."id") = 8
+      invites_id_length_check: LENGTH("message_invites"."id") = 43
       invites_maxUses_check: "message_invites"."maxUses" >= 0
       invites_uses_check: "message_invites"."uses" >= 0
       invites_uses_maxUses_check: "message_invites"."maxUses" = 0 OR "message_invites"."uses" <= "message_invites"."maxUses"

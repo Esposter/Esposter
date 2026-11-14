@@ -5,7 +5,7 @@ import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useInviteStore } from "@/store/message/room/invite";
-import { INVITE_ID_LENGTH } from "@esposter/db-schema";
+import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -17,7 +17,7 @@ describe(useInviteStore, () => {
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
-    id: "a".repeat(INVITE_ID_LENGTH),
+    id: "a".repeat(SECRET_TOKEN_LENGTH),
     maxUses: 0,
     roomId,
     updatedAt: new Date(0),
@@ -70,8 +70,8 @@ describe(useInviteStore, () => {
   test("mints a fresh link in place of one that has lapsed", async () => {
     expect.hasAssertions();
 
-    const lapsedInvite: InviteInMessage = { ...invite, expiresAt: new Date(0), id: "b".repeat(INVITE_ID_LENGTH) };
-    const freshInvite: InviteInMessage = { ...invite, id: "c".repeat(INVITE_ID_LENGTH) };
+    const lapsedInvite: InviteInMessage = { ...invite, expiresAt: new Date(0), id: "b".repeat(SECRET_TOKEN_LENGTH) };
+    const freshInvite: InviteInMessage = { ...invite, id: "c".repeat(SECRET_TOKEN_LENGTH) };
     trpcMsw.invite.readMyInvite.query(() => lapsedInvite);
     trpcMsw.invite.createInvite.mutation(() => ({ ...freshInvite, user: creator }));
     const inviteStore = useInviteStore();

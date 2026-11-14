@@ -1,6 +1,6 @@
 ## Purpose
 
-Room invite links — one 8-char token per member per room, with Discord's expiry and max-use options.
+Room invite links — one 256-bit code per member per room, with Discord's expiry and max-use options.
 
 ## Requirements
 

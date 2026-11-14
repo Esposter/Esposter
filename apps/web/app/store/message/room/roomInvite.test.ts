@@ -5,7 +5,7 @@ import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPag
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
-import { INVITE_ID_LENGTH } from "@esposter/db-schema";
+import { SECRET_TOKEN_LENGTH } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -18,7 +18,7 @@ describe(useRoomInviteStore, () => {
     createdAt: new Date(0),
     deletedAt: null,
     expiresAt: null,
-    id: id.repeat(INVITE_ID_LENGTH),
+    id: id.repeat(SECRET_TOKEN_LENGTH),
     maxUses: 0,
     roomId,
     updatedAt: new Date(0),
