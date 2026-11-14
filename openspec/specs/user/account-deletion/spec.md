@@ -38,7 +38,7 @@ The deletion SHALL remove each store the user data inventory lists as keyed to t
 
 #### Scenario: A failed sweep leaves the account to be retried
 
-- **GIVEN** a pending deletion whose blob sweep fails partway
+- **GIVEN** a pending deletion whose object sweep fails partway
 - **WHEN** the sweep is redelivered
 - **THEN** the account row still exists, the already-removed stores are unchanged, and the redelivery finishes the sweep
 
@@ -50,19 +50,19 @@ The deletion SHALL remove each store the user data inventory lists as keyed to t
 
 ### Requirement: Owned rooms are deleted as an owner's departure deletes them
 
-A room whose owner is the account being deleted SHALL be deleted for every member, with its message partitions, its search documents, its moderation records and its attachments, as leaving the room as its owner already deletes it.
+A room whose owner is the account being deleted SHALL be deleted for every member, with its messages, its search index, its moderation records and its attachments, as leaving the room as its owner already deletes it.
 
 #### Scenario: A deleted owner's room is removed with its messages and files
 
 - **GIVEN** a room owned by the account, with messages and an attachment
 - **WHEN** the deletion sweeps
-- **THEN** the room, its message partitions and its attachments are gone
+- **THEN** the room, its messages and its attachments are gone
 
 #### Scenario: A deleted owner's room is no longer searchable
 
-- **GIVEN** a room owned by the account, whose messages the search index holds
+- **GIVEN** a room owned by the account, whose messages its object holds
 - **WHEN** the deletion sweeps
-- **THEN** the index holds no document for the room, and the other rooms' documents are unchanged
+- **THEN** the room's object is deleted, and the other rooms' messages are unchanged
 
 ### Requirement: The account's messages and charged attachments are removed from the rooms it is in
 
@@ -82,17 +82,17 @@ The deletion SHALL erase the text, the files and the link preview of every messa
 
 ### Requirement: Resources the account owns are purged
 
-Each resource the account owns SHALL be purged as the resource purge already purges it, including its directory, its table partitions and its ledger rows.
+Each resource the account owns SHALL be purged as the resource purge already purges it, including its files, its rows and its ledger rows.
 
 #### Scenario: An owned resource is purged
 
 - **GIVEN** a resource the account owns with a working copy and a version
 - **WHEN** the deletion sweeps
-- **THEN** the resource's directory, its partitions and its row are gone
+- **THEN** the resource's files, its rows and its own row are gone
 
-### Requirement: The account's own blob directories are removed by prefix
+### Requirement: The account's own files are removed by prefix
 
-The deletion SHALL remove every blob under the account's prefix in the public and private asset containers and in the game-save containers.
+The deletion SHALL remove every object under the account's prefix in the public and private asset buckets and in the game-save buckets.
 
 #### Scenario: A profile image and a save are removed
 

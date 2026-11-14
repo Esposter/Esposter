@@ -117,7 +117,6 @@ Never ported: **`ofetch` options on the links** (its fetch options and header pi
 | `packages/trpc-nuxt-module/src/runtime/client/services/getLinkFetch.ts`         | `fetchWithEvent` during server rendering, the global `fetch` in the browser                     |
 | `apps/web/configuration/modules.ts`                                             | The app's registration — router, context, endpoints and the server's keep-alive                 |
 | `apps/web/app/plugins/trpc.ts`                                                  | The app's link chain around the module's client                                                 |
-| `apps/web/server/plugins/webSocketConnection.ts`                                | The connect and disconnect callers on the WebSocket hooks                                       |
 
 ## Sources
 

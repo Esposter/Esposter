@@ -4,7 +4,7 @@ An open editor that does not hear another device's save keeps the version it rea
 
 ## One subscription for every type
 
-`createResourceProcedures` already generates `onSaveResourceContent` for every type, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere. No type keeps a subscribable of its own.
+The person's user object pushes a `saveResourceContent` event to each of their tabs when a save lands, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere. No type keeps a subscribable of its own.
 
 The stream carries the new content version and the writing device rather than the content. The content is re-read through the reload stage a restore already runs, so a large Sheet arrives by the large-documents path rather than over the socket, and one path adopts whatever wrote the blob.
 
@@ -27,7 +27,7 @@ Until it is answered, the store's stale latch holds autosave, as it does after a
 
 ```mermaid
 flowchart TD
-  SAVE["another device saves — an agent, or another tab"] --> EVENT["onSaveResourceContent — the new version and the device"]
+  SAVE["another device saves — an agent, or another tab"] --> EVENT["saveResourceContent event — the new version and the device"]
   EVENT --> DIRTY{"does this editor hold an unwritten edit?"}
   DIRTY -->|no| RELOAD["Reload stage — the content store re-reads"]
   RELOAD --> ADOPT["Adopt stage — a library editor takes the document"]

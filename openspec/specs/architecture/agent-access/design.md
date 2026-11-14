@@ -97,7 +97,7 @@ An **API key** from better-auth's own plugin, `@better-auth/api-key`, never a to
 | `apps/web/server/services/mcp/getMcpTools.ts`                       | walks the router for the procedures whose meta opts in, reads marked                    |
 | `apps/web/server/services/mcp/getMcpTools.test.ts`                  | one object input per tool, no two tools one name, each scope's tools                    |
 | `apps/web/server/models/trpc/Meta.ts`                               | the meta type every procedure may opt into MCP with, under a scope                      |
-| `apps/web/shared/models/auth/McpScope.ts`                           | the scopes a key may hold                                                               |
+| `packages/db-schema/src/models/user/McpScope.ts`                    | the scopes a key may hold                                                               |
 | `apps/web/shared/services/auth/getApiKeyScopes.ts`                  | a verified key's scopes, none unless its permissions parse                              |
 | `apps/web/server/trpc/routers/user.ts`                              | `createApiKey`, the one place a key's scopes are set                                    |
 | `apps/web/server/trpc/context.ts`                                   | carries a session the route already authenticated, and the agent's key                  |

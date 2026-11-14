@@ -4,7 +4,7 @@ Keys carry scopes, reads are marked read-only and an agent's writes name their k
 
 ## The keys made before scopes
 
-Every key created before scopes was made for the follow-ups, the only tools there were. Each was made with no permissions, which the endpoint reads as no scope, so a drain run on one would be refused every tool. A backfill gave each existing key the `FollowUps` scope and nothing else: an `UPDATE` of every key whose permissions were null to `{"mcp":["FollowUps"]}`, run once against the keys table, `auth_apiKeys` in the `core` D1 database, which a session cannot reach in production. No migration for it remains in the tree.
+A key with no permissions holds no scope. The endpoint reads that as a refusal for every tool, so a drain run on a key made before scopes existed is refused every tool.
 
 ## The owner's alone
 
