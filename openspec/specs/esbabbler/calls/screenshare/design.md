@@ -1,12 +1,12 @@
 # Screenshare
 
-A screen share is a LiveKit `Track.Source.ScreenShare` track published from the local participant — ephemeral media like audio, with **no DB columns or server state**. The token already grants `screen_share` + `screen_share_audio` publish sources ([calls](../README.md)).
+A screen share is a RealtimeKit screen-share track published from the local participant — ephemeral media like audio, with **no DB columns or server state**. The participant's preset includes screenshare, which is what permits the publish ([calls](../README.md)).
 
 ## How it works
 
-- **Start**: the Share Screen button calls `room.localParticipant.setScreenShareEnabled(true, SCREEN_SHARE_CAPTURE_OPTIONS)` (audio on, 1920×1080 at 15 frames a second, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate `ScreenShareAudio` track if the user checked "Share audio").
-- **Stop**: `setScreenShareEnabled(false)` unpublishes; the layout reverts to the video grid.
-- Remote clients receive the stream via `RoomEvent.TrackSubscribed` (source `ScreenShare`) into `call/media.ts`'s `remoteScreenShareStreams`.
+- **Start**: the Share Screen button calls `setScreenShare(true)`, which enables the meeting's screen share under `SCREEN_SHARE_CONSTRAINTS` (1920×1080 at 15 frames a second at most, the sharer's own tab excluded from the picker, and the shared surface switchable mid-share) — the browser's native `getDisplayMedia` picker opens; picking a window/tab/monitor publishes the track (plus a separate `ScreenShareAudio` track if the user checked "Share audio").
+- **Stop**: `setScreenShare(false)` unpublishes; the layout reverts to the video grid.
+- Remote clients receive the stream through each participant's `screenShareUpdate` event, which the store hands into `call/media.ts`'s `remoteScreenShareStreams`.
 - Starting a share **auto-pops the call into picture-in-picture** so the sharer keeps watching the call while presenting; the activation-ordering constraint behind this lives in [picture-in-picture](../picture-in-picture/design.md).
 - Feature-detected: the button is hidden when `getDisplayMedia` is unavailable (iOS Safari).
 
@@ -16,11 +16,11 @@ The track is the only state there is, so every layout and moderation behaviour b
 flowchart TD
   BUTTON["Share Screen"] --> PICKER["getDisplayMedia picker"]
   PICKER -->|"cancelled"| NOTHING["nothing published"]
-  PICKER -->|"window, tab or monitor"| PUBLISH["setScreenShareEnabled true"]
+  PICKER -->|"window, tab or monitor"| PUBLISH["setScreenShare(true)"]
   PUBLISH --> TRACK["ScreenShare track, plus ScreenShareAudio when opted in"]
   TRACK --> PIP["auto-pop to picture-in-picture"]
   TRACK --> LOCAL["local layout switches to presenter"]
-  TRACK --> REMOTE["RoomEvent.TrackSubscribed on every other client"]
+  TRACK --> REMOTE["screenShareUpdate on every other client"]
   REMOTE --> REMOTELAYOUT["remoteScreenShareStreams, same presenter layout"]
   TRACK --> STOP{"how it ends"}
   STOP -->|"sharer stops"| UNPUBLISH["setScreenShareEnabled false"]
@@ -45,7 +45,7 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 
 - Clicking the stage requests **native fullscreen of the whole `MessageContentCallView` root** (Google Meet model), not the `<video>` — the Fullscreen API isolates rendering to the target's subtree, so fullscreening the video alone would drop the tiles and controls. `MessageContentCallScreenShareStage` emits `fullscreen`; `MessageContentCallView` owns the root ref and calls `requestFullscreen()`. In the PiP window the stage is non-interactive (no click-to-fullscreen), matching Meet.
 - Multiple simultaneous sharers: tabs above the main area; the active tab is the focused share.
-- **Pin/spotlight**: clicking any tile pins it (`pinnedParticipantId` in `call/media.ts`, values are LiveKit identities = auth session ids); local-only, not broadcast. With nothing pinned, `activeScreenShareParticipantId` prefers your own share and otherwise takes the first sharer in the presenter list.
+- **Pin/spotlight**: clicking any tile pins it (`pinnedParticipantId` in `call/media.ts`, values are RealtimeKit custom participant ids = auth session ids); local-only, not broadcast. With nothing pinned, `activeScreenShareParticipantId` prefers your own share and otherwise takes the first sharer in the presenter list.
 
 ## Moderation
 
@@ -58,4 +58,4 @@ When any participant publishes a screen track, the shared `MessageContentCallSta
 | `apps/web/app/components/Message/Content/Call/ScreenShare/Stage.vue`  | presenter `<video>` stage                    |
 | `apps/web/app/components/Message/Content/Call/ScreenShare/Button.vue` | start/stop toggle                            |
 | `apps/web/app/store/message/room/call/media.ts`                       | screenshare/pin state + local/remote streams |
-| `apps/web/app/store/message/room/liveKit.ts`                          | `setScreenShare` + screen track event bridge |
+| `apps/web/app/store/message/room/realtime.ts`                         | `setScreenShare` + screen track event bridge |

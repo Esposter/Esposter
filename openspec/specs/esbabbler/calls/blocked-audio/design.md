@@ -4,19 +4,18 @@ A browser plays sound only after the page has had a gesture of the reader's own.
 
 ## How it works
 
-LiveKit reports the refusal itself: a remote audio element that fails to play flips `Room.canPlaybackAudio` and emits `RoomEvent.AudioPlaybackStatusChanged`. `useLiveKitStore` keeps that as `isAudioPlaybackBlocked`, cleared on disconnect, and `startAudio` calls `Room.startAudio()` from inside the button's click.
+The store plays each remote microphone's element itself. A `play()` the browser refuses with `NotAllowedError` sets `isAudioPlaybackBlocked`, a play that succeeds clears it, and the notice's button calls `startAudio`, which plays every element again from inside the button's click. Disconnect clears the flag.
 
-`Room.startAudio()` unmutes every remote audio element as it calls `play()` on them, which would undo deafen, so the store lays `isDeafened` back over them straight after the call, before its playback settles. A reader deafened while the sound was blocked is still deafened once it plays, and still deafened if the browser refuses it again.
+Deafen is each element's `muted` flag, which a `play()` leaves alone, so a press does not undo it. A reader deafened while the sound was blocked is still deafened once it plays, and still deafened if the browser refuses it again.
 
 ```mermaid
 flowchart TD
     Attach["Remote audio element attached"] --> Play{"Browser allows playback?"}
     Play -->|Yes| Sound["Call audio plays"]
-    Play -->|No| Blocked["AudioPlaybackStatusChanged(false) → isAudioPlaybackBlocked"]
+    Play -->|No| Blocked["play() rejects with NotAllowedError → isAudioPlaybackBlocked"]
     Blocked --> Notice["Notice with Play sound"]
-    Notice -->|Press| Start["Room.startAudio()"]
-    Start --> Deafen["setRemoteAudioMuted(isDeafened)"]
-    Deafen --> Cleared["AudioPlaybackStatusChanged(true) → notice gone"]
+    Notice -->|Press| Start["startAudio() plays every element"]
+    Start --> Cleared["play() resolves → notice gone"]
     Cleared --> Sound
 ```
 
@@ -30,10 +29,10 @@ flowchart TD
 
 ## Key files
 
-| File                                                                     | Role                                                           |
-| :----------------------------------------------------------------------- | :------------------------------------------------------------- |
-| `apps/web/app/store/message/room/liveKit.ts`                             | `isAudioPlaybackBlocked`, `startAudio` and the deafen re-apply |
-| `apps/web/app/components/Message/Content/Call/Audio/PlaybackNotice.vue`  | the warning and its Play sound button                          |
-| `apps/web/app/components/Message/Content/Call/View.vue`                  | places it above the call view's controls                       |
-| `apps/web/app/components/Message/Content/Call/PictureInPicture/View.vue` | places it above the PiP window's controls                      |
-| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`           | places it under the room's call strip while the view is closed |
+| File                                                                     | Role                                                            |
+| :----------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `apps/web/app/store/message/room/realtime.ts`                            | `isAudioPlaybackBlocked`, `startAudio` and the per-element mute |
+| `apps/web/app/components/Message/Content/Call/Audio/PlaybackNotice.vue`  | the warning and its Play sound button                           |
+| `apps/web/app/components/Message/Content/Call/View.vue`                  | places it above the call view's controls                        |
+| `apps/web/app/components/Message/Content/Call/PictureInPicture/View.vue` | places it above the PiP window's controls                       |
+| `apps/web/app/components/Message/Content/Call/Panel/Index.vue`           | places it under the room's call strip while the view is closed  |

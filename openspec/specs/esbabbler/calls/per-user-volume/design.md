@@ -10,12 +10,12 @@ Client-only, in-call state — there is no DB column and no procedure; Discord h
 flowchart LR
   slider["User Volume slider<br/>(participant action menu)"] -->|set| map["media.ts<br/>participantVolumePercentageMap"]
   settings[("userSettingsInMessage<br/>speakerVolumePercentage")] --> apply
-  map -->|"liveKit.ts watcher"| apply["applyRemoteAudioVolume"]
+  map -->|"realtime.ts watcher"| apply["applyRemoteAudioVolume"]
   apply -->|"HTMLMediaElement.volume"| audio["that participant's<br/>remote audio elements"]
   leave["participant leaves"] -->|delete entry| map
 ```
 
-- `participantVolumePercentageMap` is keyed by participant id (the auth session id, which is also the LiveKit identity); an absent entry means the 100% default.
+- `participantVolumePercentageMap` is keyed by participant id (the auth session id, which is also the RealtimeKit participant's custom id); an absent entry means the 100% default.
 - Effective element volume = `min(1, (speakerVolumePercentage / 100) × (participantVolumePercentage / 100))` — `HTMLMediaElement.volume` caps at 1, so combined values above 100% clamp to full (same limitation as the master [speaker volume](../../voice-video/design.md)).
 - The volume resets when the participant leaves (`onLeaveCall` deletes the map entry) and the whole map clears with the call (`resetCallMedia`).
 - The action menu keeps `close-on-content-click` off so dragging the slider doesn't dismiss it; moderation items close it explicitly.
@@ -25,7 +25,7 @@ flowchart LR
 | File                                                                         | Role                                                         |
 | :--------------------------------------------------------------------------- | :----------------------------------------------------------- |
 | `apps/web/app/store/message/room/call/media.ts`                              | `participantVolumePercentageMap` + set/delete mutations      |
-| `apps/web/app/store/message/room/liveKit.ts`                                 | applies master × participant volume to remote audio elements |
+| `apps/web/app/store/message/room/realtime.ts`                                | applies master × participant volume to remote audio elements |
 | `apps/web/app/components/Message/Content/Call/Participant/ActionMenu.vue`    | shared menu: volume slider + moderation actions              |
 | `apps/web/app/components/Message/Content/Call/Participant/VolumeSlider.vue`  | the slider bound to the store map                            |
 | `apps/web/app/composables/message/room/call/useSubscribeCallParticipants.ts` | deletes the entry on participant leave                       |

@@ -1,6 +1,6 @@
 ## Purpose
 
-LiveKit screen-share tracks, the presenter layout, and moderation enforcement.
+RealtimeKit screen-share tracks, the presenter layout, and moderation enforcement.
 
 ## Requirements
 

@@ -37,7 +37,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [display names](display-names/design.md)                             | Per-room display names and resolution                              |
 | [mention badges](mention-badges/design.md)                           | Mention-only unread counts in the room sidebar                     |
 | [profiles and presence](profiles-and-presence/design.md)             | Profile card/editing and Online/Idle/DND/Offline presence          |
-| [calls](calls/README.md)                                             | LiveKit sessions, membership boundary, knock lobby                 |
+| [calls](calls/README.md)                                             | RealtimeKit sessions, membership boundary, knock lobby             |
 | [call view](calls/call-view/design.md)                               | Call surface, prejoin/ready room, tiles, control bar               |
 | [screen share](calls/screenshare/design.md)                          | Screen-share tracks, presenter layout, moderation                  |
 | [picture-in-picture](calls/picture-in-picture/design.md)             | Document PiP pop-out of the active call                            |
@@ -45,7 +45,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [user settings](settings/design.md)                                  | Message-scoped user settings dialog + `userSettingsInMessage`      |
 | [room settings](room-settings/design.md)                             | Room settings dialog — Discord categories + permission gating      |
 | [room UI](room-ui/design.md)                                         | Room-shell polish — member grouping, resizable sidebars, density   |
-| [voice & video settings](voice-video/design.md)                      | Voice & Video panel and live LiveKit application                   |
+| [voice & video settings](voice-video/design.md)                      | Voice & Video panel and live RealtimeKit application               |
 | [push-to-talk](push-to-talk/design.md)                               | Hold-to-talk keybind, mic gate, release delay                      |
 | [push notifications](push-notifications/design.md)                   | Web push delivery and recipient filtering                          |
 | [slash commands](slash-commands/design.md)                           | `/command` registry, picker, execution model                       |

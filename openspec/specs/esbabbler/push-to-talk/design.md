@@ -30,7 +30,7 @@ stateDiagram-v2
 | `apps/web/app/composables/message/room/call/usePushToTalk.ts`                                     | keydown/keyup/blur listener composable (hosted by the call store) |
 | `apps/web/app/util/dom/checkIsEditableTarget.ts`                                                  | cross-realm-safe editable-target skip                             |
 | `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`                                    | key-driven gate mode (`isPushToTalkKeyHeld`)                      |
-| `apps/web/app/store/message/room/liveKit.ts`                                                      | `setPushToTalkKeyHeld` + release-delay timer                      |
+| `apps/web/app/store/message/room/realtime.ts`                                                     | `setPushToTalkKeyHeld` + release-delay timer                      |
 | `apps/web/app/components/Message/Content/Call/PictureInPicture/Host.vue`                          | PiP window listener wiring                                        |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkKeybindButton.vue`      | keybind capture field                                             |
 | `apps/web/app/components/Message/Model/User/Settings/Type/Voice/PushToTalkReleaseDelaySlider.vue` | release-delay slider                                              |

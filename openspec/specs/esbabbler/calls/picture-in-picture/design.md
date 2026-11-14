@@ -2,7 +2,7 @@
 
 Pop the active call out into an always-on-top OS window (Google Meet / Discord style) using the **Document Picture-in-Picture API**. Unlike native `<video>` PiP, Document PiP renders arbitrary DOM, so the popped-out window shows the full call stage (screen share + side tiles, or the participant grid) **and** a compact control bar.
 
-Purely client-side: no DB changes, no procedures, no infrastructure. The LiveKit `Room` and every `MediaStream` live in Pinia stores independent of where the DOM renders — **popping out is a DOM relocation, not a media reconnection**. It builds on the [call lifetime boundary](../README.md): `activeCallSessionId` already survives navigation.
+Purely client-side: no DB changes, no procedures, no infrastructure. The RealtimeKit meeting and every `MediaStream` live in Pinia stores independent of where the DOM renders — **popping out is a DOM relocation, not a media reconnection**. It builds on the [call lifetime boundary](../README.md): `activeCallSessionId` already survives navigation.
 
 Chromium 116+ only; the pop-out button is feature-detected and never renders unsupported (the full-page call view is the fallback). VueUse has no Document-PiP composable (its PiP surface drives the single-`<video>` native API), so `useDocumentPictureInPicture` is a small hand-rolled SSR-safe composable in the VueUse return-shape style (`{ isSupported, pictureInPictureWindow, open, close }`).
 

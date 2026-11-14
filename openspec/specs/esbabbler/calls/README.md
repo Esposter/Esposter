@@ -12,17 +12,17 @@ A call is anchored to a `callSessionsInMessage` row, not a route:
 - `roomId` — set for room calls (unique FK → rooms, cascade); null-scoped standalone calls persist ownership on `userId` (creator).
 - The session row is the persistent 1:1 anchor per room and survives restarts; participants do not (in-memory `callSessionParticipantMap`).
 
-`CallParticipant.id` is the **auth `session.id`, not `user.id`** — the LiveKit `AccessToken` uses `identity: session.id`, so each device is its own participant (separate tracks, separate mute state). Using `user.id` would make multi-device join last-write-wins and let device A's leave evict device B.
+`CallParticipant.id` is the **auth `session.id`, not `user.id`** — the RealtimeKit participant's `customParticipantId` is `session.id`, so each device is its own participant (separate tracks, separate mute state). Using `user.id` would make multi-device join last-write-wins and let device A's leave evict device B.
 
 ## The call lifetime boundary
 
 **Call membership is anchored to `activeCallSessionId`, never the viewed route.** `activeCallSessionId` answers "what call am I in?"; `currentRoomCallSessionId` answers "what call belongs to the room I'm looking at?" — they can differ, and that is valid. Navigating rooms swaps the observer only.
 
-Leave happens only on: explicit **Leave Call**, moderation (`KickFromCall`/`KickFromRoom`/`TimeoutUser`/`CreateBan`/`SoftBan` on the call's room), real session loss (logout, tab close, LiveKit `participant_left` webhook), or `/calls/[id]` unmount (that page _is_ the call context — except when popped out to [picture-in-picture](picture-in-picture/design.md)).
+Leave happens only on: explicit **Leave Call**, moderation (`KickFromCall`/`KickFromRoom`/`TimeoutUser`/`CreateBan`/`SoftBan` on the call's room), real session loss (logout, tab close, RealtimeKit `meeting.participantLeft` webhook), or `/calls/[id]` unmount (that page _is_ the call context — except when popped out to [picture-in-picture](picture-in-picture/design.md)).
 
 | Owner                               | Responsibility                                                                                                                                           | Must not do                                         |
 | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
-| `callStore.leaveCall()`             | the only normal path that leaves, disconnects LiveKit, and resets active state                                                                           | run implicitly during room navigation               |
+| `callStore.leaveCall()`             | the only normal path that leaves, leaves the RealtimeKit meeting, and resets active state                                                                | run implicitly during room navigation               |
 | `useCallSubscribables()`            | observes the viewed room's session; updates `currentRoomCallSessionId`, and its participants unless the joined call holds that session                   | remove the active participant or disconnect LiveKit |
 | `useCallParticipantSubscribables()` | subscribes the joined call's participants, from the messages layout for a room call and the call page for a standalone one; a session has one such owner | subscribe a session the joined call does not hold   |
 | `useCallIdSubscribables()`          | owns `/calls/[id]` membership; validates session, subscribes, leaves on unmount (unless popped out)                                                      | reuse room-navigation cleanup semantics             |
@@ -34,19 +34,19 @@ Leave happens only on: explicit **Leave Call**, moderation (`KickFromCall`/`Kick
 sequenceDiagram
     participant A as Client (joining)
     participant T as tRPC callSession router
-    participant LK as LiveKit SFU
+    participant RTK as RealtimeKit
     participant B as Other clients
 
     A->>T: joinCallByRoomId({ roomId }) / joinCall({ id })
     T->>T: create/reuse session · update callSessionParticipantMap
-    T-->>A: { liveKitUrl, liveKitToken }
-    A->>LK: room.connect(url, token)
-    LK-->>T: webhook participant_joined (backup path)
+    T-->>A: { authToken, meetingId }
+    A->>RTK: join the meeting with authToken
+    RTK-->>T: webhook meeting.participantJoined (backup path)
     T->>B: callEventEmitter → onJoinCall subscription
-    Note over A,B: audio/video/screenshare tracks flow through the SFU
+    Note over A,B: audio/video/screenshare tracks flow through RealtimeKit
 ```
 
-The LiveKit webhook (`server/api/webhooks/livekit.post.ts`, validated with `WebhookReceiver`) is the **backup** for clients that disconnect without calling `leaveCall` (tab crash, network drop) — never the primary path for in-app route changes. It is also the door a token cannot get around: a room call's `participant_joined` is checked against the room's membership and any timeout (`checkIsCallConnectionAdmitted`), and a connection the room no longer admits is disconnected rather than added, since LiveKit accepts a removed member's old token until it expires.
+The RealtimeKit webhook (`server/api/webhooks/realtimekit.post.ts`, validated by `verifyRealtimeKitWebhook`) is the **backup** for clients that disconnect without calling `leaveCall` (tab crash, network drop) — never the primary path for in-app route changes. It is also the door a token cannot get around: a room call's `participant_joined` is checked against the room's membership and any timeout (`checkIsCallConnectionAdmitted`), and a connection the room no longer admits is disconnected rather than added, since LiveKit accepts a removed member's old token until it expires.
 
 ### Standalone knock lobby
 
@@ -55,7 +55,7 @@ Every `/calls/[id]` visitor sees prejoin (verify mic/camera) first. The creator 
 ```mermaid
 flowchart TD
   VISIT["visitor opens the call link"] --> ISCREATOR{"session creator?"}
-  ISCREATOR -- yes --> JOIN["joinCall — LiveKit connection data"]
+  ISCREATOR -- yes --> JOIN["joinCall — RealtimeKit auth token"]
   ISCREATOR -- no --> KNOCK["knockCall — added to callKnockerMap"]
   KNOCK --> NOTIFY["onKnockCall — the creator's lobby list"]
   NOTIFY --> DECIDE{"creator decides"}
@@ -88,17 +88,17 @@ flowchart TD
   DURATION --> SUMMARY["MessageType.Call system message carrying the duration"]
 ```
 
-Every teardown path funnels through `leaveCallAsParticipant` — the explicit leave, the LiveKit `participant_left` webhook and the moderation actions alike — so the start time is never orphaned by a call that ended some other way.
+Every teardown path funnels through `leaveCallAsParticipant` — the explicit leave, the RealtimeKit `meeting.participantLeft` webhook and the moderation actions alike — so the start time is never orphaned by a call that ended some other way.
 
 ### A restart does not end the calls
 
-Losing these maps is survivable, not correct. LiveKit is an external SFU reached over `LIVEKIT_URL`; this process mints tokens and receives webhooks but holds no media connection, so a call in progress is entirely unaffected by the process going away and its participants stay connected to the SFU throughout. What the restart destroys is only this side's picture of them, and three things follow from that:
+Losing these maps is survivable, not correct. RealtimeKit is an external service reached over its REST API; this process mints tokens and receives webhooks but holds no media connection, so a call in progress is entirely unaffected by the process going away and its participants stay connected to the SFU throughout. What the restart destroys is only this side's picture of them, and three things follow from that:
 
 - `requireJoinedCallSession` admits the creator from the stored session row but every other participant only from the participant map, so every pre-restart participant other than the creator is locked out of the call procedures until they rejoin, while still being in the call.
 - Their eventual `participant_left` webhook finds no map entry, `deleteCallParticipant` returns `false`, and `leaveCallAsParticipant` returns early — no `leaveCall` event, no duration message.
 - The next join reads `isFirstJoiner` from that same empty map and re-stamps `callStartTimeMap`, so the duration the call finally reports is measured from the restart rather than from the call.
 
-Rebuilding the maps from LiveKit's own view of each room is the fix, and it waits on a trigger worth having — [call state reconciliation](../../../deferred/esbabbler/call-state-reconciliation/design.md).
+Rebuilding the maps from RealtimeKit's own view of each meeting is the fix, and it waits on a trigger worth having — [call state reconciliation](../../../deferred/esbabbler/call-state-reconciliation/design.md).
 
 ## Procedures
 
@@ -109,7 +109,7 @@ All in `server/trpc/routers/call/index.ts`, registered as `callSession`; the wai
 | `createCall`                                                                           | authed             | create a standalone roomless session (`/calls`)                                       |
 | `readCallSessionId({ roomId })`                                                        | member             | room observer entry; returns `""` if none (never null)                                |
 | `readCallSession({ id })`                                                              | authed             | standalone validation for `/calls/[id]`                                               |
-| `joinCallByRoomId({ roomId })`                                                         | member             | create/reuse room session; returns LiveKit connection data                            |
+| `joinCallByRoomId({ roomId })`                                                         | member             | create/reuse room session; returns the RealtimeKit auth token                         |
 | `joinCall({ id })`                                                                     | authed             | standalone join — creator or admitted knocker only                                    |
 | `leaveCall({ callSessionId })`                                                         | authed             | remove from participant map; last leaver posts the `MessageType.Call` system message  |
 | `readCallParticipantMap({ callSessionId })`                                            | authed             | initial participant map for observers                                                 |
@@ -125,7 +125,7 @@ Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAu
 
 ## Client stores
 
-`store/message/room/call/index.ts` is the orchestration root (session boundaries, tRPC + SDK coordination); focused state lives in smaller stores so the LiveKit bridge never imports the root:
+`store/message/room/call/index.ts` is the orchestration root (session boundaries, tRPC + SDK coordination); focused state lives in smaller stores so the realtime bridge never imports the root:
 
 | Store                 | Owns                                                                                                                                          |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -133,7 +133,7 @@ Tokens grant `canPublishSources: [Microphone, Camera, ScreenShare, ScreenShareAu
 | `call/participant.ts` | `callSessionParticipantsMap` (keyed by session id), `speakingIds`, join notice                                                                |
 | `call/media.ts`       | deafen, force-mute, camera, screenshare + pin state, virtual background, `isPoppedOut`, streams, [per-user volume](per-user-volume/design.md) |
 | `call/knocker.ts`     | `knockingCallSessionId`, pre-join options, knocker queue                                                                                      |
-| `liveKit.ts`          | the LiveKit `Room` media bridge: connect, track events, device switching, mic processor, [blocked audio](blocked-audio/design.md)             |
+| `realtime.ts`         | the RealtimeKit meeting bridge: connect, track events, device switching, mic processor, [blocked audio](blocked-audio/design.md)              |
 
 DM calls work identically — call procedures accept `RoomType.DirectMessage`; membership via `usersToRooms` gates access. The first joiner posts the `MessageType.Call` "started a call" system message, and call end writes the call-duration variant.
 
@@ -147,9 +147,9 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 | `apps/web/server/services/message/call/`                         | participant/knocker/admitted maps + CRUD                                    |
 | `apps/web/server/services/message/call/onWhileCallRoomMember.ts` | a call's subscription, ended by the room's membership or a standalone leave |
 | `apps/web/server/services/message/call/onWhileJoinedCall.ts`     | the same stream behind the join gate, for the participant subscriptions     |
-| `apps/web/server/api/webhooks/livekit.post.ts`                   | webhook backup for join/leave                                               |
+| `apps/web/server/api/webhooks/realtimekit.post.ts`               | webhook backup for join/leave                                               |
 | `apps/web/app/store/message/room/call/`                          | root + participant + media + knocker stores                                 |
-| `apps/web/app/store/message/room/liveKit.ts`                     | LiveKit `Room` bridge                                                       |
+| `apps/web/app/store/message/room/realtime.ts`                    | RealtimeKit meeting bridge                                                  |
 | `apps/web/app/pages/calls/`                                      | standalone lobby (`index.vue`) + call route (`[id].vue`)                    |
 
 ## Notes
