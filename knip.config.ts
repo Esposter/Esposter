@@ -18,7 +18,8 @@ const knipConfiguration: KnipConfig = {
         "@lerna-lite/publish",
       ],
     },
-    "apps/functions": { entry: ["src/**/*.ts"] },
+    "apps/jobs": { entry: ["src/**/*.ts"] },
+    "apps/realtime": { entry: ["src/**/*.ts"] },
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {
       // A development route's handler is registered by its path from a module under `nuxt dev` alone, so nothing imports it

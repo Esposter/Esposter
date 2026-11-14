@@ -176,7 +176,7 @@
 
 ### Cloudflare
 
-- [Workers](https://developers.cloudflare.com/workers/): the web Worker and the functions Worker.
+- [Workers](https://developers.cloudflare.com/workers/): the web, realtime and jobs Workers.
 - [D1](https://developers.cloudflare.com/d1/): the relational database.
 - [R2](https://developers.cloudflare.com/r2/): files.
 - [Queues](https://developers.cloudflare.com/queues/): async jobs, each with its own dead-letter queue.
@@ -327,8 +327,9 @@ pnpm graph:gen
 
 | Package                                                                                                                     | Description                                                                                                                                                                                                                                 | Published |
 | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------: |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                                           | Cloudflare Worker that consumes the queues, runs the Cron Trigger and exports the Durable Object classes `RoomObject`, `CallObject` and `UserObject`                                                                                        |     —     |
 | [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                                                   | Pulumi program for the Cloudflare estate (Azure resources still declared until teardown)                                                                                                                                                    |     —     |
+| [`apps/jobs`](https://github.com/Esposter/Esposter/tree/main/apps/jobs)                                                     | Cloudflare Worker that consumes the queues, runs the Cron Trigger and answers the temporary cutover routes, reaching the Durable Objects through the realtime Worker's script name                                                          |     —     |
+| [`apps/realtime`](https://github.com/Esposter/Esposter/tree/main/apps/realtime)                                             | Cloudflare Worker that exports the Durable Object classes `RoomObject`, `CallObject` and `UserObject`, the live state and sockets of rooms, calls and users; its `fetch` answers 404                                                        |     —     |
 | [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                                       | Main Nuxt web application — frontend, server routes, tRPC API                                                                                                                                                                               |     —     |
 | [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)                           | Shared ESLint, TSConfig, and tsdown build configurations                                                                                                                                                                                    |     —     |
 | [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                                                 | Server-side helpers over D1 and R2: the stream table client, blob reads and writes, and the message, moderation, notification, resource and RBAC services                                                                                   |     —     |

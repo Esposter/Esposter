@@ -8,7 +8,7 @@ describe(getProposalSummary, () => {
   test("counts the Key files rows and reads each signal off their paths", () => {
     expect.hasAssertions();
 
-    const text = `# C\n\nLead.\n\n## Key files\n\n| File | Role |\n| --- | --- |\n| \`apps/web/server/a.ts\` | a |\n| \`packages/db-schema/a.ts\` | a |\n| \`apps/functions/a.ts\` | a |\n| \`apps/web/package.json\` | a |\n\n## Sources\n\n| \`apps/infra/a.ts\` | a |\n`;
+    const text = `# C\n\nLead.\n\n## Key files\n\n| File | Role |\n| --- | --- |\n| \`apps/web/server/a.ts\` | a |\n| \`packages/db-schema/a.ts\` | a |\n| \`apps/jobs/a.ts\` | a |\n| \`apps/web/package.json\` | a |\n\n## Sources\n\n| \`apps/infra/a.ts\` | a |\n`;
 
     expect(getProposalSummary(id, text, new Set())).toStrictEqual({
       blockerIds: [],

@@ -66,29 +66,50 @@ jobs:
         with:
           package: "@esposter/web"
 
-      - name: 🏗️ Build the functions Worker
+      # The realtime objects deploy first, since the jobs and the web Worker call them by their bindings
+      - name: 🏗️ Build the realtime Worker
         uses: ./.github/actions/build-app
         with:
-          package: "@esposter/functions"
+          package: "@esposter/realtime"
 
-      # Reads the install the functions build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
+      - name: 🏗️ Build the jobs Worker
+        uses: ./.github/actions/build-app
+        with:
+          package: "@esposter/jobs"
+
+      # Reads the install the jobs build left, which holds `@esposter/db-schema` and its drizzle-kit, so it follows that build
       - name: 🗄️ Apply the D1 migrations
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ENVIRONMENT: ${{ env.CLOUDFLARE_ENV }}
         run: pnpm --filter @esposter/db-schema db:migrate
 
-      - name: 🚀 Deploy the functions Worker
+      - name: 🚀 Deploy the realtime Worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: pnpm -C apps/functions deploy:worker
+        run: pnpm -C apps/realtime deploy:worker
 
       # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
-      - name: 🔐 Put the functions Worker's secrets
+      - name: 🔐 Put the realtime Worker's secrets
         uses: ./.github/actions/put-worker-secrets
         with:
-          worker: functions
-          directory: apps/functions
+          worker: realtime
+          directory: apps/realtime
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: 🚀 Deploy the jobs Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm -C apps/jobs deploy:worker
+
+      # After its deploy, since `wrangler secret bulk` writes to a Worker that must already exist
+      - name: 🔐 Put the jobs Worker's secrets
+        uses: ./.github/actions/put-worker-secrets
+        with:
+          worker: jobs
+          directory: apps/jobs
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}

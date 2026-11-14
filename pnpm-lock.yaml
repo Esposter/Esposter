@@ -799,7 +799,41 @@ importers:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
 
-  apps/functions:
+  apps/infra:
+    dependencies:
+      '@esposter/db-schema':
+        specifier: workspace:*
+        version: link:../../packages/db-schema
+      '@esposter/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@pulumi/azure-native':
+        specifier: 'catalog:'
+        version: 3.30.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      '@pulumi/cloudflare':
+        specifier: 'catalog:'
+        version: 6.24.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      '@pulumi/github':
+        specifier: 'catalog:'
+        version: 6.15.1(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      '@pulumi/pulumi':
+        specifier: 'catalog:'
+        version: 3.276.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+    devDependencies:
+      '@esposter/configuration':
+        specifier: workspace:*
+        version: link:../../packages/configuration
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      tsdown:
+        specifier: 'catalog:'
+        version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.25.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      type-fest:
+        specifier: 'catalog:'
+        version: 5.10.0
+
+  apps/jobs:
     dependencies:
       '@esposter/db':
         specifier: workspace:*
@@ -851,39 +885,45 @@ importers:
         specifier: 'catalog:'
         version: 4.162.0(@cloudflare/workers-types@5.20261114.1)(@types/node@26.6.6)
 
-  apps/infra:
+  apps/realtime:
     dependencies:
+      '@esposter/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@esposter/db-schema':
         specifier: workspace:*
         version: link:../../packages/db-schema
       '@esposter/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@pulumi/azure-native':
+      drizzle-orm:
         specifier: 'catalog:'
-        version: 3.30.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      '@pulumi/cloudflare':
+        version: 1.0.0-rc.5(@cloudflare/workers-types@5.20261114.1)(@electric-sql/pglite@0.5.16)(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.1.1)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
+      temporal-polyfill:
         specifier: 'catalog:'
-        version: 6.24.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      '@pulumi/github':
+        version: 1.0.8
+      zod:
         specifier: 'catalog:'
-        version: 6.15.1(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      '@pulumi/pulumi':
-        specifier: 'catalog:'
-        version: 3.276.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+        version: 4.6.7
     devDependencies:
+      '@cloudflare/workers-types':
+        specifier: 'catalog:'
+        version: 5.20261114.1
       '@esposter/configuration':
         specifier: workspace:*
         version: link:../../packages/configuration
+      '@esposter/db-mock':
+        specifier: workspace:*
+        version: link:../../packages/db-mock
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
-      tsdown:
+      uuid:
         specifier: 'catalog:'
-        version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.25.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-      type-fest:
+        version: 14.0.3
+      wrangler:
         specifier: 'catalog:'
-        version: 5.10.0
+        version: 4.162.0(@cloudflare/workers-types@5.20261114.1)(@types/node@26.6.6)
 
   apps/web:
     dependencies:

@@ -20,7 +20,7 @@ const queueName = getCloudflareResourceName(
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
   CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Functions,
+  CloudflareWorkerPurpose.Jobs,
 );
 
 export const prodQEsposterProcessNotificationConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(

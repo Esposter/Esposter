@@ -2,7 +2,7 @@
 export enum ProposalSignal {
   // A `package.json` — a package argued in through dependency admission
   Dependency = "dependency",
-  // A path under `apps/functions` or `apps/infra` — a deploy past the app's own
+  // A path under `apps/jobs`, `apps/realtime` or `apps/infra` — a deploy past the app's own
   Deploy = "deploy",
   // A path under `packages/db-schema` — a migration
   Schema = "schema",

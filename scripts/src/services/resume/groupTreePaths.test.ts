@@ -5,8 +5,8 @@ describe(groupTreePaths, () => {
   test.each([
     [[], []],
     [
-      [" M apps/web/a.ts", "?? apps/web/b/c.ts", " D apps/functions/d.ts", " M package.json"],
-      ["apps/web (2)", "apps/functions (1)", "package.json (1)"],
+      [" M apps/web/a.ts", "?? apps/web/b/c.ts", " D apps/jobs/d.ts", " M package.json"],
+      ["apps/web (2)", "apps/jobs (1)", "package.json (1)"],
     ],
     [["R  old/x/a.ts -> new/y/a.ts"], ["new/y (1)"]],
     [[" M pnpm-lock.yaml"], []],

@@ -2,23 +2,23 @@
   "tasks": [
     {
       "command": "host start",
-      "dependsOn": "pnpm i (functions)",
+      "dependsOn": "pnpm i (jobs)",
       "isBackground": true,
       "label": "func: host start",
-      "options": { "cwd": "${workspaceFolder}/apps/functions" },
+      "options": { "cwd": "${workspaceFolder}/apps/jobs" },
       "problemMatcher": "$func-node-watch",
       "type": "func"
     },
     {
       "command": "pnpm i",
-      "label": "pnpm i (functions)",
-      "options": { "cwd": "${workspaceFolder}/apps/functions" },
+      "label": "pnpm i (jobs)",
+      "options": { "cwd": "${workspaceFolder}/apps/jobs" },
       "type": "shell"
     },
     {
       "command": "pnpm prune --prod",
-      "label": "pnpm prune (functions)",
-      "options": { "cwd": "${workspaceFolder}/apps/functions" },
+      "label": "pnpm prune (jobs)",
+      "options": { "cwd": "${workspaceFolder}/apps/jobs" },
       "type": "shell"
     }
   ],

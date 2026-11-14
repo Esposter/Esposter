@@ -19,7 +19,7 @@ const deadLetterQueueName = getCloudflareResourceName(
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Production,
   CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Functions,
+  CloudflareWorkerPurpose.Jobs,
 );
 
 export const prodDlqEsposterDeleteOrphanedProfileImageConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(

@@ -19,7 +19,7 @@ const deadLetterQueueName = getCloudflareResourceName(
 const scriptName = getCloudflareResourceName(
   CloudflareEnvironment.Development,
   CloudflareAssetType.Worker,
-  CloudflareWorkerPurpose.Functions,
+  CloudflareWorkerPurpose.Jobs,
 );
 
 export const devDlqEsposterReconcileStorageLedgerEntryConsumer: cloudflare.QueueConsumer = new cloudflare.QueueConsumer(

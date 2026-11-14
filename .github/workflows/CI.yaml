@@ -64,11 +64,10 @@ jobs:
 
       - name: 📦 Setup Packages
         uses: ./.github/actions/setup-packages
-      # Two suites assert against a built bundle: the Functions package counts the `app.*` registrations in its
-      # `dist`, and the bundle-size record holds both apps' bundles. The `package-builds` artifact holds libraries only,
-      # so they are built here, from the source this shard checked out.
+      # The bundle-size record holds the infrastructure program's bundle. The `package-builds` artifact holds libraries
+      # only, so it is built here, from the source this shard checked out.
       - name: 🏗️ Build the app bundles the suite asserts against
-        run: pnpm --filter "@esposter/functions" --filter "@esposter/infra" build
+        run: pnpm --filter "@esposter/infra" build
       # Restored only: `build-packages` fills and saves the mirror under this key before a shard starts on the default
       # branch and `ai/queue`; another branch restores the newest mirror it can see (monorepo-tooling.md → ## CI job shape)
       - name: ♻️ Restore the game data mirror

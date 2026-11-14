@@ -2,7 +2,7 @@ name: Build App
 description: Build one app from the source this job checked out — install the app's closure, build the libraries it links against, then the app itself
 inputs:
   package:
-    description: The app's npm name, e.g. `@esposter/functions` — the install, the dependency build and the app build are all selected from it
+    description: The app's npm name, e.g. `@esposter/jobs` — the install, the dependency build and the app build are all selected from it
     required: true
 runs:
   using: composite

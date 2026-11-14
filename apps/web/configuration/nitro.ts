@@ -26,7 +26,7 @@ const pdfjsDistDirectory = dirname(createRequire(import.meta.url).resolve("pdfjs
 export const nitro: NuxtConfig["nitro"] = {
   // The Worker's own wrangler configuration, written beside the build. A build is made for one environment — CI sets
   // CLOUDFLARE_ENV by its branch before building, and a local build is prod — so the file holds that environment alone:
-  // Wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the functions Worker's
+  // Wrangler refuses `env` blocks in a configuration a tool generated. The app's stateful half is the realtime Worker's
   // Durable Objects, which the bindings in `wrangler.ts` reach by that Worker's script name
   cloudflare: {
     deployConfig: true,

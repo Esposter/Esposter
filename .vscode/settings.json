@@ -3,7 +3,7 @@
     "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit", "source.organizeImports": "explicit" }
   },
   "[xml]": { "editor.formatOnSave": false },
-  "azureFunctions.deploySubpath": "apps/functions",
+  "azureFunctions.deploySubpath": "apps/jobs",
   "azureFunctions.postDeployTask": "pnpm i (functions)",
   "azureFunctions.preDeployTask": "pnpm prune (functions)",
   "azureFunctions.projectLanguage": "TypeScript",
