@@ -6,7 +6,7 @@ import { index, integer, primaryKey } from "drizzle-orm/sqlite-core";
 // A row exists iff the user has opened the resource, and holds when they last did. Server-side rather than
 // Per-device, because Recent is a list surface of its own with a Last accessed column — a column that
 // Disagreed between two browsers is harder to defend than a card that quietly did.
-// Deliberately not called a view: `ResourceViewEntity` counts anonymous hits on a *published* resource,
+// Deliberately not called a view: `resourceViewsInResource` counts anonymous hits on a *published* resource,
 // While this records the owner opening their own. One row per user per resource, rewritten on every open,
 // So the table stays bounded by what exists rather than growing with traffic.
 export const resourceAccessesInResource = sqliteTable(
