@@ -1,9 +1,9 @@
 {
   "version": "7",
   "dialect": "sqlite",
-  "id": "a604d1de-29e1-4283-8c14-277e042e4f5c",
+  "id": "0381aafc-e7db-44b6-ac9c-1c6144a77e7a",
   "prevIds": [
-    "00000000-0000-0000-0000-000000000000"
+    "9349d301-049b-42aa-8722-24ea7683d6c5"
   ],
   "ddl": [
     {
@@ -64,6 +64,14 @@
     },
     {
       "name": "message_messages",
+      "entityType": "tables"
+    },
+    {
+      "name": "message_moderationLogs",
+      "entityType": "tables"
+    },
+    {
+      "name": "message_moderationNotes",
       "entityType": "tables"
     },
     {
@@ -139,7 +147,15 @@
       "entityType": "tables"
     },
     {
+      "name": "resource_programParticipants",
+      "entityType": "tables"
+    },
+    {
       "name": "resource_resourceAccesses",
+      "entityType": "tables"
+    },
+    {
+      "name": "resource_resourceActivities",
       "entityType": "tables"
     },
     {
@@ -167,7 +183,15 @@
       "entityType": "tables"
     },
     {
+      "name": "resource_resourceViews",
+      "entityType": "tables"
+    },
+    {
       "name": "resource_resourceWorkingAssets",
+      "entityType": "tables"
+    },
+    {
+      "name": "resource_surveyResponses",
       "entityType": "tables"
     },
     {
@@ -1625,6 +1649,176 @@
       "name": "userId",
       "type": "text",
       "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "actorUserId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "durationMs",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "roomId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "targetUserId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "type",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "actorUserId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "note",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "roomId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "targetUserId",
+      "type": "text",
+      "notNull": true,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -3331,6 +3525,86 @@
       "entityType": "columns"
     },
     {
+      "table": "resource_programParticipants",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "keyValue",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "publicId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "resourceId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "token",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
       "table": "resource_resourceAccesses",
       "name": "createdAt",
       "type": "integer",
@@ -3385,6 +3659,126 @@
       "name": "userId",
       "type": "text",
       "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "activityType",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "apiKeyId",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "apiKeyName",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "''",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "newName",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "oldName",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "publishVersion",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "resourceId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "userId",
+      "type": "text",
+      "notNull": false,
       "autoincrement": false,
       "default": null,
       "generated": null,
@@ -3891,6 +4285,76 @@
       "entityType": "columns"
     },
     {
+      "table": "resource_resourceViews",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "count",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "resourceId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "utcDate",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
       "table": "resource_resourceWorkingAssets",
       "name": "createdAt",
       "type": "integer",
@@ -3932,6 +4396,106 @@
     },
     {
       "table": "resource_resourceWorkingAssets",
+      "name": "resourceId",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "createdAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "deletedAt",
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "updatedAt",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "id",
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "isDraft",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "model",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'{}'",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "modelVersion",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "pageNo",
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "participantToken",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "''",
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "resource_surveyResponses",
       "name": "resourceId",
       "type": "text",
       "notNull": true,
@@ -4469,6 +5033,110 @@
       "entityType": "indexes"
     },
     {
+      "table": "message_moderationLogs",
+      "name": "moderationLogs_roomId_createdAt_id_index",
+      "columns": [
+        {
+          "value": "roomId",
+          "isExpression": false
+        },
+        {
+          "value": "createdAt",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "moderationLogs_actorUserId_index",
+      "columns": [
+        {
+          "value": "actorUserId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "moderationLogs_targetUserId_index",
+      "columns": [
+        {
+          "value": "targetUserId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "moderationNotes_roomId_targetUserId_createdAt_id_index",
+      "columns": [
+        {
+          "value": "roomId",
+          "isExpression": false
+        },
+        {
+          "value": "targetUserId",
+          "isExpression": false
+        },
+        {
+          "value": "createdAt",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "moderationNotes_actorUserId_index",
+      "columns": [
+        {
+          "value": "actorUserId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "moderationNotes_targetUserId_index",
+      "columns": [
+        {
+          "value": "targetUserId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
       "table": "message_roomCategories",
       "name": "roomCategories_userId_index",
       "columns": [
@@ -4811,6 +5479,56 @@
       "entityType": "indexes"
     },
     {
+      "table": "resource_resourceActivities",
+      "name": "resourceActivities_resourceId_createdAt_id_index",
+      "columns": [
+        {
+          "value": "resourceId",
+          "isExpression": false
+        },
+        {
+          "value": "createdAt",
+          "isExpression": false
+        },
+        {
+          "value": "id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "resourceActivities_apiKeyId_index",
+      "columns": [
+        {
+          "value": "apiKeyId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "resourceActivities_userId_index",
+      "columns": [
+        {
+          "value": "userId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
       "table": "resource_resourceLinks",
       "name": "resourceLinks_target_index",
       "columns": [
@@ -4834,6 +5552,32 @@
       "columns": [
         {
           "value": "userId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "entityType": "indexes"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "surveyResponses_resourceId_isDraft_createdAt_id_index",
+      "columns": [
+        {
+          "value": "resourceId",
+          "isExpression": false
+        },
+        {
+          "value": "isDraft",
+          "isExpression": false
+        },
+        {
+          "value": "createdAt",
+          "isExpression": false
+        },
+        {
+          "value": "id",
           "isExpression": false
         }
       ],
@@ -5218,6 +5962,81 @@
       "name": "fk_message_messages_userId_auth_users_id_fk",
       "columns": [
         "userId"
+      ],
+      "tableTo": "auth_users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "fk_message_moderationLogs_roomId_message_rooms_id_fk",
+      "columns": [
+        "roomId"
+      ],
+      "tableTo": "message_rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "message_moderationLogs",
+      "name": "fk_message_moderationLogs_targetUserId_auth_users_id_fk",
+      "columns": [
+        "targetUserId"
+      ],
+      "tableTo": "auth_users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "fk_message_moderationNotes_actorUserId_auth_users_id_fk",
+      "columns": [
+        "actorUserId"
+      ],
+      "tableTo": "auth_users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "fk_message_moderationNotes_roomId_message_rooms_id_fk",
+      "columns": [
+        "roomId"
+      ],
+      "tableTo": "message_rooms",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "fk_message_moderationNotes_targetUserId_auth_users_id_fk",
+      "columns": [
+        "targetUserId"
       ],
       "tableTo": "auth_users",
       "columnsTo": [
@@ -5728,6 +6547,21 @@
       "entityType": "fks"
     },
     {
+      "table": "resource_programParticipants",
+      "name": "fk_resource_programParticipants_resourceId_resource_resources_id_fk",
+      "columns": [
+        "resourceId"
+      ],
+      "tableTo": "resource_resources",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
       "table": "resource_resourceAccesses",
       "name": "fk_resource_resourceAccesses_resourceId_resource_resources_id_fk",
       "columns": [
@@ -5754,6 +6588,51 @@
       ],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "fk_resource_resourceActivities_apiKeyId_auth_apiKeys_id_fk",
+      "columns": [
+        "apiKeyId"
+      ],
+      "tableTo": "auth_apiKeys",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "fk_resource_resourceActivities_resourceId_resource_resources_id_fk",
+      "columns": [
+        "resourceId"
+      ],
+      "tableTo": "resource_resources",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "fk_resource_resourceActivities_userId_auth_users_id_fk",
+      "columns": [
+        "userId"
+      ],
+      "tableTo": "auth_users",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "SET NULL",
       "nameExplicit": false,
       "entityType": "fks"
     },
@@ -5867,8 +6746,38 @@
       "entityType": "fks"
     },
     {
+      "table": "resource_resourceViews",
+      "name": "fk_resource_resourceViews_resourceId_resource_resources_id_fk",
+      "columns": [
+        "resourceId"
+      ],
+      "tableTo": "resource_resources",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
       "table": "resource_resourceWorkingAssets",
       "name": "fk_resource_resourceWorkingAssets_resourceId_resource_resources_id_fk",
+      "columns": [
+        "resourceId"
+      ],
+      "tableTo": "resource_resources",
+      "columnsTo": [
+        "id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "CASCADE",
+      "nameExplicit": false,
+      "entityType": "fks"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "fk_resource_surveyResponses_resourceId_resource_resources_id_fk",
       "columns": [
         "resourceId"
       ],
@@ -6277,6 +7186,24 @@
       "entityType": "pks"
     },
     {
+      "table": "message_moderationLogs",
+      "name": "message_moderationLogs_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "message_moderationNotes",
+      "name": "message_moderationNotes_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
       "table": "message_roomCategories",
       "name": "message_roomCategories_pk",
       "columns": [
@@ -6394,6 +7321,24 @@
       "entityType": "pks"
     },
     {
+      "table": "resource_programParticipants",
+      "name": "resource_programParticipants_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "resource_resourceActivities",
+      "name": "resource_resourceActivities_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
       "table": "resource_resourcePublications",
       "name": "resource_resourcePublications_pk",
       "columns": [
@@ -6405,6 +7350,24 @@
     {
       "table": "resource_resources",
       "name": "resource_resources_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "resource_resourceViews_pk",
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "resource_surveyResponses",
+      "name": "resource_surveyResponses_pk",
       "columns": [
         "id"
       ],
@@ -6464,6 +7427,35 @@
       "columns": [
         "userId",
         "endpoint"
+      ],
+      "nameExplicit": true,
+      "entityType": "uniques"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "programParticipants_resourceId_keyValue_unique",
+      "columns": [
+        "resourceId",
+        "keyValue"
+      ],
+      "nameExplicit": true,
+      "entityType": "uniques"
+    },
+    {
+      "table": "resource_programParticipants",
+      "name": "programParticipants_token_unique",
+      "columns": [
+        "token"
+      ],
+      "nameExplicit": true,
+      "entityType": "uniques"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "resourceViews_resourceId_utcDate_unique",
+      "columns": [
+        "resourceId",
+        "utcDate"
       ],
       "nameExplicit": true,
       "entityType": "uniques"
@@ -6790,6 +7782,12 @@
       "table": "resource_resourceVersions",
       "name": "resourceVersions_storedBytes_check",
       "value": "\"storedBytes\" >= 0",
+      "entityType": "checks"
+    },
+    {
+      "table": "resource_resourceViews",
+      "name": "resourceViews_count_check",
+      "value": "\"count\" >= 0",
       "entityType": "checks"
     },
     {

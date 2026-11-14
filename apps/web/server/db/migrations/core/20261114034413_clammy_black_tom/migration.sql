@@ -264,13 +264,14 @@ CREATE TABLE `message_roomMemberPermissions` (
 	`createdAt` integer NOT NULL,
 	`deletedAt` integer,
 	`updatedAt` integer NOT NULL,
-	`allow` text DEFAULT '0' NOT NULL,
-	`deny` text DEFAULT '0' NOT NULL,
+	`allow` integer DEFAULT '0' NOT NULL,
+	`deny` integer DEFAULT '0' NOT NULL,
 	`roomId` text NOT NULL,
 	`userId` text NOT NULL,
 	CONSTRAINT `message_roomMemberPermissions_pk` PRIMARY KEY(`userId`, `roomId`),
 	CONSTRAINT `fk_message_roomMemberPermissions_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
-	CONSTRAINT `fk_message_roomMemberPermissions_userId_roomId_message_usersToRooms_userId_roomId_fk` FOREIGN KEY (`userId`,`roomId`) REFERENCES `message_usersToRooms`(`userId`,`roomId`) ON DELETE CASCADE
+	CONSTRAINT `fk_message_roomMemberPermissions_userId_roomId_message_usersToRooms_userId_roomId_fk` FOREIGN KEY (`userId`,`roomId`) REFERENCES `message_usersToRooms`(`userId`,`roomId`) ON DELETE CASCADE,
+	CONSTRAINT "roomMemberPermissions_allow_deny_disjoint_check" CHECK(("allow" & "deny") = 0)
 );
 --> statement-breakpoint
 CREATE TABLE `message_roomRoles` (
@@ -281,7 +282,7 @@ CREATE TABLE `message_roomRoles` (
 	`id` text PRIMARY KEY,
 	`isEveryone` integer DEFAULT false NOT NULL,
 	`name` text NOT NULL,
-	`permissions` text DEFAULT '0' NOT NULL,
+	`permissions` integer DEFAULT '0' NOT NULL,
 	`position` integer DEFAULT 0 NOT NULL,
 	`roomId` text NOT NULL,
 	CONSTRAINT `fk_message_roomRoles_roomId_message_rooms_id_fk` FOREIGN KEY (`roomId`) REFERENCES `message_rooms`(`id`) ON DELETE CASCADE,
@@ -706,7 +707,7 @@ CREATE INDEX `roomCategories_userId_index` ON `message_roomCategories` (`userId`
 CREATE UNIQUE INDEX `roomEmojis_roomId_name_unique` ON `message_roomEmojis` (`roomId`,`name`);--> statement-breakpoint
 CREATE INDEX `roomMemberPermissions_roomId_index` ON `message_roomMemberPermissions` (`roomId`);--> statement-breakpoint
 CREATE INDEX `roomRoles_roomId_position_index` ON `message_roomRoles` (`roomId`,`position`);--> statement-breakpoint
-CREATE UNIQUE INDEX `roomRoles_roomId_isEveryone_unique` ON `message_roomRoles` (`roomId`) WHERE "message_roomRoles"."isEveryone" = 1;--> statement-breakpoint
+CREATE UNIQUE INDEX `roomRoles_roomId_isEveryone_unique` ON `message_roomRoles` (`roomId`) WHERE "message_roomRoles"."isEveryone" = TRUE;--> statement-breakpoint
 CREATE INDEX `scheduledMessageJobs_userId_roomId_runAt_index` ON `message_scheduledMessageJobs` (`userId`,`roomId`,`runAt`);--> statement-breakpoint
 CREATE INDEX `searchHistories_userId_roomId_index` ON `message_searchHistories` (`userId`,`roomId`);--> statement-breakpoint
 CREATE INDEX `searchHistories_roomId_index` ON `message_searchHistories` (`roomId`);--> statement-breakpoint
@@ -717,7 +718,7 @@ CREATE INDEX `usersToRooms_categoryId_index` ON `message_usersToRooms` (`categor
 CREATE INDEX `usersToRooms_timeoutUntil_index` ON `message_usersToRooms` (`timeoutUntil`) WHERE "message_usersToRooms"."timeoutUntil" IS NOT NULL;--> statement-breakpoint
 CREATE INDEX `webhooks_roomId_index` ON `message_webhooks` (`roomId`);--> statement-breakpoint
 CREATE INDEX `notifications_userId_createdAt_index` ON `notification_notifications` (`userId`,"createdAt" DESC);--> statement-breakpoint
-CREATE INDEX `notifications_userId_isRead_index` ON `notification_notifications` (`userId`) WHERE "notification_notifications"."isRead" = 0;--> statement-breakpoint
+CREATE INDEX `notifications_userId_isRead_index` ON `notification_notifications` (`userId`) WHERE "notification_notifications"."isRead" = false;--> statement-breakpoint
 CREATE INDEX `pushSubscriptions_sessionId_index` ON `notification_pushSubscriptions` (`sessionId`);--> statement-breakpoint
 CREATE INDEX `likes_postId_index` ON `post_likes` (`postId`);--> statement-breakpoint
 CREATE INDEX `posts_parentId_ranking_index` ON `post_posts` (`parentId`,"ranking" DESC,"id" DESC);--> statement-breakpoint
@@ -732,8 +733,7 @@ CREATE INDEX `friends_receiverId_index` ON `social_friends` (`receiverId`);--> s
 CREATE INDEX `friends_senderId_index` ON `social_friends` (`senderId`);--> statement-breakpoint
 CREATE INDEX `storageLedger_userId_reconciledAt_index` ON `storage_storageLedger` (`userId`,`reconciledAt`);--> statement-breakpoint
 CREATE UNIQUE INDEX `dataExports_userId_status_unique` ON `user_dataExports` (`userId`) WHERE "user_dataExports"."status" IN ('queued', 'building');--> statement-breakpoint
-CREATE INDEX `dataExports_userId_index` ON `user_dataExports` (`userId`);
---> statement-breakpoint
+CREATE INDEX `dataExports_userId_index` ON `user_dataExports` (`userId`);--> statement-breakpoint
 CREATE VIRTUAL TABLE `messages_search` USING fts5(`message`, `filenames`, `senderName`, content='message_messages', content_rowid='rowid', tokenize = 'unicode61 remove_diacritics 2');--> statement-breakpoint
 CREATE TRIGGER `message_messages_search_insert` AFTER INSERT ON `message_messages` BEGIN
 	INSERT INTO `messages_search` (`rowid`, `message`, `filenames`, `senderName`) VALUES (new.`rowid`, new.`message`, new.`filenames`, new.`senderName`);
@@ -744,16 +744,4 @@ END;--> statement-breakpoint
 CREATE TRIGGER `message_messages_search_update` AFTER UPDATE OF `message`, `filenames`, `senderName` ON `message_messages` BEGIN
 	INSERT INTO `messages_search` (`messages_search`, `rowid`, `message`, `filenames`, `senderName`) VALUES ('delete', old.`rowid`, old.`message`, old.`filenames`, old.`senderName`);
 	INSERT INTO `messages_search` (`rowid`, `message`, `filenames`, `senderName`) VALUES (new.`rowid`, new.`message`, new.`filenames`, new.`senderName`);
-END;
---> statement-breakpoint
-CREATE VIRTUAL TABLE `resources_search` USING fts5(`name`, `tags`, `id` UNINDEXED, tokenize = 'unicode61 remove_diacritics 2');--> statement-breakpoint
-CREATE TRIGGER `resource_resources_search_insert` AFTER INSERT ON `resource_resources` BEGIN
-	INSERT INTO `resources_search` (`id`, `name`, `tags`) VALUES (new.`id`, new.`name`, (SELECT group_concat(`key` || ' ' || `value`, ' ') FROM json_each(new.`tags`)));
-END;--> statement-breakpoint
-CREATE TRIGGER `resource_resources_search_update` AFTER UPDATE OF `name`, `tags` ON `resource_resources` BEGIN
-	DELETE FROM `resources_search` WHERE `id` = old.`id`;
-	INSERT INTO `resources_search` (`id`, `name`, `tags`) VALUES (new.`id`, new.`name`, (SELECT group_concat(`key` || ' ' || `value`, ' ') FROM json_each(new.`tags`)));
-END;--> statement-breakpoint
-CREATE TRIGGER `resource_resources_search_delete` AFTER DELETE ON `resource_resources` BEGIN
-	DELETE FROM `resources_search` WHERE `id` = old.`id`;
 END;

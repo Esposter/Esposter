@@ -62,6 +62,7 @@ describe("schema", () => {
       resourceVersionAssets_assetHash_check: LENGTH("resource_resourceVersionAssets"."assetHash") = 64 AND "resource_resourceVersionAssets"."assetHash" NOT GLOB '*[^0-9a-f]*'
       resourceVersions_plaintextBytes_check: "resource_resourceVersions"."plaintextBytes" >= 0
       resourceVersions_storedBytes_check: "resource_resourceVersions"."storedBytes" >= 0
+      resourceViews_count_check: "resource_resourceViews"."count" >= 0
       resourceWorkingAssets_assetHash_check: LENGTH("resource_resourceWorkingAssets"."assetHash") = 64 AND "resource_resourceWorkingAssets"."assetHash" NOT GLOB '*[^0-9a-f]*'
       roomCategories_name_length_check: LENGTH(TRIM("message_roomCategories"."name")) BETWEEN 1 AND 100
       roomCategories_position_check: "message_roomCategories"."position" >= 0
