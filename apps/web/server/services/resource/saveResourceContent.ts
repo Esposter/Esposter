@@ -137,20 +137,25 @@ export const saveResourceContent = async (
     ctx.db.delete(resourceLinksInResource).where(and(eq(resourceLinksInResource.sourceId, id), where));
   // The clear and the write are one batch, the write guarded on the version as the clear is, so the set is either the one this
   // save wrote or the one the save that superseded it wrote
-  const writeResourceLinks = (expectedContentVersion: number) =>
-    ctx.db.batch([
+  const writeResourceLinks = (expectedContentVersion: number) => {
+    // Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
+    const now = Date.now();
+    return ctx.db.batch([
       clearResourceLinks(isCurrentContentVersion(expectedContentVersion)),
       ctx.db.insert(resourceLinksInResource).select(
         ctx.db
           .select({
+            createdAt: sql<Date>`${now}`,
             sourceId: sql<ResourceInResource["id"]>`${id}`,
             targetId: sql<string>`json_extract(link.value, '$.targetId')`,
             type: sql<ResourceLinkInResource["type"]>`json_extract(link.value, '$.type')`,
+            updatedAt: sql<Date>`${now}`,
           })
           .from(sql`json_each(${JSON.stringify(resourceLinkTargets)}) AS link`)
           .where(isCurrentContentVersion(expectedContentVersion)),
       ),
     ]);
+  };
   // The links are cleared before the upload and written after the charge, so they never claim what the blob does not back. A
   // cleared set rejects the survey's tokens until the next save that lands writes it again — every partial outcome lands there
   // rather than on a stale set:

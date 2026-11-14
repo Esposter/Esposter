@@ -21,6 +21,8 @@ export const getSnapshotVersionWrites = (
   { assetHashes, summary, writtenVersion }: PreparedSnapshotVersion,
 ) => {
   const { baseHash, hash, plaintextBytes, storedBytes } = writtenVersion;
+  // Epoch milliseconds, the encoding the timestamp columns store, since an insert from a select takes no JS default
+  const now = Date.now();
   return [
     db
       .insert(resourceVersionsInResource)
@@ -52,7 +54,9 @@ export const getSnapshotVersionWrites = (
                 .select({
                   assetHash: sql<string>`asset.value`,
                   channel: sql<SnapshotChannel>`${channel}`,
+                  createdAt: sql<Date>`${now}`,
                   resourceId: sql<ResourceInResource["id"]>`${resourceId}`,
+                  updatedAt: sql<Date>`${now}`,
                   version: sql<number>`${version}`,
                 })
                 .from(sql`json_each(${JSON.stringify([...assetHashes])}) AS asset`),

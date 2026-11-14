@@ -28,12 +28,19 @@ export const reserveWorkingAssets = async (
   await touchSnapshotAssets(resourceId, addedHashes);
   // A concurrent reserve of the same asset may have written the row since the read, which is the same reference. One statement
   // over a JSON array, since a bind limit of 100 parameters per statement would cap a document at a few dozen assets
+  // Epoch milliseconds, since an insert from a select takes no JS default for the timestamp columns
+  const now = Date.now();
   if (addedHashes.size > 0)
     await db
       .insert(resourceWorkingAssetsInResource)
       .select(
         db
-          .select({ assetHash: sql<string>`asset.value`, resourceId: sql<string>`${resourceId}` })
+          .select({
+            assetHash: sql<string>`asset.value`,
+            createdAt: sql<Date>`${now}`,
+            resourceId: sql<string>`${resourceId}`,
+            updatedAt: sql<Date>`${now}`,
+          })
           .from(sql`json_each(${JSON.stringify([...addedHashes])}) AS asset`)
           .where(sql`true`),
       )
