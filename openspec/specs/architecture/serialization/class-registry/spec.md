@@ -14,12 +14,6 @@ A class that crosses a serialization boundary SHALL be listed once in the shared
 - **WHEN** it is added with one entry in the shared registry
 - **THEN** page loads and procedure calls both revive it as the same class
 
-#### Scenario: The table reads do not consult the shared registry
-
-- **GIVEN** a new message kind read from table storage
-- **WHEN** it is added
-- **THEN** the shared registry needs no entry for it, since table reads select the class through `MessageTypeEntityMap`
-
 ### Requirement: A registered class name is never renamed
 
 A registered class name SHALL NOT be renamed, because the name is stored inside saved data and a rename would stop that data from being revived.

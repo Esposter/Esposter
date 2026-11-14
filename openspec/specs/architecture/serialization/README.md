@@ -1,20 +1,13 @@
 # Serialization
 
-How class instances (e.g. `StandardMessageEntity`) are serialized and deserialized across all three paths in the app: Azure Table read, SSR payload hydration, and tRPC transport. Each path, and each topic with decisions of its own, has a page below; this page holds what they share.
+How class instances (e.g. `Dashboard`) are serialized and deserialized across the two transport paths in the app: SSR payload hydration and tRPC transport. Each path, and each topic with decisions of its own, has a page below; this page holds what they share.
 
-## The three paths
+## The two paths
 
 Each path is independent. They do not compose or run in sequence.
 
 ```mermaid
 flowchart TB
-  subgraph at [Azure Table read — server-side only]
-    ROW["Azure SDK row<br/>date columns → Date · JSON columns → string"]
-    DE["deserializeEntity.ts<br/>jsonDateParse(String(value)) per JSON column"]
-    INST1["class instance<br/>createdAt: Date ✓"]
-    ROW --> DE --> INST1
-  end
-
   subgraph ssr [SSR / Nuxt payload — page load]
     PINIA["Pinia state (Date objects)"]
     RED["customPayloads.ts reducer<br/>JSON.stringify(entity)"]
@@ -54,7 +47,6 @@ Both the SSR and tRPC paths fix this by passing the raw JSON string through `jso
 
 | Page                                                       | What it decides                                                                                   |
 | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| [Azure Table read](azure-table-path/design.md)             | Which columns are dates and which are JSON strings, and how an entity is rebuilt as its class     |
 | [SSR payload](ssr-payload/design.md)                       | How Nuxt's payload reducer and reviver carry an instance into the HTML and back                   |
 | [tRPC transport](trpc-transport/design.md)                 | The SuperJSON custom transformer over HTTP and WebSocket links                                    |
 | [Class registry](class-registry/design.md)                 | Which classes serialize, and why the registry keys are an on-disk format                          |
