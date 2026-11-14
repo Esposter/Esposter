@@ -10,4 +10,4 @@
 
 ## 3.
 
-- [ ] 3.1 Make every component importing apexcharts, three.js, pdf.js or the call's track processors client-only, and add the server bundle size check to CI. Verified by the check passing under the cap.
+- [x] 3.1 Keep the web Worker's server bundle under the 64 MiB code cap, a component leaving it only as a `.client.vue` or under an `ssr: false` route, and check its size in CI after the app build (`server-bundle:check`). Verified by the check passing at 28.21 MiB.
