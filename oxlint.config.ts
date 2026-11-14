@@ -350,6 +350,9 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "promise/param-names": ["error", { rejectPattern: "^_?reject", resolvePattern: "^_?resolve" }],
     "promise/prefer-await-to-callbacks": "off",
     "promise/prefer-await-to-then": "off",
+    // The core `require-await` reports the same sites as `typescript/require-await`, which is type-aware and alone
+    // Reads a function returning a promise as awaited, so the core copy is off
+    "require-await": "off",
     "routing/no-route-literal": "error",
     "setup-scope/no-detached-mutation": "error",
     "sort-imports": "off",
@@ -388,6 +391,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "typescript/prefer-nullish-coalescing": "off",
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-readonly-parameter-types": "off",
+    // Type-aware copy of `unicorn/prefer-string-starts-ends-with`: the same sites, so only the syntactic rule runs
+    "typescript/prefer-string-starts-ends-with": "off",
     "typescript/promise-function-async": "off",
     "typescript/restrict-plus-operands": "off",
     "typescript/strict-boolean-expressions": "off",
@@ -400,6 +405,8 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "unicorn/no-array-reverse": ["error", { allowExpressionStatement: false }],
     "unicorn/no-array-sort": ["error", { allowExpressionStatement: false }],
     "unicorn/no-await-expression-member": "off",
+    // The core `no-negated-condition` reports the same sites, so this copy is off
+    "unicorn/no-negated-condition": "off",
     "unicorn/no-nested-ternary": "off",
     "unicorn/no-null": "off",
     "unicorn/no-object-as-default-parameter": "off",
