@@ -5,8 +5,10 @@ Read when client call state is read or added: which store owns it, and the two s
 `useCallStore` (`store/message/room/call/index.ts`) holds two session ids that read alike and must never be swapped:
 
 - `activeCallSessionId` — the session the user is **in** (drives `leaveCall` and every write to the user's own participant flags).
-- `currentRoomCallSessionId` — the session for the **viewed** room (set by `useCallSubscribables`, drives the participant list), reset to `""` on room leave.
+- `currentRoomCallSessionId` — the session for the **viewed** room (set by `useCallSubscribables`, read by the room's participant view), reset to `""` on room leave. Its participants are held only once the user has joined that call, since the call socket opens to a joined or knocking connection alone.
 
 `callRoomId` names the room of a room call and is empty for a standalone call; the call's route, the permission checks on its participants, the admin actions' roomId checks and the invite card's hiding all read it. `callThreadRootId` names a thread call's thread. Participants live in `useParticipantStore` (`call/participant.ts`) and every media flag and stream in `useMediaStore` (`call/media.ts`) — each store's return is its inventory.
+
+The call's frames arrive on one socket held by `useConnectionStore` (`store/realtime/connection.ts`): `openCall` opens it for the call a join or a knock names and is a no-op for the call it already holds, `closeCall` runs when the user leaves, and `onCallEvent` registers a handler for one frame type. Nothing else opens it.
 
 `useRealtimeStore` (`store/message/room/realtime.ts`) wraps the RealtimeKit meeting — the connection, every local and remote track, and the devices. All track/media logic lives here; `useCallStore` delegates to it. Device selection is sourced from the persisted `useVoiceDeviceSettingsStore` (single source of truth) — `setActiveDevice` writes that store and per-kind watchers hand the picked device to `self.setDevice`. The store keeps no per-kind selected-device refs. See `openspec/specs/esbabbler/voice-video/design.md` (Device selection).
