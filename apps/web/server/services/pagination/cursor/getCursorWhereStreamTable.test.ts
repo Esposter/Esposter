@@ -1,8 +1,10 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { CompositeKey } from "@esposter/db-schema";
 
 import { getCursorWhereStreamTable } from "#server/services/pagination/cursor/getCursorWhereStreamTable";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 import { describe, expect, test } from "vitest";
 

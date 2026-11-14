@@ -1,8 +1,10 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
+import type { CompositeKey } from "@esposter/db-schema";
 
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getNextCursor } from "#server/services/pagination/cursor/getNextCursor";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { CompositeKeyPropertyNames } from "@esposter/db-schema";
 
 import { describe, expect, test } from "vitest";
 
