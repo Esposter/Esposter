@@ -1,6 +1,6 @@
-import type { MessageEntity, RoomInMessage } from "@esposter/db-schema";
+import type { MessageInMessage, RoomInMessage } from "@esposter/db-schema";
 
 export interface SentMessageWithRoom {
-  message: MessageEntity;
+  message: MessageInMessage;
   room: RoomInMessage;
 }

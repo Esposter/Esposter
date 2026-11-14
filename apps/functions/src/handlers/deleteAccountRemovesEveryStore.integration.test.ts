@@ -36,7 +36,6 @@ import {
   ResourceType,
   resourceVersionsInResource,
   roomsInMessage,
-  SearchIndex,
   sessionsInAuth,
   SnapshotChannel,
   storageLedgerInStorage,
@@ -45,7 +44,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockSearchDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -57,7 +56,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
-vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
   import("#src/services/server/publishToServer"),
@@ -94,7 +92,6 @@ describe(deleteAccountHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
-    MockSearchDatabase.clear();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
@@ -267,17 +264,6 @@ describe(deleteAccountHandler, () => {
     expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
     expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
-    // The search index holds a document for the owned room's messages and one for the member room's. The sweep removes
-    // The owned room's documents by its partition key, and the member room's document is not its to remove
-    const indexedOwnedRoomDocument = {
-      [serializeKey(CompositeKeyPropertyNames.partitionKey)]: ownedRoom.id,
-      [serializeKey(CompositeKeyPropertyNames.rowKey)]: getReverseTickedTimestamp(),
-    };
-    const indexedMemberRoomDocument = {
-      [serializeKey(CompositeKeyPropertyNames.partitionKey)]: memberRoom.id,
-      [serializeKey(CompositeKeyPropertyNames.rowKey)]: memberRoomMessage.rowKey,
-    };
-    MockSearchDatabase.set(SearchIndex.Messages, [indexedOwnedRoomDocument, indexedMemberRoomDocument]);
 
     await deleteAccountHandler({ userId });
 
@@ -303,7 +289,6 @@ describe(deleteAccountHandler, () => {
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
     expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).toStrictEqual([]);
     expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoom.id}/`)).toStrictEqual([]);
-    expect(MockSearchDatabase.get(SearchIndex.Messages)).toStrictEqual([indexedMemberRoomDocument]);
 
     // The owned resource, its version, its working copy, its objects and its activity trail
     await expect(

@@ -1,39 +1,43 @@
 import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
-import type { SelectFields } from "@azure/search-documents";
+import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
+import type { Database } from "@esposter/db-schema";
 
-import type { MessageEntity, Clause } from "@esposter/db-schema";
-
-import { readMessageSearchDocuments } from "#server/services/message/readMessageSearchDocuments";
+import { getMessageSearchExpression } from "#server/services/message/search/getMessageSearchExpression";
+import { getSearchFilterConditions } from "#server/services/message/search/getSearchFilterConditions";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
-import { getSearchNullClause, serializeSearchClauses } from "@esposter/azure";
-import { filtersToClauses } from "@esposter/db";
-import {
-  FilterType,
-  SearchIndex,
-  SearchIndexSearchableFieldsMap,
-  BinaryOperator,
-  CompositeKeyPropertyNames,
-} from "@esposter/db-schema";
-import { ItemMetadataPropertyNames } from "@esposter/shared";
+import { FilterType, messagesInMessage } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 
-export const searchMessages = async ({ filters, limit, offset, query, roomId, sortBy }: SearchMessagesInput) => {
+// The text is matched by the FTS5 index the triggers keep beside `messages`, and the rows it finds are then narrowed by
+// the room, the soft delete and the filters, which all read the row itself. Ranked by bm25 with the message weighted 3 and
+// the sender 1.5 when there is text to rank by; a filter-only search reads newest first
+export const searchMessages = async (
+  db: Database,
+  { filters, limit, offset, query, roomId }: SearchMessagesInput,
+): Promise<SearchMessagesResult> => {
   const searchableFilters = getSearchableFilters(filters);
   const hasRoomInFilter = searchableFilters.some(({ type }) => type === FilterType.In);
-  const clauses: Clause<Record<SelectFields<MessageEntity> & string, unknown>>[] = [
-    ...(hasRoomInFilter
-      ? []
-      : [{ key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId }]),
-    getSearchNullClause(ItemMetadataPropertyNames.deletedAt),
+  const expression = getMessageSearchExpression(query);
+  const conditions = [
+    ...(hasRoomInFilter ? [] : [eq(messagesInMessage.roomId, roomId)]),
+    isNull(messagesInMessage.deletedAt),
+    ...getSearchFilterConditions(searchableFilters),
+    ...(expression ? [sql`rowid in (select rowid from messages_search where messages_search match ${expression})`] : []),
   ];
-  if (searchableFilters.length > 0) clauses.push(...filtersToClauses(searchableFilters));
-  const { count, messages } = await readMessageSearchDocuments({
-    filter: serializeSearchClauses(clauses),
-    limit,
-    offset,
-    orderBy: sortBy.map(({ key, order }) => `${key} ${order}`),
-    query,
-    searchFields: SearchIndexSearchableFieldsMap[SearchIndex.Messages],
-  });
-  return { count, data: getBasePaginationData(messages, limit) };
+  const where = and(...conditions);
+  const rank = sql`(select bm25(messages_search, 3, 1, 1.5) from messages_search where messages_search match ${expression} and rowid = ${messagesInMessage}.rowid)`;
+  const newestFirst = [desc(messagesInMessage.createdAt), desc(messagesInMessage.id)];
+  const [messages, totals] = await Promise.all([
+    db
+      .select()
+      .from(messagesInMessage)
+      .where(where)
+      .orderBy(...(expression ? [rank, ...newestFirst] : newestFirst))
+      .limit(limit + 1)
+      .offset(offset),
+    db.select({ count: count() }).from(messagesInMessage).where(where),
+  ]);
+  return { count: takeOne(totals, 0).count, data: getBasePaginationData(messages, limit) };
 };

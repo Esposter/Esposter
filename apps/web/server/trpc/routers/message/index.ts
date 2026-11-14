@@ -437,7 +437,7 @@ export const baseMessageRouter = router({
       if (!inFilterRoomIds.every((value) => typeof value === "string"))
         throw getInvalidOperationError(Operation.Read, AzureEntityType.Message, JSON.stringify(inFilterRoomIds));
       else if (inFilterRoomIds.length > 0) await assertIsMember(ctx.db, ctx.getSessionPayload, inFilterRoomIds);
-      return searchMessages(input);
+      return searchMessages(ctx.db, input);
     },
   ),
   unfollowThread: getMemberProcedure(followThreadInputSchema, "roomId").mutation<void>(

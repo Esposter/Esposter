@@ -14,8 +14,8 @@ export const searchMessagesInputSchema = z
   .object({
     ...roomIdSchema.shape,
     ...createOffsetPaginationParamsSchema(standardMessageEntitySchema.keyof(), [CREATED_AT_DESCENDING_SORT_ITEM]).shape,
-    // Not unique by type: Azure Search takes one clause per filter, so two `has:` or two `from:` narrow together,
-    // And `getSearchableFilters` is what drops an exact repeat on either side of the wire
+    // Not unique by type: each filter is one condition, so two `has:` or two `from:` narrow together, and
+    // `getSearchableFilters` is what drops an exact repeat on either side of the wire
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
     query: selectSearchHistoryInMessageSchema.shape.query,
   })

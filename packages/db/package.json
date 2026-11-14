@@ -60,7 +60,6 @@
   "peerDependencies": {
     "@azure/core-client": "catalog:",
     "@azure/core-rest-pipeline": "catalog:",
-    "@azure/search-documents": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@azure/storage-queue": "catalog:",
     "@esposter/azure": "workspace:*",

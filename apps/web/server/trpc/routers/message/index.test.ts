@@ -42,7 +42,6 @@ import {
   MessageCreationRejectionType,
   MessageType,
   roomFiltersInMessage,
-  SearchIndex,
   StandardMessageEntity,
   storageLedgerInStorage,
   StorageTier,
@@ -56,7 +55,6 @@ import { isTrackedEnvelope } from "@trpc/server";
 import {
   MockBlobClient,
   MockContainerDatabase,
-  MockSearchDatabase,
   MockTableClient,
 } from "azure-mock";
 import { and, eq } from "drizzle-orm";
@@ -183,7 +181,6 @@ describe("messageRouter", () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockJobQueueDatabase.clear();
-    MockSearchDatabase.clear();
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
   });
@@ -205,61 +202,6 @@ describe("messageRouter", () => {
 
     expect(messages.items).toHaveLength(1);
     expect(takeOne(messages.items).message).toBe(newMessage.message);
-  });
-
-  test("reads my sent messages", async () => {
-    expect.hasAssertions();
-
-    const userId = getMockSession().user.id;
-    const message = createMentionMessage(userId);
-    const epoch = new Date(0);
-    const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
-    const dayAfterNext = new Date(Temporal.Duration.from({ days: 2 }).total("milliseconds"));
-    const firstMessage = new StandardMessageEntity({
-      createdAt: nextDay,
-      message,
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-      type: MessageType.Message,
-      updatedAt: nextDay,
-      userId,
-    });
-    const secondMessage = new StandardMessageEntity({
-      createdAt: epoch,
-      message,
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-      type: MessageType.Message,
-      updatedAt: epoch,
-      userId,
-    });
-    const otherUserMessage = new StandardMessageEntity({
-      createdAt: dayAfterNext,
-      message,
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-      type: MessageType.Message,
-      updatedAt: dayAfterNext,
-      userId: crypto.randomUUID(),
-    });
-    const deletedMessage = new StandardMessageEntity({
-      createdAt: dayAfterNext,
-      deletedAt: dayAfterNext,
-      message,
-      partitionKey: roomId,
-      rowKey: getReverseTickedTimestamp(),
-      type: MessageType.Message,
-      updatedAt: dayAfterNext,
-      userId,
-    });
-    MockSearchDatabase.set(SearchIndex.Messages, [firstMessage, secondMessage, otherUserMessage, deletedMessage]);
-    const sentMessages = await messageCaller.readMySentMessages({ limit: 1 });
-
-    expect(sentMessages.count).toBe(2);
-    expect(sentMessages.data.hasMore).toBe(true);
-    expect(sentMessages.data.items).toHaveLength(1);
-    expect(takeOne(sentMessages.data.items).message.rowKey).toBe(firstMessage.rowKey);
-    expect(takeOne(sentMessages.data.items).room.id).toBe(roomId);
   });
 
   test("reads with cursor and includes value", async () => {

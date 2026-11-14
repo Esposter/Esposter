@@ -80,8 +80,8 @@ The `message` router is flat-merged at the tRPC root, with `emoji`, `moderation`
 | `pinMessage` / `unpinMessage`     | author | Room-wide pins (message-scoped, `Pin` operation)                                                                                                               |
 | `votePoll`                        | member | Cast/withdraw a poll vote via a conditional write                                                                                                              |
 | `readMessages` / `readThread`     | member | Cursor pagination / thread view                                                                                                                                |
-| `searchMessages`                  | member | Filtered search via the Azure AI Search index                                                                                                                  |
-| `readMySentMessages`              | authed | Cross-room sent list from the Search index                                                                                                                     |
+| `searchMessages`                  | member | Filtered search via the `messages_search` FTS5 index                                                                                                                  |
+| `readMySentMessages`              | authed | Cross-room sent list from the `messages` table                                                                                                                     |
 | `onCreateMessage` etc.            | member | Live subscriptions                                                                                                                                             |
 | `createTyping` / `onCreateTyping` | member | Typing indicators — the typist and the name shown (room display name, else account name) are resolved server-side from the session, never taken from the input |
 | `generate*FileSas*`               | member | SAS-based file upload/download URLs                                                                                                                            |

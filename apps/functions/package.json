@@ -28,7 +28,6 @@
     "typecheck": "tsrs --fast"
   },
   "dependencies": {
-    "@azure/identity": "catalog:",
     "@azure/storage-blob": "catalog:",
     "@esposter/azure": "workspace:*",
     "@esposter/db": "workspace:*",
@@ -42,7 +41,6 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@azure/search-documents": "catalog:",
     "@cloudflare/workers-types": "catalog:",
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
