@@ -7,12 +7,12 @@ import { generateProgramParticipants } from "#server/services/program/generatePr
 import { issueProgramInvites } from "#server/services/program/issueProgramInvites";
 import { readProgramStatusRows } from "#server/services/program/readProgramStatusRows";
 import { regenerateProgramParticipantTokens } from "#server/services/program/regenerateProgramParticipantTokens";
+import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { router } from "#server/trpc";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { regenerateProgramParticipantTokenInputSchema } from "#shared/models/db/program/RegenerateProgramParticipantTokenInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";

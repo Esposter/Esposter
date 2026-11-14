@@ -1,7 +1,7 @@
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { runSheetCommand } from "#server/services/resource/sheet/runSheetCommand";
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
-import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { runSheetCommandInputSchema } from "#shared/models/db/resource/sheet/RunSheetCommandInput";
 import { McpScope, ResourceType } from "@esposter/db-schema";

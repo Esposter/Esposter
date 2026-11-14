@@ -1,7 +1,7 @@
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { writeNoteMarkdown } from "#server/services/resource/note/writeNoteMarkdown";
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
-import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { writeNoteMarkdownInputSchema } from "#shared/models/db/resource/note/WriteNoteMarkdownInput";
 import { McpScope, ResourceType } from "@esposter/db-schema";

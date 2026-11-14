@@ -19,7 +19,10 @@ import { RESOURCE_ASSET_SAS_DURATION_MS } from "#server/services/resource/consta
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
+import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
+import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -45,10 +48,7 @@ import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperatio
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
-import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { getResourceListTopics } from "#server/trpc/procedure/resource/getResourceListTopics";
-import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";

@@ -1,7 +1,7 @@
 import type { z } from "zod";
 
 import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
-import { getResourceListTopics } from "#server/trpc/procedure/resource/getResourceListTopics";
+import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
 import { getTopic } from "#shared/services/realtime/getTopic";
 import { TopicKind } from "@esposter/db-schema";
 

@@ -7,11 +7,11 @@ import type { PublishableResourceType } from "#shared/models/resource/Publishabl
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
+import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { emailRouter } from "#server/trpc/routers/email";
 import { noteRouter } from "#server/trpc/routers/note";

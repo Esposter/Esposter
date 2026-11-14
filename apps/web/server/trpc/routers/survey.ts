@@ -3,6 +3,7 @@ import type { SurveyResponseRecords } from "#shared/models/resource/survey/Surve
 import type { SurveyResponseInResource } from "@esposter/db-schema";
 
 import { getProcedureTopics } from "#server/services/realtime/getProcedureTopics";
+import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getInvalidParticipantTokenError } from "#server/services/survey/getInvalidParticipantTokenError";
 import { readSurveyResponseRecords } from "#server/services/survey/readSurveyResponseRecords";
 import { readSurveyResponsesCount } from "#server/services/survey/readSurveyResponsesCount";
@@ -14,7 +15,6 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
-import { getResourceTopics } from "#server/trpc/procedure/resource/getResourceTopics";
 import { slowRateLimitedProcedure } from "#server/trpc/procedure/slowRateLimitedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";

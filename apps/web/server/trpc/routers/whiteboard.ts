@@ -1,9 +1,9 @@
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 
+import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { moveWhiteboardElement } from "#server/services/resource/whiteboard/moveWhiteboardElement";
 import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
-import { getChangedResourceTopics } from "#server/trpc/procedure/resource/getChangedResourceTopics";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { moveWhiteboardElementInputSchema } from "#shared/models/db/resource/whiteboard/MoveWhiteboardElementInput";
 import { McpScope, ResourceType } from "@esposter/db-schema";
