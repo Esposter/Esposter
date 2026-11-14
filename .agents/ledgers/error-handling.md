@@ -28,7 +28,7 @@
 | `app/components` — the rest                                                                                    | 2026-10-05 · Opus 5.5 |                                                                                       |
 | `packages/db`, `apps/infra`                                                                                    | 2026-10-05 · Opus 5.5 | `db` rolls back then rethrows; `infra` is resource declarations with no error path    |
 | `scripts`                                                                                                      | 2026-10-05 · Opus 5.5 | `TypeError`/`RangeError` stay — the ban is on the bare `Error`, not on a precise one  |
-| `packages/azure`, `packages/azure-mock`, `packages/db-mock`                                                    | 2026-10-05 · Opus 5.5 | every throw is a stub, an unsupported-in-mock, or an Azure wire response              |
+| `packages/db-mock`                                                                                             | 2026-10-05 · Opus 5.5 | every throw is a stub or an unsupported-in-mock                                       |
 | `packages/parse-tmx`, `packages/vue-phaserjs`                                                                  | 2026-10-05 · Opus 5.5 | every throw is a named error class, no chain to terminate outside `shared`            |
 | `server/trpc` — `guards`, `procedure`, `plugins`, `middleware`                                                 | 2026-10-05 · Opus 5.5 | a limiter bypass on a local production build is a notice, not an err handler          |
 | `server/api`                                                                                                   | 2026-10-05 · Opus 5.5 |                                                                                       |
@@ -82,14 +82,12 @@ local writes has nothing to terminate.
 ## Exclusions
 
 - `.isOk()` / `.isErr()` call sites are a lint finding, not a sweep finding — they fail on the line that writes them.
-- Unimplemented stubs, which the skill exempts from the `new Error` ban. `azure-mock`'s `Method not implemented.`
-  throws are that exemption at scale — they are the bulk of every `new Error` grep and none of them is a finding.
-- `azure-mock`'s "not supported by this mock" throws, which are the same exemption worn differently.
+- Unimplemented stubs, which the skill exempts from the `new Error` ban; none of them is a finding.
 - `toAppError` itself, which is the mechanism that wraps an unknown throw into an `Error`.
-- The five `console.warn` calls: two report a browser capability in `store/message/room/liveKit.ts`, two are the
-  same rate-limiter bypass note in the tRPC middleware and the Nitro asset route, and one is `ignoreWarn.ts`'s own
+- The `console.warn` calls: the browser-capability report in `store/message/room/realtime.ts`, the rate-limiter bypass
+  note in the tRPC middleware, the Nitro asset route and `consumeAddressRateLimit.ts`, and `ignoreWarn.ts`'s own
   mechanism. None terminates a `Result`, which is what the `.orTee(console.error)` rule is about. That the
-  rate-limiter pair states its key derivation, its warning and its rationale twice is a `file-organization`
+  rate-limiter notes state their key derivation, its warning and its rationale twice is a `file-organization`
   finding, raised rather than swept here.
 - `requireAuthData`, where the whole point is that the auth api's own sentence reaches the user — the wrapper
   would prefix it with an operation and an entity name and bury it. The reason is written at the call site.

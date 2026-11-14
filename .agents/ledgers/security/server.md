@@ -15,11 +15,11 @@
 | `server/services/message` — the roots                                                                                                                 | 2026-10-05 · Opus 5.5 |       |
 | `server/services/message` — `moderation`, `events`, `thread`, `file`, `emoji`                                                                         | 2026-10-05 · Opus 5.5 |       |
 | `server/services/resource` — the roots                                                                                                                | 2026-10-05 · Opus 5.5 |       |
-| `server/services/resource` — `snapshot`, `todoList`, `events`                                                                                         | 2026-10-05 · Opus 5.5 |       |
+| `server/services/resource` — `snapshot`, `todoList`                                                                                                   | 2026-10-05 · Opus 5.5 |       |
 | `server/services/room`, `blueprint`                                                                                                                   | 2026-10-05 · Opus 5.5 |       |
 | `server/services/pagination`, `survey`                                                                                                                | 2026-10-05 · Opus 5.5 |       |
-| `server/services/auth`, `rateLimiter`, `livekit`                                                                                                      | 2026-10-05 · Opus 5.5 |       |
-| `server/services/dataset`, `storage`, `azure`                                                                                                         | 2026-10-05 · Opus 5.5 |       |
+| `server/services/auth`, `rateLimiter`                                                                                                                 | 2026-10-05 · Opus 5.5 |       |
+| `server/services/dataset`, `storage`                                                                                                                  | 2026-10-05 · Opus 5.5 |       |
 | `server/services/program`, `post`, `achievement`                                                                                                      | 2026-10-05 · Opus 5.5 |       |
 | `server/services/friend`, `db`, `blobState`                                                                                                           | 2026-10-05 · Opus 5.5 |       |
 | `server/services/user`, `role`, `request`, `notification`                                                                                             | 2026-10-05 · Opus 5.5 |       |

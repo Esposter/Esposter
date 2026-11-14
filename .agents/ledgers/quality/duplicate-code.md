@@ -30,7 +30,6 @@
 | `apps/web/server/trpc`                               | 2026-10-29 · Sonnet 5.5 |                                    |
 | `apps/web/shared`                                    | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages`                                           | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |
-| `packages/azure-mock`                                | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/db`                                        | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/db-schema`                                 | 2026-10-14 · Haiku 5.5  |                                    |
 | `packages/genshin-engine`                            | 2026-10-14 · Haiku 5.5  | the rest, excluding the rows above |

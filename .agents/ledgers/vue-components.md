@@ -122,7 +122,7 @@ whose name its own name opens with. Nothing here has to look for those.
 
 What is left is the crowded directory — roughly ten or more flat components — and whether a shared first word in
 one is a group to fold or a **suffix family** to leave alone. `Resource/List` is the standing example of both:
-`Selection*` folded, while `StatusFilterPill`/`TagFilterPill`/`TypeFilterPill` did not, because folding `Type/`
+`Selection*` folded, while `StatusFilterPill`/`TagFilterPill`/`TypeFilterPill` did not, because folding `Type*`
 scatters the `FilterPill` family and renames its members for the worse.
 
 ```bash

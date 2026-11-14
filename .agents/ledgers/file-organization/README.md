@@ -18,7 +18,7 @@ one set of names across every promoted ledger.
 | [server](server.md)       | `apps/web/server` — routers, procedure builders, guards and services.                                                                                      |
 | [shared](shared.md)       | `apps/web/shared`, `app/components/Styled` and `packages/shared` — what both halves of the app read.                                                       |
 | [packages](packages.md)   | Every workspace package outside `apps/web` and `packages/shared`.                                                                                          |
-| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root configuration and `content/`.                                                                                       |
+| [tooling](tooling.md)     | `scripts/`, `.agents/`, the app's root configuration.                                                                                                      |
 
 ## Find recipe
 

@@ -15,7 +15,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `shared/models/dungeons`                                   | 2026-10-05 · Opus 5.5   |                                                                                                      |
 | `shared/models` — the page builder and game trees          | 2026-10-29 · Sonnet 5.5 |                                                                                                      |
 | `shared/models` — the rest                                 | 2026-10-05 · Opus 5.5   | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
-| `app/models`, `app/services/*/…` form schemas              | 2026-10-05 · Opus 5.5   | the schema-form ones carry extra rules                                                               |
+| `app/models`, `app/services/*` form schemas                | 2026-10-05 · Opus 5.5   | the schema-form ones carry extra rules                                                               |
 | `packages/db`, `packages/db-mock`                          | 2026-10-05 · Opus 5.5   | neither declares a table or a zod schema; the mock's snapshot is generated                           |
 | `packages/shared`, `packages/parse-tmx`                    | 2026-10-05 · Opus 5.5   | `parse-tmx` depends on zod nowhere                                                                   |
 
