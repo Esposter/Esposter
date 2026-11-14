@@ -53,6 +53,7 @@
   "dependencies": {
     "@esposter/shared": "workspace:*",
     "node-html-parser": "catalog:",
+    "uuid": "catalog:",
     "vue-block-editor-headless": "workspace:*"
   },
   "devDependencies": {

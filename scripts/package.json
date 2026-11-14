@@ -86,6 +86,7 @@
     "drizzle-orm": "catalog:",
     "genshin-text": "workspace:*",
     "postgres": "catalog:",
+    "uuid": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

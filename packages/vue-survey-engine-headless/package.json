@@ -53,6 +53,7 @@
     "@esposter/shared": "workspace:*",
     "re2js": "catalog:",
     "survey-expression": "workspace:*",
+    "uuid": "catalog:",
     "vue-block-editor-headless": "workspace:*"
   },
   "devDependencies": {

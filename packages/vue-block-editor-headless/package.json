@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "@esposter/shared": "workspace:*",
-    "neverthrow": "catalog:"
+    "neverthrow": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

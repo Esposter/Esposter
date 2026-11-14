@@ -65,6 +65,7 @@
     "happy-dom": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
+    "uuid": "catalog:",
     "vue": "catalog:"
   },
   "peerDependencies": {

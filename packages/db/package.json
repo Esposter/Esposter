@@ -48,7 +48,8 @@
     "aws4fetch": "catalog:",
     "link-preview-js": "catalog:",
     "linkifyjs": "catalog:",
-    "node-html-parser": "catalog:"
+    "node-html-parser": "catalog:",
+    "uuid": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

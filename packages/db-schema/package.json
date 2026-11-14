@@ -48,7 +48,9 @@
     "test": "vitest",
     "typecheck": "tsrs --fast"
   },
-  "dependencies": {},
+  "dependencies": {
+    "uuid": "catalog:"
+  },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "drizzle-kit": "catalog:",

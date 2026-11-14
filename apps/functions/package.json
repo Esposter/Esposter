@@ -45,6 +45,7 @@
     "@esposter/db-mock": "workspace:*",
     "@types/node": "catalog:",
     "@types/web-push": "catalog:",
+    "uuid": "catalog:",
     "wrangler": "catalog:"
   }
 }

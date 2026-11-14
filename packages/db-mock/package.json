@@ -48,7 +48,8 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "tsdown": "catalog:"
+    "tsdown": "catalog:",
+    "uuid": "catalog:"
   },
   "peerDependencies": {
     "@esposter/db-schema": "workspace:*",

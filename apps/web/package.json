@@ -113,6 +113,7 @@
     "temporal-polyfill": "catalog:",
     "three": "catalog:",
     "unicode-emoji-json": "catalog:",
+    "uuid": "catalog:",
     "vue": "catalog:",
     "vue-block-editor-headless": "workspace:*",
     "vue-canvas-frame-headless": "workspace:*",

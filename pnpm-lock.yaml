@@ -675,6 +675,9 @@ catalogs:
     unplugin-auto-import:
       specifier: ^21.1.0
       version: 21.1.0
+    uuid:
+      specifier: ^14.0.3
+      version: 14.0.3
     vite-plugin-glsl:
       specifier: ^1.6.3
       version: 1.6.3
@@ -844,6 +847,9 @@ importers:
       '@types/web-push':
         specifier: 'catalog:'
         version: 3.6.4
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       wrangler:
         specifier: 'catalog:'
         version: 4.162.0(@cloudflare/workers-types@5.20261114.1)(@types/node@26.6.6)
@@ -1097,6 +1103,9 @@ importers:
       unicode-emoji-json:
         specifier: 'catalog:'
         version: 0.9.0
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -1374,6 +1383,9 @@ importers:
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.7
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
     devDependencies:
       '@esposter/configuration':
         specifier: workspace:*
@@ -1412,6 +1424,9 @@ importers:
       tsdown:
         specifier: 'catalog:'
         version: 0.23.7(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.7)(oxc-resolver@11.24.2)(publint@0.3.25)(tsrs@0.25.0-ts7.1.0-beta)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
 
   packages/db-schema:
     dependencies:
@@ -1421,6 +1436,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 1.0.0-rc.5(@cloudflare/workers-types@5.20261114.1)(@electric-sql/pglite@0.5.16)(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(mysql2@3.24.6(@types/node@26.6.6))(postgres@4.1.1)(valibot@1.5.0(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))(zod@4.6.7)
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -1595,6 +1613,9 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vite:
         specifier: ^8.3.8
         version: 8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)
@@ -1654,6 +1675,9 @@ importers:
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.7
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue-block-editor-headless:
         specifier: workspace:*
         version: link:../vue-block-editor-headless
@@ -1809,6 +1833,9 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -1818,6 +1845,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vitest:
         specifier: 'catalog:'
         version: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/browser-preview@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(happy-dom@21.0.4)(msw@3.0.5(@types/node@26.6.6)(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1)))(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
@@ -2055,6 +2085,9 @@ importers:
       neverthrow:
         specifier: 'catalog:'
         version: 8.2.0
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -2146,6 +2179,9 @@ importers:
       pdfjs-dist:
         specifier: 'catalog:'
         version: 6.5.438
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -2208,6 +2244,9 @@ importers:
       survey-expression:
         specifier: workspace:*
         version: link:../survey-expression
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       vue:
         specifier: 'catalog:'
         version: 3.5.45(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -2239,6 +2278,9 @@ importers:
       postgres:
         specifier: 'catalog:'
         version: 4.1.1
+      uuid:
+        specifier: 'catalog:'
+        version: 14.0.3
       zod:
         specifier: 'catalog:'
         version: 4.6.7
@@ -11507,6 +11549,10 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  uuid@14.0.3:
+    resolution: {integrity: sha512-Sc5u1VVln93y1Xnz4R+CunOZc7R9LUcTmhj7Rc7Eg3HVcf7rVn2FOoa812fe0W8p3jD7xeoGSYbfqCGGH2B6xw==}
+    hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
@@ -22529,6 +22575,8 @@ snapshots:
       punycode: 2.3.1
 
   util-deprecate@1.0.2: {}
+
+  uuid@14.0.3: {}
 
   uuid@8.3.2: {}
 

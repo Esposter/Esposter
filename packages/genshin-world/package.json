@@ -117,6 +117,7 @@
     "rolldown": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
+    "uuid": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
     "vitest-browser-vue": "catalog:"
