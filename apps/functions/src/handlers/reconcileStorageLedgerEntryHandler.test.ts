@@ -43,7 +43,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
       ?.storageBytesUsed;
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.MessageAssets, StorageBucket.ResourceAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });
