@@ -69,10 +69,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 
 const readArchiveEntries = async (blobName: string) => {
   const archiveBucket = getBucket(StorageBucket.UserAssets);

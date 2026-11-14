@@ -1,0 +1,443 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "id": "6acc9f4b-7f43-4e93-81af-1e9c0b92ebbd",
+  "prevIds": [
+    "00000000-0000-0000-0000-000000000000"
+  ],
+  "ddl": [
+    {
+      "name": "Messages",
+      "entityType": "tables"
+    },
+    {
+      "name": "MessagesMetadata",
+      "entityType": "tables"
+    },
+    {
+      "name": "ModerationLog",
+      "entityType": "tables"
+    },
+    {
+      "name": "ModerationNotes",
+      "entityType": "tables"
+    },
+    {
+      "name": "ProgramParticipants",
+      "entityType": "tables"
+    },
+    {
+      "name": "ResourceActivity",
+      "entityType": "tables"
+    },
+    {
+      "name": "ResourceViews",
+      "entityType": "tables"
+    },
+    {
+      "name": "SurveyResponses",
+      "entityType": "tables"
+    },
+    {
+      "table": "Messages",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "Messages",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "Messages",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "Messages",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "MessagesMetadata",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "MessagesMetadata",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "MessagesMetadata",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "MessagesMetadata",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationLog",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationLog",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationLog",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationLog",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationNotes",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationNotes",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationNotes",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ModerationNotes",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ProgramParticipants",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ProgramParticipants",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ProgramParticipants",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ProgramParticipants",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceActivity",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceActivity",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceActivity",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceActivity",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceViews",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceViews",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceViews",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "ResourceViews",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "SurveyResponses",
+      "name": "entity",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "SurveyResponses",
+      "name": "etag",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "SurveyResponses",
+      "name": "partitionKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "SurveyResponses",
+      "name": "rowKey",
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "entityType": "columns"
+    },
+    {
+      "table": "Messages",
+      "name": "Messages_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "MessagesMetadata",
+      "name": "MessagesMetadata_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ModerationLog",
+      "name": "ModerationLog_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ModerationNotes",
+      "name": "ModerationNotes_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ProgramParticipants",
+      "name": "ProgramParticipants_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ResourceActivity",
+      "name": "ResourceActivity_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "ResourceViews",
+      "name": "ResourceViews_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    },
+    {
+      "table": "SurveyResponses",
+      "name": "SurveyResponses_pk",
+      "columns": [
+        "partitionKey",
+        "rowKey"
+      ],
+      "nameExplicit": false,
+      "entityType": "pks"
+    }
+  ],
+  "renames": []
+}

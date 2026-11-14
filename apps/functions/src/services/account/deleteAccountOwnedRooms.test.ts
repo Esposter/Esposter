@@ -27,10 +27,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
@@ -94,12 +90,12 @@ describe(deleteAccountOwnedRooms, () => {
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, otherRoom.id))).toHaveLength(
       roomTableNames.length,
     );
-    await expect(mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage)).resolves.toStrictEqual([
-      { roomId: otherRoom.id },
-    ]);
-    await expect(mockDb.select({ roomId: moderationNotesInMessage.roomId }).from(moderationNotesInMessage)).resolves.toStrictEqual([
-      { roomId: otherRoom.id },
-    ]);
+    await expect(
+      mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage),
+    ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);
+    await expect(
+      mockDb.select({ roomId: moderationNotesInMessage.roomId }).from(moderationNotesInMessage),
+    ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);
     await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([`${otherRoom.id}/${fileId}`]);
     await expect(readBlobNames(StorageBucket.PublicUserAssets)).resolves.toStrictEqual([
       `rooms/${otherRoom.id}/ProfileImage`,

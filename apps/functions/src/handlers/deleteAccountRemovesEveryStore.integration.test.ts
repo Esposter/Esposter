@@ -4,7 +4,6 @@ import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
-import { readPartitionEntities } from "#src/services/streams/readPartitionEntities.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
@@ -56,15 +55,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(
-  import("#src/services/streams/getStreamTableClient"),
-  () => import("#src/services/streams/getStreamTableClient.test"),
-);
 vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 
 const readBlobNamesUnder = async (containerName: StorageBucket, prefix: string) =>

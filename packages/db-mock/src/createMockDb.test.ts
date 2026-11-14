@@ -2,7 +2,7 @@ import type { MockDatabase } from "#src/models/MockDatabase";
 
 import { createMockDb } from "#src/createMockDb";
 import { StorageBucket, accountsInAuth, usersInAuth } from "@esposter/db-schema";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(createMockDb, () => {
@@ -58,8 +58,8 @@ describe(createMockDb, () => {
     expect.hasAssertions();
 
     await insertUser(crypto.randomUUID());
-    await mockDatabase.db.run(sql`CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)`);
-    await mockDatabase.db.run(sql`INSERT INTO resetSearch (body) VALUES ('before')`);
+    await mockDatabase.streamsDb.exec("CREATE VIRTUAL TABLE IF NOT EXISTS resetSearch USING fts5(body)");
+    await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('before')").run();
     const bucket = await mockDatabase.getBucket(StorageBucket.ClickerAssets);
     await bucket.put("object", "value");
 
@@ -67,11 +67,11 @@ describe(createMockDb, () => {
 
     expect(await mockDatabase.db.$count(usersInAuth)).toBe(0);
     expect((await bucket.list()).objects).toStrictEqual([]);
-    expect(await mockDatabase.db.all(sql`SELECT body FROM resetSearch`)).toStrictEqual([]);
-    await mockDatabase.db.run(sql`INSERT INTO resetSearch (body) VALUES ('after')`);
-    const matches = await mockDatabase.db.all<{ body: string }>(
-      sql`SELECT body FROM resetSearch WHERE resetSearch MATCH 'after'`,
-    );
-    expect(matches).toStrictEqual([{ body: "after" }]);
+    expect((await mockDatabase.streamsDb.prepare("SELECT body FROM resetSearch").all()).results).toStrictEqual([]);
+    await mockDatabase.streamsDb.prepare("INSERT INTO resetSearch (body) VALUES ('after')").run();
+    const matches = await mockDatabase.streamsDb
+      .prepare("SELECT body FROM resetSearch WHERE resetSearch MATCH 'after'")
+      .all<{ body: string }>();
+    expect(matches.results).toStrictEqual([{ body: "after" }]);
   });
 });
