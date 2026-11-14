@@ -13,6 +13,6 @@ export const adjustStorageBytesUsed = async (
 ): Promise<void> => {
   await db
     .update(usersInAuth)
-    .set({ storageBytesUsed: sql`GREATEST(0, ${usersInAuth.storageBytesUsed} + ${deltaBytes})` })
+    .set({ storageBytesUsed: sql`MAX(0, ${usersInAuth.storageBytesUsed} + ${deltaBytes})` })
     .where(eq(usersInAuth.id, userId));
 };

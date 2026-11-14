@@ -28,11 +28,11 @@ export const executeAutomodAction = async (
   const durationMs = action === WordFilterAction.Timeout && timeoutDurationMs ? timeoutDurationMs : undefined;
   if (durationMs) {
     const timeoutUntil = new Date(Date.now() + durationMs);
-    // Extend-only: GREATEST never shortens a longer moderator-applied timeout with a shorter automod one.
-    // Postgres GREATEST ignores NULL, so a null/expired existing timeout becomes the new date.
+    // Extend-only: MAX never shortens a longer moderator-applied timeout with a shorter automod one. SQLite's MAX of
+    // several values is NULL if any is NULL, so a null existing timeout is read as the epoch and the new date wins
     await db
       .update(usersToRoomsInMessage)
-      .set({ timeoutUntil: sql`GREATEST(${usersToRoomsInMessage.timeoutUntil}, ${timeoutUntil})` })
+      .set({ timeoutUntil: sql`MAX(COALESCE(${usersToRoomsInMessage.timeoutUntil}, 0), ${timeoutUntil.getTime()})` })
       .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, roomId)));
   }
 
