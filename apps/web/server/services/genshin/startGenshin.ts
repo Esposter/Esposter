@@ -6,7 +6,7 @@ import { genshinEventEmitter } from "#server/services/genshin/events/genshinEven
 import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { startGenshinSession } from "#server/services/genshin/startGenshinSession";
 import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 
 export interface StartGenshinResult {
   etag?: string;
@@ -33,7 +33,7 @@ const toStartResult = (envelope: GenshinSaveEnvelope, etag?: string): StartGensh
 // A concurrent start that wrote first makes this write a CONFLICT. A start the page retries after its write landed finds
 // The blob already under the page's session, and answers what that write answered, without writing again
 export const startGenshin = async (userId: string, sessionId: string): Promise<StartGenshinResult> => {
-  const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+  const containerClient = await useContainerClient(StorageBucket.GenshinAssets);
   const { envelope, etag } = await readGenshinSaveState(containerClient, userId);
   if (envelope?.sessionId === sessionId) return toStartResult(envelope, etag);
 

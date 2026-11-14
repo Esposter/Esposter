@@ -3,7 +3,7 @@ import type { InvocationContext } from "@azure/functions";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { RESOURCE_ASSET_BLOB_NAME_REGEX } from "#src/services/storage/constants";
 import { findMismatchedResourceAssetHash } from "@esposter/db";
-import { AzureContainer, AzureFunction } from "@esposter/db-schema";
+import { StorageBucket, AzureFunction } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 // A resource asset is addressed by the hash of its bytes, and the client computes that hash and uploads directly, so the
@@ -13,7 +13,7 @@ export const verifyResourceAssetBlob = async (context: InvocationContext, blobNa
   const nameMatch = RESOURCE_ASSET_BLOB_NAME_REGEX.exec(blobName);
   if (!nameMatch) return;
 
-  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   const actualHash = await findMismatchedResourceAssetHash(containerClient, blobName, takeOne(nameMatch, 1));
   if (actualHash === undefined) return;
 

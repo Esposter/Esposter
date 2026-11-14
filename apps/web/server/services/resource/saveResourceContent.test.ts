@@ -26,7 +26,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureQueue,
   AzureTable,
   getResourceFileBlobName,
@@ -105,7 +105,7 @@ describe(saveResourceContent, () => {
       })
     )?.storageBytesUsed;
   const getStoredContentBytes = () =>
-    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
+    MockContainerDatabase.get(StorageBucket.ResourceAssets)?.get(getContentBlobName(resource.id))?.byteLength;
   const readStoredVersionBytes = async () =>
     (
       await mockContext.db.query.resourceVersionsInResource.findMany({
@@ -153,7 +153,7 @@ describe(saveResourceContent, () => {
         .returning(),
     );
   const uploadAssetBlob = async (resourceId: ResourceInResource["id"], hash: string) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await containerClient
       .getBlockBlobClient(getResourceFileBlobName(resourceId, hash))
       .upload(assetBytes, assetBytes.byteLength);
@@ -291,18 +291,18 @@ describe(saveResourceContent, () => {
 
     await saveResourceContent(ctx, { content, resource });
     const contentBlobName = getContentBlobName(resource.id);
-    const firstStoredContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(contentBlobName);
+    const firstStoredContent = MockContainerDatabase.get(StorageBucket.ResourceAssets)?.get(contentBlobName);
     assert.exists(firstStoredContent);
     // The first save's own event, arriving with the position storage wrote the blob in
     await reconcileStorageLedgerEntry(
       mockContext.db,
-      AzureContainer.ResourceAssets,
+      StorageBucket.ResourceAssets,
       contentBlobName,
       firstStoredContent.byteLength,
       sequencer,
     );
     await saveResourceContent(ctx, { content: { items: [item, new TodoListItem({ dueAt, name })] }, resource });
-    const storedContent = MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(contentBlobName);
+    const storedContent = MockContainerDatabase.get(StorageBucket.ResourceAssets)?.get(contentBlobName);
     assert.exists(storedContent);
 
     expect(storedContent.byteLength).toBeGreaterThan(firstStoredContent.byteLength);
@@ -524,7 +524,7 @@ describe(saveResourceContent, () => {
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
     expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
       blobNames: [getResourceFileBlobName(webpage.id, otherAssetHash)],
-      containerName: AzureContainer.ResourceAssets,
+      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
     });
   });

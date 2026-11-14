@@ -9,7 +9,7 @@ import { MAX_DEAD_LETTER_REPLAY_ATTEMPTS } from "#src/services/deadLetter/consta
 import { InvocationContext } from "@azure/functions";
 import { MAX_EVENT_GRID_PUBLISH_BYTES } from "@esposter/azure";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureFunction,
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_BLOB_SUBJECT_PREFIX,
@@ -26,7 +26,7 @@ vi.mock(
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const readContainer = () => {
-  const container = MockContainerDatabase.get(AzureContainer.DeadLetter);
+  const container = MockContainerDatabase.get(StorageBucket.DeadLetter);
   assert.exists(container);
   return Object.fromEntries(Array.from(container, ([name, buffer]) => [name, buffer.toString("utf8")]));
 };
@@ -34,7 +34,7 @@ const readContainer = () => {
 describe(replayDeadLetterEventHandler, () => {
   const blobName = "";
   const seedBlob = async (content: string, name: string = blobName) => {
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
 

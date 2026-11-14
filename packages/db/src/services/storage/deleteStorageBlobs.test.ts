@@ -4,7 +4,7 @@ import type { Database } from "@esposter/db-schema";
 import { deleteStorageBlobs } from "#src/services/storage/deleteStorageBlobs";
 import { RestError } from "@azure/core-rest-pipeline";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop, takeOne } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -30,7 +30,7 @@ describe(deleteStorageBlobs, () => {
     } as unknown as ContainerClient;
 
     const caughtError = await getResultAsync(() =>
-      deleteStorageBlobs(db, containerClient, AzureContainer.ResourceAssets, [firstBlobName, secondBlobName], () =>
+      deleteStorageBlobs(db, containerClient, StorageBucket.ResourceAssets, [firstBlobName, secondBlobName], () =>
         Promise.resolve(),
       ),
     ).match(noop, (error: unknown) => error);

@@ -5,7 +5,7 @@ import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { createEntity } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   getReverseTickedTimestamp,
   ResourceActivityEntity,
@@ -51,7 +51,7 @@ describe(deleteCreatedResources, () => {
   beforeEach(() => {
     containerClientMock.current = new MockContainerClient(
       "",
-      AzureContainer.ResourceAssets,
+      StorageBucket.ResourceAssets,
     ) as unknown as ContainerClient;
   });
 

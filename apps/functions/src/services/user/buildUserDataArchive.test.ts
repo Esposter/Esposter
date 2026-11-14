@@ -19,7 +19,7 @@ import {
   achievementsInAchievement,
   AdminActionType,
   AppNotificationType,
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   blocksInSocial,
   bookmarksInApp,
@@ -76,7 +76,7 @@ vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/ser
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
 const readArchiveEntries = (blobName: string) => {
-  const archiveBytes = MockContainerDatabase.get(AzureContainer.UserAssets)?.get(blobName);
+  const archiveBytes = MockContainerDatabase.get(StorageBucket.UserAssets)?.get(blobName);
   assert.exists(archiveBytes);
   return unzipSync(archiveBytes);
 };
@@ -121,7 +121,7 @@ describe(buildUserDataArchive, () => {
   });
 
   const seedAttachment = async (blobName: string) => {
-    const containerClient = await getContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await getContainerClient(StorageBucket.MessageAssets);
     await containerClient.getBlockBlobClient(blobName).upload(attachmentBytes, attachmentBytes.length);
   };
 
@@ -170,16 +170,16 @@ describe(buildUserDataArchive, () => {
 
     // The account's own stores: a save, a profile image, an owned resource with a working copy and asset, and a
     // Moderation record naming the person as its target
-    const savesContainerClient = await getContainerClient(AzureContainer.GenshinAssets);
+    const savesContainerClient = await getContainerClient(StorageBucket.GenshinAssets);
     await writeJsonBlob(savesContainerClient, getSaveBlobName(userId), content);
-    const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+    const publicContainerClient = await getContainerClient(StorageBucket.PublicUserAssets);
     await publicContainerClient
       .getBlockBlobClient(getUserProfileImageBlobName(userId))
       .upload(attachmentBytes, attachmentBytes.length);
     const resource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
     );
-    const resourceContainerClient = await getContainerClient(AzureContainer.ResourceAssets);
+    const resourceContainerClient = await getContainerClient(StorageBucket.ResourceAssets);
     await writeJsonBlob(resourceContainerClient, getContentBlobName(resource.id), content);
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
@@ -379,11 +379,11 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
-    const messageAssetsContainerClient = await getContainerClient(AzureContainer.MessageAssets);
+    const messageAssetsContainerClient = await getContainerClient(StorageBucket.MessageAssets);
     await messageAssetsContainerClient
       .getBlockBlobClient(getRoomEmojiBlobName(room.id, emoji.id))
       .upload(attachmentBytes, attachmentBytes.length);
-    const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+    const publicContainerClient = await getContainerClient(StorageBucket.PublicUserAssets);
     await publicContainerClient
       .getBlockBlobClient(`rooms/${room.id}/ProfileImage`)
       .upload(attachmentBytes, attachmentBytes.length);

@@ -1,5 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer, Database, FileEntity, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, FileEntity, UserInAuth } from "@esposter/db-schema";
 
 import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
 import { chargeAndCopyBlob } from "#src/services/storage/chargeAndCopyBlob";
@@ -12,7 +12,7 @@ import { getResultAsync, InvalidOperationError, Operation, settleAll } from "@es
 export const cloneFiles = async (
   db: Database,
   userId: UserInAuth["id"],
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   containerClient: ContainerClient,
   files: FileEntity[],
   sourcePrefix = "",

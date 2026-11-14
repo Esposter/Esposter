@@ -1,4 +1,4 @@
-import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
 import { storageLedgerInStorage } from "@esposter/db-schema";
@@ -8,7 +8,7 @@ import { and, eq, inArray } from "drizzle-orm";
 // It expands to — deleteStorageBlobs, the only caller, hands it one deletion wave at a time.
 export const releaseStorageLedgerEntries = (
   db: Database,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   blobNames: string[],
 ): Promise<UserInAuth["id"][]> => {
   if (blobNames.length === 0) return Promise.resolve([]);

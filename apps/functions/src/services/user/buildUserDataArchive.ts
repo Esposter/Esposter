@@ -24,7 +24,7 @@ import { writeRoomEntries } from "#src/services/user/writeRoomEntries";
 import { writeSaveEntries } from "#src/services/user/writeSaveEntries";
 import { writeSearchHistoryEntry } from "#src/services/user/writeSearchHistoryEntry";
 import { writeThreadFollowEntry } from "#src/services/user/writeThreadFollowEntry";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Streams one person's archive into the block blob named for it.
@@ -34,7 +34,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 // The write's own error is the one reported.
 // A failed upload is rethrown as it is; the writes then wait on a stream nothing drains, which holds nothing more.
 export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: string): Promise<void> => {
-  const containerClient = await getContainerClient(AzureContainer.UserAssets);
+  const containerClient = await getContainerClient(StorageBucket.UserAssets);
   const archive = createUserDataArchive();
   const failArchive = (error: Error): never => {
     archive.output.destroy();

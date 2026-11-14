@@ -6,7 +6,7 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -39,7 +39,7 @@ describe(deleteAccountChargedBlobs, () => {
     await mockDb.delete(usersInAuth);
   });
 
-  const seedChargedBlob = async (userId: string, containerName: AzureContainer, blobName: string) => {
+  const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
     await seedBlob(containerName, blobName);
     await mockDb
       .insert(storageLedgerInStorage)
@@ -61,14 +61,14 @@ describe(deleteAccountChargedBlobs, () => {
     const chargedMessageBlobName = `${roomId}/${crypto.randomUUID()}`;
     const chargedBackgroundBlobName = `${userId}/CallBackground/0`;
     const otherMessageBlobName = `${roomId}/${crypto.randomUUID()}`;
-    await seedChargedBlob(userId, AzureContainer.MessageAssets, chargedMessageBlobName);
-    await seedChargedBlob(userId, AzureContainer.UserAssets, chargedBackgroundBlobName);
-    await seedChargedBlob(otherUserId, AzureContainer.MessageAssets, otherMessageBlobName);
+    await seedChargedBlob(userId, StorageBucket.MessageAssets, chargedMessageBlobName);
+    await seedChargedBlob(userId, StorageBucket.UserAssets, chargedBackgroundBlobName);
+    await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMessageBlobName);
 
     await deleteAccountChargedBlobs(context, userId);
 
-    expect(readBlobNames(AzureContainer.MessageAssets)).toStrictEqual([otherMessageBlobName]);
-    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([]);
+    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([otherMessageBlobName]);
+    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);
     await expect(
       mockDb
         .select({ blobName: storageLedgerInStorage.blobName, userId: storageLedgerInStorage.userId })

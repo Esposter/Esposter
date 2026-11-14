@@ -3,7 +3,7 @@ import type { StandardMessageEntity } from "@esposter/db-schema";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { getFilesBlobNames } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 // Announces one batch the soft delete has just committed: each message leaves the room's live views, and its
@@ -16,7 +16,7 @@ export const publishSoftDeletedMessages = async (roomId: string, batch: Standard
   for (const { partitionKey, rowKey } of batch) messageEventEmitter.emit("deleteMessage", [{ partitionKey, rowKey }]);
   await publishBlobDeletion(
     roomId,
-    AzureContainer.MessageAssets,
+    StorageBucket.MessageAssets,
     batch.flatMap(({ files }) => getFilesBlobNames(roomId, files)),
   ).match(noop, console.error);
 };

@@ -67,7 +67,7 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { generateReadSasUrl, getContentBlobName } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   DatabaseEntityType,
   ResourceActivityType,
   resourcePublicationsInResource,
@@ -155,7 +155,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
     // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
     generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id").query<string>(
       async ({ input: { id } }) => {
-        const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+        const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
         const contentBlobName = getContentBlobName(id);
         const blockBlobClient = containerClient.getBlockBlobClient(contentBlobName);
         return generateReadSasUrl(blockBlobClient, {
@@ -169,7 +169,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         generateReservedWriteSasUrl(
           ctx.db,
           ctx.getSessionPayload.user.id,
-          AzureContainer.ResourceAssets,
+          StorageBucket.ResourceAssets,
           getStagingContentBlobName(id),
           size,
         ),

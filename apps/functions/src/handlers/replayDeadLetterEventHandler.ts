@@ -11,7 +11,7 @@ import { writeDeadLetterBlob } from "#src/services/deadLetter/writeDeadLetterBlo
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { MAX_EVENT_GRID_PUBLISH_BYTES, MAX_EVENT_GRID_PUBLISH_EVENT_COUNT } from "@esposter/azure";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureFunction,
   createEventGridEventSchema,
   DEAD_LETTER_ARCHIVED_PREFIX,
@@ -43,7 +43,7 @@ export const replayDeadLetterEventHandler: EventGridHandler = (event, context) =
     // Event cannot make the replay consume — and delete — the archived or quarantined copies it wrote itself.
     if (blobName.startsWith(DEAD_LETTER_ARCHIVED_PREFIX) || blobName.startsWith(DEAD_LETTER_QUARANTINE_PREFIX)) return;
 
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     // Delivery is at-least-once, and every terminal path here deletes the blob it just handled, so a redelivered
     // Event finds nothing left to replay. That is a completed replay, not a failure: downloading it anyway would 404

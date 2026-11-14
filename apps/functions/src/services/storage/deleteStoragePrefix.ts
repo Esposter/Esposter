@@ -1,5 +1,5 @@
 import type { InvocationContext } from "@azure/functions";
-import type { AzureContainer } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
@@ -11,7 +11,7 @@ import { deleteStorageBlobs, listBlobNames } from "@esposter/db";
 // Members who uploaded them, so the release cannot be skipped the way a bare directory teardown skips it
 export const deleteStoragePrefix = async (
   context: InvocationContext,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   prefix: string,
 ): Promise<void> => {
   const containerClient = await getContainerClient(containerName);

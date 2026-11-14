@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
+import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Built once and shared between the save procedure and the client save-conflict surface so detection can never drift
@@ -44,7 +44,7 @@ export const ASSET_GRACE_MS = Temporal.Duration.from({ hours: 1 }).total("millis
 // Collects it once it is unreferenced
 export const ASSET_DECISION_CLOCK_MARGIN_MS = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // Must match the serving route's directory: server/api/resource-assets/[...path].get.ts
-export const RESOURCE_ASSETS_URL_PREFIX = `/api/${AzureContainer.ResourceAssets}`;
+export const RESOURCE_ASSETS_URL_PREFIX = `/api/${StorageBucket.ResourceAssets}`;
 // Emitted only by `getResourceAssetUrl`, whose per-segment encoding closes the charset by construction —
 // The "token we control" case of openspec/specs/architecture/content-token-rewriting/design.md: prefix-anchored, positive
 // Charset, no opener analysis needed. Global flag — use only via matchAll/replaceAll.

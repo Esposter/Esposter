@@ -1,4 +1,4 @@
-import type { AzureContainer } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
@@ -12,7 +12,7 @@ import { jsonDateParse } from "@esposter/shared";
 // Would write that fresh game over the one it could not read. The ETag is answered beside the model, the one the next
 // Save is sent under. The rule: openspec/specs/architecture/persisted-data-latest-shape-only/design.md
 export const createReadBlobStateProcedure = <TData, TInit>(
-  container: AzureContainer,
+  container: StorageBucket,
   Model: new (init?: TInit) => TData,
   schema: z.ZodType<TInit>,
 ) =>

@@ -32,7 +32,7 @@ import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWrit
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureFunction,
   AzureTable,
   DatabaseEntityType,
@@ -74,7 +74,7 @@ describe(createResourceProcedures, () => {
   // Back the hash its commit names
   const stageContent = async (id: string, compressedContent: Buffer) => {
     await dashboardCaller.generateUploadContentSasUrl({ id, size: compressedContent.byteLength });
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await containerClient
       .getBlockBlobClient(getStagingContentBlobName(id))
       .upload(compressedContent, compressedContent.byteLength);
@@ -298,7 +298,7 @@ describe(createResourceProcedures, () => {
       contentVersion: 0,
       id: newResource.id,
     });
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     const baseline = await readJsonBlob(containerClient, getContentBlobName(newResource.id));
     assert.exists(baseline);
     const dashboard = new Dashboard({ visuals: [new Visual()] });
@@ -363,7 +363,7 @@ describe(createResourceProcedures, () => {
     expect(updatedResource.contentVersion).toBe(1);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
     expect(
-      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(getStagingContentBlobName(newResource.id)),
+      MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(getStagingContentBlobName(newResource.id)),
     ).toBe(false);
     // The content blob's own charge is all that is left
     expect(storageLedgerEntries.map(({ blobName }) => blobName)).toStrictEqual([getContentBlobName(newResource.id)]);
@@ -390,7 +390,7 @@ describe(createResourceProcedures, () => {
     const newResource = await dashboardCaller.createResource({ name });
     const compressedContent = gzipSync(JSON.stringify(new Dashboard()));
     const stagedHash = await stageContent(newResource.id, compressedContent);
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     const { etag } = await containerClient
       .getBlockBlobClient(getStagingContentBlobName(newResource.id))
       .getProperties();
@@ -406,7 +406,7 @@ describe(createResourceProcedures, () => {
     expect(downloadToBuffer).toHaveBeenCalledWith(0, compressedContent.byteLength, { conditions: { ifMatch: etag } });
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
     expect(
-      MockContainerDatabase.get(AzureContainer.ResourceAssets)?.get(getStagingContentBlobName(newResource.id)),
+      MockContainerDatabase.get(StorageBucket.ResourceAssets)?.get(getStagingContentBlobName(newResource.id)),
     ).toStrictEqual(compressedContent);
   });
 
@@ -757,7 +757,7 @@ describe(createResourceProcedures, () => {
     });
 
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
+    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
 
     expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
   });
@@ -780,7 +780,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
     const blobDeletionEvents = (MockEventGridDatabase.get("") ?? []).filter(
@@ -790,11 +790,11 @@ describe(createResourceProcedures, () => {
     expect(blobDeletionEvents.map(({ data }) => data)).toStrictEqual([
       {
         blobNames: [blobName],
-        containerName: AzureContainer.ResourceAssets,
+        containerName: StorageBucket.ResourceAssets,
         decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
       },
     ]);
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(blobName)).toBe(true);
   });
 
   // A version naming an asset the container no longer holds is refused, so a publish that races a file's delete cannot
@@ -804,14 +804,14 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });
     // Deleted after the working copy named it, as the file delete does before the release decides on it
-    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
+    MockContainerDatabase.get(StorageBucket.ResourceAssets)?.delete(blobName);
 
     await expect(webpageCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
@@ -823,7 +823,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,

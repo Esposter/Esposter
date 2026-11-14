@@ -5,14 +5,14 @@ import { cloneFiles } from "#src/services/azure/container/cloneFiles";
 import { getThumbnailBlobName } from "#src/services/azure/container/getThumbnailBlobName";
 import { createUser } from "#src/services/message/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, FileEntity, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, FileEntity, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(cloneFiles, () => {
   let db: Database;
   const userId = crypto.randomUUID();
-  const containerName = AzureContainer.MessageAssets;
+  const containerName = StorageBucket.MessageAssets;
   const containerUrl = "";
   const sourcePrefix = crypto.randomUUID();
   const destinationPrefix = crypto.randomUUID();

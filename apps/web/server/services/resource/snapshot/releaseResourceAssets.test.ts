@@ -10,7 +10,7 @@ import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import {
-  AzureContainer,
+  StorageBucket,
   getResourceFileBlobName,
   resourcesInResource,
   ResourceType,
@@ -49,7 +49,7 @@ describe(releaseResourceAssets, () => {
     );
   // Uploaded at the moment the clock reads, which is what a re-upload stamps onto the blob
   const uploadAsset = async (hash: string) => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await containerClient
       .getBlockBlobClient(getResourceFileBlobName(resource.id, hash))
       .upload(assetBytes, assetBytes.byteLength);
@@ -161,7 +161,7 @@ describe(releaseResourceAssets, () => {
 
     expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
-      containerName: AzureContainer.ResourceAssets,
+      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
     });
   });
@@ -192,7 +192,7 @@ describe(releaseResourceAssets, () => {
 
     expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
-      containerName: AzureContainer.ResourceAssets,
+      containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
     });
   });

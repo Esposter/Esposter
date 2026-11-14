@@ -6,7 +6,7 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, getBlobSubjectPrefix, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, getBlobSubjectPrefix, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -21,15 +21,14 @@ vi.mock(import("#src/services/shared/db"), () => ({
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const createBlobCreatedEvent = (blobName: string) =>
-  createEventGridEvent({ subject: `${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}` });
-const hasBlob = (blobName: string) =>
-  MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName) === true;
+  createEventGridEvent({ subject: `${getBlobSubjectPrefix(StorageBucket.PublicUserAssets)}${blobName}` });
+const hasBlob = (blobName: string) => MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName) === true;
 describe(deleteOrphanedProfileImageHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const blobContent = " ";
   const seedBlob = async (blobName: string) => {
-    const containerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+    const containerClient = await getContainerClient(StorageBucket.PublicUserAssets);
     await containerClient.getBlockBlobClient(blobName).upload(blobContent, blobContent.length);
   };
 

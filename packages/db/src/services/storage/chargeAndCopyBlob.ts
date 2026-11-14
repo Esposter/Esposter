@@ -1,5 +1,5 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
 
 import { copyBlob } from "#src/services/azure/container/copyBlob";
 import { chargeStorageLedgerEntry } from "#src/services/storage/chargeStorageLedgerEntry";
@@ -13,7 +13,7 @@ import { getResultAsync, noop } from "@esposter/shared";
 export const chargeAndCopyBlob = async (
   db: Database,
   userId: UserInAuth["id"],
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   containerClient: ContainerClient,
   sourceBlobName: string,
   destinationBlobName: string,

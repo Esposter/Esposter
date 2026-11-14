@@ -1,7 +1,7 @@
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   DEAD_LETTER_ARCHIVED_PREFIX,
   DEAD_LETTER_QUARANTINE_PREFIX,
   EVENT_GRID_DELIVERY_TTL_MS,
@@ -19,7 +19,7 @@ import { getResultAsync } from "@esposter/shared";
 // It is not a sweep: nothing is scheduled, and every start that follows a healthy one finds nothing to do
 // (openspec/specs/infra/eventgrid-dead-letter/design.md).
 export const drainDeadLetterContainer = async (): Promise<number> => {
-  const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+  const containerClient = await getContainerClient(StorageBucket.DeadLetter);
   let drainedCount = 0;
   for await (const { name, properties } of containerClient.listBlobsFlat()) {
     // The replay's own copies. The subscription filters both prefixes out, so re-uploading one would retrigger

@@ -4,7 +4,7 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { generateReadSasUrl } from "@esposter/db";
-import { AzureContainer, DatabaseEntityType, DataExportStatus } from "@esposter/db-schema";
+import { StorageBucket, DatabaseEntityType, DataExportStatus } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // Refused for every state but a ready export that has not expired and names its archive. The expiry is checked here
@@ -13,7 +13,7 @@ export const getDataExportLink = async ({ blobName, expiresAt, id, status }: Dat
   if (status !== DataExportStatus.Ready || !blobName || !expiresAt || expiresAt <= new Date())
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, id);
 
-  const containerClient = await useContainerClient(AzureContainer.UserAssets);
+  const containerClient = await useContainerClient(StorageBucket.UserAssets);
   return generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
     expiresOn: new Date(Date.now() + DATA_EXPORT_LINK_DURATION_MS),
   });

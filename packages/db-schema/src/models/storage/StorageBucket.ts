@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-// Every container is private unless its name says `public-`, so a public one is always visible in its name
-export enum AzureContainer {
+// Every bucket is private unless its name says `public-`, so a public one is always visible in its name. Each name is
+// also its R2 bucket's name
+export enum StorageBucket {
   ClickerAssets = "clicker-assets",
   DeadLetter = "deadletter",
   GenshinAssets = "genshin-assets",
@@ -14,4 +15,4 @@ export enum AzureContainer {
   UserAssets = "user-assets",
 }
 
-export const azureContainerSchema = z.enum(AzureContainer) satisfies z.ZodType<AzureContainer>;
+export const storageBucketSchema = z.enum(StorageBucket) satisfies z.ZodType<StorageBucket>;

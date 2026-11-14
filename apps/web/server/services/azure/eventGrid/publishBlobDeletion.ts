@@ -1,4 +1,4 @@
-import type { AzureContainer, BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { StorageBucket, BlobDeletionEventGridData } from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { chunkBlobNamesByEventSize } from "#server/services/azure/eventGrid/chunkBlobNamesByEventSize";
@@ -13,7 +13,7 @@ import { getResultAsync } from "@esposter/shared";
 // Durable.
 export const publishBlobDeletion = (
   subject: string,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   blobNames: (() => Promise<string[]>) | string[],
   // The instant the names were judged unreferenced, forwarded so the handler keeps any blob written after it
   decidedAt?: Date,

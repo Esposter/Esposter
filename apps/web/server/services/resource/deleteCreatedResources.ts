@@ -4,7 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { deleteDirectory, deleteTablePartitionEntities } from "@esposter/db";
-import { AzureContainer, AzureTable, resourcesInResource } from "@esposter/db-schema";
+import { StorageBucket, AzureTable, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
 
@@ -18,7 +18,7 @@ export const deleteCreatedResources = async (ctx: AuthedContext, ids: ResourceIn
   if (ids.length === 0) return;
 
   await getResultAsync(async () => {
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await Promise.all(ids.map((id) => deleteDirectory(containerClient, id)));
   }).match(noop, console.error);
   await getResultAsync(async () => {

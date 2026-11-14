@@ -6,7 +6,7 @@ import { createMockContext } from "#server/trpc/context.test";
 import { clickerRouter } from "#server/trpc/routers/clicker";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { compressZstd } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -68,7 +68,7 @@ describe("clickerRouter", () => {
     expect.hasAssertions();
 
     await caller.saveClicker({ data: new ClickerSave() });
-    const container = MockContainerDatabase.get(AzureContainer.ClickerAssets);
+    const container = MockContainerDatabase.get(StorageBucket.ClickerAssets);
     assert.exists(container);
     const [blobName] = container.keys();
     assert.exists(blobName);
@@ -85,7 +85,7 @@ describe("clickerRouter", () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     await caller.saveClicker({ data: new ClickerSave() });
-    const container = MockContainerDatabase.get(AzureContainer.ClickerAssets);
+    const container = MockContainerDatabase.get(StorageBucket.ClickerAssets);
     assert.exists(container);
     const [blobName] = container.keys();
     assert.exists(blobName);

@@ -1,6 +1,6 @@
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 
 export const useLogoImageUrl = () => {
   const containerBaseUrl = useContainerBaseUrl();
-  return `${containerBaseUrl}/${AzureContainer.PublicAppAssets}/logo.png`;
+  return `${containerBaseUrl}/${StorageBucket.PublicAppAssets}/logo.png`;
 };

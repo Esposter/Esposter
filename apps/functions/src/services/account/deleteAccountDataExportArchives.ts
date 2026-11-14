@@ -3,7 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
 import { deleteBlobs } from "@esposter/db";
-import { AzureContainer, dataExportsInUser } from "@esposter/db-schema";
+import { StorageBucket, dataExportsInUser } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // The export archive sits under no user prefix, so it is found by the row that names it, before the user row's cascade
@@ -15,6 +15,6 @@ export const deleteAccountDataExportArchives = async (userId: UserInAuth["id"]):
     .from(dataExportsInUser)
     .where(eq(dataExportsInUser.userId, userId));
   const blobNames = dataExportRows.map(({ blobName }) => blobName).filter((blobName) => blobName !== null);
-  const containerClient = await getContainerClient(AzureContainer.UserAssets);
+  const containerClient = await getContainerClient(StorageBucket.UserAssets);
   await deleteBlobs(containerClient, blobNames);
 };

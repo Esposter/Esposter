@@ -4,14 +4,14 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
 import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { deleteBlobs } from "@esposter/db";
-import { AzureContainer, AzureFunction, getUserProfileImageBlobName, parseBlobSubject } from "@esposter/db-schema";
+import { StorageBucket, AzureFunction, getUserProfileImageBlobName, parseBlobSubject } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A profile image's write SAS outlives the request that minted it, so its blob can land after the account has been
 // Swept. Nothing lists it at that point, so the landing deletes itself. A landing for an account still in use is kept
 export const deleteOrphanedProfileImageHandler: EventGridHandler = (event, context) =>
   getResultAsync(async () => {
-    const parsedBlobSubject = parseBlobSubject(event.subject, [AzureContainer.PublicUserAssets]);
+    const parsedBlobSubject = parseBlobSubject(event.subject, [StorageBucket.PublicUserAssets]);
     if (!parsedBlobSubject) return;
 
     const { blobName } = parsedBlobSubject;
@@ -25,6 +25,6 @@ export const deleteOrphanedProfileImageHandler: EventGridHandler = (event, conte
     });
     if (user && !user.deletionRequestedAt) return;
 
-    const containerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+    const containerClient = await getContainerClient(StorageBucket.PublicUserAssets);
     await deleteBlobs(containerClient, [blobName]);
   }).match(noop, logAndRethrow(context, AzureFunction.DeleteOrphanedProfileImage));

@@ -23,7 +23,7 @@ import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shar
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   ResourceActivityType,
   resourceLinksInResource,
   resourcesInResource,
@@ -86,7 +86,7 @@ export const saveResourceContent = async (
   // What the owner is charged: the length the compressed blob takes at rest, not the JSON's
   let storedContentSize = 0;
   const serializedContent = JSON.stringify(parsedContent);
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   const contentBlobName = getContentBlobName(id);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
@@ -200,7 +200,7 @@ export const saveResourceContent = async (
   await chargeAndEmitStorageLedgerEntry(
     ctx.db,
     resource.userId,
-    AzureContainer.ResourceAssets,
+    StorageBucket.ResourceAssets,
     contentBlobName,
     storedContentSize,
   );

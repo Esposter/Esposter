@@ -15,7 +15,7 @@ import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants"
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
 import { generateReadSasUrl } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { createError, defineEventHandler, getRequestIP, sendRedirect } from "nuxt/server";
 
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
   if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, resourceAccess)))
     throw createError({ status: userId ? 404 : 401 });
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   // The blob's content type is the uploader's and its name carries no extension, so a navigation to the asset would
   // Render whatever the uploader sent on the blob origin. An attachment downloads on navigation, and an <img> or
   // <video> still embeds it, since those ignore Content-Disposition

@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { AzureContainer, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, UserInAuth } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
@@ -11,7 +11,7 @@ import { generateWriteSasUrl } from "@esposter/db";
 export const generateReservedWriteSasUrl = async (
   db: Context["db"],
   userId: UserInAuth["id"],
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   blobName: string,
   declaredBytes: number,
 ): Promise<string> => {

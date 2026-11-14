@@ -79,7 +79,7 @@ import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinit
 import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { purgeResource } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   DatabaseEntityType,
   getResourceOwnedTableNames,
@@ -185,7 +185,7 @@ export const resourceRouter = router({
   purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
     .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
     .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
-      const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+      const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
       const tableClients = await Promise.all(
         getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useTableClient(tableName)),

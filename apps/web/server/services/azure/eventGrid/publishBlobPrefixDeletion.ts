@@ -1,4 +1,4 @@
-import type { AzureContainer, BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { StorageBucket, BlobDeletionEventGridData } from "@esposter/db-schema";
 
 import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { AzureFunction, createEventGridEvent } from "@esposter/db-schema";
@@ -16,7 +16,7 @@ import { getResultAsync } from "@esposter/shared";
 // Landed after it (an upload holding a still-valid write SAS when its room was deleted has no later sweep).
 export const publishBlobPrefixDeletion = (
   subject: string,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   prefix: string,
   createdBefore: Date | undefined,
 ) =>

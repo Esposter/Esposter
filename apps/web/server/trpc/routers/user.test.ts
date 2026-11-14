@@ -25,7 +25,7 @@ import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureFunction,
   DatabaseEntityType,
   dataExportsInUser,
@@ -52,7 +52,7 @@ const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
   MockContainerDatabase.set(
-    AzureContainer.UserAssets,
+    StorageBucket.UserAssets,
     new Map(slots.map((slot) => [getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize)])),
   );
 };
@@ -73,7 +73,7 @@ describe("userRouter", () => {
   const updatedMessage = "updatedMessage";
   const userId = getMockSession().user.id;
   const getCallBackgroundUrl = (slot: number) =>
-    `${MOCK_BLOB_BASE_URL}/${AzureContainer.UserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
+    `${MOCK_BLOB_BASE_URL}/${StorageBucket.UserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
   // A second session the caller holds, and a revoke that deletes its row the way better-auth would
   const holdOtherSession = async () => {
     const otherSession = createMockSession(userId);
@@ -357,7 +357,7 @@ describe("userRouter", () => {
 
     const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
 
-    expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${userId}/ProfileImage`);
+    expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${StorageBucket.PublicUserAssets}/${userId}/ProfileImage`);
     expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b", new Date(WRITE_SAS_DURATION_MS)));
   });
 
@@ -430,7 +430,7 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     MockContainerDatabase.set(
-      AzureContainer.UserAssets,
+      StorageBucket.UserAssets,
       new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
     );
     const callBackgrounds = await caller.readCallBackgrounds();
@@ -452,7 +452,7 @@ describe("userRouter", () => {
     expect(callBackgrounds).toStrictEqual([]);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [getCallBackgroundBlobName(userId, 0)],
-      containerName: AzureContainer.UserAssets,
+      containerName: StorageBucket.UserAssets,
     });
   });
 
@@ -502,7 +502,7 @@ describe("userRouter", () => {
 
     // The bound is what stops a redelivered delete taking the image that replaced the one it named
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      containerName: AzureContainer.UserAssets,
+      containerName: StorageBucket.UserAssets,
       createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
     });
@@ -590,7 +590,7 @@ describe("userRouter", () => {
 
     expect(link).toBe(
       getMockSasUrl(
-        `${MOCK_BLOB_BASE_URL}/${AzureContainer.UserAssets}/${blobName}`,
+        `${MOCK_BLOB_BASE_URL}/${StorageBucket.UserAssets}/${blobName}`,
         "r",
         "b",
         new Date(DATA_EXPORT_LINK_DURATION_MS),

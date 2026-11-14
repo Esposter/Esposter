@@ -5,7 +5,7 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { AzureContainer, FILES_DIRECTORY_SEGMENT, getResourceFileBlobName } from "@esposter/db-schema";
+import { StorageBucket, FILES_DIRECTORY_SEGMENT, getResourceFileBlobName } from "@esposter/db-schema";
 
 // Each resource the person owns is written as its record, its working copy and the assets that copy embeds.
 // Its publication, when it is published, and the links it holds are written too.
@@ -17,7 +17,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     columns: { contentVersion: true, createdAt: true, id: true, name: true, tags: true, type: true },
     where: { userId: { eq: userId } },
   });
-  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   for (const resource of resources) {
     const entryDirectory = `resources/${resource.id}`;
     // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order

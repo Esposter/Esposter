@@ -4,7 +4,7 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
 import { transformer } from "#shared/services/trpc/transformer";
-import { AzureContainer, getSaveBlobName } from "@esposter/db-schema";
+import { StorageBucket, getSaveBlobName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
@@ -68,7 +68,7 @@ describe(saveGenshin, () => {
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);
     const sessionId = crypto.randomUUID();
-    const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+    const containerClient = await useContainerClient(StorageBucket.GenshinAssets);
     const putUserId = crypto.randomUUID();
     const conflictUserId = crypto.randomUUID();
     const serializedEnvelope = JSON.stringify({ save, sessionId });

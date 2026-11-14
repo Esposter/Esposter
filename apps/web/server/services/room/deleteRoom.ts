@@ -8,7 +8,7 @@ import { ownedBy } from "#server/services/db/ownedBy";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
-import { AzureContainer, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
+import { StorageBucket, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
 
 export const deleteRoom = async (db: Context["db"], { session, user }: GetSessionPayload, id: string) => {
@@ -29,10 +29,10 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
     // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
     // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
     // Of any member still holding a write SAS when the owner deleted, billed and downloadable forever
-    publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id, undefined).match(noop, console.error),
+    publishBlobPrefixDeletion(id, StorageBucket.MessageAssets, id, undefined).match(noop, console.error),
     // Profile images are a handful, so their listing stays a resolved list rather than a prefix walk
-    publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
-      const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    publishBlobDeletion(id, StorageBucket.PublicUserAssets, async () => {
+      const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
       return listRoomProfileImageBlobNames(containerClient, id);
     }).match(noop, console.error),
   ]);

@@ -6,7 +6,7 @@ import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -40,7 +40,7 @@ vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
 }));
 
 const readContainer = () => {
-  const container = MockContainerDatabase.get(AzureContainer.MessageAssets);
+  const container = MockContainerDatabase.get(StorageBucket.MessageAssets);
   assert.exists(container);
   return [...container.keys()];
 };
@@ -48,10 +48,10 @@ const readContainer = () => {
 const createBlobDeletionEvent = (data: BlobDeletionEventGridData) => createEventGridEvent({ data });
 
 const createEvent = (blobNames: string[]) =>
-  createBlobDeletionEvent({ blobNames, containerName: AzureContainer.MessageAssets });
+  createBlobDeletionEvent({ blobNames, containerName: StorageBucket.MessageAssets });
 
 const createPrefixEvent = (prefix: string, createdBefore: Date) =>
-  createBlobDeletionEvent({ containerName: AzureContainer.MessageAssets, createdBefore, prefix });
+  createBlobDeletionEvent({ containerName: StorageBucket.MessageAssets, createdBefore, prefix });
 
 describe(processBlobDeletionHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
@@ -63,7 +63,7 @@ describe(processBlobDeletionHandler, () => {
   const userId = crypto.randomUUID();
   const countedBytes = 1;
   const seedBlob = async (name: string) => {
-    const containerClient = await getContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await getContainerClient(StorageBucket.MessageAssets);
     await containerClient.getBlockBlobClient(name).upload(content, content.length);
   };
   // A blob storage has already reported, so the counter is carrying its bytes and a release gives them back
@@ -72,7 +72,7 @@ describe(processBlobDeletionHandler, () => {
       .insert(storageLedgerInStorage)
       .values({
         blobName: name,
-        containerName: AzureContainer.MessageAssets,
+        containerName: StorageBucket.MessageAssets,
         countedBytes,
         declaredBytes: countedBytes,
         expiresAt: new Date(0),
@@ -122,7 +122,7 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(
       createBlobDeletionEvent({
         blobNames: [blobName],
-        containerName: AzureContainer.MessageAssets,
+        containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(0),
       }),
       context,
@@ -139,7 +139,7 @@ describe(processBlobDeletionHandler, () => {
     await processBlobDeletionHandler(
       createBlobDeletionEvent({
         blobNames: [blobName],
-        containerName: AzureContainer.MessageAssets,
+        containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
       }),
       context,

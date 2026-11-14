@@ -5,7 +5,7 @@ import { readStagedResourceContent } from "#server/services/resource/readStagedR
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createHash } from "node:crypto";
@@ -37,7 +37,7 @@ describe(readStagedResourceContent, () => {
         [constants.ZSTD_c_windowLog]: getWindowLog(baseline.byteLength, Buffer.byteLength(content)),
       },
     }).toBase64();
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await writeJsonBlob(containerClient, getContentBlobName(id), baseline.toString());
     await containerClient
       .getBlockBlobClient(getStagingContentBlobName(id))

@@ -9,7 +9,7 @@ import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnap
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { checkIsNotFound } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   getResourceFileBlobName,
   MAX_CONCURRENT_BLOB_COPIES,
   resourceVersionAssetsInResource,
@@ -59,7 +59,7 @@ export const releaseResourceAssets = async (
     ]);
     const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
 
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     const graceChecks = await settleAll(
       unclaimedHashes.map((hash) => async () => ({
         hash,
@@ -74,7 +74,7 @@ export const releaseResourceAssets = async (
   // Charged until the next release names it again
   await publishBlobDeletion(
     resourceId,
-    AzureContainer.ResourceAssets,
+    StorageBucket.ResourceAssets,
     unreferencedHashes.map((hash) => getResourceFileBlobName(resourceId, hash)),
     decidedAt,
   ).match(noop, console.error);

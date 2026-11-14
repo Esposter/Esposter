@@ -5,7 +5,7 @@ import { cloneContentAssets } from "#server/services/resource/cloneContentAssets
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  AzureContainer,
+  StorageBucket,
   FILES_DIRECTORY_SEGMENT,
   resourcePublicationsInResource,
   resourcesInResource,
@@ -33,7 +33,7 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
     chargeAndCopyBlob: (
       _db: Database,
       _userId: string,
-      _containerName: AzureContainer,
+      _containerName: StorageBucket,
       containerClient: ContainerClient,
       sourceBlobName: string,
       destinationBlobName: string,
@@ -76,7 +76,7 @@ describe(cloneContentAssets, () => {
   let containerClient: MockContainerClient;
 
   beforeEach(async () => {
-    containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
+    containerClient = new MockContainerClient("", StorageBucket.ResourceAssets);
     containerClientMock.current = containerClient as unknown as ContainerClient;
     await Promise.all(
       [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) =>

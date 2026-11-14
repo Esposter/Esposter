@@ -2,7 +2,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { touchResourceAssetBlob } from "#server/services/resource/touchResourceAssetBlob";
-import { AzureContainer, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { settleAll } from "@esposter/shared";
 
 // Every asset a write is about to name that is still stored is touched rather than only checked, so its grace window
@@ -16,7 +16,7 @@ export const touchSnapshotAssets = async (
 ): Promise<Set<string>> => {
   if (assetHashes.size === 0) return new Set();
 
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   const touches = await settleAll(
     Array.from(assetHashes, (hash) => async () => ({
       hash,

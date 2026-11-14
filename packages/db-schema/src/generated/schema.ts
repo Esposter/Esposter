@@ -60,7 +60,7 @@ import { blocksInSocial } from "#src/schema/social/blocksInSocial";
 import { friendRequestsInSocial } from "#src/schema/social/friendRequestsInSocial";
 import { friendsInSocial } from "#src/schema/social/friendsInSocial";
 import { socialSchema } from "#src/schema/social/socialSchema";
-import { azureContainerEnum, storageLedgerInStorage } from "#src/schema/storage/storageLedgerInStorage";
+import { storageBucketEnum, storageLedgerInStorage } from "#src/schema/storage/storageLedgerInStorage";
 import { storageSchema } from "#src/schema/storage/storageSchema";
 import { dataExportsInUser, dataExportStatusEnum } from "#src/schema/user/dataExportsInUser";
 import { userSchema } from "#src/schema/user/userSchema";
@@ -75,7 +75,7 @@ export const schema = {
   appSchema,
   appUsersInMessage,
   authSchema,
-  azureContainerEnum,
+  storageBucketEnum,
   bansInMessage,
   blocksInSocial,
   bookmarksInApp,

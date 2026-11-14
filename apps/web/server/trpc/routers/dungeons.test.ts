@@ -6,7 +6,7 @@ import { createMockContext } from "#server/trpc/context.test";
 import { dungeonsRouter } from "#server/trpc/routers/dungeons";
 import { Dungeons } from "#shared/models/dungeons/data/Dungeons";
 import { compressZstd } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -49,7 +49,7 @@ describe("dungeonsRouter", () => {
 
     vi.spyOn(console, "error").mockImplementation(() => {});
     await caller.saveDungeons({ data: new Dungeons() });
-    const container = MockContainerDatabase.get(AzureContainer.UserAssets);
+    const container = MockContainerDatabase.get(StorageBucket.UserAssets);
     assert.exists(container);
     const [blobName] = container.keys();
     assert.exists(blobName);

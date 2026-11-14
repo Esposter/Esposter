@@ -12,7 +12,7 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { AzureContainer, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
+import { StorageBucket, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -38,10 +38,10 @@ describe("webpageRouter", () => {
 
   // Stores an uploaded image under its hash, the way the upload's write target lands it
   const addAsset = (resourceId: string) => {
-    const resourceAssets = MockContainerDatabase.get(AzureContainer.ResourceAssets) ?? new Map<string, Buffer>();
+    const resourceAssets = MockContainerDatabase.get(StorageBucket.ResourceAssets) ?? new Map<string, Buffer>();
     const blobName = getResourceFileBlobName(resourceId, hash);
     resourceAssets.set(blobName, Buffer.alloc(1));
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, resourceAssets);
+    MockContainerDatabase.set(StorageBucket.ResourceAssets, resourceAssets);
     return getResourceAssetUrl(blobName);
   };
 
@@ -121,7 +121,7 @@ describe("webpageRouter", () => {
     const assetBlobName = getResourceFileBlobName(newResource.id, hash);
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(assetBlobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(assetBlobName)).toBe(true);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 

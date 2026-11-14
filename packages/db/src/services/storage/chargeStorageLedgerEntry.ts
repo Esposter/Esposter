@@ -1,4 +1,4 @@
-import type { AzureContainer, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, StorageLedgerEntryInStorage, UserInAuth } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStorageLedgerEntry";
 import { storageLedgerInStorage } from "@esposter/db-schema";
@@ -24,7 +24,7 @@ import { storageLedgerInStorage } from "@esposter/db-schema";
 export const chargeStorageLedgerEntry = async (
   db: Database,
   userId: UserInAuth["id"],
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
 ): Promise<void> => {

@@ -17,7 +17,7 @@ import {
 import { createMockDb } from "@esposter/db-mock";
 import {
   AdminActionType,
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   dataExportsInUser,
   DataExportStatus,
@@ -107,28 +107,28 @@ describe(exportUserDataHandler, () => {
       type: MessageType.Message,
       userId,
     });
-    await seedBlob(AzureContainer.MessageAssets, getFileBlobNames(room.id, file.id, file.filename).blobName);
+    await seedBlob(StorageBucket.MessageAssets, getFileBlobNames(room.id, file.id, file.filename).blobName);
     const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
-    await seedBlob(AzureContainer.MessageAssets, getRoomEmojiBlobName(room.id, emoji.id));
-    await seedBlob(AzureContainer.PublicUserAssets, `rooms/${room.id}/ProfileImage`);
+    await seedBlob(StorageBucket.MessageAssets, getRoomEmojiBlobName(room.id, emoji.id));
+    await seedBlob(StorageBucket.PublicUserAssets, `rooms/${room.id}/ProfileImage`);
 
     // The owned resource, with its working copy and the asset that copy embeds
     const resource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
     );
     await writeJsonBlob(
-      await getContainerClient(AzureContainer.ResourceAssets),
+      await getContainerClient(StorageBucket.ResourceAssets),
       getContentBlobName(resource.id),
       content,
     );
     const assetHash = "0".repeat(64);
     await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    await seedBlob(AzureContainer.ResourceAssets, getResourceFileBlobName(resource.id, assetHash));
+    await seedBlob(StorageBucket.ResourceAssets, getResourceFileBlobName(resource.id, assetHash));
 
     // The account's profile image, a call background, its save, and a moderation record naming it as the target
-    await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
-    await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
-    await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
+    await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
+    await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
+    await writeJsonBlob(await getContainerClient(StorageBucket.GenshinAssets), getSaveBlobName(userId), content);
     await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
       actorUserId: otherUserId,
       roomId: room.id,
@@ -148,7 +148,7 @@ describe(exportUserDataHandler, () => {
         .from(dataExportsInUser)
         .where(eq(dataExportsInUser.id, dataExportId)),
     );
-    const archiveBytes = MockContainerDatabase.get(AzureContainer.UserAssets)?.get(getDataExportBlobName(dataExportId));
+    const archiveBytes = MockContainerDatabase.get(StorageBucket.UserAssets)?.get(getDataExportBlobName(dataExportId));
     assert.exists(archiveBytes);
     const entries = unzipSync(archiveBytes);
 

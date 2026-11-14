@@ -7,7 +7,7 @@ import { db } from "#src/services/shared/db";
 import { deleteStoragePrefix } from "#src/services/storage/deleteStoragePrefix";
 import { getPartitionKeyFilter } from "@esposter/azure";
 import { deleteSearchDocumentsByFilter, deleteTablePartitionEntities } from "@esposter/db";
-import { AzureContainer, AzureTable, roomsInMessage, SearchIndex } from "@esposter/db-schema";
+import { StorageBucket, AzureTable, roomsInMessage, SearchIndex } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // An owner's departure deletes the room for everyone, and account deletion does the same to each room its account owns.
@@ -28,7 +28,7 @@ export const deleteAccountOwnedRoom = async (
   );
   // The index is fed from the Messages partition just cleared, so the room's documents are removed once that partition is
   await deleteSearchDocumentsByFilter(getSearchClient(SearchIndex.Messages), getPartitionKeyFilter(roomId));
-  await deleteStoragePrefix(context, AzureContainer.MessageAssets, `${roomId}/`);
-  await deleteStoragePrefix(context, AzureContainer.PublicUserAssets, `rooms/${roomId}/`);
+  await deleteStoragePrefix(context, StorageBucket.MessageAssets, `${roomId}/`);
+  await deleteStoragePrefix(context, StorageBucket.PublicUserAssets, `rooms/${roomId}/`);
   await db.delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));
 };

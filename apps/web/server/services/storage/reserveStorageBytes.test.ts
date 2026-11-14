@@ -5,7 +5,7 @@ import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
 import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storage/constants";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
-  AzureContainer,
+  StorageBucket,
   EVENT_GRID_DELIVERY_TTL_MS,
   storageLedgerInStorage,
   StorageTier,
@@ -19,7 +19,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 describe(reserveStorageBytes, () => {
   let mockContext: Context;
   let userId: string;
-  const containerName = AzureContainer.ResourceAssets;
+  const containerName = StorageBucket.ResourceAssets;
   const blobName = "blobName";
   const declaredBytes = 1;
   const quotaBytes = StorageTierQuotaMap[StorageTier.Free];

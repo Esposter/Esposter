@@ -52,7 +52,7 @@ import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIds
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
@@ -114,7 +114,7 @@ export const baseRoomRouter = router({
     publicUrl: string;
     sasUrl: string;
   }>(async ({ input: { roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+    const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
     // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
     // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
     const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
@@ -507,8 +507,8 @@ export const baseRoomRouter = router({
     // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
     // Dropped publish orphans a public blob, never the room update
     if (image !== undefined && image !== previousImage)
-      await publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
-        const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
+      await publishBlobDeletion(id, StorageBucket.PublicUserAssets, async () => {
+        const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
         // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
         // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
         // Uploaded in between — so the row value being replaced is exactly the value that can name the other

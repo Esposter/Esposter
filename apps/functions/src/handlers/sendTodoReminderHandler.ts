@@ -8,7 +8,7 @@ import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import {
   AppNotificationType,
-  AzureContainer,
+  StorageBucket,
   AzureFunction,
   publishNotification,
   ResourceType,
@@ -28,7 +28,7 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
       return;
     }
 
-    const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
     // A missing content blob means nothing to remind about, so it drops the reminder while transient Azure
     // Failures surface for a retry instead of being swallowed as "no content".
     const buffer = await readJsonBlob(containerClient, getContentBlobName(resourceId));

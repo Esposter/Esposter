@@ -3,7 +3,7 @@ import AzureSubscriptionId from "#src/azure/constants/AzureSubscriptionId";
 import JimmyChenPrincipalId from "#src/azure/constants/JimmyChenPrincipalId";
 import { prodRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/prodRgEsposterAe001";
 import { prodstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/prodstesposter001";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 import * as pulumi from "@pulumi/pulumi";
 
@@ -15,7 +15,7 @@ export const jimmyChenProdstesposter001PublicAppAssetsStorageBlobDataContributor
       principalType: azure_native.authorization.PrincipalType.User,
       roleAssignmentName: "21a4bb98-5b6b-465d-9930-9cf86ef184e6",
       roleDefinitionId: AzureStorageBlobDataContributorRoleDefinitionId,
-      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Storage/storageAccounts/${prodstesposter001.name}/blobServices/default/containers/${AzureContainer.PublicAppAssets}`,
+      scope: pulumi.interpolate`subscriptions/${AzureSubscriptionId}/resourceGroups/${prodRgEsposterAe001.name}/providers/Microsoft.Storage/storageAccounts/${prodstesposter001.name}/blobServices/default/containers/${StorageBucket.PublicAppAssets}`,
     },
     { parent: prodstesposter001, protect: true },
   );

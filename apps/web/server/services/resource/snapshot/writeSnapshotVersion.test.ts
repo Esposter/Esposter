@@ -6,7 +6,7 @@ import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSn
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import {
-  AzureContainer,
+  StorageBucket,
   getResourceFileBlobName,
   resourcesInResource,
   ResourceType,
@@ -72,7 +72,7 @@ describe(writeSnapshotVersion, () => {
       mockContext.db.query.resourceVersionsInResource.findFirst({ where: { resourceId: { eq: resource.id } } }),
     ).resolves.toBeUndefined();
     await expect(mockContext.db.select().from(resourceVersionAssetsInResource)).resolves.toStrictEqual([]);
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.size ?? 0).toBe(0);
+    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.size ?? 0).toBe(0);
   });
 
   // A touch restarts the grace window of an asset nothing references. The digests are what a document of pasted hashes

@@ -4,7 +4,7 @@ import type { WrittenVersion } from "keyframe-store";
 
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { chargeAndEmitStorageLedgerEntry } from "#server/services/storage/chargeAndEmitStorageLedgerEntry";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 
 // A version is stored bytes the owner keeps, charged for exactly what its object cost rather than for a copy of
 // The document — which is what makes the meter say something true: one cell edited costs about a hundred
@@ -21,7 +21,7 @@ export const chargeSnapshotVersion = async (
   await chargeAndEmitStorageLedgerEntry(
     db,
     resource.userId,
-    AzureContainer.ResourceAssets,
+    StorageBucket.ResourceAssets,
     getSnapshotObjectBlobName(resource.id, hash),
     storedBytes,
   );

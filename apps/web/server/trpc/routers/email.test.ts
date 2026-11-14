@@ -11,7 +11,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
-import { AzureContainer, AzureTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
+import { StorageBucket, AzureTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
@@ -187,7 +187,7 @@ describe("emailRouter", () => {
     });
     await caller.publishResource({ id: newResource.id });
     const storageBytesUsedWhilePublished = await readStorageBytesUsed(newResource.userId);
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
     assert.exists(container);
     const readResourceBlobNames = () => [...container.keys()].filter((key) => key.startsWith(`${newResource.id}/`));
     const storedBlobNamesBeforePurge = readResourceBlobNames();

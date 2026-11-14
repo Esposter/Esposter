@@ -1,4 +1,4 @@
-import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
 
 // The exact list of blobs a user is charged for, read from the storage ledger rather than from a listing of names:
 // The ledger holds one row per charged blob with its container and owner, so a sweep removes what it was charged for
@@ -6,7 +6,7 @@ import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
 export const listChargedBlobsByUser = async (
   db: Database,
   userId: UserInAuth["id"],
-): Promise<Map<AzureContainer, string[]>> => {
+): Promise<Map<StorageBucket, string[]>> => {
   const storageLedgerEntries = await db.query.storageLedgerInStorage.findMany({
     columns: { blobName: true, containerName: true },
     where: { userId: { eq: userId } },

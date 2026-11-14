@@ -6,7 +6,7 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { checkIsResourceAssetHeld } from "#server/services/resource/checkIsResourceAssetHeld";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import { generateWriteSasUrl } from "@esposter/db";
-import { AzureContainer, getResourceFileBlobName } from "@esposter/db-schema";
+import { StorageBucket, getResourceFileBlobName } from "@esposter/db-schema";
 
 // The write targets for one batch of resource files, each addressed by the hash of its bytes. A file the resource
 // Already holds under its hash, with bytes that hash to it, gets no signature and no quota hold: its blob's last-modified
@@ -21,7 +21,7 @@ export const generateReservedResourceAssetSasEntities = async (
   resourceId: ResourceInResource["id"],
   files: { hash: string; mimetype: string; size: number }[],
 ): Promise<ResourceFileSasEntity[]> => {
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   const fileEntries = await Promise.all(
     files.map(async (file) => {
       const blobName = getResourceFileBlobName(resourceId, file.hash);
@@ -33,7 +33,7 @@ export const generateReservedResourceAssetSasEntities = async (
   await reserveStorageBytes(
     db,
     userId,
-    AzureContainer.ResourceAssets,
+    StorageBucket.ResourceAssets,
     fileEntries.filter(({ isHeld }) => !isHeld).map(({ blobName, size }) => ({ blobName, declaredBytes: size })),
   );
 

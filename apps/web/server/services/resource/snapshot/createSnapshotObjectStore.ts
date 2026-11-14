@@ -5,7 +5,7 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { checkIsAlreadyStored, checkIsNotFound } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The store's only contact with storage: one resource's objects in the resource assets container, keyed by
@@ -16,12 +16,12 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Deletes and releases the ledger entry as one retried unit, and a bare delete would leave the object's bytes
 // Charged to the owner forever
 export const createSnapshotObjectStore = async (resourceId: ResourceInResource["id"]): Promise<ObjectStore> => {
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   return {
     delete: (keys) =>
       publishBlobDeletion(
         resourceId,
-        AzureContainer.ResourceAssets,
+        StorageBucket.ResourceAssets,
         keys.map((key) => getSnapshotObjectBlobName(resourceId, key)),
       ).match(noop, console.error),
     read: async (key) => {

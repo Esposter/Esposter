@@ -1,6 +1,6 @@
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { writeDeadLetterBlob } from "#src/services/deadLetter/writeDeadLetterBlob";
-import { AzureContainer, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
+import { StorageBucket, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
 import { MockContainerDatabase, MockRestError } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
@@ -18,11 +18,11 @@ describe(writeDeadLetterBlob, () => {
   test("copies under every prefix and leaves the source untouched", async () => {
     expect.hasAssertions();
 
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     await containerClient.getBlockBlobClient(blobName).upload(content, content.length);
     await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content);
     await writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_ARCHIVED_PREFIX, content);
-    const container = MockContainerDatabase.get(AzureContainer.DeadLetter);
+    const container = MockContainerDatabase.get(StorageBucket.DeadLetter);
     assert.exists(container);
 
     expect([...container.keys()]).toStrictEqual([
@@ -37,7 +37,7 @@ describe(writeDeadLetterBlob, () => {
   test("reports only the write that created the copy, not a redelivery of it", async () => {
     expect.hasAssertions();
 
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     const [isCreated, isRedelivered] = await Promise.all([
       writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content),
       writeDeadLetterBlob(containerClient, blobName, DEAD_LETTER_QUARANTINE_PREFIX, content),
@@ -49,7 +49,7 @@ describe(writeDeadLetterBlob, () => {
   test("propagates a write failure that is not the copy already existing", async () => {
     expect.hasAssertions();
 
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     vi.spyOn(blockBlobClient, "upload").mockRejectedValue(new MockRestError("", 503));
     vi.spyOn(containerClient, "getBlockBlobClient").mockReturnValue(blockBlobClient);

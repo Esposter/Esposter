@@ -6,7 +6,7 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -56,13 +56,13 @@ describe(deleteAccountDataExportArchives, () => {
         userId: otherUserId,
       },
     ]);
-    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(dataExportId));
-    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(secondDataExportId));
-    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(otherDataExportId));
+    await seedBlob(StorageBucket.UserAssets, getDataExportBlobName(dataExportId));
+    await seedBlob(StorageBucket.UserAssets, getDataExportBlobName(secondDataExportId));
+    await seedBlob(StorageBucket.UserAssets, getDataExportBlobName(otherDataExportId));
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([getDataExportBlobName(otherDataExportId)]);
+    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([getDataExportBlobName(otherDataExportId)]);
   });
 
   test("a row whose archive is already gone does not fail the sweep, and the archive it still holds is removed", async () => {
@@ -81,10 +81,10 @@ describe(deleteAccountDataExportArchives, () => {
       },
       { blobName: getDataExportBlobName(dataExportId), id: dataExportId, status: DataExportStatus.Ready, userId },
     ]);
-    await seedBlob(AzureContainer.UserAssets, getDataExportBlobName(dataExportId));
+    await seedBlob(StorageBucket.UserAssets, getDataExportBlobName(dataExportId));
 
     await deleteAccountDataExportArchives(userId);
 
-    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([]);
+    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);
   });
 });

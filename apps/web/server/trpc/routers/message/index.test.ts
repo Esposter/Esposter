@@ -33,7 +33,7 @@ import {
 } from "@esposter/db";
 import {
   AppNotificationType,
-  AzureContainer,
+  StorageBucket,
   AzureEntityType,
   AzureFunction,
   AzureTable,
@@ -122,7 +122,7 @@ describe("messageRouter", () => {
   // The two blobs one attachment owns, which every deletion path has to publish together
   const getExpectedBlobDeletionData = (id: string) => ({
     blobNames: [getBlobName(`${roomId}/${id}`, filename), getThumbnailBlobName(roomId, id)],
-    containerName: AzureContainer.MessageAssets,
+    containerName: StorageBucket.MessageAssets,
   });
   // Every mock Azure client resolves in the same microtask drain, so two concurrent procedures run to completion
   // One after the other and never interleave on their own. The write is the seam the conditional-write tests
@@ -149,7 +149,7 @@ describe("messageRouter", () => {
   // The blob an attachment points at, which only the tests that assert a deletion have to actually put there
   const setMessageAssetBlob = (id: string) => {
     MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
+      StorageBucket.MessageAssets,
       new Map([[getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size)]]),
     );
   };
@@ -1053,10 +1053,10 @@ describe("messageRouter", () => {
   // Carries, or every blob under its prefix, released through the same `deleteStorageBlobs`. The bytes are read after
   // That, so a case proves the release path returned them rather than the procedure that published it
   const runBlobDeletionEvents = async () => {
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
     const blobDeletions = (MockEventGridDatabase.get("") ?? [])
       .map(({ data }) => data as BlobDeletionEventGridData)
-      .filter(({ containerName }) => containerName === AzureContainer.MessageAssets);
+      .filter(({ containerName }) => containerName === StorageBucket.MessageAssets);
     const blobNames = (
       await Promise.all(
         blobDeletions.map((blobDeletion) =>
@@ -1066,13 +1066,13 @@ describe("messageRouter", () => {
         ),
       )
     ).flat();
-    await deleteStorageBlobs(mockContext.db, containerClient, AzureContainer.MessageAssets, blobNames, () =>
+    await deleteStorageBlobs(mockContext.db, containerClient, StorageBucket.MessageAssets, blobNames, () =>
       Promise.resolve(),
     );
   };
   // Storage reporting an upload's stored size is the reconcile the `BlobCreated` handler runs
   const reportStoredUpload = (blobName: string) =>
-    reconcileStorageLedgerEntry(mockContext.db, AzureContainer.MessageAssets, blobName, size, "0");
+    reconcileStorageLedgerEntry(mockContext.db, StorageBucket.MessageAssets, blobName, size, "0");
   const readStorageBytesUsed = async () =>
     (
       await mockContext.db.query.usersInAuth.findFirst({

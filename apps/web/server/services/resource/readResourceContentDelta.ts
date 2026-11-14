@@ -7,7 +7,7 @@ import {
   MAX_RESOURCE_CONTENT_SIZE,
 } from "#shared/services/resource/constants";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
+import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, getWindowLog, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { createHash } from "node:crypto";
@@ -29,7 +29,7 @@ export const readResourceContentDelta = async (
   if (resource.contentHash !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   const baseline = await readJsonBlob(containerClient, getContentBlobName(resource.id));
   if (!baseline || createHash("sha256").update(baseline).digest("hex") !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });

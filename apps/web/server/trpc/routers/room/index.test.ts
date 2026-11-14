@@ -23,7 +23,7 @@ import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants"
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { getPartitionKeyFilter } from "@esposter/azure";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   DatabaseEntityType,
   friendsInSocial,
@@ -48,7 +48,7 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 // Uploaded through the client, so the mock dates the blob now
 const uploadPublicUserAssetBlob = (blobName: string) =>
-  new MockBlockBlobClient("", AzureContainer.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+  new MockBlockBlobClient("", StorageBucket.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
 
 describe("roomRouter", () => {
   let mockContext: Context;
@@ -59,7 +59,7 @@ describe("roomRouter", () => {
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
-  const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/`;
+  const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${StorageBucket.PublicUserAssets}/`;
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
   const createUnlimitedInvite = (inviteRoomId: string) =>
@@ -238,7 +238,7 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
-    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
@@ -252,9 +252,9 @@ describe("roomRouter", () => {
     expect(blobDeletionEvents).toHaveLength(1);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName],
-      containerName: AzureContainer.PublicUserAssets,
+      containerName: StorageBucket.PublicUserAssets,
     });
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
   // The version being replaced gets no exemption from the age filter: the submitted url is whatever the caller's
@@ -273,7 +273,7 @@ describe("roomRouter", () => {
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
   // The lost-update race the age filter exists for: a save whose form opened before the other admin's upload
@@ -292,7 +292,7 @@ describe("roomRouter", () => {
     await roomCaller.updateRoom({ id: newRoom.id, image: staleUrl, name: updatedName });
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(freshBlobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(freshBlobName)).toBe(true);
   });
 
   test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
@@ -302,7 +302,7 @@ describe("roomRouter", () => {
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
     // Seeded rather than uploaded, so the mock dates it before the write sas window and the sweep collects it
-    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const inFlightBlobName = getBlobName(inFlightPublicUrl);
@@ -314,9 +314,9 @@ describe("roomRouter", () => {
 
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName],
-      containerName: AzureContainer.PublicUserAssets,
+      containerName: StorageBucket.PublicUserAssets,
     });
-    expect(MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
   });
 
   // The column is free text, so the dropped value is only a blob name if an upload could have written it — the
@@ -433,7 +433,7 @@ describe("roomRouter", () => {
       (_value, index) => `${newRoom.id}/${index}`,
     );
     MockContainerDatabase.set(
-      AzureContainer.MessageAssets,
+      StorageBucket.MessageAssets,
       new Map(blobNames.map((blobName) => [blobName, Buffer.alloc(0)])),
     );
     await roomCaller.deleteRoom(newRoom.id);
@@ -442,7 +442,7 @@ describe("roomRouter", () => {
 
     expect(blobDeletionEvents).toHaveLength(1);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      containerName: AzureContainer.MessageAssets,
+      containerName: StorageBucket.MessageAssets,
       prefix: newRoom.id,
     });
   });
@@ -452,20 +452,20 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert.exists(blobDeletionEvents);
 
     // Profile images stay a resolved list, since they are a handful. The room's attachments go out as the prefix event
     const profileImageDeletionEvents = blobDeletionEvents.filter(
-      ({ data }) => (data as BlobDeletionEventGridData).containerName === AzureContainer.PublicUserAssets,
+      ({ data }) => (data as BlobDeletionEventGridData).containerName === StorageBucket.PublicUserAssets,
     );
 
     expect(profileImageDeletionEvents).toHaveLength(1);
     expect(takeOne(profileImageDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [blobName],
-      containerName: AzureContainer.PublicUserAssets,
+      containerName: StorageBucket.PublicUserAssets,
     });
   });
 

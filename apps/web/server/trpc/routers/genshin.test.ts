@@ -5,7 +5,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
 import { genshinRouter } from "#server/trpc/routers/genshin";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { EMPTY_GENSHIN_SAVE } from "genshin-world/save";
 import { zstdCompressSync } from "node:zlib";
@@ -119,7 +119,7 @@ describe("genshinRouter", () => {
     expect.hasAssertions();
 
     const start = await genshinCaller.startGenshin({ sessionId: firstSessionId });
-    const container = MockContainerDatabase.get(AzureContainer.GenshinAssets);
+    const container = MockContainerDatabase.get(StorageBucket.GenshinAssets);
     assert.exists(container);
     const [blobName] = container.keys();
     assert.exists(blobName);

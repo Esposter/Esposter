@@ -1,6 +1,6 @@
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { drainDeadLetterContainer } from "#src/services/deadLetter/drainDeadLetterContainer";
-import { AzureContainer, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
+import { StorageBucket, DEAD_LETTER_ARCHIVED_PREFIX, DEAD_LETTER_QUARANTINE_PREFIX } from "@esposter/db-schema";
 import {
   getMockBlobKey,
   getMockContainer,
@@ -15,7 +15,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const readLastModified = (blobName: string) =>
-  MockContainerBlobDatesDatabase.get(getMockBlobKey(AzureContainer.DeadLetter, blobName))?.lastModified;
+  MockContainerBlobDatesDatabase.get(getMockBlobKey(StorageBucket.DeadLetter, blobName))?.lastModified;
 
 describe(drainDeadLetterContainer, () => {
   const strandedBlobName = "";
@@ -33,11 +33,11 @@ describe(drainDeadLetterContainer, () => {
   test("re-uploads what no delivery can still reach, and nothing else", async () => {
     expect.hasAssertions();
 
-    const container = getMockContainer(AzureContainer.DeadLetter);
+    const container = getMockContainer(StorageBucket.DeadLetter);
     container.set(strandedBlobName, content);
     container.set(`${DEAD_LETTER_ARCHIVED_PREFIX}${strandedBlobName}`, content);
     container.set(`${DEAD_LETTER_QUARANTINE_PREFIX}${strandedBlobName}`, content);
-    const containerClient = await getContainerClient(AzureContainer.DeadLetter);
+    const containerClient = await getContainerClient(StorageBucket.DeadLetter);
     await containerClient.getBlockBlobClient(freshBlobName).upload(content, content.length);
     const freshLastModified = readLastModified(freshBlobName);
 
@@ -54,7 +54,7 @@ describe(drainDeadLetterContainer, () => {
   test("lets exactly one of several concurrent drains claim a stranded payload", async () => {
     expect.hasAssertions();
 
-    getMockContainer(AzureContainer.DeadLetter).set(strandedBlobName, content);
+    getMockContainer(StorageBucket.DeadLetter).set(strandedBlobName, content);
 
     const drainedCounts = await Promise.all([
       drainDeadLetterContainer(),
@@ -70,7 +70,7 @@ describe(drainDeadLetterContainer, () => {
   test("leaves a payload it already re-uploaded to the delivery it just triggered", async () => {
     expect.hasAssertions();
 
-    getMockContainer(AzureContainer.DeadLetter).set(strandedBlobName, content);
+    getMockContainer(StorageBucket.DeadLetter).set(strandedBlobName, content);
 
     await expect(drainDeadLetterContainer()).resolves.toBe(1);
     await expect(drainDeadLetterContainer()).resolves.toBe(0);
@@ -81,7 +81,7 @@ describe(drainDeadLetterContainer, () => {
   test("skips a stranded payload that is gone before this drain reads it", async () => {
     expect.hasAssertions();
 
-    getMockContainer(AzureContainer.DeadLetter).set(strandedBlobName, content);
+    getMockContainer(StorageBucket.DeadLetter).set(strandedBlobName, content);
     vi.spyOn(MockBlockBlobClient.prototype, "downloadToBuffer").mockRejectedValueOnce(new MockRestError(" ", 404));
 
     await expect(drainDeadLetterContainer()).resolves.toBe(0);

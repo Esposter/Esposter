@@ -2,7 +2,7 @@ import { createContainerClient } from "#src/services/azure/container/createConta
 import { deleteUserDirectories } from "#src/services/azure/container/deleteUserDirectories";
 import { listBlobNames } from "#src/services/azure/container/listBlobNames";
 import { uploadBlobs } from "#src/services/azure/container/uploadBlobs.test";
-import { AzureContainer, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
+import { StorageBucket, getSaveBlobName, getUserProfileImageBlobName } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, describe, expect, test } from "vitest";
 
@@ -16,9 +16,9 @@ describe(deleteUserDirectories, () => {
 
     const userId = crypto.randomUUID();
     const otherUserId = crypto.randomUUID();
-    const publicUserAssetsClient = createContainerClient(AzureContainer.PublicUserAssets);
-    const userAssetsClient = createContainerClient(AzureContainer.UserAssets);
-    const genshinAssetsClient = createContainerClient(AzureContainer.GenshinAssets);
+    const publicUserAssetsClient = createContainerClient(StorageBucket.PublicUserAssets);
+    const userAssetsClient = createContainerClient(StorageBucket.UserAssets);
+    const genshinAssetsClient = createContainerClient(StorageBucket.GenshinAssets);
     await uploadBlobs(publicUserAssetsClient, [
       getUserProfileImageBlobName(userId),
       `${userId}/ProfileImage.thumb`,
@@ -42,7 +42,7 @@ describe(deleteUserDirectories, () => {
     expect.hasAssertions();
 
     const userId = crypto.randomUUID();
-    const containerClient = createContainerClient(AzureContainer.PublicUserAssets);
+    const containerClient = createContainerClient(StorageBucket.PublicUserAssets);
     await uploadBlobs(containerClient, [getUserProfileImageBlobName(userId), `${userId}/ProfileImage.thumb`]);
     await deleteUserDirectories([containerClient], userId);
 

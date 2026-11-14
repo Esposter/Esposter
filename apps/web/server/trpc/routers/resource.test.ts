@@ -44,7 +44,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureQueue,
   AzureTable,
   getResourceFileBlobName,
@@ -70,14 +70,14 @@ import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } 
 
 // Every asset the resource's files directory holds
 const readFilesBlobNames = (id: string): string[] => {
-  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
   assert.exists(container);
   return [...container.keys()].filter((blobName) => blobName.startsWith(`${getResourceFilesDirectoryName(id)}/`));
 };
 
 // Everything a publish writes: the version's object, and nothing under the files directory
 const readPublishedBlobSizes = (id: string): number[] => {
-  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
   assert.exists(container);
   return [...container.entries()]
     .filter(
@@ -90,7 +90,7 @@ const readPublishedBlobSizes = (id: string): number[] => {
 
 // A stored asset is one byte in the container, which is all a clone or a charge has to find
 const storeAsset = (blobName: string) => {
-  MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+  MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 };
 // The one reference a page makes to an asset, read back the same way after a clone rewrote it
 const createImageNode = (blobName: string) => createTestImageNode(getResourceAssetUrl(blobName));
@@ -739,7 +739,7 @@ describe("resourceRouter", () => {
         ),
       ),
     );
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
     expect(publication).toBeUndefined();
   });
 
@@ -801,7 +801,7 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
-    const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
     await writeJsonBlob(containerClient, getContentBlobName(webpageResource.id), "a");
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -809,7 +809,7 @@ describe("resourceRouter", () => {
     );
 
     const { items } = await caller.readResources();
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
     assert.exists(container);
 
     // The copy is fully reverted: no row and no blobs outside the original's directory
@@ -1232,7 +1232,7 @@ describe("resourceRouter", () => {
     await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, webpageEditor, 1);
-    MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
+    MockContainerDatabase.get(StorageBucket.ResourceAssets)?.delete(blobName);
 
     const { resource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,

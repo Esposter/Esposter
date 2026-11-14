@@ -9,7 +9,7 @@ import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
-  AzureContainer,
+  StorageBucket,
   resourcesInResource,
   ResourceType,
   usersInAuth,
@@ -35,7 +35,7 @@ const seedContent = async (
   resourceId: string,
   items: { completedAt?: string; dueAt: string; id: string; name: string }[],
 ) => {
-  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   return writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify({ items }));
 };
 

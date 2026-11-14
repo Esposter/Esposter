@@ -1,21 +1,19 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { AzureContainer } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 
 import { syncProperties } from "#src/services/azure/container/syncProperties";
 import { createProvisionedClientCache } from "#src/services/azure/createProvisionedClientCache";
 import { BlobServiceClient } from "@azure/storage-blob";
-import { AzureContainerPropertiesMap } from "@esposter/db-schema";
+import { StorageBucketPropertiesMap } from "@esposter/db-schema";
 
-const provisionContainerClient = async (connectionString: string, azureContainer: AzureContainer) => {
+const provisionContainerClient = async (connectionString: string, storageBucket: StorageBucket) => {
   const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
-  const containerClient = blobServiceClient.getContainerClient(azureContainer);
-  const containerCreateOptions = AzureContainerPropertiesMap[azureContainer];
+  const containerClient = blobServiceClient.getContainerClient(storageBucket);
+  const containerCreateOptions = StorageBucketPropertiesMap[storageBucket];
   await containerClient.createIfNotExists(containerCreateOptions);
   await syncProperties(containerClient, containerCreateOptions);
   return containerClient;
 };
 
-export const getContainerClient: (
-  connectionString: string,
-  azureContainer: AzureContainer,
-) => Promise<ContainerClient> = createProvisionedClientCache(provisionContainerClient);
+export const getContainerClient: (connectionString: string, storageBucket: StorageBucket) => Promise<ContainerClient> =
+  createProvisionedClientCache(provisionContainerClient);

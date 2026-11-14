@@ -1,6 +1,6 @@
 import type { StorageBlobReservation } from "#server/models/storage/StorageBlobReservation";
 import type { Context } from "#server/trpc/context";
-import type { AzureContainer, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, UserInAuth } from "@esposter/db-schema";
 
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -27,7 +27,7 @@ import { and, count, eq, gt, inArray, isNull, lte, ne, notInArray, or, sql, sum 
 export const reserveStorageBytes = async (
   db: Context["db"],
   userId: UserInAuth["id"],
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   reservations: StorageBlobReservation[],
 ): Promise<void> => {
   if (reservations.length === 0) return;

@@ -9,7 +9,7 @@ import { InvocationContext } from "@azure/functions";
 import { createMessage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   dataExportsInUser,
   DataExportStatus,
@@ -127,7 +127,7 @@ describe(exportUserDataHandler, () => {
     await exportUserDataHandler(context, { dataExportId });
     await exportUserDataHandler(context, { dataExportId });
 
-    expect(readBlobNames(AzureContainer.UserAssets)).toStrictEqual([getDataExportBlobName(dataExportId)]);
+    expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([getDataExportBlobName(dataExportId)]);
     expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);
   });
 });

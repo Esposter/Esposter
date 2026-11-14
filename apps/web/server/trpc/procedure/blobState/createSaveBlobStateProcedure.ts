@@ -1,4 +1,4 @@
-import type { AzureContainer } from "@esposter/db-schema";
+import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
@@ -11,7 +11,7 @@ import { getSaveBlobName } from "@esposter/db-schema";
 // The data is typed by its input and output as two parameters rather than by a generic schema, because a generic
 // Schema's optional-key check stays deferred, and tRPC then types the input as possibly undefined
 export const createSaveBlobStateProcedure = <TData, TDataInput>(
-  container: AzureContainer,
+  container: StorageBucket,
   inputSchema: z.ZodType<{ data: TData; etag?: string }, { data: TDataInput; etag?: string }>,
 ) =>
   standardAuthedProcedure.input(inputSchema).mutation<{ etag: string }>(async ({ ctx, input }) => {

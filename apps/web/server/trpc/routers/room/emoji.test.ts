@@ -11,7 +11,7 @@ import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import {
-  AzureContainer,
+  StorageBucket,
   DatabaseEntityType,
   getRoomEmojiBlobName,
   roomEmojisInMessage,
@@ -39,7 +39,7 @@ describe("emojiRouter", () => {
   const position = 1;
   // The client's PUT, which is what makes the blob the create insists on exist
   const uploadRoomEmojiBlob = async (id: string, body = "") => {
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
     await containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).upload(body, body.length);
   };
   const createRoomEmoji = async (emojiName = name) => {
@@ -210,7 +210,7 @@ describe("emojiRouter", () => {
     await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
     expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
-      containerName: AzureContainer.MessageAssets,
+      containerName: StorageBucket.MessageAssets,
     });
   });
 

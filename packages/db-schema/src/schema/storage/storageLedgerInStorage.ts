@@ -1,11 +1,11 @@
-import { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import { StorageBucket } from "#src/models/storage/StorageBucket";
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { storageSchema } from "#src/schema/storage/storageSchema";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
 import { bigint, check, index, primaryKey, text, timestamp } from "drizzle-orm/pg-core";
 
-export const azureContainerEnum = storageSchema.enum("azureContainer", AzureContainer);
+export const storageBucketEnum = storageSchema.enum("storageBucket", StorageBucket);
 // The per-blob ledger behind `users.storageBytesUsed`: one row per write target this user was handed, holding
 // Exactly the bytes the counter is carrying on its behalf. Every increment of the counter writes a row in the
 // Same transaction, so a crash can never leave bytes held with nothing left to give them back, and every
@@ -22,7 +22,7 @@ export const storageLedgerInStorage = pgTable(
   "storageLedger",
   {
     blobName: text().notNull(),
-    containerName: azureContainerEnum().notNull(),
+    containerName: storageBucketEnum().notNull(),
     // What the counter is holding for this blob right now — zero until reconciliation reads the stored object's
     // Real size back, because nothing is charged before then and `declaredBytes` is what holds the space in the
     // Meantime. Kept separate so the adjustment is a difference, never a re-read.

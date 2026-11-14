@@ -14,7 +14,7 @@ import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
-import { AzureContainer, getResourceFilesDirectoryName, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import { StorageBucket, getResourceFilesDirectoryName, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getBlobUrl, MockContainerDatabase } from "azure-mock";
 import { createHash } from "node:crypto";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -91,10 +91,10 @@ describe("resourceDispatchRouter", () => {
       id: webpageResource.id,
     });
     const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
-    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
+    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
 
     expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
-    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
+    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(blobName)).not.toBe(true);
   });
 
   test("an agent uploads a file before its address expires", async () => {
@@ -110,14 +110,14 @@ describe("resourceDispatchRouter", () => {
         id: webpageResource.id,
       });
 
-    const blobUrl = getBlobUrl(AzureContainer.ResourceAssets, blobName);
+    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([
       { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) },
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS / 2));
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, heldBytes]]));
+    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, heldBytes]]));
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
   });

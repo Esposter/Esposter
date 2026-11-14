@@ -7,7 +7,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase, MockRestError } from "azure-mock";
 import { createHash } from "node:crypto";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -41,7 +41,7 @@ vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
 
 const hashOf = (value: string) => createHash("sha256").update(value).digest("hex");
 const readResourceAssetNames = () => {
-  const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+  const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
   assert.exists(container);
   return [...container.keys()];
 };
@@ -49,7 +49,7 @@ const readResourceAssetNames = () => {
 describe(reconcileStorageLedgerEntryHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
-  const containerName = AzureContainer.ResourceAssets;
+  const containerName = StorageBucket.ResourceAssets;
   const blobName = " ";
   const contentLength = 1;
   const sequencer = "0";
@@ -77,9 +77,9 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
   const mismatchedResourceAssetName = `${resourceId}/files/${hashOf("")}`;
   const createResourceAssetEvent = (name: string) =>
-    createBlobCreatedEvent(`${getBlobSubjectPrefix(AzureContainer.ResourceAssets)}${name}`);
+    createBlobCreatedEvent(`${getBlobSubjectPrefix(StorageBucket.ResourceAssets)}${name}`);
   const seedResourceAsset = async (name: string) => {
-    const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+    const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
     await containerClient.getBlockBlobClient(name).upload(resourceAssetContent, resourceAssetContent.length);
   };
 
@@ -108,7 +108,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     const messageBlobName = getBlobName(`${resourceId}/${crypto.randomUUID()}`, "filename");
-    const messageContainerName = AzureContainer.MessageAssets;
+    const messageContainerName = StorageBucket.MessageAssets;
     await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
     const downloadSpy = vi.spyOn(MockBlockBlobClient.prototype, "download");
     await reconcileStorageLedgerEntryHandler(
@@ -165,7 +165,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}`),
+      createBlobCreatedEvent(`${getBlobSubjectPrefix(StorageBucket.PublicUserAssets)}${blobName}`),
       context,
     );
 

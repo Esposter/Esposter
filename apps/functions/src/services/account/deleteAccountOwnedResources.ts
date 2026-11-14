@@ -4,7 +4,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
-import { AzureContainer, resourcesInResource } from "@esposter/db-schema";
+import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // Each resource the account owns goes through the purge the recycle bin's timer runs for an expired one, so its
@@ -17,7 +17,7 @@ export const deleteAccountOwnedResources = async (
     .select({ id: resourcesInResource.id, type: resourcesInResource.type })
     .from(resourcesInResource)
     .where(eq(resourcesInResource.userId, userId));
-  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   for (const ownedResource of ownedResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as the timer's purge runs
     await purgeResourceAndBroadcast(context, containerClient, ownedResource);

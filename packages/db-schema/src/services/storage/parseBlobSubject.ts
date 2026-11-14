@@ -1,11 +1,11 @@
-import type { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import type { StorageBucket } from "#src/models/storage/StorageBucket";
 
-import { getBlobSubjectPrefix } from "#src/services/azure/container/getBlobSubjectPrefix";
+import { getBlobSubjectPrefix } from "#src/services/storage/getBlobSubjectPrefix";
 
 // The inverse of getBlobSubjectPrefix for a known set of containers: a storage event's subject back into the
 // (container, blob name) pair the ledger is keyed by. Returns undefined for anything outside the given set,
 // So a subscription filter that drifts wider than its handler expects is a no-op rather than a mis-attribution.
-export const parseBlobSubject = (subject: string, containerNames: AzureContainer[]) => {
+export const parseBlobSubject = (subject: string, containerNames: StorageBucket[]) => {
   for (const containerName of containerNames) {
     const prefix = getBlobSubjectPrefix(containerName);
     if (subject.startsWith(prefix)) return { blobName: subject.slice(prefix.length), containerName };

@@ -6,7 +6,7 @@ import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStor
 import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
 import { releaseStorageLedgerEntriesByPrefix } from "#src/services/storage/releaseStorageLedgerEntriesByPrefix";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -16,7 +16,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 describe(releaseStorageLedgerEntries, () => {
   let db: Database;
   const userId = crypto.randomUUID();
-  const containerName = AzureContainer.ResourceAssets;
+  const containerName = StorageBucket.ResourceAssets;
   const resourceId = crypto.randomUUID();
   const blobName = `${resourceId}/blobName`;
   const declaredBytes = 3;
@@ -235,7 +235,7 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    await releaseStorageLedgerEntries(db, AzureContainer.MessageAssets, [blobName]);
+    await releaseStorageLedgerEntries(db, StorageBucket.MessageAssets, [blobName]);
 
     await expect(readStorageBytesUsed()).resolves.toBe(actualBytes);
   });

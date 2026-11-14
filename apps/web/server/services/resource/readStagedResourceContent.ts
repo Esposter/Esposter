@@ -5,7 +5,7 @@ import { getStagingContentBlobName } from "#server/services/resource/getStagingC
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
-import { AzureContainer, DatabaseEntityType } from "@esposter/db-schema";
+import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { promisify } from "node:util";
@@ -17,7 +17,7 @@ const decompress = promisify(gunzip);
 // Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
 // Under the limit is smaller than the document, so the limit bounds both
 export const readStagedResourceContent = async (id: ResourceInResource["id"], hash: string): Promise<unknown> => {
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   const blockBlobClient = containerClient.getBlockBlobClient(getStagingContentBlobName(id));
   const { contentLength = 0, etag } = await getResultAsync(() => blockBlobClient.getProperties()).match(
     (properties) => properties,

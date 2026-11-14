@@ -6,7 +6,7 @@ import { checkIsGenshinSessionCurrent } from "#server/services/genshin/checkIsGe
 import { getGenshinSessionReplacedError } from "#server/services/genshin/getGenshinSessionReplacedError";
 import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
-import { AzureContainer, getSaveBlobName } from "@esposter/db-schema";
+import { StorageBucket, getSaveBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 
@@ -23,7 +23,7 @@ export const saveGenshin = async (
   userId: string,
   { etag, save, sessionId }: SaveGenshinInput,
 ): Promise<SaveGenshinResult> => {
-  const containerClient = await useContainerClient(AzureContainer.GenshinAssets);
+  const containerClient = await useContainerClient(StorageBucket.GenshinAssets);
   const blobName = getSaveBlobName(userId);
   const writeSave = (readEtag: string) =>
     writeBlobState(containerClient, blobName, JSON.stringify({ save, sessionId }), readEtag);

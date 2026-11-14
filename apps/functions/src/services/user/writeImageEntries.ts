@@ -4,17 +4,17 @@ import type { UserInAuth } from "@esposter/db-schema";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { listBlobNames } from "@esposter/db";
-import { AzureContainer, getUserProfileImageBlobName } from "@esposter/db-schema";
+import { StorageBucket, getUserProfileImageBlobName } from "@esposter/db-schema";
 
 // The person's profile image, when they have one, and each call background they have set.
 // A profile image is optional, so its absence is no entry rather than a failed export
 export const writeImageEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
-  const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+  const publicContainerClient = await getContainerClient(StorageBucket.PublicUserAssets);
   const profileImageBlobName = getUserProfileImageBlobName(userId);
   if (await publicContainerClient.getBlobClient(profileImageBlobName).exists())
     await writeBlobEntry(archive, "images/ProfileImage", publicContainerClient, profileImageBlobName);
 
-  const userContainerClient = await getContainerClient(AzureContainer.UserAssets);
+  const userContainerClient = await getContainerClient(StorageBucket.UserAssets);
   const callBackgroundPrefix = `${userId}/CallBackground/`;
   const callBackgroundBlobNames = await listBlobNames(userContainerClient, callBackgroundPrefix);
   for (const blobName of callBackgroundBlobNames)

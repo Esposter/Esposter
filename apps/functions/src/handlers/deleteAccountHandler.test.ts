@@ -10,7 +10,7 @@ import { createEntity, getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   createMessageEntity,
   getUserProfileImageBlobName,
@@ -113,15 +113,15 @@ describe(deleteAccountHandler, () => {
       await getTableClient(AzureTable.Messages),
       createMessageEntity({ message: "message", roomId: memberRoom.id, type: MessageType.Message, userId }),
     );
-    await seedBlob(AzureContainer.ResourceAssets, getContentBlobName(ownedResource.id));
-    await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
-    await seedBlob(AzureContainer.MessageAssets, `${ownedRoom.id}/${fileId}`);
-    await seedBlob(AzureContainer.MessageAssets, `${memberRoom.id}/${fileId}`);
+    await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
+    await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
+    await seedBlob(StorageBucket.MessageAssets, `${ownedRoom.id}/${fileId}`);
+    await seedBlob(StorageBucket.MessageAssets, `${memberRoom.id}/${fileId}`);
     await mockDb
       .insert(storageLedgerInStorage)
       .values({
         blobName: `${memberRoom.id}/${fileId}`,
-        containerName: AzureContainer.MessageAssets,
+        containerName: StorageBucket.MessageAssets,
         countedBytes,
         declaredBytes: countedBytes,
         expiresAt: new Date(0),
@@ -136,8 +136,8 @@ describe(deleteAccountHandler, () => {
     await expect(
       mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage).where(eq(roomsInMessage.userId, userId)),
     ).resolves.toStrictEqual([]);
-    expect(readBlobNames(AzureContainer.ResourceAssets)).toStrictEqual([]);
-    expect(readBlobNames(AzureContainer.PublicUserAssets)).toStrictEqual([]);
-    expect(readBlobNames(AzureContainer.MessageAssets)).toStrictEqual([]);
+    expect(readBlobNames(StorageBucket.ResourceAssets)).toStrictEqual([]);
+    expect(readBlobNames(StorageBucket.PublicUserAssets)).toStrictEqual([]);
+    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([]);
   });
 });

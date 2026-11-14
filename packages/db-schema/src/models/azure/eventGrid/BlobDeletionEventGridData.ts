@@ -1,6 +1,6 @@
-import type { AzureContainer } from "#src/models/azure/container/AzureContainer";
+import type { StorageBucket } from "#src/models/storage/StorageBucket";
 
-import { azureContainerSchema } from "#src/models/azure/container/AzureContainer";
+import { storageBucketSchema } from "#src/models/storage/StorageBucket";
 import { MAX_BLOB_DELETION_EVENT_BLOB_NAMES } from "#src/services/azure/eventGrid/constants";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { z } from "zod";
@@ -13,19 +13,19 @@ import { z } from "zod";
 export type BlobDeletionEventGridData = (
   | { blobNames: string[]; createdBefore?: never; decidedAt?: Date; prefix?: never }
   | { blobNames?: never; createdBefore?: Date; decidedAt?: never; prefix: string }
-) & { containerName: AzureContainer };
+) & { containerName: StorageBucket };
 
 export const blobDeletionEventGridDataSchema = z.union([
   z.object({
     blobNames: createUniqueArraySchema(z.string()).min(1).max(MAX_BLOB_DELETION_EVENT_BLOB_NAMES),
-    containerName: azureContainerSchema,
+    containerName: storageBucketSchema,
     // The instant the publisher decided these names were unreferenced. Delivery is at-least-once and a replay can
     // Arrive long after that decision, so a blob written since — a re-upload or a re-copy the decision never saw — is
     // Kept rather than deleted. Omitted by a named deletion that carries no such judgement, which deletes as it always has
     decidedAt: z.coerce.date().optional(),
   }),
   z.object({
-    containerName: azureContainerSchema,
+    containerName: storageBucketSchema,
     // The listing happens at delivery time, but the set the publisher meant is the one that existed when it
     // Published. Delivery is at-least-once and a dead-lettered event can be replayed hours later, so without
     // This bound a redelivery would enumerate — and delete — blobs written after the deletion was decided.

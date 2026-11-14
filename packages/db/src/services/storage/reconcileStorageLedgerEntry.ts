@@ -1,5 +1,5 @@
 import type { ReconcileStorageLedgerEntryResult } from "#src/models/storage/ReconcileStorageLedgerEntryResult";
-import type { AzureContainer, Database, StorageLedgerEntryInStorage } from "@esposter/db-schema";
+import type { StorageBucket, Database, StorageLedgerEntryInStorage } from "@esposter/db-schema";
 
 import { adjustStorageBytesUsed } from "#src/services/storage/adjustStorageBytesUsed";
 import { checkIsNewerSequencer } from "#src/services/storage/checkIsNewerSequencer";
@@ -20,7 +20,7 @@ import { and, eq } from "drizzle-orm";
 // The owner whose counter this actually moved — the only thing a meter watching the number needs telling about.
 export const reconcileStorageLedgerEntry = (
   db: Database,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   blobName: StorageLedgerEntryInStorage["blobName"],
   actualBytes: number,
   sequencer?: string,

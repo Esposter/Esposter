@@ -14,7 +14,7 @@ import { sanitizedMessageSchema } from "#src/models/message/SanitizedMessage";
 import { standardMessageTypeSchema } from "#src/models/message/StandardMessageType";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
-import { FILE_MAX_LENGTH } from "#src/services/azure/container/constants";
+import { FILE_MAX_LENGTH } from "#src/services/storage/constants";
 import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
 import { MENTION_MAX_LENGTH } from "#src/services/message/constants";
 import { createUniqueArraySchema } from "@esposter/shared";

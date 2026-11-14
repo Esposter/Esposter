@@ -7,7 +7,7 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, AzureTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, AzureTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -67,10 +67,10 @@ describe(deleteAccountOwnedRooms, () => {
         seedPartitionRow(tableName, otherRoom.id),
       ]),
     );
-    await seedBlob(AzureContainer.MessageAssets, `${ownedRoom.id}/${fileId}`);
-    await seedBlob(AzureContainer.MessageAssets, `${otherRoom.id}/${fileId}`);
-    await seedBlob(AzureContainer.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
-    await seedBlob(AzureContainer.PublicUserAssets, `rooms/${otherRoom.id}/ProfileImage`);
+    await seedBlob(StorageBucket.MessageAssets, `${ownedRoom.id}/${fileId}`);
+    await seedBlob(StorageBucket.MessageAssets, `${otherRoom.id}/${fileId}`);
+    await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
+    await seedBlob(StorageBucket.PublicUserAssets, `rooms/${otherRoom.id}/ProfileImage`);
 
     await deleteAccountOwnedRooms(context, userId);
 
@@ -78,8 +78,8 @@ describe(deleteAccountOwnedRooms, () => {
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, otherRoom.id))).toHaveLength(
       roomTableNames.length,
     );
-    expect(readBlobNames(AzureContainer.MessageAssets)).toStrictEqual([`${otherRoom.id}/${fileId}`]);
-    expect(readBlobNames(AzureContainer.PublicUserAssets)).toStrictEqual([`rooms/${otherRoom.id}/ProfileImage`]);
+    expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([`${otherRoom.id}/${fileId}`]);
+    expect(readBlobNames(StorageBucket.PublicUserAssets)).toStrictEqual([`rooms/${otherRoom.id}/ProfileImage`]);
     await expect(mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage)).resolves.toStrictEqual([
       { id: otherRoom.id },
     ]);

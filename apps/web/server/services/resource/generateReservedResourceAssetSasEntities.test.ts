@@ -3,7 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
-import { AzureContainer, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
+import { StorageBucket, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockRestError } from "azure-mock";
 import { createHash } from "node:crypto";
@@ -82,10 +82,10 @@ describe(generateReservedResourceAssetSasEntities, () => {
     expect(secondEntity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
     expect(secondEntity.id).toBe(firstEntity.id);
     // Only the first upload reserves, so the owner's storage usage does not grow for the second
-    expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(1, db, userId, AzureContainer.ResourceAssets, [
+    expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(1, db, userId, StorageBucket.ResourceAssets, [
       { blobName, declaredBytes: file.size },
     ]);
-    expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(2, db, userId, AzureContainer.ResourceAssets, []);
+    expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(2, db, userId, StorageBucket.ResourceAssets, []);
   });
 
   // The grace window the collection honours is measured from the last write, so re-uploading held bytes is what keeps an
@@ -99,7 +99,7 @@ describe(generateReservedResourceAssetSasEntities, () => {
 
     expect(entity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
     expect(setMetadataMock).toHaveBeenCalledExactlyOnceWith(blobName, { touchedAt: new Date(0).toISOString() });
-    expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, AzureContainer.ResourceAssets, []);
+    expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, []);
   });
 
   test("a held asset whose blob disappears before the touch is uploaded again", async () => {
@@ -110,7 +110,7 @@ describe(generateReservedResourceAssetSasEntities, () => {
     const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
-    expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, AzureContainer.ResourceAssets, [
+    expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, [
       { blobName, declaredBytes: file.size },
     ]);
   });

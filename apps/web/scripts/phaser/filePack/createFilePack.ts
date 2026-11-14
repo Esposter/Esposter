@@ -6,7 +6,7 @@ import { outputFile } from "@@/scripts/services/outputFile";
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { BlobServiceClient } from "@azure/storage-blob";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { format } from "oxfmt";
@@ -16,7 +16,7 @@ import formatterConfiguration from "../../../../../oxfmt.config.ts";
 export const createFilePack = async () => {
   if (existsSync(".env")) process.loadEnvFile();
   const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_ACCOUNT_CONNECTION_STRING);
-  const containerClient = blobServiceClient.getContainerClient(AzureContainer.PublicDungeonsAssets);
+  const containerClient = blobServiceClient.getContainerClient(StorageBucket.PublicDungeonsAssets);
   const files: Types.Loader.FileConfig[] = [];
   const fileKeys = new Set<string>();
   const enumName = "FileKey";

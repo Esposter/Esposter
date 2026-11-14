@@ -25,7 +25,7 @@ import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRo
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { generateWriteSasUrl } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   DatabaseEntityType,
   getMimeCategory,
   getRoomEmojiBlobName,
@@ -44,7 +44,7 @@ export const emojiRouter = router({
     "roomId",
     RateLimiterType.Slow,
   ).mutation<RoomEmojiWithSasUrl>(async ({ ctx, input: { id, name, roomId } }) => {
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
     // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
     // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
     // The declared size is an input check the client could lie about, so the row is only created for a blob
@@ -105,7 +105,7 @@ export const emojiRouter = router({
     roomEmojiEventEmitter.emit("deleteRoomEmoji", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
-    await publishBlobDeletion(roomId, AzureContainer.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
+    await publishBlobDeletion(roomId, StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
       noop,
       console.error,
     );
@@ -130,7 +130,7 @@ export const emojiRouter = router({
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
     const id: string = crypto.randomUUID();
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
     const blockBlobClient = containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id));
     return { id, sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }) };
   }),
@@ -143,7 +143,7 @@ export const emojiRouter = router({
     async ({ ctx, input: { roomId } }) => {
       const [roomEmojis, containerClient] = await Promise.all([
         ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } }),
-        useContainerClient(AzureContainer.MessageAssets),
+        useContainerClient(StorageBucket.MessageAssets),
       ]);
       return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(containerClient, roomEmoji)));
     },

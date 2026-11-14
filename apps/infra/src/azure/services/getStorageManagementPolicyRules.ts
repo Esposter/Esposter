@@ -1,4 +1,4 @@
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 import * as azure_native from "@pulumi/azure-native";
 
 export const getStorageManagementPolicyRules = (
@@ -21,7 +21,7 @@ export const getStorageManagementPolicyRules = (
           tierToCool: { daysAfterCreationGreaterThan: 30 },
         },
       },
-      filters: { blobTypes: ["blockBlob"], prefixMatch: [AzureContainer.MessageAssets] },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [StorageBucket.MessageAssets] },
     },
     enabled: true,
     name: "TierMessageAttachments",
@@ -39,7 +39,7 @@ export const getStorageManagementPolicyRules = (
   {
     definition: {
       actions: { baseBlob: { delete: { daysAfterModificationGreaterThan: 7 } } },
-      filters: { blobTypes: ["blockBlob"], prefixMatch: [`${AzureContainer.UserAssets}/exports/`] },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [`${StorageBucket.UserAssets}/exports/`] },
     },
     enabled: true,
     name: "DeleteDataExports",

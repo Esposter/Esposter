@@ -82,7 +82,7 @@ import {
   updateEntity,
 } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   AzureEntityType,
   AzureTable,
   AzureWebPubSubHub,
@@ -149,7 +149,7 @@ export const baseMessageRouter = router({
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
       await publishBlobDeletion(
         `${partitionKey}/${rowKey}`,
-        AzureContainer.MessageAssets,
+        StorageBucket.MessageAssets,
         Object.values(getFileBlobNames(partitionKey, id, deletedFilename)),
       ).match(noop, console.error);
     },
@@ -179,7 +179,7 @@ export const baseMessageRouter = router({
       // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for
       await publishBlobDeletion(
         `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
-        AzureContainer.MessageAssets,
+        StorageBucket.MessageAssets,
         getFilesBlobNames(messageEntity.partitionKey, messageEntity.files),
       ).match(noop, console.error);
     },
@@ -196,7 +196,7 @@ export const baseMessageRouter = router({
         if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await publishBlobDeletion(roomId, AzureContainer.MessageAssets, getFilesBlobNames(roomId, files)).match(
+      await publishBlobDeletion(roomId, StorageBucket.MessageAssets, getFilesBlobNames(roomId, files)).match(
         noop,
         console.error,
       );
@@ -215,7 +215,7 @@ export const baseMessageRouter = router({
       // Instead of three
       const [[messageClient, messageAscendingClient], containerClient] = await Promise.all([
         getMessageTableClients(),
-        useContainerClient(AzureContainer.MessageAssets),
+        useContainerClient(StorageBucket.MessageAssets),
       ]);
       const { entity: messageEntity } = await requireEntity(
         readLiveMessageWithEtag(messageClient, partitionKey, rowKey),
@@ -245,7 +245,7 @@ export const baseMessageRouter = router({
           const clonedFiles = await cloneFiles(
             ctx.db,
             ctx.getSessionPayload.user.id,
-            AzureContainer.MessageAssets,
+            StorageBucket.MessageAssets,
             containerClient,
             messageEntity.files,
             messageEntity.partitionKey,
@@ -302,12 +302,12 @@ export const baseMessageRouter = router({
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
     async ({ input: { files, roomId } }) =>
-      generateDownloadFileSasUrls(await useContainerClient(AzureContainer.MessageAssets), files, roomId),
+      generateDownloadFileSasUrls(await useContainerClient(StorageBucket.MessageAssets), files, roomId),
   ),
   generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId").query<
     string[]
   >(async ({ input: { files, roomId } }) =>
-    generateDownloadThumbnailSasUrls(await useContainerClient(AzureContainer.MessageAssets), files, roomId),
+    generateDownloadThumbnailSasUrls(await useContainerClient(StorageBucket.MessageAssets), files, roomId),
   ),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").mutation<
     MessageFileSasEntity[]

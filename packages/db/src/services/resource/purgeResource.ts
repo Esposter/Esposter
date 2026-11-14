@@ -5,7 +5,7 @@ import type { CustomTableClient, Database, ResourceInResource, UserInAuth } from
 import { deleteDirectory } from "#src/services/azure/container/deleteDirectory";
 import { deleteTablePartitionEntities } from "#src/services/resource/deleteTablePartitionEntities";
 import { releaseStorageLedgerEntriesByPrefix } from "#src/services/storage/releaseStorageLedgerEntriesByPrefix";
-import { AzureContainer, resourcesInResource } from "@esposter/db-schema";
+import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
 // Ordered for idempotent retry: blob directory, then dependent Azure Table partitions, then the
@@ -36,11 +36,7 @@ export const purgeResource = async (
   // The counter has moved and every open meter still shows the old figure. Releasing after the row instead
   // Would spend the marker that re-drives the sequence, and a release that then failed would hold the bytes
   // Against the owner for good
-  const releasedUserIds = await releaseStorageLedgerEntriesByPrefix(
-    db,
-    AzureContainer.ResourceAssets,
-    `${resourceId}/`,
-  );
+  const releasedUserIds = await releaseStorageLedgerEntriesByPrefix(db, StorageBucket.ResourceAssets, `${resourceId}/`);
   await db.delete(resourcesInResource).where(eq(resourcesInResource.id, resourceId));
   return releasedUserIds;
 };

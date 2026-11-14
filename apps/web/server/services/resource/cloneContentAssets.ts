@@ -13,7 +13,7 @@ import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { chargeAndCopyBlob } from "@esposter/db";
-import { AzureContainer, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
+import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,
@@ -38,7 +38,7 @@ const cloneAsset = async (
   await chargeAndCopyBlob(
     db,
     userId,
-    AzureContainer.ResourceAssets,
+    StorageBucket.ResourceAssets,
     containerClient,
     blobName,
     destinationBlobName,
@@ -74,7 +74,7 @@ export const cloneContentAssets = async <TContent>(
   ];
   if (candidates.length === 0) return relativizedContent;
 
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   // The promise is stored rather than its value, so the assets checked concurrently below share one read per resource
   const resourceIdAccessMap = new Map<ResourceInResource["id"], Promise<ResourceAccess>>();
   const clonableAssets = (

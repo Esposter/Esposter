@@ -12,7 +12,7 @@ import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  AzureContainer,
+  StorageBucket,
   resourcesInResource,
   ResourceType,
   resourceVersionsInResource,
@@ -27,7 +27,7 @@ import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const seedContentBlob = async (id: ResourceInResource["id"], content: string) => {
-  const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
   await writeJsonBlob(containerClient, getContentBlobName(id), content);
 };
 
@@ -95,7 +95,7 @@ describe(takeResourceRevision, () => {
     const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
     const resourceVersion = await readResourceVersion(1);
     assert.exists(resourceVersion);
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
     assert.exists(container);
 
     // Dated by the row's own default clock, which the database keeps rather than the pinned one
@@ -189,7 +189,7 @@ describe(takeResourceRevision, () => {
 
     expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
       blobNames: [getSnapshotObjectBlobName(resource.id, evictedVersion.hash)],
-      containerName: AzureContainer.ResourceAssets,
+      containerName: StorageBucket.ResourceAssets,
     });
   });
 

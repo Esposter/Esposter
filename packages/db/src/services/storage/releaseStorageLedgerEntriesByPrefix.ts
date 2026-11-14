@@ -1,4 +1,4 @@
-import type { AzureContainer, Database, UserInAuth } from "@esposter/db-schema";
+import type { StorageBucket, Database, UserInAuth } from "@esposter/db-schema";
 
 import { releaseStorageLedgerEntriesByWhere } from "#src/services/storage/releaseStorageLedgerEntriesByWhere";
 import { storageLedgerInStorage } from "@esposter/db-schema";
@@ -12,7 +12,7 @@ import { and, eq, sql } from "drizzle-orm";
 // That would silently widen the release to a sibling directory.
 export const releaseStorageLedgerEntriesByPrefix = (
   db: Database,
-  containerName: AzureContainer,
+  containerName: StorageBucket,
   prefix: string,
 ): Promise<UserInAuth["id"][]> =>
   releaseStorageLedgerEntriesByWhere(

@@ -3,7 +3,7 @@ import type { InvocationContext } from "@azure/functions";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
-import { AzureContainer, AzureFunction, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
+import { StorageBucket, AzureFunction, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -22,7 +22,7 @@ export const purgeExpiredResources = async (context: InvocationContext): Promise
   if (expiredResources.length === 0) return;
 
   context.log(`${AzureFunction.PurgeDeletedResources} purging`, { count: expiredResources.length });
-  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   // Per-resource so one poisoned resource cannot block the rest of the sweep; its row survives,
   // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
   // The resources this pass already purged behind a retry of the whole batch.

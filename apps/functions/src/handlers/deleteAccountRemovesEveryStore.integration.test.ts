@@ -23,7 +23,7 @@ import {
   accountsInAuth,
   AdminActionType,
   apiKeysInAuth,
-  AzureContainer,
+  StorageBucket,
   AzureTable,
   getReverseTickedTimestamp,
   getSaveBlobName,
@@ -65,7 +65,7 @@ vi.mock(
   () => import("#src/services/azure/getWebPubSubServiceClient.test"),
 );
 
-const readBlobNamesUnder = (containerName: AzureContainer, prefix: string) =>
+const readBlobNamesUnder = (containerName: StorageBucket, prefix: string) =>
   readBlobNames(containerName).filter((blobName) => blobName.startsWith(prefix));
 const readLedgerRows = (userId: string) =>
   mockDb
@@ -102,7 +102,7 @@ describe(deleteAccountHandler, () => {
     await mockDb.delete(usersInAuth);
   });
 
-  const seedChargedBlob = async (userId: string, containerName: AzureContainer, blobName: string) => {
+  const seedChargedBlob = async (userId: string, containerName: StorageBucket, blobName: string) => {
     await seedBlob(containerName, blobName);
     await chargeStorageLedgerEntry(mockDb, userId, containerName, blobName, countedBytes);
   };
@@ -125,8 +125,8 @@ describe(deleteAccountHandler, () => {
     const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     const ownedRoomAttachmentBlobName = `${ownedRoom.id}/${crypto.randomUUID()}`;
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: ownedRoom.id, userId });
-    await seedBlob(AzureContainer.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
-    await seedChargedBlob(userId, AzureContainer.MessageAssets, ownedRoomAttachmentBlobName);
+    await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
+    await seedChargedBlob(userId, StorageBucket.MessageAssets, ownedRoomAttachmentBlobName);
 
     // A room the account is a member of but does not own, with the account's messages, a charged attachment, and the
     // Other account's message and attachment beside them
@@ -158,8 +158,8 @@ describe(deleteAccountHandler, () => {
     });
     const memberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
     const otherMemberRoomAttachmentBlobName = `${memberRoom.id}/${crypto.randomUUID()}`;
-    await seedChargedBlob(userId, AzureContainer.MessageAssets, memberRoomAttachmentBlobName);
-    await seedChargedBlob(otherUserId, AzureContainer.MessageAssets, otherMemberRoomAttachmentBlobName);
+    await seedChargedBlob(userId, StorageBucket.MessageAssets, memberRoomAttachmentBlobName);
+    await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMemberRoomAttachmentBlobName);
 
     // The moderation record names the account in a room the account does not own, so it is kept
     await writeModerationLogEntry(await getTableClient(AzureTable.ModerationLog), {
@@ -193,14 +193,14 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    const resourceAssetsClient = await getContainerClient(AzureContainer.ResourceAssets);
+    const resourceAssetsClient = await getContainerClient(StorageBucket.ResourceAssets);
     const contentBlobName = getContentBlobName(ownedResource.id);
     const { size: contentSize } = await writeJsonBlob(resourceAssetsClient, contentBlobName, content);
-    await chargeStorageLedgerEntry(mockDb, userId, AzureContainer.ResourceAssets, contentBlobName, contentSize);
+    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, contentBlobName, contentSize);
     // A version's object is stored under its resource's directory at its hash, as the snapshot store writes it
     const versionBlobName = `${ownedResource.id}/objects/${hash}`;
     const { size: versionSize } = await writeJsonBlob(resourceAssetsClient, versionBlobName, content);
-    await chargeStorageLedgerEntry(mockDb, userId, AzureContainer.ResourceAssets, versionBlobName, versionSize);
+    await chargeStorageLedgerEntry(mockDb, userId, StorageBucket.ResourceAssets, versionBlobName, versionSize);
     await mockDb
       .insert(resourceVersionsInResource)
       .values({
@@ -260,11 +260,11 @@ describe(deleteAccountHandler, () => {
     );
 
     // The account's own blob directories
-    await seedBlob(AzureContainer.PublicUserAssets, getUserProfileImageBlobName(userId));
-    await seedBlob(AzureContainer.UserAssets, `${userId}/CallBackground/0`);
-    await writeJsonBlob(await getContainerClient(AzureContainer.GenshinAssets), getSaveBlobName(userId), content);
-    await seedBlob(AzureContainer.ClickerAssets, getSaveBlobName(userId));
-    await seedBlob(AzureContainer.UserAssets, getSaveBlobName(userId));
+    await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
+    await seedBlob(StorageBucket.UserAssets, `${userId}/CallBackground/0`);
+    await writeJsonBlob(await getContainerClient(StorageBucket.GenshinAssets), getSaveBlobName(userId), content);
+    await seedBlob(StorageBucket.ClickerAssets, getSaveBlobName(userId));
+    await seedBlob(StorageBucket.UserAssets, getSaveBlobName(userId));
 
     // The search index holds a document for the owned room's messages and one for the member room's. The sweep removes
     // The owned room's documents by its partition key, and the member room's document is not its to remove
@@ -305,8 +305,8 @@ describe(deleteAccountHandler, () => {
         .where(eq(usersToRoomsInMessage.roomId, ownedRoom.id)),
     ).resolves.toStrictEqual([]);
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.PublicUserAssets, `rooms/${ownedRoom.id}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.MessageAssets, `${ownedRoom.id}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${ownedRoom.id}/`)).toStrictEqual([]);
     expect(MockSearchDatabase.get(SearchIndex.Messages)).toStrictEqual([indexedMemberRoomDocument]);
 
     // The owned resource, its version, its working copy, its objects and its activity trail
@@ -322,7 +322,7 @@ describe(deleteAccountHandler, () => {
         .from(resourceVersionsInResource)
         .where(eq(resourceVersionsInResource.resourceId, ownedResource.id)),
     ).resolves.toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.ResourceAssets, `${ownedResource.id}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.ResourceAssets, `${ownedResource.id}/`)).toStrictEqual([]);
     expect(readPartitionEntities(AzureTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
 
     // The owned survey's responses and the owned program's participants go with their resources
@@ -338,7 +338,7 @@ describe(deleteAccountHandler, () => {
     await expect(
       messageClient.getEntity<StandardMessageEntity>(memberRoomMessage.partitionKey, memberRoomMessage.rowKey),
     ).resolves.toMatchObject({ files: "[]", message: "" });
-    expect(readBlobNamesUnder(AzureContainer.MessageAssets, `${memberRoom.id}/`)).toStrictEqual([
+    expect(readBlobNamesUnder(StorageBucket.MessageAssets, `${memberRoom.id}/`)).toStrictEqual([
       otherMemberRoomAttachmentBlobName,
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
@@ -350,10 +350,10 @@ describe(deleteAccountHandler, () => {
     ).toStrictEqual([[otherUserId], [otherUserId]]);
 
     // The account's blob prefixes in every container the inventory keys to it
-    expect(readBlobNamesUnder(AzureContainer.PublicUserAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.UserAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.GenshinAssets, `${userId}/`)).toStrictEqual([]);
-    expect(readBlobNamesUnder(AzureContainer.ClickerAssets, `${userId}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.PublicUserAssets, `${userId}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.UserAssets, `${userId}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.GenshinAssets, `${userId}/`)).toStrictEqual([]);
+    expect(readBlobNamesUnder(StorageBucket.ClickerAssets, `${userId}/`)).toStrictEqual([]);
 
     // Kept: the moderation record that names the account, and the account's activity on a resource it does not own
     expect(
@@ -371,7 +371,7 @@ describe(deleteAccountHandler, () => {
     );
     await expect(readDeletedAt(otherMemberRoomMessage)).resolves.toBeNull();
     await expect(readLedgerRows(otherUserId)).resolves.toStrictEqual([
-      { blobName: otherMemberRoomAttachmentBlobName, containerName: AzureContainer.MessageAssets },
+      { blobName: otherMemberRoomAttachmentBlobName, containerName: StorageBucket.MessageAssets },
     ]);
   });
 });

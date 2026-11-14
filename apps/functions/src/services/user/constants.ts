@@ -1,4 +1,4 @@
-import { AzureContainer } from "@esposter/db-schema";
+import { StorageBucket } from "@esposter/db-schema";
 
 // The archive uploads in blocks of this size, with at most the concurrency below in flight.
 // So the upload's window is fixed whatever the account holds
@@ -10,7 +10,7 @@ export const DATA_EXPORT_CONTENT_TYPE = "application/zip";
 export const DATA_EXPORT_RETENTION = Temporal.Duration.from({ hours: 7 * 24 });
 // The game containers that hold a person's save, keyed by the game name the archive's saves entry is named after
 export const SAVE_GAME_CONTAINERS = {
-  clicker: AzureContainer.ClickerAssets,
-  dungeons: AzureContainer.UserAssets,
-  genshin: AzureContainer.GenshinAssets,
-} as const satisfies Record<string, AzureContainer>;
+  clicker: StorageBucket.ClickerAssets,
+  dungeons: StorageBucket.UserAssets,
+  genshin: StorageBucket.GenshinAssets,
+} as const satisfies Record<string, StorageBucket>;

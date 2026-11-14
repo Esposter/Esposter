@@ -3,7 +3,7 @@ import type { Database } from "@esposter/db-schema";
 import { createUser } from "#src/services/message/createUser.test";
 import { listChargedBlobsByUser } from "#src/services/storage/listChargedBlobsByUser";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe(listChargedBlobsByUser, () => {
@@ -16,7 +16,7 @@ describe(listChargedBlobsByUser, () => {
   const fileId = crypto.randomUUID();
   // A ledger row is what a charge leaves behind, so the rows are written as the counter writes them and the sweep
   // Reads them back by owner — no blob listing is involved
-  const createLedgerEntry = (ownerId: string, containerName: AzureContainer, blobName: string) =>
+  const createLedgerEntry = (ownerId: string, containerName: StorageBucket, blobName: string) =>
     db
       .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId: ownerId });
@@ -39,14 +39,14 @@ describe(listChargedBlobsByUser, () => {
   test("returns the user's charged blobs grouped by container, and no other user's", async () => {
     expect.hasAssertions();
 
-    await createLedgerEntry(userId, AzureContainer.ResourceAssets, `${resourceId}/blobName`);
-    await createLedgerEntry(userId, AzureContainer.MessageAssets, `${roomId}/${fileId}`);
-    await createLedgerEntry(otherUserId, AzureContainer.ResourceAssets, `${otherResourceId}/blobName`);
+    await createLedgerEntry(userId, StorageBucket.ResourceAssets, `${resourceId}/blobName`);
+    await createLedgerEntry(userId, StorageBucket.MessageAssets, `${roomId}/${fileId}`);
+    await createLedgerEntry(otherUserId, StorageBucket.ResourceAssets, `${otherResourceId}/blobName`);
 
     await expect(listChargedBlobsByUser(db, userId)).resolves.toStrictEqual(
       new Map([
-        [AzureContainer.MessageAssets, [`${roomId}/${fileId}`]],
-        [AzureContainer.ResourceAssets, [`${resourceId}/blobName`]],
+        [StorageBucket.MessageAssets, [`${roomId}/${fileId}`]],
+        [StorageBucket.ResourceAssets, [`${resourceId}/blobName`]],
       ]),
     );
   });

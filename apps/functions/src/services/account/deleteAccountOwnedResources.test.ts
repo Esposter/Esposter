@@ -7,7 +7,7 @@ import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -56,12 +56,12 @@ describe(deleteAccountOwnedResources, () => {
         .values({ name, type: ResourceType.Note, userId: otherUserId })
         .returning(),
     );
-    await seedBlob(AzureContainer.ResourceAssets, getContentBlobName(ownedResource.id));
-    await seedBlob(AzureContainer.ResourceAssets, getContentBlobName(otherResource.id));
+    await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
+    await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(otherResource.id));
 
     await deleteAccountOwnedResources(context, userId);
 
-    expect(readBlobNames(AzureContainer.ResourceAssets)).toStrictEqual([getContentBlobName(otherResource.id)]);
+    expect(readBlobNames(StorageBucket.ResourceAssets)).toStrictEqual([getContentBlobName(otherResource.id)]);
     await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([
       { id: otherResource.id },
     ]);
