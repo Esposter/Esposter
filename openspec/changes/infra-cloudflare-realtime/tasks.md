@@ -2,7 +2,7 @@
 
 ## 1.
 
-- [ ] 1.1 Declare `RoomEvent`, `CallEvent` and `UserEvent` with their schemas in `apps/web/shared/models/realtime/`, one member per event the EventEmitters carry today. Verified by the schema tests.
+- [x] 1.1 Declare `RoomEvent`, `CallEvent` and `UserEvent` with their schemas in `packages/db-schema/src/models/realtime/`, one member per event the EventEmitters carried. Verified by the objects' and the socket routes' tests, which send them.
 - [ ] 1.2 Switch every D1 id to UUIDv7 from the `uuid` package's `v7` — the column defaults, better-auth's generator, `z.uuidv7()` in every schema — ban `crypto.randomUUID` and `uuid`'s `v4` by lint, and page every D1 cursor on `id` alone. Verified by the cursor pagination tests and the lint rule's cases.
 
 ## 2.
@@ -14,12 +14,12 @@
 ## 3.
 
 - [x] 3.1 Route `/ws/user`, `/ws/room/:roomId` and `/ws/call/:callSessionId` through the web Worker's session and membership check to the objects. Verified by the socket route tests.
-- [ ] 3.2 Move every mutation that emitted an event to the owning object's RPC method, and every queue consumer that published to it; delete the EventEmitters, the `server` object forward, `/_internal/publish`, the `Scheduler` object and its two queues. Verified by the router and consumer tests.
-- [ ] 3.3 Replace the client's subscribables with one connection manager and the event dispatch into the existing store handlers. Verified by the store tests.
+- [x] 3.2 Move every mutation that emitted an event to the owning object's RPC method, and every queue consumer that published to it; delete the EventEmitters, the `server` object forward, `/_internal/publish` and the `Scheduler` object, whose two Service Bus queues go with the Azure estate at teardown. Verified by the router and consumer tests.
+- [x] 3.3 Replace the client's subscribables with one connection manager (`app/store/realtime/connection.ts`) and the event dispatch into the existing store handlers. Verified by the store tests.
 
 ## 4.
 
-- [ ] 4.1 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and to import each room's messages into its object in `createdAt` order. Verified by the cutover's mapper tests.
+- [x] 4.1 Teach the cutover to re-key D1 rows to UUIDv7 through the id map and to import each room's messages into its object in `createdAt` order. Verified by the cutover's mapper tests and `verify` passing on develop.
 
 ## 5.
 

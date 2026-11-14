@@ -6,12 +6,11 @@
 
 ## 2.
 
-- [ ] 2.1 Build the D1 stream table client and its clause-to-SQL compiler, and rename `AzureTable`. Verified by the client's tests over Miniflare's D1.
-- [ ] 2.2 Write `messages_search` with each message and read it in `searchMessages` and `readMySentMessages`. Verified by a sent message being found by search at once.
+- [x] 2.2 Write `messages_search` in the room's object with each message and read it in its `searchMessages`; `readMySentMessages` reads the user object's sent index. Verified by the room object's test finding a sent message by search at once.
 
 ## 3.
 
-- [ ] 3.1 Replace every `db.transaction` with a batch, a conditional statement or a constraint. Verified by no `transaction(` call remaining and the touched services' tests.
+- [x] 3.1 Replace every D1 `db.transaction` with a batch, a conditional statement or a constraint; an object's own SQLite keeps its synchronous transactions. Verified by no `transaction(` call on D1 remaining and the touched services' tests.
 - [ ] 3.2 Rewrite the Postgres-only queries and the rate limiter's store. Verified by the touched services' tests.
 
 ## 4.

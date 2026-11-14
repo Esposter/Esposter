@@ -8,4 +8,4 @@
 ## 2.
 
 - [x] 2.1 Replace Service Bus with the Scheduler object. Verified by a scheduled job sent when its alarm fires.
-- [ ] 2.2 Replace Web PubSub with the `server` object's `publish`. Verified by a webhook message reaching `onCreateMessage`.
+- [x] 2.2 Replace Web PubSub with the room objects' own broadcast: a webhook's message is written through `RoomObject.createMessage`, which sends it to the room's sockets. Verified by `processWebhookHandler`'s test.
