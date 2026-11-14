@@ -33,7 +33,14 @@ import {
 } from "#src/services/room/constants";
 import { applyPollVote } from "#src/services/room/applyPollVote";
 import { getRoomSearchConditions } from "#src/services/room/getRoomSearchConditions";
-import { MessageType, MESSAGE_BATCH_MAX_LENGTH, relations, roomsInMessage } from "@esposter/db-schema";
+import { getMessageCreationRejection } from "@esposter/db";
+import {
+  MessageType,
+  MESSAGE_BATCH_MAX_LENGTH,
+  relations,
+  roomsInMessage,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { chunk, getResultAsync, getSearchExpression, noop, NotInitializedError } from "@esposter/shared";
 import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
@@ -571,7 +578,8 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     else await this.ctx.storage.deleteAlarm();
   }
 
-  // Each due message is written in the same transaction that removes it from the scheduled set, so it is sent once
+  // Each due row is removed in the same transaction that writes its message, so it is sent once or dropped once. The
+  // send is held to the rules a live send is, as its sender stands now: a row whose sender may no longer send is dropped
   private async sendDueScheduledMessages(now: Date): Promise<void> {
     const dueMessages = this.db
       .select()
@@ -580,19 +588,44 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
       .orderBy(asc(scheduledMessagesInRoom.runAt))
       .all();
     for (const { id, message, replyToId, userId } of dueMessages) {
+      const isSendable = await this.checkIsSendable(userId, message);
       const sentMessage = this.db.transaction((transaction) => {
         transaction.delete(scheduledMessagesInRoom).where(eq(scheduledMessagesInRoom.id, id)).run();
-        return this.insertMessage(
-          getMessageRow({ message, replyToId: replyToId ?? undefined, type: MessageType.Message, userId }, now),
-          now,
-          {},
-        );
+        return isSendable
+          ? this.insertMessage(
+              getMessageRow({ message, replyToId: replyToId ?? undefined, type: MessageType.Message, userId }, now),
+              now,
+              {},
+            )
+          : undefined;
       });
       await this.notifyUser(userId, (user) => user.removeScheduledMessage(id));
+      if (!sentMessage) continue;
+
       await this.notifyUser(userId, (user) =>
         user.addSentMessage({ createdAt: now, messageId: sentMessage.id, roomId: this.roomId }),
       );
+      // A scheduled send advances the sender's slowmode clock as a live one does, so it cannot slip past the room's gate
+      await getResultAsync(async () =>
+        this.core
+          .update(usersToRoomsInMessage)
+          .set({ lastMessageAt: now, lastReadAt: now })
+          .where(and(eq(usersToRoomsInMessage.roomId, this.roomId), eq(usersToRoomsInMessage.userId, userId))),
+      ).match(noop, console.error);
     }
+  }
+
+  // The rules are the ones a live send is held to, read from D1 now. A rule that rejects, and a read that faults, both
+  // drop the scheduled message: a fault is logged, and a message is never sent on a check that did not pass
+  private async checkIsSendable(userId: string, message: string): Promise<boolean> {
+    const decision = await getResultAsync(() => getMessageCreationRejection(this.core, userId, this.roomId, message));
+    return decision.match(
+      (rejection) => rejection === undefined,
+      (error) => {
+        console.error(error);
+        return false;
+      },
+    );
   }
 
   // The room-activity wave runs once per window: the room's updatedAt is written in D1, and every member online hears of

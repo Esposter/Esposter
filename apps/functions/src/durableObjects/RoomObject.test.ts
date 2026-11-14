@@ -2,9 +2,17 @@ import type { RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
 import { createMockDb } from "@esposter/db-mock";
-import { MessageType, roomsInMessage, SOCKET_IDENTITY_HEADER, usersInAuth } from "@esposter/db-schema";
+import {
+  MessageType,
+  roomRolesInMessage,
+  roomsInMessage,
+  RoomPermission,
+  SOCKET_IDENTITY_HEADER,
+  usersInAuth,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
@@ -87,6 +95,14 @@ describe(RoomObject, () => {
     await mockDatabase.db.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDatabase.db.insert(roomsInMessage).values({ name: "name", userId }).returning());
     roomId = room.id;
+    await mockDatabase.db.insert(usersToRoomsInMessage).values([
+      { roomId, userId },
+      { roomId, userId: otherUserId },
+    ]);
+    // The @everyone role every member holds, seeded with the send permission `createRoom` gives it
+    await mockDatabase.db
+      .insert(roomRolesInMessage)
+      .values({ isEveryone: true, name: "name", permissions: RoomPermission.SendMessages, roomId });
     environment = { CORE: mockDatabase.coreDatabase, USER: userNamespace } as unknown as Cloudflare.Env;
   });
 
@@ -247,6 +263,64 @@ describe(RoomObject, () => {
     expect(object.readScheduledMessages(userId)).toStrictEqual([later]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(due.id);
     expect(await state.ctx.storage.getAlarm()).toBe(later.runAt.getTime());
+  });
+
+  test("a scheduled message is dropped, not sent, when its sender has left the room by the time it comes due", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: crypto.randomUUID(), message: "left", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+    await mockDatabase.db
+      .delete(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
+
+    vi.setSystemTime(scheduledMessage.runAt);
+    await object.alarm();
+
+    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
+    expect(object.readScheduledMessages(userId)).toStrictEqual([]);
+    expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(scheduledMessage.id);
+  });
+
+  test("a scheduled message is dropped, not sent, when its sender is timed out at the time it comes due", async () => {
+    expect.hasAssertions();
+
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: crypto.randomUUID(), message: "timed out", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      actor,
+    );
+    await mockDatabase.db
+      .update(usersToRoomsInMessage)
+      .set({ timeoutUntil: new Date(ROOM_ACTIVITY_DELAY_MS * 2) })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
+
+    vi.setSystemTime(scheduledMessage.runAt);
+    await object.alarm();
+
+    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
+    expect(object.readScheduledMessages(userId)).toStrictEqual([]);
+  });
+
+  test("a scheduled message is dropped, not sent, when its sender no longer holds the permission to send", async () => {
+    expect.hasAssertions();
+
+    // The room's owner holds every permission, so the sender is the other member, who holds only the @everyone role
+    const { object } = createRoomObject();
+    const scheduledMessage = await object.createScheduledMessage(
+      { id: crypto.randomUUID(), message: "no permission", runAt: new Date(ROOM_ACTIVITY_DELAY_MS) },
+      otherActor,
+    );
+    await mockDatabase.db.delete(roomRolesInMessage).where(eq(roomRolesInMessage.roomId, roomId));
+
+    vi.setSystemTime(scheduledMessage.runAt);
+    await object.alarm();
+
+    expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
+    expect(object.readScheduledMessages(otherUserId)).toStrictEqual([]);
   });
 
   test("the room-activity wave reaches only the members online, once per window, and writes the room's updatedAt", async () => {
