@@ -39,12 +39,9 @@ describe(toD1Value, () => {
     expect(toD1Value(createColumn("object json", false), null)).toBeNull();
   });
 
-  test("stores a bitfield as an integer and refuses one past 2^53, which a number would round", () => {
+  test("stores a bitfield as its decimal text, exact past 2^53", () => {
     expect.hasAssertions();
 
-    expect(toD1Value(createColumn("custom"), "7")).toBe(7);
-    expect(() => toD1Value(createColumn("custom"), "9007199254740993")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: value, holds an integer D1 cannot store exactly]`,
-    );
+    expect(toD1Value(createColumn("custom"), "9007199254740993")).toBe("9007199254740993");
   });
 });

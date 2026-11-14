@@ -14,8 +14,9 @@ export const toD1Value = (column: CoreColumn, value: unknown): D1Value => {
   switch (column.dataType) {
     case "boolean":
       return value ? 1 : 0;
+    // The permission bitfield, stored as its decimal text so every bit survives at any width
     case "custom":
-      return getSafeInteger(column, BigInt(getBigIntSource(column, value)));
+      return BigInt(getBigIntSource(column, value)).toString();
     case "number double":
       return Number(getNumberSource(column, value));
     case "number int53":
