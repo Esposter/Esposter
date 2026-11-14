@@ -1,0 +1,38 @@
+import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
+import { createMessage } from "@/services/message/message/createMessage.test";
+import { describe, expect, test } from "vitest";
+
+describe(checkIsNewerMessage, () => {
+  const roomId = crypto.randomUUID();
+  const createdAt = new Date(0);
+  const laterCreatedAt = new Date(1);
+  const lowerId = "00000000-0000-4000-8000-000000000001";
+  const higherId = "00000000-0000-4000-8000-000000000002";
+  const createMessageWith = (messageCreatedAt: Date, id: string) => ({
+    ...createMessage(roomId),
+    createdAt: messageCreatedAt,
+    id,
+  });
+
+  test("a message created later is newer than one created earlier", () => {
+    expect.hasAssertions();
+
+    expect(
+      checkIsNewerMessage(createMessageWith(laterCreatedAt, lowerId), createMessageWith(createdAt, higherId)),
+    ).toBe(true);
+    expect(
+      checkIsNewerMessage(createMessageWith(createdAt, higherId), createMessageWith(laterCreatedAt, lowerId)),
+    ).toBe(false);
+  });
+
+  test("breaks a tie on the same creation time by id", () => {
+    expect.hasAssertions();
+
+    expect(checkIsNewerMessage(createMessageWith(createdAt, higherId), createMessageWith(createdAt, lowerId))).toBe(
+      true,
+    );
+    expect(checkIsNewerMessage(createMessageWith(createdAt, lowerId), createMessageWith(createdAt, higherId))).toBe(
+      false,
+    );
+  });
+});
