@@ -616,7 +616,7 @@ describe(buildUserDataArchive, () => {
 
     // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
     expect(readEntryJson(entries, "calls.json")).toStrictEqual([
-      { createdAt: call.createdAt, roomId: room.id, threadRootRowKey: "" },
+      { createdAt: call.createdAt, roomId: room.id, threadRootId: 0 },
     ]);
   });
 

@@ -8,7 +8,7 @@ import { db } from "#src/services/shared/db";
 // The table records who started a call, not who joined it, so the other participants are not in the archive
 export const writeCallSessionEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const calls = await db.query.callSessionsInMessage.findMany({
-    columns: { createdAt: true, roomId: true, threadRootRowKey: true },
+    columns: { createdAt: true, roomId: true, threadRootId: true },
     where: { userId: { eq: userId } },
   });
   await archive.addJsonEntry("calls.json", calls);

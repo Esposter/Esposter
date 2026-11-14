@@ -51,7 +51,7 @@ The pane's overflow menu is where everything that acts on the thread as a whole 
 
 ### A call in a thread
 
-A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootRowKey` is empty for the room's own call and holds the root rowKey for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the LiveKit room, the participant maps, the subscriptions and the knock lobby are the room call's code unchanged; see [calls](../calls/README.md).
+A call in a thread is the room's call machinery addressed by the thread it belongs to. `callSessions.threadRootId` is `0` for the room's own call and holds the root message's id for a thread's, and the unique constraint spans both columns — so a room runs its own call and one per thread at the same time, while a standalone share-link call carries no room at all and stays unconstrained. Everything downstream is keyed by the session id, so the LiveKit room, the participant maps, the subscriptions and the knock lobby are the room call's code unchanged; see [calls](../calls/README.md).
 
 The start and summary lines a call writes go into the thread rather than the room, through the same `replyRowKey` the rest of the thread is made of.
 
