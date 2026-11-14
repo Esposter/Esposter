@@ -73,7 +73,7 @@ Postgres stores microseconds and D1 milliseconds. `verify` checks that no unique
 1. The Railway app is put into maintenance: every request answers 503 with a maintenance page, WebSockets are refused, and no request writes. Because `userRouter.connect` writes on every socket open, a read-only mode is not enough; the app is closed.
 2. The Functions keep running until Event Grid has delivered everything already published and the `deadletter` container is empty, then both Function Apps are stopped, so no Service Bus message or event writes after the read.
 3. The delta copy, `copy-core`, `rewrite-urls`, `reschedule` and `verify` run.
-4. With `verify` green, the smoke checks run on `next.esposter.com`: sign in, read a room's history, send a message and find it by search, upload and download a file, receive a push, post a webhook message, schedule a message a minute out and watch it arrive, start a call. Signing in on the staging hostname needs it in each OAuth provider's callback list for the window, which only the owner can add.
+4. With `verify` green, the smoke checks run on `next.esposter.com`: read a room's history, send a message and find it by search, upload and download a file, receive a push, post a webhook message, schedule a message a minute out and watch it arrive, start a call. They run as a session the command signs with the copied auth secret, so no OAuth provider has to know the staging hostname; OAuth sign-in itself is not exercised, since its callbacks, secrets and domain do not change.
 
 **Abort** at any point up to here is restarting the Railway app and the Function Apps: the old stores were never written after the freeze began and the new ones are not yet live.
 
@@ -83,7 +83,7 @@ The apex record changes from Railway to the web Worker's custom domain; the sixt
 
 The rollback window is the soak, a few days: Railway and the Azure estate stay stopped but intact. Rolling back inside it is putting the Worker into maintenance, switching the apex back, and restarting Railway and the Functions — and it discards whatever was written on Cloudflare since the switch, which is why the smoke checks run on the real copied data before the switch rather than after it.
 
-Incoming webhooks change address: they were Azure Function URLs and become `esposter.com/api/webhooks/...`. The app shows the new URL; an integration posting to the old one fails after teardown.
+Incoming webhooks change address, from an Azure Function URL to `esposter.com/api/webhooks/...`, with no forwarder: no integration posts to one today, and the app shows the new address.
 
 ## Teardown
 

@@ -1,13 +1,14 @@
 import type { DatabaseSchema } from "#src/models/DatabaseSchema";
 import type { SqliteTable } from "#src/models/SqliteTable";
-import type { SQLiteColumnBuilderBase, SQLiteTableExtraConfigValue } from "drizzle-orm/sqlite-core";
+import type { ColumnBuilderBase } from "drizzle-orm";
+import type { SQLiteTableExtraConfigValue } from "drizzle-orm/sqlite-core";
 
 import { createMetadataSchema } from "#src/createMetadataSchema";
 import { camelCase } from "drizzle-orm/sqlite-core";
 
 export const sqliteTable: SqliteTable = <
   TTableName extends string,
-  TColumnsMap extends Record<string, SQLiteColumnBuilderBase>,
+  TColumnsMap extends Record<string, ColumnBuilderBase>,
 >(
   name: TTableName,
   columns: TColumnsMap,
