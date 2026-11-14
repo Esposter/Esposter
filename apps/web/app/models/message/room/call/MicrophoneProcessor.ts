@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/no-deprecated -- RealtimeKit's audio middleware type names ScriptProcessorNode, so the node it accepts is the deprecated one until the SDK types an AudioWorklet node */
 import { computeInputLevelDecibels } from "@/services/message/room/call/computeInputLevelDecibels";
 import { MIN_INPUT_SENSITIVITY_DECIBELS, VoiceInputMode } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";

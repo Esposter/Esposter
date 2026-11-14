@@ -3,13 +3,11 @@ import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFile
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { StorageStatusError } from "@/models/file/StorageStatusError";
+import { HTTP_STATUS_PRECONDITION_FAILED } from "@/services/file/constants";
 import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { getResourceFileBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
-
-// The status a create-only upload answers when its If-None-Match finds the object already stored
-const HTTP_STATUS_PRECONDITION_FAILED = 412;
 
 // The FileAssets round-trip for one file: the file is addressed by the hash of its bytes, uploaded only when the server does
 // Not already hold that object, and the stable asset url is handed back for the editor to embed. Reads resolve through

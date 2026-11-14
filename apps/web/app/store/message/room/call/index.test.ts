@@ -1,5 +1,7 @@
 // @vitest-environment nuxt
-import type { CallParticipant, ClientMessage } from "@esposter/db-schema";
+import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { CallParticipant } from "@esposter/db-schema";
+
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
 import { useSession } from "@/services/auth/authClient.test";
@@ -34,7 +36,7 @@ describe(useCallStore, () => {
   const callSessionId = createId(CALL_ID_LENGTH);
   const imagePath = "imagePath";
   const roomId = v7();
-  const threadRootId = v7();
+  const threadRootId = 1;
 
   beforeEach(() => {
     useSession.mockReturnValue(ref({ data: getMockSession() }));
@@ -85,7 +87,7 @@ describe(useCallStore, () => {
           session.id,
           {
             id: session.id,
-            image: user.image,
+            image: user.image ?? null,
             isCameraEnabled: false,
             isHandRaised: false,
             isMuted: false,
@@ -195,6 +197,7 @@ describe(useCallStore, () => {
           authToken: "",
           callSessionId,
           isDoorkeeper: false,
+          meetingId: "",
           participantMap,
         }));
       },
@@ -207,6 +210,7 @@ describe(useCallStore, () => {
           authToken: "",
           callSessionId,
           isDoorkeeper: false,
+          meetingId: "",
           participantMap,
         }));
       },

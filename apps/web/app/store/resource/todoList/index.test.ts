@@ -24,7 +24,6 @@ const setupStore = async () => {
 describe(useTodoListStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = v7();
-  const device = { sessionId: v7(), userId: v7() };
   const adoptedItemName = "adoptedItem";
   const itemName = "item";
   const newItemName = "newItem";
@@ -152,7 +151,7 @@ describe(useTodoListStore, () => {
     content = { items: [new TodoListItem({ name: newItemName })] };
     const resourceStore = useResourceStore();
     const { storeSaveResourceContent } = resourceStore;
-    await storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
+    await storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
     const isSuccessful = await saveTodoList();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
@@ -241,7 +240,7 @@ describe(useTodoListStore, () => {
     trpcMsw.todoList.saveResourceContent.mutation(saveKept);
     items.value = [new TodoListItem({ name: newItemName })];
     unwrittenContentResourceId.value = resourceId;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 });
     await resourceStore.keepUnwrittenContent();
 
     expect(

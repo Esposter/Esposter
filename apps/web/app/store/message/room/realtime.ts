@@ -230,7 +230,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   // Plays every remote element. The press that calls this is the gesture the browser needs, and a failure reports
   // Through the notice rather than as an error
   const startAudio = () =>
-    Promise.all([...remoteAudioElements.values()].map(({ element }) => playRemoteAudio(element)));
+    Promise.all(Array.from(remoteAudioElements.values(), ({ element }) => playRemoteAudio(element)));
   const setCamera = async (isCameraEnabled: boolean) => {
     if (!activeMeeting) return;
     if (!isCameraEnabled) {
@@ -357,6 +357,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     microphoneProcessor = new MicrophoneProcessor();
     applyMicrophoneSettings();
     await meeting.self.addAudioMiddleware(microphoneProcessor.audioMiddleware);
+    // oxlint-disable-next-line unicorn/require-array-join-separator -- RealtimeKit's meeting.join() is not Array#join and takes no separator
     await meeting.join();
     // Participants already in the meeting are attached here, and the listeners that follow are registered in the same
     // Tick, so no join or leave can land between the two

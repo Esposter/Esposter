@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { CallParticipant } from "@esposter/db-schema";
+
 import { getMockSession } from "#server/trpc/context.test";
 import { createId } from "#shared/util/math/random/createId";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -13,7 +14,7 @@ const createSessionParticipant = (): CallParticipant => {
   const { session, user } = getMockSession();
   return {
     id: session.id,
-    image: user.image,
+    image: user.image ?? null,
     isCameraEnabled: false,
     isHandRaised: false,
     isMuted: false,

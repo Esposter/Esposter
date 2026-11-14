@@ -1,13 +1,12 @@
 // @vitest-environment nuxt
-import RealtimeKitClient from "@cloudflare/realtimekit";
-import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { EventEmitter } from "node:events";
-
 import { useAlertStore } from "@/store/alert";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
+import RealtimeKitClient from "@cloudflare/realtimekit";
+import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
+import { EventEmitter } from "node:events";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 // The SDK's meeting is replaced by an emitter holding the methods the store calls, so each test drives the events
@@ -20,17 +19,23 @@ const createMeeting = () => {
     },
   });
   const self = Object.assign(new EventEmitter(), {
-    addAudioMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
-    addVideoMiddleware: vi.fn(() => Promise.resolve({ message: "", success: true })),
-    disableAudio: vi.fn(() => Promise.resolve()),
-    disableScreenShare: vi.fn(() => Promise.resolve()),
-    disableVideo: vi.fn(() => Promise.resolve()),
-    enableAudio: vi.fn(() => Promise.resolve()),
-    enableScreenShare: vi.fn(() => Promise.resolve()),
-    enableVideo: vi.fn(() => Promise.resolve()),
-    rawAudioTrack: { applyConstraints: vi.fn(() => Promise.resolve()) },
-    removeAllVideoMiddlewares: vi.fn(() => Promise.resolve({ message: "", success: true })),
-    setDevice: vi.fn(() => Promise.resolve()),
+    addAudioMiddleware: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
+      Promise.resolve({ message: "", success: true }),
+    ),
+    addVideoMiddleware: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
+      Promise.resolve({ message: "", success: true }),
+    ),
+    disableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    disableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    disableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    enableAudio: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    enableScreenShare: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    enableVideo: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    rawAudioTrack: { applyConstraints: vi.fn<() => Promise<void>>(() => Promise.resolve()) },
+    removeAllVideoMiddlewares: vi.fn<() => Promise<{ message: string; success: boolean }>>(() =>
+      Promise.resolve({ message: "", success: true }),
+    ),
+    setDevice: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     videoEnabled: false,
     videoTrack: {} as MediaStreamTrack,
   });
@@ -44,8 +49,8 @@ const createMeeting = () => {
     return Promise.resolve();
   });
   const meeting = {
-    join: vi.fn(() => Promise.resolve()),
-    leave: vi.fn(() => Promise.resolve()),
+    join: vi.fn<() => Promise<void>>(() => Promise.resolve()),
+    leave: vi.fn<() => Promise<void>>(() => Promise.resolve()),
     meta: new EventEmitter(),
     participants: Object.assign(new EventEmitter(), { joined }),
     self,
@@ -82,9 +87,13 @@ describe(useRealtimeStore, () => {
     expect.hasAssertions();
 
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "isSupported").mockReturnValue(true);
+    type VideoBackgroundTransformer = RealtimeKitVideoBackgroundTransformer;
+    type VideoMiddleware = Awaited<ReturnType<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>>;
     const transformer = {
-      createStaticBackgroundVideoMiddleware: vi.fn(() => Promise.resolve(vi.fn())),
-      destruct: vi.fn(),
+      createStaticBackgroundVideoMiddleware: vi.fn<VideoBackgroundTransformer["createStaticBackgroundVideoMiddleware"]>(
+        () => Promise.resolve(vi.fn<VideoMiddleware>()),
+      ),
+      destruct: vi.fn<VideoBackgroundTransformer["destruct"]>(),
     };
     vi.spyOn(RealtimeKitVideoBackgroundTransformer, "init").mockResolvedValue(
       transformer as unknown as RealtimeKitVideoBackgroundTransformer,
@@ -130,9 +139,9 @@ describe(useRealtimeStore, () => {
     const participant = createParticipant("identity");
     joinedEvents.emit("participantJoined", participant);
 
-    await vi.waitFor(() => {
-      expect(isAudioPlaybackBlocked.value).toBe(true);
-    });
+    await waitForSynchronizedFunctions();
+
+    expect(isAudioPlaybackBlocked.value).toBe(true);
 
     await startAudio();
 
@@ -182,7 +191,7 @@ describe(useRealtimeStore, () => {
       const { connect } = realtimeStore;
       await connect("authToken", vi.fn<() => Promise<void>>(), isMicrophoneEnabled);
 
-      expect(init).toHaveBeenCalledWith(expect.objectContaining({ authToken: "authToken" }));
+      expect(init.mock.lastCall?.[0].authToken).toBe("authToken");
       expect(meeting.self.enableAudio).toHaveBeenCalledTimes(isMicrophoneEnabled ? 1 : 0);
     },
   );
@@ -208,7 +217,7 @@ describe(useRealtimeStore, () => {
     await waitForSynchronizedFunctions();
 
     expect(disconnectHandler).not.toHaveBeenCalled();
-    expect(init).toHaveBeenLastCalledWith(expect.objectContaining({ authToken: "rejoinToken" }));
+    expect(init.mock.lastCall?.[0].authToken).toBe("rejoinToken");
   });
 
   test("a lost connection still ends the call", async () => {

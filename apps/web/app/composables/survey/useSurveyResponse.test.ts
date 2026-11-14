@@ -23,7 +23,7 @@ describe(useSurveyResponse, () => {
     model,
     modelVersion: 0,
     pageNo: 0,
-    participantToken,
+    participantTokenHash: "",
     resourceId,
     updatedAt: new Date(0),
   });

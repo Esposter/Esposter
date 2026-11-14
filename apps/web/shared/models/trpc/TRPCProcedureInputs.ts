@@ -1,6 +1,5 @@
 import type { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
 import type { saveDungeonsInputSchema } from "#shared/models/db/dungeons/SaveDungeonsInput";
-import type { ResourceInResource, ResourceType, updateRoomInputSchema } from "@esposter/db-schema";
 import type { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessageInput";
 import type { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
 import type { messageIdentityInputSchema } from "#shared/models/db/message/MessageIdentityInput";
@@ -25,6 +24,7 @@ import type { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput
 import type { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import type { updateSurveyResponseInputSchema } from "#shared/models/db/survey/UpdateSurveyResponseInput";
 import type { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import type { ResourceInResource, ResourceType, updateRoomInputSchema } from "@esposter/db-schema";
 import type { z } from "zod";
 
 export type TRPCPath = keyof TRPCProcedureInputs;

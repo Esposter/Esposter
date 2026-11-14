@@ -1,12 +1,12 @@
 import { authClient } from "@/services/auth/authClient";
-import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useRoomStore } from "@/store/message/room";
+import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useMemberStore } from "@/store/message/user/member";
 import { useConnectionStore } from "@/store/realtime/connection";
 import { getResultAsync, getSynchronizedFunction, noop, RoutePath, takeOne } from "@esposter/shared";
 
 // The rooms a person is in, and the direct messages among them, change on the person's own socket: every room event
-// that concerns the list reaches each of the person's tabs, and the room it names is the one written to
+// That concerns the list reaches each of the person's tabs, and the room it names is the one written to
 export const useRoomListEvents = () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
@@ -47,8 +47,8 @@ export const useRoomListEvents = () => {
     ),
   );
   onScopeDispose(
-    onUserEvent("joinRoom", ({ roomId, user }) => {
-      storeCreateMember(roomId, user);
+    onUserEvent("joinRoom", ({ displayName, roomId, user }) => {
+      storeCreateMember(roomId, { ...user, displayName });
     }),
   );
   onScopeDispose(

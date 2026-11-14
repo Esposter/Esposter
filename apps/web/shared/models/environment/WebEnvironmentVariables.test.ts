@@ -1,5 +1,6 @@
 import { webEnvironmentVariablesSchema } from "#shared/models/environment/WebEnvironmentVariables";
 import { MOCK_ENVIRONMENT_VARIABLES } from "#shared/services/environment/constants.test";
+import { jsonDateParse } from "@esposter/shared";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
@@ -16,7 +17,7 @@ describe("webEnvironmentVariablesSchema", () => {
   test("uploads as Worker secrets exactly the variables it marks secret", () => {
     expect.hasAssertions();
 
-    const workerSecrets: { web: string[] } = JSON.parse(
+    const workerSecrets = jsonDateParse<{ web: string[] }>(
       readFileSync(join(import.meta.dirname, "../../../../../.github/worker-secrets.json"), "utf8"),
     );
     const secretNames = Object.entries(webEnvironmentVariablesSchema.shape)
