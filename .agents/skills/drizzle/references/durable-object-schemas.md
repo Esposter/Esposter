@@ -1,0 +1,8 @@
+# Durable Object Schemas
+
+Read when adding or editing a table in a Durable Object's own SQLite — the room, call or user object. The one-line rule is in `SKILL.md`; this page is its full statement.
+
+- **Each object has a schema file in the functions Worker**: `apps/functions/src/durableObjects/room/schema.ts`, `apps/functions/src/durableObjects/call/schema.ts` and `apps/functions/src/durableObjects/user/schema.ts`. Its tables are built with drizzle-orm's `sqliteTable` from `drizzle-orm/sqlite-core`, not the `sqliteTable` wrapper in `packages/db-schema/src/sqliteTable.ts`: a Durable Object is its own database, so its tables take no area prefix.
+- **Each object has its own migrations folder beside its schema** (`apps/functions/src/durableObjects/room/migrations`, and its `call` and `user` siblings). A folder is generated from its own config — `packages/db-schema/drizzle.room.config.ts`, `packages/db-schema/drizzle.call.config.ts` or `packages/db-schema/drizzle.user.config.ts`, each with `driver: "durable-sqlite"` — one object at a time. The object is built with its folder's migrations: `createDurableObjectDatabase(this.ctx, roomMigrations.migrations)` in `apps/functions/src/durableObjects/RoomObject.ts`.
+- **`pnpm db:gen` does not read these schemas.** Its config globs `src/schema/**` only, and the registries hold the core tables alone (`references/schema-registration.md`).
+- **A room's message id is its integer sequence.** `messagesInRoom`'s `id` is `integer().primaryKey({ autoIncrement: true })`, so an id is never handed out again once its row is gone, and a page reads `id < ?` (`apps/functions/src/durableObjects/room/schema.ts`).

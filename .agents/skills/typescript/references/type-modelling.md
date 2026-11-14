@@ -17,7 +17,7 @@ Read when a type is awkward: reaching for a cast, re-declaring fields a source t
 
 What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
 
-- **A fake standing in for an SDK type with private or branded members** — an Azure SDK response carries `_response`/private brands a mock cannot structurally satisfy. This is the whole job of `azure-mock`/`db-mock`, and the `testing` skill sanctions it (`references/colocated-mocks.md`).
+- **A fake standing in for an SDK type with private or branded members** — a Workers binding carries brands a hand-written object cannot structurally satisfy. This is the job `db-mock` does with Miniflare's own bindings, and the `testing` skill sanctions it (`references/colocated-mocks.md`).
 - **A `vi.mock` factory replacing an overloaded function** — `vi.fn<typeof overloadedFn>()` cannot reproduce an overload set, hence `mockFn as unknown as typeof overloadedFn`.
 - **The mixin limitation** — a class expression extending a generic `TBase` cannot be inferred back to its mapped return type.
 
@@ -29,7 +29,7 @@ A few are unavoidable in production source, and every known kind shares a tell �
 
 Prefer a single `as T` whenever TS accepts it, and comment **what the compiler cannot see** — never "this is safe". Adding one to production source earns the same scrutiny as reaching for `any`: if the shape is worth asserting, it is worth declaring.
 
-What TS accepts is settled by one rule — **one side must be assignable to the other**. A single `as` holds for a fake that is a **subset** of its target: an `EventEmitter` standing in for a `ChildProcess`, a phantom-branded intersection (`TableClient` → `TableClient & { entityType }`), an `Except<T, K>` back to `T`, an object literal of a few members typed against an interface with many, a `defineComponent` stub against a library component, and a `Mock<F>` against a non-overloaded `F`. It never holds for a class fake against an SDK class (`MockContainerClient` → `ContainerClient`), a hand-rolled object against a class with fields the object lacks, a deep-partial stub against a `Database` or a store, or a `Mock` against an overload set — every one of those is a genuine `as unknown as`, and the single form is a typecheck error rather than a judgement call. Write the single form first and let the compiler answer.
+What TS accepts is settled by one rule — **one side must be assignable to the other**. A single `as` holds for a fake that is a **subset** of its target: a `Pick<Response, "json">` standing in for a `Response`, a phantom-branded intersection (`T` → `T & { brand }`), an `Except<T, K>` back to `T`, an object literal of a few members typed against an interface with many, a `defineComponent` stub against a library component, and a `Mock<F>` against a non-overloaded `F`. It never holds for a class fake against a library class, a hand-rolled object against a class with fields the object lacks, a deep-partial stub against a `Database` or a store, or a `Mock` against an overload set — every one of those is a genuine `as unknown as`, and the single form is a typecheck error rather than a judgement call. Write the single form first and let the compiler answer.
 
 ## A type is stated where the value is defined, never where it is used
 
@@ -45,7 +45,7 @@ export interface FooConfiguration extends BarConfiguration, Pick<SourceType, "a"
 
 Use `Pick` for all properties derived directly from the source type. Keep explicit declarations only for `Parameters<SourceType["method"]>` tuples and their indexed members (no readable property to pick), and plain primitives representing constructor args with no matching readable property on the source type.
 
-The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies. `EventGridEventInput<TData>` in `packages/db-schema/src/models/azure/eventGrid/` is `Pick<EventGridEvent<TData>, "data" | "dataVersion" | "eventType" | "id" | "subject">` — one definition for every publisher and consumer, and it follows the SDK when the SDK moves. Never define a per-feature alias (`FooEvent`, `BarEvent`, …) that just re-declares the same envelope; instantiate the generic.
+The same rule covers **third-party SDK envelopes**: when our code authors or reads a subset of an SDK's own shape, `Pick` from the SDK type instead of restating the fields, and make it generic over the part that actually varies, so one definition serves every publisher and consumer and follows the SDK when the SDK moves. Never define a per-feature alias (`FooEvent`, `BarEvent`, …) that just re-declares the same envelope; instantiate the generic.
 
 ## Discriminant-keyed maps — `as const satisfies` a mapped type
 

@@ -17,7 +17,8 @@ pnpm db:up    # upgrades snapshot metadata to a newer drizzle-kit format, never 
 
 - `db:gen` reads no environment variable and no database: the diff is schema-vs-snapshot, never the live D1 database.
 - **Rename the generated codename folder** descriptively, keeping drizzle's timestamp prefix, then rerun `db:gen` — it must report `No schema changes, nothing to migrate`.
-- Generation surfaces real drift a hand-written chain silently missed — e.g. enum values present in schema + code but never migrated. Verify against the live DB (`select enum_range(null::my_enum)`) before assuming a surprising diff is wrong.
+- Generation surfaces real drift a hand-written chain silently missed. Check a surprising diff against the migrations folder before calling it wrong.
+- **Applying** goes to the `core` D1 database through `pnpm --filter @esposter/db-schema db:migrate`, which uses D1's HTTP API. Local development applies the same folder with `wrangler d1 migrations apply CORE --local`, which `apps/web`'s `predev` runs.
 
 ## One generation at a time
 
@@ -25,42 +26,37 @@ Two `db:gen` runs in parallel descend from the same parent snapshot and fork the
 
 ## Renames — hint them, never hand-patch the drop
 
-A rename is indistinguishable from a delete-plus-create in a schema diff, so drizzle-kit refuses to guess: it exits 2 and prints, per ambiguous entity, the two hint objects it would accept. Answer with `rename` and it emits `ALTER … RENAME`, which is metadata-only and keeps the data. This is strictly better than letting it generate a drop/recreate and rewriting the SQL afterwards — the SQL is right the first time and `snapshot.json` needs no thought.
+A rename is indistinguishable from a delete-plus-create in a schema diff, so drizzle-kit refuses to guess: it exits 2 and prints, per ambiguous entity, the hint it would accept. Answer with `rename` and it writes `ALTER TABLE … RENAME TO` or `ALTER TABLE … RENAME COLUMN`, which keeps the rows. That is better than a drop and a copy rewritten afterwards — the SQL is right the first time and `snapshot.json` needs no thought.
 
 ```bash
 pnpm db:gen --hints-file <path>.json    # a JSON array; --hints '<inline>' blows the Windows 8191-char limit
 ```
 
-Each entry is `{ "type": "rename", "kind": "table" | "enum" | "check" | "index" | "unique", "from": [...], "to": [...] }`. `from` names the **previous** snapshot's identifier, `to` the new one — `[schema, name]` for a table or enum, `[schema, table, name]` for anything living on a table.
+Each entry is `{ "type": "rename", "kind": "table" | "column", "from": [...], "to": [...] }`. `from` names the **previous** snapshot's identifier, `to` the new one.
 
-What costs a cycle if unknown:
-
-- **Resolve in rounds.** A constraint or index on a table that is _also_ being renamed is not prompted until the table's own rename is known, so a second `db:gen` surfaces a fresh batch. Re-run until it writes the migration.
-- **For those second-round entries, `from` takes the _new_ table name** with the _old_ constraint name. The table rename is applied first, so a `from` naming the old table matches nothing and fails with `doesn't match any deleted <kind>`.
-
-Verify the result is what you asked for before renaming the folder — for a pure rename migration, every statement should be an `ALTER`, with no `DROP`, `TRUNCATE` or `DELETE` anywhere:
+Verify the result is what you asked for before renaming the folder. A pure rename migration holds `ALTER TABLE` statements and nothing that drops or deletes rows:
 
 ```bash
-grep -cE "DROP|TRUNCATE|DELETE FROM" <migration>.sql   # expect 0
+grep -cE "DROP TABLE|DELETE FROM" <migration>.sql   # expect 0
 ```
 
-**Any** schema change — not just a rename — invalidates two derived artifacts: `packages/db-mock`'s pre-migrated PGlite snapshot, which fails confusingly later (refreshed in the order `references/schema-registration.md` gives), and the bundles the size tests read, which a schema change grows wherever `@esposter/db-schema` is inlined. The snapshot is built from the schema, not from the migrations, so a plain added column fails every server test with `column "x" of relation "y" does not exist` — and a rename fails them with `relation "x" does not exist`. The bundle-size record that growth moves is regenerated with `pnpm bundle-sizes:gen` only after the rebuild, as `build`'s `references/dist-size.md` sets out.
+## Schema changes rebuild tables
+
+SQLite cannot alter most of a column, so drizzle-kit rebuilds the table for a change to a column or a constraint: `PRAGMA foreign_keys=OFF`, a `__new_` table, an `INSERT … SELECT` copy, `DROP TABLE`, `ALTER TABLE … RENAME TO`, `PRAGMA foreign_keys=ON`. `apps/web/server/db/migrations/core/20261114044134_low_the_stranger/migration.sql` is one.
+
+The bundles the size tests read grow with a schema change wherever `@esposter/db-schema` is inlined. The bundle-size record that growth moves is regenerated with `pnpm bundle-sizes:gen` only after the rebuild, as `build`'s `references/dist-size.md` sets out. `@esposter/db-mock` applies the migration folders on every `createMockDb`, so no snapshot goes stale.
 
 ## Fixing up the generated SQL
 
 Editing the generated **`migration.sql`** by hand is allowed and expected — but only the SQL, and only before it's applied. The migrator's bookkeeping hash is `sha256(migration.sql)`, computed at apply time, so an un-applied `migration.sql` is free to edit; leave `snapshot.json` exactly as generated.
 
-**A backfill runs under the constraint the migration has not replaced yet.** drizzle-kit groups its statements by column, so a column whose CHECK is being relaxed gets its `UPDATE` while the outgoing one is still live — backfilling `NULL` to a `0` sentinel under `… IS NULL OR … >= 1` fails on the first row it was written for. Swap the constraints first, then backfill, then `SET DEFAULT` and `SET NOT NULL`: a CHECK is unknown rather than false on a `NULL`, so the incoming one admits the rows the backfill has yet to reach. Nothing here catches it — the diff is against the snapshot rather than data, and a database with no such row applies the wrong order green, which is every database a test starts from.
+**A backfill runs under the constraint the migration has not replaced yet.** drizzle-kit groups its statements by column, so a column whose CHECK is being relaxed gets its `UPDATE` while the outgoing one is still live — backfilling `NULL` to a `0` sentinel under `… IS NULL OR … >= 1` fails on the first row it was written for. Swap the constraints first, then backfill: a CHECK is unknown rather than false on a `NULL`, so the incoming one admits the rows the backfill has yet to reach. Nothing here catches it — the diff is against the snapshot rather than data, and a database with no such row applies the wrong order green, which is every database a test starts from.
 
-**Destructive diffs → rewrite the SQL to preserve data.** drizzle-kit emits drop/recreate where a data-preserving statement exists; an enum-value rename should be `ALTER TYPE "resource"."fooType" RENAME VALUE 'Bar' TO 'Baz';`, not `DROP TYPE` + `CREATE TYPE`. A value-order-only change generates a text-cast recreate (`SET DATA TYPE text` → `DROP TYPE` → `CREATE TYPE` → cast back). Postgres derives an enum's `ORDER BY`, `MIN`/`MAX` and `<`/`>` from its declared value order, so a recreate that reorders values silently changes those results — it is **not** harmless by default. Leave the recreate as-is only after confirming the enum is compared for equality only (never ordered on) and has no default; otherwise rewrite the SQL to preserve the declared value order.
+**A rebuild copies only the columns its `INSERT … SELECT` names.** A column the copy leaves out loses its data, so read the copy before the migration is applied.
 
 ## A new reference over existing rows
 
 A referencing column that a pre-existing row cannot fill is settled in the migration, never by leaving the reference off: **delete those rows or backfill them with a real parent id**, whichever the domain can justify. An empty sentinel is not available to a foreign key — no row has that id, so the constraint rejects every one of them and the migration fails. Deleting is the cheap answer wherever the row is rebuilt by its own client on next use, and the migration says which it is.
-
-## When drizzle-kit itself crashes
-
-drizzle-kit's JSON parse for json/jsonb column defaults sits outside its try/catch, so a legacy default form in an old snapshot (`'{}'::jsonb`) can crash generation with a parse error. Normalize the offending snapshot's default to the plain form (`'{}'`) and rerun. In normal development this is the only sanctioned `snapshot.json` edit — a parser workaround, not a chain repair.
 
 ## Recovering a forked chain (maintainer-only)
 

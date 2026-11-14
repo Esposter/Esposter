@@ -24,7 +24,7 @@ that reads it (`names-a-dependency-owns.md`), so it is not on the denylist; thos
 
 ## A stored count is `<singular noun>Count`
 
-`commentCount`, `likeCount`, `webhookCount`, DB columns included. Singular, because the suffix already carries the
+`commentCount`, `likeCount`, `mentionCount`, DB columns included. Singular, because the suffix already carries the
 plurality. It names a **field**; `read*Count` names the fetch that answers with a count and `count*` the in-memory
 tally, which are calls.
 
@@ -37,4 +37,4 @@ the accumulator is `accumulator`) or a display title such as `"Sum"`.
 
 ## Component and file names are identifiers the whole app types
 
-`Navigation` never `Nav` — `ResourceBladeNavigation`, `useConfirmBeforeNavigation`, `app/models/shared/NavigationTrailPage.ts`.
+`Navigation` never `Nav` — `ResourceBladeNavigation`, `useConfirmBeforeNavigation`, `apps/web/app/models/shared/NavigationTrailPage.ts`.

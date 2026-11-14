@@ -1,45 +1,48 @@
-# Postgres Schemas and Export Names
+# Table Prefixes and Export Names
 
-Read when adding a table or an enum, choosing where one lives, naming anything drizzle derives from a table, or moving a table to another schema.
+Read when adding a table, choosing the product area it lives in, naming anything drizzle derives from a table, or moving a table to another area.
 
-## Every table lives in its product area's schema
+## Every table lives in its product area's prefix
 
-Nothing is created in `public`. A Postgres schema is a folder: `src/schema/<schema>/` holds `<schema>Schema.ts` (`camelCase.schema("<schema>")`) and that schema's tables, and `src/relations/<schema>/` holds their relation parts. A table joins its schema through the `pgTable` wrapper's `schema` option, and an enum is declared as `<schema>Schema.enum(...)` in the file of the table that declares it.
+SQLite has no schemas, so a product area is a table-name prefix. A folder is the area: `src/schema/<area>/` holds `<area>Schema.ts` (`createDatabaseSchema("<area>")`, `packages/db-schema/src/createDatabaseSchema.ts`) and that area's tables, and `src/relations/<area>/` holds their relation parts. A table joins its area through the `sqliteTable` wrapper's `schema` option, and the wrapper names it `<area>_<table>` in D1 (`message_rooms`). Every core table shares one D1 database, so the prefix keeps each name unique across the folders.
 
-A table belongs to the product area whose docs own it — the area is the unit a reader already knows, and a schema per area is what a DBA sees in `\dn`:
+An enum is not a database object. A TS enum is held on its column through `createEnumColumn(SomeEnum)` (`packages/db-schema/src/services/shared/createEnumColumn.ts`), and its values are stored as text.
 
-| Schema         | What belongs in it                                                   |
+A table belongs to the product area whose docs own it — the area is the unit a reader already knows, and the prefix is what a reader sees in the migration SQL:
+
+| Area           | What belongs in it                                                   |
 | -------------- | -------------------------------------------------------------------- |
 | `auth`         | a model better-auth or one of its plugins writes                     |
 | `social`       | a relationship between two users that no single product owns         |
 | `message`      | esbabbler's rooms and everything scoped to one                       |
 | `post`         | the post feed                                                        |
 | `resource`     | a resource and what hangs off one                                    |
-| `storage`      | what every storage container is charged through                      |
+| `storage`      | what every storage bucket is charged through                         |
 | `achievement`  | achievements and their progress                                      |
 | `notification` | the bell and the devices it reaches                                  |
+| `user`         | a person's own records no other area owns, such as a data export     |
 | `app`          | app-wide machinery no product owns, such as the dock and rate limits |
 
-A new table goes in the schema of the area that owns it; a new area with tables of its own gets a new folder. The table is read as `<schema>.<table>` in SQL, and its DDL name stays the bare camelCase noun (`users`), since the schema already qualifies it.
+A new table goes in the area that owns it; a new area with tables of its own gets a new folder. The table's DDL name is `<area>_<table>` (`auth_users`), so the bare camelCase noun is the `<table>` part, and `schema.test.ts` derives the export from the full name.
 
-## Every name drizzle derives from a table carries its schema
+## Every name drizzle derives from a table carries its area
 
-The export is derived from the DDL name and the schema, never chosen, so it can never collide with a local (`const rooms = …`), a row type or a library's name (livekit's `Room`, the `UserStatus` enum), and every reference says where its table lives:
+The export is derived from the DDL name, never chosen, so it can never collide with a local (`const rooms = …`), a row type or a name another module already exports (the `UserStatus` enum), and every reference says where its table lives:
 
-| Derived from `post.posts`  | Name                      |
-| -------------------------- | ------------------------- |
-| the table                  | `postsInPost`             |
-| its file                   | `postsInPost.ts`          |
-| the row type               | `PostInPost`              |
-| the select schema          | `selectPostInPostSchema`  |
-| the relation part and file | `postsInPostRelation`     |
-| a `with` shape const       | `PostInPostRelations`     |
-| a row type with relations  | `PostInPostWithRelations` |
+| Derived from the table `posts` in `post` | Name                      |
+| ---------------------------------------- | ------------------------- |
+| the table                                | `postsInPost`             |
+| its file                                 | `postsInPost.ts`          |
+| the row type                             | `PostInPost`              |
+| the select schema                        | `selectPostInPostSchema`  |
+| the relation part and file               | `postsInPostRelation`     |
+| a `with` shape const                     | `PostInPostRelations`     |
+| a row type with relations                | `PostInPostWithRelations` |
 
-An enum's export is its DDL name with `Enum` (`roomTypeEnum`), since it shares its name with the TS enum it is built from. `packages/db-schema/src/schema.test.ts` derives the expected export from each table's and enum's own config and fails on any other name, and on anything left in `public`.
+`packages/db-schema/src/schema.test.ts` derives the expected export from each table's own config and fails on any other name, and on a table whose DDL name carries no area prefix.
 
 A relation key is a name we choose (`user`, `sessionsInAuth`), except where better-auth joins on it: its adapter derives the key from the model name, so the relations between `auth` tables are keyed by the export for a join to one row (`usersInAuth`) and by the export plus `s` for a join to many (`accountsInAuths`), and better-auth's model names point at the exports through `apps/web/server/services/auth/authModelOptions.ts`.
 
-## Moving a table or an enum to another schema
+## Moving a table to another area
 
-A move is a rename drizzle-kit cannot tell from a drop and a create, so it is hinted (`references/migrations.md`, "Renames"): one `{ "type": "rename", "kind": "table", "from": ["<old schema>", "<table>"], "to": ["<new schema>", "<table>"] }` per table and the same with `"kind": "enum"` per enum. The migration it writes is `CREATE SCHEMA` for a new schema and `ALTER … SET SCHEMA` for each move — metadata only, every row and constraint kept — and the grep for `DROP|TRUNCATE|DELETE FROM` that closes a rename expects 0.
+A move changes the DDL name's prefix, which drizzle-kit cannot tell from a drop and a create, so it is hinted as a table rename (`references/migrations.md`, "Renames"). The migration it writes is `ALTER TABLE … RENAME TO`, metadata only, with every row and constraint kept, and the grep for `DROP TABLE|DELETE FROM` that closes a rename expects 0.

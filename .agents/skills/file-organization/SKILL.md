@@ -11,7 +11,7 @@ description: Apply when creating, moving, renaming, or organising any file, expo
 - **Publishing a `0.0.0-stage` version by hand, or reading lerna's "Successfully published" as proof a version landed.** The registry makes that placeholder itself and refuses the version, and lerna counts a rejected version as published; the registry's packument is the evidence (`references/npm-lifecycle.md`).
 - **A plugin for one function per file** — its exceptions (`constants.ts`, a schema beside its type, an enum beside its values array, a composable's own options) are a roster that grows with the repo; the models-rule plugin is the `oxlint` skill's Settled line for the same reason.
 - **A rule for duplicate constants or the sole-consumer rule** — both need the whole repo in mind; the ≥2-consumers half already has its test.
-- **Converting `apps/infra/src/azure/constants/` to named exports** — one PascalCase file per constant, each a default export, read that way at hundreds of sites; no rule names default exports either way, the tree is internally consistent, and the swap is dozens of files of churn.
+- **Converting `apps/infra`'s one-constant-per-file folders to named exports** — one PascalCase file per constant, each a default export, read that way at hundreds of sites; no rule names default exports either way, the tree is internally consistent, and the swap is dozens of files of churn.
 
 ## Imports
 

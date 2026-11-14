@@ -32,11 +32,13 @@ Always batch over an array — never loop individual `INSERT`s:
 
 ```ts
 // CORRECT — one INSERT with multiple rows
-await tx
+await ctx.db
   .insert(foos)
   .values(ids.map((id) => ({ id, parentId })))
   .onConflictDoNothing();
 ```
+
+Several statements are one `db.batch([...])`, never a transaction — there is none on D1 (`references/d1-transactions.md`).
 
 ## Insert ... select
 
@@ -44,4 +46,4 @@ await tx
 
 A bare `sql.param(value, column)` is not an SQL chunk, so it cannot stand as a select field; wrap it in a template: sql`${sql.param(value, column)}`.
 
-A D1 statement takes at most `D1_MAX_BOUND_PARAMETERS` bound values, so a multi-row values insert inside a batch splits its rows into statements of `floor(D1_MAX_BOUND_PARAMETERS / columns)` rows each (`apps/web/server/services/db/constants.ts`).
+A D1 statement takes at most `D1_MAX_BOUND_PARAMETERS` bound values, so a multi-row values insert inside a batch splits its rows into statements of `floor(D1_MAX_BOUND_PARAMETERS / columns)` rows each (`apps/web/server/services/db/constants.ts`). A list filter that can outgrow that cap is bound as one JSON array instead (`references/json-arrays.md`).

@@ -14,7 +14,7 @@ description: Apply when writing Zod schemas. Esposter's Zod conventions for sche
 
 ## Deep Dives
 
-- `references/boundary-payloads.md` — when parsing runtime data that crosses a trust boundary: EventGrid data, a queue message, a webhook body, subprocess stdout, a committed config file.
+- `references/boundary-payloads.md` — when parsing runtime data that crosses a trust boundary: a queue message, a webhook body, subprocess stdout, a committed config file.
 - `references/isolated-declarations.md` — when exporting a schema const from a `packages/*` library, or a consumer's `...someSchema.shape` spread breaks against the published package.
 - `references/generic-factories.md` — when a schema needs a type parameter, forms a discriminated union, wraps many payloads in one envelope, or shares a field with only some union members.
 - `references/string-normalization.md` — when a string is trimmed or lowercased before validation: the two shared helpers and the hand-written chain.
@@ -54,11 +54,11 @@ Zod 4's top-level builders (`z.email()`, `z.int()`, `z.strictObject`), `z.enum(M
 
 ## Validate, Never Cast
 
-Runtime data crossing any trust boundary (EventGrid `event.data`, queue messages, webhook bodies, subprocess stdout, committed config files) gets a co-located Zod schema parsed at the edge — never `x as unknown as SomeType` or hand-rolled guards + casts. Full rules: `references/boundary-payloads.md`.
+Runtime data crossing any trust boundary (queue messages, webhook bodies, subprocess stdout, committed config files) gets a co-located Zod schema parsed at the edge — never `x as unknown as SomeType` or hand-rolled guards + casts. Full rules: `references/boundary-payloads.md`.
 
 ## Persisted Data — Latest Shape Only
 
-Schemas for persisted client-authoritative data (save blobs, localStorage state) and Azure Table entities model **only the latest shape** — no legacy union arms, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `openspec/specs/architecture/persisted-data-latest-shape-only/design.md`.
+Schemas for persisted client-authoritative data (save blobs, localStorage state) and D1 rows model **only the latest shape** — no union arms for an older shape, no `.default()`s covering fields older data lacks, no migration code, no read-side inference of a field a pre-change row lacks. A parse failure resets the data to a fresh default; the reset is the migration, and the old shape is deleted in the same commit. Standard: `openspec/specs/architecture/persisted-data-latest-shape-only/design.md`.
 
 ## Tightest Possible Constraints — `references/numeric-constraints.md`
 

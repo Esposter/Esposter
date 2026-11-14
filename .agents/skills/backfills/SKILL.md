@@ -5,7 +5,7 @@ description: Apply when a change to a persisted shape — a content blob's schem
 
 # Backfills
 
-A schema change that stored data no longer satisfies is finished only when the stored data satisfies it. The latest-shape-only standard (`openspec/specs/architecture/persisted-data-latest-shape-only/design.md`) keeps every read path to one shape, so the data is brought to that shape once, from outside the app, rather than tolerated inside it.
+A schema change is finished only when the stored data it affects satisfies the new schema. The latest-shape-only standard (`openspec/specs/architecture/persisted-data-latest-shape-only/design.md`) keeps every read path to one shape, so the data is brought to that shape once, from outside the app, rather than tolerated inside it.
 
 ## Settled — do not re-propose
 
@@ -13,7 +13,7 @@ A schema change that stored data no longer satisfies is finished only when the s
 - **Leaving the stored data broken** because the standard "accepts" a reset. A user's content and saves are theirs; the reset is for state nothing can repair.
 - **Holding the backfill, or the schema, for compatibility with the code still deployed.** Prod is backfilled as soon as dev is, and the old code reads the new shape badly until the change ships — an accepted tradeoff for code that only ever describes one clean shape, never a reason for a transitional schema or a two-phase rollout.
 - **Asking first.** The backfill is part of the change that needs it. The session runs it on dev and on prod itself, with no approval step.
-- **Keeping a default "because a writer omits the field" without proof.** A default on an Azure entity stays only where a current writer produces the absence, and that is read off the stored rows, never recalled: scan the table for the rows lacking the field and the newest one's timestamp. A newest-missing row older than the field's introduction is legacy, so it is backfilled and the default goes; a recent one names a writer that omits it, and that writer is fixed before anything else (`references/persisted-stores.md` lists the stores; the Table's own behaviour is in `openspec/specs/architecture/serialization/azure-table-path/design.md`).
+- **Keeping a default "because a writer omits the field" without proof.** A default on a stored row stays only where a current writer produces the absence, and that is read off the stored rows, never recalled: scan the rows lacking the field and the newest one's `createdAt`. A newest-missing row older than the field's introduction predates it, so it is backfilled and the default goes; a recent one names a writer that omits it, and that writer is fixed before anything else (`references/persisted-stores.md` lists the stores).
 - **Committing the backfill.** It is a scratchpad script, never a file in the repo, a Nitro plugin or a migration — so the tree carries no trace of it, and no dead code to delete later.
 
 ## When one is owed
@@ -26,7 +26,7 @@ A field _removed_ from a plain `z.object` schema is not one: Zod's object parse 
 
 ## Where persisted JSON lives
 
-Which blob holds a schema's stored data, and the writer that keeps it, is `references/persisted-stores.md`.
+Which R2 bucket holds a schema's stored data, and the writer that keeps it, is `references/persisted-stores.md`.
 
 ## The run
 

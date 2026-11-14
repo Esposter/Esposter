@@ -19,7 +19,7 @@ Nothing in this repository keeps an older version of itself working. The argumen
 - **Only per-unit work no tree-wide commit can do gets a ledger** (the `sweeps` skill) — judgement a unit's own evidence settles, never the old shape waiting to be removed.
 - **The owners of the narrower cases:**
   - when a name is wrong — corrected in place, never aliased (the `naming` skill);
-  - when a persisted client shape or Azure Table entity changes — the latest shape only (the `zod` skill, "Persisted Data — Latest Shape Only");
+  - when a persisted client shape or a D1 row changes — the latest shape only (the `zod` skill, "Persisted Data — Latest Shape Only");
   - when a schema change leaves stored data behind — backfilled, never held for the deployed code (the `backfills` skill);
   - when a deployed identity is wrong — renamed through a preview (the `pulumi-infra` skill, `references/migrations.md`);
   - when a published package's export is renamed or removed — a `refactor`, never a major (the `package-scripts` skill).

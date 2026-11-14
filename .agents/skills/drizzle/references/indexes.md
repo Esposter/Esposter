@@ -1,6 +1,6 @@
 # Indexes
 
-Read when a query's filter or order needs an index, a count runs on a path every render pays for, or an index is added to a populated table. Constraint and index names are `references/table-constraints.md`.
+Read when a query's filter or order needs an index, or a count runs on a path every render pays for. Constraint and index names are `references/table-constraints.md`.
 
 ## A count on a render path gets its own partial index
 
@@ -36,16 +36,9 @@ the whole table. The rule, applied to every table a read touches:
   `usersToRooms_roomId_index` for "this room's members".
 - **Order the trailing columns by the read's `ORDER BY`**, with the window's partition key first, so the planner needs no sort:
   `usersToRoomRoles_roomId_userId_index` serves the top-role query's `row_number() over (partition by userId ...)`.
-- **A foreign key gets no index in Postgres.** Index every foreign key whose parent's delete cascades through it, or whose
+- **A foreign key gets no index of its own, and SQLite does not add one.** Index every foreign key whose parent's delete cascades through it, or whose
   children a read filters by: `posts_userId_ranking_index` serves an author's feed and the cascade of a user's deletion.
 - **A composite that starts with a column another index already leads with is redundant.** Replace the single-column
   index rather than keep both; the composite answers its filter.
 
 Adding a query means checking its filter and its order against the index list of each table it reads, in the same change.
-
-## Index creation on a populated table
-
-This repository's migrations run before any production data exists, so the generated `CREATE INDEX` is plain. Once a table
-holds production rows, a plain `CREATE INDEX` takes a write lock for the length of the build, and the migration for that
-index uses `CREATE INDEX CONCURRENTLY` (in a migration with no transaction) instead. Revisit this rule at the first
-production migration.

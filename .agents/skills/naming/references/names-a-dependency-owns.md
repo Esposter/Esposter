@@ -34,17 +34,16 @@ our own key sitting beside a foreign one is named the way any other identifier i
   type, so they are its names, not ours. The tell is a file whose comment says to keep it in sync with the
   dependency's source — a declaration file restating a dependency's interface, or any object literal a dependency
   reads, is out of scope for a naming pass entirely.
-- **A method their interface declares.** azure-mock's `byPage` on `PagedAsyncIterableIterator` is the Azure
-  SDK's paging contract rather than a lookup we named, so the `<key><value>Map` rule does not reach it.
+- **A method their interface declares.** `batch` on the D1 handle is drizzle's method name, so a call site keeps
+  `db.batch(...)` rather than a local alias for it, and the `<key><value>Map` rule does not reach it.
 - **A destructure their documentation spells.** `ctx` is the name for a tRPC context value, in source and tests
   alike, because it mirrors tRPC's own `{ ctx }`. Expanding one file's to `context` desyncs that file from every
   call site.
 - **A truncation they authored.** The no-abbreviations rule expands `Nav` to `Navigation` because that name is
   ours; a dependency's own truncation — Vue's `VNode` — is its name to keep.
-- **A verb on a thin wrapper.** `listBlobNames` and `listRoomProfileImageBlobNames` sit on
-  `@azure/storage-blob`'s `listBlobsFlat` and are read beside that SDK's documentation. The exemption is the
-  operation's verb alone, and only while the dependency's call is the whole body — anything deriving an answer
-  from a listing is a `read*` like every other fetch.
+- **A verb on a thin wrapper.** `listBlobItems` pages R2's `list` on the bucket under the same verb, and is read beside
+  R2's documentation. The exemption is the operation's verb alone, and only while the dependency's call is the whole
+  body — anything deriving an answer from a listing is a `read*` like every other fetch.
 - **A value off their wire.** A provider's error code read off a redirect query, or a field of a third-party
   payload we accept or emit verbatim, keeps that provider's spelling, `snake_case` included. Type the map's key
   as `string` when the library exports no union for it — most don't, and hand-copying their literals into a union

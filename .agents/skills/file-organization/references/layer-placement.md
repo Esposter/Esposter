@@ -22,7 +22,7 @@ ordinary service function (`createDefaultSheetSettings`).
 
 **External library extensions go in `services/`** — helpers that extend or wrap third-party libraries
 (`services/<lib>/doThing.ts`), not `util/`. A helper over a language global rather than a library is a `util/` one
-(`util/date/formatDate.ts`).
+(`apps/web/shared/util/date/formatDate.ts`).
 
 ## `util/` — truly universal utilities only
 
