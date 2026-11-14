@@ -1,21 +1,19 @@
 import { CloudflareEnvironment } from "@esposter/db-schema";
-import { sharedEnvironmentVariablesShape } from "@esposter/shared";
 import { z } from "zod";
 
+// Every variable this Worker reads. A secret is marked by `.meta({ secret: true })`, and a deploy uploads each marked one
+// from Pulumi ESC as a Worker secret; every other one is a wrangler var in wrangler.jsonc
 export interface FunctionsEnvironmentVariables {
-  AZURE_SEARCH_BASE_URL: string;
-  AZURE_STORAGE_ACCOUNT_CONNECTION_STRING: string;
   BASE_URL: string;
   // The environment this Worker runs in, which names its queues: the dispatcher finds a batch's job by it
   CLOUDFLARE_ENVIRONMENT: CloudflareEnvironment;
-  DATABASE_URL: string;
   VAPID_PRIVATE_KEY: string;
   VAPID_PUBLIC_KEY: string;
 }
 
-// Every variable this app declares is one the web app declares with the same validator, so the schema is the shared shape
-// plus the one this Worker alone reads
 export const functionsEnvironmentVariablesSchema = z.object({
-  ...sharedEnvironmentVariablesShape,
+  BASE_URL: z.url(),
   CLOUDFLARE_ENVIRONMENT: z.enum(CloudflareEnvironment),
+  VAPID_PRIVATE_KEY: z.string().min(1).meta({ secret: true }),
+  VAPID_PUBLIC_KEY: z.string().min(1).meta({ secret: true }),
 }) satisfies z.ZodType<FunctionsEnvironmentVariables>;

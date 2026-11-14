@@ -13,6 +13,18 @@ describe("webEnvironmentVariablesSchema", () => {
     expect(names.toSorted()).toStrictEqual(Object.keys(webEnvironmentVariablesSchema.shape).toSorted());
   });
 
+  test("uploads as Worker secrets exactly the variables it marks secret", () => {
+    expect.hasAssertions();
+
+    const workerSecrets: { web: string[] } = JSON.parse(
+      readFileSync(join(import.meta.dirname, "../../../../../.github/worker-secrets.json"), "utf8"),
+    );
+    const secretNames = Object.entries(webEnvironmentVariablesSchema.shape)
+      .filter(([, schema]) => schema.meta()?.secret === true)
+      .map(([name]) => name);
+    expect(secretNames.toSorted()).toStrictEqual(workerSecrets.web.toSorted());
+  });
+
   test("accepts the mock environment every test runs against", () => {
     expect.hasAssertions();
     expect(webEnvironmentVariablesSchema.safeParse(MOCK_ENVIRONMENT_VARIABLES).success).toBe(true);

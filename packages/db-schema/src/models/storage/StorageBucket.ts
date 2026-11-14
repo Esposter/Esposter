@@ -4,7 +4,6 @@ import { z } from "zod";
 // also its R2 bucket's name
 export const StorageBucket = {
   ClickerAssets: "clicker-assets",
-  DeadLetter: "deadletter",
   GenshinAssets: "genshin-assets",
   MessageAssets: "message-assets",
   PublicAppAssets: "public-app-assets",

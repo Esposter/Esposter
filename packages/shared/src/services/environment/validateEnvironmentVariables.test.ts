@@ -12,6 +12,14 @@ describe(validateEnvironmentVariables, () => {
     }).not.toThrow();
   });
 
+  test("returns the parsed environment it accepted", () => {
+    expect.hasAssertions();
+    expect(validateEnvironmentVariables(schema, { SECRET: "a", URL: "https://example.com" })).toStrictEqual({
+      SECRET: "a",
+      URL: "https://example.com",
+    });
+  });
+
   test("names every variable that fails in one error", () => {
     expect.hasAssertions();
     expect(() => {

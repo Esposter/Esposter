@@ -11,4 +11,16 @@ describe("the Functions environment", () => {
     const names = Object.keys(parseEnv(readFileSync(join(import.meta.dirname, "../../../.env.example"), "utf8")));
     expect(names.toSorted()).toStrictEqual(Object.keys(functionsEnvironmentVariablesSchema.shape).toSorted());
   });
+
+  test("uploads as Worker secrets exactly the variables it marks secret", () => {
+    expect.hasAssertions();
+
+    const workerSecrets: { functions: string[] } = JSON.parse(
+      readFileSync(join(import.meta.dirname, "../../../../../.github/worker-secrets.json"), "utf8"),
+    );
+    const secretNames = Object.entries(functionsEnvironmentVariablesSchema.shape)
+      .filter(([, schema]) => schema.meta()?.secret === true)
+      .map(([name]) => name);
+    expect(secretNames.toSorted()).toStrictEqual(workerSecrets.functions.toSorted());
+  });
 });
