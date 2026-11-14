@@ -1,5 +1,5 @@
-import type { StreamTable, StreamTableEntityMap } from "@esposter/db-schema";
 import type { StreamTableClient } from "@esposter/db";
+import type { StreamTable, StreamTableEntityMap } from "@esposter/db-schema";
 
 import { SEED_DATE, SEED_MESSAGE_EPOCH_NANOSECONDS } from "#src/services/devSeed/constants";
 import { addMessageMetadata, serializeEntity } from "@esposter/db";

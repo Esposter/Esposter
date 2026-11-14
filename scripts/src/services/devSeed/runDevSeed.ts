@@ -1,31 +1,22 @@
-import type { SeedRefusal } from "#src/models/devSeed/SeedRefusal";
-
-import { MIGRATIONS_FOLDER } from "#src/services/devSeed/constants";
-import { createSeedDatabase } from "#src/services/devSeed/createSeedDatabase";
-import { getDatabaseName } from "#src/services/devSeed/getDatabaseName";
-import { getSeedRefusal } from "#src/services/devSeed/getSeedRefusal";
+import {
+  CORE_MIGRATIONS_FOLDER,
+  DEV_SEED_PERSIST_ROOT,
+  STREAMS_MIGRATIONS_FOLDER,
+} from "#src/services/devSeed/constants";
 import { seedDevDataset } from "#src/services/devSeed/seedDevDataset";
-import { getTableClient } from "@esposter/db";
-import { StreamTable, relations } from "@esposter/db-schema";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import postgres from "postgres";
+import { StreamTableClient } from "@esposter/db";
+import { createMockDatabase } from "@esposter/db-mock";
+import { StreamTable } from "@esposter/db-schema";
+import { drizzle } from "drizzle-orm/d1";
 
-// Gates the run's two targets before anything is created, then creates the seed's database, migrates it and seeds it.
-// Both stores are the run's own: the database the address names and the storage connection string the run started
-export const runDevSeed = async (
-  databaseUrl: string,
-  storageConnectionString: string,
-): Promise<SeedRefusal | undefined> => {
-  const refusal = getSeedRefusal(databaseUrl, storageConnectionString);
-  if (refusal) return refusal;
-  const databaseName = getDatabaseName(databaseUrl);
-  await createSeedDatabase(databaseUrl, databaseName);
-  const client = postgres(databaseUrl);
-  const db = drizzle({ client, relations });
-  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
-  const messageClient = await getTableClient(storageConnectionString, StreamTable.Messages);
-  const seedRefusal = await seedDevDataset({ databaseUrl, db, messageClient, storageConnectionString });
-  await client.end();
-  return seedRefusal;
+// Migrates both local databases the dev server reads, then writes the dataset into them. Nothing here reaches a remote
+// Database, since the bindings are Miniflare's local D1 files, so there is no address to gate
+export const runDevSeed = async (): Promise<void> => {
+  const { db, dispose, streamsDb } = await createMockDatabase(
+    CORE_MIGRATIONS_FOLDER,
+    STREAMS_MIGRATIONS_FOLDER,
+    DEV_SEED_PERSIST_ROOT,
+  );
+  await seedDevDataset({ db, messageClient: new StreamTableClient(drizzle(streamsDb), StreamTable.Messages) });
+  await dispose();
 };
