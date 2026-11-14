@@ -8,7 +8,11 @@ import { z } from "zod";
 // and a thread follow name it by. Dates are ISO strings on the wire, so they are read back into dates
 export const roomMessageSchema = z.object({
   appUserId: z.string().nullable(),
+  // The webhook identity's image as it was when it sent, empty for every other message
+  appUserImage: z.string(),
   createdAt: z.coerce.date(),
+  // Set only on the tombstone a delete leaves, which a client keeps by id in place of the message it replaced
+  deletedAt: z.coerce.date().nullable(),
   files: z.array(fileEntitySchema),
   id: z.number().int().positive(),
   isEdited: z.boolean(),

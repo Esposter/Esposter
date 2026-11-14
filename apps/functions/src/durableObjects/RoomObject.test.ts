@@ -3,6 +3,7 @@ import type { Mock } from "vitest";
 
 import { createMockDb } from "@esposter/db-mock";
 import {
+  appUsersInMessage,
   MessageType,
   roomRolesInMessage,
   roomsInMessage,
@@ -128,6 +129,36 @@ describe(RoomObject, () => {
     expect(readFrames(bystanderSocket)).toStrictEqual([
       { data: JSON.parse(JSON.stringify([message])), type: "createMessage" },
     ]);
+  });
+
+  test("a webhook message keeps the image its app user had when it sent", async () => {
+    expect.hasAssertions();
+
+    const appUserId = crypto.randomUUID();
+    await mockDatabase.db
+      .insert(appUsersInMessage)
+      .values({ id: appUserId, image: "https://example.com/hook.png", name: "hook" });
+    const { object } = createRoomObject();
+    const message = await object.createWebhookMessage({ appUserId, message: "from a hook", senderName: "hook" });
+
+    expect(message.appUserImage).toBe("https://example.com/hook.png");
+    expect(object.readMessages({ limit: 10 })).toStrictEqual([message]);
+  });
+
+  test("a viewer of the room is sent the tombstone of each message an erase removes, and keeps it as deleted", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createRoomObject();
+    const viewerSocket = createSocket();
+    state.ctx.acceptWebSocket(viewerSocket, [`user:${otherUserId}`, `device:${otherDeviceId}`]);
+    const message = await sendMessage(object, "erased soon");
+
+    await object.deleteUserMessages(userId);
+
+    expect(readFrames(viewerSocket).at(-1)).toStrictEqual({
+      data: expect.objectContaining({ deletedAt: new Date(0).toISOString(), id: message.id, message: "" }),
+      type: "deleteMessage",
+    });
   });
 
   test("a socket that reconnects with the last id it heard is replayed the messages after it, oldest first", async () => {

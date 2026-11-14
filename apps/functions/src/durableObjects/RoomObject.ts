@@ -35,6 +35,7 @@ import { applyPollVote } from "#src/services/room/applyPollVote";
 import { getRoomSearchConditions } from "#src/services/room/getRoomSearchConditions";
 import { getMessageCreationRejection } from "@esposter/db";
 import {
+  appUsersInMessage,
   MessageType,
   MESSAGE_BATCH_MAX_LENGTH,
   relations,
@@ -45,8 +46,9 @@ import { chunk, getResultAsync, getSearchExpression, noop, NotInitializedError }
 import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
-// The columns a message is read by. Its search text and its tombstone time stay in the row: nothing a reader is sent
-const { deletedAt: _deletedAt, filenames: _filenames, ...messageColumns } = getTableColumns(messagesInRoom);
+// The columns a message is read by. Its search text stays in the row: nothing a reader is sent. Its tombstone time is sent
+// only on the tombstone a delete leaves, since every reader filters deleted rows out
+const { filenames: _filenames, ...messageColumns } = getTableColumns(messagesInRoom);
 
 type NewMessage = typeof messagesInRoom.$inferInsert;
 type SendOptions = { excludeTag?: string };
@@ -55,6 +57,7 @@ type NotifyUser = (user: DurableObjectStub<UserObject>) => unknown;
 // The fields a message is written from, whichever kind of sender wrote it
 interface MessageFields {
   appUserId?: string;
+  appUserImage?: string;
   files?: FileEntity[];
   isForward?: boolean;
   linkPreviewResponse?: LinkPreviewResponse | null;
@@ -71,6 +74,7 @@ const getFilenames = (files: FileEntity[]): string => files.map(({ filename }) =
 const getMessageRow = (
   {
     appUserId,
+    appUserImage = "",
     files = [],
     isForward = false,
     linkPreviewResponse = null,
@@ -84,6 +88,7 @@ const getMessageRow = (
   now: Date,
 ): NewMessage => ({
   appUserId: appUserId ?? null,
+  appUserImage,
   createdAt: now,
   files,
   filenames: getFilenames(files),
@@ -264,9 +269,34 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   async createWebhookMessage(input: CreateWebhookRoomMessageInput): Promise<RoomMessage> {
     const now = new Date();
-    const message = this.insertMessage(getMessageRow({ ...input, type: MessageType.Webhook }, now), now, {});
+    // The message keeps the image its webhook identity has now, so every reader names the sender without the app user's row
+    const appUserImage = await this.readAppUserImage(input.appUserId);
+    const message = this.insertMessage(
+      getMessageRow({ ...input, appUserImage, type: MessageType.Webhook }, now),
+      now,
+      {},
+    );
     await this.armAlarm();
     return message;
+  }
+
+  // A read that faults leaves the message without an image, never without the message: the fault is logged, and the write
+  // goes on
+  private async readAppUserImage(appUserId: string): Promise<string> {
+    const appUser = await getResultAsync(async () =>
+      this.core
+        .select({ image: appUsersInMessage.image })
+        .from(appUsersInMessage)
+        .where(eq(appUsersInMessage.id, appUserId))
+        .get(),
+    );
+    return appUser.match(
+      (row) => row?.image || "",
+      (error) => {
+        console.error(error);
+        return "";
+      },
+    );
   }
 
   updateMessage({ id, message }: { id: number; message: string }, actor: RoomActor): RoomMessage | null {
@@ -506,13 +536,15 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   private async tombstoneMessages(messages: RoomMessage[], sendOptions: SendOptions): Promise<void> {
     const now = new Date();
     for (const message of messages) {
-      this.db
+      // The tombstone is what every viewer is sent, so a client replaces the message it holds with the row as it now is
+      const tombstone = this.db
         .update(messagesInRoom)
         .set({ deletedAt: now, filenames: "", files: [], linkPreviewResponse: null, message: "" })
         .where(eq(messagesInRoom.id, message.id))
-        .run();
+        .returning(messageColumns)
+        .get();
       this.db.delete(messageEmojisInRoom).where(eq(messageEmojisInRoom.messageId, message.id)).run();
-      this.broadcast({ data: { id: message.id }, type: "deleteMessage" }, sendOptions);
+      if (tombstone) this.broadcast({ data: tombstone, type: "deleteMessage" }, sendOptions);
     }
     await Promise.all(
       messages.flatMap(({ id, userId }) =>

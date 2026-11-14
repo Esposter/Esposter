@@ -20,10 +20,8 @@ const createMessageEventSchema = z.object({
   type: z.literal("createMessage"),
 });
 const createTypingEventSchema = z.object({ data: typingSchema, type: z.literal("createTyping") });
-const deleteMessageEventSchema = z.object({
-  data: roomMessageSchema.pick({ id: true }),
-  type: z.literal("deleteMessage"),
-});
+// A delete carries the tombstone the object left, with its deletedAt set, so a client keeps the message by id as deleted
+const deleteMessageEventSchema = z.object({ data: roomMessageSchema, type: z.literal("deleteMessage") });
 // A message update carries the whole message as the object now holds it, so a client replaces it by id
 const updateMessageEventSchema = z.object({ data: roomMessageSchema, type: z.literal("updateMessage") });
 // A reaction is one row, and its update carries the whole row, so a client replaces the reaction it holds by its key

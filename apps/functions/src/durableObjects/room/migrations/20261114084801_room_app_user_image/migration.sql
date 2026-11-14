@@ -1,0 +1,1 @@
+ALTER TABLE `messages` ADD `appUserImage` text DEFAULT '' NOT NULL;

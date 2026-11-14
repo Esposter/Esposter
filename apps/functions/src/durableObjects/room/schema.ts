@@ -10,6 +10,8 @@ import { index, integer, primaryKey, sqliteTable, text } from "drizzle-orm/sqlit
 // has no `userId`; its `appUserId` names the webhook identity that sent it
 export const messagesInRoom = sqliteTable("messages", {
   appUserId: text(),
+  // The image the webhook identity had when it sent, copied in so a read names the sender without the app user's row
+  appUserImage: text().notNull().default(""),
   createdAt: integer({ mode: "timestamp_ms" }).notNull(),
   deletedAt: integer({ mode: "timestamp_ms" }),
   filenames: text().notNull().default(""),
