@@ -37,6 +37,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
   let microphoneProcessor: MicrophoneProcessor | undefined;
   let pushToTalkReleaseTimeoutId: number | undefined;
   let videoBackgroundTransformer: RealtimeKitVideoBackgroundTransformer | undefined;
+  const { executeMutation: executeRejoinMutation } = useMutation();
   const { executeMutation: executeSetVirtualBackgroundMutation } = useMutation();
   const mediaStore = useMediaStore();
   const { setLocalScreenShareStream, setRemoteScreenShareStream, setRemoteVideoStream } = mediaStore;
@@ -201,9 +202,11 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     meeting.self.on("roomJoined", () => {
       connectionState.value = ConnectionState.Connected;
     });
-    meeting.self.on("roomLeft", () => {
+    meeting.self.on("roomLeft", ({ state }) => {
       connectionState.value = ConnectionState.Disconnected;
-      onDisconnected();
+      // The server's kick is not the call ending: a moderator's kick ends the call through its admin action, and a revoke's
+      // Kick is followed by the token to rejoin with, so the call is not left here
+      if (state !== "kicked") onDisconnected();
     });
     meeting.meta.on("socketConnectionUpdate", ({ state }) => {
       connectionState.value = SocketConnectionStateMap[state];
@@ -379,6 +382,25 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     // Leaving releases the local tracks and the media handler, so it is the last step
     await meeting?.leave();
   };
+  // A revoke that narrows the connection replaces it, and its user joins the meeting again with the token it was handed.
+  // The devices carry across, the microphone only where the new preset still allows it, and the camera comes back on if
+  // It was on. A screen share ends with the connection it was shared on, since the browser's picker has to be answered
+  // Afresh. Queued under one key, since each rejoin replaces the meeting the next one reads: a second revoke's token
+  // Joins after the first meeting is left, rather than being dropped while that meeting is still being replaced
+  const rejoin = getSynchronizedFunction((authToken: string, canPublishMicrophone: boolean) =>
+    executeRejoinMutation(
+      async () => {
+        const meeting = activeMeeting;
+        const handler = disconnectHandler;
+        if (!meeting || !handler) return;
+        const isCameraEnabled = meeting.self.videoEnabled;
+        await connect(authToken, handler, canPublishMicrophone && meeting.self.audioEnabled);
+        if (isCameraEnabled) await setCamera(true);
+        setLocalScreenShare(false, {});
+      },
+      { key: "rejoin", onError: console.error },
+    ),
+  );
   watch(
     () => userSettingsStore.userSettings?.speakerVolumePercentage,
     () => {
@@ -414,6 +436,7 @@ export const useRealtimeStore = defineStore("message/room/realtime", () => {
     connectionState,
     disconnect,
     isAudioPlaybackBlocked,
+    rejoin,
     setActiveDevice,
     setCamera,
     setMicrophone,

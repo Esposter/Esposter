@@ -7,6 +7,7 @@ import { useAlertStore } from "@/store/alert";
 import { useMediaStore } from "@/store/message/room/call/media";
 import { useRealtimeStore } from "@/store/message/room/realtime";
 import { useCallBackgroundStore } from "@/store/message/user/settings/callBackground";
+import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useRealtimeStore, () => {
@@ -183,6 +184,73 @@ describe(useRealtimeStore, () => {
 
       expect(init).toHaveBeenCalledWith(expect.objectContaining({ authToken: "authToken" }));
       expect(meeting.self.enableAudio).toHaveBeenCalledTimes(isMicrophoneEnabled ? 1 : 0);
+    },
+  );
+
+  // A revoke that narrows the connection kicks it, and the kick reaches the client as a leave of its meeting. That leave
+  // Is not the call ending, so the disconnect handler stays in place for the rejoin that follows with the new token
+  test("a kick from the meeting does not end the call, so the rejoin that follows still has it to rejoin", async () => {
+    expect.hasAssertions();
+
+    const first = createMeeting();
+    const second = createMeeting();
+    const init = vi
+      .spyOn(RealtimeKitClient, "init")
+      .mockResolvedValueOnce(first.meeting as unknown as RealtimeKitClient)
+      .mockResolvedValueOnce(second.meeting as unknown as RealtimeKitClient);
+    const realtimeStore = useRealtimeStore();
+    const { connect, rejoin } = realtimeStore;
+    const disconnectHandler = vi.fn<() => Promise<void>>();
+    await connect("authToken", disconnectHandler, false);
+
+    first.meeting.self.emit("roomLeft", { state: "kicked" });
+    rejoin("rejoinToken", false);
+    await waitForSynchronizedFunctions();
+
+    expect(disconnectHandler).not.toHaveBeenCalled();
+    expect(init).toHaveBeenLastCalledWith(expect.objectContaining({ authToken: "rejoinToken" }));
+  });
+
+  test("a lost connection still ends the call", async () => {
+    expect.hasAssertions();
+
+    const { meeting } = createMeeting();
+    useMeeting(meeting);
+    const realtimeStore = useRealtimeStore();
+    const { connect } = realtimeStore;
+    const disconnectHandler = vi.fn<() => Promise<void>>();
+    await connect("authToken", disconnectHandler, false);
+
+    meeting.self.emit("roomLeft", { state: "disconnected" });
+    await waitForSynchronizedFunctions();
+
+    expect(disconnectHandler).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  // The camera was on before the revoke, so it comes back on. The microphone comes back only where the new preset still
+  // Allows it, since a revoke that took it leaves the new connection unable to publish it
+  test.each([true, false])(
+    "rejoins with the new token, the camera back on and the microphone on only where the new preset allows it, %s",
+    async (canPublishMicrophone) => {
+      expect.hasAssertions();
+
+      const first = createMeeting();
+      const second = createMeeting();
+      vi.spyOn(RealtimeKitClient, "init")
+        .mockResolvedValueOnce(first.meeting as unknown as RealtimeKitClient)
+        .mockResolvedValueOnce(second.meeting as unknown as RealtimeKitClient);
+      const realtimeStore = useRealtimeStore();
+      const { connect, rejoin, setCamera } = realtimeStore;
+      await connect("authToken", vi.fn<() => Promise<void>>(), true);
+      Object.assign(first.meeting.self, { audioEnabled: true });
+      await setCamera(true);
+
+      rejoin("rejoinToken", canPublishMicrophone);
+      await waitForSynchronizedFunctions();
+
+      expect(first.meeting.leave).toHaveBeenCalledExactlyOnceWith();
+      expect(second.meeting.self.enableAudio).toHaveBeenCalledTimes(canPublishMicrophone ? 1 : 0);
+      expect(second.meeting.self.enableVideo).toHaveBeenCalledExactlyOnceWith();
     },
   );
 });
