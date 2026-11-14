@@ -25,7 +25,7 @@ stateDiagram-v2
 
 Blocking is unilateral, but a block in either direction prevents friend requests and excludes the user from `searchUsers` results. Self-relationships are rejected by database CHECK constraints, not just router validation.
 
-On the client, the friend subscriptions read the friends and requests once they have started, and a component's read issued before it is superseded by that one. The friends, requests and blocked-user reads each replay the writes that land while they are in flight over their answers (`apps/web/app/composables/shared/useReadingPushes.ts`, which merges them with `apps/web/app/services/shared/mergeSnapshot.ts`), so a response taken before an accept does not write the new friend back out, and one taken before an unblock does not restore the unblocked user. On the client, every transition out of `Pending` is the same edit: drop the requests the app user shares with one other party. `readFriendRequests` filters on the app user and `onSendFriendRequest` yields nothing else, so the loaded list only ever holds the app user's own requests — which means naming the **other** party identifies the pair on its own. Accepting, declining and blocking therefore all run one removal in `store/message/user/friendRequest.ts`, and none of them consults the session: reading the app user's id back out to re-confirm what the list already guarantees would silently do nothing while the session ref is still resolving, leaving an answered request on screen until a reload.
+On the client, the friend events arrive on the user socket and are handled through the connection store's `onUserEvent`, and the friends and requests are read once those handlers are registered, so a component's read issued before it is superseded by that one. The friends, requests and blocked-user reads each replay the writes that land while they are in flight over their answers (`apps/web/app/composables/shared/useReadingPushes.ts`, which merges them with `apps/web/app/services/shared/mergeSnapshot.ts`), so a response taken before an accept does not write the new friend back out, and one taken before an unblock does not restore the unblocked user. On the client, every transition out of `Pending` is the same edit: drop the requests the app user shares with one other party. `readFriendRequests` filters on the app user, and a `sendFriendRequest` event reaches a person's sockets only for a request they are a party to, so the loaded list only ever holds the app user's own requests — which means naming the **other** party identifies the pair on its own. Accepting, declining and blocking therefore all run one removal in `store/message/user/friendRequest.ts`, and none of them consults the session: reading the app user's id back out to re-confirm what the list already guarantees would silently do nothing while the session ref is still resolving, leaving an answered request on screen until a reload.
 
 The **New Message** dialog lists accepted friends; selecting one or more and confirming calls `createDirectMessage`, which finds or creates the DM room. Idempotency comes from `rooms.participantKey` — the sorted participant ids joined into one string with a unique index — so two users always share exactly one DM room. Group DMs have no size cap of their own — `createDirectMessageInputSchema` bounds the participant list only by the shared `MAX_READ_LIMIT`, and the router's own check is that every participant is an accepted friend — the creator is deduplicated out of the target list first, so naming yourself is a no-op and naming only yourself is the one rejection. They show a generated name ("You, Alice, Bob") unless the creator sets one, and 1:1 DM names are derived at display time from the other participant so they never go stale. Hovering a DM row reveals a close action that soft-hides it (`usersToRooms.isHidden = true`) without deleting the thread.
 
@@ -54,17 +54,18 @@ DMs are invisible to non-participants: invite links are rejected for `RoomType.D
 
 ## Key files
 
-| File                                                             | Role                                                    |
-| ---------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts` | Pending-request table                                   |
-| `packages/db-schema/src/schema/social/friendsInSocial.ts`        | Accepted-friendship table                               |
-| `packages/db-schema/src/schema/social/blocksInSocial.ts`         | Block table                                             |
-| `apps/web/server/trpc/routers/friend.ts`                         | Friend procedures                                       |
-| `apps/web/server/trpc/routers/friendRequest.ts`                  | Request lifecycle                                       |
-| `apps/web/server/trpc/routers/block.ts`                          | Blocking                                                |
-| `apps/web/server/trpc/routers/room/directMessage.ts`             | DM creation, participants, hide                         |
-| `apps/web/app/pages/messages/friends.vue`                        | Friends management page                                 |
-| `apps/web/app/store/message/user/friend.ts`                      | Friends client state (+ `friendRequest.ts`, `block.ts`) |
+| File                                                                       | Role                                                                            |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/social/friendRequestsInSocial.ts`           | Pending-request table                                                           |
+| `packages/db-schema/src/schema/social/friendsInSocial.ts`                  | Accepted-friendship table                                                       |
+| `packages/db-schema/src/schema/social/blocksInSocial.ts`                   | Block table                                                                     |
+| `apps/web/server/trpc/routers/friend.ts`                                   | Friend procedures                                                               |
+| `apps/web/server/trpc/routers/friendRequest.ts`                            | Request lifecycle                                                               |
+| `apps/web/server/trpc/routers/block.ts`                                    | Blocking                                                                        |
+| `apps/web/server/trpc/routers/room/directMessage.ts`                       | DM creation, participants, hide                                                 |
+| `apps/web/app/composables/message/subscribables/useFriendSubscribables.ts` | Friend events from the user socket, and the list reads once they are registered |
+| `apps/web/app/pages/messages/friends.vue`                                  | Friends management page                                                         |
+| `apps/web/app/store/message/user/friend.ts`                                | Friends client state (+ `friendRequest.ts`, `block.ts`)                         |
 
 ## Notes
 

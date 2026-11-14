@@ -14,14 +14,15 @@ Badging and [push notifications](../push-notifications/design.md) both resolve t
 
 Threading a precomputed `ClassifiedMentions` through instead would buy that back at a real cost. `getMessageRecipientUserIds` is also called from outside the send path, where no classification has happened, so the parameter would have to be optional — and an optional precomputed input is a parameter a caller can pass from the _wrong_ message, turning a self-contained function into one whose correctness depends on its caller. What the two functions share is the resolution rule, and that is already shared: `getMentionConditions` holds one copy of it, and the badge and notification variants differ only in the condition a resolved set of user ids becomes, which is its one parameter.
 
-Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [display names](../display-names/design.md)) and update live through the `onUpdateUserToRoom` subscription: both the increment and the clear emit `updateUserToRoom` per affected row, so the chip appears and disappears with no new subscription.
+Counts arrive with `readMyUsersToRooms` at startup (already loaded for every room — see [display names](../display-names/design.md)) and update live through the `updateUserToRoom` UserEvent on the user socket: both the increment and the clear send `updateUserToRoom` to each affected member's User object, per affected row, so the chip appears and disappears with no new subscription.
 
 ```mermaid
 flowchart LR
   CM["createMessage"] -->|"incrementMentionCounts<br/>(one batched UPDATE, sender excluded)"| DB[("usersToRooms.mentionCount")]
   VIEW["room view<br/>(/messages/[id])"] -->|"clearMentionCount"| DB
-  DB -->|"updateUserToRoom event"| SUB["onUpdateUserToRoom subscription"]
-  SUB --> STORE["useUserToRoomStore.myUserToRoom"]
+  CM -->|"updateUserToRoom per affected member"| UO["each affected member's User object<br/>on their user socket"]
+  VIEW -->|"updateUserToRoom to the caller's User object"| UO
+  UO --> STORE["useUserToRoomStore.myUserToRoom"]
   STORE -->|"mentionCount > 0"| CHIP["room ListItem red chip"]
 ```
 
@@ -39,16 +40,17 @@ flowchart LR
 
 ## Key files
 
-| File                                                                      | Role                                                      |
-| ------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `packages/db-schema/src/schema/message/usersToRoomsInMessage.ts`          | `mentionCount` column + check                             |
-| `packages/db/src/services/message/incrementMentionCounts.ts`              | batched increment (`getMentionBadgeConditions` targeting) |
-| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts` | broadcasts held to the sender's `MentionEveryone`         |
-| `apps/web/server/services/message/createUserMessage.ts`                   | best-effort increment + `updateUserToRoom` fan-out        |
-| `apps/web/server/trpc/routers/userToRoom.ts`                              | `clearMentionCount`                                       |
-| `apps/web/app/pages/messages/[id]/index.vue`                              | clears the count on room view                             |
-| `apps/web/app/components/Message/Model/Room/List/Item.vue`                | red count chip                                            |
-| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`            | the unread flag that un-mutes the row, beside the chip    |
+| File                                                                           | Role                                                                    |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/usersToRoomsInMessage.ts`               | `mentionCount` column + check                                           |
+| `packages/db/src/services/message/incrementMentionCounts.ts`                   | batched increment (`getMentionBadgeConditions` targeting)               |
+| `packages/db/src/services/message/mention/getSenderClassifiedMentions.ts`      | broadcasts held to the sender's `MentionEveryone`                       |
+| `apps/web/server/services/message/createUserMessage.ts`                        | best-effort increment + `updateUserToRoom` to each affected User object |
+| `apps/web/server/trpc/routers/userToRoom.ts`                                   | `clearMentionCount`                                                     |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts` | the client's `updateUserToRoom` handler on the connection store         |
+| `apps/web/app/pages/messages/[id]/index.vue`                                   | clears the count on room view                                           |
+| `apps/web/app/components/Message/Model/Room/List/Item.vue`                     | red count chip                                                          |
+| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`                 | the unread flag that un-mutes the row, beside the chip                  |
 
 ## Notes
 

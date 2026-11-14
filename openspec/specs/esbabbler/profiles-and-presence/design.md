@@ -4,10 +4,10 @@ Who a user appears as (profile card, biography, avatar) and whether they appear 
 
 ## Presence
 
-`userStatuses` table (Postgres), one row per user: `status` (nullable enum), `isConnected`, `message` (custom status), `expiresAt`.
+`userStatuses` table (D1, `userStatusesInMessage`), one row per user: `status` (nullable enum), `isConnected`, `message` (custom status), `expiresAt`.
 
 - `UserStatus`: `Online | Idle | DoNotDisturb | Offline` — **nullable**: `null` means "connected, no manual override", so the effective status is derived (`getDetectedUserStatus`) from `isConnected` + any manual override + expiry.
-- `user.upsertStatus` upserts the row (`onConflictDoUpdate` on `userId`) and emits `upsertStatus` on `userEventEmitter`; the `onUpsertStatus` subscription pushes live presence to members. `user.readStatuses(userIds)` batch-loads statuses for the member list.
+- `user.upsertStatus` upserts the row (`onConflictDoUpdate` on `userId`) and calls the caller's User object `upsertStatus`, which fans the status out to each room the person is in as a room event, so members see the change live. `user.readStatuses(userIds)` batch-loads statuses for the member list.
 - Auto-idle: the client flips to Idle after `autoIdleThresholdMs` from [user settings](../settings/design.md).
 
 The stored row is what the user asked for, never what anyone is shown: `getDetectedUserStatus` collapses the manual override, its expiry and `isConnected` into one status on the way out, so an override that has expired stops applying with nothing having to rewrite the row. Both exits derive — the emit and the batch read — so a client never sees a raw row and has no rule of its own to keep in step.
@@ -16,11 +16,12 @@ The stored row is what the user asked for, never what anyone is shown: `getDetec
 flowchart TD
   Idle["idle timer passes autoIdleThresholdMs"] --> Proc
   Manual["user picks Online / Idle / DND, with an optional expiry"] --> Proc
-  Socket["connection opens or drops"] --> Proc
+  Socket["the first socket opens, or the last one closes"] --> UO["User object<br/>writes isConnected, then attaches or detaches the person in each room"]
+  UO -->|"isConnected"| Row
   Proc["user.upsertStatus<br/>onConflictDoUpdate on userId"] --> Row[("userStatuses")]
   Row --> D1["getDetectedUserStatus"]
   Row -->|"user.readStatuses on member-list load"| D2["getDetectedUserStatus"]
-  D1 -->|"userEventEmitter, onUpsertStatus"| Client
+  D1 -->|"User object upsertStatus, to each room"| Client
   D2 --> Client["every member's client<br/>the presence dot and its custom message"]
 ```
 
@@ -36,9 +37,10 @@ In room contexts, a `displayName` wins over the account name ([display names](..
 
 ## Key files
 
-| File                                                             | Role                                                |
-| :--------------------------------------------------------------- | :-------------------------------------------------- |
-| `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` enum                  |
-| `apps/web/server/trpc/routers/user.ts`                           | `upsertStatus`, `readStatuses`, `updateUser`        |
-| `apps/web/app/components/User/ProfileCard/`                      | editable profile card (global surface)              |
-| `apps/web/app/components/Message/Model/User/ProfileCard/`        | in-room profile card (mutual rooms, member actions) |
+| File                                                             | Role                                                                                    |
+| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` enum                                                      |
+| `apps/functions/src/services/user/setUserConnectedInRooms.ts`    | the connected flag, written on the first socket and the last close, then each room told |
+| `apps/web/server/trpc/routers/user.ts`                           | `upsertStatus`, `readStatuses`, `updateUser`                                            |
+| `apps/web/app/components/User/ProfileCard/`                      | editable profile card (global surface)                                                  |
+| `apps/web/app/components/Message/Model/User/ProfileCard/`        | in-room profile card (mutual rooms, member actions)                                     |

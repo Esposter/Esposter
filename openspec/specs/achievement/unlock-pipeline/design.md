@@ -1,6 +1,6 @@
 # Unlock Pipeline
 
-Every authed mutation flows through `achievementPlugin`, which turns matching procedure calls into progress rows and pushes unlocks to the client over a tRPC subscription.
+Every authed mutation flows through `achievementPlugin`, which turns matching procedure calls into progress rows and pushes unlocks to the client over the user socket.
 
 ## How it works
 
@@ -11,12 +11,11 @@ flowchart LR
   defs -->|check| check[safeParse the raw input,<br/>then the condition?]
   check --> upsert[(achievements +<br/>userAchievements upsert)]
   upsert -->|amount reached| unlock[stamp unlockedAt]
-  upsert --> emit[achievementEventEmitter]
-  emit --> sub[achievement.onUpdateAchievement<br/>subscription]
-  sub --> toast[NotificationToast]
+  upsert --> send["User object updateAchievement<br/>on the saver's user socket"]
+  send --> toast[NotificationToast]
 ```
 
-The plugin runs **after** `next()` and only for successful mutations. For each definition whose `triggerPath` equals the called path (and whose `check` passes: the raw input parses against the trigger's schema, and the definition's condition, if any, holds for the parsed input): lazily insert the `achievements` row on first encounter, upsert the caller's `userAchievements` counter, skip entirely if already unlocked, stamp `unlockedAt` when the threshold is met, and finally emit one `updateAchievement` event with everything that changed. The subscription filters events to the session user and the toast list shows progress/unlocks live anywhere in the app.
+The plugin runs **after** `next()` and only for successful mutations. For each definition whose `triggerPath` equals the called path (and whose `check` passes: the raw input parses against the trigger's schema, and the definition's condition, if any, holds for the parsed input): lazily insert the `achievements` row on first encounter, upsert the caller's `userAchievements` counter, skip entirely if already unlocked, stamp `unlockedAt` when the threshold is met, and finally send one `updateAchievement` event with everything that changed to the saver's User object, which delivers it to that person's sockets alone. The toast list shows progress/unlocks live anywhere in the app.
 
 The achievement router sits in the one root router beside the others. Each trigger path is a `TRPCPath`, a key of `TRPCProcedureInputs`, so the plugin reads no type derived from the routers it wraps.
 
@@ -26,7 +25,6 @@ The achievement router sits in the one root router beside the others. Each trigg
 | ---------------------------------- | ------------ | ---------------- | ------------------------------------------------------------------------------------------------------------- |
 | `achievement.readAchievementMap`   | authed       | —                | all definitions without their trigger schema (a hidden, still-locked one has its description masked as `???`) |
 | `achievement.readUserAchievements` | rate-limited | optional user id | a user's progress rows (defaults to caller)                                                                   |
-| `achievement.onUpdateAchievement`  | authed       | —                | live progress/unlock events                                                                                   |
 
 ## Key files
 
@@ -40,7 +38,8 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `shared/models/db/message/ZonedCreateMessageInput.ts`                        | a send with the sender's time zone                                                             |
 | `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map                                                                          |
 | `shared/models/achievement/ClaimedAchievementTriggerPath.ts`                 | the triggers whose input is a client's own save, whose definitions carry no points             |
-| `server/trpc/routers/achievement.ts`                                         | read + subscription procedures                                                                 |
+| `app/composables/achievement/useAchievementSubscribables.ts`                 | the client's `updateAchievement` handler on the connection store                               |
+| `server/trpc/routers/achievement.ts`                                         | read procedures                                                                                |
 | `app/components/Achievement/`                                                | gallery grid + notification toasts                                                             |
 | `packages/db-schema/src/schema/achievement/userAchievementsInAchievement.ts` | progress rows                                                                                  |
 

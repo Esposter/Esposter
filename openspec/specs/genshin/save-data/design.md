@@ -40,7 +40,7 @@ Some values are derived on load and never saved: a character's Friendship Level 
 
 ## How a save is leased and written
 
-A start is one read and one write `apps/web/server/services/genshin/startGenshin.ts`. The blob's ETag and its envelope come from one download, and the start writes the page's session under that ETag, or creates the blob when none exists. The replaced session is announced to the user's subscribers, as the start's own answer says which session it replaced `apps/web/server/services/genshin/events/genshinEventEmitter.ts`. The page generates its session id once and sends it with every attempt of its start, so an attempt whose write landed and whose response was lost is answered again rather than replaced.
+A start is one read and one write `apps/web/server/services/genshin/startGenshin.ts`. The blob's ETag and its envelope come from one download, and the start writes the page's session under that ETag, or creates the blob when none exists. The replaced session is announced to the user's own sockets through their User object, as the start's own answer says which session it replaced. The page generates its session id once and sends it with every attempt of its start, so an attempt whose write landed and whose response was lost is answered again rather than replaced.
 
 ```mermaid
 flowchart TD
@@ -54,7 +54,7 @@ flowchart TD
   W -->|"precondition failed"| X["CONFLICT: a concurrent start wrote first, and the page retries the start with backoff"]
   W -->|"written"| O["the save, the session id, the replaced session id, the new ETag and the server's now"]
   O --> E{"did it replace a session?"}
-  E -->|"yes"| N["genshinEventEmitter replaceSession, to the user's subscribers"]
+  E -->|"yes"| N["the user's User object replaceSession, to each of their sockets"]
 ```
 
 The envelope keeps the session a start replaced until the page's first save rewrites it `apps/web/server/models/genshin/GenshinSaveEnvelope.ts`, and a player is new when no session was replaced. A page's save is only sent once its start has answered, so no save can rewrite the envelope before a retry of that start.
@@ -110,7 +110,7 @@ flowchart TD
   C -->|"signed in"| SV["one save at a time: the schema, the journal written with it, then genshin.saveGenshin"]
   C -->|"signed out"| LS["localStorage under the same schema"]
   SV -->|"CONFLICT"| R["replaced: the page stops saving and offers to take the game back"]
-  RP["genshin.onSessionReplaced, the replacing session's id"] -->|"not this session"| R
+  RP["replaceSession UserEvent, the replacing session's id"] -->|"not this session"| R
 ```
 
 Saves go one at a time `apps/web/app/services/shared/createSingleFlight.ts`. A save requested while one is in flight runs once after it settles, carrying the newest save and the ETag the last acknowledgement returned, so no save is sent over one the page has not heard back about. Before a save is sent, the same schema the server parses is run on it: a save the schema refuses is logged and shown, is not sent and is never marked saved. A save equal to the last one stored is not sent at all.
@@ -123,7 +123,7 @@ A signed-in start that fails does not fall back to the browser's copy. The page 
 
 The save a page has not had acknowledged is kept in a journal under the account, `genshin-pending:{userId}` `apps/web/app/services/shared/LocalStorageKey.ts`, holding the save and the session that held it `apps/web/app/models/genshin/GenshinJournal.ts`. Each save is written to the journal before it is sent, and the journal is written at once when the page is hidden or left, and cleared once the account acknowledges the save. So the journal is never older than the save the account may hold under that session. The next start reads the journal from the browser as it answers, rather than from a copy the page kept, since another window of the browser may have written it since, and adopts it only when it replaced that same session. Any other journal is discarded.
 
-The server's clock answers every start and save, and the page keeps its offset from the call's midpoint, re-taken on each acknowledgement `apps/web/app/composables/genshin/useGenshinSave.ts`. A replaced session is told by the real-time layer when it is subscribed, and otherwise by its next refused save.
+The server's clock answers every start and save, and the page keeps its offset from the call's midpoint, re-taken on each acknowledgement `apps/web/app/composables/genshin/useGenshinSave.ts`. A replaced session is told over its user socket when that socket is open, and otherwise by its next refused save.
 
 ## Write budget
 
@@ -146,7 +146,7 @@ The cost basis is the operations: each write is one billed write operation on th
 - **Saves are by value, one at a time `apps/web/app/services/shared/createSingleFlight.ts`.** Each save is the world's whole state, so the newest save supersedes the ones before it and a lost save costs nothing the next one does not carry. Sending one at a time keeps every save built on the ETag the last acknowledgement returned.
 - **The save fits one request.** The request size limiter admits the size `MAX_REQUEST_SIZE` names for any body, whatever its `Content-Type` (`apps/web/shared/services/app/constants.ts`, read by `apps/web/configuration/security.ts`), and the save's ceiling is held under it, so a save is never refused for its size on the way in.
 - **A start is idempotent across its page's retries `apps/web/server/services/genshin/startGenshin.ts`.** The page generates one session id and sends it with every attempt. A blob already under that id answers the start its first write took, from the session that write replaced, which the envelope keeps, so a lost response is never read as a replacement of the page's own lease, and a guest's save is never uploaded over an account that the first attempt already created.
-- **A replaced session is told by the in-process real-time layer, and by the refused write as the fallback.** A start that replaces a session emits the replacing session's id on the per-user `replaceSession` event, which the `onSessionReplaced` subscription yields to the user's subscribers. The emitter is in-process, so a session on another server instance hears nothing and is replaced by its next refused save `apps/web/server/services/genshin/events/genshinEventEmitter.ts`.
+- **A replaced session is told over the user's socket, and by the refused write as the fallback.** A start that replaces a session calls the user's User object `replaceSession` with the replacing session's id, which sends a `replaceSession` UserEvent carrying `{ sessionId }` to each of the user's sockets. A session with no socket open when it is sent hears nothing, and is replaced by its next refused save `apps/web/server/services/genshin/startGenshin.ts`.
 - **A signed-in start that fails blocks the page.** The browser's copy is a guest's save or a new player's, so a signed-in player whose start fails must not play it. The page waits on its loading screen with a Retry, and the retries back off so an outage is not hammered `apps/web/app/services/genshin/getGenshinStartRetryDelayMs.ts`.
 - **The unacknowledged save is journaled per account.** A page can be closed the moment it is hidden, before its save lands, so the save it holds is written to the browser under `genshin-pending:{userId}` at once, not sent, and each save is written there before it is sent. A start adopts that journal only when it replaced the session that wrote it `apps/web/app/services/genshin/parseGenshinJournal.ts`, reading it from the browser as the start answers. The journal is never older than a save the account may hold under that session, so adopting it cannot roll the account's save back past one it acknowledged. A journal that does not parse or that the schema refuses is discarded.
 - **A save is validated before it is sent.** The schema the server parses is run on the client first `apps/web/app/services/shared/parseJsonWithSchema.ts`. A save it refuses is logged and shown, is not sent and is not marked saved.
@@ -170,7 +170,7 @@ Paths relative to the repository root.
 
 | File                                                                                   | Role                                                                                                          |
 | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/genshin.ts`                                              | `startGenshin` and `saveGenshin`, and `onSessionReplaced`                                                     |
+| `apps/web/server/trpc/routers/genshin.ts`                                              | `startGenshin` and `saveGenshin`                                                                              |
 | `apps/web/server/services/genshin/startGenshin.ts`                                     | take the lease in one GET and one PUT, returning the replaced session and the new ETag                        |
 | `apps/web/server/services/genshin/saveGenshin.ts`                                      | one write under the session's ETag, one read when a refused write was the session's own                       |
 | `apps/web/server/services/genshin/writeGenshinSaveEnvelope.ts`                         | the write through `writeBlobState`, its CONFLICT refused as a replacement                                     |
@@ -215,7 +215,7 @@ Paths relative to the repository root.
 | `packages/genshin-world/src/services/save/toAchievementProgressSave.ts`                | the achievements' progress written as its save                                                                |
 | `packages/db/src/services/azure/container/decompressJsonBlob.ts`                       | the zstd decode every server reader of a JSON blob shares                                                     |
 | `packages/db/src/services/azure/container/writeJsonBlob.ts`                            | a write under conditions, returning its ETag and stored length                                                |
-| `apps/web/server/services/genshin/events/genshinEventEmitter.ts`                       | the per-user `replaceSession` event a start emits                                                             |
+| `packages/db-schema/src/models/realtime/UserEvent.ts`                                  | the user socket's event union, with the `replaceSession` frame a start sends                                  |
 | `apps/web/app/composables/genshin/useGenshinSave.ts`                                   | the page's save: start with retry, offset, autosave, grant, leaving, journal, guest merge                     |
 | `apps/web/app/services/shared/createSingleFlight.ts`                                   | one save in flight, and one trailing run for every call made meanwhile                                        |
 | `apps/web/app/models/genshin/GenshinJournal.ts`                                        | the journal's shape: the unacknowledged save and the session that held it                                     |
