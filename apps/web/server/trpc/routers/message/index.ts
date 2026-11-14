@@ -87,7 +87,6 @@ import {
   FileEntity,
   FilterType,
   getMimeCategory,
-  getReverseTickedTimestamp,
   MessageType,
   MessageTypeEntityMap,
   roomIdSchema,
