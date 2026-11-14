@@ -15,7 +15,7 @@ import { getRouteParam } from "@/util/router/getRouteParam";
 
 const { currentRoute } = useRouter();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
-const { deletingRowKey, detailRowKey } = storeToRefs(surveyResponseDialogStore);
+const { deletingResponseId, detailResponseId } = storeToRefs(surveyResponseDialogStore);
 // The blade is keyed by resource id and suspended, so this instance only ever serves one survey
 const id = getRouteParam(currentRoute.value.params, "id");
 const { error, records, refreshResponses, summaryCards, summaryError } = useReadSurveyResponses(id);
@@ -39,18 +39,18 @@ const tableColumns = computed<UiDataTableColumn<SurveyResponseRecord & { id: str
   })) ?? []),
   { isSortable: false, key: "actions", title: "" },
 ]);
-// A response is keyed by its row key, which the table reads its rows by
-const items = computed(() => records.value?.rows.map((row) => ({ ...row, id: row.rowKey })) ?? []);
+// A response is keyed by its response id, which the table reads its rows by
+const items = computed(() => records.value?.rows.map((row) => ({ ...row, id: row.responseId })) ?? []);
 const itemsPerPage = ref(DATA_TABLE_ITEMS_PER_PAGE_OPTIONS[0]);
 const page = ref(1);
 const sortBy = ref<SortItem<string>[]>([]);
 const { getContextMenuProps } = useContextMenu();
 // A row opens its answers on a click, so its commands are what else there is to do with it
-const getActionItems = (rowKey: string): Item[] => [
+const getActionItems = (responseId: string): Item[] => [
   {
     meaning: UiIconMeaning.Show,
     onClick: () => {
-      detailRowKey.value = rowKey;
+      detailResponseId.value = responseId;
     },
     title: "View response",
   },
@@ -59,7 +59,7 @@ const getActionItems = (rowKey: string): Item[] => [
     isGroupStart: true,
     meaning: UiIconMeaning.Delete,
     onClick: () => {
-      deletingRowKey.value = rowKey;
+      deletingResponseId.value = responseId;
     },
     title: "Delete response",
   },
@@ -104,7 +104,7 @@ await refreshResponses();
             :items
             :items-per-page-options="DATA_TABLE_ITEMS_PER_PAGE_OPTIONS"
             label="Responses"
-            :on-open="({ id: rowKey }) => (detailRowKey = rowKey)"
+            :on-open="({ id: responseId }) => (detailResponseId = responseId)"
           >
             <template #cell="{ column, item, value }">
               <!-- The cell is the menu's, so a click that misses its button does not open the response -->

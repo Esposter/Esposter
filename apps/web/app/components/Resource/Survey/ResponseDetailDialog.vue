@@ -13,12 +13,12 @@ interface Props {
 
 const { items } = defineProps<Props>();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
-const { detailRowKey } = storeToRefs(surveyResponseDialogStore);
-// One dialog for the whole table, driven by the target row key — never one dialog per row. The item is resolved
+const { detailResponseId } = storeToRefs(surveyResponseDialogStore);
+// One dialog for the whole table, driven by the target response id — never one dialog per row. The item is resolved
 // Through the target too, so a response that leaves the page under the open dialog drops it instead of re-opening
 // Over that response when a later read brings it back
-const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
-  items.find(({ rowKey }) => rowKey === detailRowKey.value),
+const { isOpen, item } = useSingletonDialog(detailResponseId, () =>
+  items.find(({ responseId }) => responseId === detailResponseId.value),
 );
 </script>
 

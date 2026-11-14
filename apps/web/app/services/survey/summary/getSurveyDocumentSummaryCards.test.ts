@@ -24,7 +24,7 @@ import {
 describe(getSurveyDocumentSummaryCards, () => {
   const checkboxAnswers = ["a", "b"].join(CHECKBOX_ANSWER_SEPARATOR);
   const id = crypto.randomUUID();
-  const rowKey = crypto.randomUUID();
+  const responseId = crypto.randomUUID();
   const questions: SurveyQuestionNode[] = [
     {
       props: {
@@ -69,8 +69,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(questions, [
-        { a: "a", b: checkboxAnswers, c: true, d: 1, e: 1, f: "a", rowKey },
-        { a: null, b: "a", c: false, d: 2, e: 3, f: "", rowKey },
+        { a: "a", b: checkboxAnswers, c: true, d: 1, e: 1, f: "a", responseId },
+        { a: null, b: "a", c: false, d: 2, e: 3, f: "", responseId },
       ]),
     ).toStrictEqual([
       {
@@ -150,7 +150,7 @@ describe(getSurveyDocumentSummaryCards, () => {
     ];
 
     expect(
-      getSurveyDocumentSummaryCards(choiceQuestions, [{ a: `a${CHECKBOX_ANSWER_SEPARATOR}b`, rowKey }]),
+      getSurveyDocumentSummaryCards(choiceQuestions, [{ a: `a${CHECKBOX_ANSWER_SEPARATOR}b`, responseId }]),
     ).toStrictEqual([
       {
         answeredCount: 1,
@@ -188,8 +188,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(rankingQuestions, [
-        { a: `b${CHECKBOX_ANSWER_SEPARATOR}a${CHECKBOX_ANSWER_SEPARATOR}c`, rowKey },
-        { a: `a${CHECKBOX_ANSWER_SEPARATOR}c`, rowKey },
+        { a: `b${CHECKBOX_ANSWER_SEPARATOR}a${CHECKBOX_ANSWER_SEPARATOR}c`, responseId },
+        { a: `a${CHECKBOX_ANSWER_SEPARATOR}c`, responseId },
       ]),
     ).toStrictEqual([
       {
@@ -229,8 +229,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(pickerQuestions, [
-        { a: `a${CHECKBOX_ANSWER_SEPARATOR}b`, rowKey },
-        { a: "b", rowKey },
+        { a: `a${CHECKBOX_ANSWER_SEPARATOR}b`, responseId },
+        { a: "b", responseId },
       ]),
     ).toStrictEqual([
       {
@@ -257,8 +257,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(sliderQuestions, [
-        { a: 0, rowKey },
-        { a: 1, rowKey },
+        { a: 0, responseId },
+        { a: 1, responseId },
       ]),
     ).toStrictEqual([
       {
@@ -302,8 +302,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(otherQuestions, [
-        { a: "a", b: `a${CHECKBOX_ANSWER_SEPARATOR}b`, rowKey },
-        { a: "b", b: "a", rowKey },
+        { a: "a", b: `a${CHECKBOX_ANSWER_SEPARATOR}b`, responseId },
+        { a: "b", b: "a", responseId },
       ]),
     ).toStrictEqual([
       {
@@ -350,8 +350,8 @@ describe(getSurveyDocumentSummaryCards, () => {
 
     expect(
       getSurveyDocumentSummaryCards(expressionQuestions, [
-        { a: 0, b: 0, rowKey },
-        { a: 1, b: 1, rowKey },
+        { a: 0, b: 0, responseId },
+        { a: 1, b: 1, responseId },
       ]),
     ).toStrictEqual([
       {
@@ -376,6 +376,6 @@ describe(getSurveyDocumentSummaryCards, () => {
       { props: { ...surveyImageNodeType.createDefaultProps(), id, name: "b" }, type: SurveyNodeType.Image },
     ];
 
-    expect(getSurveyDocumentSummaryCards(descriptiveQuestions, [{ a: "a", b: "b", rowKey }])).toStrictEqual([]);
+    expect(getSurveyDocumentSummaryCards(descriptiveQuestions, [{ a: "a", b: "b", responseId }])).toStrictEqual([]);
   });
 });

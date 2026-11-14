@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { ResourceActivityEntity } from "@esposter/db-schema";
+import type { ResourceActivityInResource } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import ResourceActivityLog from "@/components/Resource/ActivityLog.vue";
@@ -21,8 +21,8 @@ describe("resourceActivityLog", () => {
     const resourceId = crypto.randomUUID();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
-    const data = Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
-      items: [{ rowKey: crypto.randomUUID() } as ResourceActivityEntity],
+    const data = Object.assign(new CursorPaginationData<ResourceActivityInResource>(), {
+      items: [{ id: crypto.randomUUID() } as ResourceActivityInResource],
     });
     trpcMsw.resource.readActivities.query(async () => {
       onReadReached();

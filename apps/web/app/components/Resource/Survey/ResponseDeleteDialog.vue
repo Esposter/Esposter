@@ -11,15 +11,15 @@ const { surveyId } = defineProps<Props>();
 const emit = defineEmits<{ delete: [] }>();
 const { $trpc } = useNuxtApp();
 const surveyResponseDialogStore = useSurveyResponseDialogStore();
-const { deletingRowKey } = storeToRefs(surveyResponseDialogStore);
+const { deletingResponseId } = storeToRefs(surveyResponseDialogStore);
 const notificationStore = useNotificationStore();
 const { createErrorNotification, createNotification } = notificationStore;
 const { executeMutation: executeDeleteMutation } = useMutation();
-const { isOpen } = useSingletonDialog(deletingRowKey);
+const { isOpen } = useSingletonDialog(deletingResponseId);
 const deleteSurveyResponse = async () => {
-  const rowKey = deletingRowKey.value;
-  await executeDeleteMutation(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, rowKey }), {
-    key: rowKey,
+  const responseId = deletingResponseId.value;
+  await executeDeleteMutation(() => $trpc.survey.deleteSurveyResponse.mutate({ id: surveyId, responseId }), {
+    key: responseId,
     onError: createErrorNotification,
     onSuccess: () => {
       createNotification({ severity: NotificationSeverity.Success, title: "Deleted response" });

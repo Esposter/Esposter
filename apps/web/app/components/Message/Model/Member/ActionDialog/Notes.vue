@@ -45,7 +45,7 @@ const { executeMutation, isPending: isCreatePending } = useMutation();
       </ul>
       <div v-else-if="items.length > 0">
         <ul flex flex-col gap-3>
-          <MessageModelMemberActionDialogNoteListItem v-for="item of items" :key="item.rowKey" :note="item" />
+          <MessageModelMemberActionDialogNoteListItem v-for="item of items" :key="item.id" :note="item" />
         </ul>
         <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationNotes(onComplete)" />
       </div>

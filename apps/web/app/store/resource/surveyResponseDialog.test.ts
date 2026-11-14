@@ -14,14 +14,15 @@ describe(useSurveyResponseDialogStore, () => {
     const { resource } = storeToRefs(resourceStore);
     resource.value = createResourceListItem();
     const surveyResponseDialogStore = useSurveyResponseDialogStore();
-    const { deletingRowKey, detailRowKey } = storeToRefs(surveyResponseDialogStore);
-    deletingRowKey.value = "rowKey";
-    detailRowKey.value = "rowKey";
+    const { deletingResponseId, detailResponseId } = storeToRefs(surveyResponseDialogStore);
+    const responseId = crypto.randomUUID();
+    deletingResponseId.value = responseId;
+    detailResponseId.value = responseId;
     resource.value = createResourceListItem();
 
-    expect({ deletingRowKey: deletingRowKey.value, detailRowKey: detailRowKey.value }).toStrictEqual({
-      deletingRowKey: "",
-      detailRowKey: "",
+    expect({ deletingResponseId: deletingResponseId.value, detailResponseId: detailResponseId.value }).toStrictEqual({
+      deletingResponseId: "",
+      detailResponseId: "",
     });
   });
 });

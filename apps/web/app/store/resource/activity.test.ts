@@ -1,18 +1,18 @@
 // @vitest-environment nuxt
-import type { ResourceActivityEntity } from "@esposter/db-schema";
+import type { ResourceActivityInResource } from "@esposter/db-schema";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { useActivityStore } from "@/store/resource/activity";
 import { describe, expect, test } from "vitest";
 
-const createActivity = (rowKey: string) => ({ rowKey }) as ResourceActivityEntity;
+const createActivity = (id: string) => ({ id }) as ResourceActivityInResource;
 const createReader =
-  (...rowKeys: string[]) =>
+  (...activityIds: string[]) =>
   () =>
     Promise.resolve(
-      Object.assign(new CursorPaginationData<ResourceActivityEntity>(), {
+      Object.assign(new CursorPaginationData<ResourceActivityInResource>(), {
         hasMore: true,
-        items: rowKeys.map((rowKey) => createActivity(rowKey)),
+        items: activityIds.map((id) => createActivity(id)),
         nextCursor: "nextCursor",
       }),
     );
@@ -27,8 +27,8 @@ const openActivityBlade = (id: string) => {
 describe(useActivityStore, () => {
   const firstResourceId = crypto.randomUUID();
   const secondResourceId = crypto.randomUUID();
-  const firstRowKey = crypto.randomUUID();
-  const secondRowKey = crypto.randomUUID();
+  const firstActivityId = crypto.randomUUID();
+  const secondActivityId = crypto.randomUUID();
 
   // The store outlives the blade, so a second resource's blade mounts against state the first one filled. Held
   // As one slice, its rows, `hasMore` and cursor all still answer for the previous resource until its own read
@@ -40,21 +40,21 @@ describe(useActivityStore, () => {
     const { hasMore, items } = storeToRefs(activityStore);
     const { readItems } = activityStore;
     openActivityBlade(firstResourceId);
-    await readItems(createReader(firstRowKey));
+    await readItems(createReader(firstActivityId));
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([firstRowKey]);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([firstActivityId]);
 
     openActivityBlade(secondResourceId);
 
     expect(items.value).toStrictEqual([]);
     expect(hasMore.value).toBe(false);
 
-    await readItems(createReader(secondRowKey));
+    await readItems(createReader(secondActivityId));
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([secondRowKey]);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([secondActivityId]);
 
     openActivityBlade(firstResourceId);
 
-    expect(items.value.map(({ rowKey }) => rowKey)).toStrictEqual([firstRowKey]);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([firstActivityId]);
   });
 });

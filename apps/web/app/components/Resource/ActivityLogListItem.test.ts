@@ -1,6 +1,8 @@
 // @vitest-environment nuxt
+import type { ResourceActivityInResource } from "@esposter/db-schema";
+
 import ResourceActivityLogListItem from "@/components/Resource/ActivityLogListItem.vue";
-import { getReverseTickedTimestamp, ResourceActivityEntity, ResourceActivityType } from "@esposter/db-schema";
+import { ResourceActivityType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -10,17 +12,21 @@ describe("resourceActivityLogListItem", () => {
     expect.hasAssertions();
 
     const name = "Assistant";
-    const component = await mountSuspended(ResourceActivityLogListItem, {
-      props: {
-        activity: new ResourceActivityEntity({
-          activityType: ResourceActivityType.ContentSaved,
-          apiKeyName: name,
-          createdAt: new Date(0),
-          partitionKey: crypto.randomUUID(),
-          rowKey: getReverseTickedTimestamp(),
-        }),
-      },
-    });
+    const activity: ResourceActivityInResource = {
+      activityType: ResourceActivityType.ContentSaved,
+      apiKeyId: crypto.randomUUID(),
+      apiKeyName: name,
+      createdAt: new Date(0),
+      deletedAt: null,
+      id: crypto.randomUUID(),
+      newName: null,
+      oldName: null,
+      publishVersion: null,
+      resourceId: crypto.randomUUID(),
+      updatedAt: new Date(0),
+      userId: crypto.randomUUID(),
+    };
+    const component = await mountSuspended(ResourceActivityLogListItem, { props: { activity } });
 
     expect(component.text()).toContain(`Through the API key "${name}"`);
   });

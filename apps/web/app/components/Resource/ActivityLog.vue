@@ -45,7 +45,7 @@ onMounted(async () => {
       title="No activity yet"
     />
     <ul v-else flex flex-col>
-      <ResourceActivityLogListItem v-for="activity of items" :key="activity.rowKey" :activity />
+      <ResourceActivityLogListItem v-for="activity of items" :key="activity.id" :activity />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreActivities(onComplete)" />
     </ul>
   </div>

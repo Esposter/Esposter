@@ -39,7 +39,7 @@ await Promise.all([readModerationLog(), readMembers()]);
       :title="type || actorUserId || targetUserId ? 'No audit log entries match the filters.' : 'No audit log entries.'"
     />
     <div v-else role="list" aria-label="Audit log" flex flex-col>
-      <MessageModelRoomSettingsTypeAuditLogListItem v-for="item of items" :key="item.rowKey" :item />
+      <MessageModelRoomSettingsTypeAuditLogListItem v-for="item of items" :key="item.id" :item />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreModerationLog(onComplete)" />
     </div>
   </div>

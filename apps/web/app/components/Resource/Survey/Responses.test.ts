@@ -20,6 +20,7 @@ vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/auth
 describe("resourceSurveyResponses", () => {
   const { trpcMsw } = setupMswTrpc();
   const surveyId = crypto.randomUUID();
+  const responseId = crypto.randomUUID();
   const question = "Favourite colour";
   const surveyDocument = createSurveyDocument();
   const [page] = surveyDocument.content;
@@ -48,7 +49,7 @@ describe("resourceSurveyResponses", () => {
   };
   const records: SurveyResponseRecords = {
     columns: [{ name: "colour", type: ColumnType.String }],
-    rows: [{ colour: "Teal", rowKey: "response-1" }],
+    rows: [{ colour: "Teal", responseId }],
     totalRows: 1,
   };
 
@@ -104,7 +105,7 @@ describe("resourceSurveyResponses", () => {
 
     trpcMsw.survey.readSurveyResponseRecords.query(() => ({
       columns: [{ name: "actions", type: ColumnType.String }],
-      rows: [{ actions: "Teal", rowKey: "response-1" }],
+      rows: [{ actions: "Teal", responseId }],
       totalRows: 1,
     }));
     const component = await mountSuspended(ResourceSurveyResponses, { route: RoutePath.Resource(surveyId) });

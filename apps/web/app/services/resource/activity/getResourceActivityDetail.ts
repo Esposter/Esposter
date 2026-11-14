@@ -1,4 +1,4 @@
-import type { ResourceActivityEntity } from "@esposter/db-schema";
+import type { ResourceActivityInResource } from "@esposter/db-schema";
 
 import { ResourceActivityType } from "@esposter/db-schema";
 import { exhaustiveGuard } from "@esposter/shared";
@@ -9,7 +9,7 @@ export const getResourceActivityDetail = ({
   newName,
   oldName,
   publishVersion,
-}: ResourceActivityEntity): string => {
+}: ResourceActivityInResource): string => {
   switch (activityType) {
     case ResourceActivityType.ContentSaved:
     case ResourceActivityType.Created:

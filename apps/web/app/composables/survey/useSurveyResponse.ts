@@ -1,4 +1,4 @@
-import type { SurveyResponseEntity } from "@esposter/db-schema";
+import type { SurveyResponseInResource } from "@esposter/db-schema";
 import type { SurveyAnswers } from "vue-survey-engine-headless";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
@@ -10,15 +10,15 @@ import { z } from "zod";
 // A stored draft's answers are parsed rather than cast, since the record holds whatever the server stored
 const surveyAnswersSchema: z.ZodType<SurveyAnswers> = z.record(z.string(), surveyAnswerValueSchema);
 
-export const useSurveyResponse = (id: string, participantToken: string) => {
+export const useSurveyResponse = (resourceId: string, participantToken: string) => {
   const { $trpc } = useNuxtApp();
   // Respondent progress is tracked per browser, and scoped by participant token so a shared device cannot
   // Resume someone else's answers — see openspec/specs/architecture/browser-execution/design.md
-  const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(id, participantToken), "");
-  // A response's row key is its seed, so a shuffled choice list keeps one order across visits: the key of the stored
-  // Response when there is one, else a new key that the first save creates the row under
+  const surveyResponseId = useLocalStorage(LocalStorageKey.SurveyResponseId(resourceId, participantToken), "");
+  // A response's id is its seed, so a shuffled choice list keeps one order across visits: the id of the stored
+  // Response when there is one, else a new id that the first save creates the row under
   const seed = surveyResponseId.value || crypto.randomUUID();
-  let surveyResponse: SurveyResponseEntity | undefined;
+  let surveyResponse: SurveyResponseInResource | undefined;
   const { executeMutation } = useMutation();
   // Server-generated response row (modelVersion) — non-optimistic, applied in onSuccess.
   // Resolves to whether the answers are persisted, so a caller can never show a thank-you page for a
@@ -39,12 +39,12 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
         const storedSurveyResponse = surveyResponse;
         if (!storedSurveyResponse)
           return $trpc.survey.createSurveyResponse.mutate({
+            id: seed,
             isDraft: !isSubmitting,
             model: answers,
             pageNo: pageIndex,
             participantToken,
-            partitionKey: id,
-            rowKey: seed,
+            resourceId,
           });
         // The stored row already holds these answers at this position, which is the write the server itself
         // Rejects as a duplicate — so resolving with the stored row keeps an unchanged submit a success
@@ -57,22 +57,22 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
           return Promise.resolve(storedSurveyResponse);
         else
           return $trpc.survey.updateSurveyResponse.mutate({
+            id: storedSurveyResponse.id,
             isDraft: !isSubmitting,
             model: answers,
             modelVersion: storedSurveyResponse.modelVersion,
             pageNo: pageIndex,
             participantToken,
-            partitionKey: storedSurveyResponse.partitionKey,
-            rowKey: storedSurveyResponse.rowKey,
+            resourceId: storedSurveyResponse.resourceId,
           });
       },
       {
         // One live response per participant per survey, so every save queues against that one target — a
         // Submit issued while the create is still in flight is exactly such a save
-        key: id,
+        key: resourceId,
         onSuccess: (newSurveyResponse) => {
           surveyResponse = newSurveyResponse;
-          surveyResponseId.value = newSurveyResponse.rowKey;
+          surveyResponseId.value = newSurveyResponse.id;
         },
       },
     );
@@ -85,16 +85,16 @@ export const useSurveyResponse = (id: string, participantToken: string) => {
       if (!surveyResponseId.value) return undefined;
 
       surveyResponse = await $trpc.survey.readSurveyResponse.query({
+        id: surveyResponseId.value,
         participantToken,
-        partitionKey: id,
-        rowKey: surveyResponseId.value,
+        resourceId,
       });
       if (!surveyResponse) return undefined;
 
       return {
         answers: surveyAnswersSchema.parse(surveyResponse.model),
         pageIndex: surveyResponse.pageNo,
-        seed: surveyResponse.rowKey,
+        seed: surveyResponse.id,
       };
     })
       .orTee(console.error)

@@ -1,4 +1,4 @@
-import type { ResourceActivityEntity } from "@esposter/db-schema";
+import type { ResourceActivityInResource } from "@esposter/db-schema";
 
 import { getRouteParam } from "@/util/router/getRouteParam";
 
@@ -10,7 +10,7 @@ export const useActivityStore = defineStore("resource/activity", () => {
   // And its own read landing — and the cursor is the dangerous one, since paging then appends that resource's
   // Next page onto this one's list
   const { hasMore, items, readItems, readMoreItems } =
-    useCursorPaginationDataMap<ResourceActivityEntity>(currentResourceId);
+    useCursorPaginationDataMap<ResourceActivityInResource>(currentResourceId);
 
   return { hasMore, items, readItems, readMoreItems };
 });
