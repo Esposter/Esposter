@@ -19,10 +19,6 @@
       "entityType": "tables"
     },
     {
-      "name": "app_rateLimiterFlexible",
-      "entityType": "tables"
-    },
-    {
       "name": "auth_accounts",
       "entityType": "tables"
     },
@@ -390,66 +386,6 @@
       "table": "app_bookmarks",
       "name": "userId",
       "type": "text",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "createdAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "deletedAt",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "updatedAt",
-      "type": "integer",
-      "notNull": true,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "expire",
-      "type": "integer",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "key",
-      "type": "text",
-      "notNull": false,
-      "autoincrement": false,
-      "default": null,
-      "generated": null,
-      "entityType": "columns"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "points",
-      "type": "integer",
       "notNull": true,
       "autoincrement": false,
       "default": null,
@@ -6616,15 +6552,6 @@
       "name": "achievement_achievements_pk",
       "columns": [
         "id"
-      ],
-      "nameExplicit": false,
-      "entityType": "pks"
-    },
-    {
-      "table": "app_rateLimiterFlexible",
-      "name": "app_rateLimiterFlexible_pk",
-      "columns": [
-        "key"
       ],
       "nameExplicit": false,
       "entityType": "pks"
