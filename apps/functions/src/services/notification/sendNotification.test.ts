@@ -5,7 +5,6 @@ import { sendNotification } from "#src/services/notification/sendNotification";
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
@@ -35,7 +34,6 @@ vi.mock(import("#src/services/notification/webpush"), () => import("#src/service
 // Fan-out AppNotificationTypeChannelMap decides — which types write a bell row, which reach a device, and which session
 // A notification skips because it caused it.
 describe(sendNotification, () => {
-  const context = new InvocationContext();
   const message = "<p>a</p>";
   const name = "name";
   const path = "path";
@@ -77,7 +75,7 @@ describe(sendNotification, () => {
     expect.hasAssertions();
 
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
-    await sendNotification(context, {
+    await sendNotification({
       message: { ...standardMessage, message: "<p></p>" },
       threadRootRowKey: "",
       type: AppNotificationType.Message,
@@ -91,7 +89,7 @@ describe(sendNotification, () => {
 
     vi.stubEnv("BASE_URL", "");
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
-    await sendNotification(context, {
+    await sendNotification({
       message: standardMessage,
       threadRootRowKey: "",
       type: AppNotificationType.Message,
@@ -106,7 +104,7 @@ describe(sendNotification, () => {
   });
 
   // The bell insert is the last step allowed to fail this handler. Event Grid reads a throw as a retry request
-  // And AzureFunctionIsIdempotentMap marks this function replayable, so a trim that failed the invocation would
+  // And QueueJobMaxRetriesMap marks this function replayable, so a trim that failed the invocation would
   // Have the rows written again on the redelivery
   test("keeps the bell row and does not throw when the retention trim fails", async () => {
     expect.hasAssertions();
@@ -116,7 +114,7 @@ describe(sendNotification, () => {
     });
 
     await expect(
-      sendNotification(context, { path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
+      sendNotification({ path, title, type: AppNotificationType.ResourceOperation, userId: subscriberUserId }),
     ).resolves.toBeUndefined();
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toHaveLength(1);
     expect(trim).toHaveBeenCalledTimes(1);
@@ -128,7 +126,7 @@ describe(sendNotification, () => {
     await mockDb
       .insert(pushSubscriptionsInNotification)
       .values([pushSubscription, { ...pushSubscription, endpoint: " ", sessionId: actingSessionId }]);
-    await sendNotification(context, {
+    await sendNotification({
       excludedSessionId: actingSessionId,
       path,
       title,

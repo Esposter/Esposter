@@ -5,7 +5,6 @@ import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, StreamTable, roomsInMessage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -32,7 +31,6 @@ const seedPartitionRow = (tableName: StreamTable, partitionKey: string) =>
   new MockTableClient("", tableName).createEntity({ partitionKey, rowKey: crypto.randomUUID() });
 
 describe(deleteAccountOwnedRooms, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
   const roomTableNames = [
     StreamTable.Messages,
@@ -72,7 +70,7 @@ describe(deleteAccountOwnedRooms, () => {
     await seedBlob(StorageBucket.PublicUserAssets, `rooms/${ownedRoom.id}/ProfileImage`);
     await seedBlob(StorageBucket.PublicUserAssets, `rooms/${otherRoom.id}/ProfileImage`);
 
-    await deleteAccountOwnedRooms(context, userId);
+    await deleteAccountOwnedRooms(userId);
 
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
     expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, otherRoom.id))).toHaveLength(

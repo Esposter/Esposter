@@ -1,30 +1,25 @@
-import type { ServiceBusQueueHandler } from "@azure/functions";
-
 import { todoReminderContentSchema } from "#src/models/todoReminder/TodoReminderContent";
-import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
-import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import {
   AppNotificationType,
   StorageBucket,
-  AzureFunction,
+  QueueJob,
   publishNotification,
   ResourceType,
   todoReminderQueueMessageSchema,
 } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
 
-export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context) =>
-  getResultAsync(async () => {
+export const sendTodoReminderHandler = async (message: unknown): Promise<void> => {
     const { dueAt, itemId, resourceId } = todoReminderQueueMessageSchema.parse(message);
-    context.log(`${AzureFunction.SendTodoReminder} dequeued reminder`, { itemId, resourceId });
+    console.log(`${QueueJob.SendTodoReminder} dequeued reminder`, { itemId, resourceId });
     const resource = await db.query.resourcesInResource.findFirst({
       where: { deletedAt: { isNull: true }, id: { eq: resourceId }, type: { eq: ResourceType.TodoList } },
     });
     if (!resource) {
-      context.log(`${AzureFunction.SendTodoReminder} skipped: resource gone`, { resourceId });
+      console.log(`${QueueJob.SendTodoReminder} skipped: resource gone`, { resourceId });
       return;
     }
 
@@ -33,7 +28,7 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
     // Failures surface for a retry instead of being swallowed as "no content".
     const buffer = await readJsonBlob(containerClient, getContentBlobName(resourceId));
     if (!buffer) {
-      context.log(`${AzureFunction.SendTodoReminder} skipped: no content`, { resourceId });
+      console.log(`${QueueJob.SendTodoReminder} skipped: no content`, { resourceId });
       return;
     }
     // oxlint-disable-next-line no-restricted-properties -- todoReminderContentSchema coerces dueAt itself
@@ -43,17 +38,17 @@ export const sendTodoReminderHandler: ServiceBusQueueHandler = (message, context
     // Have been deleted or re-dated (a re-dated item enqueued its own fresh reminder), or completed since the
     // Reminder was enqueued, any of which makes this stale reminder a silent no-op.
     if (item?.dueAt?.getTime() !== dueAt.getTime() || item?.completedAt) {
-      context.log(`${AzureFunction.SendTodoReminder} skipped: item deleted, re-dated or completed`, {
+      console.log(`${QueueJob.SendTodoReminder} skipped: item deleted, re-dated or completed`, {
         itemId,
         resourceId,
       });
       return;
     }
 
-    await publishNotification(eventGridPublisherClient, {
+    await publishNotification(getJobQueue(QueueJob.ProcessNotification), {
       itemName: item.name,
       resourceId,
       type: AppNotificationType.TodoReminder,
       userId: resource.userId,
     });
-  }).match(noop, logAndRethrow(context, AzureFunction.SendTodoReminder));
+};

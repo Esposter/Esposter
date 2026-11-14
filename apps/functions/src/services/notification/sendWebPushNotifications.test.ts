@@ -5,7 +5,6 @@ import { sendWebPushNotifications } from "#src/services/notification/sendWebPush
 import { setupWebPushSuite } from "#src/services/notification/setupWebPushSuite.test";
 import { webpush } from "#src/services/notification/webpush.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { pushSubscriptionsInNotification, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -24,7 +23,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
 describe(sendWebPushNotifications, () => {
-  const context = new InvocationContext();
   const payload = "";
   const userId = crypto.randomUUID();
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, userId);
@@ -41,7 +39,7 @@ describe(sendWebPushNotifications, () => {
     expect.hasAssertions();
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
-    await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
+    await sendWebPushNotifications([{ auth, endpoint, expirationTime, id, p256dh }], payload);
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledExactlyOnceWith(
       { endpoint, expirationTime: null, keys: { auth, p256dh } },
@@ -54,7 +52,7 @@ describe(sendWebPushNotifications, () => {
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
     vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", 410, {}, "", ""));
-    await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
+    await sendWebPushNotifications([{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInNotification)
@@ -82,7 +80,7 @@ describe(sendWebPushNotifications, () => {
       expirationTime: null,
       id: crypto.randomUUID(),
     }));
-    await sendWebPushNotifications(context, subscriptions, payload);
+    await sendWebPushNotifications(subscriptions, payload);
     sendNotification.mockReset();
 
     expect(peakInFlight).toBe(MAX_CONCURRENT_PUSH_SENDS);
@@ -93,7 +91,7 @@ describe(sendWebPushNotifications, () => {
 
     const { auth, endpoint, expirationTime, id, p256dh } = await seedSubscription();
     vi.mocked(webpush.sendNotification).mockRejectedValueOnce(new WebPushError("", 500, {}, "", ""));
-    await sendWebPushNotifications(context, [{ auth, endpoint, expirationTime, id, p256dh }], payload);
+    await sendWebPushNotifications([{ auth, endpoint, expirationTime, id, p256dh }], payload);
     const remainingPushSubscriptions = await mockDb
       .select()
       .from(pushSubscriptionsInNotification)

@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { publishToServer } from "#src/services/server/publishToServer";
@@ -16,13 +15,13 @@ import { getResultAsync, noop } from "@esposter/shared";
 //
 // Best-effort, and it has to be: the counter is durable by the time this runs, so a publish failure must
 // Never reject the handler and replay an at-least-once event whose work is already done.
-export const broadcastStorageUsage = async (context: InvocationContext, userIds: UserInAuth["id"][]): Promise<void> => {
+export const broadcastStorageUsage = async (userIds: UserInAuth["id"][]): Promise<void> => {
   if (userIds.length === 0) return;
 
   await Promise.all(
     userIds.map((userId) =>
       getResultAsync(() => publishToServer({ type: PublishEventType.Storage, userId })).match(noop, (error) => {
-        context.error(`Failed to broadcast storage usage for ${userId}: `, error);
+        console.error(`Failed to broadcast storage usage for ${userId}: `, error);
       }),
     ),
   );

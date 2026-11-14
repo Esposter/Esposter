@@ -2,7 +2,7 @@
 
 [![Apache-2.0 licensed][badge-license]][url-license]
 
-Runs Esposter's asynchronous work as serverless Azure Functions. The triggers are Azure EventGrid events, Service Bus queues and timers. The work is notification delivery, webhook delivery, scheduled message jobs and resource purging.
+Runs Esposter's asynchronous work as a Cloudflare Worker. Each job has its own Queue, and the Worker consumes them: notification delivery, webhook delivery, scheduled message jobs, storage reconciliation and account deletion. A Cron Trigger runs the nightly purge of deleted resources.
 
 Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs).
 
@@ -15,10 +15,12 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run this command from `apps/functions/`:
+Run these commands from `apps/functions/`:
 
 ```bash
-pnpm build        # compile to dist/
+pnpm dev          # wrangler dev, the dev environment
+pnpm build        # bundle the prod Worker to dist/, a dry run that checks its size
+pnpm deploy:worker # wrangler deploy, the prod Worker
 ```
 
 ## <a name="license">⚖️ License</a>

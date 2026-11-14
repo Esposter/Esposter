@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { ResourceInResource } from "@esposter/db-schema";
 
@@ -11,7 +10,6 @@ import { getResourceOwnedTableNames } from "@esposter/db-schema";
 // One resource's purge, then the broadcast to the owners it gave bytes back to. The timer's per-resource body, which the
 // One-time survey purge repeats for each survey
 export const purgeResourceAndBroadcast = async (
-  context: InvocationContext,
   containerClient: ContainerClient,
   { id, type }: Pick<ResourceInResource, "id" | "type">,
 ): Promise<void> => {
@@ -20,5 +18,5 @@ export const purgeResourceAndBroadcast = async (
     getResourceOwnedTableNames(type).map((tableName) => getStreamTableClient(tableName)),
   );
   const releasedUserIds = await purgeResource(db, containerClient, tableClients, id);
-  await broadcastStorageUsage(context, releasedUserIds);
+  await broadcastStorageUsage(releasedUserIds);
 };

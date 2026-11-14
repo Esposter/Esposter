@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { getSearchClient } from "#src/services/azure/getSearchClient";
@@ -13,10 +12,7 @@ import { eq } from "drizzle-orm";
 // An owner's departure deletes the room for everyone, and account deletion does the same to each room its account owns.
 // The message partitions and the search documents that index them, the attachments and the profile images go first, and
 // The room row last: the row is what a replay finds the room by, so a room whose sweep fails keeps its row and is swept again
-export const deleteAccountOwnedRoom = async (
-  context: InvocationContext,
-  roomId: RoomInMessage["id"],
-): Promise<void> => {
+export const deleteAccountOwnedRoom = async (roomId: RoomInMessage["id"]): Promise<void> => {
   await Promise.all(
     [
       StreamTable.Messages,
@@ -27,7 +23,7 @@ export const deleteAccountOwnedRoom = async (
   );
   // The index is fed from the Messages partition just cleared, so the room's documents are removed once that partition is
   await deleteSearchDocumentsByFilter(getSearchClient(SearchIndex.Messages), getPartitionKeyFilter(roomId));
-  await deleteStoragePrefix(context, StorageBucket.MessageAssets, `${roomId}/`);
-  await deleteStoragePrefix(context, StorageBucket.PublicUserAssets, `rooms/${roomId}/`);
+  await deleteStoragePrefix(StorageBucket.MessageAssets, `${roomId}/`);
+  await deleteStoragePrefix(StorageBucket.PublicUserAssets, `rooms/${roomId}/`);
   await db.delete(roomsInMessage).where(eq(roomsInMessage.id, roomId));
 };

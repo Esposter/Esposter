@@ -1,19 +1,11 @@
-import type { BlobCreatedEventGridData, Database, PublishEvent } from "@esposter/db-schema";
+import type { Database, PublishEvent, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { reconcileStorageLedgerEntryHandler } from "#src/handlers/reconcileStorageLedgerEntryHandler";
-import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
-import {
-  StorageBucket,
-  getBlobSubjectPrefix,
-  PublishEventType,
-  storageLedgerInStorage,
-  usersInAuth,
-} from "@esposter/db-schema";
+import { PublishEventType, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase, MockRestError } from "azure-mock";
 import { createHash } from "node:crypto";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -44,14 +36,13 @@ const readResourceAssetNames = () => {
 };
 
 describe(reconcileStorageLedgerEntryHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const containerName = StorageBucket.ResourceAssets;
   const blobName = " ";
   const contentLength = 1;
-  const sequencer = "0";
-  const createBlobCreatedEvent = (subject: string) =>
-    createEventGridEvent({ data: { contentLength, sequencer } satisfies BlobCreatedEventGridData, subject });
+  const eventTime = "2026-11-14T00:00:00.000Z";
+  const createObjectCreatedMessage = (key: string, bucket: StorageBucket = containerName) =>
+    ({ bucket, eventTime, object: { key, size: contentLength } }) satisfies R2ObjectCreatedQueueMessage;
   const readStorageBytesUsed = async () =>
     (await mockDb.query.usersInAuth.findFirst({ columns: { storageBytesUsed: true }, where: { id: { eq: userId } } }))
       ?.storageBytesUsed;
@@ -73,8 +64,6 @@ describe(reconcileStorageLedgerEntryHandler, () => {
   const matchingResourceAssetName = `${resourceId}/files/${hashOf(resourceAssetContent)}`;
   // The hash of the other canonical value, so the name describes bytes the blob does not hold
   const mismatchedResourceAssetName = `${resourceId}/files/${hashOf("")}`;
-  const createResourceAssetEvent = (name: string) =>
-    createBlobCreatedEvent(`${getBlobSubjectPrefix(StorageBucket.ResourceAssets)}${name}`);
   const seedResourceAsset = async (name: string) => {
     const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
     await containerClient.getBlockBlobClient(name).upload(resourceAssetContent, resourceAssetContent.length);
@@ -89,10 +78,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(containerName)}${blobName}`),
-      context,
-    );
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(blobName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
@@ -107,10 +93,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     const messageContainerName = StorageBucket.MessageAssets;
     await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
     const downloadSpy = vi.spyOn(MockBlockBlobClient.prototype, "download");
-    await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(messageContainerName)}${messageBlobName}`),
-      context,
-    );
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(messageBlobName, messageContainerName));
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
@@ -123,47 +106,20 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    const event = createBlobCreatedEvent(`${getBlobSubjectPrefix(containerName)}${blobName}`);
-    await reconcileStorageLedgerEntryHandler(event, context);
+    const message = createObjectCreatedMessage(blobName);
+    await reconcileStorageLedgerEntryHandler(message);
     vi.clearAllMocks();
-    await reconcileStorageLedgerEntryHandler(event, context);
+    await reconcileStorageLedgerEntryHandler(message);
 
     await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
     expect(publishMock).not.toHaveBeenCalled();
   });
 
-  test("recovers a blob name storage percent-encoded into the subject", async () => {
+  test("ignores a bucket no upload reserves against", async () => {
     expect.hasAssertions();
 
     await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(containerName)}${encodeURIComponent(blobName)}`),
-      context,
-    );
-
-    await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
-    expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
-  });
-
-  // A lone `%` is legal in a filename and decodes to nothing valid. The blob is simply one nobody reserved —
-  // A clone or an upload from outside the chokepoints — so it is a no-op, never an event that poisons its queue
-  test("ignores an unreserved blob whose name cannot be decoded", async () => {
-    expect.hasAssertions();
-
-    await expect(
-      reconcileStorageLedgerEntryHandler(createBlobCreatedEvent(`${getBlobSubjectPrefix(containerName)}%`), context),
-    ).resolves.toBeUndefined();
-    await expect(readStorageBytesUsed()).resolves.toBe(0);
-  });
-
-  test("ignores a container no upload reserves against", async () => {
-    expect.hasAssertions();
-
-    await createStorageLedgerEntry();
-    await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(StorageBucket.PublicUserAssets)}${blobName}`),
-      context,
-    );
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(blobName, StorageBucket.PublicUserAssets));
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
   });
@@ -173,8 +129,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await seedResourceAsset(matchingResourceAssetName);
     const downloadSpy = vi.spyOn(MockBlockBlobClient.prototype, "download");
-    const errorSpy = vi.spyOn(context, "error");
-    await reconcileStorageLedgerEntryHandler(createResourceAssetEvent(matchingResourceAssetName), context);
+    const errorSpy = vi.spyOn(console, "error");
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(matchingResourceAssetName));
 
     expect(downloadSpy).toHaveBeenCalledExactlyOnceWith();
     expect(readResourceAssetNames()).toStrictEqual([matchingResourceAssetName]);
@@ -185,21 +141,21 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect.hasAssertions();
 
     await seedResourceAsset(mismatchedResourceAssetName);
-    const errorSpy = vi.spyOn(context, "error");
-    await reconcileStorageLedgerEntryHandler(createResourceAssetEvent(mismatchedResourceAssetName), context);
+    const errorSpy = vi.spyOn(console, "error");
+    await reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(mismatchedResourceAssetName));
 
     expect(readResourceAssetNames()).toStrictEqual([]);
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
   });
 
-  test("a redelivered event for a deleted resource asset is a no-op", async () => {
+  test("a redelivered message for a deleted resource asset is a no-op", async () => {
     expect.hasAssertions();
 
     await seedResourceAsset(mismatchedResourceAssetName);
-    const errorSpy = vi.spyOn(context, "error");
-    const event = createResourceAssetEvent(mismatchedResourceAssetName);
-    await reconcileStorageLedgerEntryHandler(event, context);
-    await expect(reconcileStorageLedgerEntryHandler(event, context)).resolves.toBeUndefined();
+    const errorSpy = vi.spyOn(console, "error");
+    const message = createObjectCreatedMessage(mismatchedResourceAssetName);
+    await reconcileStorageLedgerEntryHandler(message);
+    await expect(reconcileStorageLedgerEntryHandler(message)).resolves.toBeUndefined();
 
     expect(readResourceAssetNames()).toStrictEqual([]);
     expect(errorSpy).toHaveBeenCalledExactlyOnceWith(expect.stringContaining(mismatchedResourceAssetName));
@@ -213,7 +169,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     vi.spyOn(MockBlockBlobClient.prototype, "download").mockRejectedValueOnce(new MockRestError("", 503));
 
     await expect(
-      reconcileStorageLedgerEntryHandler(createResourceAssetEvent(mismatchedResourceAssetName), context),
+      reconcileStorageLedgerEntryHandler(createObjectCreatedMessage(mismatchedResourceAssetName)),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[MockRestError]`);
     expect(readResourceAssetNames()).toStrictEqual([mismatchedResourceAssetName]);
   });

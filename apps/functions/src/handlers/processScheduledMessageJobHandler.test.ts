@@ -1,13 +1,12 @@
 import type { Database, ScheduledJob, ScheduledMessageJobPayload } from "@esposter/db-schema";
 
 import { processScheduledMessageJobHandler } from "#src/handlers/processScheduledMessageJobHandler";
-import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { MockJobQueue } from "#src/services/queue/getJobQueue.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createReplyThreadFollows } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
-  AzureFunction,
+  QueueJob,
   StreamTable,
   DatabaseEntityType,
   getReverseTickedTimestamp,
@@ -45,10 +44,7 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
     createReplyThreadFollows: vi.fn<typeof actual.createReplyThreadFollows>(actual.createReplyThreadFollows),
   };
 });
-vi.mock(
-  import("#src/services/azure/eventGridPublisherClient"),
-  () => import("#src/services/azure/eventGridPublisherClient.test"),
-);
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 vi.mock(import("#src/services/scheduler/getScheduler"), () => ({ getScheduler: () => ({ schedule: mocks.schedule }) }));
 vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
@@ -60,7 +56,6 @@ vi.mock(import("#src/services/notification/webpush"), () => import("#src/service
 const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
 
 describe(processScheduledMessageJobHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const error = new Error(" ");
   const name = "name";
   const otherRoomId = crypto.randomUUID();
@@ -135,7 +130,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips when no active job exists", async () => {
     expect.hasAssertions();
 
-    await processScheduledMessageJobHandler({ id: crypto.randomUUID() }, context);
+    await processScheduledMessageJobHandler({ id: crypto.randomUUID() });
 
     expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
     expect(mocks.schedule).not.toHaveBeenCalled();
@@ -145,7 +140,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(reminderPayload, { completedAt: new Date(0) });
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const skippedJob = await getJob(job.id);
 
@@ -157,7 +152,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(reminderPayload, { cancelledAt: new Date(0) });
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const skippedJob = await getJob(job.id);
 
@@ -171,11 +166,11 @@ describe(processScheduledMessageJobHandler, () => {
   test("skips a claimed job before running any guard", async () => {
     expect.hasAssertions();
 
-    const logSpy = vi.spyOn(context, "log");
+    const logSpy = vi.spyOn(console, "log");
     const job = await insertJob(scheduledMessagePayload, { processingStartedAt: new Date(0) });
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
-    expect(logSpy).toHaveBeenCalledWith(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, {
+    expect(logSpy).toHaveBeenCalledWith(`${QueueJob.ProcessScheduledMessageJob} skipped: no active job`, {
       id: job.id,
     });
     expect(MockTableDatabase.get(StreamTable.Messages)).toBeUndefined();
@@ -185,7 +180,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(reminderPayload, { runAt: new Date(Date.now() + 1) });
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const requeuedJob = await getJob(job.id);
 
@@ -193,7 +188,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect(requeuedJob?.processingStartedAt).toBeNull();
     expect(mocks.schedule).toHaveBeenCalledExactlyOnceWith(job.runAt.getTime(), {
       payload: { id: job.id },
-      queueJob: AzureFunction.ProcessScheduledMessageJob,
+      queueJob: QueueJob.ProcessScheduledMessageJob,
     });
   });
 
@@ -201,7 +196,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(reminderPayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const processedJob = await getJob(job.id);
 
@@ -214,7 +209,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(scheduledMessagePayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const processedJob = await getJob(job.id);
 
@@ -229,7 +224,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(scheduledMessagePayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
@@ -243,7 +238,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(threadReplyPayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const messagesTable = MockTableDatabase.get(StreamTable.Messages);
     assert.exists(messagesTable);
@@ -257,7 +252,7 @@ describe(processScheduledMessageJobHandler, () => {
     expect.hasAssertions();
 
     const job = await insertJob(threadReplyPayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const follows = await mockDb
       .select({
@@ -276,10 +271,10 @@ describe(processScheduledMessageJobHandler, () => {
   test("notifies when following the thread fails after the message is created", async () => {
     expect.hasAssertions();
 
-    const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
+    const sendSpy = vi.spyOn(MockJobQueue.prototype, "send");
     vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(error);
     const job = await insertJob(threadReplyPayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const room = await mockDb.query.roomsInMessage.findFirst({
       columns: { updatedAt: true },
@@ -293,9 +288,9 @@ describe(processScheduledMessageJobHandler, () => {
   test("completes job when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);
+    vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(error);
     const job = await insertJob(scheduledMessagePayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const processedJob = await getJob(job.id);
 
@@ -308,9 +303,9 @@ describe(processScheduledMessageJobHandler, () => {
   test("advances the slowmode clock when notifying fails after the message is created", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(eventGridPublisherClient, "send").mockRejectedValueOnce(error);
+    vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(error);
     const job = await insertJob(scheduledMessagePayload);
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const member = await mockDb.query.usersToRoomsInMessage.findFirst({
       columns: { lastMessageAt: true },
@@ -335,7 +330,7 @@ describe(processScheduledMessageJobHandler, () => {
         words: [scheduledMessagePayload.message],
       });
     const job = await insertJob(scheduledMessagePayload, { userId: memberUserId });
-    await processScheduledMessageJobHandler({ id: job.id }, context);
+    await processScheduledMessageJobHandler({ id: job.id });
 
     const cancelledJob = await getJob(job.id);
     const member = await mockDb.query.usersToRoomsInMessage.findFirst({
@@ -354,7 +349,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     const job = await insertJob(scheduledMessagePayload, { roomId: otherRoomId });
 
-    await expect(processScheduledMessageJobHandler({ id: job.id }, context)).rejects.toThrowErrorMatchingInlineSnapshot(
+    await expect(processScheduledMessageJobHandler({ id: job.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[InvalidOperationError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.ScheduledMessageJob, otherRoomId).message}]`,
     );
 

@@ -1,10 +1,8 @@
 import type { Database } from "@esposter/db-schema";
 
 import { sendTodoReminderHandler } from "#src/handlers/sendTodoReminderHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -15,7 +13,8 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockContainerDatabase } from "azure-mock";
+import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -25,10 +24,8 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(
-  import("#src/services/azure/eventGridPublisherClient"),
-  () => import("#src/services/azure/eventGridPublisherClient.test"),
-);
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
+
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
 const seedContent = async (
@@ -40,7 +37,6 @@ const seedContent = async (
 };
 
 describe(sendTodoReminderHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
   const userId = crypto.randomUUID();
   const dueAt = new Date(0);
@@ -55,7 +51,7 @@ describe(sendTodoReminderHandler, () => {
 
   afterEach(async () => {
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await mockDb.delete(resourcesInResource);
   });
 
@@ -69,9 +65,9 @@ describe(sendTodoReminderHandler, () => {
     const resource = await insertResource();
     const itemId = crypto.randomUUID();
     await seedContent(resource.id, [{ dueAt: dueAt.toISOString(), id: itemId, name }]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
+    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
 
-    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)?.map(({ data }) => data)).toStrictEqual([
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessNotification)).toStrictEqual([
       { itemName: name, resourceId: resource.id, type: AppNotificationType.TodoReminder, userId },
     ]);
   });
@@ -79,9 +75,9 @@ describe(sendTodoReminderHandler, () => {
   test("skips when the resource is gone", async () => {
     expect.hasAssertions();
 
-    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() }, context);
+    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: crypto.randomUUID() });
 
-    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("skips when the item was deleted", async () => {
@@ -89,9 +85,9 @@ describe(sendTodoReminderHandler, () => {
 
     const resource = await insertResource();
     await seedContent(resource.id, []);
-    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id }, context);
+    await sendTodoReminderHandler({ dueAt, itemId: crypto.randomUUID(), resourceId: resource.id });
 
-    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("skips when the item was re-dated", async () => {
@@ -101,9 +97,9 @@ describe(sendTodoReminderHandler, () => {
     const itemId = crypto.randomUUID();
     const reDatedAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
     await seedContent(resource.id, [{ dueAt: reDatedAt.toISOString(), id: itemId, name }]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
+    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
 
-    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // Completing a todo cancels nothing already scheduled, so the reminder has to find out when it fires
@@ -115,8 +111,8 @@ describe(sendTodoReminderHandler, () => {
     await seedContent(resource.id, [
       { completedAt: dueAt.toISOString(), dueAt: dueAt.toISOString(), id: itemId, name },
     ]);
-    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id }, context);
+    await sendTodoReminderHandler({ dueAt, itemId, resourceId: resource.id });
 
-    expect(MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT)).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 });

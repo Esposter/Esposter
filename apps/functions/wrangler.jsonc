@@ -1,0 +1,76 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "main": "src/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "env": {
+    "prod": {
+      "name": "prod-wkr-esposter-functions",
+      "vars": {
+        "CLOUDFLARE_ENVIRONMENT": "prod"
+      },
+      "triggers": {
+        "crons": ["0 3 * * *"]
+      },
+      "queues": {
+        "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "prod-q-esposter-process-notification" }]
+      },
+      "d1_databases": [
+        { "binding": "CORE", "database_name": "prod-d1-esposter-core", "database_id": "set-at-deploy" },
+        { "binding": "STREAMS", "database_name": "prod-d1-esposter-streams", "database_id": "set-at-deploy" }
+      ],
+      "r2_buckets": [
+        { "binding": "CLICKER_ASSETS", "bucket_name": "prod-r2-esposter-clicker-assets" },
+        { "binding": "GENSHIN_ASSETS", "bucket_name": "prod-r2-esposter-genshin-assets" },
+        { "binding": "MESSAGE_ASSETS", "bucket_name": "prod-r2-esposter-message-assets" },
+        { "binding": "PUBLIC_APP_ASSETS", "bucket_name": "prod-r2-esposter-public-app-assets" },
+        { "binding": "PUBLIC_DUNGEONS_ASSETS", "bucket_name": "prod-r2-esposter-public-dungeons-assets" },
+        { "binding": "PUBLIC_GENSHIN_ASSETS", "bucket_name": "prod-r2-esposter-public-genshin-assets" },
+        { "binding": "PUBLIC_USER_ASSETS", "bucket_name": "prod-r2-esposter-public-user-assets" },
+        { "binding": "RESOURCE_ASSETS", "bucket_name": "prod-r2-esposter-resource-assets" },
+        { "binding": "USER_ASSETS", "bucket_name": "prod-r2-esposter-user-assets" }
+      ],
+      "durable_objects": {
+        "bindings": [
+          { "name": "SCHEDULER", "class_name": "Scheduler" },
+          { "name": "SERVER", "class_name": "$DurableObject", "script_name": "prod-wkr-esposter-web" }
+        ]
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Scheduler"] }]
+    },
+    "dev": {
+      "name": "dev-wkr-esposter-functions",
+      "vars": {
+        "CLOUDFLARE_ENVIRONMENT": "dev"
+      },
+      "triggers": {
+        "crons": ["0 3 * * *"]
+      },
+      "queues": {
+        "producers": [{ "binding": "PROCESS_NOTIFICATION_QUEUE", "queue": "dev-q-esposter-process-notification" }]
+      },
+      "d1_databases": [
+        { "binding": "CORE", "database_name": "dev-d1-esposter-core", "database_id": "set-at-deploy" },
+        { "binding": "STREAMS", "database_name": "dev-d1-esposter-streams", "database_id": "set-at-deploy" }
+      ],
+      "r2_buckets": [
+        { "binding": "CLICKER_ASSETS", "bucket_name": "dev-r2-esposter-clicker-assets" },
+        { "binding": "GENSHIN_ASSETS", "bucket_name": "dev-r2-esposter-genshin-assets" },
+        { "binding": "MESSAGE_ASSETS", "bucket_name": "dev-r2-esposter-message-assets" },
+        { "binding": "PUBLIC_APP_ASSETS", "bucket_name": "dev-r2-esposter-public-app-assets" },
+        { "binding": "PUBLIC_DUNGEONS_ASSETS", "bucket_name": "dev-r2-esposter-public-dungeons-assets" },
+        { "binding": "PUBLIC_GENSHIN_ASSETS", "bucket_name": "dev-r2-esposter-public-genshin-assets" },
+        { "binding": "PUBLIC_USER_ASSETS", "bucket_name": "dev-r2-esposter-public-user-assets" },
+        { "binding": "RESOURCE_ASSETS", "bucket_name": "dev-r2-esposter-resource-assets" },
+        { "binding": "USER_ASSETS", "bucket_name": "dev-r2-esposter-user-assets" }
+      ],
+      "durable_objects": {
+        "bindings": [
+          { "name": "SCHEDULER", "class_name": "Scheduler" },
+          { "name": "SERVER", "class_name": "$DurableObject", "script_name": "dev-wkr-esposter-web" }
+        ]
+      },
+      "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Scheduler"] }]
+    }
+  }
+}

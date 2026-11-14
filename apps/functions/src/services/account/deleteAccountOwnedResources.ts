@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { UserInAuth } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
@@ -10,7 +9,6 @@ import { eq } from "drizzle-orm";
 // Each resource the account owns goes through the purge the recycle bin's timer runs for an expired one, so its
 // Directory, the partitions its type owns and its ledger rows go in the order that makes a replay safe
 export const deleteAccountOwnedResources = async (
-  context: InvocationContext,
   userId: UserInAuth["id"],
 ): Promise<void> => {
   const ownedResources = await db
@@ -20,5 +18,5 @@ export const deleteAccountOwnedResources = async (
   const containerClient = await getContainerClient(StorageBucket.ResourceAssets);
   for (const ownedResource of ownedResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as the timer's purge runs
-    await purgeResourceAndBroadcast(context, containerClient, ownedResource);
+    await purgeResourceAndBroadcast(containerClient, ownedResource);
 };

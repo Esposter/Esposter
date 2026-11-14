@@ -1,16 +1,14 @@
-import type { InvocationContext } from "@azure/functions";
 
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { db } from "#src/services/shared/db";
 import { executeAutomodAction, getMessageCreationRejection } from "@esposter/db";
-import { AzureFunction, StreamTable, DatabaseEntityType, MessageCreationRejectionType } from "@esposter/db-schema";
+import { QueueJob, StreamTable, DatabaseEntityType, MessageCreationRejectionType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, WordFilteredError } from "@esposter/shared";
 
 // The worker's face of the shared message-creation rules — the decision itself lives in `@esposter/db`, so a
 // Scheduled delivery can never allow what the composer rejects, or reject what it allows. Only the word
 // Filter is distinguishable here: the handler retries every other rejection, and must not retry that one.
 export const assertCanCreateMessage = async (
-  context: InvocationContext,
   userId: string,
   roomId: string,
   message: string,
@@ -33,7 +31,7 @@ export const assertCanCreateMessage = async (
     // Best-effort, but attributable: the timeout still applies, so a lost audit row is a moderator looking at a
     // Timed-out member with nothing explaining it — through the invocation's own sink, never bare console
     (error) => {
-      context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to write the automod audit row: `, error);
+      console.error(`${QueueJob.ProcessScheduledMessageJob} failed to write the automod audit row: `, error);
     },
   );
   throw new WordFilteredError(invalidOperationError.message);

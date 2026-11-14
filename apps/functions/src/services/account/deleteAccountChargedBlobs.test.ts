@@ -4,7 +4,6 @@ import { deleteAccountChargedBlobs } from "#src/services/account/deleteAccountCh
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
@@ -25,7 +24,6 @@ vi.mock(
 );
 
 describe(deleteAccountChargedBlobs, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const countedBytes = 1;
 
   beforeAll(async () => {
@@ -65,7 +63,7 @@ describe(deleteAccountChargedBlobs, () => {
     await seedChargedBlob(userId, StorageBucket.UserAssets, chargedBackgroundBlobName);
     await seedChargedBlob(otherUserId, StorageBucket.MessageAssets, otherMessageBlobName);
 
-    await deleteAccountChargedBlobs(context, userId);
+    await deleteAccountChargedBlobs(userId);
 
     expect(readBlobNames(StorageBucket.MessageAssets)).toStrictEqual([otherMessageBlobName]);
     expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([]);

@@ -3,7 +3,6 @@ import type { Database } from "@esposter/db-schema";
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -22,7 +21,6 @@ vi.mock(import("#src/services/resource/purgeResourceAndBroadcast"), () => ({
 }));
 
 describe(purgeExpiredResources, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const name = "name";
   const expiredDeletedAt = new Date(Date.now() - RECYCLE_BIN_RETENTION_MS - 1000);
@@ -53,7 +51,7 @@ describe(purgeExpiredResources, () => {
     await insertResource(withinRetentionDeletedAt);
     await insertResource(null);
 
-    await purgeExpiredResources(context);
+    await purgeExpiredResources();
 
     const purgedIds = vi.mocked(purgeResourceAndBroadcast).mock.calls.map((call) => call[2].id);
     expect(purgedIds).toStrictEqual([expiredResource.id]);
@@ -68,7 +66,7 @@ describe(purgeExpiredResources, () => {
       resource.id === failingResource.id ? Promise.reject(new Error(" ")) : Promise.resolve(),
     );
 
-    await expect(purgeExpiredResources(context)).resolves.toBeUndefined();
+    await expect(purgeExpiredResources()).resolves.toBeUndefined();
     const purgedIds = vi
       .mocked(purgeResourceAndBroadcast)
       .mock.calls.map((call) => call[2].id)

@@ -1,12 +1,10 @@
-import type { Database } from "@esposter/db-schema";
+import type { Database, R2ObjectCreatedQueueMessage } from "@esposter/db-schema";
 
 import { deleteOrphanedProfileImageHandler } from "#src/handlers/deleteOrphanedProfileImageHandler";
-import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { StorageBucket, getBlobSubjectPrefix, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
+import { StorageBucket, getUserProfileImageBlobName, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -20,11 +18,15 @@ vi.mock(import("#src/services/shared/db"), () => ({
 
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
-const createBlobCreatedEvent = (blobName: string) =>
-  createEventGridEvent({ subject: `${getBlobSubjectPrefix(StorageBucket.PublicUserAssets)}${blobName}` });
+const createObjectCreatedMessage = (key: string) =>
+  ({
+    bucket: StorageBucket.PublicUserAssets,
+    eventTime: "2026-11-14T00:00:00.000Z",
+    object: { key, size: 1 },
+  }) satisfies R2ObjectCreatedQueueMessage;
 const hasBlob = (blobName: string) => MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName) === true;
+
 describe(deleteOrphanedProfileImageHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const blobContent = " ";
   const seedBlob = async (blobName: string) => {
@@ -47,7 +49,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
 
     const blobName = getUserProfileImageBlobName(crypto.randomUUID());
     await seedBlob(blobName);
-    await deleteOrphanedProfileImageHandler(createBlobCreatedEvent(blobName), context);
+    await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     expect(hasBlob(blobName)).toBe(false);
   });
@@ -58,7 +60,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
     await mockDb.update(usersInAuth).set({ deletionRequestedAt: new Date(0) });
     const blobName = getUserProfileImageBlobName(userId);
     await seedBlob(blobName);
-    await deleteOrphanedProfileImageHandler(createBlobCreatedEvent(blobName), context);
+    await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     expect(hasBlob(blobName)).toBe(false);
   });
@@ -68,7 +70,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
 
     const blobName = getUserProfileImageBlobName(userId);
     await seedBlob(blobName);
-    await deleteOrphanedProfileImageHandler(createBlobCreatedEvent(blobName), context);
+    await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     expect(hasBlob(blobName)).toBe(true);
   });
@@ -79,7 +81,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
 
     const blobName = `rooms/${crypto.randomUUID()}/ProfileImage/${crypto.randomUUID()}`;
     await seedBlob(blobName);
-    await deleteOrphanedProfileImageHandler(createBlobCreatedEvent(blobName), context);
+    await deleteOrphanedProfileImageHandler(createObjectCreatedMessage(blobName));
 
     expect(hasBlob(blobName)).toBe(true);
   });

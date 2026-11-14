@@ -1,10 +1,8 @@
-import type { BlobDeletionEventGridData, Database, PublishEvent } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, Database, PublishEvent } from "@esposter/db-schema";
 
 import { processBlobDeletionHandler } from "#src/handlers/processBlobDeletionHandler";
-import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, PublishEventType, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
@@ -36,7 +34,7 @@ const readContainer = () => {
   return [...container.keys()];
 };
 
-const createBlobDeletionEvent = (data: BlobDeletionEventGridData) => createEventGridEvent({ data });
+const createBlobDeletionEvent = (data: BlobDeletionQueueMessage) => data;
 
 const createEvent = (blobNames: string[]) =>
   createBlobDeletionEvent({ blobNames, containerName: StorageBucket.MessageAssets });
@@ -45,7 +43,6 @@ const createPrefixEvent = (prefix: string, createdBefore: Date) =>
   createBlobDeletionEvent({ containerName: StorageBucket.MessageAssets, createdBefore, prefix });
 
 describe(processBlobDeletionHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const blobName = "";
   const secondBlobName = " ";
   const prefix = "a";
@@ -91,7 +88,7 @@ describe(processBlobDeletionHandler, () => {
 
     await seedBlob(blobName);
     await seedBlob(secondBlobName);
-    await processBlobDeletionHandler(createEvent([blobName, secondBlobName]), context);
+    await processBlobDeletionHandler(createEvent([blobName, secondBlobName]));
 
     expect(readContainer()).toStrictEqual([]);
   });
@@ -100,7 +97,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);
-    await processBlobDeletionHandler(createEvent([blobName]), context);
+    await processBlobDeletionHandler(createEvent([blobName]));
 
     expect(readContainer()).toStrictEqual([]);
   });
@@ -116,7 +113,6 @@ describe(processBlobDeletionHandler, () => {
         containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(0),
       }),
-      context,
     );
 
     expect(readContainer()).toStrictEqual([blobName]);
@@ -133,7 +129,6 @@ describe(processBlobDeletionHandler, () => {
         containerName: StorageBucket.MessageAssets,
         decidedAt: new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds")),
       }),
-      context,
     );
 
     expect(readContainer()).toStrictEqual([]);
@@ -145,7 +140,7 @@ describe(processBlobDeletionHandler, () => {
     await seedBlob(blobName);
     await seedStorageLedgerEntry(blobName);
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes });
-    await processBlobDeletionHandler(createEvent([blobName]), context);
+    await processBlobDeletionHandler(createEvent([blobName]));
 
     await expect(readStorageBytesUsed()).resolves.toBe(0);
     expect(publishMock).toHaveBeenCalledExactlyOnceWith({ type: PublishEventType.Storage, userId });
@@ -156,7 +151,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(blobName);
-    await processBlobDeletionHandler(createEvent([blobName]), context);
+    await processBlobDeletionHandler(createEvent([blobName]));
 
     expect(publishMock).not.toHaveBeenCalled();
   });
@@ -166,9 +161,9 @@ describe(processBlobDeletionHandler, () => {
 
     const event = createEvent([blobName, secondBlobName]);
     await seedBlob(blobName);
-    await processBlobDeletionHandler(event, context);
+    await processBlobDeletionHandler(event);
 
-    await expect(processBlobDeletionHandler(event, context)).resolves.toBeUndefined();
+    await expect(processBlobDeletionHandler(event)).resolves.toBeUndefined();
 
     expect(readContainer()).toStrictEqual([]);
   });
@@ -179,7 +174,6 @@ describe(processBlobDeletionHandler, () => {
     await seedBlob(prefixedBlobName);
     await processBlobDeletionHandler(
       createPrefixEvent(prefix, new Date(Date.now() + Temporal.Duration.from({ days: 1 }).total("milliseconds"))),
-      context,
     );
 
     expect(readContainer()).toStrictEqual([]);
@@ -191,7 +185,7 @@ describe(processBlobDeletionHandler, () => {
     expect.hasAssertions();
 
     await seedBlob(prefixedBlobName);
-    await processBlobDeletionHandler(createPrefixEvent(prefix, new Date(0)), context);
+    await processBlobDeletionHandler(createPrefixEvent(prefix, new Date(0)));
 
     expect(readContainer()).toStrictEqual([prefixedBlobName]);
   });
@@ -203,7 +197,7 @@ describe(processBlobDeletionHandler, () => {
     vi.spyOn(MockBlockBlobClient.prototype, "deleteIfExists").mockRejectedValue(new Error(" "));
 
     await expect(
-      processBlobDeletionHandler(createEvent([blobName]), context),
+      processBlobDeletionHandler(createEvent([blobName])),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(readContainer()).toStrictEqual([blobName]);
@@ -222,7 +216,7 @@ describe(processBlobDeletionHandler, () => {
     vi.spyOn(MockBlockBlobClient.prototype, "deleteIfExists").mockRejectedValueOnce(new Error(" "));
 
     await expect(
-      processBlobDeletionHandler(createEvent([blobName, secondBlobName]), context),
+      processBlobDeletionHandler(createEvent([blobName, secondBlobName])),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     expect(readContainer()).toStrictEqual([blobName]);

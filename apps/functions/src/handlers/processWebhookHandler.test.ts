@@ -1,18 +1,12 @@
-import type { WebhookEventGridData } from "#src/models/message/WebhookEventGridData";
-import type { WebhookPayload } from "@esposter/db-schema";
+import type { WebhookPayload, WebhookQueueMessage } from "@esposter/db-schema";
 
 import { processWebhookHandler } from "#src/handlers/processWebhookHandler";
-import { MOCK_EVENT_GRID_ENDPOINT } from "#src/services/azure/constants.test";
-import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.test";
-import { InvocationContext } from "@azure/functions";
-import { StreamTable } from "@esposter/db-schema";
-import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { MockJobQueueDatabase } from "#src/services/queue/getJobQueue.test";
+import { QueueJob, StreamTable } from "@esposter/db-schema";
+import { MockTableDatabase } from "azure-mock";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock(
-  import("#src/services/azure/eventGridPublisherClient"),
-  () => import("#src/services/azure/eventGridPublisherClient.test"),
-);
+vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 vi.mock(
   import("#src/services/streams/getStreamTableClient"),
   () => import("#src/services/streams/getStreamTableClient.test"),
@@ -23,27 +17,21 @@ vi.mock(
 );
 
 describe(processWebhookHandler, () => {
-  const context = new InvocationContext();
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
 
   afterEach(() => {
     MockTableDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
   });
 
   test("creates message in table storage and publishes push notification event", async () => {
     expect.hasAssertions();
 
-    const response = await processWebhookHandler(
-      createEventGridEvent({
-        data: {
-          payload: { content: "content", username: "username" } satisfies WebhookPayload,
-          webhook: { roomId, userId },
-        } satisfies WebhookEventGridData,
-      }),
-      context,
-    );
+    const response = await processWebhookHandler({
+      payload: { content: "content", username: "username" } satisfies WebhookPayload,
+      webhook: { roomId, userId },
+    } satisfies WebhookQueueMessage);
 
     expect(response).toBeUndefined();
 
@@ -52,7 +40,7 @@ describe(processWebhookHandler, () => {
 
     expect(messagesTable.size).toBe(1);
 
-    const events = MockEventGridDatabase.get(MOCK_EVENT_GRID_ENDPOINT);
+    const events = MockJobQueueDatabase.get(QueueJob.ProcessNotification);
     assert.exists(events);
 
     expect(events).toHaveLength(1);

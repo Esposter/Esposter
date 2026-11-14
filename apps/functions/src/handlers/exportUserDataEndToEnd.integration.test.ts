@@ -6,7 +6,6 @@ import { getStreamTableClient } from "#src/services/streams/getStreamTableClient
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { InvocationContext } from "@azure/functions";
 import {
   createMessage,
   getContentBlobName,
@@ -55,7 +54,6 @@ vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src
 
 describe(exportUserDataHandler, () => {
   const content = JSON.stringify({});
-  const context = new InvocationContext({ logHandler: () => {} });
   const description = "description";
   const filename = "filename";
   const name = "name";
@@ -140,7 +138,7 @@ describe(exportUserDataHandler, () => {
     const dataExportId = crypto.randomUUID();
     await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
 
-    await exportUserDataHandler(context, { dataExportId });
+    await exportUserDataHandler({ dataExportId });
 
     const exportRow = takeOne(
       await mockDb

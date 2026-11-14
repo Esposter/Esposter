@@ -1,16 +1,13 @@
-import type { ServiceBusQueueHandler } from "@azure/functions";
-
-import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
+import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
 import { assertCanCreateMessage } from "#src/services/message/assertCanCreateMessage";
 import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
 import { getScheduler } from "#src/services/scheduler/getScheduler";
 import { db } from "#src/services/shared/db";
-import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { createReplyThreadFollows } from "@esposter/db";
 import {
   AppNotificationType,
-  AzureFunction,
+  QueueJob,
   StreamTable,
   MessageType,
   publishNotification,
@@ -24,13 +21,12 @@ import {
 import { getResultAsync, noop, WordFilteredError } from "@esposter/shared";
 import { and, eq, isNull } from "drizzle-orm";
 
-export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (message, context) =>
-  getResultAsync(async () => {
+export const processScheduledMessageJobHandler = async (message: unknown): Promise<void> => {
     const { id } = scheduledMessageJobQueueMessageSchema.parse(message);
     // Every write below this one targets the job this invocation dequeued, so the row it addresses is stated once
     const updateJob = (values: Partial<typeof scheduledMessageJobsInMessage.$inferInsert>) =>
       db.update(scheduledMessageJobsInMessage).set(values).where(eq(scheduledMessageJobsInMessage.id, id));
-    context.log(`${AzureFunction.ProcessScheduledMessageJob} dequeued job`, { id });
+    console.log(`${QueueJob.ProcessScheduledMessageJob} dequeued job`, { id });
     // Every column the claim below requires to be unset must be unset here too: this read settles an
     // Already-cancelled/completed/claimed job without paying for the claim's write. The claim stays
     // Authoritative — it is what actually stops a redelivery re-running the guards and the send.
@@ -43,17 +39,17 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       },
     });
     if (!job) {
-      context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: no active job`, { id });
+      console.log(`${QueueJob.ProcessScheduledMessageJob} skipped: no active job`, { id });
       return;
     } else if (job.runAt.getTime() > Date.now()) {
-      context.log(`${AzureFunction.ProcessScheduledMessageJob} requeued: runAt in future`, {
+      console.log(`${QueueJob.ProcessScheduledMessageJob} requeued: runAt in future`, {
         id,
         now: new Date().toISOString(),
         runAt: job.runAt.toISOString(),
       });
       await getScheduler(job.id).schedule(job.runAt.getTime(), {
         payload: { id: job.id },
-        queueJob: AzureFunction.ProcessScheduledMessageJob,
+        queueJob: QueueJob.ProcessScheduledMessageJob,
       });
       return;
     }
@@ -63,7 +59,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     // Single-shot, so every redelivery loses the race, and the row is left neither deliverable nor cancellable
     const payload = scheduledMessageJobPayloadSchema.parse(job.payload);
     // Claiming on `processingStartedAt IS NULL` is what makes this handler idempotent
-    // (AzureFunctionIsIdempotentMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
+    // (QueueJobIsIdempotentMap): delivery is at-least-once, and a message carries a fresh reverse-ticked
     // `rowKey`, so a redelivery that could re-pass this guard would post a second copy rather than repair the first
     const [processingJob] = await db
       .update(scheduledMessageJobsInMessage)
@@ -78,7 +74,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       )
       .returning();
     if (!processingJob) {
-      context.log(`${AzureFunction.ProcessScheduledMessageJob} skipped: lost processing race`, { id });
+      console.log(`${QueueJob.ProcessScheduledMessageJob} skipped: lost processing race`, { id });
       return;
     }
     // Everything past the claim reads the claimed row, never the pre-claim read above: the two are the same row, and
@@ -94,7 +90,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Own, so the claim is released before the rethrow asks Service Bus to redeliver — the claim is
       // Single-shot, and a job left holding it would be neither delivered nor cancellable/reschedulable
       const isWordFiltered = await getResultAsync(() =>
-        assertCanCreateMessage(context, processingJob.userId, processingJob.roomId, payload.message),
+        assertCanCreateMessage(processingJob.userId, processingJob.roomId, payload.message),
       ).match(
         () => false,
         async (error) => {
@@ -108,7 +104,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Automod action — so the job is tombstoned rather than retried, which would re-apply that action per delivery
       if (isWordFiltered) {
         await updateJob({ cancelledAt: new Date() });
-        context.log(`${AzureFunction.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
+        console.log(`${QueueJob.ProcessScheduledMessageJob} cancelled: message is word filtered`, { id });
         return;
       }
     }
@@ -119,14 +115,14 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // Itself is no longer what is at risk — it is published now, so a failure past this point is Event Grid's
       // To retry and dead-letter ([dead-letter replay](openspec/specs/infra/eventgrid-dead-letter/design.md))
       await getResultAsync(() =>
-        publishNotification(eventGridPublisherClient, {
+        publishNotification(getJobQueue(QueueJob.ProcessNotification), {
           roomId: processingJob.roomId,
           text: payload.text,
           type: AppNotificationType.Reminder,
           userId: processingJob.userId,
         }),
       ).match(noop, (error) => {
-        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to notify`, { error, id });
+        console.error(`${QueueJob.ProcessScheduledMessageJob} failed to notify`, { error, id });
       });
     else {
       const now = new Date();
@@ -139,14 +135,14 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
             eq(usersToRoomsInMessage.userId, processingJob.userId),
           ),
         );
-      const newMessage = await createAndBroadcastMessage(context, {
+      const newMessage = await createAndBroadcastMessage({
         message: payload.message,
         replyRowKey: payload.replyRowKey,
         roomId: processingJob.roomId,
         type: MessageType.Message,
         userId: processingJob.userId,
       });
-      context.log(`${AzureFunction.ProcessScheduledMessageJob} created message`, {
+      console.log(`${QueueJob.ProcessScheduledMessageJob} created message`, {
         partitionKey: newMessage.partitionKey,
         rowKey: newMessage.rowKey,
       });
@@ -157,7 +153,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
       // First failure conditional on it, so a follow that could not be written would silently cost the
       // Notification and the room's sort order too
       const logFailure = (step: string) => (error: unknown) => {
-        context.error(`${AzureFunction.ProcessScheduledMessageJob} failed to ${step}`, { error, id });
+        console.error(`${QueueJob.ProcessScheduledMessageJob} failed to ${step}`, { error, id });
       };
       // A message scheduled into a thread is a reply like any other, so it owes the same follow rows — and
       // Owes them before the publish that reads them
@@ -165,7 +161,7 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
         createReplyThreadFollows(db, getStreamTableClient(StreamTable.Messages), newMessage),
       ).match(noop, logFailure("follow the thread"));
       await getResultAsync(() =>
-        publishNotification(eventGridPublisherClient, {
+        publishNotification(getJobQueue(QueueJob.ProcessNotification), {
           message: {
             message: newMessage.message,
             partitionKey: newMessage.partitionKey,
@@ -185,4 +181,4 @@ export const processScheduledMessageJobHandler: ServiceBusQueueHandler = (messag
     }
 
     await updateJob({ completedAt: new Date() });
-  }).match(noop, logAndRethrow(context, AzureFunction.ProcessScheduledMessageJob));
+};

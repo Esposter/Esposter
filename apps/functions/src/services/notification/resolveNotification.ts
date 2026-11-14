@@ -1,6 +1,5 @@
 import type { ResolvedNotification } from "#src/models/notification/ResolvedNotification";
-import type { InvocationContext } from "@azure/functions";
-import type { NotificationEventGridData } from "@esposter/db-schema";
+import type { NotificationQueueMessage } from "@esposter/db-schema";
 
 import { getMessageNotificationAuthor } from "#src/services/notification/getMessageNotificationAuthor";
 import { getMessageNotificationBody } from "#src/services/notification/getMessageNotificationBody";
@@ -15,8 +14,7 @@ import { exhaustiveGuard, RoutePath } from "@esposter/shared";
 //
 // Undefined means there is nothing to deliver, which only a message can be: everything else knows its own copy.
 export const resolveNotification = async (
-  context: InvocationContext,
-  data: NotificationEventGridData,
+  data: NotificationQueueMessage,
 ): Promise<ResolvedNotification | undefined> => {
   switch (data.type) {
     case AppNotificationType.FriendRequest: {
@@ -33,7 +31,7 @@ export const resolveNotification = async (
       };
     }
     case AppNotificationType.Message: {
-      const body = getMessageNotificationBody(context, data.message.message);
+      const body = getMessageNotificationBody(data.message.message);
       // Cheapest possible rejection first: a message that renders to nothing has no recipients worth resolving
       if (!body) return undefined;
 

@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { CreateMessageInput, MessageTypeEntityMap } from "@esposter/db-schema";
 
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
@@ -8,7 +7,6 @@ import { StreamTable, PublishEventType } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 export const createAndBroadcastMessage = async <T extends CreateMessageInput>(
-  context: InvocationContext,
   input: T,
 ): Promise<InstanceType<MessageTypeEntityMap[T["type"]]>> => {
   const messageClient = getStreamTableClient(StreamTable.Messages);
@@ -18,7 +16,7 @@ export const createAndBroadcastMessage = async <T extends CreateMessageInput>(
   await getResultAsync(() => publishToServer({ message: newMessage, type: PublishEventType.Message })).match(
     noop,
     (error) => {
-      context.error(`Failed to broadcast message ${newMessage.partitionKey}/${newMessage.rowKey}: `, error);
+      console.error(`Failed to broadcast message ${newMessage.partitionKey}/${newMessage.rowKey}: `, error);
     },
   );
   return newMessage;

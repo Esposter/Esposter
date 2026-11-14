@@ -5,7 +5,6 @@ import { getStreamTableClient } from "#src/services/streams/getStreamTableClient
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { createEntity, getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -34,7 +33,6 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
@@ -46,7 +44,6 @@ const readUserRows = (userId: string) =>
   mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
 
 describe(deleteAccountHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
   const countedBytes = 1;
 
@@ -70,7 +67,7 @@ describe(deleteAccountHandler, () => {
       .insert(accountsInAuth)
       .values({ accountId: "accountId", id: crypto.randomUUID(), providerId: "providerId", userId });
 
-    await deleteAccountHandler(context, userId);
+    await deleteAccountHandler({ userId });
 
     await expect(readUserRows(userId)).resolves.toStrictEqual([]);
     await expect(
@@ -88,7 +85,7 @@ describe(deleteAccountHandler, () => {
       throw new Error(" ");
     });
 
-    await expect(deleteAccountHandler(context, userId)).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+    await expect(deleteAccountHandler({ userId })).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
     await expect(readUserRows(userId)).resolves.toStrictEqual([{ id: userId }]);
   });
 
@@ -129,8 +126,8 @@ describe(deleteAccountHandler, () => {
       });
     await mockDb.update(usersInAuth).set({ storageBytesUsed: countedBytes }).where(eq(usersInAuth.id, userId));
 
-    await expect(deleteAccountHandler(context, userId)).resolves.toBeUndefined();
-    await expect(deleteAccountHandler(context, userId)).resolves.toBeUndefined();
+    await expect(deleteAccountHandler({ userId })).resolves.toBeUndefined();
+    await expect(deleteAccountHandler({ userId })).resolves.toBeUndefined();
 
     await expect(readUserRows(userId)).resolves.toStrictEqual([]);
     await expect(

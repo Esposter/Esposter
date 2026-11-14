@@ -4,7 +4,6 @@ import { deleteAccountOwnedResources } from "#src/services/account/deleteAccount
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { StorageBucket, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
@@ -30,7 +29,6 @@ vi.mock(
 );
 
 describe(deleteAccountOwnedResources, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
 
   beforeAll(async () => {
@@ -62,7 +60,7 @@ describe(deleteAccountOwnedResources, () => {
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(otherResource.id));
 
-    await deleteAccountOwnedResources(context, userId);
+    await deleteAccountOwnedResources(userId);
 
     expect(readBlobNames(StorageBucket.ResourceAssets)).toStrictEqual([getContentBlobName(otherResource.id)]);
     await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([

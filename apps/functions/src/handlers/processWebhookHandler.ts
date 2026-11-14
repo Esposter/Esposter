@@ -1,43 +1,35 @@
-import type { EventGridHandler } from "@azure/functions";
-
-import { webhookEventGridDataSchema } from "#src/models/message/WebhookEventGridData";
-import { eventGridPublisherClient } from "#src/services/azure/eventGridPublisherClient";
 import { createAndBroadcastMessage } from "#src/services/message/createAndBroadcastMessage";
 import { getWebhookCreateMessageInput } from "#src/services/message/getWebhookCreateMessageInput";
-import { logAndRethrow } from "#src/services/shared/logAndRethrow";
-import { AppNotificationType, AzureFunction, publishNotification } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getJobQueue } from "#src/services/queue/getJobQueue";
+import { AppNotificationType, publishNotification, QueueJob, webhookQueueMessageSchema } from "@esposter/db-schema";
+import { getResultAsync } from "@esposter/shared";
 
-export const processWebhookHandler: EventGridHandler = (event, context) => {
-  // The event, never its data: the data is the webhook's message, and no log line carries a body
-  context.log(`${AzureFunction.ProcessWebhook} received event`, { id: event.id, subject: event.subject });
-  return getResultAsync(async () => {
-    const { payload, webhook } = webhookEventGridDataSchema.parse(event.data);
-    const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
-    const newMessage = await createAndBroadcastMessage(context, webhookCreateMessageInput);
-    // Best-effort like the broadcast: the message is persisted, so a publish failure must not
-    // Replay the event and duplicate the message.
-    await getResultAsync(() =>
-      publishNotification(eventGridPublisherClient, {
-        appUserId: newMessage.appUser.id,
-        message: {
-          message: newMessage.message,
-          partitionKey: newMessage.partitionKey,
-          rowKey: newMessage.rowKey,
-          userId: newMessage.userId,
-        },
-        threadRootRowKey: "",
-        type: AppNotificationType.Message,
-      }),
-    ).match(
-      () => {
-        context.log(
-          `Published ${AppNotificationType.Message} notification for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
-        );
+// Not idempotent, so the queue does not redeliver it: a retry would write the message a second time
+export const processWebhookHandler = async (body: unknown): Promise<void> => {
+  const { payload, webhook } = webhookQueueMessageSchema.parse(body);
+  const webhookCreateMessageInput = getWebhookCreateMessageInput(payload, webhook);
+  const newMessage = await createAndBroadcastMessage(webhookCreateMessageInput);
+  // Best-effort like the broadcast: the message is persisted, so a failed notification must not fail the delivery
+  await getResultAsync(() =>
+    publishNotification(getJobQueue(QueueJob.ProcessNotification), {
+      appUserId: newMessage.appUser.id,
+      message: {
+        message: newMessage.message,
+        partitionKey: newMessage.partitionKey,
+        rowKey: newMessage.rowKey,
+        userId: newMessage.userId,
       },
-      (error) => {
-        context.error(`Failed to publish ${AppNotificationType.Message} notification: `, error);
-      },
-    );
-  }).match(noop, logAndRethrow(context, AzureFunction.ProcessWebhook));
+      threadRootRowKey: "",
+      type: AppNotificationType.Message,
+    }),
+  ).match(
+    () => {
+      console.log(
+        `Published ${AppNotificationType.Message} notification for message id: ${JSON.stringify({ partitionKey: newMessage.partitionKey, rowKey: newMessage.rowKey })}`,
+      );
+    },
+    (error) => {
+      console.error(`Failed to publish ${AppNotificationType.Message} notification: `, error);
+    },
+  );
 };

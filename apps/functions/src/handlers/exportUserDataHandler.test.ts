@@ -5,7 +5,6 @@ import { getStreamTableClient } from "#src/services/streams/getStreamTableClient
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { InvocationContext } from "@azure/functions";
 import { createMessage } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -54,7 +53,6 @@ const seedQueuedExport = async (userId: string) => {
 };
 
 describe(exportUserDataHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const filename = "filename";
   const name = "name";
 
@@ -88,7 +86,7 @@ describe(exportUserDataHandler, () => {
     });
     const dataExportId = await seedQueuedExport(userId);
 
-    await exportUserDataHandler(context, { dataExportId });
+    await exportUserDataHandler({ dataExportId });
 
     await expect(readExportRow(dataExportId)).resolves.toStrictEqual({
       blobName: getDataExportBlobName(dataExportId),
@@ -106,7 +104,7 @@ describe(exportUserDataHandler, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const dataExportId = await seedQueuedExport(userId);
 
-    await exportUserDataHandler(context, { dataExportId });
+    await exportUserDataHandler({ dataExportId });
 
     const row = await readExportRow(dataExportId);
     expect(row.status).toBe(DataExportStatus.Ready);
@@ -124,8 +122,8 @@ describe(exportUserDataHandler, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const dataExportId = await seedQueuedExport(userId);
 
-    await exportUserDataHandler(context, { dataExportId });
-    await exportUserDataHandler(context, { dataExportId });
+    await exportUserDataHandler({ dataExportId });
+    await exportUserDataHandler({ dataExportId });
 
     expect(readBlobNames(StorageBucket.UserAssets)).toStrictEqual([getDataExportBlobName(dataExportId)]);
     expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);

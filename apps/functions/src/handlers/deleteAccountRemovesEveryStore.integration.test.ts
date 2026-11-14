@@ -7,7 +7,6 @@ import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { InvocationContext } from "@azure/functions";
 import { CompositeKeyPropertyNames, serializeKey } from "@esposter/azure";
 import {
   chargeStorageLedgerEntry,
@@ -77,7 +76,6 @@ const readUserRows = (userId: string) =>
 const readApiKeyRows = (userId: string) =>
   mockDb.select({ id: apiKeysInAuth.id }).from(apiKeysInAuth).where(eq(apiKeysInAuth.referenceId, userId));
 describe(deleteAccountHandler, () => {
-  const context = new InvocationContext({ logHandler: () => {} });
   const content = JSON.stringify({});
   const countedBytes = 1;
   const message = "message";
@@ -264,6 +262,11 @@ describe(deleteAccountHandler, () => {
     await seedBlob(StorageBucket.ClickerAssets, getSaveBlobName(userId));
     await seedBlob(StorageBucket.UserAssets, getSaveBlobName(userId));
 
+    const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
+    // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
+    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
+    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
+    await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
     // The search index holds a document for the owned room's messages and one for the member room's. The sweep removes
     // The owned room's documents by its partition key, and the member room's document is not its to remove
     const indexedOwnedRoomDocument = {
@@ -276,12 +279,7 @@ describe(deleteAccountHandler, () => {
     };
     MockSearchDatabase.set(SearchIndex.Messages, [indexedOwnedRoomDocument, indexedMemberRoomDocument]);
 
-    const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
-    // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
-    expect(readPartitionEntities(StreamTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
-    expect(readPartitionEntities(StreamTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
-    await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
-    await deleteAccountHandler(context, userId);
+    await deleteAccountHandler({ userId });
 
     // The user row is last, and the sign-in rows that cascade from it go with it
     await expect(readUserRows(userId)).resolves.toStrictEqual([]);

@@ -1,4 +1,3 @@
-import type { InvocationContext } from "@azure/functions";
 import type { StorageBucket } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
@@ -10,13 +9,12 @@ import { deleteStorageBlobs, listBlobNames } from "@esposter/db";
 // To whoever was charged for it, and every owner it gave bytes back to is told. A room's attachments are charged to the
 // Members who uploaded them, so the release cannot be skipped the way a bare directory teardown skips it
 export const deleteStoragePrefix = async (
-  context: InvocationContext,
   containerName: StorageBucket,
   prefix: string,
 ): Promise<void> => {
   const containerClient = await getContainerClient(containerName);
   const blobNames = await listBlobNames(containerClient, prefix);
   await deleteStorageBlobs(db, containerClient, containerName, blobNames, (releasedUserIds) =>
-    broadcastStorageUsage(context, releasedUserIds),
+    broadcastStorageUsage(releasedUserIds),
   );
 };

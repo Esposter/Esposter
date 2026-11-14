@@ -1,52 +1,26 @@
-import type { EventGridHandler } from "@azure/functions";
-
 import { db } from "#src/services/shared/db";
-import { logAndRethrow } from "#src/services/shared/logAndRethrow";
 import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
 import { verifyResourceAssetBlob } from "#src/services/storage/verifyResourceAssetBlob";
 import { reconcileStorageLedgerEntry } from "@esposter/db";
-import { StorageBucket, AzureFunction, blobCreatedEventGridDataSchema, parseBlobSubject } from "@esposter/db-schema";
-import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
+import { StorageBucket, r2ObjectCreatedQueueMessageSchema } from "@esposter/db-schema";
 
-// Storage's own BlobCreated event is what turns a client's declared size into the truth. It arrives seconds
-// After the PUT lands, carries the stored object's real length, and — unlike anything we could publish
-// Ourselves — it reports what happened on a data path our servers are never part of.
-// Every container a reserve writes into is listed here, and the subscriptions filter to the same set, so an event
-// From anywhere else is dropped rather than mis-attributed. The row names whose allowance a blob is charged to:
-// A resource asset's owner, or a message attachment's uploader. See openspec/specs/resource/storage-quotas/design.md
+// The object-create notification is what turns a client's declared size into the truth. It arrives after the PUT lands,
+// carries the stored object's real size, and reports what happened on a data path our servers are never part of.
+// Every bucket a reserve writes into is listed here, and the notifications come from those buckets only, so an object from
+// anywhere else is dropped rather than mis-attributed. The row names whose allowance a blob is charged to: a resource
+// asset's owner, or a message attachment's uploader. See openspec/specs/resource/storage-quotas/design.md
 const STORAGE_BLOB_CONTAINERS = [StorageBucket.ResourceAssets, StorageBucket.MessageAssets];
 
-export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, context) => {
-  context.log(`${AzureFunction.ReconcileStorageLedgerEntry} processed subject: `, event.subject);
-  return getResultAsync(async () => {
-    const parsedBlobSubject = parseBlobSubject(event.subject, STORAGE_BLOB_CONTAINERS);
-    if (!parsedBlobSubject) return;
+export const reconcileStorageLedgerEntryHandler = async (body: unknown): Promise<void> => {
+  const { bucket, eventTime, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
+  const containerName = STORAGE_BLOB_CONTAINERS.find((storageBlobContainer) => storageBlobContainer === bucket);
+  if (!containerName) return;
 
-    const { blobName, containerName } = parsedBlobSubject;
-    const { contentLength, sequencer } = blobCreatedEventGridDataSchema.parse(event.data);
-    // The name is the only thing that differs between the two attempts, and only a matched row is ever charged
-    // To an owner — so the meter is told here rather than once per attempt
-    const reconcile = async (name: string) => {
-      const { chargedUserId, isMatched } = await reconcileStorageLedgerEntry(
-        db,
-        containerName,
-        name,
-        contentLength,
-        sequencer,
-      );
-      if (chargedUserId) await broadcastStorageUsage(context, [chargedUserId]);
-      return isMatched;
-    };
-    const isMatched = await reconcile(blobName);
-    // A blob name reaches us through a url path, and whether storage percent-encodes it in the subject depends
-    // On the characters in it — our names carry a `|` separator and a user-chosen filename. Rather than guess
-    // Which form a given event used, the decoded form is tried only once the raw one has found no row.
-    // A filename holding a lone `%` decodes to nothing valid, and falling back to the raw name keeps that a
-    // No-op — throwing would turn an unreserved blob, which is not an error, into a poison event
-    const decodedBlobName = getDecodedUriComponent(blobName, blobName);
-    if (!isMatched && decodedBlobName !== blobName) await reconcile(decodedBlobName);
-    // Verified after the ledger step so a mismatched blob is charged before its deletion raises BlobDeleted, which
-    // Releases the charge. A resource asset's name holds no characters storage encodes, so the raw name is the stored one
-    if (containerName === StorageBucket.ResourceAssets) await verifyResourceAssetBlob(context, blobName);
-  }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
+  // R2 gives no per-object ordering token, so the notification's own time orders two writes to one name: a reconcile
+  // applies a notification only when it is newer than the one already applied
+  const { chargedUserId } = await reconcileStorageLedgerEntry(db, containerName, object.key, object.size, eventTime);
+  if (chargedUserId) await broadcastStorageUsage([chargedUserId]);
+  // Verified after the ledger step so a mismatched blob is charged before its deletion raises BlobDeleted, which
+  // Releases the charge
+  if (containerName === StorageBucket.ResourceAssets) await verifyResourceAssetBlob(object.key);
 };

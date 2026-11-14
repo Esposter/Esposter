@@ -1,4 +1,4 @@
-import type { ScheduledJob, SchedulerObject } from "@esposter/db-schema";
+import { type ScheduledJob, type SchedulerObject, QueueJobBindingNameMap } from "@esposter/db-schema";
 
 import { SCHEDULED_JOB_STORAGE_KEY } from "#src/services/scheduler/constants";
 import { DurableObject } from "cloudflare:workers";
@@ -10,7 +10,7 @@ export class Scheduler extends DurableObject<Cloudflare.Env> implements Schedule
     const job = await this.ctx.storage.get<ScheduledJob>(SCHEDULED_JOB_STORAGE_KEY);
     if (!job) return;
     // Deleted only once the queue has it, so a send that fails leaves the job for the alarm's own retry
-    await this.env[job.queueJob].send(job.payload);
+    await this.env[QueueJobBindingNameMap[job.queueJob]].send(job.payload);
     await this.ctx.storage.delete(SCHEDULED_JOB_STORAGE_KEY);
   }
 

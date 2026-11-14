@@ -1,0 +1,87 @@
+import {
+  CloudflareAssetType,
+  CloudflareEnvironment,
+  getCloudflareResourceName,
+  QueueJob,
+  QueueJobBindingNameMap,
+  StorageBucket,
+} from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, test } from "vitest";
+
+interface WranglerEnvironment {
+  d1_databases: { database_name: string }[];
+  durable_objects: { bindings: { class_name: string; name: string; script_name?: string }[] };
+  migrations: { new_sqlite_classes: string[]; tag: string }[];
+  name: string;
+  queues: { producers: { binding: string; queue: string }[] };
+  r2_buckets: { bucket_name: string }[];
+  triggers: { crons: string[] };
+  vars: { CLOUDFLARE_ENVIRONMENT: string };
+}
+
+// The names this file shares with Pulumi and the app: a queue, bucket or database a wrangler config names that Pulumi does
+// not create is a binding that resolves to nothing. Each expected name is built by the same function Pulumi calls, so the
+// two cannot disagree. Read from this package's own file so the suite runs from the repo root too.
+const configuration = jsonDateParse<Record<CloudflareEnvironment, WranglerEnvironment>>(
+  readFileSync(resolve(import.meta.dirname, "..", "wrangler.jsonc"), "utf8"),
+);
+
+const environments = [
+  { environment: CloudflareEnvironment.Development },
+  { environment: CloudflareEnvironment.Production },
+];
+
+describe.each(environments)("the $environment environment of the functions Worker", ({ environment }) => {
+  const wrangler = configuration.env[environment];
+
+  test("produces to the notification queue under its environment's queue name", () => {
+    expect.hasAssertions();
+
+    expect(wrangler.queues.producers).toStrictEqual([
+      {
+        binding: QueueJobBindingNameMap[QueueJob.ProcessNotification],
+        queue: getCloudflareResourceName(environment, CloudflareAssetType.Queue, QueueJob.ProcessNotification),
+      },
+    ]);
+  });
+
+  test("binds every storage bucket and both databases under their environment's names", () => {
+    expect.hasAssertions();
+
+    expect(wrangler.r2_buckets.map(({ bucket_name }) => bucket_name).toSorted()).toStrictEqual(
+      Object.values(StorageBucket)
+        .map((bucket) => getCloudflareResourceName(environment, CloudflareAssetType.R2Bucket, bucket))
+        .toSorted(),
+    );
+    expect(wrangler.d1_databases.map(({ database_name }) => database_name)).toStrictEqual(
+      ["core", "streams"].map((database) =>
+        getCloudflareResourceName(environment, CloudflareAssetType.D1Database, database),
+      ),
+    );
+  });
+
+  test("runs as its environment's Worker, reads its queue names by that environment, and purges on the nightly cron", () => {
+    expect.hasAssertions();
+
+    expect(wrangler.name).toBe(getCloudflareResourceName(environment, CloudflareAssetType.Worker, "functions"));
+    expect(wrangler.vars.CLOUDFLARE_ENVIRONMENT).toBe(environment);
+    expect(wrangler.triggers.crons).toStrictEqual(["0 3 * * *"]);
+  });
+
+  test("calls the web Worker's object by its script and holds its own scheduler, migrated as a SQLite class", () => {
+    expect.hasAssertions();
+
+    expect(wrangler.durable_objects.bindings).toStrictEqual([
+      { class_name: "Scheduler", name: "SCHEDULER" },
+      {
+        class_name: "$DurableObject",
+        name: "SERVER",
+        script_name: getCloudflareResourceName(environment, CloudflareAssetType.Worker, "web"),
+      },
+    ]);
+    expect(wrangler.migrations).toStrictEqual([{ new_sqlite_classes: ["Scheduler"], tag: "v1" }]);
+  });
+});
