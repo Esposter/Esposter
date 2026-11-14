@@ -53,7 +53,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
       files: ["**/*.d.ts", "**/*.d.mts", "**/*.d.cts"],
       rules: { "literal-union/no-string-literal-union": "off", "unicorn/require-module-specifiers": "off" },
     },
-    // An Azure resource is named as the portal names it, spelled out so the one file is found from the portal
+    // A cloud resource is named as its portal names it, spelled out so the one file is found from the portal
     { files: ["apps/infra/**"], rules: { "naming/no-site-name-literal": "off" } },
     {
       files: ["**/*.vue"],
