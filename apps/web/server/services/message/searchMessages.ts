@@ -2,9 +2,9 @@ import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessag
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { Database, MessageInMessage } from "@esposter/db-schema";
 
-import { getMessageSearchExpression } from "#server/services/message/search/getMessageSearchExpression";
 import { getSearchFilterConditions } from "#server/services/message/search/getSearchFilterConditions";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
+import { getSearchExpression } from "#server/services/search/getSearchExpression";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { FilterType, messagesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -20,7 +20,7 @@ export const searchMessages = async (
 ): Promise<SearchMessagesResult> => {
   const searchableFilters = getSearchableFilters(filters);
   const hasRoomInFilter = searchableFilters.some(({ type }) => type === FilterType.In);
-  const expression = getMessageSearchExpression(query);
+  const expression = getSearchExpression(query);
   const where = and(
     ...(hasRoomInFilter ? [] : [eq(messagesInMessage.roomId, roomId)]),
     isNull(messagesInMessage.deletedAt),

@@ -1,17 +1,17 @@
-import { getMessageSearchExpression } from "#server/services/message/search/getMessageSearchExpression";
+import { getSearchExpression } from "#server/services/search/getSearchExpression";
 import { describe, expect, test } from "vitest";
 
-describe(getMessageSearchExpression, () => {
+describe(getSearchExpression, () => {
   test("matches no words as no expression at all", () => {
     expect.hasAssertions();
 
-    expect(getMessageSearchExpression("   ")).toBe("");
+    expect(getSearchExpression("   ")).toBe("");
   });
 
   test("or-joins the words, quoting each and making the last a prefix", () => {
     expect.hasAssertions();
 
-    expect(getMessageSearchExpression("hello  world")).toBe(`"hello" OR "world"*`);
+    expect(getSearchExpression("hello  world")).toBe(`"hello" OR "world"*`);
   });
 
   // Each attack is one crafted query: a boolean operator, a proximity operator, a wildcard, a column filter, and a quote
@@ -25,6 +25,6 @@ describe(getMessageSearchExpression, () => {
   ])("matches %s literally", (query, expected) => {
     expect.hasAssertions();
 
-    expect(getMessageSearchExpression(query)).toBe(expected);
+    expect(getSearchExpression(query)).toBe(expected);
   });
 });

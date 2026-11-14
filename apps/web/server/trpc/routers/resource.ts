@@ -16,7 +16,6 @@ import type { UpdateResourceContentResult } from "#shared/models/resource/Update
 import type { ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { escapeLike } from "#server/services/db/escapeLike";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
@@ -29,14 +28,14 @@ import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
-import { getSearchNameMatch } from "#server/services/resource/getSearchNameMatch";
-import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceDependencies } from "#server/services/resource/readResourceDependencies";
+import { readResourceList } from "#server/services/resource/readResourceList";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
+import { readResourceTagCounts } from "#server/services/resource/readResourceTagCounts";
 import { readStoredResourceContent } from "#server/services/resource/readStoredResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
 import { requireAgentWritableOperations } from "#server/services/resource/requireAgentWritableOperations";
@@ -77,7 +76,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { purgeResource } from "@esposter/db";
+import { inJsonArray, purgeResource } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -91,7 +90,7 @@ import {
   SnapshotReason,
 } from "@esposter/db-schema";
 import { getSynchronizedFunction, MAX_READ_LIMIT, Operation, RoutePath, takeOne } from "@esposter/shared";
-import { and, asc, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull, isNull } from "drizzle-orm";
 
 export const resourceRouter = router({
   // Typeless: the type is named in the input, so one tool creates a resource of any type
@@ -120,7 +119,7 @@ export const resourceRouter = router({
         ctx.db,
         and(
           eq(resourcesInResource.userId, ctx.getSessionPayload.user.id),
-          inArray(resourcesInResource.id, ids),
+          inJsonArray(resourcesInResource.id, ids),
           isNull(resourcesInResource.deletedAt),
         ),
       );
@@ -340,29 +339,9 @@ export const resourceRouter = router({
         scope: McpScope.Resources,
       },
     })
-    .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) => {
-      const userId = ctx.getSessionPayload.user.id;
-      const where = getResourcesWhere(ctx.db, userId, filter);
-      const orderBy = [
-        // Relevance ladder, every search value bound through the query builder. A name match comes before a row matched
-        // Only by a tag, so a tag never outranks a name. Among the names, the closest trigram match comes first so a typo
-        // Still ranks its resource top; a tag-only row scores 0 there, which leaves the tag matches newest-first. Then
-        // Prefix matches above the remaining substring matches (true sorts before false under desc), then newest-first
-        ...(filter.searchQuery
-          ? [
-              desc(getSearchNameMatch(filter.searchQuery)),
-              desc(
-                sql`case when ${getSearchNameMatch(filter.searchQuery)} then ${getSearchSimilarity(filter.searchQuery)} else 0 end`,
-              ),
-              desc(ilike(resourcesInResource.name, `${escapeLike(filter.searchQuery)}%`)),
-            ]
-          : []),
-        ...(sortBy.length > 0
-          ? parseSortByToSql(resourceListSelection, sortBy)
-          : [desc(resourcesInResource.updatedAt)]),
-      ];
-      return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
-    }),
+    .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) =>
+      readResourceList(ctx.db, ctx.getSessionPayload.user.id, filter, sortBy, limit, offset),
+    ),
   readResourcesCount: standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})).query<number>(
     async ({ ctx, input }) =>
       takeOne(
@@ -372,22 +351,13 @@ export const resourceRouter = router({
           .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, input)),
       ).count,
   ),
-  // The Tags list. Tag names live inside one jsonb column rather than their own table, so the breakdown is a
-  // Grouped count over the expanded keys — the expansion is a subquery because a set-returning function
-  // Cannot sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
+  // The Tags list. Tag names live inside one JSON column rather than their own table, so the breakdown is a
+  // Grouped count over the expanded keys — the expansion is a subquery because a table-valued json_each cannot
+  // Sit beside an aggregate in one select list. Values are deliberately not part of the grouping: the
   // Tags entry answers "which tags do I use", and the /all Tag pill is where a value narrows it further
-  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) => {
-    const tagNames = ctx.db
-      .select({ name: sql<string>`jsonb_object_keys(${resourcesInResource.tags})`.as("name") })
-      .from(resourcesInResource)
-      .where(getResourcesWhere(ctx.db, ctx.getSessionPayload.user.id, {}))
-      .as("tag_names");
-    return ctx.db
-      .select({ count: count(), name: tagNames.name })
-      .from(tagNames)
-      .groupBy(tagNames.name)
-      .orderBy(desc(count()), asc(tagNames.name));
-  }),
+  readResourceTagCounts: standardAuthedProcedure.query<ResourceTagCount[]>(({ ctx }) =>
+    readResourceTagCounts(ctx.db, ctx.getSessionPayload.user.id),
+  ),
   // The summary cards own the type breakdown, so `types` is the one filter they cannot pass — a card is
   // The affordance for setting it
   readResourceTypeCounts: standardAuthedProcedure
@@ -464,7 +434,7 @@ export const resourceRouter = router({
         .where(
           and(
             eq(resourcesInResource.userId, userId),
-            inArray(resourcesInResource.id, ids),
+            inJsonArray(resourcesInResource.id, ids),
             isNotNull(resourcesInResource.deletedAt),
           ),
         )

@@ -2,7 +2,7 @@ import type { Filter } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { ContentTypes } from "#server/services/message/search/ContentTypes";
-import { getStartOfDay } from "@esposter/db";
+import { getStartOfDay, inJsonArray } from "@esposter/db";
 import {
   FilterType,
   filterTypeAuthorTypeSchema,
@@ -55,7 +55,7 @@ export const getSearchFilterConditions = (filters: Filter[]): SQL[] => {
 };
 
 const getMentionsCondition = (userIds: string[]): SQL =>
-  sql`exists (select 1 from json_each(${messagesInMessage.mentions}) where ${inArray(sql`json_each.value`, userIds)})`;
+  sql`exists (select 1 from json_each(${messagesInMessage.mentions}) where ${inJsonArray(sql`json_each.value`, userIds)})`;
 
 const getFilterConditions = (type: string, value: Filter["value"]): SQL[] => {
   switch (type) {
