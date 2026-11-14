@@ -6,7 +6,8 @@ import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutU
 describe(createPresignedPutUrl, () => {
   const credentials = {
     accessKeyId: "accessKeyId",
-    accountId: "accountId",
+    // Lowercase, as a host is: a URL's origin lowercases its host, so a mixed-case account id is never the origin
+    accountId: "accountid",
     environment: CloudflareEnvironment.Production,
     secretAccessKey: "secretAccessKey",
   };
@@ -18,7 +19,7 @@ describe(createPresignedPutUrl, () => {
       await createPresignedPutUrl(credentials, StorageBucket.MessageAssets, "room/id|a#b?c", "image/png"),
     );
 
-    expect(url.origin).toBe("https://accountId.r2.cloudflarestorage.com");
+    expect(url.origin).toBe("https://accountid.r2.cloudflarestorage.com");
     expect(url.pathname).toBe("/prod-r2-esposter-message-assets/room/id%7Ca%23b%3Fc");
     expect(url.searchParams.get("X-Amz-Expires")).toBe("3600");
     expect(url.searchParams.get("X-Amz-SignedHeaders")).toContain("content-type");

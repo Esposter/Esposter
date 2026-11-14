@@ -15,7 +15,7 @@ describe(getPushSubscriptionsForUsers, () => {
   const otherSessionId = crypto.randomUUID();
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     const createdAt = new Date(0);
     await db.insert(usersInAuth).values([userId, otherUserId].map((id) => createUser(id, createdAt, name)));
     const expiresAt = new Date(createdAt.getTime() + Temporal.Duration.from({ days: 1 }).total("milliseconds"));

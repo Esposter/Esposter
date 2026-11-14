@@ -15,7 +15,7 @@ describe(cloneFiles, () => {
   const filename = "a";
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db.insert(usersInAuth).values(createUser(userId, new Date(0), "name"));
     ({ bucket, dispose } = await createMockBucket(StorageBucket.MessageAssets));
   });

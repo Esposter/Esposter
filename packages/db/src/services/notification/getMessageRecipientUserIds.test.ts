@@ -47,7 +47,7 @@ describe(getMessageRecipientUserIds, () => {
   const allUserIds = [allOnlineUserId, allOfflineUserId, allNullStatusUserId];
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db.insert(usersInAuth).values(userIds.map((id) => createUser(id, new Date(0), name)));
     await db.insert(roomsInMessage).values({ id: roomId, name, type: RoomType.Room, userId: allOnlineUserId });
     await db.insert(usersToRoomsInMessage).values([

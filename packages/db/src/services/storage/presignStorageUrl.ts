@@ -24,6 +24,7 @@ export const presignStorageUrl = async (
   url.searchParams.set("X-Amz-Expires", String(expiresInMs / 1000));
   for (const [name, value] of Object.entries(searchParams ?? {})) url.searchParams.set(name, value);
   const client = new AwsClient({ accessKeyId, region: "auto", secretAccessKey, service: "s3" });
-  const { url: presignedUrl } = await client.sign(url, { aws: { signQuery: true }, headers, method });
+  // aws4fetch leaves Content-Type out of a query signature unless told to sign every header, and a PUT's type is signed
+  const { url: presignedUrl } = await client.sign(url, { aws: { allHeaders: true, signQuery: true }, headers, method });
   return presignedUrl;
 };

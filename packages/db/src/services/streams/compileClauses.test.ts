@@ -1,11 +1,12 @@
 import { BinaryOperator, StreamTable, createStreamTable } from "@esposter/db-schema";
+import { SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { describe, expect, test } from "vitest";
-import { SQLiteSyncDialect } from "drizzle-orm/sqlite-core";
+
 import { compileClauses } from "#src/services/streams/compileClauses";
 
 describe(compileClauses, () => {
   const table = createStreamTable(StreamTable.Messages);
-  const dialect = new SQLiteSyncDialect();
+  const dialect = new SQLiteDialect();
   const getQuery = (clauses: Parameters<typeof compileClauses>[0]) => {
     const condition = compileClauses(clauses, table);
     if (!condition) throw new Error("expected a condition");

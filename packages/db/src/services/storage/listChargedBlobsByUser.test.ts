@@ -22,7 +22,7 @@ describe(listChargedBlobsByUser, () => {
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId: ownerId });
 
   beforeAll(async () => {
-    db = await createMockDb();
+    db = (await createMockDb()).db;
     await db
       .insert(usersInAuth)
       .values([createUser(userId, new Date(0), "name"), createUser(otherUserId, new Date(0), "name")]);
