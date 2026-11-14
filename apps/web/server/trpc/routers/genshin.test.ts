@@ -125,8 +125,10 @@ describe("genshinRouter", () => {
       sessionId: start.sessionId,
     });
 
+    // The retry is refused under the replaced ETag and written again under the current one. R2's ETag is the content's
+    // hash, so writing the same save reads back the ETag it landed with
     expect(retried.etag).toBeTypeOf("string");
-    expect(retried.etag).not.toBe(landed.etag);
+    expect(retried.etag).toBe(landed.etag);
   });
 
   // The blob is the player's only copy, so a start over one that no longer parses would be the loss, and a save is

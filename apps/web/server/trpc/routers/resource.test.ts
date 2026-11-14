@@ -45,7 +45,20 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { apiKeysInAuth, getResourceFileBlobName, getResourceFilesDirectoryName, McpScope, resourceActivitiesInResource, ResourceActivityType, resourceLinksInResource, ResourceLinkType, ResourceType, SnapshotChannel, SnapshotReason, StorageBucket } from "@esposter/db-schema";
+import {
+  apiKeysInAuth,
+  getResourceFileBlobName,
+  getResourceFilesDirectoryName,
+  McpScope,
+  resourceActivitiesInResource,
+  ResourceActivityType,
+  resourceLinksInResource,
+  ResourceLinkType,
+  ResourceType,
+  SnapshotChannel,
+  SnapshotReason,
+  StorageBucket,
+} from "@esposter/db-schema";
 import {
   InvalidOperationError,
   jsonDateParse,
@@ -1101,7 +1114,8 @@ describe("resourceRouter", () => {
     });
     await waitForSynchronizedFunctions();
     const { items } = await caller.readActivities({ id: webpageResource.id });
-    const saveEvent = userObjectCalls.find(({ method }) => method === "saveResourceContent")?.args[0];
+    // The restore is the last save, so its event is the last one the user object was sent
+    const saveEvent = userObjectCalls.findLast(({ method }) => method === "saveResourceContent")?.args[0];
     assert.exists(saveEvent);
 
     expect(saveEvent).toMatchObject({ contentVersion: restoredResource.contentVersion, id: webpageResource.id });
