@@ -16,7 +16,7 @@ The consumer waits for the functions Worker's first deploy, and so do the Worker
 
 ## Each message is acknowledged or retried alone
 
-A message is acknowledged when its job's handler resolves and retried when it throws. The failure is logged once with `console.error` in the same batch handler (`references/logging-sinks.md`), and a message that exhausts its retries is the dead-letter queue's.
+A message is acknowledged when its job's handler resolves and retried when it throws. The failure is logged once with `console.error` in the same batch handler (`.agents/skills/error-handling/references/logging-sinks.md`), and a message that exhausts its retries is the dead-letter queue's.
 
 ## The dead-letter queue is where a repeating failure shows
 

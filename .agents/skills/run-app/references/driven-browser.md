@@ -16,7 +16,7 @@ Read when a change's claim is one no test reaches — pointer hit-testing, drag 
 
 The app's pages that need a person to be signed in are reached through a development-only route, `POST /api/dev/session`. The dev server registers it under `nuxt dev` alone (`apps/web/modules/devSession.ts`), and it signs in the one seeded driven user, `DRIVEN_USER_ID` (`packages/shared/src/services/devSeed/constants.ts`). It refuses every request unless the server is not in production and its `BASE_URL` is a local address, and a refused request writes no session. Nothing outside a run enables it.
 
-A run seeds the local D1 files the dev server reads, and nothing it does reaches a remote database. The seed's bindings are Miniflare's local files under `DEV_SEED_PERSIST_ROOT` (`scripts/src/services/devSeed/constants.ts`, which is `apps/web/.wrangler/state/v3`), the same state the dev server reads, so the rows a run writes are the local dev data itself. `<scratch>` is a directory outside the tree for the run's logs and screenshots.
+A run seeds the local D1 files the dev server reads, and nothing it does reaches a remote database. The seed's bindings are Miniflare's local files under `DEV_SEED_PERSIST_ROOT` (`scripts/src/services/devSeed/constants.ts`, the local Wrangler state the dev server reads), the same state the dev server reads, so the rows a run writes are the local dev data itself. `<scratch>` is a directory outside the tree for the run's logs and screenshots.
 
 1. **Seed the local databases**, from the repo root. The seed migrates both local D1 databases and writes the dataset into them, and a rerun converges on the same rows:
 
@@ -40,4 +40,4 @@ A run seeds the local D1 files the dev server reads, and nothing it does reaches
 
    The pages a signed-in driver check opens are `/messages` (the room and its messages), `/messages/friends`, `/messages/draftsandsent`, `/resource-explorer` and `/achievements`. A refused POST answers `404`, the answer a server without the route gives, so a `404` is read against the server's `APP_ENV`, its `BASE_URL` and whether it started after the route was added.
 
-**Leave nothing behind:** stop the dev server by its PID tree and delete `<scratch>`. The seeded local D1 files stay under `apps/web/.wrangler/state/v3`, the state the dev server reads, and the next run's seed converges on them.
+**Leave nothing behind:** stop the dev server by its PID tree and delete `<scratch>`. The seeded local D1 files stay in the local Wrangler state the dev server reads, and the next run's seed converges on them.
