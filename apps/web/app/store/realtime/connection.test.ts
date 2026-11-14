@@ -20,4 +20,25 @@ describe(useConnectionStore, () => {
 
     expect(openRealtimeSocket).toHaveBeenCalledTimes(1);
   });
+
+  // A room's frame reaches its handler with the room its socket was opened for, since a message is named by its room and
+  // its integer id and the frame names neither
+  test("dispatches a room frame to the handlers of its type with the room the socket was opened for", async () => {
+    expect.hasAssertions();
+
+    const connectionStore = useConnectionStore();
+    const roomId = crypto.randomUUID();
+    const handler = vi.fn();
+    connectionStore.onRoomEvent("deleteMessage", handler);
+    await connectionStore.openRoom(
+      roomId,
+      () => undefined,
+      () => undefined,
+    );
+    const [, onFrame] = vi.mocked(openRealtimeSocket).mock.lastCall ?? [];
+
+    onFrame?.(JSON.stringify({ data: { id: 1 }, type: "deleteMessage" }));
+
+    expect(handler).toHaveBeenCalledExactlyOnceWith({ id: 1 }, roomId);
+  });
 });

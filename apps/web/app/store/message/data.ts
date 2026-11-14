@@ -20,7 +20,7 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType } from "@esposter/db-schema";
-import { getResultAsync, Operation } from "@esposter/shared";
+import { getResultAsync, getSynchronizedFunction, noop, Operation } from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -194,6 +194,30 @@ export const useDataStore = defineStore("message/data", () => {
     await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
+  // A reconnect replays the messages it missed but not the edits or deletes, so the loaded window is read again by id.
+  // A row the room no longer returns was deleted while the socket was closed, and one whose `updatedAt` has moved was
+  // edited, and each goes through the same funnel its live event would have
+  const refreshLoadedMessages = getSynchronizedFunction((roomId: MessageInMessage["roomId"]) =>
+    getResultAsync(async () => {
+      const { items: roomItems } = getSlice(roomId);
+      const loadedMessages = roomItems.value.filter(({ isLoading }) => !isLoading);
+      if (loadedMessages.length === 0) return;
+
+      const liveMessages = await $trpc.message.readMessagesByRowKeys.query({
+        messageIds: loadedMessages.map(({ id }) => id),
+        roomId,
+      });
+      const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
+      for (const loadedMessage of loadedMessages) {
+        const liveMessage = liveMessageMap.get(loadedMessage.id);
+        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each row lands in the order the window holds it
+        if (!liveMessage) await storeDeleteMessage({ id: loadedMessage.id, roomId });
+        // oxlint-disable-next-line no-await-in-loop -- Order is the contract: each row lands in the order the window holds it
+        else if (liveMessage.updatedAt.getTime() !== loadedMessage.updatedAt.getTime())
+          await storeUpdateMessage({ ...liveMessage, roomId });
+      }
+    }).match(noop, console.error),
+  );
 
   const sendMessage = async (
     input: StandardCreateMessageInput,
@@ -229,6 +253,7 @@ export const useDataStore = defineStore("message/data", () => {
     hasMoreNewer,
     items,
     nextCursorNewer,
+    refreshLoadedMessages,
     sendMessage,
     storeCreateMessage,
     storeDeleteMessage,
