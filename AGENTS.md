@@ -60,7 +60,7 @@ pnpm test path/to/file.test.ts --run    # the suites a change touched; never a b
 
 **The checks are CI's**, all of them on every push; locally a session runs only the tests of what it touched, and the pre-commit hook only formats what is staged (the `running-checks` skill).
 
-From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In a package that gained, renamed or lost a module file: `pnpm build` regenerates its barrel, which is all a sibling typechecking against its source needs. Migrations are generated from `packages/db-schema/` and applied by `pnpm --filter @esposter/db-schema db:migrate`, run by `pnpm dev` and the deploy's pre-deploy step — the `drizzle` skill owns all of it.
+From the repo root: `pnpm i` after a manifest change, `pnpm update:node [version]` to bump node everywhere, `pnpm graph:gen` for `dependency-graph.svg`. In a package that gained, renamed or lost a module file: `pnpm build` regenerates its barrel, which is all a sibling typechecking against its source needs. Migrations are generated from `packages/db-schema/`; `pnpm dev` applies them to the local D1 through wrangler, and the deploy applies them to the environment's D1 with `pnpm --filter @esposter/db-schema db:migrate` before it deploys the Workers — the `drizzle` skill owns all of it.
 
 On Windows, Vitest runs only because `apps/web/configuration/modules.ts` keeps a minimal Nuxt module allowlist under `process.env.VITEST` — loading the full set crashes the config load while `unplugin-pwa-nuxt` resolves its virtual register module (the error and the probe that retires the fork are in `openspec/specs/architecture/test-harness-workarounds/design.md`). A test needing an excluded module adds it to the Vitest branch there.
 
@@ -111,7 +111,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 | Reviewing anything — lanes, scope, findings, the stop rule                         | `code-review` skill                                         |
 | Static files — bundled under `app/assets`, or fixed under `public`                 | `openspec/specs/architecture/static-assets/design.md`       |
 | Enforcing a rule — construction, primitive, lint, test, then prose                 | `openspec/specs/architecture/enforcement-ladder/design.md`  |
-| Where an artifact lives — the repo or R2, never one disk                   | `openspec/specs/architecture/recoverability/design.md`      |
+| Where an artifact lives — the repo or R2, never one disk                           | `openspec/specs/architecture/recoverability/design.md`      |
 
 Deciding without asking — the recommended option is taken, and only the user-only list is asked about — is the `throughput` skill's "Decide, don't ask" section. Everything else is a skill: read the skill listing and load the ones the files at hand hit. The `code-review` skill's routing table is the same map, keyed by file glob.
 
