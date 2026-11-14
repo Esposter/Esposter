@@ -38,7 +38,14 @@ A session ticks each of these after running its verification.
 
 In flight when the lead handed off; each one pushes to `ai/cloudflare` when it finishes. Read `git log origin/ai/cloudflare` before taking any of them up, and redo only what did not land:
 
-- Message reminders move onto the person's `UserObject` alarm. Then the `Scheduler` object, its binding, its queue and its D1 table are deleted, and the generic streams layer and the `STREAMS` binding go.
+- Landed: message reminders are rows on the person's `UserObject` alarm, and the `Scheduler`, its binding, queue, handler and D1 table are deleted. The drop migration is generated but not applied, and the cutover imports pending reminders before it runs. The Pulumi files for the queue are unprotected in code, so apply the unprotect before the deletion.
+- Not done: the generic streams layer and the `STREAMS` binding. Three things still hold it:
+  - The shape types under `packages/db-schema/src/models/streams`, which live message models and `messagesInMessage` import. The cutover drops those tables.
+  - The dev seed, `scripts/src/services/devSeed`, and the cutover tooling, which use the streams client.
+  - `updateEntityConditionally`, which `openspec/specs/architecture/conditional-writes/design.md` names as its owner. That page is rewritten onto D1's guarded writes (`meta.changes`, task 3.4) in the same change.
+
+  Only `useStreamTableClient`, the cursor helpers and that writer are dead.
+
 - Rate limiting moves to the Workers Rate Limiting binding (3.3), which unblocks the web Worker's upload.
 - Bearer tokens (webhook, program participant) are stored only as a SHA-256 hash, shown once at create or regenerate, and regenerated rather than revealed. Invite codes become 256-bit `generateSecretToken()` codes.
 - The cutover (7.3):
