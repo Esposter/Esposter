@@ -19,9 +19,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(
   import("#src/services/streams/getStreamTableClient"),
   () => import("#src/services/streams/getStreamTableClient.test"),

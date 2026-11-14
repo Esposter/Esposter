@@ -45,7 +45,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
-import { MockSearchDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -56,9 +56,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
     return mockDb;
   },
 }));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
+vi.mock(
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
+);
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
-vi.mock(import("#src/services/azure/getSearchClient"), () => import("#src/services/azure/getSearchClient.test"));
 vi.mock(
   import("#src/services/streams/getStreamTableClient"),
   () => import("#src/services/streams/getStreamTableClient.test"),
@@ -103,7 +105,6 @@ describe(deleteAccountHandler, () => {
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
-    MockSearchDatabase.clear();
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
