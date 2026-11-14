@@ -6,7 +6,7 @@ import { MAX_UNRECONCILED_STORAGE_LEDGER_ENTRIES } from "#shared/services/storag
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   StorageBucket,
-  EVENT_GRID_DELIVERY_TTL_MS,
+  QUEUE_DELIVERY_TTL_MS,
   storageLedgerInStorage,
   StorageTier,
   usersInAuth,
@@ -124,7 +124,7 @@ describe(reserveStorageBytes, () => {
       .values({ blobName, containerName, countedBytes: 0, declaredBytes: quotaBytes, expiresAt: new Date(0), userId });
     // An upload that was never made, past the last moment storage could still be telling us otherwise — a PUT
     // The SAS authorized at the final instant has had its whole completion allowance and its event's retries
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(QUEUE_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
@@ -174,7 +174,7 @@ describe(reserveStorageBytes, () => {
     await mockContext.db
       .insert(storageLedgerInStorage)
       .values({ blobName, containerName, countedBytes: declaredBytes, declaredBytes, expiresAt: new Date(0), userId });
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(QUEUE_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
     await reserveStorageBytes(mockContext.db, userId, containerName, [{ blobName: `${blobName} `, declaredBytes }]);
 
     const storageLedgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();

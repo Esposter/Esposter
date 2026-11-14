@@ -1,6 +1,6 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
-import type { BlobDeletionEventGridData, ResourceInResource } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
@@ -11,20 +11,12 @@ import { takeResourceRevision } from "#server/services/resource/snapshot/takeRes
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import {
-  StorageBucket,
-  resourcesInResource,
-  ResourceType,
-  resourceVersionsInResource,
-  SnapshotChannel,
-  SnapshotReason,
-  storageLedgerInStorage,
-  usersInAuth,
-} from "@esposter/db-schema";
+import { QueueJob, resourcesInResource, ResourceType, resourceVersionsInResource, SnapshotChannel, SnapshotReason, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockContainerDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const seedContentBlob = async (id: ResourceInResource["id"], content: string) => {
   const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
@@ -73,7 +65,7 @@ describe(takeResourceRevision, () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
@@ -184,10 +176,10 @@ describe(takeResourceRevision, () => {
 
     expect(snapshotVersions).toHaveLength(maxRetained);
     expect(takeOne(snapshotVersions).version).toBe(2);
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
-    expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents, blobDeletionEvents.length - 1) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getSnapshotObjectBlobName(resource.id, evictedVersion.hash)],
       containerName: StorageBucket.ResourceAssets,
     });
@@ -223,7 +215,7 @@ describe(takeResourceRevision, () => {
     await seedContentBlob(resource.id, serializedContent);
     await takeResourceRevision(ctx, resource, SnapshotReason.Automatic);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // The triggers that take one before overwriting a draft reach a resource created and never saved exactly

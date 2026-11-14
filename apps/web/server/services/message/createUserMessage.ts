@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { MessageEntity, StandardCreateMessageInput } from "@esposter/db-schema";
 
-import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
+import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
@@ -20,6 +20,7 @@ import {
   AppNotificationType,
   DatabaseEntityType,
   publishNotification,
+  QueueJob,
   roomsInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -63,7 +64,7 @@ export const createUserMessage = async (
   // No recipient query of its own. Best-effort after the Table write — a failed publish loses one notification,
   // Never the message that landed
   await getResultAsync(() =>
-    publishNotification(useEventGridPublisherClient(), {
+    publishNotification(getJobQueue(QueueJob.ProcessNotification), {
       message: {
         message: newMessageEntity.message,
         partitionKey: newMessageEntity.partitionKey,

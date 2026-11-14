@@ -27,7 +27,7 @@ import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetU
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, reconcileStorageLedgerEntry } from "@esposter/db";
 import {
-  AzureFunction,
+  QueueJob,
   StreamTable,
   getResourceFileBlobName,
   ResourceActivityType,
@@ -43,10 +43,11 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { PositionedElementType } from "vue-block-editor-headless";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // The upload is the seam a post-blob failure has to be injected at: it is the only step between the version bump
 // And the commit that is not transactional, so rejecting anything earlier proves nothing about the window where
@@ -140,7 +141,7 @@ describe(saveResourceContent, () => {
   const sequencer = "0";
   const { contentSchema } = ResourceDefinitionMap[ResourceType.TodoList];
   const createReminder = (resourceId: ResourceInResource["id"]) => ({
-    job: { payload: { dueAt, itemId: item.id, resourceId }, queueJob: AzureFunction.SendTodoReminder },
+    job: { payload: { dueAt, itemId: item.id, resourceId }, queueJob: QueueJob.SendTodoReminder },
     runAt: dueAt.getTime(),
   });
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
@@ -189,7 +190,7 @@ describe(saveResourceContent, () => {
     vi.restoreAllMocks();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     scheduledJobMap.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
@@ -523,7 +524,7 @@ describe(saveResourceContent, () => {
     await saveResourceContent(ctx, { content: createWebpageContent(webpage.id, [assetHash]), resource: webpage });
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
-    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
+    expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(webpage.id, otherAssetHash)],
       containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),

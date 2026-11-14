@@ -10,7 +10,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
-import { AzureFunction, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
+import { QueueJob, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -104,7 +104,7 @@ describe("blueprintRouter", () => {
       {
         job: {
           payload: { dueAt, itemId: item.id, resourceId: deployment.resource.id },
-          queueJob: AzureFunction.SendTodoReminder,
+          queueJob: QueueJob.SendTodoReminder,
         },
         runAt: dueAt.getTime(),
       },

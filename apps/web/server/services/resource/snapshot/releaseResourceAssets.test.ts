@@ -9,23 +9,12 @@ import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSn
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import {
-  StorageBucket,
-  getResourceFileBlobName,
-  resourcesInResource,
-  ResourceType,
-  resourceVersionAssetsInResource,
-  resourceVersionsInResource,
-  resourceWorkingAssetsInResource,
-  SnapshotChannel,
-  SnapshotReason,
-  storageLedgerInStorage,
-  usersInAuth,
-} from "@esposter/db-schema";
+import { getResourceFileBlobName, QueueJob, resourcesInResource, ResourceType, resourceVersionAssetsInResource, resourceVersionsInResource, resourceWorkingAssetsInResource, SnapshotChannel, SnapshotReason, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockContainerDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
 
@@ -91,7 +80,7 @@ describe(releaseResourceAssets, () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
@@ -106,7 +95,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
     await expect(readAssetHashes()).resolves.toStrictEqual([{ assetHash }]);
   });
 
@@ -121,7 +110,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // A whiteboard image stores the hash of its file as a bare id, so the url scan that once counted it never saw it
@@ -134,7 +123,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("an asset only an older retained version names is kept", async () => {
@@ -147,7 +136,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("an asset no retained version names is deleted", async () => {
@@ -159,7 +148,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
+    expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
       containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
@@ -175,7 +164,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // The deletion is published to the handler that deletes the blob and releases its ledger entry, which is where the
@@ -190,7 +179,7 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
-    expect(takeOne(MockEventGridDatabase.get("") ?? []).data).toStrictEqual({
+    expect(takeOne(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])).toStrictEqual({
       blobNames: [getResourceFileBlobName(resource.id, assetHash)],
       containerName: StorageBucket.ResourceAssets,
       decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
@@ -205,6 +194,6 @@ describe(releaseResourceAssets, () => {
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 });

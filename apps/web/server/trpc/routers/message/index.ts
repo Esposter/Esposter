@@ -10,7 +10,7 @@ import type { TrackedEnvelope } from "@trpc/server";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { updateEntityConditionally } from "#server/services/streams/updateEntityConditionally";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
@@ -145,7 +145,6 @@ export const baseMessageRouter = router({
       messageEventEmitter.emit("updateMessage", [updatedMessageEntity]);
       // A dropped publish leaves an orphaned blob, never the file the user asked to remove
       await publishBlobDeletion(
-        `${partitionKey}/${rowKey}`,
         StorageBucket.MessageAssets,
         Object.values(getFileBlobNames(partitionKey, id, deletedFilename)),
       ).match(noop, console.error);
@@ -175,7 +174,6 @@ export const baseMessageRouter = router({
       messageEventEmitter.emit("deleteMessage", [input]);
       // A dropped publish leaves orphaned attachment blobs, never the delete the user asked for
       await publishBlobDeletion(
-        `${messageEntity.partitionKey}/${messageEntity.rowKey}`,
         StorageBucket.MessageAssets,
         getFilesBlobNames(messageEntity.partitionKey, messageEntity.files),
       ).match(noop, console.error);
@@ -193,7 +191,7 @@ export const baseMessageRouter = router({
         if (!checkIsUploadFileTokenValid(ctx.getSessionPayload.user.id, roomId, id, token))
           throw new TRPCError({ code: "UNAUTHORIZED" });
 
-      await publishBlobDeletion(roomId, StorageBucket.MessageAssets, getFilesBlobNames(roomId, files)).match(
+      await publishBlobDeletion(StorageBucket.MessageAssets, getFilesBlobNames(roomId, files)).match(
         noop,
         console.error,
       );

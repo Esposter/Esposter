@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
@@ -10,16 +10,11 @@ import { emojiRouter } from "#server/trpc/routers/room/emoji";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
-import {
-  StorageBucket,
-  DatabaseEntityType,
-  getRoomEmojiBlobName,
-  roomEmojisInMessage,
-  RoomPermission,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, getRoomEmojiBlobName, QueueJob, roomEmojisInMessage, RoomPermission, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockEventGridDatabase } from "azure-mock";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { assert, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getRoomEmojiErrorMessage = (operation: Operation, context: string) =>
   new InvalidOperationError(operation, DatabaseEntityType.RoomEmoji, context).message;
@@ -204,11 +199,11 @@ describe("emojiRouter", () => {
 
     const roomEmoji = await createRoomEmoji();
     await roomEmojiCaller.deleteRoomEmoji({ id: roomEmoji.id, roomId });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     await expect(roomEmojiCaller.readRoomEmojis({ roomId })).resolves.toStrictEqual([]);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getRoomEmojiBlobName(roomId, roomEmoji.id)],
       containerName: StorageBucket.MessageAssets,
     });

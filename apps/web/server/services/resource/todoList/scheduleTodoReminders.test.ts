@@ -2,7 +2,7 @@ import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
 import { getTodoReminderId } from "#server/services/resource/todoList/getTodoReminderId";
 import { scheduleTodoReminders } from "#server/services/resource/todoList/scheduleTodoReminders";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
-import { AzureFunction } from "@esposter/db-schema";
+import { QueueJob } from "@esposter/db-schema";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(scheduleTodoReminders, () => {
@@ -30,7 +30,7 @@ describe(scheduleTodoReminders, () => {
     expect(scheduledJobMap.get(getTodoReminderId(resourceId, item.id))).toStrictEqual({
       job: {
         payload: { dueAt: futureDueAt, itemId: item.id, resourceId },
-        queueJob: AzureFunction.SendTodoReminder,
+        queueJob: QueueJob.SendTodoReminder,
       },
       runAt: futureDueAt.getTime(),
     });

@@ -1,6 +1,6 @@
 import type { StandardMessageEntity } from "@esposter/db-schema";
 
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { getFilesBlobNames } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
@@ -15,7 +15,6 @@ import { noop } from "@esposter/shared";
 export const publishSoftDeletedMessages = async (roomId: string, batch: StandardMessageEntity[]): Promise<void> => {
   for (const { partitionKey, rowKey } of batch) messageEventEmitter.emit("deleteMessage", [{ partitionKey, rowKey }]);
   await publishBlobDeletion(
-    roomId,
     StorageBucket.MessageAssets,
     batch.flatMap(({ files }) => getFilesBlobNames(roomId, files)),
   ).match(noop, console.error);

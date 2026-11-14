@@ -1,7 +1,7 @@
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
-import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
-import { AppNotificationType, publishNotification } from "@esposter/db-schema";
+import { getJobQueue } from "#server/services/queue/getJobQueue";
+import { AppNotificationType, publishNotification, QueueJob } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // A resource operation reaches the owner's other devices. The session that performed it is excluded: it showed
@@ -15,7 +15,7 @@ export const publishResourceOperation = async (
   { path, title }: { path: string; title: string },
 ): Promise<void> => {
   await getResultAsync(() =>
-    publishNotification(useEventGridPublisherClient(), {
+    publishNotification(getJobQueue(QueueJob.ProcessNotification), {
       excludedSessionId: session.id,
       path,
       title,

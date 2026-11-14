@@ -4,7 +4,7 @@ import type { ToData } from "@esposter/shared";
 
 import { useScheduler } from "#server/composables/scheduler/useScheduler";
 import { getTodoReminderId } from "#server/services/resource/todoList/getTodoReminderId";
-import { AzureFunction } from "@esposter/db-schema";
+import { QueueJob } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Schedules one reminder per item whose due date is new or changed since the last Save and still in the future, on
@@ -43,7 +43,7 @@ export const scheduleTodoReminders = (
       ...reminders.map(({ dueAt, itemId }) =>
         useScheduler(getTodoReminderId(resourceId, itemId)).schedule(dueAt.getTime(), {
           payload: { dueAt, itemId, resourceId },
-          queueJob: AzureFunction.SendTodoReminder,
+          queueJob: QueueJob.SendTodoReminder,
         }),
       ),
     ]);

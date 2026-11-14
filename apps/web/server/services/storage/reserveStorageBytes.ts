@@ -11,7 +11,7 @@ import {
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   DatabaseEntityType,
-  EVENT_GRID_DELIVERY_TTL_MS,
+  QUEUE_DELIVERY_TTL_MS,
   storageLedgerInStorage,
   usersInAuth,
   WRITE_SAS_DURATION_MS,
@@ -39,7 +39,7 @@ export const reserveStorageBytes = async (
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
   // No row, charges nothing and reports no failure. The completion allowance is the SAS's own duration reused, so
   // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
-  const collectableBefore = new Date(now.getTime() - (EVENT_GRID_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
+  const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
   await db.transaction(async (tx) => {
     // `storageLedger` before `users`, the order every path that touches both takes, so a reserve cannot close a
     // Lock cycle with a concurrent release or reconcile (openspec/specs/resource/storage-quotas/design.md). The

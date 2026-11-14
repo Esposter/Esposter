@@ -18,9 +18,10 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
-import { MockEventGridDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 describe(createUserMessage, () => {
   let mockContext: Context;
@@ -37,7 +38,7 @@ describe(createUserMessage, () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });

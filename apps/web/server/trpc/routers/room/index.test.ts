@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
-import type { BlobDeletionEventGridData, StandardMessageEntity } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
@@ -19,29 +19,17 @@ import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createD
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import {
-  StorageBucket,
-  StreamTable,
-  DatabaseEntityType,
-  friendsInSocial,
-  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
-  MessageType,
-  PublicUserColumns,
-  RoomPermission,
-  roomsInMessage,
-  usersToRoomsInMessage,
-  WRITE_SAS_DURATION_MS,
-} from "@esposter/db-schema";
+import { DatabaseEntityType, friendsInSocial, MAX_BLOB_DELETION_EVENT_BLOB_NAMES, MessageType, PublicUserColumns, QueueJob, RoomPermission, roomsInMessage, StorageBucket, StreamTable, usersToRoomsInMessage, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
   getMockSasUrl,
   MOCK_BLOB_BASE_URL,
   MockBlockBlobClient,
   MockContainerDatabase,
-  MockEventGridDatabase,
 } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // Uploaded through the client, so the mock dates the blob now
 const uploadPublicUserAssetBlob = (blobName: string) =>
@@ -76,7 +64,7 @@ describe("roomRouter", () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(roomsInMessage);
   });
@@ -238,12 +226,12 @@ describe("roomRouter", () => {
       () => subscription,
       () => roomCaller.updateRoom({ id: newRoom.id, image: "" }),
     );
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     expect(data.image).toBe("");
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
       containerName: StorageBucket.PublicUserAssets,
     });
@@ -265,7 +253,7 @@ describe("roomRouter", () => {
     const { publicUrl: replacementPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
     expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName)).toBe(true);
   });
 
@@ -281,10 +269,10 @@ describe("roomRouter", () => {
     await uploadPublicUserAssetBlob(freshBlobName);
     // The other admin's save landed first, so the row already points at the fresh avatar
     await roomCaller.updateRoom({ id: newRoom.id, image: freshUrl });
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await roomCaller.updateRoom({ id: newRoom.id, image: staleUrl, name: updatedName });
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
     expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(freshBlobName)).toBe(true);
   });
 
@@ -302,10 +290,10 @@ describe("roomRouter", () => {
     // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
     await uploadPublicUserAssetBlob(inFlightBlobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
       containerName: StorageBucket.PublicUserAssets,
     });
@@ -323,7 +311,7 @@ describe("roomRouter", () => {
     await roomCaller.updateRoom({ id: newRoom.id, image: craftedImage });
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // A save that carries back the url it loaded with replaced nothing, so it must sweep nothing — otherwise a
@@ -336,10 +324,10 @@ describe("roomRouter", () => {
     const blobName = getBlobName(publicUrl);
     await uploadPublicUserAssetBlob(blobName);
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl, name });
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("updates", async () => {
@@ -430,11 +418,11 @@ describe("roomRouter", () => {
       new Map(blobNames.map((blobName) => [blobName, Buffer.alloc(0)])),
     );
     await roomCaller.deleteRoom(newRoom.id);
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       containerName: StorageBucket.MessageAssets,
       prefix: newRoom.id,
     });
@@ -447,16 +435,16 @@ describe("roomRouter", () => {
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.deleteRoom(newRoom.id);
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     // Profile images stay a resolved list, since they are a handful. The room's attachments go out as the prefix event
     const profileImageDeletionEvents = blobDeletionEvents.filter(
-      ({ data }) => (data as BlobDeletionEventGridData).containerName === StorageBucket.PublicUserAssets,
+      (blobDeletion) => (blobDeletion as BlobDeletionQueueMessage).containerName === StorageBucket.PublicUserAssets,
     );
 
     expect(profileImageDeletionEvents).toHaveLength(1);
-    expect(takeOne(profileImageDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(profileImageDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [blobName],
       containerName: StorageBucket.PublicUserAssets,
     });

@@ -3,8 +3,8 @@ import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
   DataExportInUser,
-  DeleteAccountEventGridData,
-  ExportUserDataEventGridData,
+  DeleteAccountQueueMessage,
+  ExportUserDataQueueMessage,
   UserInAuth,
   UserSettingsInMessage,
   UserStatusInMessage,
@@ -13,14 +13,14 @@ import type { SetNonNullable } from "type-fest";
 
 import { auth } from "#server/auth";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
-import { publishBlobPrefixDeletion } from "#server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "#server/services/events/on";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { readCallBackgroundBlobs } from "#server/services/message/call/readCallBackgroundBlobs";
 import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
+import { getJobQueue } from "#server/services/queue/getJobQueue";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
+import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
@@ -45,8 +45,6 @@ import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constan
 import { generateReadSasUrl, generateWriteSasUrl } from "@esposter/db";
 import {
   StorageBucket,
-  AzureFunction,
-  createEventGridEvent,
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
@@ -59,6 +57,7 @@ import {
   getUserProfileImageBlobName,
   MimeCategory,
   NoiseSuppressionMode,
+  QueueJob,
   userSettingsInMessage,
   usersInAuth,
   UserStatus,
@@ -91,11 +90,10 @@ export const userRouter = router({
   deleteAccount: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
-    const data: DeleteAccountEventGridData = { userId };
-    const deleteAccountEvent = createEventGridEvent(AzureFunction.DeleteAccount, userId, data);
-    // Fatal, unlike the best-effort publishes after a write: this event is the only thing that starts the sweep, so a
-    // Publish that only logged its failure would leave a marked account that nothing sweeps
-    await getResultAsync(() => useEventGridPublisherClient().send([deleteAccountEvent])).match(noop, (error) => {
+    const data: DeleteAccountQueueMessage = { userId };
+    // Fatal, unlike the best-effort publishes after a write: this message is the only thing that starts the sweep, so a
+    // Send that only logged its failure would leave a marked account that nothing sweeps
+    await getResultAsync(() => getJobQueue(QueueJob.DeleteAccount).send(data)).match(noop, (error) => {
       throw error;
     });
     await deleteAccountSessions(ctx);
@@ -111,7 +109,6 @@ export const userRouter = router({
       // The settings row keeps naming a slot that no longer resolves, which the picker already renders as no
       // Background - so there is nothing to unwind here and no cleanup pass to schedule
       await publishBlobPrefixDeletion(
-        userId,
         StorageBucket.UserAssets,
         getCallBackgroundBlobName(userId, slot),
         new Date(),
@@ -186,7 +183,7 @@ export const userRouter = router({
     // A slot that came back over the cap is dropped from what the picker receives and reclaimed through the
     // Same event every other blob delete goes through. Best-effort: a dropped publish only leaves a slot
     // Occupied by a blob nothing will ever hand out
-    await publishBlobDeletion(userId, StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
+    await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
     return Promise.all(
       servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
         sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),
@@ -278,9 +275,8 @@ export const userRouter = router({
       .onConflictDoNothing()
       .returning();
     if (insertedDataExport) {
-      const data: ExportUserDataEventGridData = { dataExportId: insertedDataExport.id };
-      const exportUserDataEvent = createEventGridEvent(AzureFunction.ExportUserData, userId, data);
-      await getResultAsync(() => useEventGridPublisherClient().send([exportUserDataEvent])).match(
+      const data: ExportUserDataQueueMessage = { dataExportId: insertedDataExport.id };
+      await getResultAsync(() => getJobQueue(QueueJob.ExportUserData).send(data)).match(
         noop,
         async (error) => {
           await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));

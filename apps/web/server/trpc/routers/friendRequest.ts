@@ -1,6 +1,6 @@
 import type { FriendRequestInSocialWithRelations, PublicUser } from "@esposter/db-schema";
 
-import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
+import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { on } from "#server/services/events/on";
 import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
 import { getReceivedFriendRequestWhere } from "#server/services/friend/getReceivedFriendRequestWhere";
@@ -17,6 +17,7 @@ import {
   friendRequestsInSocial,
   friendsInSocial,
   publishNotification,
+  QueueJob,
 } from "@esposter/db-schema";
 import { getFriendshipId, getResultAsync, noop, Operation } from "@esposter/shared";
 
@@ -137,7 +138,7 @@ export const friendRequestRouter = router({
       // Best-effort after the insert — a failed publish loses one notification, never the friend request that
       // Already landed.
       await getResultAsync(() =>
-        publishNotification(useEventGridPublisherClient(), {
+        publishNotification(getJobQueue(QueueJob.ProcessNotification), {
           receiverId,
           senderId: userId,
           type: AppNotificationType.FriendRequest,

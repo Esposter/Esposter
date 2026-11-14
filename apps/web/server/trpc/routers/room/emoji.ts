@@ -4,7 +4,7 @@ import type { RoomEmojiInMessage } from "@esposter/db-schema";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getDevice } from "#server/services/auth/getDevice";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { inRoom } from "#server/services/db/inRoom";
 import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
@@ -105,7 +105,7 @@ export const emojiRouter = router({
     roomEmojiEventEmitter.emit("deleteRoomEmoji", [{ id, roomId }, getDevice(ctx.getSessionPayload)]);
     // Best-effort and post-persist: a dropped publish orphans one blob under a prefix the room's own teardown
     // Sweeps anyway, and every reaction and token naming this id already renders its fallback
-    await publishBlobDeletion(roomId, StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
+    await publishBlobDeletion(StorageBucket.MessageAssets, [getRoomEmojiBlobName(roomId, id)]).match(
       noop,
       console.error,
     );

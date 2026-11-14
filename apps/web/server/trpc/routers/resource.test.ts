@@ -45,7 +45,7 @@ import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
 import {
-  AzureFunction,
+  QueueJob,
   StreamTable,
   getResourceFileBlobName,
   getResourceFilesDirectoryName,
@@ -834,11 +834,11 @@ describe("resourceRouter", () => {
 
     expect([...scheduledJobMap.values()]).toStrictEqual([
       {
-        job: { payload: { ...reminder, resourceId: todoListResource.id }, queueJob: AzureFunction.SendTodoReminder },
+        job: { payload: { ...reminder, resourceId: todoListResource.id }, queueJob: QueueJob.SendTodoReminder },
         runAt: dueAt.getTime(),
       },
       {
-        job: { payload: { ...reminder, resourceId: duplicatedResource.id }, queueJob: AzureFunction.SendTodoReminder },
+        job: { payload: { ...reminder, resourceId: duplicatedResource.id }, queueJob: QueueJob.SendTodoReminder },
         runAt: dueAt.getTime(),
       },
     ]);

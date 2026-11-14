@@ -2,7 +2,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import type { ObjectStore } from "keyframe-store";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { checkIsAlreadyStored, checkIsNotFound } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
@@ -20,7 +20,6 @@ export const createSnapshotObjectStore = async (resourceId: ResourceInResource["
   return {
     delete: (keys) =>
       publishBlobDeletion(
-        resourceId,
         StorageBucket.ResourceAssets,
         keys.map((key) => getSnapshotObjectBlobName(resourceId, key)),
       ).match(noop, console.error),

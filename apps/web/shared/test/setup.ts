@@ -45,6 +45,11 @@ globalThis.sessionStorage ??= new MemoryStorage();
 // File's OWN direct import of the same composable. A setup file runs before the test module is imported, so
 // Registering once here covers both. The factory is lazy, so a test that touches no scheduler pays nothing.
 vi.mock(
+  import("#server/services/queue/getJobQueue"),
+  () => import("#server/services/queue/getJobQueue.test"),
+);
+
+vi.mock(
   import("#server/composables/scheduler/useScheduler"),
   () => import("#server/composables/scheduler/useScheduler.test"),
 );

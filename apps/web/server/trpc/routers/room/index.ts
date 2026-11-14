@@ -7,7 +7,7 @@ import type { SQL } from "drizzle-orm";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
-import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
@@ -507,7 +507,7 @@ export const baseRoomRouter = router({
     // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a
     // Dropped publish orphans a public blob, never the room update
     if (image !== undefined && image !== previousImage)
-      await publishBlobDeletion(id, StorageBucket.PublicUserAssets, async () => {
+      await publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {
         const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
         // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
         // A save carries the image url its form loaded with, which is a *stale* url whenever another admin

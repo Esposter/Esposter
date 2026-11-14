@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { BlobDeletionEventGridData } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createMockSession } from "#server/auth.test";
@@ -26,7 +26,7 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import {
   StorageBucket,
-  AzureFunction,
+  QueueJob,
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
@@ -41,12 +41,11 @@ import {
   getMockSasUrl,
   MOCK_BLOB_BASE_URL,
   MockContainerDatabase,
-  MockEventGridDatabase,
-  MockEventGridPublisherClient,
   MockTableDatabase,
 } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase, MockJobQueue } from "#server/services/queue/getJobQueue.test";
 
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
@@ -96,7 +95,7 @@ describe("userRouter", () => {
   // An accepted delete has ended the caller's sessions, marked the account and published the sweep once
   const expectAccountDeleted = async () => {
     const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
-    const deleteAccountEvents = MockEventGridDatabase.get("");
+    const deleteAccountEvents = MockJobQueueDatabase.get(QueueJob.DeleteAccount);
     assert.exists(deleteAccountEvents);
 
     await expect(
@@ -104,9 +103,7 @@ describe("userRouter", () => {
     ).resolves.toStrictEqual([]);
     expect(user?.deletionRequestedAt).toStrictEqual(new Date());
     expect(deleteAccountEvents).toHaveLength(1);
-    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
-    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
-    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
+    expect(takeOne(deleteAccountEvents)).toStrictEqual({ userId });
   };
   // An export as the handler leaves it once its archive is committed, owned by the given person
   const insertReadyDataExport = async (ownerId: string, expiresAt: Date) =>
@@ -138,7 +135,7 @@ describe("userRouter", () => {
     vi.restoreAllMocks();
     getMockRevokeSession().mockReset();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
@@ -179,12 +176,12 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const otherSession = await holdOtherSession();
-    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+    vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(publishError);
 
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
 
     const sessions = await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } });
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
     expect(sessions.map(({ id }) => id)).toContain(otherSession.id);
   });
 
@@ -192,7 +189,7 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     await holdOtherSession();
-    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+    vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(publishError);
 
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
     await caller.deleteAccount();
@@ -438,7 +435,7 @@ describe("userRouter", () => {
     // Never listed, and never reclaimed on a guess either — nothing is published for a name this router did
     // Not mint
     expect(callBackgrounds).toStrictEqual([]);
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   test("readCallBackgrounds drops a slot over the size cap and reclaims it", async () => {
@@ -446,11 +443,11 @@ describe("userRouter", () => {
 
     seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
     const callBackgrounds = await caller.readCallBackgrounds();
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     expect(callBackgrounds).toStrictEqual([]);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       blobNames: [getCallBackgroundBlobName(userId, 0)],
       containerName: StorageBucket.UserAssets,
     });
@@ -497,11 +494,11 @@ describe("userRouter", () => {
 
     seedSlots(userId, [0], size);
     await caller.deleteCallBackground({ slot: 0 });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
 
     // The bound is what stops a redelivered delete taking the image that replaced the one it named
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual({
       containerName: StorageBucket.UserAssets,
       createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
@@ -512,15 +509,13 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const dataExport = await caller.requestDataExport();
-    const dataExportEvents = MockEventGridDatabase.get("");
+    const dataExportEvents = MockJobQueueDatabase.get(QueueJob.ExportUserData);
     assert.exists(dataExportEvents);
 
     expect(dataExport.status).toBe(DataExportStatus.Queued);
     expect(dataExport.userId).toBe(userId);
     expect(dataExportEvents).toHaveLength(1);
-    expect(takeOne(dataExportEvents).data).toStrictEqual({ dataExportId: dataExport.id });
-    expect(takeOne(dataExportEvents).eventType).toBe(AzureFunction.ExportUserData);
-    expect(takeOne(dataExportEvents).subject).toBe(userId);
+    expect(takeOne(dataExportEvents)).toStrictEqual({ dataExportId: dataExport.id });
   });
 
   test("requestDataExport returns the active export to a second request, and publishes nothing more", async () => {
@@ -530,7 +525,7 @@ describe("userRouter", () => {
     const secondDataExport = await caller.requestDataExport();
 
     expect(secondDataExport).toStrictEqual(firstDataExport);
-    expect(MockEventGridDatabase.get("")).toHaveLength(1);
+    expect(MockJobQueueDatabase.get(QueueJob.ExportUserData)).toHaveLength(1);
   });
 
   // The row is deleted when its event is refused, so a retry queues a new export rather than returning one that
@@ -538,7 +533,7 @@ describe("userRouter", () => {
   test("requestDataExport fails when the event is not published, and a retry queues the export again", async () => {
     expect.hasAssertions();
 
-    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+    vi.spyOn(MockJobQueue.prototype, "send").mockRejectedValueOnce(publishError);
 
     await expect(caller.requestDataExport()).rejects.toMatchObject({ cause: publishError });
     await expect(
@@ -548,7 +543,7 @@ describe("userRouter", () => {
     const dataExport = await caller.requestDataExport();
 
     expect(dataExport.status).toBe(DataExportStatus.Queued);
-    expect(MockEventGridDatabase.get("")).toHaveLength(1);
+    expect(MockJobQueueDatabase.get(QueueJob.ExportUserData)).toHaveLength(1);
   });
 
   test("readDataExport returns the export being built", async () => {

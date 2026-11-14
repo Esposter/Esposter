@@ -2,7 +2,7 @@ import type { readMessages } from "#server/services/message/readMessages";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
-import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
@@ -35,7 +35,7 @@ import {
   AppNotificationType,
   StorageBucket,
   AzureEntityType,
-  AzureFunction,
+  QueueJob,
   StreamTable,
   getReverseTickedTimestamp,
   MAX_THUMBNAIL_BYTES,
@@ -56,12 +56,12 @@ import { isTrackedEnvelope } from "@trpc/server";
 import {
   MockBlobClient,
   MockContainerDatabase,
-  MockEventGridDatabase,
   MockSearchDatabase,
   MockTableClient,
 } from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const { readMessagesMock } = vi.hoisted(() => ({ readMessagesMock: vi.fn<typeof readMessages>() }));
 
@@ -182,7 +182,7 @@ describe("messageRouter", () => {
     updateEntitySpy.mockRestore();
     vi.useRealTimers();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     MockSearchDatabase.clear();
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
@@ -964,10 +964,10 @@ describe("messageRouter", () => {
     });
     assert(sasEntity);
     await messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId });
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert(blobDeletionEvents);
 
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(
       getExpectedBlobDeletionData(sasEntity.id),
     );
   });
@@ -1004,7 +1004,7 @@ describe("messageRouter", () => {
         }
       ]]
     `);
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // Past the write sas the upload has either landed on a message — where the blob belongs to that message, not
@@ -1025,7 +1025,7 @@ describe("messageRouter", () => {
       messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // The blob names an unreferenced upload and a posted attachment live under are the same room-scoped namespace,
@@ -1046,7 +1046,7 @@ describe("messageRouter", () => {
       messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
 
-    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(MockJobQueueDatabase.size).toBe(0);
   });
 
   // Each give-back below runs the work a blob-deletion event does once the functions host takes it: the names the event
@@ -1054,8 +1054,8 @@ describe("messageRouter", () => {
   // That, so a case proves the release path returned them rather than the procedure that published it
   const runBlobDeletionEvents = async () => {
     const containerClient = await useContainerClient(StorageBucket.MessageAssets);
-    const blobDeletions = (MockEventGridDatabase.get("") ?? [])
-      .map(({ data }) => data as BlobDeletionEventGridData)
+    const blobDeletions = (MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])
+      .map((blobDeletion) => blobDeletion as BlobDeletionQueueMessage)
       .filter(({ containerName }) => containerName === StorageBucket.MessageAssets);
     const blobNames = (
       await Promise.all(
@@ -1204,14 +1204,14 @@ describe("messageRouter", () => {
     });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
 
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(
       getExpectedBlobDeletionData(id),
     );
   });
@@ -1227,14 +1227,14 @@ describe("messageRouter", () => {
     });
 
     // Drop the send's own notification event so the assertion below is about the deletion and nothing else
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await messageCaller.deleteMessage(getCompositeKey(newMessage));
 
-    const blobDeletionEvents = MockEventGridDatabase.get("");
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert(blobDeletionEvents);
 
     expect(blobDeletionEvents).toHaveLength(1);
-    expect(takeOne(blobDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual(
+    expect(takeOne(blobDeletionEvents) as BlobDeletionQueueMessage).toStrictEqual(
       getExpectedBlobDeletionData(id),
     );
   });
@@ -1657,13 +1657,12 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const newMessage = await messageCaller.createMessage({ message: name, roomId, timeZone });
-    const events = MockEventGridDatabase.get("");
+    const events = MockJobQueueDatabase.get(QueueJob.ProcessNotification);
     assert.exists(events);
 
     // Published unconditionally: whether anyone is subscribed is not a question the request path asks
     expect(events).toHaveLength(1);
-    expect(takeOne(events).eventType).toBe(AzureFunction.ProcessNotification);
-    expect(takeOne(events).data).toStrictEqual(createMessageNotificationData(name, roomId, newMessage.rowKey));
+    expect(takeOne(events)).toStrictEqual(createMessageNotificationData(name, roomId, newMessage.rowKey));
   });
 
   test("createMessage reply publishes one notification carrying the thread root", async () => {
@@ -1671,7 +1670,7 @@ describe("messageRouter", () => {
 
     const newRootMessage = await messageCaller.createMessage({ message: name, roomId, timeZone });
     // Ignore the root message's notification; assert only on the reply
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
 
     const newReplyMessage = await messageCaller.createMessage({
       message: name,
@@ -1679,13 +1678,13 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    const events = MockEventGridDatabase.get("");
+    const events = MockJobQueueDatabase.get(QueueJob.ProcessNotification);
     assert.exists(events);
 
     // One event rather than two: a thread's followers widen the reply's recipient set instead of raising a
     // Second notification that the first has to be de-duplicated against
     expect(events).toHaveLength(1);
-    expect(takeOne(events).data).toStrictEqual(
+    expect(takeOne(events)).toStrictEqual(
       createMessageNotificationData(name, roomId, newReplyMessage.rowKey, newRootMessage.rowKey),
     );
   });

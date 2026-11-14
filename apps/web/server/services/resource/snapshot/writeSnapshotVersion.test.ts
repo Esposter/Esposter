@@ -16,8 +16,9 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockBlobClient, MockContainerDatabase, MockEventGridDatabase } from "azure-mock";
+import { MockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 describe(writeSnapshotVersion, () => {
   let mockContext: Context;
@@ -44,7 +45,7 @@ describe(writeSnapshotVersion, () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });

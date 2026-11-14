@@ -34,7 +34,7 @@ import type { Clause } from "@esposter/db-schema";
 import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
   StorageBucket,
-  AzureFunction,
+  QueueJob,
   StreamTable,
   DatabaseEntityType,
   getResourceFilesDirectoryName,
@@ -50,7 +50,6 @@ import {
   getBlobUrl,
   MockBlobClient,
   MockContainerDatabase,
-  MockEventGridDatabase,
   MockRestError,
   MockTableClient,
   MockTableDatabase,
@@ -58,6 +57,7 @@ import {
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
 // Per-type router tests only assert their own wiring (correct ResourceType + content schema round-trip).
@@ -99,7 +99,7 @@ describe(createResourceProcedures, () => {
   afterEach(async () => {
     vi.useRealTimers();
     MockContainerDatabase.clear();
-    MockEventGridDatabase.clear();
+    MockJobQueueDatabase.clear();
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
     await mockContext.db.delete(resourcesInResource);
@@ -561,7 +561,7 @@ describe(createResourceProcedures, () => {
       orderBy: { channel: "desc" },
       where: { resourceId: { eq: newResource.id } },
     });
-    const publishedEventCount = MockEventGridDatabase.get("")?.length ?? 0;
+    const publishedEventCount = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)?.length ?? 0;
 
     // The premise: the published version deduplicated against the revision's object
     expect(publishedVersion).toStrictEqual(revisionVersion);
@@ -576,9 +576,7 @@ describe(createResourceProcedures, () => {
     );
     await expect(resourceCaller.readSnapshotHistory({ id: newResource.id })).resolves.toHaveLength(1);
     // The revision still names the object, so the unpublish publishes no deletion for it
-    const blobDeletionEvents = (MockEventGridDatabase.get("")?.slice(publishedEventCount) ?? []).filter(
-      ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
-    );
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)?.slice(publishedEventCount) ?? [];
 
     expect(blobDeletionEvents).toStrictEqual([]);
   });
@@ -608,11 +606,11 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const publishedEventCount = MockEventGridDatabase.get("")?.length ?? 0;
+    const publishedEventCount = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)?.length ?? 0;
 
     await dashboardCaller.unpublishResource({ id: newResource.id });
 
-    expect(MockEventGridDatabase.get("")?.length ?? 0).toBe(publishedEventCount);
+    expect(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)?.length ?? 0).toBe(publishedEventCount);
   });
 
   // The snapshot's blob is still in the mock, so the rejection a swept snapshot raises from the live
@@ -784,11 +782,9 @@ describe(createResourceProcedures, () => {
     MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
     await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
-    const blobDeletionEvents = (MockEventGridDatabase.get("") ?? []).filter(
-      ({ eventType }) => eventType === AzureFunction.ProcessBlobDeletion,
-    );
+    const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [];
 
-    expect(blobDeletionEvents.map(({ data }) => data)).toStrictEqual([
+    expect(blobDeletionEvents).toStrictEqual([
       {
         blobNames: [blobName],
         containerName: StorageBucket.ResourceAssets,
