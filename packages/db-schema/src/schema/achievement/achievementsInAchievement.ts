@@ -1,13 +1,17 @@
-import { pgTable } from "#src/pgTable";
 import { achievementSchema } from "#src/schema/achievement/achievementSchema";
 import { AchievementName } from "#src/services/achievement/AchievementName";
-import { uuid } from "drizzle-orm/pg-core";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { sqliteTable } from "#src/sqliteTable";
+import { text } from "drizzle-orm/sqlite-core";
 
-export const achievementNameEnum = achievementSchema.enum("achievementName", AchievementName);
-
-export const achievementsInAchievement = pgTable(
+export const achievementsInAchievement = sqliteTable(
   "achievements",
-  { id: uuid().primaryKey().defaultRandom(), name: achievementNameEnum().notNull().unique() },
+  {
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: createEnumColumn(AchievementName).notNull().unique(),
+  },
   { schema: achievementSchema },
 );
 

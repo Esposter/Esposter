@@ -1,16 +1,14 @@
 import { AppNotificationType } from "#src/models/notification/AppNotificationType";
 import { NotificationSeverity } from "#src/models/notification/NotificationSeverity";
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
+import { sqliteTable } from "#src/sqliteTable";
 import { sql } from "drizzle-orm";
-import { boolean, index, text, uuid } from "drizzle-orm/pg-core";
+import { index, integer, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
-export const appNotificationTypeEnum = notificationSchema.enum("appNotificationType", AppNotificationType);
-
-export const notificationSeverityEnum = notificationSchema.enum("notificationSeverity", NotificationSeverity);
 // One row per recipient per notification, written by ProcessNotification for every type whose
 // AppNotificationTypeChannelMap entry includes the bell. Persisted rather than session-scoped because a push delivered
 // While the app was closed has nowhere else to land: the tab that would have held it in memory did not exist.
@@ -18,18 +16,20 @@ export const notificationSeverityEnum = notificationSchema.enum("notificationSev
 //
 // The notification schema, not messageSchema, for the same reason the subscriptions table is not in it: a resource
 // Operation and a todo reminder are notifications with nothing message-shaped about them.
-export const notificationsInNotification = pgTable(
+export const notificationsInNotification = sqliteTable(
   "notifications",
   {
     body: text().notNull().default(""),
-    id: uuid().primaryKey().defaultRandom(),
-    isRead: boolean().notNull().default(false),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    isRead: integer({ mode: "boolean" }).notNull().default(false),
     // The in-app route the notification opens, and the same path the push payload deep-links to. Empty for a
     // Notification with nowhere to go rather than nullable, so a reader never branches on two kinds of absence
     path: text().notNull().default(""),
-    severity: notificationSeverityEnum().notNull(),
+    severity: createEnumColumn(NotificationSeverity).notNull(),
     title: text().notNull(),
-    type: appNotificationTypeEnum().notNull(),
+    type: createEnumColumn(AppNotificationType).notNull(),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),
@@ -37,7 +37,7 @@ export const notificationsInNotification = pgTable(
   {
     // Every read of this table is the same shape — one user's own bell, newest first — so the index carries the
     // Order too and a page is a range scan rather than a scan plus a sort. `createdAt` comes from the metadata
-    // Columns the pgTable wrapper adds, which are outside what extraConfig is handed, so it is named in SQL.
+    // Columns the sqliteTable wrapper adds, which are outside what extraConfig is handed, so it is named in SQL.
     //
     // The unread total is the second read, and the composite index is the wrong shape for it: it would scan one
     // User's whole history to count the unread rows in it, and that history only grows — nothing purges a

@@ -1,19 +1,21 @@
-import { pgTable } from "#src/pgTable";
 import { sessionsInAuth } from "#src/schema/auth/sessionsInAuth";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { notificationSchema } from "#src/schema/notification/notificationSchema";
-import { index, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { index, integer, text, unique } from "drizzle-orm/sqlite-core";
 
 // The notification schema rather than messageSchema: a row is per-session and per-user with nothing message-shaped
 // About it, and every notification type — a resource operation, a todo reminder — resolves its devices through this
 // Table. Filed under the message domain, none of them could reach it without importing that domain.
-export const pushSubscriptionsInNotification = pgTable(
+export const pushSubscriptionsInNotification = sqliteTable(
   "pushSubscriptions",
   {
     auth: text().notNull(),
     endpoint: text().notNull(),
-    expirationTime: timestamp(),
-    id: uuid().primaryKey().defaultRandom(),
+    expirationTime: integer({ mode: "timestamp_ms" }),
+    id: text()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
     p256dh: text().notNull(),
     // A subscription belongs to the session that created it, not to the browser that once signed in, so the
     // Cascade is what makes a revoke, a sign-out and an expiry all stop that device's pushes without a cleanup

@@ -1,10 +1,10 @@
-import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { socialSchema } from "#src/schema/social/socialSchema";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
-import { check, index, primaryKey, text } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, primaryKey, text } from "drizzle-orm/sqlite-core";
 
-export const blocksInSocial = pgTable(
+export const blocksInSocial = sqliteTable(
   "blocks",
   {
     blockedId: text()

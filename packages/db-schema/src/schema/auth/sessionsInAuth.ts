@@ -1,12 +1,12 @@
-import { pgTable } from "#src/pgTable";
 import { authSchema } from "#src/schema/auth/authSchema";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
-import { index, text, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { index, integer, text } from "drizzle-orm/sqlite-core";
 
-export const sessionsInAuth = pgTable(
+export const sessionsInAuth = sqliteTable(
   "sessions",
   {
-    expiresAt: timestamp().notNull(),
+    expiresAt: integer({ mode: "timestamp_ms" }).notNull(),
     id: text().primaryKey(),
     ipAddress: text(),
     token: text().notNull().unique(),

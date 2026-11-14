@@ -1,21 +1,22 @@
-import { pgTable } from "#src/pgTable";
+import { ResourceType } from "#src/models/resource/ResourceType";
 import { appSchema } from "#src/schema/app/appSchema";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
-import { resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
 import { BOOKMARK_PATH_MAX_LENGTH, BOOKMARK_TITLE_MAX_LENGTH } from "#src/services/bookmark/constants";
+import { createEnumColumn } from "#src/services/shared/createEnumColumn";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
-import { check, primaryKey, text } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, primaryKey, text } from "drizzle-orm/sqlite-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 
 // A page of the app the reader bookmarked to the dock: its path, the title it was bookmarked under, and the type of
 // The resource it showed, which the dock draws as its mark — null for any page that is not a resource's. Server-side
 // So bookmarks follow the reader between devices, unlike the recent pages, which stay on the device
-export const bookmarksInApp = pgTable(
+export const bookmarksInApp = sqliteTable(
   "bookmarks",
   {
     path: text().notNull(),
-    resourceType: resourceTypeEnum(),
+    resourceType: createEnumColumn(ResourceType),
     title: text().notNull(),
     userId: text()
       .notNull()

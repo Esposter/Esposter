@@ -1,18 +1,18 @@
-import { pgTable } from "#src/pgTable";
 import { achievementSchema } from "#src/schema/achievement/achievementSchema";
 import { achievementsInAchievement } from "#src/schema/achievement/achievementsInAchievement";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
-import { check, integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, integer, primaryKey, text } from "drizzle-orm/sqlite-core";
 
-export const userAchievementsInAchievement = pgTable(
+export const userAchievementsInAchievement = sqliteTable(
   "userAchievements",
   {
-    achievementId: uuid()
+    achievementId: text()
       .notNull()
       .references(() => achievementsInAchievement.id, { onDelete: "cascade" }),
     amount: integer().notNull(),
-    unlockedAt: timestamp(),
+    unlockedAt: integer({ mode: "timestamp_ms" }),
     userId: text()
       .notNull()
       .references(() => usersInAuth.id, { onDelete: "cascade" }),

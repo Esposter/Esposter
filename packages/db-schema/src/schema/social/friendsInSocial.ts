@@ -1,10 +1,10 @@
-import { pgTable } from "#src/pgTable";
 import { socialSchema } from "#src/schema/social/socialSchema";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
 import { createSenderReceiverColumns } from "#src/services/social/createSenderReceiverColumns";
-import { check, index, text } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { check, index, text } from "drizzle-orm/sqlite-core";
 
-export const friendsInSocial = pgTable(
+export const friendsInSocial = sqliteTable(
   "friends",
   {
     // Natural key — getFriendshipId(senderId, receiverId).

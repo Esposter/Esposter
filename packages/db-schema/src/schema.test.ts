@@ -1,27 +1,26 @@
 import { schema } from "#src/generated/schema";
 import { capitalize } from "@esposter/shared";
-import { is } from "drizzle-orm";
-import { getTableConfig, isPgEnum, PgDialect, PgTable } from "drizzle-orm/pg-core";
+import { getTableConfig, SQLiteDialect } from "drizzle-orm/sqlite-core";
 import { describe, expect, test } from "vitest";
 
 describe("schema", () => {
-  // Every table and enum lives in the Postgres schema of the product area that owns it, never in `public`, and its
-  // Export is derived from its DDL name rather than chosen: a table's is suffixed with its schema — `usersInAuth` for
-  // `auth.users` — so it can never collide with a local, a row type or a library name and always says where the table
-  // Lives, and an enum's with `Enum`, since it shares its name with the TS enum it is built from. Nothing normalises a
-  // DDL name, so a snake_case one would otherwise go unnoticed, and both kinds are checked in one pass so a
-  // Declaration cannot be added under a kind this invariant forgot to look at
-  test("every table and enum lives in a named schema and exports its name with its suffix", () => {
+  // Every table lives in the product area that owns it, never unprefixed, and its export is derived from its DDL name
+  // rather than chosen: `auth_users` is exported as `usersInAuth`, so it can never collide with a local, a row type or
+  // a library name and always says where the table lives. Nothing normalises a DDL name, so a snake_case one would
+  // otherwise go unnoticed
+  test("every table lives in a named schema and exports its name with its suffix", () => {
     expect.hasAssertions();
 
     const mismatched = Object.entries(schema)
-      .flatMap(([exportName, value]) => {
-        if (is(value, PgTable)) {
-          const { name, schema: tableSchema } = getTableConfig(value);
-          return [[exportName, tableSchema ? `${name}In${capitalize(tableSchema)}` : `${name} in public`] as const];
-        } else if (isPgEnum(value))
-          return [[exportName, value.schema ? `${value.enumName}Enum` : `${value.enumName} in public`] as const];
-        else return [];
+      .map(([exportName, table]) => {
+        const { name } = getTableConfig(table);
+        // The DDL name is `<schema>_<table>`, so the schema is everything before the first underscore
+        const separatorIndex = name.indexOf("_");
+        const expected =
+          separatorIndex === -1
+            ? `${name} in no schema`
+            : `${name.slice(separatorIndex + 1)}In${capitalize(name.slice(0, separatorIndex))}`;
+        return [exportName, expected] as const;
       })
       .filter(([exportName, expected]) => exportName !== expected)
       .map(([exportName, expected]) => `${exportName} should be ${expected}`);
@@ -36,9 +35,8 @@ describe("schema", () => {
   test("check constraint sql", () => {
     expect.hasAssertions();
 
-    const dialect = new PgDialect();
+    const dialect = new SQLiteDialect();
     const renderedChecks = Object.values(schema)
-      .filter((value) => is(value, PgTable))
       .flatMap((table) =>
         getTableConfig(table).checks.map((check) => `${check.name}: ${dialect.sqlToQuery(check.value).sql}`),
       )
@@ -46,12 +44,12 @@ describe("schema", () => {
 
     expect(renderedChecks).toMatchInlineSnapshot(`
       "appUsers_name_length_check: LENGTH(TRIM("message"."appUsers"."name")) BETWEEN 1 AND 100
-      blocks_blockerId_blockedId_check: "social"."blocks"."blockerId" != "social"."blocks"."blockedId"
-      bookmarks_path_length_check: LENGTH("app"."bookmarks"."path") <= 2048
-      bookmarks_title_length_check: LENGTH("app"."bookmarks"."title") <= 100
+      blocks_blockerId_blockedId_check: "social_blocks"."blockerId" != "social_blocks"."blockedId"
+      bookmarks_path_length_check: LENGTH("app_bookmarks"."path") <= 2048
+      bookmarks_title_length_check: LENGTH("app_bookmarks"."title") <= 100
       callSessions_id_length_check: LENGTH("message"."callSessions"."id") = 12
-      friendRequests_senderId_receiverId_check: "social"."friendRequests"."senderId" != "social"."friendRequests"."receiverId"
-      friends_senderId_receiverId_check: "social"."friends"."senderId" != "social"."friends"."receiverId"
+      friendRequests_senderId_receiverId_check: "social_friendRequests"."senderId" != "social_friendRequests"."receiverId"
+      friends_senderId_receiverId_check: "social_friends"."senderId" != "social_friends"."receiverId"
       invites_id_length_check: LENGTH("message"."invites"."id") = 8
       invites_maxUses_check: "message"."invites"."maxUses" >= 0
       invites_uses_check: "message"."invites"."uses" >= 0
@@ -87,15 +85,15 @@ describe("schema", () => {
       searchHistories_query_length_check: LENGTH("message"."searchHistories"."query") <= 10000
       storageLedger_declaredBytes_check: "storage"."storageLedger"."declaredBytes" >= 0
       storageLedger_countedBytes_check: "storage"."storageLedger"."countedBytes" >= 0
-      userAchievements_amount_check: "achievement"."userAchievements"."amount" >= 1
+      userAchievements_amount_check: "achievement_userAchievements"."amount" >= 1
       userSettings_inputSensitivityDecibels_check: "message"."userSettings"."inputSensitivityDecibels" BETWEEN -100 AND 0
       userSettings_microphoneVolumePercentage_check: "message"."userSettings"."microphoneVolumePercentage" BETWEEN 0 AND 200
       userSettings_speakerVolumePercentage_check: "message"."userSettings"."speakerVolumePercentage" BETWEEN 0 AND 200
       userSettings_autoIdleThresholdMs_check: "message"."userSettings"."autoIdleThresholdMs" BETWEEN 60000 AND 86400000
       userSettings_pushToTalkKeybind_length_check: LENGTH("message"."userSettings"."pushToTalkKeybind") <= 64
       userSettings_pushToTalkReleaseDelayMs_check: "message"."userSettings"."pushToTalkReleaseDelayMs" BETWEEN 0 AND 2000
-      users_biography_length_check: LENGTH("auth"."users"."biography") <= 160
-      users_name_length_check: LENGTH(TRIM("auth"."users"."name")) BETWEEN 1 AND 100
+      users_biography_length_check: LENGTH("auth_users"."biography") <= 160
+      users_name_length_check: LENGTH(TRIM("auth_users"."name")) BETWEEN 1 AND 100
       userStatuses_message_length_check: LENGTH("message"."userStatuses"."message") <= 64
       usersToRooms_displayName_length_check: LENGTH("message"."usersToRooms"."displayName") <= 32
       usersToRooms_mentionCount_check: "message"."usersToRooms"."mentionCount" >= 0

@@ -1,9 +1,9 @@
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { resourcesInResource } from "#src/schema/resource/resourcesInResource";
-import { text, uuid } from "drizzle-orm/pg-core";
+import { text } from "drizzle-orm/sqlite-core";
 
 export const createResourceUserColumns = () => ({
-  resourceId: uuid()
+  resourceId: text()
     .notNull()
     .references(() => resourcesInResource.id, { onDelete: "cascade" }),
   userId: text()

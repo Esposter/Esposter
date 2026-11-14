@@ -1,9 +1,9 @@
-import { pgTable } from "#src/pgTable";
 import { appSchema } from "#src/schema/app/appSchema";
-import { integer, text, timestamp } from "drizzle-orm/pg-core";
+import { sqliteTable } from "#src/sqliteTable";
+import { integer, text } from "drizzle-orm/sqlite-core";
 
-export const rateLimiterFlexibleInApp = pgTable(
+export const rateLimiterFlexibleInApp = sqliteTable(
   "rateLimiterFlexible",
-  { expire: timestamp(), key: text().primaryKey(), points: integer().notNull() },
+  { expire: integer({ mode: "timestamp_ms" }), key: text().primaryKey(), points: integer().notNull() },
   { schema: appSchema },
 );
