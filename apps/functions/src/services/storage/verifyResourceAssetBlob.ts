@@ -1,7 +1,7 @@
 import { RESOURCE_ASSET_BLOB_NAME_REGEX } from "#src/services/storage/constants";
 import { getBucket } from "#src/services/storage/getBucket";
 import { findMismatchedResourceAssetHash } from "@esposter/db";
-import { StorageBucket, QueueJob } from "@esposter/db-schema";
+import { QueueJob, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 
 // A resource asset is addressed by the hash of its bytes, and the client computes that hash and uploads directly, so the

@@ -1,7 +1,7 @@
 import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
-import { StorageBucket, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
+import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -27,6 +27,6 @@ export const purgeExpiredResources = async (): Promise<void> => {
   for (const expiredResource of expiredResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across its own partitions and blob directory
     await getResultAsync(() => purgeResourceAndBroadcast(bucket, expiredResource)).match(noop, (error) => {
-      console.error(`purgeExpiredResources failed to purge resource ${expiredResource.id}: `, error);
+      console.error(`purgeExpiredResources failed to purge resource ${expiredResource.id}:`, error);
     });
 };

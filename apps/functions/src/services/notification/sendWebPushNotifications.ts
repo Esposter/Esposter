@@ -26,10 +26,10 @@ export const sendWebPushNotifications = async (
             await getResultAsync(() =>
               db.delete(pushSubscriptionsInNotification).where(eq(pushSubscriptionsInNotification.id, id)),
             ).match(noop, (deleteError) => {
-              console.error(`Failed to delete expired subscription ${endpoint}: `, deleteError);
+              console.error(`Failed to delete expired subscription ${endpoint}:`, deleteError);
             });
-          } else console.error(`Failed to send push notification to ${endpoint}: `, error);
-        else console.error(`Unexpected error sending push notification to ${endpoint}: `, error);
+          } else console.error(`Failed to send push notification to ${endpoint}:`, error);
+        else console.error(`Unexpected error sending push notification to ${endpoint}:`, error);
       });
     }),
     MAX_CONCURRENT_PUSH_SENDS,

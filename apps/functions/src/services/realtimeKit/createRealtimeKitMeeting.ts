@@ -1,5 +1,6 @@
 import type { RealtimeKitCredentials } from "#src/models/realtimeKit/RealtimeKitCredentials";
 
+import { HttpMethod } from "#src/models/realtimeKit/HttpMethod";
 import { requestRealtimeKit } from "#src/services/realtimeKit/requestRealtimeKit";
 import { z } from "zod";
 
@@ -7,7 +8,7 @@ import { z } from "zod";
 export const createRealtimeKitMeeting = async (credentials: RealtimeKitCredentials): Promise<string> => {
   const { id } = await requestRealtimeKit(credentials, {
     body: {},
-    method: "POST",
+    method: HttpMethod.Post,
     path: "/meetings",
     schema: z.object({ id: z.string() }),
   });

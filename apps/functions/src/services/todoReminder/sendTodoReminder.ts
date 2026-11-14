@@ -5,10 +5,10 @@ import { getJobQueue } from "#src/services/queue/getJobQueue";
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { AppNotificationType, StorageBucket, QueueJob, publishNotification, ResourceType } from "@esposter/db-schema";
+import { AppNotificationType, publishNotification, QueueJob, ResourceType, StorageBucket } from "@esposter/db-schema";
 
-// Sends one due reminder through the notification queue, unless the item it was set for no longer stands. A failure
-// that is not a missing item throws, so the owning object keeps the reminder and retries it
+// Sends one due reminder through the notification queue, unless the item it was set for no longer stands.
+// A failure that is not a missing item throws, so the owning object keeps the reminder and retries it
 export const sendTodoReminder = async ({ dueAt, itemId, resourceId }: TodoReminder): Promise<void> => {
   console.log(`${QueueJob.ProcessNotification} todo reminder due`, { itemId, resourceId });
   const resource = await db.query.resourcesInResource.findFirst({

@@ -1,8 +1,9 @@
 import { validateFunctionsEnvironment } from "#src/services/environment/validateFunctionsEnvironment";
 import * as baseWebpush from "web-push";
 
-// The VAPID details are set on the first push an isolate sends, from the environment it validated at its start. A Worker's
-// module scope runs before that validation, so setting them at import would throw before the missing variable is named
+// The VAPID details are set on the first push an isolate sends, from the environment it validated at its start.
+// A Worker's module scope runs before that validation.
+// Setting them at import would throw before the missing variable is named
 let isConfigured = false;
 
 export const webpush: Pick<typeof baseWebpush, "sendNotification"> = {

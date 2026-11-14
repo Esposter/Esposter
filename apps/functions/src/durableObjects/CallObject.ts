@@ -18,6 +18,7 @@ import {
   realtimeKitParticipants,
 } from "#src/durableObjects/call/schema";
 import { RealtimeObject } from "#src/durableObjects/RealtimeObject";
+import { HttpMethod } from "#src/models/realtimeKit/HttpMethod";
 import { createDurableObjectDatabase } from "#src/services/durableObject/createDurableObjectDatabase";
 import { getObjectName } from "#src/services/durableObject/getObjectName";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
@@ -469,7 +470,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     if (isGranted) {
       await requestRealtimeKit(credentials, {
         body: { preset_name: getRealtimeKitPresetName(publishSources) },
-        method: "PATCH",
+        method: HttpMethod.Patch,
         path: `/meetings/${meetingId}/participants/${realtimeKitParticipantId}`,
         schema: z.unknown().optional(),
       });

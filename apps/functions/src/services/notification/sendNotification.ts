@@ -54,7 +54,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
           ),
         ),
     ).match(noop, (error) => {
-      console.error("Failed to trim delivered notifications: ", error);
+      console.error("Failed to trim delivered notifications:", error);
     });
   }
   if (!channels.includes(NotificationChannel.Push)) return;
@@ -65,7 +65,7 @@ export const sendNotification = async (data: NotificationQueueMessage): Promise<
     getPushSubscriptionsForUsers(db, userIds, "excludedSessionId" in data ? data.excludedSessionId : undefined),
   )
     .orTee((error) => {
-      console.error(`Failed to read push subscriptions for ${data.type}: `, error);
+      console.error(`Failed to read push subscriptions for ${data.type}:`, error);
     })
     .unwrapOr([]);
   if (pushSubscriptions.length === 0) {
