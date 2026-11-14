@@ -1,14 +1,14 @@
 # Scheduled message jobs architecture
 
-Read when scheduling work to run at a future time (scheduled messages, reminders). A scheduled job is two pieces: a row in `scheduledMessageJobsInMessage`, which the delivery handler reads, and a **Scheduler Durable Object** whose alarm fires at the due time and sends the job to its queue.
+Read when scheduling work to run at a future time (scheduled messages, reminders). A scheduled chat message is no longer a queue job: it is a row in its room's `RoomObject` storage, and the room's one alarm sends it when it comes due, holding it to the sender's creation rules as they stand then (`sendDueScheduledMessages` in `apps/functions/src/durableObjects/RoomObject.ts`). A TodoList reminder is a row in its owner's `UserObject`, sent from that object's alarm (`scheduleTodoReminders.ts` in `apps/web/server/services/resource/todoList/`).
 
-**Flow**:
+**What the `ProcessScheduledMessageJob` queue still delivers**: a row in `scheduledMessageJobsInMessage` whose payload is a reminder. The handler (`apps/functions/src/handlers/processScheduledMessageJobHandler.ts`) claims it, publishes the reminder and stamps `completedAt`. A row whose payload is a chat message is skipped untouched, unclaimed, for its owner to retire.
 
-1. A tRPC mutation (`apps/web/server/trpc/routers/message/scheduledMessageJob.ts`) inserts a row into `scheduledMessageJobsInMessage`.
-2. The same mutation calls `scheduleScheduledMessageJob(job)` (`apps/web/server/services/message/scheduledMessageJob/`), which calls `schedule(runAt, job)` on the Scheduler object named by the job's id (`useScheduler(id)`). The object stores the job and sets its alarm at `runAt`. Pass `runAt` as a `Date`: an alarm set in the past fires at once.
-3. When the alarm fires, the Scheduler object sends `{ id }` to the `ProcessScheduledMessageJob` queue. The functions Worker's consumer reads the row, atomically claims it on `processingStartedAt IS NULL` (the single-shot claim that makes the handler idempotent under at-least-once delivery), executes, and marks `completedAt`. If `job.runAt` is still in the future it schedules the job again instead of executing.
-4. A cancel or a send-now clears the row, then clears the object's alarm with `unscheduleScheduledMessageJob`. That clear is best-effort: the handler skips a cancelled row whether or not its alarm was cleared.
+The reminder's flow, for the rows this queue still delivers:
+
+1. The row is in `scheduledMessageJobsInMessage` with its due time.
+2. Its time is set on a Scheduler object named by the job's id, which sends `{ id }` to the queue at `runAt`. Pass `runAt` as a `Date`: an alarm set in the past fires at once.
+3. The consumer reads the row, atomically claims it on `processingStartedAt IS NULL` (the single-shot claim that makes the handler idempotent under at-least-once delivery), publishes the reminder, and marks `completedAt`. If `job.runAt` is still in the future it schedules the job again instead of executing.
+4. A cancel clears the row, so the handler skips a cancelled row whether or not its alarm was cleared.
 
 **No timer function** — the alarm is the due time, so nothing polls for due jobs.
-
-**Scheduler object** — `apps/functions/src/durableObjects/Scheduler.ts`, one per job id. A reschedule replaces its job and alarm; a cancel removes both. A TodoList reminder does not use it: `apps/web/server/services/resource/todoList/scheduleTodoReminders.ts` gives the reminder to the resource owner's `UserObject`, which keeps it in `todoRemindersInUser` and sends it from its one alarm.
