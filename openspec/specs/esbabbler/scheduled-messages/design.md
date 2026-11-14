@@ -1,98 +1,64 @@
 # Scheduled Messages & Reminders
 
-Server-backed `/remind` and `/schedule`: a Postgres job row plus an Azure Service Bus scheduled message, executed by a Service Bus-triggered Azure Function. **Postgres is the source of truth** — the queue message carries only `{ id }`.
+Two things are scheduled, and each is held where its owner lives. **A scheduled message** is a row in its room's object, which sends it when it comes due. **A reminder** (`/remind`) is a self-addressed notification held as a row in D1 and fired by the `Scheduler` object at `runAt`. Neither is a queue message that carries the work itself.
 
-## How it works
+## Scheduled messages — held by their room
 
-```mermaid
-sequenceDiagram
-    participant U as User
-    participant T as tRPC (scheduledMessageJob)
-    participant DB as Postgres
-    participant Q as Azure Service Bus
-    participant F as ProcessScheduledMessageJob (Azure Function)
-    participant EG as Azure Event Grid
+Procedures under `message.scheduledMessage.`:
 
-    U->>T: scheduleReminder / scheduleMessage({ roomId, runAt, … })
-    T->>DB: INSERT scheduledMessageJobsInMessage
-    T->>Q: schedule { id } with scheduledEnqueueTimeUtc = runAt
-    Note over Q: fires natively at runAt — no delay cap
+| Procedure                                                            | Notes                                                                                                                                                                                                                                                                       |
+| -------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `createScheduledMessage({ roomId, message, replyToId?, runAt })`     | behind `assertCanCreateMessage` at creation; the router mints the row's id and the room's object stores the row                                                                                                                                                             |
+| `updateScheduledMessage({ id, roomId, message, replyToId?, runAt })` | the same creation guard; the object replaces the row's text, reply target and time                                                                                                                                                                                          |
+| `deleteScheduledMessage({ id, roomId })`                             | the object deletes the row; a row that is not there is not found                                                                                                                                                                                                            |
+| `sendScheduledMessageNow({ id, roomId })`                            | reads the row, runs the creation guards, then claims it by deleting it in the object and posts through `createUserMessage`. A word-filter block deletes the row, so the blocked message is not kept for a second block. Any other failure after the claim puts the row back |
+| `readScheduledMessages({ roomId })`                                  | the room's object, for the sender only                                                                                                                                                                                                                                      |
+| `readMyScheduledMessages({ limit, offset })`                         | the sender's `UserObject` index names the rooms they have rows in; each room's object is read in parallel and the rows are joined to their rooms (Scheduled tab → [drafts & sent](../drafts-and-sent/design.md))                                                            |
+| `readMyScheduledMessagesCount()`                                     | the length of the same index                                                                                                                                                                                                                                                |
 
-    Q->>F: message fires
-    F->>DB: SELECT job WHERE id AND cancelledAt IS NULL AND completedAt IS NULL AND processingStartedAt IS NULL
-    alt job missing / cancelled / completed / claimed
-        F->>F: exit (no-op)
-    else runAt still in the future (clock skew guard)
-        F->>Q: re-schedule same id at runAt
-    else due
-        F->>DB: UPDATE processingStartedAt = now() WHERE all three tombstones IS NULL
-        alt zero rows — another delivery already claimed it
-            F->>F: exit (no-op)
-        else claimed
-            F->>F: ScheduledMessage → assertCanCreateMessage
-            alt guard rejects
-                F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
-            else any other rejection (missing `SendMessages`, read-only, slowmode, timeout, lost membership)
-                F->>DB: UPDATE processingStartedAt = null, rethrow — Service Bus redelivers
-            end
-            F->>EG: Reminder → publishNotification — best-effort, logged
-            F->>DB: ScheduledMessage → advance the room clocks
-            F->>F: ScheduledMessage → createAndBroadcastMessage
-            F->>EG: publishNotification + room updatedAt touch — best-effort, logged
-            F->>DB: UPDATE completedAt = now()
-        end
-    end
-```
+A row is sent by its room's alarm. `RoomObject.alarm` runs every row that is due, in one synchronous transaction per row: the row is deleted and its message is written, so a row is sent once or dropped once. The sender's rules are read from D1 at that moment (`getMessageCreationRejection`). A rule that rejects the send, and a read that faults, both drop the row and send nothing, since a message is never sent on a check that did not pass. A sent message then owes what a live reply owes: its thread's follows are written, its notification is published, and the sender's slowmode clock advances. The sender's `UserObject` is told to drop the row from its index and to index the sent message.
 
-Failure semantics: the `processingStartedAt` update is a **single-shot claim** — it stamps the job only while `cancelledAt`, `completedAt` and `processingStartedAt` are all still null, so of two concurrent deliveries exactly one proceeds. The claim is what lets `AzureFunctionIsIdempotentMap` mark the handler idempotent: a posted message carries a fresh reverse-ticked `rowKey`, so an unclaimed rerun would duplicate it rather than repair it. The claim also splits retries in two: a failure that throws **before the claim** leaves the job unstamped, so Service Bus redelivers and the job retries — while a failure **after the claim** can no longer be retried at all, since the redelivery it would ask for is skipped by the claim itself. So everything past the message write is best-effort rather than fatal ([persist then notify](../../architecture/persist-then-notify/design.md)): the push notification and the room's `updatedAt` touch are logged through `context.error` and the job still reaches `completedAt`. The slowmode clock (`lastMessageAt`) is deliberately **not** in that block — it is what the next send is checked against, so it advances ahead of the write like [`createUserMessage`](../messaging/design.md) does; behind the write a swallowed failure would leave a stale clock that keeps passing, and slowmode would silently stop applying to that member. Only a failure of the delivery itself — the message write or the `completedAt` stamp — leaves the job stuck mid-delivery, which is the cost of never posting twice. The reminder is not among them: it is published like every other notification, so its retries and its dead letter belong to Event Grid ([notifications](../../architecture/notifications/design.md)) rather than to this handler's one claim. Cancellation is DB-only (tombstone): `cancelScheduledMessageJob` sets `cancelledAt`, the scheduled Service Bus message still fires, and the worker guard skips it.
+Because the rules are re-read when the row comes due, a member who has lost their membership or their send permission by then never sends the message.
 
-The same three tombstones gate the owner's side: `cancel`, `reschedule` and `send now` only touch a job the delivery handler has not claimed, so neither path can post the message the other is already sending.
+## Reminders — held in D1 and fired by the Scheduler
 
-The two delivery paths order their guards differently, because only one of them can be redelivered. `sendScheduledMessageNow` is a request: it runs every guard before flipping `cancelledAt`, and a rejection leaves the job scheduled, except a word-filter block, which tombstones it as the worker does (below). The worker runs `assertCanCreateMessage` **inside** the claim, because a word-filter block applies the room's automod action and the `cancelledAt` that records it is a second write — guarded outside the claim, a failure between those two writes leaves the job unclaimed and uncancelled, so the redelivery punishes the user again for one message. Every other rejection (missing `SendMessages`, read-only room, slowmode, timeout, lost membership) has no side effect, so the worker **releases the claim** (`processingStartedAt = null`) before rethrowing: Service Bus redelivers and retries, and a job whose retries exhaust stays visible to `cancel`/`reschedule`/`send now`.
+Procedures under `message.scheduledMessageJob.`:
 
-**The word filter is the one rejection the worker does not retry.** Its inputs are both stored — the room's word list and the job's own message text — so every redelivery re-reads the same pair and blocks again, and the guard applies the filter's configured automod action (`Warn`/`Timeout`, audited as `AutoMod`) exactly as a live send would. Retrying it would re-apply that action and write another audit row once per delivery, so the worker tombstones the job with `cancelledAt` and returns instead of rethrowing. The scheduled path and the live path therefore share one consequence for one blocked message. Both call the same `executeAutomodAction` core in `@esposter/db`; only the app wrapper adds the in-process `moderationEventEmitter` fan-out, which does not exist in the Function process.
+| Procedure                                       | Notes                                                                                                         |
+| ----------------------------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| `scheduleReminder({ roomId, runAt, text })`     | inserts a job row, then has the `Scheduler` object for that row alarm at `runAt`. Behind `getMemberProcedure` |
+| `cancelScheduledMessageJob({ id })`             | tombstones the row with `cancelledAt` and cancels the `Scheduler`'s alarm                                     |
+| `readMyScheduledMessageJobs({ offset, limit })` | the caller's active reminders across rooms, soonest first                                                     |
+| `readMyScheduledMessageJobsCount()`             | the same count, for the tab badge                                                                             |
+
+A reminder's `Scheduler` alarm sends its job id to the `ProcessScheduledMessageJob` queue at `runAt`, and the delivery handler does the rest. The handler reads the row and skips it when it is cancelled, completed or already claimed. A row whose `runAt` is still ahead is handed back to its `Scheduler`. Otherwise the handler claims it: it stamps `processingStartedAt` only while `cancelledAt`, `completedAt` and `processingStartedAt` are all still null, so of two concurrent deliveries exactly one proceeds. The claimed reminder is published as a notification, best-effort, and `completedAt` is stamped.
+
+The claim splits the retries. A failure before the claim leaves the row unclaimed, so the queue redelivers it. A failure after the claim is not retried, because the redelivery would be skipped by the claim itself. The reminder notification is published like every other notification, so its own retries belong to the notification queue ([notifications](../../architecture/notifications/design.md)).
+
+The handler skips any row that is not a reminder. The `payload` column still names the earlier scheduled-message kind, and no current procedure writes one.
 
 ## Data model
 
-Postgres table `scheduledMessageJobsInMessage`:
+Table `scheduledMessageJobsInMessage` holds reminders:
 
-| Field                 | Notes                                                                                                                                                                                                           |
-| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                  | UUID primary key — the only thing put on the queue                                                                                                                                                              |
-| `userId`              | creator / recipient                                                                                                                                                                                             |
-| `roomId`              | required room scope                                                                                                                                                                                             |
-| `payload`             | discriminated JSON by `type`: `Reminder` (`text`) or `ScheduledMessage` (`message`, plus the `replyRowKey` that lands a message scheduled from a thread back in that thread, exactly as sending it there would) |
-| `runAt`               | timestamp                                                                                                                                                                                                       |
-| `processingStartedAt` | nullable; the delivery handler's single-shot claim, stamped atomically on `IS NULL` — a claimed job is invisible to cancel/reschedule/send-now and to the listings                                              |
-| `completedAt`         | nullable; set after success; a pre-claim failure leaves it null so redelivery retries, a post-claim failure leaves the job mid-delivery rather than posting twice                                               |
-| `cancelledAt`         | nullable; set by `cancelScheduledMessageJob`, `rescheduleMessage` (on the old row) and `sendScheduledMessageNow`; workers skip jobs where this is set                                                           |
-
-## Procedures
-
-All under `message.scheduledMessageJob.`:
-
-| Procedure                                           | Notes                                                                                                                                                                                                                                                                                                      |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `scheduleReminder({ roomId, runAt, text })`         | self-addressed notification at `runAt` → [notifications](../../architecture/notifications/design.md)                                                                                                                                                                                                       |
-| `scheduleMessage({ roomId, runAt, message })`       | behind `SendMessages` + read-only/slowmode checks at creation **and** execution time                                                                                                                                                                                                                       |
-| `cancelScheduledMessageJob({ id })`                 | sets `cancelledAt` tombstone                                                                                                                                                                                                                                                                               |
-| `rescheduleMessage({ id, roomId, runAt, message })` | one transaction: tombstones the old row, inserts the replacement, re-enqueues — guards re-checked                                                                                                                                                                                                          |
-| `sendScheduledMessageNow({ id })`                   | guards first, then tombstones the job and posts via `createUserMessage` — a guard rejection leaves it scheduled, except a word-filter block, which tombstones it, and a failed send lifts the tombstone and re-enqueues the delivery the tombstone may have already consumed, so the message is never lost |
-| `readScheduledMessageJobs({ roomId })`              | per-room listing                                                                                                                                                                                                                                                                                           |
-| `readMyScheduledMessageJobs({ offset, limit })`     | cross-room listing (Scheduled tab → [drafts & sent](../drafts-and-sent/design.md))                                                                                                                                                                                                                         |
-| `readMyScheduledMessageJobsCount()`                 | tab badge count                                                                                                                                                                                                                                                                                            |
-
-## Notes
-
-- **Why Service Bus rather than a Storage Queue**: a Storage Queue trigger polls the storage account around the clock whether or not a job is due — it backs off exponentially with jitter while the queue is empty, but only up to the host's "maxPollingInterval", never to nothing — which for this workload is the dominant storage cost, and its visibility delay caps at 7 days, so anything scheduled further out needs a re-enqueue loop of its own. Service Bus scheduled messages (`scheduledEnqueueTimeUtc`) become eligible at `runAt` with no delay cap, so nothing has to re-enqueue anything. Its receiver pulls as well — no queue is genuinely push — but it pulls over a held AMQP link against a namespace whose Basic tier has no base charge, rather than issuing billed transactions against the storage account this app already pays for by the operation. When one is actually picked up still depends on the queue's workload.
-- Infrastructure: Basic-tier namespaces, one per environment, each with the scheduled-message jobs queue and the to-do reminders queue, all declared under `apps/infra/src/azure/resources/Microsoft.ServiceBus/namespaces/`. Connection-string auth via `AZURE_SERVICE_BUS_CONNECTION_STRING`, the same shared-key authentication the table, blob and Web PubSub clients use.
+| Column                | Meaning                                                                               |
+| --------------------- | :------------------------------------------------------------------------------------ |
+| `id`                  | UUID primary key, the only thing the `Scheduler` puts on the queue                    |
+| `userId`              | the person the reminder is for                                                        |
+| `roomId`              | the room the reminder was set in, which its notification links to                     |
+| `payload`             | discriminated JSON by `type`; a reminder carries `text`                               |
+| `runAt`               | when the reminder is due                                                              |
+| `processingStartedAt` | nullable; the delivery handler's single-shot claim                                    |
+| `completedAt`         | nullable; set once the reminder has been published                                    |
+| `cancelledAt`         | nullable; set by `cancelScheduledMessageJob`; the handler skips a row where it is set |
 
 ## Key files
 
-| File                                                                     | Role                          |
-| :----------------------------------------------------------------------- | :---------------------------- |
-| `packages/db-schema/src/schema/message/scheduledMessageJobsInMessage.ts` | job table                     |
-| `apps/web/server/trpc/routers/message/scheduledMessageJob.ts`            | scheduling/cancel/list router |
-| `apps/web/server/composables/azure/serviceBus/useServiceBusSender.ts`    | Service Bus scheduling        |
-| `apps/functions/src/functions/processScheduledMessageJob.ts`             | worker trigger                |
-| `apps/functions/src/handlers/processScheduledMessageJobHandler.ts`       | worker logic + guards         |
+| File                                                                     | Role                                           |
+| :----------------------------------------------------------------------- | :--------------------------------------------- |
+| `apps/web/server/trpc/routers/message/scheduledMessage.ts`               | scheduled messages: create, edit, send, list   |
+| `apps/functions/src/durableObjects/RoomObject.ts`                        | holds, sends and drops a room's scheduled rows |
+| `apps/web/server/trpc/routers/message/scheduledMessageJob.ts`            | reminders: schedule, cancel, list              |
+| `apps/functions/src/durableObjects/Scheduler.ts`                         | fires a reminder's job id at `runAt`           |
+| `apps/functions/src/handlers/processScheduledMessageJobHandler.ts`       | reminder delivery and its claim                |
+| `packages/db-schema/src/schema/message/scheduledMessageJobsInMessage.ts` | reminder rows                                  |
