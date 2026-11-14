@@ -7,6 +7,8 @@ const knipConfiguration: KnipConfig = {
   // A workspace's `entry` replaces knip's default `src/index.ts`, so a package that sets one lists its barrel too
   workspaces: {
     ".": {
+      // The composite action runs `wrangler` in a Worker app's directory, whose devDependency provides it
+      ignoreBinaries: ["wrangler"],
       // The `lint:workflows` task in `vite/checkTasks.ts` runs this package's binary, which no script names
       // The OpenSpec skill invokes this CLI with `pnpm exec`, which Knip does not trace from skill prose
       ignoreDependencies: [
@@ -119,7 +121,9 @@ const knipConfiguration: KnipConfig = {
       // Command entry and the shell wrapper's slot gate are named here
       entry: ["src/**/index.ts", "src/oxlint/**/*.ts", "src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts"],
       // Loaded by path through createRequire, which knip cannot follow
-      ignoreDependencies: ["jscpd"],
+      // `@azure/identity` is declared for the lockfile alone: unstorage's optional Azure peer resolves to this copy, so
+      // dropping it re-resolves every Nuxt peer variant with it, and nothing imports it
+      ignoreDependencies: ["@azure/identity", "jscpd"],
     },
   },
 };
