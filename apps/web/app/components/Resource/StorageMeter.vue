@@ -3,7 +3,7 @@ import { STORAGE_USAGE_ERROR_PERCENTAGE, STORAGE_USAGE_WARNING_PERCENTAGE } from
 import { getFileSize } from "@/services/file/getFileSize";
 import { useStorageStore } from "@/store/storage";
 
-await useStorageSubscribables();
+useStorageSubscribables();
 
 const storageStore = useStorageStore();
 const { readStorageUsage } = storageStore;

@@ -1,29 +1,16 @@
-import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useAchievementStore } from "@/store/achievement";
+import { useConnectionStore } from "@/store/realtime/connection";
 import { checkIsServer } from "@esposter/shared";
 
-export const useAchievementSubscribables = async () => {
+export const useAchievementSubscribables = () => {
   if (checkIsServer()) return;
 
-  const onlineSubscribableContext = getOnlineSubscribableContext();
-  const { $trpc } = useNuxtApp();
   const achievementStore = useAchievementStore();
   const { updateAchievement } = achievementStore;
-  const { data: session } = await useAuthSession();
-
-  useOnlineSubscribable(
-    () => session.value?.user.id,
-    (userId) => {
-      if (!userId) return undefined;
-
-      return getUnsubscribe(
-        $trpc.achievement.onUpdateAchievement.subscribe(undefined, {
-          onData: (achievements) => {
-            for (const achievement of achievements) updateAchievement(achievement);
-          },
-        }),
-      );
-    },
-    onlineSubscribableContext,
-  );
+  const connectionStore = useConnectionStore();
+  const { onUserEvent } = connectionStore;
+  const unregister = onUserEvent("updateAchievement", (achievements) => {
+    for (const achievement of achievements) updateAchievement(achievement);
+  });
+  onScopeDispose(unregister);
 };

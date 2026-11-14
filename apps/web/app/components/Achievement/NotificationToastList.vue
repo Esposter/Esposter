@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAchievementStore } from "@/store/achievement";
 
-await useAchievementSubscribables();
+useAchievementSubscribables();
 await useUserSocket();
 
 const { $trpc } = useNuxtApp();

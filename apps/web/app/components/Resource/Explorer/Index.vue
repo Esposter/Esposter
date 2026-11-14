@@ -15,7 +15,7 @@ const { resource } = defineProps<Props>();
 // Is the route's, so the back button and a shared link both land on it. See openspec/specs/resource/resource-snapshots/design.md
 const { isVersionHistoryOpen, previewSnapshotVersionId } = useVersionHistoryRoute();
 // The page is keyed by resource id, so this instance only ever hears one resource's saves
-useResourceSaveSubscribable(resource.type);
+useResourceSaveSubscribable();
 </script>
 
 <!-- One box, not two: a list pane beside the blade would duplicate the way back the breadcrumb and the

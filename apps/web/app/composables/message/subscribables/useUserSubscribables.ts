@@ -1,34 +1,20 @@
-import { getIdsFromKey } from "@/services/message/subscribables/getIdsFromKey";
-import { getIdsKey } from "@/services/message/subscribables/getIdsKey";
-import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
+import { useConnectionStore } from "@/store/realtime/connection";
 
 export const useUserSubscribables = async () => {
-  const onlineSubscribableContext = getOnlineSubscribableContext();
+  const currentInstance = getCurrentInstance();
   const { data: session } = await useAuthSession();
-  const { $trpc } = useNuxtApp();
   const memberStore = useMemberStore();
   const { members } = storeToRefs(memberStore);
   const statusStore = useStatusStore();
   const { storeStatus } = statusStore;
-
-  useOnlineSubscribable(
-    [() => getIdsKey(members.value), session],
-    ([memberIdsString, newSession]) => {
-      if (!newSession) return undefined;
-
-      const newMemberIds = getIdsFromKey(memberIdsString).filter((id) => id !== newSession.user.id);
-      if (newMemberIds.length === 0) return undefined;
-
-      return getUnsubscribe(
-        $trpc.user.onUpsertStatus.subscribe(newMemberIds, {
-          onData: ({ userId, ...userStatus }) => {
-            storeStatus(userId, userStatus);
-          },
-        }),
-      );
-    },
-    onlineSubscribableContext,
-  );
+  const connectionStore = useConnectionStore();
+  const { onRoomEvent } = connectionStore;
+  // Only the members the list holds are kept, and never the person's own status
+  const unregister = onRoomEvent("upsertStatus", ({ userId, ...userStatus }) => {
+    const isListedMember = members.value.some(({ id }) => id === userId);
+    if (isListedMember && userId !== session.value?.user.id) storeStatus(userId, userStatus);
+  });
+  onUnmounted(unregister, currentInstance);
 };

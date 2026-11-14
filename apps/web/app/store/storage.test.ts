@@ -1,9 +1,8 @@
 // @vitest-environment nuxt
 import type { StorageUsage } from "@esposter/db-schema";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useStorageStore } from "@/store/storage";
-import { StorageTier } from "@esposter/db-schema";
+import { StorageTier, StorageTierQuotaMap } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
 describe(useStorageStore, () => {

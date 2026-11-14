@@ -3,7 +3,6 @@
 import type { GenshinSave } from "genshin-world/save";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
-import { authClient } from "@/services/auth/authClient";
 import { AUTOSAVE_INTERVAL_MS } from "@/services/clicker/constants";
 import { getGenshinStartRetryDelayMs } from "@/services/genshin/getGenshinStartRetryDelayMs";
 import { parseGenshinJournal } from "@/services/genshin/parseGenshinJournal";
@@ -32,7 +31,6 @@ export const useGenshinSave = async () => {
   const alertStore = useAlertStore();
   const { createAlert } = alertStore;
   const saveToLocalStorage = useSaveToLocalStorage();
-  const session = authClient.useSession();
   const initialSave = shallowRef<GenshinSave>(EMPTY_GENSHIN_SAVE);
   const isReplaced = ref(false);
   const isSaveLoaded = ref(false);
@@ -213,23 +211,14 @@ export const useGenshinSave = async () => {
     loadAccountSave(accountUserId);
   };
   if (!checkIsServer()) {
-    // A session another sign-in replaced hears it through the real-time layer, the replacing session's id reaching every
-    // Subscriber of the user. One that does not hear it is refused by its next save instead
-    useOnlineSubscribable(
-      () => session.value.data?.user.id,
-      (userId) => {
-        if (!userId) return undefined;
-        const sessionReplacedUnsubscribable = $trpc.genshin.onSessionReplaced.subscribe(undefined, {
-          onData: (replacedSessionId) => {
-            if (sessionId && replacedSessionId !== sessionId) isReplaced.value = true;
-          },
-        });
-        return () => {
-          sessionReplacedUnsubscribable.unsubscribe();
-        };
-      },
-      getOnlineSubscribableContext(),
-    );
+    // A session another sign-in replaced hears it on the person's user socket, which carries the replacing
+    // Session's id to every tab of the person. One that does not hear it is refused by its next save instead
+    const connectionStore = useConnectionStore();
+    const { onUserEvent } = connectionStore;
+    const unregisterReplaceSession = onUserEvent("replaceSession", ({ sessionId: replacingSessionId }) => {
+      if (sessionId && replacingSessionId !== sessionId) isReplaced.value = true;
+    });
+    onScopeDispose(unregisterReplaceSession);
     // Leaving the page, in the app or out of it, writes the journal at once and sends the save. The journal is what
     // Survives a page closed before the send lands
     const leave = () => {

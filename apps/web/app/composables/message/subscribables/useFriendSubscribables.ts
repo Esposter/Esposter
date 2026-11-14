@@ -1,63 +1,43 @@
-import { getUnsubscribe } from "@/services/shared/getUnsubscribe";
-import { subscribeStarted } from "@/services/shared/subscribeStarted";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
+import { useConnectionStore } from "@/store/realtime/connection";
+
+// Of the two parties to a request or a friendship, the one that is not the person
+const getOtherUserId = (userId: string | undefined, receiverId: string, senderId: string) =>
+  senderId === userId ? receiverId : senderId;
 
 export const useFriendSubscribables = async () => {
-  const onlineSubscribableContext = getOnlineSubscribableContext();
+  const currentInstance = getCurrentInstance();
   const { data: session } = await useAuthSession();
-  const { $trpc } = useNuxtApp();
   const friendRequestStore = useFriendRequestStore();
   const { storeAcceptFriendRequest, storeCreateFriendRequest, storeDeleteFriendRequestsByUser } = friendRequestStore;
   const friendStore = useFriendStore();
   const { storeDeleteFriend } = friendStore;
+  const connectionStore = useConnectionStore();
+  const { onUserEvent } = connectionStore;
   const readFriendLists = useReadFriends();
-
-  useOnlineSubscribable(
-    () => session.value?.user.id,
-    async (userId) => {
-      if (!userId) return undefined;
-
-      // The lists are read once these have started, so a change between the read and its subscription is never lost.
-      // The components that read the lists on mount may read before this runs. This read is issued after theirs, so the
-      // Lists keep its answer
-      const subscriptions = await Promise.all([
-        subscribeStarted((handlers) =>
-          $trpc.friendRequest.onSendFriendRequest.subscribe(undefined, {
-            onData: (friendRequest) => {
-              storeCreateFriendRequest(friendRequest);
-            },
-            ...handlers,
-          }),
-        ),
-        subscribeStarted((handlers) =>
-          $trpc.friendRequest.onAcceptFriendRequest.subscribe(undefined, {
-            onData: (receiverUser) => {
-              storeAcceptFriendRequest(receiverUser);
-            },
-            ...handlers,
-          }),
-        ),
-        subscribeStarted((handlers) =>
-          $trpc.friendRequest.onDeclineFriendRequest.subscribe(undefined, {
-            onData: (declinerId) => {
-              storeDeleteFriendRequestsByUser(declinerId);
-            },
-            ...handlers,
-          }),
-        ),
-        subscribeStarted((handlers) =>
-          $trpc.friend.onDeleteFriend.subscribe(undefined, {
-            onData: (deleterId) => {
-              storeDeleteFriend(deleterId);
-            },
-            ...handlers,
-          }),
-        ),
-      ]);
-      await readFriendLists();
-      return getUnsubscribe(...subscriptions);
-    },
-    onlineSubscribableContext,
-  );
+  const unregisters = [
+    onUserEvent("sendFriendRequest", (friendRequest) => {
+      storeCreateFriendRequest(friendRequest);
+    }),
+    onUserEvent("acceptFriendRequest", ({ receiverUser, senderUser }) => {
+      const friendUser = senderUser.id === session.value?.user.id ? receiverUser : senderUser;
+      storeAcceptFriendRequest(friendUser);
+    }),
+    onUserEvent("declineFriendRequest", ({ receiverId, senderId }) => {
+      const otherUserId = getOtherUserId(session.value?.user.id, receiverId, senderId);
+      storeDeleteFriendRequestsByUser(otherUserId);
+    }),
+    onUserEvent("deleteFriend", ({ receiverId, senderId }) => {
+      const otherUserId = getOtherUserId(session.value?.user.id, receiverId, senderId);
+      storeDeleteFriend(otherUserId);
+    }),
+  ];
+  // Torn down with the page that registered them, so a page mounted again does not hear each frame twice
+  onUnmounted(() => {
+    for (const unregister of unregisters) unregister();
+  }, currentInstance);
+  // The lists are read once the handlers are registered, so a change between the read and its registration
+  // Is never lost. A component reading them on mount may read before this, and this read is issued after it
+  await readFriendLists();
 };

@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { Device } from "#shared/models/auth/Device";
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
@@ -55,7 +54,6 @@ describe(useResourceStore, () => {
   let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
   const resourceId = crypto.randomUUID();
-  const device: Device = { sessionId: crypto.randomUUID(), userId: crypto.randomUUID() };
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
@@ -931,8 +929,8 @@ describe(useResourceStore, () => {
     expect(stages).toStrictEqual(["reload", "adopt"]);
   });
 
-  // The save stream names the version and the device only, so every open resource of every type is told of another
-  // Device's save through the same store door
+  // The user socket names the version and the key only, so every open resource of every type is told of another
+  // device's save through the same store door
   test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
     "an open resource of any type hears another device's save (%s)",
     async (type) => {
@@ -944,7 +942,7 @@ describe(useResourceStore, () => {
       const resourceStore = useResourceStore();
       await resourceStore.readResource();
       await withFinalizerAsync(
-        () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device }),
+        () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1 }),
         unregisterReload,
       );
 
@@ -966,13 +964,13 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device }),
+      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 }),
       unregisterReload,
     );
     const isSaved = await resourceStore.saveContent(createDefaultSheetResource());
 
     expect(reload).not.toHaveBeenCalled();
-    expect(heldSave.value).toStrictEqual({ apiKeyName: "", contentVersion: contentVersion + 1, device });
+    expect(heldSave.value).toStrictEqual({ apiKeyName: "", contentVersion: contentVersion + 1 });
     expect(saveState.value).toBe(ResourceSaveState.Stale);
     expect(isSaved).toBe(false);
     expect(saveResourceContent).not.toHaveBeenCalled();
@@ -990,7 +988,7 @@ describe(useResourceStore, () => {
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 });
     await withFinalizerAsync(() => resourceStore.takeOtherSave(), unregisterReload);
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
@@ -1015,7 +1013,7 @@ describe(useResourceStore, () => {
     });
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 });
     await withFinalizerAsync(() => resourceStore.keepUnwrittenContent(), unregisterKeep);
 
     expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
@@ -1034,12 +1032,12 @@ describe(useResourceStore, () => {
     assert.exists(resource.value);
     const { contentVersion, id } = resource.value;
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ apiKeyName, contentVersion: contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName, contentVersion: contentVersion + 1 });
 
-    expect(heldSave.value).toStrictEqual({ apiKeyName, contentVersion: contentVersion + 1, device });
+    expect(heldSave.value).toStrictEqual({ apiKeyName, contentVersion: contentVersion + 1 });
   });
 
-  // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
+  // The user socket names the version and the key only, so an editor with nothing unwritten re-reads the document
   // Through the reload stage and lets its library adopt it — the same two stages a restore runs
   test("an editor with nothing unsaved adopts a save in place", async () => {
     expect.hasAssertions();
@@ -1054,7 +1052,7 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device }),
+      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1 }),
       () => {
         unregisterReload();
         unregisterAdopt();
@@ -1096,11 +1094,7 @@ describe(useResourceStore, () => {
     await readResource();
     await readContent(noop);
     assert.exists(resource.value);
-    await resourceStore.storeSaveResourceContent({
-      apiKeyName: "",
-      contentVersion: resource.value.contentVersion + 1,
-      device,
-    });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: resource.value.contentVersion + 1 });
     await nextTick();
     const isUndoableAfterAdoption = isUndoable.value;
     await saveContent(createLargeSheetResource("a"));
