@@ -2,10 +2,9 @@ import type { AppUserInMessage, WebhookInMessage, WebhookInMessageWithRelations 
 
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { generateToken } from "#server/services/auth/generateToken";
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
-import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { router } from "#server/trpc";
-import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedure";
@@ -21,12 +20,13 @@ import {
   DatabaseEntityType,
   roomIdSchema,
   RoomPermission,
+  roomsInMessage,
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
 import { inJsonArray } from "@esposter/db";
-import { Operation, takeOne } from "@esposter/shared";
-import { and, count, eq, getColumns } from "drizzle-orm";
+import { Operation } from "@esposter/shared";
+import { and, eq, getColumns, sql } from "drizzle-orm";
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(
@@ -34,43 +34,46 @@ export const webhookRouter = router({
     createWebhookInputSchema,
     "roomId",
     RateLimiterType.Slow,
-  ).mutation<WebhookInMessage>(({ ctx, input: { name, roomId } }) =>
-    ctx.db.transaction(async (tx) => {
-      await lockRoomRow(tx, roomId);
-      const webhookContext = JSON.stringify({ name, roomId });
-      const webhookCount = takeOne(
-        await tx.select({ count: count() }).from(webhooksInMessage).where(eq(webhooksInMessage.roomId, roomId)),
-      ).count;
-      if (webhookCount >= WEBHOOK_MAX_LENGTH)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Webhook, webhookContext);
-
-      const newAppUser = requireMutation(
-        (await tx.insert(appUsersInMessage).values({ name }).returning())[0],
-        Operation.Create,
-        DatabaseEntityType.AppUser,
-        JSON.stringify({ name }),
-      );
-      const token = generateToken();
-      return requireMutation(
-        (
-          await tx
-            .insert(webhooksInMessage)
-            .values({
-              creatorId: ctx.getSessionPayload.user.id,
-              isActive: true,
-              name,
-              roomId,
-              token,
-              userId: newAppUser.id,
+  ).mutation<WebhookInMessage>(async ({ ctx, input: { name, roomId } }) => {
+    const webhookContext = JSON.stringify({ name, roomId });
+    // The webhook posts as its app user, so the app user's id is named up front. Both rows are selected from the room
+    // Only while it holds fewer webhooks than the cap, so a full room refuses the pair and writes neither of them
+    const appUserId = crypto.randomUUID();
+    const webhookId = crypto.randomUUID();
+    const creatorId = ctx.getSessionPayload.user.id;
+    const token = generateToken();
+    const isUnderWebhookCap = and(
+      eq(roomsInMessage.id, roomId),
+      sql`(select count(*) from ${webhooksInMessage} where ${eq(webhooksInMessage.roomId, roomId)}) < ${WEBHOOK_MAX_LENGTH}`,
+    );
+    const [, webhookRows] = await ctx.db.batch([
+      ctx.db.insert(appUsersInMessage).select(
+        ctx.db
+          .select({ ...getInsertSelectMetadata(appUsersInMessage), id: sql`${appUserId}`, name: sql`${name}` })
+          .from(roomsInMessage)
+          .where(isUnderWebhookCap),
+      ),
+      ctx.db
+        .insert(webhooksInMessage)
+        .select(
+          ctx.db
+            .select({
+              ...getInsertSelectMetadata(webhooksInMessage),
+              creatorId: sql`${creatorId}`,
+              id: sql`${webhookId}`,
+              isActive: sql`${sql.param(true, webhooksInMessage.isActive)}`,
+              name: sql`${name}`,
+              roomId: roomsInMessage.id,
+              token: sql`${token}`,
+              userId: sql`${appUserId}`,
             })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.Webhook,
-        webhookContext,
-      );
-    }),
-  ),
+            .from(roomsInMessage)
+            .where(isUnderWebhookCap),
+        )
+        .returning(),
+    ]);
+    return requireMutation(webhookRows[0], Operation.Create, DatabaseEntityType.Webhook, webhookContext);
+  }),
   deleteWebhook: getPermissionsProcedure(
     RoomPermission.ManageWebhooks,
     deleteWebhookInputSchema,

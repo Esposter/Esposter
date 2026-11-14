@@ -1,6 +1,7 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: every check reads the participants the adds before it joined */
 import type { DirectMessageParticipants } from "#shared/models/db/room/DirectMessageParticipants";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { inJsonArray } from "@esposter/db";
 import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
@@ -10,6 +11,7 @@ import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWher
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
+import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { assertCanCreateDirectMessageParticipant } from "#server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { readDirectMessageParticipantIds } from "#server/services/room/directMessage/readDirectMessageParticipantIds";
@@ -40,106 +42,111 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { inJsonArray } from "@esposter/db";
-import { getOrCreate, noop, Operation } from "@esposter/shared";
+import { chunk, getOrCreate, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, ne, or } from "drizzle-orm";
+import { and, asc, eq, exists, ne, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
     .input(createDirectMessageInputSchema)
-    .mutation<RoomInMessage>(({ ctx, input }) =>
-      ctx.db.transaction(async (tx) => {
-        const userId = ctx.getSessionPayload.user.id;
-        const allUserIds = [...new Set([userId, ...input])];
-        const targetUserIds = allUserIds.filter((id) => id !== userId);
-        if (targetUserIds.length === 0)
-          throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
+    .mutation<RoomInMessage>(async ({ ctx, input }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const allUserIds = [...new Set([userId, ...input])];
+      const targetUserIds = allUserIds.filter((id) => id !== userId);
+      if (targetUserIds.length === 0)
+        throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
 
-        const acceptedFriendships = await tx
-          .select()
-          .from(friendsInSocial)
-          .where(
-            or(
-              and(eq(friendsInSocial.senderId, userId), inJsonArray(friendsInSocial.receiverId, targetUserIds)),
-              and(eq(friendsInSocial.receiverId, userId), inJsonArray(friendsInSocial.senderId, targetUserIds)),
-            ),
-          );
-        if (acceptedFriendships.length !== targetUserIds.length)
-          throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
+      const acceptedFriendships = await ctx.db
+        .select()
+        .from(friendsInSocial)
+        .where(
+          or(
+            and(eq(friendsInSocial.senderId, userId), inJsonArray(friendsInSocial.receiverId, targetUserIds)),
+            and(eq(friendsInSocial.receiverId, userId), inJsonArray(friendsInSocial.senderId, targetUserIds)),
+          ),
+        );
+      if (acceptedFriendships.length !== targetUserIds.length)
+        throw getInvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, userId);
 
-        const participantKey = getDirectMessageParticipantKey(allUserIds);
-        const [newRoom] = await tx
+      // The room is inserted unless one already holds this participant set. The memberships name their room by that
+      // Key rather than by an id this request generated, so they land on whichever room the key belongs to, and the
+      // Room is read back at the end of the same batch
+      const participantKey = getDirectMessageParticipantKey(allUserIds);
+      const participantRoomId = sql`(select ${roomsInMessage.id} from ${roomsInMessage} where ${roomsInMessage.participantKey} = ${participantKey})`;
+      // Each membership row binds its room's key and its user, so a statement takes as many rows as that leaves room for
+      await ctx.db.batch([
+        ctx.db
           .insert(roomsInMessage)
           .values({ participantKey, type: RoomType.DirectMessage, userId })
-          .onConflictDoNothing({ target: roomsInMessage.participantKey })
-          .returning();
-        const room = requireMutation(
-          newRoom ?? (await tx.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } })),
-          Operation.Create,
-          DerivedDatabaseEntityType.DirectMessage,
-          participantKey,
-        );
-
-        await tx
-          .insert(usersToRoomsInMessage)
-          .values(allUserIds.map((participantUserId) => ({ roomId: room.id, userId: participantUserId })))
-          .onConflictDoNothing();
-        await tx.update(usersToRoomsInMessage).set({ isHidden: false }).where(getRoomMembershipWhere(room.id, userId));
-        return room;
-      }),
-    ),
+          .onConflictDoNothing({ target: roomsInMessage.participantKey }),
+        ...chunk(allUserIds, Math.floor(D1_MAX_BOUND_PARAMETERS / 2)).map((userIdChunk) =>
+          ctx.db
+            .insert(usersToRoomsInMessage)
+            .values(userIdChunk.map((participantUserId) => ({ roomId: participantRoomId, userId: participantUserId })))
+            .onConflictDoNothing(),
+        ),
+        ctx.db
+          .update(usersToRoomsInMessage)
+          .set({ isHidden: false })
+          .where(and(eq(usersToRoomsInMessage.userId, userId), eq(usersToRoomsInMessage.roomId, participantRoomId))),
+      ]);
+      return requireMutation(
+        await ctx.db.query.roomsInMessage.findFirst({ where: { participantKey: { eq: participantKey } } }),
+        Operation.Create,
+        DerivedDatabaseEntityType.DirectMessage,
+        participantKey,
+      );
+    }),
   createDirectMessageParticipants: getMemberProcedure(createDirectMessageParticipantsInputSchema, "roomId").mutation<
     PublicUser[]
   >(async ({ ctx, input: { roomId, userIds } }) => {
     const actorUser = ctx.getSessionPayload.user;
-    const { targetUsers, updatedRoom } = await ctx.db.transaction(async (tx) => {
-      await assertIsRoom(tx, roomId, RoomType.DirectMessage);
-      const participantIds = await readDirectMessageParticipantIds(tx, roomId);
-      const addedUsers: PublicUser[] = [];
+    await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
+    const participantIds = await readDirectMessageParticipantIds(ctx.db, roomId);
+    const addedUsers: PublicUser[] = [];
 
-      for (const userId of userIds) {
-        if (participantIds.includes(userId))
-          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId);
-        await assertCanCreateDirectMessageParticipant(tx, actorUser.id, participantIds, userId);
-        const targetUser = await requireEntity(
-          tx.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
-          DatabaseEntityType.User,
-          userId,
-        );
-        const [userToRoom] = await tx
+    // Every check reads the participants the adds before it joined, and none of them writes, so the checks run ahead of
+    // The batch that writes the memberships and the key they add up to
+    for (const userId of userIds) {
+      if (participantIds.includes(userId))
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userId);
+      await assertCanCreateDirectMessageParticipant(ctx.db, actorUser.id, participantIds, userId);
+      const targetUser = await requireEntity(
+        ctx.db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
+        DatabaseEntityType.User,
+        userId,
+      );
+      participantIds.push(userId);
+      addedUsers.push(targetUser);
+    }
+
+    // A re-added member is upserted back to visible, and the key names everyone the loop admitted, in one batch
+    // Each added row binds its user, the room and the visibility, and the conflict's own reset adds one more to a statement
+    const [updatedRoomRows] = await ctx.db.batch([
+      updateDirectMessageParticipantKey(ctx.db, roomId, participantIds),
+      ...chunk(addedUsers, Math.floor((D1_MAX_BOUND_PARAMETERS - 1) / 3)).map((addedUserChunk) =>
+        ctx.db
           .insert(usersToRoomsInMessage)
-          .values({ isHidden: false, roomId, userId })
+          .values(addedUserChunk.map(({ id }) => ({ isHidden: false, roomId, userId: id })))
           .onConflictDoUpdate({
             set: { isHidden: false },
             target: [usersToRoomsInMessage.userId, usersToRoomsInMessage.roomId],
-          })
-          .returning();
-        requireMutation(
-          userToRoom,
-          Operation.Create,
-          DatabaseEntityType.UserToRoom,
-          JSON.stringify({ roomId, userId }),
-        );
-        participantIds.push(userId);
-        addedUsers.push(targetUser);
-      }
+          }),
+      ),
+    ]);
+    const updatedRoom = requireMutation(
+      updatedRoomRows[0],
+      Operation.Update,
+      DerivedDatabaseEntityType.DirectMessage,
+      roomId,
+    );
 
-      const updatedRoomRow = requireMutation(
-        (await updateDirectMessageParticipantKey(tx, roomId, participantIds))[0],
-        Operation.Update,
-        DerivedDatabaseEntityType.DirectMessage,
-        roomId,
-      );
-      return { targetUsers: addedUsers, updatedRoom: updatedRoomRow };
-    });
-
-    for (const targetUser of targetUsers)
+    for (const targetUser of addedUsers)
       roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user: targetUser });
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await Promise.all(
-      targetUsers.map((targetUser) =>
+      addedUsers.map((targetUser) =>
         createSystemRoomMessage(
           roomId,
           actorUser.id,
@@ -148,55 +155,62 @@ export const directMessageRouter = router({
         ).match(noop, console.error),
       ),
     );
-    return targetUsers;
+    return addedUsers;
   }),
   deleteDirectMessageParticipant: getMemberProcedure(
     deleteDirectMessageParticipantInputSchema,
     "roomId",
   ).mutation<PublicUser>(async ({ ctx, input: { roomId, userId } }) => {
     const actorUser = ctx.getSessionPayload.user;
-    const { targetUser, updatedRoom } = await ctx.db.transaction(async (tx) => {
-      await assertIsRoom(tx, roomId, RoomType.DirectMessage);
-      const room = await tx.query.roomsInMessage.findFirst({
-        columns: { userId: true },
-        where: { id: { eq: roomId } },
-      });
-      // Discord's group direct message: anyone may leave it, and only its owner removes somebody else
-      if (userId !== actorUser.id && room?.userId !== actorUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
-      const participantIds = await readDirectMessageParticipantIds(tx, roomId);
-      if (!participantIds.includes(userId))
-        throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
-      const remainingParticipantIds = participantIds.filter((id) => id !== userId);
-
-      const removedUser = await requireEntity(
-        tx.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
-        DatabaseEntityType.User,
-        userId,
-      );
-      requireMutation(
-        (await tx.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(roomId, userId)).returning())[0],
-        Operation.Delete,
-        DatabaseEntityType.UserToRoom,
-        JSON.stringify({ roomId, userId }),
-      );
-      // The owner leaving hands the group to the next participant, since the owner's permissions are checked without
-      // Looking for a membership and a departed owner would otherwise keep every gate on a conversation they are not in
-      const [nextOwnerId] = remainingParticipantIds;
-      const updatedRoomRow = requireMutation(
-        (
-          await updateDirectMessageParticipantKey(
-            tx,
-            roomId,
-            remainingParticipantIds,
-            room?.userId === userId ? nextOwnerId : undefined,
-          )
-        )[0],
-        Operation.Update,
-        DerivedDatabaseEntityType.DirectMessage,
-        roomId,
-      );
-      return { targetUser: removedUser, updatedRoom: updatedRoomRow };
+    await assertIsRoom(ctx.db, roomId, RoomType.DirectMessage);
+    const room = await ctx.db.query.roomsInMessage.findFirst({
+      columns: { userId: true },
+      where: { id: { eq: roomId } },
     });
+    // Discord's group direct message: anyone may leave it, and only its owner removes somebody else
+    if (userId !== actorUser.id && room?.userId !== actorUser.id) throw new TRPCError({ code: "UNAUTHORIZED" });
+    const participantIds = await readDirectMessageParticipantIds(ctx.db, roomId);
+    if (!participantIds.includes(userId))
+      throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.UserToRoom, userId);
+    const remainingParticipantIds = participantIds.filter((id) => id !== userId);
+
+    const targetUser = await requireEntity(
+      ctx.db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
+      DatabaseEntityType.User,
+      userId,
+    );
+    // The owner leaving hands the group to the next participant, since the owner's permissions are checked without
+    // Looking for a membership and a departed owner would otherwise keep every gate on a conversation they are not in
+    const [nextOwnerId] = remainingParticipantIds;
+    // The key is written first and only while the membership it drops still stands, so the membership's own delete,
+    // Which follows in the same batch, is the one that removes exactly the row the key was written against
+    const [updatedRoomRows, deletedUserToRoomRows] = await ctx.db.batch([
+      updateDirectMessageParticipantKey(
+        ctx.db,
+        roomId,
+        remainingParticipantIds,
+        room?.userId === userId ? nextOwnerId : undefined,
+        exists(
+          ctx.db
+            .select({ _: sql`1` })
+            .from(usersToRoomsInMessage)
+            .where(getRoomMembershipWhere(roomId, userId)),
+        ),
+      ),
+      ctx.db.delete(usersToRoomsInMessage).where(getRoomMembershipWhere(roomId, userId)).returning(),
+    ]);
+    requireMutation(
+      deletedUserToRoomRows[0],
+      Operation.Delete,
+      DatabaseEntityType.UserToRoom,
+      JSON.stringify({ roomId, userId }),
+    );
+    const updatedRoom = requireMutation(
+      updatedRoomRows[0],
+      Operation.Update,
+      DerivedDatabaseEntityType.DirectMessage,
+      roomId,
+    );
     announceRoomMemberDeparture({ roomId, userId }, ctx.getSessionPayload.session.id);
     roomEventEmitter.emit("updateRoom", updatedRoom);
     await createSystemRoomMessage(

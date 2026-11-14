@@ -6,6 +6,8 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
+import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { containsLike } from "#server/services/db/containsLike";
 import { on } from "#server/services/events/on";
@@ -22,7 +24,6 @@ import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJ
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
-import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -52,8 +53,10 @@ import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
 import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
+  bansInMessage,
   StorageBucket,
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
@@ -75,38 +78,33 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, notExists, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 
 export const baseRoomRouter = router({
-  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
-      const newRoom = requireMutation(
-        (
-          await tx
-            .insert(roomsInMessage)
-            .values({ ...input, userId: ctx.getSessionPayload.user.id })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.Room,
-        JSON.stringify(input),
-      );
-
-      await Promise.all([
-        tx.insert(usersToRoomsInMessage).values({ roomId: newRoom.id, userId: ctx.getSessionPayload.user.id }),
-        tx
+  createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(
+    async ({ ctx, input }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      // The id is named up front, since the membership and the @everyone role both belong to the room being created
+      const roomId = crypto.randomUUID();
+      const [newRoomRows] = await ctx.db.batch([
+        ctx.db
+          .insert(roomsInMessage)
+          .values({ ...input, id: roomId, userId })
+          .returning(),
+        ctx.db.insert(usersToRoomsInMessage).values({ roomId, userId }),
+        ctx.db
           .insert(roomRolesInMessage)
           .values({
             isEveryone: true,
             name: "@everyone",
             permissions: DEFAULT_EVERYONE_PERMISSIONS,
             position: 0,
-            roomId: newRoom.id,
+            roomId,
           }),
       ]);
-      return newRoom;
-    }),
+      return requireMutation(newRoomRows[0], Operation.Create, DatabaseEntityType.Room, JSON.stringify(input));
+    },
   ),
   deleteRoom: standardAuthedProcedure
     .input(deleteRoomInputSchema)
@@ -123,85 +121,104 @@ export const baseRoomRouter = router({
     return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
   }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
-    const { room, roomId, user } = await ctx.db.transaction(async (tx) => {
-      // The room the token names is read and locked before a use is consumed, and the lock is held through the
-      // Membership insert: a pause committing between the check below and that insert would otherwise let one more
-      // Member in through a link the room had already closed
-      const invitedRoom = await requireEntity(
-        tx.query.invitesInMessage.findFirst({ columns: { roomId: true }, where: { id: { eq: input } } }),
-        DatabaseEntityType.Invite,
-        input,
-      );
+    const userId = ctx.getSessionPayload.user.id;
+    const invite = await requireEntity(
+      ctx.db.query.invitesInMessage.findFirst({ where: { id: { eq: input } } }),
+      DatabaseEntityType.Invite,
+      input,
+    );
+    // Expired and exhausted invites get the same error as unknown tokens
+    if (!checkIsInviteUsable(invite)) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
-      await lockRoomRow(tx, invitedRoom.roomId);
-      // Usability check + use consumption in one statement so two concurrent joins can't both
-      // Consume the last use. Expired/exhausted invites get the same error as unknown tokens.
-      const [invite] = await tx
-        .update(invitesInMessage)
-        .set({ uses: sql`${invitesInMessage.uses} + 1` })
-        .where(
-          and(
-            eq(invitesInMessage.id, input),
-            or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
-            or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
-          ),
-        )
-        .returning({ roomId: invitesInMessage.roomId });
-      if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
+    await assertIsRoom(ctx.db, invite.roomId);
 
-      await assertIsRoom(tx, invite.roomId);
+    const { isInvitePaused } = await requireEntity(
+      ctx.db.query.roomsInMessage.findFirst({
+        columns: { isInvitePaused: true },
+        where: { id: { eq: invite.roomId } },
+      }),
+      DatabaseEntityType.Room,
+      invite.roomId,
+    );
+    // A paused room answers a live link exactly as it answers an unknown one
+    if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
-      const { isInvitePaused } = await requireEntity(
-        tx.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: invite.roomId } } }),
-        DatabaseEntityType.Room,
-        invite.roomId,
-      );
-      // A paused room answers a live link exactly as it answers an unknown one — the use the statement above
-      // Consumed rolls back with the transaction, so pausing costs the link nothing
-      if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-      const ban = await tx.query.bansInMessage.findFirst({
-        columns: { userId: true },
-        where: {
-          deletedAt: { isNull: true },
-          roomId: { eq: invite.roomId },
-          userId: { eq: ctx.getSessionPayload.user.id },
-        },
-      });
-      if (ban) throw getForbiddenError("You are banned from this room");
-
-      const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id });
-
-      // Read under the room lock above, so a second join racing this one waits here and finds the row it made
-      const existingUserToRoom = await tx.query.usersToRoomsInMessage.findFirst({
-        columns: { roomId: true },
-        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
-      });
-      if (existingUserToRoom)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
-
-      const userToRoom = requireMutation(
-        (
-          await tx
-            .insert(usersToRoomsInMessage)
-            .values({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id })
-            .returning()
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.UserToRoom,
-        userToRoomContext,
-      );
-      const userToRoomWithRelations = await requireEntity(
-        tx.query.usersToRoomsInMessage.findFirst({
-          where: { roomId: { eq: userToRoom.roomId }, userId: { eq: userToRoom.userId } },
-          with: UserToRoomInMessageRelations,
-        }),
-        DatabaseEntityType.UserToRoom,
-        JSON.stringify(userToRoom),
-      );
-      const { room: joinedRoom, roomId: joinedRoomId, user: joinedUser } = userToRoomWithRelations;
-      return { room: joinedRoom, roomId: joinedRoomId, user: joinedUser };
+    const ban = await ctx.db.query.bansInMessage.findFirst({
+      columns: { userId: true },
+      where: { deletedAt: { isNull: true }, roomId: { eq: invite.roomId }, userId: { eq: userId } },
     });
+    if (ban) throw getForbiddenError("You are banned from this room");
+
+    const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
+    const existingUserToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
+      columns: { roomId: true },
+      where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
+    });
+    if (existingUserToRoom)
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
+
+    // The membership and the use it consumes are one batch, and each is selected only while the link is still usable,
+    // The room still open and the user unbanned, so a change landing after the reads above refuses both. A second
+    // Join of the same user collides on the membership's key and refuses the batch the same way
+    const isStillJoinable = and(
+      eq(invitesInMessage.id, input),
+      or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
+      or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
+      sql`exists ${ctx.db
+        .select({ _: sql`1` })
+        .from(roomsInMessage)
+        .where(and(eq(roomsInMessage.id, invite.roomId), eq(roomsInMessage.isInvitePaused, false)))}`,
+      notExists(
+        ctx.db
+          .select({ _: sql`1` })
+          .from(bansInMessage)
+          .where(
+            and(
+              eq(bansInMessage.roomId, invite.roomId),
+              eq(bansInMessage.userId, userId),
+              isNull(bansInMessage.deletedAt),
+            ),
+          ),
+      ),
+    );
+    const [joinedRows] = await getResultAsync(() =>
+      ctx.db.batch([
+        ctx.db
+          .insert(usersToRoomsInMessage)
+          .select(
+            ctx.db
+              .select({
+                ...getInsertSelectMetadata(usersToRoomsInMessage),
+                roomId: invitesInMessage.roomId,
+                userId: sql`${userId}`,
+              })
+              .from(invitesInMessage)
+              .where(isStillJoinable),
+          )
+          .returning(),
+        ctx.db
+          .update(invitesInMessage)
+          .set({ uses: sql`${invitesInMessage.uses} + 1` })
+          .where(isStillJoinable),
+      ]),
+    ).match(
+      (results) => results,
+      (error) => {
+        if (checkIsUniqueViolation(error))
+          throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
+        throw error;
+      },
+    );
+    if (!joinedRows[0]) throw getNotFoundError(DatabaseEntityType.Invite, input);
+
+    const { room, roomId, user } = await requireEntity(
+      ctx.db.query.usersToRoomsInMessage.findFirst({
+        where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
+        with: UserToRoomInMessageRelations,
+      }),
+      DatabaseEntityType.UserToRoom,
+      userToRoomContext,
+    );
 
     roomEventEmitter.emit("joinRoom", { roomId, sessionId: ctx.getSessionPayload.session.id, user });
     await createSystemRoomMessage(
@@ -477,23 +494,18 @@ export const baseRoomRouter = router({
     ["name"],
   ).mutation<RoomInMessage>(async ({ ctx, input: { id, ...rest } }) => {
     const { image } = rest;
-    // Read before the update so the sweep below knows which version the room is dropping, and the rename line
-    // Whether the name moved. The row is locked through the update, so two admins renaming it at once compare
-    // Against each other's write rather than both against the old name, and the room records one rename
-    const { previousRoom, updatedRoom } = await ctx.db.transaction(async (tx) => {
-      const [lockedRoom] = await tx
+    // The previous row is read in the batch ahead of the update, so the sweep below knows which version the room is
+    // Dropping and the rename line knows whether the name moved. Both statements are one batch, so two admins renaming
+    // It at once cannot both read the old name: the second one's read lands after the first one's write
+    const [previousRoomRows, updatedRoomRows] = await ctx.db.batch([
+      ctx.db
         .select({ image: roomsInMessage.image, name: roomsInMessage.name })
         .from(roomsInMessage)
-        .where(eq(roomsInMessage.id, id))
-        .for("update");
-      const room = requireMutation(
-        (await tx.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning())[0],
-        Operation.Update,
-        DatabaseEntityType.Room,
-        id,
-      );
-      return { previousRoom: lockedRoom, updatedRoom: room };
-    });
+        .where(eq(roomsInMessage.id, id)),
+      ctx.db.update(roomsInMessage).set(rest).where(eq(roomsInMessage.id, id)).returning(),
+    ]);
+    const previousRoom = previousRoomRows[0];
+    const updatedRoom = requireMutation(updatedRoomRows[0], Operation.Update, DatabaseEntityType.Room, id);
     const previousImage = image === undefined ? "" : (previousRoom?.image ?? "");
     roomEventEmitter.emit("updateRoom", updatedRoom);
     // The rename line is the server's to write, like every other line in the room's voice, so no member can post

@@ -1,10 +1,9 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 
 import { usersToRoomsInMessage } from "@esposter/db-schema";
 import { eq } from "drizzle-orm";
 
-export const readDirectMessageParticipantIds = async (db: Context["db"] | Transaction, roomId: string) =>
+export const readDirectMessageParticipantIds = async (db: Context["db"], roomId: string) =>
   (
     await db
       .select({ userId: usersToRoomsInMessage.userId })

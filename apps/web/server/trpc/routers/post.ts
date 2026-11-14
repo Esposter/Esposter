@@ -1,6 +1,7 @@
 import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
 import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { inJsonArray } from "@esposter/db";
 import type { PostInPost, PostInPostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
@@ -29,124 +30,119 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { inJsonArray } from "@esposter/db";
 import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, arrayContains, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { and, count, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
-    ({ ctx, input }) =>
-      ctx.db.transaction(async (tx) => {
-        const parentPost = await requireEntity(
-          tx.query.postsInPost.findFirst({
-            columns: { ancestorIds: true, depth: true, id: true },
-            where: { id: { eq: input.parentId } },
-          }),
-          DatabaseEntityType.Post,
-          input.parentId,
-        );
-        // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
-        const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
-        const createdAt = new Date();
-        const newComment = requireMutation(
-          (
-            await tx
-              .insert(postsInPost)
-              .values({
-                ...input,
-                ancestorIds,
-                createdAt,
-                depth: parentPost.depth + 1,
-                ranking: getPostRanking(0, createdAt),
-                userId: ctx.getSessionPayload.user.id,
-              })
-              .returning({ id: postsInPost.id })
-          )[0],
-          Operation.Create,
-          DerivedDatabaseEntityType.Comment,
-          JSON.stringify(input),
-        );
+    async ({ ctx, input }) => {
+      const parentPost = await requireEntity(
+        ctx.db.query.postsInPost.findFirst({
+          columns: { ancestorIds: true, depth: true, id: true },
+          where: { id: { eq: input.parentId } },
+        }),
+        DatabaseEntityType.Post,
+        input.parentId,
+      );
+      // The parent's chain plus the parent itself: what this reply inherits, and the posts whose counters move
+      const ancestorIds = [...parentPost.ancestorIds, parentPost.id];
+      const createdAt = new Date();
+      // The reply and the counter of every ancestor commit in one batch, so no counter counts a reply that did not land
+      const [newCommentRows] = await ctx.db.batch([
+        ctx.db
+          .insert(postsInPost)
+          .values({
+            ...input,
+            ancestorIds,
+            createdAt,
+            depth: parentPost.depth + 1,
+            ranking: getPostRanking(0, createdAt),
+            userId: ctx.getSessionPayload.user.id,
+          })
+          .returning({ id: postsInPost.id }),
         // Every ancestor, not just the parent: a counter that stops at direct children makes a feed card
         // Under-report its own thread
-        await tx
+        ctx.db
           .update(postsInPost)
           .set({ commentCount: sql`${postsInPost.commentCount} + 1` })
-          .where(inJsonArray(postsInPost.id, ancestorIds));
+          .where(inJsonArray(postsInPost.id, ancestorIds)),
+      ]);
+      const newComment = requireMutation(
+        newCommentRows[0],
+        Operation.Create,
+        DerivedDatabaseEntityType.Comment,
+        JSON.stringify(input),
+      );
 
-        return {
-          ancestorIds,
-          comment: await readPostWithRelations(
-            tx,
-            newComment.id,
-            DerivedDatabaseEntityType.Comment,
-            ctx.getSessionPayload.user.id,
-          ),
-        };
-      }),
+      return {
+        ancestorIds,
+        comment: await readPostWithRelations(
+          ctx.db,
+          newComment.id,
+          DerivedDatabaseEntityType.Comment,
+          ctx.getSessionPayload.user.id,
+        ),
+      };
+    },
   ),
   createPost: getProfanityFilterProcedure(createPostInputSchema, [
     "title",
     "description",
-  ]).mutation<PostInPostWithRelations>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
-      const createdAt = new Date();
-      const newPost = requireMutation(
-        (
-          await tx
-            .insert(postsInPost)
-            .values({
-              ...input,
-              createdAt,
-              ranking: getPostRanking(0, createdAt),
-              userId: ctx.getSessionPayload.user.id,
-            })
-            .returning({ id: postsInPost.id })
-        )[0],
-        Operation.Create,
-        DatabaseEntityType.Post,
-        JSON.stringify(input),
-      );
+  ]).mutation<PostInPostWithRelations>(async ({ ctx, input }) => {
+    const createdAt = new Date();
+    const newPost = requireMutation(
+      (
+        await ctx.db
+          .insert(postsInPost)
+          .values({ ...input, createdAt, ranking: getPostRanking(0, createdAt), userId: ctx.getSessionPayload.user.id })
+          .returning({ id: postsInPost.id })
+      )[0],
+      Operation.Create,
+      DatabaseEntityType.Post,
+      JSON.stringify(input),
+    );
 
-      return readPostWithRelations(tx, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-    }),
-  ),
-  deleteComment: standardAuthedProcedure.input(deleteCommentInputSchema).mutation<DeletedComment>(({ ctx, input }) =>
-    ctx.db.transaction(async (tx) => {
-      // Counted before the delete, because the cascade takes these rows with it and nothing afterwards could say
-      // How many there were. Containment reads the whole subtree in one predicate, this row included, which makes
-      // The count the number every ancestor loses.
-      // The rows are locked rather than merely counted: a delete of a reply beneath this one would otherwise commit
-      // Between this read and the decrement below, and both writes would subtract that same reply from every
-      // Ancestor above it. Ascending id is the order every such delete acquires them in, so an overlap waits here —
-      // And one that still collides further in is aborted by the deadlock detector rather than double-counted
-      const removedComments = await tx
-        .select({ id: postsInPost.id })
-        .from(postsInPost)
-        .where(or(eq(postsInPost.id, input), arrayContains(postsInPost.ancestorIds, [input])))
-        .orderBy(postsInPost.id)
-        .for("update");
-      const removedCommentCount = removedComments.length;
-      const deletedComment = requireMutation(
-        (
-          await tx
-            .delete(postsInPost)
-            .where(and(ownedBy(postsInPost, input, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
-            .returning()
-        )[0],
+    return readPostWithRelations(ctx.db, newPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+  }),
+  deleteComment: standardAuthedProcedure
+    .input(deleteCommentInputSchema)
+    .mutation<DeletedComment>(async ({ ctx, input }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      const ownedComment = and(ownedBy(postsInPost, input, userId), isNotNull(postsInPost.parentId));
+      // The ancestors are what the counters move, and they never change, so they are read ahead of the batch
+      const { ancestorIds } = requireMutation(
+        (await ctx.db.select({ ancestorIds: postsInPost.ancestorIds }).from(postsInPost).where(ownedComment))[0],
         Operation.Delete,
         DerivedDatabaseEntityType.Comment,
         input,
       );
-      // Every ancestor loses the whole subtree, and the deleted row carries the list of which posts those are
-      const { ancestorIds } = deletedComment;
-      await tx
-        .update(postsInPost)
-        .set({ commentCount: sql`${postsInPost.commentCount} - ${removedCommentCount}` })
-        .where(inJsonArray(postsInPost.id, ancestorIds));
+      // The subtree is the comment and every reply beneath it. It is counted inside the batch rather than read before
+      // It: a reply landing between a read and the delete would otherwise be subtracted from the ancestors without being
+      // Counted. The count and the counter's own subquery see the same rows, since nothing else writes between them
+      const subtreeWhere = or(
+        eq(postsInPost.id, input),
+        sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
+      );
+      const [[{ removedCommentCount }], , deletedCommentRows] = await ctx.db.batch([
+        ctx.db.select({ removedCommentCount: count() }).from(postsInPost).where(subtreeWhere),
+        // Every ancestor loses the whole subtree; the guard leaves the counters alone when the delete below will not land
+        ctx.db
+          .update(postsInPost)
+          .set({
+            commentCount: sql`${postsInPost.commentCount} - (select count(*) from ${postsInPost} where ${subtreeWhere})`,
+          })
+          .where(
+            and(
+              inJsonArray(postsInPost.id, ancestorIds),
+              sql`exists (select 1 from ${postsInPost} where ${ownedComment})`,
+            ),
+          ),
+        ctx.db.delete(postsInPost).where(ownedComment).returning({ id: postsInPost.id }),
+      ]);
+      requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
       return { ancestorIds, removedCommentCount };
     }),
-  ),
   deletePost: standardAuthedProcedure.input(deletePostInputSchema).mutation<PostInPost>(async ({ ctx, input }) =>
     requireMutation(
       (
@@ -167,7 +163,7 @@ export const postRouter = router({
       readPostWithRelations(ctx.db, input, DatabaseEntityType.Post, ctx.getSessionPayload?.user.id),
     ),
   // The counts the server keeps on each post, read in one statement for the posts a client has marked as changed. The
-  // Server adjusts a count in the same transaction as the write that changes it, so only this read says what it is now
+  // Server adjusts a count in the same batch as the write that changes it, so only this read says what it is now
   readPostCounts: standardRateLimitedProcedure
     .input(readPostCountsInputSchema)
     .query<Pick<PostInPost, "commentCount" | "id" | "likeCount">[]>(({ ctx, input }) =>
@@ -213,48 +209,44 @@ export const postRouter = router({
     ),
   updateComment: getProfanityFilterProcedure(updateCommentInputSchema, [
     "description",
-  ]).mutation<PostInPostWithRelations>(({ ctx, input: { id, ...rest } }) =>
-    ctx.db.transaction(async (tx) => {
-      const updatedComment = requireMutation(
-        (
-          await tx
-            .update(postsInPost)
-            .set(rest)
-            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
-            .returning({ id: postsInPost.id })
-        )[0],
-        Operation.Update,
-        DerivedDatabaseEntityType.Comment,
-        id,
-      );
+  ]).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+    const updatedComment = requireMutation(
+      (
+        await ctx.db
+          .update(postsInPost)
+          .set(rest)
+          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNotNull(postsInPost.parentId)))
+          .returning({ id: postsInPost.id })
+      )[0],
+      Operation.Update,
+      DerivedDatabaseEntityType.Comment,
+      id,
+    );
 
-      return readPostWithRelations(
-        tx,
-        updatedComment.id,
-        DerivedDatabaseEntityType.Comment,
-        ctx.getSessionPayload.user.id,
-      );
-    }),
-  ),
+    return readPostWithRelations(
+      ctx.db,
+      updatedComment.id,
+      DerivedDatabaseEntityType.Comment,
+      ctx.getSessionPayload.user.id,
+    );
+  }),
   updatePost: getProfanityFilterProcedure(updatePostInputSchema, [
     "title",
     "description",
-  ]).mutation<PostInPostWithRelations>(({ ctx, input: { id, ...rest } }) =>
-    ctx.db.transaction(async (tx) => {
-      const updatedPost = requireMutation(
-        (
-          await tx
-            .update(postsInPost)
-            .set(rest)
-            .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
-            .returning({ id: postsInPost.id })
-        )[0],
-        Operation.Update,
-        DatabaseEntityType.Post,
-        id,
-      );
+  ]).mutation<PostInPostWithRelations>(async ({ ctx, input: { id, ...rest } }) => {
+    const updatedPost = requireMutation(
+      (
+        await ctx.db
+          .update(postsInPost)
+          .set(rest)
+          .where(and(ownedBy(postsInPost, id, ctx.getSessionPayload.user.id), isNull(postsInPost.parentId)))
+          .returning({ id: postsInPost.id })
+      )[0],
+      Operation.Update,
+      DatabaseEntityType.Post,
+      id,
+    );
 
-      return readPostWithRelations(tx, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
-    }),
-  ),
+    return readPostWithRelations(ctx.db, updatedPost.id, DatabaseEntityType.Post, ctx.getSessionPayload.user.id);
+  }),
 });

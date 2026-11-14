@@ -4,13 +4,13 @@ import type { RoomEmojiInMessage } from "@esposter/db-schema";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getDevice } from "#server/services/auth/getDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
 import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { roomEmojiEventEmitter } from "#server/services/message/events/roomEmojiEventEmitter";
-import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
@@ -34,9 +34,10 @@ import {
   roomEmojisInMessage,
   roomIdSchema,
   RoomPermission,
+  roomsInMessage,
 } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
-import { and, notExists } from "drizzle-orm";
+import { and, eq, notExists, sql } from "drizzle-orm";
 
 export const emojiRouter = router({
   createRoomEmoji: getPermissionsProcedure(
@@ -58,28 +59,40 @@ export const emojiRouter = router({
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, name);
 
     const roomEmojiContext = JSON.stringify({ name, roomId });
-    const newRoomEmoji = await ctx.db.transaction(async (tx) => {
-      // The unique index is what makes a duplicate name impossible; the lock is what makes the cap impossible to
-      // Exceed, and it serializes only creates for the same room
-      await lockRoomRow(tx, roomId);
-      const roomEmojiCount = await readRoomEmojiCount(tx, roomId);
-      if (roomEmojiCount >= MAX_ROOM_EMOJIS)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomEmojiContext);
-
-      const existingRoomEmoji = await tx.query.roomEmojisInMessage.findFirst({
-        columns: { id: true },
-        where: { name: { eq: name }, roomId: { eq: roomId } },
-      });
-      if (existingRoomEmoji)
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomEmojiContext);
-
-      return requireMutation(
-        (await tx.insert(roomEmojisInMessage).values({ id, name, roomId }).returning())[0],
-        Operation.Create,
-        DatabaseEntityType.RoomEmoji,
-        roomEmojiContext,
-      );
-    });
+    // The cap and the name are checked by the insert itself: the row is only selected while the room holds fewer emoji
+    // Than the cap and none of its emoji already answers to the name. Both refusals are the same answer, so one check
+    const newRoomEmoji = requireMutation(
+      (
+        await ctx.db
+          .insert(roomEmojisInMessage)
+          .select(
+            ctx.db
+              .select({
+                ...getInsertSelectMetadata(roomEmojisInMessage),
+                id: sql`${id}`,
+                name: sql`${name}`,
+                roomId: roomsInMessage.id,
+              })
+              .from(roomsInMessage)
+              .where(
+                and(
+                  eq(roomsInMessage.id, roomId),
+                  sql`(select count(*) from ${roomEmojisInMessage} where ${eq(roomEmojisInMessage.roomId, roomId)}) < ${MAX_ROOM_EMOJIS}`,
+                  notExists(
+                    ctx.db
+                      .select({ _: sql`1` })
+                      .from(roomEmojisInMessage)
+                      .where(and(eq(roomEmojisInMessage.roomId, roomId), eq(roomEmojisInMessage.name, name))),
+                  ),
+                ),
+              ),
+          )
+          .returning()
+      )[0],
+      Operation.Create,
+      DatabaseEntityType.RoomEmoji,
+      roomEmojiContext,
+    );
     const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
     roomEmojiEventEmitter.emit("createRoomEmoji", [roomEmojiWithSasUrl, getDevice(ctx.getSessionPayload)]);
     return roomEmojiWithSasUrl;
@@ -122,7 +135,7 @@ export const emojiRouter = router({
         JSON.stringify({ mimetype, size }),
       );
     // Rejected here rather than at create, so a room at its cap never receives a write target it cannot use.
-    // The create counts again inside its own transaction — this check is the early no, not the guarantee
+    // The create checks again inside its own statement — this check is the early no, not the guarantee
     const roomEmojiCount = await readRoomEmojiCount(ctx.db, roomId);
     if (roomEmojiCount >= MAX_ROOM_EMOJIS)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);

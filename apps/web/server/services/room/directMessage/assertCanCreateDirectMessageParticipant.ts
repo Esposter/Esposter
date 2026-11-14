@@ -1,4 +1,3 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -8,7 +7,7 @@ import { getFriendshipId, Operation } from "@esposter/shared";
 import { and, eq, or } from "drizzle-orm";
 
 export const assertCanCreateDirectMessageParticipant = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   actorUserId: string,
   participantIds: string[],
   targetUserId: string,

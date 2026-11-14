@@ -1,4 +1,3 @@
-import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -9,7 +8,7 @@ import { Operation } from "@esposter/shared";
 // Handed to a room procedure must not read back any differently from an id that does not exist, or the
 // Rejection tells a caller which rooms are real
 export const assertIsRoom = async (
-  db: Context["db"] | Transaction,
+  db: Context["db"],
   roomId: string,
   type: RoomType = RoomType.Room,
 ): Promise<void> => {

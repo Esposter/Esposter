@@ -5,12 +5,12 @@ import type { InviteInMessage, InviteInMessageWithCreator } from "@esposter/db-s
 import type { SQL } from "drizzle-orm";
 
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { readMyInvite } from "#server/services/message/readMyInvite";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
-import { lockRoomRow } from "#server/services/room/lockRoomRow";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -35,73 +35,86 @@ import {
   invitesInMessage,
   PublicUserColumns,
   roomIdSchema,
+  roomsInMessage,
   RoomPermission,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { getResultAsync, Operation, takeOne } from "@esposter/shared";
-import { and, eq, getColumns } from "drizzle-orm";
+import { getResultAsync, Operation } from "@esposter/shared";
+import { and, eq, exists, getColumns, sql } from "drizzle-orm";
 
 export const inviteRouter = router({
   createInvite: getPermissionsProcedure(RoomPermission.ManageInvites, createInviteInputSchema, "roomId")
     .use(assertIsRoomMiddleware)
-    .mutation<InviteInMessageWithCreator>(({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) =>
-      ctx.db.transaction(async (tx) => {
-        // Locked before the check below, so a pause cannot commit between the check and the insert and let the room
-        // Mint a link after it closed
-        await lockRoomRow(tx, roomId);
-        // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
-        // Nobody can use
-        const { isInvitePaused } = await requireEntity(
-          tx.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
-          DatabaseEntityType.Room,
-          roomId,
-        );
-        if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
-        // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
-        const expiresAt = expireAfterMinutes
-          ? new Date(Date.now() + Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds"))
-          : null;
-        // One invite per member per room — creating with new options replaces the old link
-        await tx
-          .delete(invitesInMessage)
-          .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, ctx.getSessionPayload.user.id)));
-        // The creator rides back with the row because the management panel lists one column of them, and the
-        // Session carries the auth user rather than this table's row
-        const user = await requireEntity(
-          tx.query.usersInAuth.findFirst({
-            columns: PublicUserColumns,
-            where: { id: { eq: ctx.getSessionPayload.user.id } },
-          }),
-          DatabaseEntityType.User,
-          ctx.getSessionPayload.user.id,
-        );
+    .mutation<InviteInMessageWithCreator>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
+      const userId = ctx.getSessionPayload.user.id;
+      // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
+      // Nobody can use
+      const { isInvitePaused } = await requireEntity(
+        ctx.db.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
+        DatabaseEntityType.Room,
+        roomId,
+      );
+      if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
+      // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
+      const expiresAt = expireAfterMinutes
+        ? new Date(Date.now() + Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds"))
+        : null;
+      // The creator rides back with the row because the management panel lists one column of them, and the
+      // Session carries the auth user rather than this table's row
+      const user = await requireEntity(
+        ctx.db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: userId } } }),
+        DatabaseEntityType.User,
+        userId,
+      );
+      // The pause is checked by the statements themselves, so one committed after the check above refuses them too:
+      // The old link stays and no new one is minted
+      const roomIsOpen = exists(
+        ctx.db
+          .select({ _: sql`1` })
+          .from(roomsInMessage)
+          .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false))),
+      );
 
-        for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
-          const id = createId(INVITE_ID_LENGTH);
-          // Each attempt is its own savepoint: a failed insert aborts the enclosing transaction, so a retry issued
-          // Straight on it fails as "transaction aborted" rather than as another roll of the id. Only a collision
-          // Is retried — anything else is the database itself, and re-rolling the id through it hides the report
-          // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
-          const invite = await getResultAsync(() =>
-            tx.transaction((savepoint) =>
-              savepoint
-                .insert(invitesInMessage)
-                .values({ expiresAt, id, maxUses, roomId, userId: ctx.getSessionPayload.user.id })
-                .returning(),
-            ),
-          ).match(
-            (invites) => takeOne(invites),
-            (error) => {
-              if (checkIsUniqueViolation(error)) return undefined;
-              throw error;
-            },
-          );
-          if (invite) return { ...invite, user };
-        }
-        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
-      }),
-    ),
+      for (let attempt = 0; attempt < MAX_INVITE_ID_RETRIES; attempt++) {
+        const id = createId(INVITE_ID_LENGTH);
+        // Each attempt is one batch, so a collision refuses the whole batch and the old link comes back with it. Only a
+        // Collision is retried — anything else is the database itself, and re-rolling the id through it hides the report
+        // oxlint-disable-next-line no-await-in-loop -- Retry: the next attempt rolls a new id only because this one collided
+        const invite = await getResultAsync(() =>
+          ctx.db.batch([
+            // One invite per member per room — creating with new options replaces the old link
+            ctx.db
+              .delete(invitesInMessage)
+              .where(and(eq(invitesInMessage.roomId, roomId), eq(invitesInMessage.userId, userId), roomIsOpen)),
+            ctx.db
+              .insert(invitesInMessage)
+              .select(
+                ctx.db
+                  .select({
+                    ...getInsertSelectMetadata(invitesInMessage),
+                    expiresAt: sql`${sql.param(expiresAt, invitesInMessage.expiresAt)}`,
+                    id: sql`${id}`,
+                    maxUses: sql`${maxUses}`,
+                    roomId: roomsInMessage.id,
+                    userId: sql`${userId}`,
+                  })
+                  .from(roomsInMessage)
+                  .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false))),
+              )
+              .returning(),
+          ]),
+        ).match(
+          ([, invites]) => requireMutation(invites[0], Operation.Create, DatabaseEntityType.Invite, roomId),
+          (error) => {
+            if (checkIsUniqueViolation(error)) return undefined;
+            throw error;
+          },
+        );
+        if (invite) return { ...invite, user };
+      }
+      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId, "UNPROCESSABLE_CONTENT");
+    }),
   readInvite: standardAuthedProcedure
     .input(readInviteInputSchema)
     .query<ReadInviteResult | undefined>(async ({ ctx, input }) => {

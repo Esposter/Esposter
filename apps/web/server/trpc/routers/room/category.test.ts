@@ -69,7 +69,7 @@ describe("categoryRouter", () => {
     expect(updatedRoomCategory.position).toBe(1);
   });
 
-  test("reorders in one transaction", async () => {
+  test("reorders in one statement", async () => {
     expect.hasAssertions();
 
     const first = await roomCategoryCaller.createRoomCategory({ name });
@@ -86,7 +86,7 @@ describe("categoryRouter", () => {
     expect(takeOne(roomCategories).id).toBe(second.id);
   });
 
-  test("rolls back the whole reorder when a row is not owned", async () => {
+  test("moves nothing when a row is not owned", async () => {
     expect.hasAssertions();
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
