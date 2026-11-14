@@ -19,7 +19,7 @@ describe(useReadResources, () => {
   });
 
   // The table reads again for a page turn, a page-size change and a sort change as well as a filter
-  // Change, and none of the first three move a total that for a search is a COUNT(*) behind a trigram predicate
+  // Change, and none of the first three move a total that for a search is a COUNT(*) behind a full-text match
   test("counts once for a page or sort change and re-counts when the filter changes", async () => {
     expect.hasAssertions();
 

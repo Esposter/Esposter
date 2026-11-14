@@ -8,7 +8,7 @@ interface ReadResourcesPageOptions<TFilterInput> {
   getFilterInput: () => TFilterInput;
   // Identity of the query the total belongs to. A page change, a page-size change and a sort change read the
   // Same way a filter change does, and none of the first three move the total —
-  // For a search it is a COUNT(*) behind a trigram predicate over every resource the caller owns. It is the
+  // For a search it is a COUNT(*) behind a full-text match over every resource the caller owns. It is the
   // Filter the caller picked, never the resolved input: a key holding a Date.now()-anchored boundary never
   // Repeats, so the total would be re-counted on every one of those three
   getFilterKey: () => string;
