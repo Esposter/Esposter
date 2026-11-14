@@ -1,6 +1,6 @@
 ## Purpose
 
-The single 60 FPS game tick, click handling, autosave, and the normalized id-based save persisted per user to Azure blob or localStorage.
+The single 60 FPS game tick, click handling, autosave, and the normalized id-based save persisted per user to the account on the server or to localStorage.
 
 ## Requirements
 

@@ -1,6 +1,6 @@
 # Points Leaderboard
 
-A global ranking of users with at least one unlocked achievement by the summed `points` of their unlocks. Every achievement already carries a points value and unlocks live in Postgres, so the leaderboard is one aggregate over existing tables plus a page — no new schema. It gives the games and products a shared competitive surface.
+A global ranking of users with at least one unlocked achievement by the summed `points` of their unlocks. Every achievement already carries a points value and unlocks live in the `core` D1 database, so the leaderboard is one aggregate over existing tables plus a page — no new schema. It gives the games and products a shared competitive surface.
 
 ## How it works
 

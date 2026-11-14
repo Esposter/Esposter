@@ -1,6 +1,6 @@
 # Game Loop and Saves
 
-Production runs on one worker-based game tick, and the entire game state is one `Clicker` entity in memory, persisted as a normalized id-based `ClickerSave` to a per-user Azure blob (authenticated) or localStorage (anonymous).
+Production runs on one worker-based game tick, and the entire game state is one `Clicker` entity in memory, persisted as a normalized id-based `ClickerSave` to a per-user object in R2 (authenticated) or localStorage (anonymous).
 
 ## How it works
 
@@ -19,7 +19,7 @@ flowchart TD
   buy[buy building / upgrade] --> save60[virtualClicker watch: immediate save]
   auto[60 s autosave timer] --> persist
   save60 --> persist{useSave + toClickerSave}
-  persist -->|authed| blob[clicker.saveClicker → Azure blob userId/save]
+  persist -->|authed| blob[clicker.saveClicker → R2 object userId/save]
   persist -->|anonymous| ls[localStorage ClickerStore]
   blob -->|parsed by the server; a failure is an error| load[useReadClicker]
   ls -->|parsed here; a failure starts a fresh game| load
@@ -30,7 +30,7 @@ flowchart TD
 
 **Normalized save data** — the save stores only what the player _did_: `boughtUpgrades` as `UpgradeId[]` and `boughtBuildings` as `{ id, amount, producedValue }[]` (the `ClickerSave` entity). On write, `toClickerSave` strips the in-memory definitions down to ids, and on load `toClicker` resolves them back through `UpgradeMap`/`BuildingMap` — so a balance change to the content maps reaches every existing save on its next load. The in-memory `Clicker` keeps full definition objects, leaving the effect engine and components untouched. There is no migration or self-heal path ([latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)): a guest's save that fails `clickerSaveSchema` (old shape, removed content ids) resets to a fresh game, while a signed-in player's save that fails it is an error, since the server's copy is the only one.
 
-**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic blob-state procedures over the `clicker-assets` container, blob name `${userId}/save`, validated by `clickerSaveSchema`). Each save is conditional on its ETag, as the [conditional writes](../../architecture/conditional-writes/design.md) page records — `useSave` holds that ETag for every store that uses it, so a store only names its procedure — and a refused save reloads the page to take the server's copy; anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](../../../rejected/resource/games-integration/design.md).
+**Persistence** — `useSave` and `useReadData` are the app-wide single-blob-per-user pattern (shared with dungeons): authenticated users read/write through `clicker.readClicker` / `clicker.saveClicker` (generic object-state procedures over the `clicker-assets` bucket, object key `${userId}/save`, validated by `clickerSaveSchema`). Each save is conditional on its ETag, as the [conditional writes](../../architecture/conditional-writes/design.md) page records — `useSave` holds that ETag for every store that uses it, so a store only names its procedure — and a refused save reloads the page to take the server's copy; anonymous users get the same state in localStorage under `ClickerStore`. Why games stay off the resource layer: [games integration](../../../rejected/resource/games-integration/design.md).
 
 ## Procedures
 
