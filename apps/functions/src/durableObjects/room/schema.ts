@@ -2,12 +2,15 @@ import type { FileEntity, LinkPreviewResponse, MessageType } from "@esposter/db-
 
 import { index, integer, primaryKey, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
-// One row is one message in the room. Its id is the room's sequence: `autoIncrement` keeps it from being handed out
-// again after the newest row is removed, so it only grows and a page is `id < ?`. Every field a query filters on is a
-// column; `files`, `mentions` and the link preview are nested shapes read whole, so they stay JSON. `filenames` is the
-// space-joined file names the search index reads, written with the row so the index's triggers stay plain SQL.
-// A reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages. A webhook message
-// has no `userId`; its `appUserId` names the webhook identity that sent it
+// One row is one message in the room.
+// Its id is the room's sequence: `autoIncrement` keeps it from being handed out again after the newest row is removed.
+// So it only grows, and a page is `id < ?`.
+// Every field a query filters on is a column.
+// `files`, `mentions` and the link preview are nested shapes read whole, so they stay JSON.
+// `filenames` is the space-joined file names the search index reads, written with the row.
+// So the index's triggers stay plain SQL.
+// A reply's root is `replyToId`, and a deleted root leaves its replies standing as plain messages.
+// A webhook message has no `userId`; its `appUserId` names the webhook identity that sent it
 export const messagesInRoom = sqliteTable(
   "messages",
   {
@@ -49,12 +52,13 @@ export const messageEmojisInRoom = sqliteTable(
   (table) => [primaryKey({ columns: [table.messageId, table.emojiTag] })],
 );
 
-// The members of this room who have a socket open to it, one row each. A member is online while a row exists, so the
-// room's fan-out reads its online members without a query to the database that holds the room's members
+// The members of this room who have a socket open to it, one row each. A member is online while a row exists.
+// So the room's fan-out reads its online members without a query to the database that holds the room's members
 export const onlineMembersInRoom = sqliteTable("onlineMembers", { userId: text().primaryKey() });
 
-// The room's own state that is not a message, in one row: when its last message landed, and the room-activity fan-out
-// still owed for it. A message schedules the fan-out for two seconds on, and every message in that window is one wave
+// The room's own state that is not a message, in one row.
+// It holds when its last message landed, and the room-activity fan-out still owed for it.
+// A message schedules the fan-out for two seconds on, and every message in that window is one wave
 export const roomState = sqliteTable("roomState", {
   // The time the fan-out is due, or null when none is owed
   bumpDueAt: integer({ mode: "timestamp_ms" }),
@@ -63,8 +67,8 @@ export const roomState = sqliteTable("roomState", {
   lastMessageAt: integer({ mode: "timestamp_ms" }),
 });
 
-// A message a member scheduled to send here, one row until the alarm sends it or the member cancels it. Its runAt is
-// what the alarm sorts by, so the next one due is the first row of that index
+// A message a member scheduled to send here, one row until the alarm sends it or the member cancels it.
+// Its runAt is what the alarm sorts by, so the next one due is the first row of that index
 export const scheduledMessagesInRoom = sqliteTable(
   "scheduledMessages",
   {

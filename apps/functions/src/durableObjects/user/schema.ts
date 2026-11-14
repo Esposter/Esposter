@@ -11,16 +11,17 @@ export const sentMessagesInUser = sqliteTable(
   ],
 );
 
-// The scheduled messages a person has pending, one row each until the room delivers or cancels them. Ordered by when
-// they run, which is what their list shows
+// The scheduled messages a person has pending, one row each until the room delivers or cancels them.
+// Ordered by when they run, which is what their list shows
 export const scheduledMessagesInUser = sqliteTable(
   "scheduledMessagesInUser",
   { roomId: text().notNull(), runAt: integer({ mode: "timestamp_ms" }).notNull(), scheduledId: text().primaryKey() },
   (table) => [index("scheduledMessagesInUserRunAtIndex").on(table.runAt, table.roomId)],
 );
 
-// A reminder a person set for themselves, one row until the alarm sends it. The room it was set in is what its
-// notification links to, and the index on runAt is what the alarm reads for the next one due
+// A reminder a person set for themselves, one row until the alarm sends it.
+// The room it was set in is what its notification links to.
+// The index on runAt is what the alarm reads for the next one due
 export const remindersInUser = sqliteTable(
   "remindersInUser",
   {
@@ -32,8 +33,8 @@ export const remindersInUser = sqliteTable(
   (table) => [index("remindersInUserRunAtIndex").on(table.runAt)],
 );
 
-// A TodoList item's reminder, one row per item with a due date still ahead. The alarm runs the rows that are due and
-// re-arms for the earliest one left, so the index on dueAt is what the alarm reads
+// A TodoList item's reminder, one row per item with a due date still ahead.
+// The alarm runs the rows that are due and re-arms for the earliest one left, so it reads the index on dueAt
 export const todoRemindersInUser = sqliteTable(
   "todoRemindersInUser",
   { dueAt: integer({ mode: "timestamp_ms" }).notNull(), itemId: text().notNull(), resourceId: text().notNull() },

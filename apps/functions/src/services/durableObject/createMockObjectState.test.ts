@@ -1,5 +1,6 @@
 import type { SQLInputValue } from "node:sqlite";
 
+import { jsonDateParse } from "@esposter/shared";
 import { DatabaseSync } from "node:sqlite";
 import { describe, vi } from "vitest";
 
@@ -12,7 +13,7 @@ export const createSocket = () => ({
 export type MockSocket = ReturnType<typeof createSocket>;
 
 // Each frame a socket was sent, read back as the object wrote it
-export const readFrames = (socket: MockSocket) => socket.send.mock.calls.map(([frame]) => JSON.parse(frame));
+export const readFrames = (socket: MockSocket) => socket.send.mock.calls.map(([frame]) => jsonDateParse(frame));
 
 // The rows of a statement as the driver reads them: one at a time, whole, or as arrays of column values
 const createCursor = (rows: unknown[]) => {
@@ -20,15 +21,16 @@ const createCursor = (rows: unknown[]) => {
   return { next: () => iterator.next(), toArray: () => rows };
 };
 
-// The state an object runs on. The SQLite is a real in-memory database, and the socket registry answers getWebSockets and
-// getTags as the runtime does, so a second object over the same state reads back the first's writes. A closed socket
-// leaves the registry, so a close handler sees only the sockets still open. The alarm is held as the runtime holds it,
-// and deleteAll starts the database again empty
+// The state an object runs on. The SQLite is a real in-memory database.
+// The socket registry answers getWebSockets and getTags as the runtime does.
+// So a second object over the same state reads back the first's writes.
+// A closed socket leaves the registry, so a close handler sees only the sockets still open.
+// The alarm is held as the runtime holds it, and deleteAll starts the database again empty
 export const createMockObjectState = (name: string) => {
   let database = new DatabaseSync(":memory:");
   const socketTags = new Map<MockSocket, string[]>();
-  const pendingWork: Promise<unknown>[] = [];
-  let alarm: number | null = null;
+  let pendingWork: Promise<unknown>[] = [];
+  let alarm: null | number = null;
   const ctx = {
     acceptWebSocket: (socket: MockSocket, tags: string[]) => {
       socketTags.set(socket, tags);
@@ -41,9 +43,6 @@ export const createMockObjectState = (name: string) => {
     getWebSockets: (tag?: string) =>
       [...socketTags].filter(([, tags]) => tag === undefined || tags.includes(tag)).map(([socket]) => socket),
     id: { name },
-    waitUntil: (promise: Promise<unknown>) => {
-      pendingWork.push(promise);
-    },
     storage: {
       deleteAlarm: () => {
         alarm = null;
@@ -72,6 +71,9 @@ export const createMockObjectState = (name: string) => {
         return result;
       },
     },
+    waitUntil: (promise: Promise<unknown>) => {
+      pendingWork.push(promise);
+    },
   };
   return {
     ctx,
@@ -79,7 +81,11 @@ export const createMockObjectState = (name: string) => {
       return database;
     },
     // Settles the work an object handed to waitUntil, which the runtime keeps running past the response it answered
-    settleWaitUntil: () => Promise.all(pendingWork.splice(0)),
+    settleWaitUntil: () => {
+      const settling = pendingWork;
+      pendingWork = pendingWork.toSpliced(0);
+      return Promise.all(settling);
+    },
   };
 };
 

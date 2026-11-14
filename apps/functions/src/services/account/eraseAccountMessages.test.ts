@@ -134,7 +134,7 @@ describe(eraseAccountMessages, () => {
 
     const erasedFrame = readFrames(viewerSocket).at(-1);
     expect(erasedFrame.type).toBe("deleteMessage");
-    expect(erasedFrame.data.deletedAt).toStrictEqual(new Date(0).toISOString());
+    expect(erasedFrame.data.deletedAt).toStrictEqual(new Date(0));
     expect(erasedFrame.data.id).toStrictEqual(erasedMessage.id);
     expect(erasedFrame.data.message).toBe("");
   });

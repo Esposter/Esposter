@@ -1,14 +1,22 @@
 import type { RoomImport, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { Mock } from "vitest";
 
+import { RoomObject } from "#src/durableObjects/RoomObject";
+import {
+  createMockObjectState,
+  createSocket,
+  readFrames,
+} from "#src/services/durableObject/createMockObjectState.test";
+import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE } from "#src/services/room/constants";
+import { createUser } from "#src/services/shared/createUser.test";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AppNotificationType,
   appUsersInMessage,
   MessageType,
+  RoomPermission,
   roomRolesInMessage,
   roomsInMessage,
-  RoomPermission,
   SOCKET_IDENTITY_HEADER,
   threadFollowsInMessage,
   usersInAuth,
@@ -19,15 +27,6 @@ import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { RoomObject } from "#src/durableObjects/RoomObject";
-import {
-  createMockObjectState,
-  createSocket,
-  readFrames,
-} from "#src/services/durableObject/createMockObjectState.test";
-import { createUser } from "#src/services/shared/createUser.test";
-import { ROOM_ACTIVITY_DELAY_MS, ROOM_MEMBER_REMOVED_CODE } from "#src/services/room/constants";
-
 type UserStub = Record<
   | "addScheduledMessage"
   | "addSentMessage"
@@ -37,6 +36,21 @@ type UserStub = Record<
   | "roomActivity",
   Mock
 >;
+
+// The Response the object builds for an upgrade. The test reads no part of it, so the stub builds nothing
+const ResponseStub = function () {};
+
+// A member's status as the room is sent it when the member comes online or goes offline
+const createStatus = (statusUserId: string, isConnected: boolean) => ({
+  createdAt: new Date(0),
+  deletedAt: null,
+  expiresAt: null,
+  isConnected,
+  message: "",
+  status: null,
+  updatedAt: new Date(0),
+  userId: statusUserId,
+});
 
 describe(RoomObject, () => {
   let mockDatabase: Awaited<ReturnType<typeof createMockDb>>;
@@ -77,24 +91,12 @@ describe(RoomObject, () => {
     return { object: new RoomObject(state.ctx as unknown as DurableObjectState, environment), state };
   };
 
-  // A member's status as the room is sent it when the member comes online or goes offline
-  const createStatus = (statusUserId: string, isConnected: boolean) => ({
-    createdAt: new Date(0),
-    deletedAt: null,
-    expiresAt: null,
-    isConnected,
-    message: "",
-    status: null,
-    updatedAt: new Date(0),
-    userId: statusUserId,
-  });
-
   const sendMessage = (object: RoomObjectRpc, message: string, sender = actor) =>
     object.createMessage({ message, type: MessageType.Message }, sender);
 
   // A message as the cutover copies it: a live row under the number it was given, with the fields a plain send holds
   const createImportedMessage = (
-    overrides: Pick<RoomImport["messages"][number], "id"> & Partial<RoomImport["messages"][number]>,
+    overrides: Partial<RoomImport["messages"][number]> & Pick<RoomImport["messages"][number], "id">,
   ): RoomImport["messages"][number] => ({
     appUserId: null,
     appUserImage: "",
@@ -116,10 +118,6 @@ describe(RoomObject, () => {
 
   beforeAll(async () => {
     mockDatabase = await createMockDb();
-  });
-
-  afterAll(async () => {
-    await mockDatabase.dispose();
   });
 
   beforeEach(async () => {
@@ -145,6 +143,10 @@ describe(RoomObject, () => {
     await mockDatabase.reset();
   });
 
+  afterAll(async () => {
+    await mockDatabase.dispose();
+  });
+
   test("a write reaches the room's other devices, and not the device that made it", async () => {
     expect.hasAssertions();
 
@@ -157,9 +159,7 @@ describe(RoomObject, () => {
     const message = await sendMessage(object, "hello");
 
     expect(readFrames(senderSocket)).toStrictEqual([]);
-    expect(readFrames(bystanderSocket)).toStrictEqual([
-      { data: JSON.parse(JSON.stringify([message])), type: "createMessage" },
-    ]);
+    expect(readFrames(bystanderSocket)).toStrictEqual([{ data: structuredClone([message]), type: "createMessage" }]);
   });
 
   test("a webhook message keeps the image its app user had when it sent", async () => {
@@ -211,10 +211,11 @@ describe(RoomObject, () => {
 
     await object.deleteUserMessages(userId);
 
-    expect(readFrames(viewerSocket).at(-1)).toStrictEqual({
-      data: expect.objectContaining({ deletedAt: new Date(0).toISOString(), id: message.id, message: "" }),
-      type: "deleteMessage",
-    });
+    const tombstone = readFrames(viewerSocket).at(-1);
+    expect(tombstone.type).toBe("deleteMessage");
+    expect(tombstone.data.id).toBe(message.id);
+    expect(tombstone.data.deletedAt).toStrictEqual(new Date(0));
+    expect(tombstone.data.message).toBe("");
   });
 
   test("a socket that reconnects with the last id it heard is replayed the messages after it, oldest first", async () => {
@@ -226,34 +227,23 @@ describe(RoomObject, () => {
     const third = await sendMessage(object, "third");
     const client = createSocket();
     const server = createSocket();
-    vi.stubGlobal(
-      "WebSocketPair",
-      class {
-        constructor() {
-          return [client, server];
-        }
-      },
-    );
-    vi.stubGlobal(
-      "Response",
-      class {
-        constructor(_body: unknown, _init: unknown) {}
-      },
-    );
+    const WebSocketPair = function () {
+      return [client, server];
+    };
+    vi.stubGlobal("WebSocketPair", WebSocketPair);
+    vi.stubGlobal("Response", ResponseStub);
     const request = new Request(`https://room.example/ws/room/${roomId}?after=${first.id}`, {
       headers: {
-        Upgrade: "websocket",
         [SOCKET_IDENTITY_HEADER.deviceId]: deviceId,
         [SOCKET_IDENTITY_HEADER.sessionId]: v7(),
         [SOCKET_IDENTITY_HEADER.userId]: userId,
+        Upgrade: "websocket",
       },
     });
 
     await object.fetch(request);
 
-    expect(readFrames(server)).toStrictEqual([
-      { data: JSON.parse(JSON.stringify([second, third])), type: "createMessage" },
-    ]);
+    expect(readFrames(server)).toStrictEqual([{ data: structuredClone([second, third]), type: "createMessage" }]);
   });
 
   test("search finds a message by its words, follows its edit, and forgets it once deleted", async () => {
@@ -339,9 +329,9 @@ describe(RoomObject, () => {
       { id: v7(), message: "later", runAt: new Date(ROOM_ACTIVITY_DELAY_MS * 2) },
       actor,
     );
-    expect(await state.ctx.storage.getAlarm()).toBe(due.runAt.getTime());
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(due.runAt.getTime());
 
-    vi.setSystemTime(due.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(due.runAt.getTime()));
     await object.alarm();
 
     expect(
@@ -349,7 +339,7 @@ describe(RoomObject, () => {
     ).toStrictEqual([{ message: "due", userId }]);
     expect(object.readScheduledMessages(userId)).toStrictEqual([later]);
     expect(getUserStub(userId).removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(due.id);
-    expect(await state.ctx.storage.getAlarm()).toBe(later.runAt.getTime());
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(later.runAt.getTime());
   });
 
   test("a scheduled reply follows its thread for its sender and for the root's author", async () => {
@@ -362,14 +352,16 @@ describe(RoomObject, () => {
       actor,
     );
 
-    vi.setSystemTime(reply.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(reply.runAt.getTime()));
     await object.alarm();
 
     const follows = await mockDatabase.db
       .select({ userId: threadFollowsInMessage.userId })
       .from(threadFollowsInMessage)
       .where(and(eq(threadFollowsInMessage.roomId, roomId), eq(threadFollowsInMessage.threadRootId, root.id)));
-    expect(follows.map(({ userId: followerId }) => followerId).sort()).toStrictEqual([userId, otherUserId].sort());
+    expect(follows.map(({ userId: followerId }) => followerId).toSorted()).toStrictEqual(
+      [userId, otherUserId].toSorted(),
+    );
   });
 
   test("a scheduled reply is notified to its thread's followers once it is sent", async () => {
@@ -384,7 +376,7 @@ describe(RoomObject, () => {
       actor,
     );
 
-    vi.setSystemTime(reply.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(reply.runAt.getTime()));
     await object.alarm();
 
     const sentReply = takeOne(object.readMessages({ limit: 1 }));
@@ -407,7 +399,7 @@ describe(RoomObject, () => {
       .delete(usersToRoomsInMessage)
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    vi.setSystemTime(scheduledMessage.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
     expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
@@ -428,7 +420,7 @@ describe(RoomObject, () => {
       .set({ timeoutUntil: new Date(ROOM_ACTIVITY_DELAY_MS * 2) })
       .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, userId)));
 
-    vi.setSystemTime(scheduledMessage.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
     expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
@@ -446,7 +438,7 @@ describe(RoomObject, () => {
     );
     await mockDatabase.db.delete(roomRolesInMessage).where(eq(roomRolesInMessage.roomId, roomId));
 
-    vi.setSystemTime(scheduledMessage.runAt);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(scheduledMessage.runAt.getTime()));
     await object.alarm();
 
     expect(object.readMessages({ limit: 10 })).toStrictEqual([]);
@@ -460,12 +452,12 @@ describe(RoomObject, () => {
     object.attachMember(userId, createStatus(userId, true));
     object.attachMember(otherUserId, createStatus(otherUserId, true));
     await sendMessage(object, "first");
-    vi.setSystemTime(new Date(ROOM_ACTIVITY_DELAY_MS / 4));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(0).add({ milliseconds: ROOM_ACTIVITY_DELAY_MS / 4 }));
     const last = await sendMessage(object, "second");
 
-    expect(await state.ctx.storage.getAlarm()).toBe(ROOM_ACTIVITY_DELAY_MS);
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(ROOM_ACTIVITY_DELAY_MS);
 
-    vi.setSystemTime(new Date(ROOM_ACTIVITY_DELAY_MS));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(ROOM_ACTIVITY_DELAY_MS));
     await object.alarm();
     await object.alarm();
 
@@ -518,7 +510,7 @@ describe(RoomObject, () => {
     expect(object.exportUserMessages({ limit: 1, userId })).toStrictEqual([first]);
     expect(object.exportUserMessages({ after: first.id, limit: 1, userId })).toStrictEqual([last]);
 
-    expect(await object.deleteUserMessages(userId)).toStrictEqual([first, last]);
+    await expect(object.deleteUserMessages(userId)).resolves.toStrictEqual([first, last]);
 
     expect(object.readMessages({ limit: 10 })).toStrictEqual([bystander]);
     expect(object.searchMessages({ ...searchAll, query: "first" }).count).toBe(0);
@@ -636,10 +628,10 @@ describe(RoomObject, () => {
     await object.deleteAll();
 
     expect(socket.close).toHaveBeenCalledExactlyOnceWith(1000, "Room deleted");
-    expect(await state.ctx.storage.getAlarm()).toBeNull();
+    await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 
-  test("a member coming online and going offline is sent to the room as its status, once for each change", async () => {
+  test("a member coming online and going offline is sent to the room as its status, once for each change", () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -652,12 +644,12 @@ describe(RoomObject, () => {
     object.detachMember(otherUserId, disconnectedStatus);
 
     expect(readFrames(socket)).toStrictEqual([
-      { data: JSON.parse(JSON.stringify(connectedStatus)), type: "upsertStatus" },
-      { data: JSON.parse(JSON.stringify(disconnectedStatus)), type: "upsertStatus" },
+      { data: structuredClone(connectedStatus), type: "upsertStatus" },
+      { data: structuredClone(disconnectedStatus), type: "upsertStatus" },
     ]);
   });
 
-  test("removing a member closes that member's sockets and no other", async () => {
+  test("removing a member closes that member's sockets and no other", () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
@@ -672,7 +664,7 @@ describe(RoomObject, () => {
     expect(bystanderSocket.close).not.toHaveBeenCalled();
   });
 
-  test("closing a session closes the room's sockets of that session and no other", async () => {
+  test("closing a session closes the room's sockets of that session and no other", () => {
     expect.hasAssertions();
 
     const { object, state } = createRoomObject();
