@@ -1,11 +1,11 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { SQL, SQLWrapper } from "drizzle-orm";
-import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
+import type { SQLiteTableWithColumns, TableConfig } from "drizzle-orm/sqlite-core";
 
 export interface GetCursorWhere {
   // A table indexes its own columns directly, so a table and a columns record resolve a sort key the same way
   <TTable extends TableConfig>(
-    table: PgTableWithColumns<TTable>,
+    table: SQLiteTableWithColumns<TTable>,
     serializedCursors: string,
     sortBy: SortItem<keyof TTable["columns"] & string>[],
   ): SQL;

@@ -2,9 +2,10 @@ import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
+import { inJsonArray } from "@esposter/db";
 import { blocksInSocial, DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";
 import { getFriendshipId, Operation } from "@esposter/shared";
-import { and, eq, inArray, or } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 
 export const assertCanCreateDirectMessageParticipant = async (
   db: Context["db"] | Transaction,
@@ -22,8 +23,8 @@ export const assertCanCreateDirectMessageParticipant = async (
     .from(blocksInSocial)
     .where(
       or(
-        and(eq(blocksInSocial.blockedId, targetUserId), inArray(blocksInSocial.blockerId, participantIds)),
-        and(eq(blocksInSocial.blockerId, targetUserId), inArray(blocksInSocial.blockedId, participantIds)),
+        and(eq(blocksInSocial.blockedId, targetUserId), inJsonArray(blocksInSocial.blockerId, participantIds)),
+        and(eq(blocksInSocial.blockerId, targetUserId), inJsonArray(blocksInSocial.blockedId, participantIds)),
       ),
     )
     .limit(1);

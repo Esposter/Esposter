@@ -3,9 +3,10 @@ import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMyS
 import type { Database } from "@esposter/db-schema";
 
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
+import { inJsonArray } from "@esposter/db";
 import { roomsInMessage, messagesInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { and, count, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNull } from "drizzle-orm";
 
 export const readMySentMessages = async (
   { limit, offset }: ReadMySentMessagesInput,
@@ -27,7 +28,7 @@ export const readMySentMessages = async (
   // Named off the page rather than the read, so the row that only answered `hasMore` never widens the join
   const roomIds = [...new Set(items.map(({ roomId }) => roomId))];
   const rooms =
-    roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inArray(roomsInMessage.id, roomIds)) : [];
+    roomIds.length > 0 ? await db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [];
   const roomMap = new Map(rooms.map((room) => [room.id, room]));
   return {
     count: takeOne(totals, 0).count,

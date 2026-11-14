@@ -2,8 +2,9 @@ import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { notInJsonArray } from "@esposter/db";
 import { resourceWorkingAssetsInResource } from "@esposter/db-schema";
-import { and, eq, notInArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // The second half of a content write, taken with the write once its blob has landed. The rows the new content no longer
 // Embeds are dropped, so the rows name exactly what the stored content embeds. The caller releases the hashes handed back,
@@ -18,7 +19,7 @@ export const pruneWorkingAssets = async (
     .where(
       and(
         eq(resourceWorkingAssetsInResource.resourceId, resourceId),
-        assetHashes.size > 0 ? notInArray(resourceWorkingAssetsInResource.assetHash, [...assetHashes]) : undefined,
+        assetHashes.size > 0 ? notInJsonArray(resourceWorkingAssetsInResource.assetHash, [...assetHashes]) : undefined,
       ),
     )
     .returning({ assetHash: resourceWorkingAssetsInResource.assetHash });

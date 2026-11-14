@@ -1,12 +1,12 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { SQL, SQLWrapper } from "drizzle-orm";
-import type { PgTableWithColumns, TableConfig } from "drizzle-orm/pg-core";
+import type { SQLiteTableWithColumns, TableConfig } from "drizzle-orm/sqlite-core";
 
 export interface ParseSortByToSql {
   // A table indexes its own columns directly (`users.id` is the column), so both a table and a bare column map
   // Resolve a sort key the same way
   <TTable extends TableConfig>(
-    table: PgTableWithColumns<TTable>,
+    table: SQLiteTableWithColumns<TTable>,
     sortBy: SortItem<keyof TTable["columns"] & string>[],
   ): SQL[];
   // A selection rather than a table, for a list whose sort keys span a join — the resource list sorts by the

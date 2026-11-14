@@ -8,5 +8,5 @@ export const getCancellableScheduledMessageWhere = (id: string, userId: string) 
   and(
     ownedBy(scheduledMessageJobsInMessage, id, userId),
     activeScheduledMessageJobWhere,
-    sql`${scheduledMessageJobsInMessage.payload}->>'type' = ${ScheduledMessageJobType.ScheduledMessage}`,
+    sql`json_extract(${scheduledMessageJobsInMessage.payload}, '$.type') = ${ScheduledMessageJobType.ScheduledMessage}`,
   );

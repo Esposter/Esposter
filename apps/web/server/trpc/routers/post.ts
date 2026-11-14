@@ -29,9 +29,10 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
+import { inJsonArray } from "@esposter/db";
 import { DatabaseEntityType, DerivedDatabaseEntityType, PostInPostRelations, postsInPost } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, arrayContains, eq, inArray, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { and, arrayContains, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
 
 export const postRouter = router({
   createComment: getProfanityFilterProcedure(createCommentInputSchema, ["description"]).mutation<CreatedComment>(
@@ -71,7 +72,7 @@ export const postRouter = router({
         await tx
           .update(postsInPost)
           .set({ commentCount: sql`${postsInPost.commentCount} + 1` })
-          .where(inArray(postsInPost.id, ancestorIds));
+          .where(inJsonArray(postsInPost.id, ancestorIds));
 
         return {
           ancestorIds,
@@ -142,7 +143,7 @@ export const postRouter = router({
       await tx
         .update(postsInPost)
         .set({ commentCount: sql`${postsInPost.commentCount} - ${removedCommentCount}` })
-        .where(inArray(postsInPost.id, ancestorIds));
+        .where(inJsonArray(postsInPost.id, ancestorIds));
       return { ancestorIds, removedCommentCount };
     }),
   ),
@@ -173,7 +174,7 @@ export const postRouter = router({
       ctx.db
         .select({ commentCount: postsInPost.commentCount, id: postsInPost.id, likeCount: postsInPost.likeCount })
         .from(postsInPost)
-        .where(inArray(postsInPost.id, input)),
+        .where(inJsonArray(postsInPost.id, input)),
     ),
   readPosts: standardRateLimitedProcedure
     .input(readPostsInputSchema)

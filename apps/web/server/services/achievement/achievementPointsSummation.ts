@@ -9,4 +9,4 @@ export const achievementPointsSummation = sql<number>`sum(case ${achievementsInA
     ([achievementName, { points }]) => sql`when ${achievementName} then ${points}`,
   ),
   sql` `,
-)} else 0 end)::int`;
+)} else 0 end`;

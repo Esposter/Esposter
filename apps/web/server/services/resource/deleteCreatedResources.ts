@@ -2,10 +2,9 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { getBucket } from "#server/services/storage/getBucket";
-import { deleteDirectory } from "@esposter/db";
+import { deleteDirectory, inJsonArray } from "@esposter/db";
 import { StorageBucket, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { inArray } from "drizzle-orm";
 
 // The compensating cleanup every create rolls back through. A resource that never became durable must leave
 // Nothing behind: its blobs under its directory first, and then the row, whose delete cascades to the activity trail
@@ -18,5 +17,5 @@ export const deleteCreatedResources = async (ctx: AuthedContext, ids: ResourceIn
     const bucket = getBucket(StorageBucket.ResourceAssets);
     await Promise.all(ids.map((id) => deleteDirectory(bucket, id)));
   }).match(noop, console.error);
-  await ctx.db.delete(resourcesInResource).where(inArray(resourcesInResource.id, ids));
+  await ctx.db.delete(resourcesInResource).where(inJsonArray(resourcesInResource.id, ids));
 };

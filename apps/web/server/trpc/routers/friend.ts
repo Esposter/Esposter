@@ -1,6 +1,6 @@
 import type { PublicUser } from "@esposter/db-schema";
 
-import { escapeLike } from "#server/services/db/escapeLike";
+import { containsLike } from "#server/services/db/containsLike";
 import { on } from "#server/services/events/on";
 import { friendEventEmitter } from "#server/services/friend/events/friendEventEmitter";
 import { router } from "#server/trpc";
@@ -17,7 +17,7 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { getFriendshipId, MAX_READ_LIMIT, Operation } from "@esposter/shared";
-import { and, eq, ilike, isNull, ne, or } from "drizzle-orm";
+import { and, eq, isNull, ne, or } from "drizzle-orm";
 
 export const friendRouter = router({
   deleteFriend: standardAuthedProcedure
@@ -72,9 +72,7 @@ export const friendRouter = router({
       .select(getPublicUserColumns(usersInAuth))
       .from(usersInAuth)
       .leftJoin(blockedSubquery, eq(blockedSubquery.id, usersInAuth.id))
-      .where(
-        and(ilike(usersInAuth.name, `%${escapeLike(name)}%`), ne(usersInAuth.id, userId), isNull(blockedSubquery.id)),
-      )
+      .where(and(containsLike(usersInAuth.name, name), ne(usersInAuth.id, userId), isNull(blockedSubquery.id)))
       .limit(MAX_READ_LIMIT);
   }),
 });

@@ -9,7 +9,7 @@ import type { SQL } from "drizzle-orm";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
-import { escapeLike } from "#server/services/db/escapeLike";
+import { containsLike } from "#server/services/db/containsLike";
 import { on } from "#server/services/events/on";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
 import { readRoomCallParticipantMaps } from "#server/services/message/call/readRoomCallParticipantMaps";
@@ -60,8 +60,8 @@ import {
 } from "@esposter/db-schema";
 import { exhaustiveGuard, getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, getColumns, ilike, isNull } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+import { and, eq, getColumns, isNull } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export const moderationRouter = router({
   createModerationNote: getPermissionsProcedure(
@@ -234,7 +234,7 @@ export const moderationRouter = router({
     const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
     if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
     // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
-    if (filter?.name) wheres.push(ilike(usersInAuth.name, `%${escapeLike(filter.name)}%`));
+    if (filter?.name) wheres.push(containsLike(usersInAuth.name, filter.name));
 
     const bannedByUsers = alias(usersInAuth, "bannedByUsers");
     const bannedByMemberships = alias(usersToRoomsInMessage, "bannedByMemberships");

@@ -24,8 +24,9 @@ import {
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
+import { inJsonArray } from "@esposter/db";
 import { Operation, takeOne } from "@esposter/shared";
-import { and, count, eq, getColumns, inArray } from "drizzle-orm";
+import { and, count, eq, getColumns } from "drizzle-orm";
 
 export const webhookRouter = router({
   createWebhook: getPermissionsProcedure(
@@ -95,7 +96,7 @@ export const webhookRouter = router({
         .select(getColumns(appUsersInMessage))
         .from(appUsersInMessage)
         .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
-        .where(and(eq(webhooksInMessage.roomId, roomId), inArray(appUsersInMessage.id, ids))),
+        .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),
   ),
   readWebhooks: getPermissionsProcedure(RoomPermission.ManageWebhooks, roomIdSchema, "roomId").query<
     WebhookInMessageWithRelations[]

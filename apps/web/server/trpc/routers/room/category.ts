@@ -8,9 +8,10 @@ import { createRoomCategoryInputSchema } from "#shared/models/db/roomCategory/Cr
 import { deleteRoomCategoryInputSchema } from "#shared/models/db/roomCategory/DeleteRoomCategoryInput";
 import { reorderRoomCategoriesInputSchema } from "#shared/models/db/roomCategory/ReorderRoomCategoriesInput";
 import { updateRoomCategoryInputSchema } from "#shared/models/db/roomCategory/UpdateRoomCategoryInput";
+import { inJsonArray } from "@esposter/db";
 import { roomCategoriesInMessage } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
-import { and, eq, inArray, max, sql } from "drizzle-orm";
+import { and, eq, max, sql } from "drizzle-orm";
 
 export const categoryRouter = router({
   createRoomCategory: standardAuthedProcedure
@@ -64,7 +65,7 @@ export const categoryRouter = router({
       // So a category the caller does not own rolls every other position back with it
       ctx.db.transaction(async (tx) => {
         const positionCase = sql`case ${sql.join(
-          input.map(({ id, position }) => sql`when ${roomCategoriesInMessage.id} = ${id} then ${position}::integer`),
+          input.map(({ id, position }) => sql`when ${roomCategoriesInMessage.id} = ${id} then ${position}`),
           sql` `,
         )} end`;
         const updatedRoomCategories = await tx
@@ -72,7 +73,7 @@ export const categoryRouter = router({
           .set({ position: positionCase })
           .where(
             and(
-              inArray(
+              inJsonArray(
                 roomCategoriesInMessage.id,
                 input.map(({ id }) => id),
               ),

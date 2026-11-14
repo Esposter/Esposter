@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 
 import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
+import { inJsonArray } from "@esposter/db";
 import { getDisplayNameExpression, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
-import { inArray } from "drizzle-orm";
 
 // The room display name of each user id, for rows that carry a bare user id and no membership of their own.
 // Such rows are an audit actor or a moderation note's author.
@@ -15,7 +15,7 @@ export const getRoomDisplayNameMap = async (db: Context["db"], roomId: string, u
     .select({ displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth), id: usersInAuth.id })
     .from(usersInAuth)
     .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
-    .where(inArray(usersInAuth.id, [...new Set(userIds)]));
+    .where(inJsonArray(usersInAuth.id, [...new Set(userIds)]));
   for (const { displayName, id } of rows) displayNameMap.set(id, displayName);
   return displayNameMap;
 };

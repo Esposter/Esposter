@@ -8,7 +8,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { and, eq, ne, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+import { alias } from "drizzle-orm/sqlite-core";
 
 // One ordered name per direct message, built from the other participants only; the id tie-breaker keeps equal names
 // In the same order across the switcher's page cursor and the participant list.
@@ -19,7 +19,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
   return db
     .select({
       displayName:
-        sql<string>`string_agg(${participantDisplayName}, ', ' ORDER BY ${participantDisplayName}, ${participantUser.id})`.as(
+        sql<string>`group_concat(${participantDisplayName}, ', ' ORDER BY ${participantDisplayName}, ${participantUser.id})`.as(
           "displayName",
         ),
       roomId: participantMembership.roomId,

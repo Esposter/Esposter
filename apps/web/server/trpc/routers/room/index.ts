@@ -7,7 +7,7 @@ import type { SQL } from "drizzle-orm";
 
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
-import { escapeLike } from "#server/services/db/escapeLike";
+import { containsLike } from "#server/services/db/containsLike";
 import { on } from "#server/services/events/on";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
@@ -52,7 +52,7 @@ import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { createPresignedPutUrl } from "@esposter/db";
+import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -75,8 +75,8 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, gt, ilike, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, or, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export const baseRoomRouter = router({
   createRoom: getProfanityFilterProcedure(createRoomInputSchema, ["name"]).mutation<RoomInMessage>(({ ctx, input }) =>
@@ -290,11 +290,14 @@ export const baseRoomRouter = router({
   }),
   readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
     ({ ctx, input: { roomId } }) => {
-      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups
-      const topRoles = ctx.db
-        .selectDistinctOn([usersToRoomRolesInMessage.userId], {
+      // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
+      // member's assigned roles are ranked from the highest, and only the first of each member's is kept
+      const rankedRoles = ctx.db
+        .select({
+          rank: sql<number>`row_number() over (partition by ${usersToRoomRolesInMessage.userId} order by ${roomRolesInMessage.position} desc)`.as(
+            "rank",
+          ),
           roleId: usersToRoomRolesInMessage.roleId,
-          userId: usersToRoomRolesInMessage.userId,
         })
         .from(usersToRoomRolesInMessage)
         .innerJoin(
@@ -302,11 +305,14 @@ export const baseRoomRouter = router({
           and(eq(roomRolesInMessage.id, usersToRoomRolesInMessage.roleId), not(roomRolesInMessage.isEveryone)),
         )
         .where(eq(usersToRoomRolesInMessage.roomId, roomId))
-        .orderBy(usersToRoomRolesInMessage.userId, desc(roomRolesInMessage.position))
-        .as("topRoles");
+        .as("rankedRoles");
       // Only role groups are returned — the roleless trailing group is derived client-side from the
       // Total member count so join/leave subscription updates keep it current without a refetch
-      return ctx.db.select({ count: count(), roleId: topRoles.roleId }).from(topRoles).groupBy(topRoles.roleId);
+      return ctx.db
+        .select({ count: count(), roleId: rankedRoles.roleId })
+        .from(rankedRoles)
+        .where(eq(rankedRoles.rank, 1))
+        .groupBy(rankedRoles.roleId);
     },
   ),
   readMembers: getMemberProcedure(readMembersInputSchema, "roomId").query<CursorPaginationData<MemberInRoom>>(
@@ -318,8 +324,7 @@ export const baseRoomRouter = router({
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
       if (filter?.name) {
-        const pattern = `%${escapeLike(filter.name)}%`;
-        wheres.push(or(ilike(displayName, pattern), ilike(usersInAuth.name, pattern)));
+        wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
       }
 
       const members = await ctx.db
@@ -438,7 +443,7 @@ export const baseRoomRouter = router({
     if (includeDirectMessages)
       wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
     if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
-    if (filter?.name) wheres.push(ilike(displayName, `%${escapeLike(filter.name)}%`));
+    if (filter?.name) wheres.push(containsLike(displayName, filter.name));
     if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
     const rooms = await ctx.db
@@ -461,11 +466,11 @@ export const baseRoomRouter = router({
         .select({
           ...getPublicUserColumns(usersInAuth),
           displayName: getDisplayNameExpression(usersToRoomsInMessage, usersInAuth),
-          isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`,
+          isMember: sql<boolean>`${usersToRoomsInMessage.userId} is not null`.mapWith(Boolean),
         })
         .from(usersInAuth)
         .leftJoin(usersToRoomsInMessage, getRoomMemberJoinCondition(roomId))
-        .where(inArray(usersInAuth.id, userIds)),
+        .where(inJsonArray(usersInAuth.id, userIds)),
   ),
   updateRoom: addProfanityFilterMiddleware(
     getPermissionsProcedure(RoomPermission.ManageRoom, updateRoomInputSchema, "id"),

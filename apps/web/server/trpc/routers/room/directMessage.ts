@@ -39,10 +39,11 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
+import { inJsonArray } from "@esposter/db";
 import { getOrCreate, noop, Operation } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, asc, eq, inArray, ne, or } from "drizzle-orm";
-import { alias } from "drizzle-orm/pg-core";
+import { and, asc, eq, ne, or } from "drizzle-orm";
+import { alias } from "drizzle-orm/sqlite-core";
 
 export const directMessageRouter = router({
   createDirectMessage: standardAuthedProcedure
@@ -60,8 +61,8 @@ export const directMessageRouter = router({
           .from(friendsInSocial)
           .where(
             or(
-              and(eq(friendsInSocial.senderId, userId), inArray(friendsInSocial.receiverId, targetUserIds)),
-              and(eq(friendsInSocial.receiverId, userId), inArray(friendsInSocial.senderId, targetUserIds)),
+              and(eq(friendsInSocial.senderId, userId), inJsonArray(friendsInSocial.receiverId, targetUserIds)),
+              and(eq(friendsInSocial.receiverId, userId), inJsonArray(friendsInSocial.senderId, targetUserIds)),
             ),
           );
         if (acceptedFriendships.length !== targetUserIds.length)
@@ -249,7 +250,7 @@ export const directMessageRouter = router({
         .where(
           and(
             eq(usersToRoomsInMessage1.userId, ctx.getSessionPayload.user.id),
-            inArray(usersToRoomsInMessage1.roomId, roomIds),
+            inJsonArray(usersToRoomsInMessage1.roomId, roomIds),
           ),
         )
         .orderBy(asc(participantDisplayName), asc(usersInAuth2.id));

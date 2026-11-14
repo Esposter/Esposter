@@ -45,18 +45,20 @@ export const achievementPlugin = t.procedure.use(async ({ ctx, getRawInput, next
             // The increment is done in SQL so concurrent mutations each claim a distinct amount instead of
             // Overwriting one another with a read-then-write. setWhere freezes an already unlocked achievement,
             // And its empty RETURNING is the short-circuit that keeps a completed achievement from re-emitting
+            // The unlock instant is bound from here as epoch milliseconds, the form the column stores, not read from the database clock
+            const now = new Date();
             const [userAchievement] = await ctx.db
               .insert(userAchievementsInAchievement)
               .values({
                 achievementId: achievement.id,
                 amount: incrementAmount,
-                unlockedAt: incrementAmount >= amount ? new Date() : undefined,
+                unlockedAt: incrementAmount >= amount ? now : undefined,
                 userId,
               })
               .onConflictDoUpdate({
                 set: {
                   amount: sql`${userAchievementsInAchievement.amount} + ${incrementAmount}`,
-                  unlockedAt: sql`CASE WHEN ${userAchievementsInAchievement.amount} + ${incrementAmount} >= ${amount} THEN NOW() ELSE NULL END`,
+                  unlockedAt: sql`CASE WHEN ${userAchievementsInAchievement.amount} + ${incrementAmount} >= ${amount} THEN ${now.getTime()} ELSE NULL END`,
                 },
                 setWhere: isNull(userAchievementsInAchievement.unlockedAt),
                 target: [userAchievementsInAchievement.userId, userAchievementsInAchievement.achievementId],

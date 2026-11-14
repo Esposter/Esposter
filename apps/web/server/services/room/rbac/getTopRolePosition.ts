@@ -1,8 +1,9 @@
 import type { GetTopRolePosition } from "#server/models/room/rbac/GetTopRolePosition";
 import type { Context } from "#server/trpc/context";
 
+import { inJsonArray } from "@esposter/db";
 import { roomRolesInMessage, usersToRoomRolesInMessage } from "@esposter/db-schema";
-import { and, eq, inArray, max } from "drizzle-orm";
+import { and, eq, max } from "drizzle-orm";
 
 export const getTopRolePosition: GetTopRolePosition = (async (
   db: Context["db"],
@@ -14,7 +15,7 @@ export const getTopRolePosition: GetTopRolePosition = (async (
     .select({ maxPosition: max(roomRolesInMessage.position), roomId: roomRolesInMessage.roomId })
     .from(roomRolesInMessage)
     .innerJoin(usersToRoomRolesInMessage, eq(usersToRoomRolesInMessage.roleId, roomRolesInMessage.id))
-    .where(and(eq(usersToRoomRolesInMessage.userId, userId), inArray(roomRolesInMessage.roomId, roomIdArray)))
+    .where(and(eq(usersToRoomRolesInMessage.userId, userId), inJsonArray(roomRolesInMessage.roomId, roomIdArray)))
     .groupBy(roomRolesInMessage.roomId);
   const positionMap = new Map(positions.map(({ maxPosition, roomId }) => [roomId, maxPosition ?? -1]));
   return Array.isArray(roomIds) ? positionMap : (positionMap.get(roomIds) ?? -1);

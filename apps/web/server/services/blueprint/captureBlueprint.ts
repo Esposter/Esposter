@@ -12,10 +12,11 @@ import { saveResourceContent } from "#server/services/resource/saveResourceConte
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { inJsonArray } from "@esposter/db";
 import { DatabaseEntityType, resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { NotFoundError, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // Reads each selected resource's working content (owner-gated), rewrites every cross-resource id between
 // The selection to a `{{entry:key}}` alias, and writes the set into a new Blueprint resource. Captured
@@ -28,7 +29,9 @@ export const captureBlueprint = async (
   const ownedResources = await ctx.db
     .select()
     .from(resourcesInResource)
-    .where(and(inArray(resourcesInResource.id, ids), eq(resourcesInResource.userId, ctx.getSessionPayload.user.id)));
+    .where(
+      and(inJsonArray(resourcesInResource.id, ids), eq(resourcesInResource.userId, ctx.getSessionPayload.user.id)),
+    );
   // Every id must be the caller's own resource — otherwise capture would read content across accounts
   if (ownedResources.length !== ids.length) throw new TRPCError({ code: "UNAUTHORIZED" });
   // A binned resource is still the caller's own, so it is bad input rather than an authorization failure:

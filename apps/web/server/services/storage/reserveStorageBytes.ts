@@ -16,8 +16,9 @@ import {
   usersInAuth,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
+import { inJsonArray, notInJsonArray } from "@esposter/db";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, gt, inArray, isNull, lte, ne, notInArray, or, sql, sum } from "drizzle-orm";
+import { and, count, eq, gt, isNull, lte, ne, or, sql, sum } from "drizzle-orm";
 
 // The gate every upload SAS passes through. Read-then-check would not hold on its own: a client firing many
 // Upload requests concurrently has them all read the same low usage, all pass, and all upload — so everything
@@ -64,7 +65,7 @@ export const reserveStorageBytes = async (
       .where(
         and(
           eq(storageLedgerInStorage.containerName, containerName),
-          inArray(storageLedgerInStorage.blobName, blobNames),
+          inJsonArray(storageLedgerInStorage.blobName, blobNames),
         ),
       )
       .for("update");
@@ -88,11 +89,11 @@ export const reserveStorageBytes = async (
           gt(storageLedgerInStorage.expiresAt, now),
           or(
             ne(storageLedgerInStorage.containerName, containerName),
-            notInArray(storageLedgerInStorage.blobName, blobNames),
+            notInJsonArray(storageLedgerInStorage.blobName, blobNames),
           ),
         ),
       );
-    // `sum` is a bigint aggregate, so postgres hands it back as a string — and as null for an empty set
+    // `sum` is null for an empty set, which reads as no bytes pending
     const pendingBytes = Number(pendingTotals?.pendingBytes ?? 0);
     if (user.storageBytesUsed + pendingBytes + declaredBytes > StorageTierQuotaMap[user.storageTier])
       throw getForbiddenError(STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE);

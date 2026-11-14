@@ -2,17 +2,23 @@ import type { Context } from "#server/trpc/context";
 import type { MemberPermissionOverride } from "#shared/models/db/role/MemberPermissionOverride";
 import type { UpsertMemberPermissionOverrideInput } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
 
+import { mergeMemberPermissionOverride } from "#server/services/room/rbac/mergeMemberPermissionOverride";
 import { roomMemberPermissionsInMessage } from "@esposter/db-schema";
-import { and, eq, sql } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+import { and, eq, type SQL } from "drizzle-orm";
 
-// The three bitfields move a bit between states, so the write clears every bit it names from both fields before it
-// Sets the ones it allows or denies. Passing a bit into the opposite field therefore moves it rather than leaving it
-// Set in both, which the table's CHECK would refuse. A row with neither field set is the member's roles again, so it
-// Is removed rather than kept as an empty entry. Returns the state left behind, both zero when there is no row
-export const setMemberPermissionOverride = (
+const MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS = 3;
+
+// The bitfields are read and merged in JS, since D1 stores them as text and SQL cannot OR or AND them. The write is then
+// compare-and-set on the bits it was merged from: a concurrent override that got there first makes this one lose, and it
+// reads the row again and merges onto that, a bounded number of times. A row with neither field set is the member's roles
+// again, so it is removed rather than kept as an empty entry. Returns the state left behind, both zero when there is no row
+export const setMemberPermissionOverride = async (
   db: Context["db"],
-  { allow, deny, inherit, roomId, userId }: UpsertMemberPermissionOverrideInput,
+  input: UpsertMemberPermissionOverrideInput,
+  attempt = 1,
 ): Promise<MemberPermissionOverride> => {
+  const { roomId, userId } = input;
   const {
     allow: allowColumn,
     deny: denyColumn,
@@ -20,29 +26,63 @@ export const setMemberPermissionOverride = (
     userId: userIdColumn,
   } = roomMemberPermissionsInMessage;
   const isMemberRow = and(eq(roomIdColumn, roomId), eq(userIdColumn, userId));
-  const clearedBits = sql`(${String(allow | deny | inherit)}::bigint)`;
-  return db.transaction(async (tx) => {
-    if (allow | deny)
-      await tx
-        .insert(roomMemberPermissionsInMessage)
-        .values({ allow, deny, roomId, userId })
-        .onConflictDoUpdate({
-          set: {
-            allow: sql`((${allowColumn} & ~${clearedBits}) | ${String(allow)}::bigint)`,
-            deny: sql`((${denyColumn} & ~${clearedBits}) | ${String(deny)}::bigint)`,
-          },
-          target: [userIdColumn, roomIdColumn],
-        });
-    else
-      await tx
+  const [current] = await db
+    .select({ allow: allowColumn, deny: denyColumn })
+    .from(roomMemberPermissionsInMessage)
+    .where(isMemberRow);
+  const override = mergeMemberPermissionOverride(current ?? { allow: 0n, deny: 0n }, input);
+  const isWritten = await writeMemberPermissionOverride(db, { current, isMemberRow, override, roomId, userId });
+  if (isWritten) return override;
+  if (attempt >= MAX_MEMBER_PERMISSION_OVERRIDE_ATTEMPTS)
+    throw new TRPCError({ code: "CONFLICT", message: "The member's permissions changed while this was written" });
+  return setMemberPermissionOverride(db, input, attempt + 1);
+};
+
+// Whether the write landed: an insert needs the row still absent, an update and a delete need it still holding the
+// bits the merge read. Anything else means another write got there first
+const writeMemberPermissionOverride = async (
+  db: Context["db"],
+  {
+    current,
+    isMemberRow,
+    override,
+    roomId,
+    userId,
+  }: {
+    current: MemberPermissionOverride | undefined;
+    isMemberRow: SQL | undefined;
+    override: MemberPermissionOverride;
+    roomId: string;
+    userId: string;
+  },
+): Promise<boolean> => {
+  const { allow: allowColumn, deny: denyColumn, userId: userIdColumn } = roomMemberPermissionsInMessage;
+  const isUnchanged = current
+    ? and(isMemberRow, eq(allowColumn, current.allow), eq(denyColumn, current.deny))
+    : isMemberRow;
+  if (!(override.allow | override.deny)) {
+    if (!current) return true;
+    return (
+      (await db.delete(roomMemberPermissionsInMessage).where(isUnchanged).returning({ userId: userIdColumn })).length >
+      0
+    );
+  } else if (!current)
+    return (
+      (
+        await db
+          .insert(roomMemberPermissionsInMessage)
+          .values({ ...override, roomId, userId })
+          .onConflictDoNothing()
+          .returning({ userId: userIdColumn })
+      ).length > 0
+    );
+  return (
+    (
+      await db
         .update(roomMemberPermissionsInMessage)
-        .set({ allow: sql`(${allowColumn} & ~${clearedBits})`, deny: sql`(${denyColumn} & ~${clearedBits})` })
-        .where(isMemberRow);
-    await tx.delete(roomMemberPermissionsInMessage).where(and(isMemberRow, eq(allowColumn, 0n), eq(denyColumn, 0n)));
-    const [override] = await tx
-      .select({ allow: allowColumn, deny: denyColumn })
-      .from(roomMemberPermissionsInMessage)
-      .where(isMemberRow);
-    return override ?? { allow: 0n, deny: 0n };
-  });
+        .set(override)
+        .where(isUnchanged)
+        .returning({ userId: userIdColumn })
+    ).length > 0
+  );
 };
