@@ -5,7 +5,8 @@ import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
-import { clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
+import { createSocket, readFrames } from "#src/services/durableObject/createMockObjectState.test";
+import { acceptRoomSocket, clearMockRooms, getRoomObject, openMockRooms } from "#src/services/room/getRoomObject.test";
 import { getFileBlobNames } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { MessageType, roomsInMessage, StorageBucket, usersInAuth, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -35,6 +36,7 @@ describe(eraseAccountMessages, () => {
     mimetype: "mimetype",
     size: 0,
   });
+  const deviceId = "deviceId";
 
   beforeAll(async () => {
     mockDb = (await createMockDb()).db;
@@ -108,5 +110,31 @@ describe(eraseAccountMessages, () => {
     expect(getRoomObject(nonMemberRoom.id).readMessages({ limit: 10 })).toStrictEqual([nonMemberRoomMessage]);
     expect(getRoomObject(nonMemberRoom.id).readScheduledMessages(userId)).toStrictEqual([nonMemberScheduledMessage]);
     await expect(readBlobNames(StorageBucket.MessageAssets)).resolves.toStrictEqual([otherUserBlobName]);
+  });
+
+  test("tells a viewer of the room each message the erase tombstones, as the tombstone it now is", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: memberRoom.id, userId },
+      { roomId: memberRoom.id, userId: otherUserId },
+    ]);
+    const viewerSocket = createSocket();
+    acceptRoomSocket(memberRoom.id, viewerSocket, [`user:${otherUserId}`, `device:${deviceId}`]);
+    const erasedMessage = await getRoomObject(memberRoom.id).createMessage(
+      { message, type: MessageType.Message },
+      { userId },
+    );
+
+    await eraseAccountMessages(userId);
+
+    expect(readFrames(viewerSocket).at(-1)).toStrictEqual({
+      data: expect.objectContaining({ deletedAt: new Date(0).toISOString(), id: erasedMessage.id, message: "" }),
+      type: "deleteMessage",
+    });
   });
 });

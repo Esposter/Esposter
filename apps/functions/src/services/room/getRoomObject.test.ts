@@ -1,5 +1,5 @@
 import type { MockD1Database } from "@esposter/db-mock";
-import type { MockObjectState } from "#src/services/durableObject/createMockObjectState.test";
+import type { MockObjectState, MockSocket } from "#src/services/durableObject/createMockObjectState.test";
 
 import { RoomObject } from "#src/durableObjects/RoomObject";
 import { createMockObjectState } from "#src/services/durableObject/createMockObjectState.test";
@@ -22,13 +22,11 @@ export const clearMockRooms = (): void => {
   mockRooms.clear();
 };
 
-// A room's object as the functions Worker reaches it: the same instance for the same room, so a read names what an
-// earlier write left. Each person's user object is the shared stand-in, so what a room asks of it is recorded there
-export const getRoomObject = (roomId: string): RoomObject => {
-  if (!mockCoreDb) throw new InvalidOperationError(Operation.Read, getRoomObject.name, roomId);
+const openMockRoom = (roomId: string) => {
+  if (!mockCoreDb) throw new InvalidOperationError(Operation.Read, openMockRoom.name, roomId);
 
   const existingRoom = mockRooms.get(roomId);
-  if (existingRoom) return existingRoom.object;
+  if (existingRoom) return existingRoom;
 
   const state = createMockObjectState(roomId);
   const environment = {
@@ -36,8 +34,18 @@ export const getRoomObject = (roomId: string): RoomObject => {
     USER: { get: getUserObject, idFromName: (userId: string) => userId },
   } as unknown as Cloudflare.Env;
   const object = new RoomObject(state.ctx as unknown as DurableObjectState, environment);
-  mockRooms.set(roomId, { object, state });
-  return object;
+  const room = { object, state };
+  mockRooms.set(roomId, room);
+  return room;
+};
+
+// A room's object as the functions Worker reaches it: the same instance for the same room, so a read names what an
+// earlier write left. Each person's user object is the shared stand-in, so what a room asks of it is recorded there
+export const getRoomObject = (roomId: string): RoomObject => openMockRoom(roomId).object;
+
+// A socket the room accepts as the runtime accepts one, tagged by who opened it, so the room's broadcasts reach it
+export const acceptRoomSocket = (roomId: string, socket: MockSocket, tags: string[]): void => {
+  openMockRoom(roomId).state.ctx.acceptWebSocket(socket, tags);
 };
 
 // The tables a room's storage holds. A room deleted with its object's storage holds none, which a read of its rows cannot show
