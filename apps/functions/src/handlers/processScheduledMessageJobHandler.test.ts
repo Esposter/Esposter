@@ -46,11 +46,11 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
 });
 vi.mock(import("#src/services/queue/getJobQueue"), () => import("#src/services/queue/getJobQueue.test"));
 vi.mock(import("#src/services/scheduler/getScheduler"), () => ({ getScheduler: () => ({ schedule: mocks.schedule }) }));
-vi.mock(import("#src/services/streams/getStreamTableClient"), () => import("#src/services/streams/getStreamTableClient.test"));
 vi.mock(
-  import("#src/services/server/publishToServer"),
-  () => import("#src/services/server/publishToServer.test"),
+  import("#src/services/streams/getStreamTableClient"),
+  () => import("#src/services/streams/getStreamTableClient.test"),
 );
+vi.mock(import("#src/services/server/publishToServer"), () => import("#src/services/server/publishToServer.test"));
 vi.mock(import("#src/services/notification/webpush"), () => import("#src/services/notification/webpush.test"));
 
 const getJob = (id: string) => mockDb.query.scheduledMessageJobsInMessage.findFirst({ where: { id: { eq: id } } });
@@ -91,7 +91,7 @@ describe(processScheduledMessageJobHandler, () => {
     );
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(memberUserId)]);
     await mockDb.insert(roomsInMessage).values([
       { id: roomId, name, userId },

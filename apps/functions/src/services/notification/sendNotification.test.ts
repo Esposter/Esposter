@@ -47,7 +47,7 @@ describe(sendNotification, () => {
   const { pushSubscription, seedSession } = setupWebPushSuite(() => mockDb, subscriberUserId);
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await mockDb.insert(usersInAuth).values([createUser(senderUserId), createUser(subscriberUserId)]);
     await seedSession();
     // The subscriber's second device, so a notification the first one caused still has somewhere to land
@@ -89,11 +89,7 @@ describe(sendNotification, () => {
 
     vi.stubEnv("BASE_URL", "");
     await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription);
-    await sendNotification({
-      message: standardMessage,
-      threadRootRowKey: "",
-      type: AppNotificationType.Message,
-    });
+    await sendNotification({ message: standardMessage, threadRootRowKey: "", type: AppNotificationType.Message });
 
     expect(vi.mocked(webpush.sendNotification)).toHaveBeenCalledTimes(1);
     // A message outside a thread carries the empty thread root, so the link falls through to the message itself

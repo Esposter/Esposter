@@ -50,7 +50,7 @@ describe(deleteAccountHandler, () => {
   const countedBytes = 1;
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,

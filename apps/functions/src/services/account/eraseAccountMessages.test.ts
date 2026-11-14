@@ -2,6 +2,7 @@ import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
 import { getStreamTableClient } from "#src/services/streams/getStreamTableClient";
+import { clearMockStreams, openMockStreams } from "#src/services/streams/getStreamTableClient.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { createEntity } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
@@ -14,7 +15,6 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
@@ -33,7 +33,8 @@ describe(eraseAccountMessages, () => {
   const name = "name";
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
+    await openMockStreams();
   });
 
   beforeEach(() => {
@@ -42,7 +43,7 @@ describe(eraseAccountMessages, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    MockTableDatabase.clear();
+    await clearMockStreams();
     await mockDb.delete(usersInAuth);
   });
 

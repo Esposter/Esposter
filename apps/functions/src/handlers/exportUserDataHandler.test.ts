@@ -61,7 +61,7 @@ describe(exportUserDataHandler, () => {
   const name = "name";
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([
       StorageBucket.ClickerAssets,
       StorageBucket.GenshinAssets,

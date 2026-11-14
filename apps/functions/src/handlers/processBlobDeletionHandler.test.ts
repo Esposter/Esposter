@@ -73,7 +73,7 @@ describe(processBlobDeletionHandler, () => {
       ?.storageBytesUsed;
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.MessageAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });

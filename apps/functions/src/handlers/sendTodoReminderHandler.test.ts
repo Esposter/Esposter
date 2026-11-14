@@ -46,7 +46,7 @@ describe(sendTodoReminderHandler, () => {
     takeOne(await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.TodoList, userId }).returning());
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.ResourceAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });

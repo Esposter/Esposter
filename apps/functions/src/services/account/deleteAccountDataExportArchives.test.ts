@@ -21,7 +21,7 @@ vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/s
 
 describe(deleteAccountDataExportArchives, () => {
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.UserAssets]);
   });
 

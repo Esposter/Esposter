@@ -5,7 +5,13 @@ import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceA
 import { createUser } from "#src/services/shared/createUser.test";
 import { disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { createMockDb } from "@esposter/db-mock";
-import { RECYCLE_BIN_RETENTION_MS, resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
+import {
+  RECYCLE_BIN_RETENTION_MS,
+  resourcesInResource,
+  ResourceType,
+  StorageBucket,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -28,7 +34,7 @@ describe(purgeExpiredResources, () => {
   const withinRetentionDeletedAt = new Date(Date.now() - RECYCLE_BIN_RETENTION_MS + 60_000);
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.ResourceAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });

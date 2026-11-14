@@ -30,7 +30,7 @@ describe(sendWebPushNotifications, () => {
     takeOne(await mockDb.insert(pushSubscriptionsInNotification).values(pushSubscription).returning(), 0);
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await mockDb.insert(usersInAuth).values(createUser(userId));
     await seedSession();
   });

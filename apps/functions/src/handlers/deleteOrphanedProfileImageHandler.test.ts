@@ -34,7 +34,7 @@ describe(deleteOrphanedProfileImageHandler, () => {
   };
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
     await openMockBuckets([StorageBucket.PublicUserAssets]);
     await mockDb.insert(usersInAuth).values(createUser(userId));
   });

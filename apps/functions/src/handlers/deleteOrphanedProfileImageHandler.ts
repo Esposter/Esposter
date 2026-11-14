@@ -7,8 +7,8 @@ import { StorageBucket, getUserProfileImageBlobName, r2ObjectCreatedQueueMessage
 // Swept. Nothing lists it at that point, so the landing deletes itself. A landing for an account still in use is kept.
 // The message is R2's object-create notification for the public user assets bucket, so the key is the blob's name
 export const deleteOrphanedProfileImageHandler = async (body: unknown): Promise<void> => {
-  const { bucket, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
-  if (bucket !== StorageBucket.PublicUserAssets) return;
+  const { bucket: bucketName, object } = r2ObjectCreatedQueueMessageSchema.parse(body);
+  if (bucketName !== StorageBucket.PublicUserAssets) return;
 
   const blobName = object.key;
   // A room's image is named under its room, so only a profile image's first segment names an owner

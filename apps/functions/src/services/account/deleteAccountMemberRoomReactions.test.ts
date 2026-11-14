@@ -39,7 +39,7 @@ describe(deleteAccountMemberRoomReactions, () => {
   const messageRowKey = getReverseTickedTimestamp();
 
   beforeAll(async () => {
-    mockDb = await createMockDb();
+    mockDb = (await createMockDb()).db;
   });
 
   afterEach(async () => {
