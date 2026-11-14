@@ -7,7 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { deleteDirectory } from "@esposter/db";
+import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -22,6 +22,7 @@ import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
+import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
@@ -41,7 +42,6 @@ import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@espos
 import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // Uploaded through the client, so the object is stamped now
 const uploadPublicUserAssetBlob = async (blobName: string) => {
@@ -83,8 +83,8 @@ describe("roomRouter", () => {
 
   beforeEach(() => {
     vi.useFakeTimers({ now: 0 });
-    roomObjectCalls.splice(0);
-    userObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
+    userObjectCalls.length = 0;
   });
 
   afterEach(async () => {
@@ -256,7 +256,7 @@ describe("roomRouter", () => {
     // Sweep that clears the image then sees the object as older than its cutoff
     const seededBlob = await publicUserAssets.head(blobName);
     assert.exists(seededBlob);
-    vi.setSystemTime(seededBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS + 1);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(seededBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS + 1));
     const data = await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -325,7 +325,7 @@ describe("roomRouter", () => {
     await uploadPublicUserAssetBlob(inFlightBlobName);
     const inFlightBlob = await publicUserAssets.head(inFlightBlobName);
     assert.exists(inFlightBlob);
-    vi.setSystemTime(inFlightBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS);
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(inFlightBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS));
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -674,7 +674,7 @@ describe("roomRouter", () => {
       columns: PublicUserColumns,
       where: { id: { eq: session.user.id } },
     });
-    const joinEvent = { data: { roomId: newRoom.id, user }, type: "joinRoom" };
+    const joinEvent = { data: { displayName: "", roomId: newRoom.id, user }, type: "joinRoom" };
     expect(userObjectCalls).toContainEqual({ args: [joinEvent], method: "broadcastEvent", userId: session.user.id });
     expect(roomObjectCalls).toContainEqual({ args: [joinEvent], method: "notifyOnlineMembers", roomId: newRoom.id });
   });

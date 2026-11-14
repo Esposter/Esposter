@@ -33,8 +33,8 @@ import {
   invitesInMessage,
   PublicUserColumns,
   roomIdSchema,
-  roomsInMessage,
   RoomPermission,
+  roomsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -91,11 +91,11 @@ export const inviteRouter = router({
                 ctx.db
                   .select({
                     ...getInsertSelectMetadata(invitesInMessage),
-                    expiresAt: sql`${sql.param(expiresAt, invitesInMessage.expiresAt)}`,
-                    id: sql`${id}`,
-                    maxUses: sql`${maxUses}`,
+                    expiresAt: sql`${sql.param(expiresAt, invitesInMessage.expiresAt)}`.as("expiresAt"),
+                    id: sql`${id}`.as("id"),
+                    maxUses: sql`${maxUses}`.as("maxUses"),
                     roomId: roomsInMessage.id,
-                    userId: sql`${userId}`,
+                    userId: sql`${userId}`.as("userId"),
                   })
                   .from(roomsInMessage)
                   .where(and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false))),

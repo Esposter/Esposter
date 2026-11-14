@@ -4,14 +4,15 @@ import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
 import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
+
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
-import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
-import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { containsLike } from "#server/services/db/containsLike";
+import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
@@ -49,6 +50,8 @@ import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput"
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
+import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
+import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
   bansInMessage,
   DatabaseEntityType,
@@ -71,8 +74,6 @@ import {
   UserToRoomInMessageRelations,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
-import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, notExists, or, sql } from "drizzle-orm";
@@ -188,7 +189,7 @@ export const baseRoomRouter = router({
               .select({
                 ...getInsertSelectMetadata(usersToRoomsInMessage),
                 roomId: invitesInMessage.roomId,
-                userId: sql`${userId}`,
+                userId: sql`${userId}`.as("userId"),
               })
               .from(invitesInMessage)
               .where(isStillJoinable),
@@ -262,7 +263,7 @@ export const baseRoomRouter = router({
   readMemberCountsByTopRole: getMemberProcedure(roomIdSchema, "roomId").query<MemberCountByTopRole[]>(
     ({ ctx, input: { roomId } }) => {
       // A member's top role is their highest-positioned assigned role; @everyone is implicit and never groups. Each
-      // member's assigned roles are ranked from the highest, and only the first of each member's is kept
+      // Member's assigned roles are ranked from the highest, and only the first of each member's is kept
       const rankedRoles = ctx.db
         .select({
           rank: sql<number>`row_number() over (partition by ${usersToRoomRolesInMessage.userId} order by ${roomRolesInMessage.position} desc)`.as(
@@ -294,9 +295,8 @@ export const baseRoomRouter = router({
       const sortableColumns = { ...getPublicUserColumns(usersInAuth), displayName };
       const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
       if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
-      if (filter?.name) {
+      if (filter?.name)
         wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
-      }
 
       const members = await ctx.db
         .select(sortableColumns)

@@ -19,6 +19,7 @@ import { readAppUsersInputSchema } from "#shared/models/db/webhook/ReadAppUsersI
 import { regenerateTokenInputSchema } from "#shared/models/db/webhook/RegenerateTokenInput";
 import { updateWebhookInputSchema } from "#shared/models/db/webhook/UpdateWebhookInput";
 import { WEBHOOK_MAX_LENGTH } from "#shared/services/message/constants";
+import { inJsonArray } from "@esposter/db";
 import {
   appUsersInMessage,
   DatabaseEntityType,
@@ -28,7 +29,6 @@ import {
   WebhookInMessageRelations,
   webhooksInMessage,
 } from "@esposter/db-schema";
-import { inJsonArray } from "@esposter/db";
 import { generateSecretToken, hashSecretToken, Operation } from "@esposter/shared";
 import { and, eq, getColumns, sql } from "drizzle-orm";
 import { v7 } from "uuid";
@@ -59,7 +59,11 @@ export const webhookRouter = router({
     const [, webhookRows] = await ctx.db.batch([
       ctx.db.insert(appUsersInMessage).select(
         ctx.db
-          .select({ ...getInsertSelectMetadata(appUsersInMessage), id: sql`${appUserId}`, name: sql`${name}` })
+          .select({
+            ...getInsertSelectMetadata(appUsersInMessage),
+            id: sql`${appUserId}`.as("id"),
+            name: sql`${name}`.as("name"),
+          })
           .from(roomsInMessage)
           .where(isUnderWebhookCap),
       ),
@@ -69,13 +73,13 @@ export const webhookRouter = router({
           ctx.db
             .select({
               ...getInsertSelectMetadata(webhooksInMessage),
-              creatorId: sql`${creatorId}`,
-              id: sql`${webhookId}`,
-              isActive: sql`${sql.param(true, webhooksInMessage.isActive)}`,
-              name: sql`${name}`,
+              creatorId: sql`${creatorId}`.as("creatorId"),
+              id: sql`${webhookId}`.as("id"),
+              isActive: sql`${sql.param(true, webhooksInMessage.isActive)}`.as("isActive"),
+              name: sql`${name}`.as("name"),
               roomId: roomsInMessage.id,
-              tokenHash: sql`${tokenHash}`,
-              userId: sql`${appUserId}`,
+              tokenHash: sql`${tokenHash}`.as("tokenHash"),
+              userId: sql`${appUserId}`.as("userId"),
             })
             .from(roomsInMessage)
             .where(isUnderWebhookCap),

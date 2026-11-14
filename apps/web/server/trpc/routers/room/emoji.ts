@@ -1,12 +1,13 @@
 import type { RoomEmojiInMessage, RoomEmojiWithSasUrl } from "@esposter/db-schema";
+
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
-import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
 import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
 import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -67,8 +68,8 @@ export const emojiRouter = router({
             ctx.db
               .select({
                 ...getInsertSelectMetadata(roomEmojisInMessage),
-                id: sql`${id}`,
-                name: sql`${name}`,
+                id: sql`${id}`.as("id"),
+                name: sql`${name}`.as("name"),
                 roomId: roomsInMessage.id,
               })
               .from(roomsInMessage)

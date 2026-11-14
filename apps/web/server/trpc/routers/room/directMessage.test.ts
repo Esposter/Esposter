@@ -37,8 +37,8 @@ describe("directMessageRouter", () => {
   });
 
   beforeEach(() => {
-    roomObjectCalls.splice(0);
-    userObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
+    userObjectCalls.length = 0;
   });
 
   afterEach(async () => {
@@ -69,12 +69,12 @@ describe("directMessageRouter", () => {
     });
 
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { roomId: directMessage.id, user: publicMainUser }, type: "joinRoom" }],
+      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicMainUser }, type: "joinRoom" }],
       method: "broadcastEvent",
       userId: mainUser.id,
     });
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { roomId: directMessage.id, user: publicUser }, type: "joinRoom" }],
+      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicUser }, type: "joinRoom" }],
       method: "broadcastEvent",
       userId: user.id,
     });
@@ -84,8 +84,8 @@ describe("directMessageRouter", () => {
     expect.hasAssertions();
 
     const { directMessage: directMessage1, user } = await createDirectMessageWithFriend(mockContext);
-    roomObjectCalls.splice(0);
-    userObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
+    userObjectCalls.length = 0;
     const directMessage2 = await directMessageCaller.createDirectMessage([user.id]);
 
     expect(directMessage1.id).toBe(directMessage2.id);
@@ -178,15 +178,15 @@ describe("directMessageRouter", () => {
     const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
     const addedUser = await createMockUser(mockContext.db);
     await createFriends(mockContext, mainUser, addedUser);
-    roomObjectCalls.splice(0);
-    userObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
+    userObjectCalls.length = 0;
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
     const publicAddedUser = await mockContext.db.query.usersInAuth.findFirst({
       columns: PublicUserColumns,
       where: { id: { eq: addedUser.id } },
     });
     expect(userObjectCalls).toContainEqual({
-      args: [{ data: { roomId: directMessage.id, user: publicAddedUser }, type: "joinRoom" }],
+      args: [{ data: { displayName: "", roomId: directMessage.id, user: publicAddedUser }, type: "joinRoom" }],
       method: "broadcastEvent",
       userId: addedUser.id,
     });
@@ -214,8 +214,8 @@ describe("directMessageRouter", () => {
     const addedUser = await createMockUser(mockContext.db);
     await createFriends(mockContext, mainUser, addedUser);
     await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
-    roomObjectCalls.splice(0);
-    userObjectCalls.splice(0);
+    roomObjectCalls.length = 0;
+    userObjectCalls.length = 0;
     await directMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: addedUser.id });
     const participantsData = await directMessageCaller.readDirectMessageParticipants([directMessage.id]);
     const directMessages = await directMessageCaller.readDirectMessages();

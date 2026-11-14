@@ -1,11 +1,11 @@
-import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
-import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
+import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
+import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
+import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 import type { RoomMessage } from "@esposter/db-schema";
+
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
-import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
@@ -18,10 +18,11 @@ import { searchMessages } from "#server/services/message/searchMessages";
 import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
+import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { getRoomEventOptions } from "#server/services/realtime/getRoomEventOptions";
 import { assertIsMember } from "#server/services/room/assertIsMember";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getBucket } from "#server/services/storage/getBucket";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -59,14 +60,6 @@ import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCr
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import {
-  DatabaseEntityType,
-  FilterType,
-  getMimeCategory,
-  MessageType,
-  roomIdSchema,
-  StorageBucket,
-} from "@esposter/db-schema";
-import {
   cloneFiles,
   createThreadFollow,
   generateDownloadFileSasUrls,
@@ -75,6 +68,14 @@ import {
   getFilesBlobNames,
   getMentionIds,
 } from "@esposter/db";
+import {
+  DatabaseEntityType,
+  FilterType,
+  getMimeCategory,
+  MessageType,
+  roomIdSchema,
+  StorageBucket,
+} from "@esposter/db-schema";
 import { getResultAsync, noop, Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
@@ -102,7 +103,7 @@ export const baseMessageRouter = router({
       );
     }),
   // Removing one file rewrites the whole files array inside the room's object, which applies the removal to the version
-  // it holds and returns the file it removed, so the blob deleted is the one that version named
+  // It holds and returns the file it removed, so the blob deleted is the one that version named
   deleteFile: getMessageProcedure(deleteFileInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx, input: { fileId, id, roomId } }) => {
       if (ctx.message.isForward || ctx.message.files.length === 0)
@@ -146,7 +147,7 @@ export const baseMessageRouter = router({
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
   // Away is referenced by no message at all, so the bytes would sit in the bucket until the whole room is deleted.
   // Membership cannot be the check: an unreferenced upload and a posted attachment share one room-scoped namespace, and
-  // every member reads every attachment's id off the wire, so a name-only delete destroys anyone's posted attachment.
+  // Every member reads every attachment's id off the wire, so a name-only delete destroys anyone's posted attachment.
   // The caller presents the grant it was handed when the SAS was minted
   deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId").mutation<void>(
     async ({ ctx, input: { files, roomId } }) => {
@@ -200,7 +201,7 @@ export const baseMessageRouter = router({
             targetRoomId,
           );
           // A forward is echoed to the tab that sent it as well, since it has no optimistic copy there to replace, so the
-          // actor names no device
+          // Actor names no device
           const actor = { userId };
           const roomObject = useRoomObject(targetRoomId);
           await roomObject.createMessage(
@@ -258,8 +259,8 @@ export const baseMessageRouter = router({
     // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
     // `size` is whatever the client declared, an upload SAS carries no length constraint, and the block PUT never
     // Passes back through Nitro, so a client that under-declares can write past this cap until the SAS expires.
-    // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies. See
-    // openspec/specs/esbabbler/file-media/design.md.
+    // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies.
+    // See openspec/specs/esbabbler/file-media/design.md.
     const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
@@ -296,7 +297,7 @@ export const baseMessageRouter = router({
   ),
   // One read for both shapes the client needs, since the display list is derived from the follow state:
   // `threadRootIds` is the follow-STATE source of truth — every followed root, including those whose root message was
-  // deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose follow row remains — while
+  // Deleted, so the follow button can offer Unfollow on a thread whose root is gone but whose follow row remains — while
   // `threads` drops deleted roots so the drawer never lists a dangling follow
   readFollowedThreads: getMemberProcedure(roomIdSchema, "roomId").query<ReadFollowedThreadsResult>(
     async ({ ctx, input: { roomId } }) => {
@@ -308,9 +309,9 @@ export const baseMessageRouter = router({
     },
   ),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId").query<BasePaginationData<RoomMessage>>(
-    async ({ input: { before, filter, limit, roomId } }) =>
+    async ({ input: { after, before, filter, limit, roomId } }) =>
       getBasePaginationData(
-        await useRoomObject(roomId).readMessages({ before, isPinned: filter?.isPinned, limit: limit + 1 }),
+        await useRoomObject(roomId).readMessages({ after, before, isPinned: filter?.isPinned, limit: limit + 1 }),
         limit,
       ),
   ),
@@ -351,7 +352,7 @@ export const baseMessageRouter = router({
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update).mutation<void>(
     async ({ ctx, input }) => {
       // The object stamps the message as edited and takes its mentions as the new text names them, which the procedure
-      // reads off the text it was sent
+      // Reads off the text it was sent
       await requireEntity(
         useRoomObject(input.roomId).updateMessage(
           { id: input.id, mentions: getMentionIds(input.message), message: input.message },
