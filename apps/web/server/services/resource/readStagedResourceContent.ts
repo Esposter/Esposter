@@ -1,10 +1,9 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
+import { getBucket } from "#server/services/storage/getBucket";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { checkIsNotFound, checkIsPreconditionFailed } from "@esposter/db";
 import { StorageBucket, DatabaseEntityType } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
 import { createHash } from "node:crypto";
@@ -26,16 +25,13 @@ const gunzipWithinLimit = async (compressedContent: Uint8Array) => {
 // Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
 // Under the limit is smaller than the document, so the limit bounds both
 export const readStagedResourceContent = async (id: ResourceInResource["id"], hash: string): Promise<unknown> => {
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-  const blockBlobClient = containerClient.getBlockBlobClient(getStagingContentBlobName(id));
-  const { contentLength = 0, etag } = await getResultAsync(() => blockBlobClient.getProperties()).match(
-    (properties) => properties,
-    (error) => {
-      if (checkIsNotFound(error))
-        throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Resource, "no staged content to commit");
-      throw error;
-    },
-  );
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const blobName = getStagingContentBlobName(id);
+  const stagedObject = await bucket.head(blobName);
+  if (!stagedObject)
+    throw getInvalidOperationError(Operation.Update, DatabaseEntityType.Resource, "no staged content to commit");
+
+  const { etag, size: contentLength } = stagedObject;
   if (contentLength > MAX_RESOURCE_CONTENT_SIZE)
     throw getInvalidOperationError(
       Operation.Update,
@@ -49,17 +45,13 @@ export const readStagedResourceContent = async (id: ResourceInResource["id"], ha
     "staged content does not match its hash",
   );
   // A mismatch is another device's upload landing on the same name between this one's PUT and its commit. One
-  // Landing between the measurement and the download fails the etag instead, where a shorter blob would otherwise
-  // Fail the ranged read with an error that is not the caller's to act on
-  const compressedContent = await getResultAsync(() =>
-    blockBlobClient.downloadToBuffer(0, contentLength, { conditions: { ifMatch: etag } }),
-  ).match(
-    (content) => content,
-    (error) => {
-      if (checkIsPreconditionFailed(error)) throw hashMismatchError;
-      throw error;
-    },
-  );
+  // Landing between the measurement and the download fails the etag condition, so it reads as the same mismatch
+  // Rather than as bytes the measurement did not describe. A failed condition answers the object without its body,
+  // And a blob gone since the measurement answers nothing, so both take the mismatch path
+  const compressedObject = await bucket.get(blobName, { onlyIf: { etagMatches: etag } });
+  if (!compressedObject || !("body" in compressedObject)) throw hashMismatchError;
+
+  const compressedContent = Buffer.from(await compressedObject.arrayBuffer());
   if (createHash("sha256").update(compressedContent).digest("hex") !== hash) throw hashMismatchError;
 
   const serializedContent = await getResultAsync(() => gunzipWithinLimit(compressedContent)).match(

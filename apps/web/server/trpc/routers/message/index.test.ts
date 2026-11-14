@@ -2,13 +2,14 @@ import type { readMessages } from "#server/services/message/readMessages";
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { PollMessageContent } from "#shared/models/message/poll/PollMessageContent";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage, MessageEntity, MessageNotificationData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
@@ -25,12 +26,14 @@ import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants
 import { serialize } from "#shared/services/pagination/cursor/serialize";
 import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
+  deleteDirectory,
   deleteStorageBlobs,
   getBlobName,
   getThumbnailBlobName,
   listBlobNames,
   reconcileStorageLedgerEntry,
 } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   AppNotificationType,
   StorageBucket,
@@ -52,13 +55,9 @@ import {
 } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { isTrackedEnvelope } from "@trpc/server";
-import {
-  MockBlobClient,
-  MockContainerDatabase,
-  MockTableClient,
-} from "azure-mock";
+import { MockSearchDatabase, MockTableClient } from "azure-mock";
 import { and, eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const { readMessagesMock } = vi.hoisted(() => ({ readMessagesMock: vi.fn<typeof readMessages>() }));
@@ -95,6 +94,9 @@ describe("messageRouter", () => {
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
+  let publicUserAssets: Awaited<ReturnType<typeof createMockBucket>>;
   const filename = "filename";
   const mimetype = MimeType.Png;
   const size = 1;
@@ -145,20 +147,27 @@ describe("messageRouter", () => {
   };
 
   // The blob an attachment points at, which only the tests that assert a deletion have to actually put there
-  const setMessageAssetBlob = (id: string) => {
-    MockContainerDatabase.set(
-      StorageBucket.MessageAssets,
-      new Map([[getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size)]]),
-    );
+  const setMessageAssetBlob = async (id: string) => {
+    await bucket.put(getBlobName(`${roomId}/${id}`, filename), Buffer.alloc(size));
   };
   // A room's automod list, blocking the one word the message wrapper cannot contain on its own
   const insertWordFilter = (filterRoomId = roomId) =>
     mockContext.db.insert(roomFiltersInMessage).values({ roomId: filterRoomId, words: [filteredWord] });
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.MessageAssets));
+    mockBuckets[StorageBucket.MessageAssets] = bucket;
+    // A room's delete also clears its profile images, which the suite reaches through the same accessor
+    publicUserAssets = await createMockBucket(StorageBucket.PublicUserAssets);
+    mockBuckets[StorageBucket.PublicUserAssets] = publicUserAssets.bucket;
     mockContext = getMockContext();
     messageCaller = createCallerFactory(messageRouter)(mockContext);
     roomCaller = getRoomCaller();
+  });
+
+  afterAll(async () => {
+    await dispose();
+    await publicUserAssets.dispose();
   });
 
   beforeEach(() => {
@@ -179,7 +188,7 @@ describe("messageRouter", () => {
     consoleErrorSpy.mockRestore();
     updateEntitySpy.mockRestore();
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
@@ -702,7 +711,7 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    setMessageAssetBlob(id);
+    await setMessageAssetBlob(id);
     const forwardedRoom = await roomCaller.createRoom({ name });
     const bytesBeforeForward = await readStorageBytesUsed();
     assert.exists(bytesBeforeForward);
@@ -722,10 +731,10 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    setMessageAssetBlob(id);
+    await setMessageAssetBlob(id);
     const forwardedRoom = await roomCaller.createRoom({ name });
     const bytesBeforeForward = await readStorageBytesUsed();
-    vi.spyOn(MockBlobClient.prototype, "beginCopyFromURL").mockRejectedValueOnce(new Error(" "));
+    vi.spyOn(bucket, "put").mockRejectedValueOnce(new Error(" "));
 
     await expect(
       messageCaller.forwardMessage({ message: "", ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] }),
@@ -995,7 +1004,6 @@ describe("messageRouter", () => {
   // Carries, or every blob under its prefix, released through the same `deleteStorageBlobs`. The bytes are read after
   // That, so a case proves the release path returned them rather than the procedure that published it
   const runBlobDeletionEvents = async () => {
-    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
     const blobDeletions = (MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [])
       .map((blobDeletion) => blobDeletion as BlobDeletionQueueMessage)
       .filter(({ containerName }) => containerName === StorageBucket.MessageAssets);
@@ -1004,13 +1012,11 @@ describe("messageRouter", () => {
         blobDeletions.map((blobDeletion) =>
           blobDeletion.prefix === undefined
             ? Promise.resolve(blobDeletion.blobNames)
-            : listBlobNames(containerClient, blobDeletion.prefix),
+            : listBlobNames(bucket, blobDeletion.prefix),
         ),
       )
     ).flat();
-    await deleteStorageBlobs(mockContext.db, containerClient, StorageBucket.MessageAssets, blobNames, () =>
-      Promise.resolve(),
-    );
+    await deleteStorageBlobs(mockContext.db, bucket, StorageBucket.MessageAssets, blobNames, () => Promise.resolve());
   };
   // Storage reporting an upload's stored size is the reconcile the `BlobCreated` handler runs
   const reportStoredUpload = (blobName: string) =>
@@ -1033,7 +1039,7 @@ describe("messageRouter", () => {
       roomId,
     });
     assert(sasEntity);
-    setMessageAssetBlob(sasEntity.id);
+    await setMessageAssetBlob(sasEntity.id);
     const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
     await reportStoredUpload(blobName);
     const newMessage = await messageCaller.createMessage({
@@ -1079,7 +1085,7 @@ describe("messageRouter", () => {
       roomId,
     });
     assert(sasEntity);
-    setMessageAssetBlob(sasEntity.id);
+    await setMessageAssetBlob(sasEntity.id);
     const blobName = getBlobName(`${roomId}/${sasEntity.id}`, filename);
     await reportStoredUpload(blobName);
     await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
@@ -1099,7 +1105,7 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    setMessageAssetBlob(id);
+    await setMessageAssetBlob(id);
 
     await messageCaller.deleteFile({ id, ...getCompositeKey(newMessage) });
 
@@ -1191,7 +1197,7 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    setMessageAssetBlob(newFileId);
+    await setMessageAssetBlob(newFileId);
 
     await expect(
       messageCaller.deleteFile({ id: deleteFileId, ...getCompositeKey(newMessage) }),
@@ -1211,7 +1217,7 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    setMessageAssetBlob(id);
+    await setMessageAssetBlob(id);
     const subscription = await messageCaller.onCreateMessage({ roomId });
     const trackedData = await getFirstEmit(
       () => subscription,

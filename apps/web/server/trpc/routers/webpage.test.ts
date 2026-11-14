@@ -1,4 +1,5 @@
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
@@ -12,21 +13,31 @@ import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, getResourceFileBlobName, ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
+
+const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
+
+vi.mock(import("#server/services/storage/getBucket"), () => ({
+  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
+}));
 
 describe("webpageRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(webpageRouter);
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const name = "name";
   const hash = "a".repeat(64);
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    buckets[StorageBucket.ResourceAssets] = bucket;
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
@@ -36,12 +47,14 @@ describe("webpageRouter", () => {
     vi.restoreAllMocks();
   });
 
+  afterAll(async () => {
+    await dispose();
+  });
+
   // Stores an uploaded image under its hash, the way the upload's write target lands it
-  const addAsset = (resourceId: string) => {
-    const resourceAssets = MockContainerDatabase.get(StorageBucket.ResourceAssets) ?? new Map<string, Buffer>();
+  const addAsset = async (resourceId: string) => {
     const blobName = getResourceFileBlobName(resourceId, hash);
-    resourceAssets.set(blobName, Buffer.alloc(1));
-    MockContainerDatabase.set(StorageBucket.ResourceAssets, resourceAssets);
+    await bucket.put(blobName, Buffer.alloc(1));
     return getResourceAssetUrl(blobName);
   };
 
@@ -81,22 +94,20 @@ describe("webpageRouter", () => {
     );
   });
 
-  test("publishing a document with images copies no assets", async () => {
+  test("publishing a document with images keeps each image's url", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const url = addAsset(newResource.id);
+    const url = await addAsset(newResource.id);
     await caller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(url)] }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
-    const copyBlobSpy = vi.spyOn(MockBlockBlobClient.prototype, "beginCopyFromURL");
 
     await caller.publishResource({ id: newResource.id });
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
-    expect(copyBlobSpy).not.toHaveBeenCalled();
     expect(publishedContent.content.html).toBe(
       `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>.image { max-width: 100%; height: auto; }</style></head><body><img alt="" class="image" role="presentation" src="${url}"></body></html>`,
     );
@@ -107,7 +118,7 @@ describe("webpageRouter", () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
-    const url = addAsset(newResource.id);
+    const url = await addAsset(newResource.id);
     const webpageEditor = new WebpageEditor({ content: [createTestImageNode(url)] });
     await caller.saveResourceContent({
       content: webpageEditor,
@@ -121,7 +132,7 @@ describe("webpageRouter", () => {
     const assetBlobName = getResourceFileBlobName(newResource.id, hash);
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(assetBlobName)).toBe(true);
+    await expect(bucket.head(assetBlobName)).resolves.not.toBeNull();
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 

@@ -1,6 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -13,17 +14,26 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
+import { deleteDirectory } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, getResourceFilesDirectoryName, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
-import { getBlobUrl, MockContainerDatabase } from "azure-mock";
+import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
-import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
+
+vi.mock(import("#server/services/storage/getBucket"), () => ({
+  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
+}));
 
 describe("resourceDispatchRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceDispatchRouter);
   let mockContext: Context;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const name = "name";
   // A held address names its own bytes, which the upload checks before it trusts the blob
   const heldBytes = Buffer.alloc(1);
@@ -32,15 +42,21 @@ describe("resourceDispatchRouter", () => {
   const size = 1;
   const webpageEditor = new WebpageEditor({ description: "a" });
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    buckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = getMockContext();
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   const readPublication = (resourceId: string) =>
@@ -91,10 +107,13 @@ describe("resourceDispatchRouter", () => {
       id: webpageResource.id,
     });
     const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
-    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
+    const { sasUrl } = takeOne(sasEntities);
+    const presignedUrl = new URL(sasUrl);
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
-    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(blobName)).not.toBe(true);
+    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl }]);
+    expect(presignedUrl.pathname).toContain(`/${blobName}`);
+    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
+    await expect(bucket.head(blobName)).resolves.toBeNull();
   });
 
   test("an agent uploads a file before its address expires", async () => {
@@ -110,14 +129,12 @@ describe("resourceDispatchRouter", () => {
         id: webpageResource.id,
       });
 
-    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
-
     await expect(requestUploadAddress()).resolves.toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) },
+      { id: hash, isHeld: false, sasUrl: expect.stringContaining(`/${blobName}?`) },
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
     vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS / 2));
-    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, heldBytes]]));
+    await bucket.put(blobName, heldBytes);
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
   });

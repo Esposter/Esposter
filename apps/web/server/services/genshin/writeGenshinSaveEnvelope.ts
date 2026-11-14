@@ -1,5 +1,5 @@
 import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnvelope";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { getGenshinSessionReplacedError } from "#server/services/genshin/getGenshinSessionReplacedError";
@@ -11,12 +11,12 @@ import { TRPCError } from "@trpc/server";
 // The lease was lost, to a save or a start from another session alike, so its CONFLICT is refused as a replacement
 // Rather than retried
 export const writeGenshinSaveEnvelope = (
-  containerClient: ContainerClient,
+  bucket: R2Bucket,
   userId: string,
   envelope: GenshinSaveEnvelope,
   etag: string | undefined,
 ): Promise<string | undefined> =>
-  getResultAsync(() => writeBlobState(containerClient, getSaveBlobName(userId), JSON.stringify(envelope), etag)).match(
+  getResultAsync(() => writeBlobState(bucket, getSaveBlobName(userId), JSON.stringify(envelope), etag)).match(
     (writtenEtag) => writtenEtag,
     (error) => {
       if (error instanceof TRPCError && error.code === "CONFLICT") throw getGenshinSessionReplacedError();

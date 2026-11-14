@@ -13,7 +13,6 @@ import type { ResourceInResource, ResourcePublicationInResource, ResourceType } 
 import type { WrittenVersion } from "keyframe-store";
 import type { z } from "zod";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { on } from "#server/services/events/on";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
@@ -43,6 +42,7 @@ import { softDeleteResources } from "#server/services/resource/softDeleteResourc
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { generateReservedWriteSasUrl } from "#server/services/storage/generateReservedWriteSasUrl";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -65,7 +65,7 @@ import { ResourceOperationType } from "#shared/models/notification/ResourceOpera
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { generateReadSasUrl, getContentBlobName } from "@esposter/db";
+import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -154,12 +154,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
     // A document larger than one request body is read straight from Blob Storage, so the server signs the read
     // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
     generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id").query<string>(
-      async ({ input: { id } }) => {
-        const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+      ({ input: { id } }) => {
         const contentBlobName = getContentBlobName(id);
-        const blockBlobClient = containerClient.getBlockBlobClient(contentBlobName);
-        return generateReadSasUrl(blockBlobClient, {
-          expiresOn: new Date(Date.now() + RESOURCE_ASSET_SAS_DURATION_MS),
+        return createPresignedGetUrl(getStorageCredentials(), StorageBucket.ResourceAssets, contentBlobName, {
+          expiresInMs: RESOURCE_ASSET_SAS_DURATION_MS,
         });
       },
     ),

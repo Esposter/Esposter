@@ -3,13 +3,12 @@ import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmoji
 
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
-import { getMockSasUrl } from "azure-mock";
 import { describe, expect, test } from "vitest";
 
 describe(useRoomEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
-  const sasUrl = getMockSasUrl("", undefined);
+  const sasUrl = "https://example.com/emoji.png";
   const createRoomEmoji = (): RoomEmojiWithSasUrl => ({
     createdAt: new Date(0),
     deletedAt: null,

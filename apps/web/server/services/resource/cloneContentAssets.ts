@@ -1,14 +1,14 @@
 import type { ResourceAccess } from "#server/models/resource/ResourceAccess";
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database, ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
 import { collectResourceAssetPaths } from "#server/services/resource/collectResourceAssetPaths";
 import { readResourceAccess } from "#server/services/resource/readResourceAccess";
 import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
+import { getBucket } from "#server/services/storage/getBucket";
 import { RESOURCE_ASSET_URL_REGEX } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
@@ -17,32 +17,32 @@ import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } fr
 import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,
-// So nothing is copied or charged. Returns whether the destination now holds the asset: a source Azure cannot find reads as
-// Missing, like every other reference the clone cannot follow
+// So nothing is copied or charged. Returns whether the destination now holds the asset: a source the bucket cannot
+// Find reads as Missing, like every other reference the clone cannot follow
 const cloneAsset = async (
   db: Database,
   userId: string,
-  containerClient: ContainerClient,
+  bucket: R2Bucket,
   blobName: string,
   destinationBlobName: string,
 ): Promise<boolean> => {
-  if (await containerClient.getBlobClient(destinationBlobName).exists()) return true;
+  if (await bucket.head(destinationBlobName)) return true;
 
   // One HEAD answers both questions the copy needs: that the source is there, and what the clone costs its new owner
-  const contentLength = await getResultAsync(() => containerClient.getBlockBlobClient(blobName).getProperties()).match(
-    (properties) => properties.contentLength,
-    () => undefined,
+  const sourceObject = await getResultAsync(() => bucket.head(blobName)).match(
+    (object) => object,
+    () => null,
   );
-  if (contentLength === undefined) return false;
+  if (!sourceObject) return false;
 
   await chargeAndCopyBlob(
     db,
     userId,
     StorageBucket.ResourceAssets,
-    containerClient,
+    bucket,
     blobName,
     destinationBlobName,
-    contentLength,
+    sourceObject.size,
   );
   return true;
 };
@@ -74,7 +74,7 @@ export const cloneContentAssets = async <TContent>(
   ];
   if (candidates.length === 0) return relativizedContent;
 
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   // The promise is stored rather than its value, so the assets checked concurrently below share one read per resource
   const resourceIdAccessMap = new Map<ResourceInResource["id"], Promise<ResourceAccess>>();
   const clonableAssets = (
@@ -100,7 +100,7 @@ export const cloneContentAssets = async <TContent>(
   const clonedEntries = await settleAll(
     clonableAssets.map(({ blobName, destinationBlobName, url }) => async () => ({
       destinationBlobName,
-      isHeld: await cloneAsset(db, userId, containerClient, blobName, destinationBlobName),
+      isHeld: await cloneAsset(db, userId, bucket, blobName, destinationBlobName),
       url,
     })),
     MAX_CONCURRENT_BLOB_COPIES,

@@ -5,16 +5,18 @@ import type { ResourceReferences } from "#shared/models/resource/ResourceReferen
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { scheduledJobMap } from "#server/composables/scheduler/useScheduler";
 import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
+import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
@@ -43,7 +45,8 @@ import {
 } from "#shared/services/pageBuilder/critique/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getContentBlobName, writeJsonBlob } from "@esposter/db";
+import { getContentBlobName, listBlobNames, writeJsonBlob } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   QueueJob,
   StreamTable,
@@ -65,33 +68,29 @@ import {
   takeOne,
   waitForSynchronizedFunctions,
 } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { createHash } from "node:crypto";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Every asset the resource's files directory holds
-const readFilesBlobNames = (id: string): string[] => {
-  const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
-  assert.exists(container);
-  return [...container.keys()].filter((blobName) => blobName.startsWith(`${getResourceFilesDirectoryName(id)}/`));
+const readFilesBlobNames = (id: string): Promise<string[]> => {
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  return listBlobNames(bucket, `${getResourceFilesDirectoryName(id)}/`);
 };
 
 // Everything a publish writes: the version's object, and nothing under the files directory
-const readPublishedBlobSizes = (id: string): number[] => {
-  const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
-  assert.exists(container);
-  return [...container.entries()]
-    .filter(
-      ([blobName]) =>
-        blobName.startsWith(`${id}/${SnapshotChannel.Published}/`) ||
-        blobName.startsWith(getSnapshotObjectBlobName(id, "")),
-    )
-    .map(([, data]) => data.byteLength);
+const readPublishedBlobSizes = async (id: string): Promise<number[]> => {
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const listings = await Promise.all(
+    [`${id}/${SnapshotChannel.Published}/`, getSnapshotObjectBlobName(id, "")].map((prefix) => bucket.list({ prefix })),
+  );
+  return listings.flatMap(({ objects }) => objects.map(({ size }) => size));
 };
 
-// A stored asset is one byte in the container, which is all a clone or a charge has to find
-const storeAsset = (blobName: string) => {
-  MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+// A stored asset is one byte in the bucket, which is all a clone or a charge has to find
+const storeAsset = async (blobName: string) => {
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  await bucket.put(blobName, Buffer.alloc(1));
 };
 // The one reference a page makes to an asset, read back the same way after a clone rewrote it
 const createImageNode = (blobName: string) => createTestImageNode(getResourceAssetUrl(blobName));
@@ -111,6 +110,8 @@ describe("resourceRouter", () => {
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let todoListCaller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const name = "name";
   const updatedName = "updatedName";
   const webpageEditor = new WebpageEditor({ description: "a" });
@@ -135,7 +136,9 @@ describe("resourceRouter", () => {
       id: webpageResource.id,
     });
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = getMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext).resource;
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
@@ -143,6 +146,10 @@ describe("resourceRouter", () => {
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     todoListCaller = createCallerFactory(todoListRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // `updatedAt` is populated by drizzle's $onUpdateFn(() => new Date()), so faking Date makes recency assertable.
@@ -696,11 +703,11 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     await saveWebpageContent(webpageResource, createImageEditor(blobName));
     const storageBytesUsedBeforePublish = await readStorageBytesUsed(webpageResource.userId);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    const publishedBlobSizes = readPublishedBlobSizes(webpageResource.id);
+    const publishedBlobSizes = await readPublishedBlobSizes(webpageResource.id);
     assert.exists(storageBytesUsedBeforePublish);
 
     expect(publishedBlobSizes).toHaveLength(1);
@@ -714,7 +721,7 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     const imageNode = createImageNode(blobName);
     await saveWebpageContent(webpageResource, new WebpageEditor({ content: [imageNode] }));
     await webpageCaller.publishResource({ id: webpageResource.id });
@@ -724,7 +731,7 @@ describe("resourceRouter", () => {
 
     const publication = await webpageCaller.readResourcePublication({ id: duplicatedResource.id });
     // The copy owns its assets: the file is copied under the same hash in the copy's files directory and the url rewritten to it
-    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
+    const duplicatedBlobName = takeOne(await readFilesBlobNames(duplicatedResource.id));
 
     expect(duplicatedResource.id).not.toBe(webpageResource.id);
     expect(duplicatedBlobName).toBe(getResourceFileBlobName(duplicatedResource.id, getAssetHash(blobName)));
@@ -740,7 +747,7 @@ describe("resourceRouter", () => {
         ),
       ),
     );
-    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
+    await expect(bucket.head(duplicatedBlobName)).resolves.not.toBeNull();
     expect(publication).toBeUndefined();
   });
 
@@ -752,13 +759,13 @@ describe("resourceRouter", () => {
     const missingBlobName = createFilesBlobName(webpageResource.id);
     const imageNode = createImageNode(blobName);
     const danglingImageNode = createImageNode(missingBlobName);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     await saveWebpageContent(webpageResource, new WebpageEditor({ content: [imageNode, danglingImageNode] }));
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
 
-    const duplicatedBlobName = takeOne(readFilesBlobNames(duplicatedResource.id));
+    const duplicatedBlobName = takeOne(await readFilesBlobNames(duplicatedResource.id));
 
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
@@ -785,7 +792,7 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     const imageEditor = createImageEditor(blobName);
     await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
@@ -793,7 +800,7 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(imageEditor)));
-    expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
+    await expect(readFilesBlobNames(webpageResource.id)).resolves.toStrictEqual([blobName]);
   });
 
   test("cleans up the copy when duplicating its content fails", async () => {
@@ -802,20 +809,18 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     // Corrupt the stored draft so reading it back for the copy fails after the copy's row already exists
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    await writeJsonBlob(containerClient, getContentBlobName(webpageResource.id), "a");
+    await writeJsonBlob(bucket, getContentBlobName(webpageResource.id), "a");
 
     await expect(caller.duplicateResource({ id: webpageResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Unexpected token 'a', "a" is not valid JSON]`,
     );
 
     const { items } = await caller.readResources();
-    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
-    assert.exists(container);
+    const blobNames = await listBlobNames(bucket, "");
 
     // The copy is fully reverted: no row and no blobs outside the original's directory
     expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
-    expect([...container.keys()].filter((key) => !key.startsWith(`${webpageResource.id}/`))).toStrictEqual([]);
+    expect(blobNames.filter((key) => !key.startsWith(`${webpageResource.id}/`))).toStrictEqual([]);
   });
 
   test("runs the after-save hook for a duplicated resource", async () => {
@@ -1185,7 +1190,7 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     const imageEditor = createImageEditor(blobName);
     await saveWebpageContent(webpageResource, imageEditor);
     const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
@@ -1199,7 +1204,7 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(imageEditor)));
-    expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
+    await expect(readFilesBlobNames(webpageResource.id)).resolves.toStrictEqual([blobName]);
   });
 
   // The version the undo took rides back with the restore, because a listing afterwards cannot say which of its
@@ -1234,12 +1239,12 @@ describe("resourceRouter", () => {
 
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
-    storeAsset(blobName);
+    await storeAsset(blobName);
     const imageEditor = createImageEditor(blobName);
     await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, webpageEditor, 1);
-    MockContainerDatabase.get(StorageBucket.ResourceAssets)?.delete(blobName);
+    await bucket.delete(blobName);
 
     const { resource } = await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Published,

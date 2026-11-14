@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
@@ -22,17 +23,27 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
-import { AzureEntityType, resourcesInResource, SurveyResponseMode } from "@esposter/db-schema";
+import { deleteDirectory } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
+import { AzureEntityType, resourcesInResource, StorageBucket, SurveyResponseMode } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
+import { MockTableDatabase } from "azure-mock";
+import { afterAll, assert, beforeAll, describe, expect, test, vi } from "vitest";
 import { SurveyNodeType } from "vue-survey-engine-headless";
+
+const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
+
+vi.mock(import("#server/services/storage/getBucket"), () => ({
+  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
+}));
 
 // The composition test for the whole funnel — the per-router suites own the units. Exactly one
 // Scenario lives here on purpose; more scenarios belong in those suites.
 // Scenario-named describe: there is no single function to reference (a documented deviation).
 describe("surveyFunnel", () => {
   let mockContext: Context;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
   let datasetCaller: DecorateRouterRecord<TRPCRouter["dataset"]>;
   let emailCaller: DecorateRouterRecord<TRPCRouter["email"]>;
@@ -48,6 +59,8 @@ describe("surveyFunnel", () => {
   const customers = [customerKeyValue, `${customerKeyValue} `, `${customerKeyValue}  `];
 
   beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    buckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
@@ -58,9 +71,10 @@ describe("surveyFunnel", () => {
   });
 
   afterAll(async () => {
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockTableDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
+    await dispose();
   });
 
   test("the audience's responses reach the status and a published chart without naming who was added", async () => {

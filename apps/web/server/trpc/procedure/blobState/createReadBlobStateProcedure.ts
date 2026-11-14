@@ -1,9 +1,9 @@
 import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getUnreadableSaveError } from "#server/services/blobState/getUnreadableSaveError";
 import { readBlobState } from "#server/services/blobState/readBlobState";
+import { getBucket } from "#server/services/storage/getBucket";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { getSaveBlobName } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
@@ -17,8 +17,8 @@ export const createReadBlobStateProcedure = <TData, TInit>(
   schema: z.ZodType<TInit>,
 ) =>
   standardAuthedProcedure.query<{ data: TData; etag?: string }>(async ({ ctx }) => {
-    const containerClient = await useContainerClient(container);
-    const { etag, json } = await readBlobState(containerClient, getSaveBlobName(ctx.getSessionPayload.user.id));
+    const bucket = getBucket(container);
+    const { etag, json } = await readBlobState(bucket, getSaveBlobName(ctx.getSessionPayload.user.id));
     if (!json) return { data: new Model(), etag };
 
     const parsedSave = schema.safeParse(jsonDateParse(json.toString()));

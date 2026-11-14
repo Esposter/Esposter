@@ -15,7 +15,6 @@ import type { UpdateResourceContentResult } from "#shared/models/resource/Update
 import type { Clause } from "@esposter/azure";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
@@ -52,6 +51,7 @@ import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
+import { getBucket } from "#server/services/storage/getBucket";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -185,12 +185,12 @@ export const resourceRouter = router({
   purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
     .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
     .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
-      const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+      const bucket = getBucket(StorageBucket.ResourceAssets);
       // Purge is the only place these partitions are destroyed, since delete is soft
       const tableClients = await Promise.all(
         getResourceOwnedTableNames(ctx.resource.type).map((tableName) => useStreamTableClient(tableName)),
       );
-      await purgeResource(ctx.db, containerClient, tableClients, id);
+      await purgeResource(ctx.db, bucket, tableClients, id);
       // The other half of the counter: a purge is the one delete that gives bytes back from this process, so
       // It is the one delete whose owner is here to be told. See openspec/specs/resource/storage-quotas/design.md
       await emitStorageUsage(ctx.db, ctx.resource.userId);

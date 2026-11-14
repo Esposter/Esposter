@@ -7,7 +7,6 @@ import type { Clause } from "@esposter/azure";
 import type { AzureUpdateEntity, MessageEntity } from "@esposter/db-schema";
 import type { TrackedEnvelope } from "@trpc/server";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
@@ -31,6 +30,8 @@ import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { onWhileMember } from "#server/services/room/onWhileMember";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
+import { getBucket } from "#server/services/storage/getBucket";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -206,7 +207,7 @@ export const baseMessageRouter = router({
     async ({ ctx, input: { message, partitionKey, roomIds, rowKey } }) => {
       await assertIsMember(ctx.db, ctx.getSessionPayload, roomIds);
       const messageClient = useStreamTableClient(StreamTable.Messages);
-      const containerClient = await useContainerClient(StorageBucket.MessageAssets);
+      const bucket = getBucket(StorageBucket.MessageAssets);
       const { entity: messageEntity } = await requireEntity(
         readLiveMessageWithEtag(messageClient, partitionKey, rowKey),
         AzureEntityType.Message,
@@ -236,7 +237,7 @@ export const baseMessageRouter = router({
             ctx.db,
             ctx.getSessionPayload.user.id,
             StorageBucket.MessageAssets,
-            containerClient,
+            bucket,
             messageEntity.files,
             messageEntity.partitionKey,
             roomId,
@@ -291,13 +292,13 @@ export const baseMessageRouter = router({
     },
   ),
   generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId").query<string[]>(
-    async ({ input: { files, roomId } }) =>
-      generateDownloadFileSasUrls(await useContainerClient(StorageBucket.MessageAssets), files, roomId),
+    ({ input: { files, roomId } }) =>
+      generateDownloadFileSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
   ),
   generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId").query<
     string[]
-  >(async ({ input: { files, roomId } }) =>
-    generateDownloadThumbnailSasUrls(await useContainerClient(StorageBucket.MessageAssets), files, roomId),
+  >(({ input: { files, roomId } }) =>
+    generateDownloadThumbnailSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
   ),
   generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").mutation<
     MessageFileSasEntity[]

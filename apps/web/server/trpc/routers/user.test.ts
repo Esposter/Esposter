@@ -1,11 +1,14 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createMockSession } from "#server/auth.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
+import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { createCallerFactory } from "#server/trpc";
 import {
@@ -24,41 +27,38 @@ import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
+import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
+import { deleteDirectory } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   StorageBucket,
   QueueJob,
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
-  READ_SAS_DURATION_MS,
   sessionsInAuth,
   UserStatus,
   userStatusesInMessage,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
-import {
-  getMockSasUrl,
-  MOCK_BLOB_BASE_URL,
-  MockContainerDatabase,
-  MockTableDatabase,
-} from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase, MockJobQueue } from "#server/services/queue/getJobQueue.test";
 
 const getCallBackgroundErrorMessage = (context: string) =>
   new InvalidOperationError(Operation.Create, DatabaseEntityType.CallBackground, context).message;
 const seedSlots = (userId: string, slots: number[], slotSize: number) => {
-  MockContainerDatabase.set(
-    StorageBucket.UserAssets,
-    new Map(slots.map((slot) => [getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize)])),
-  );
+  const bucket = getBucket(StorageBucket.UserAssets);
+  return Promise.all(slots.map((slot) => bucket.put(getCallBackgroundBlobName(userId, slot), Buffer.alloc(slotSize))));
 };
 
 describe("userRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const biography = "biography";
   const blobName = "a";
   const expiredAt = new Date(-1);
@@ -71,8 +71,6 @@ describe("userRouter", () => {
   const unexpiredAt = new Date(Temporal.Duration.from({ days: 7 }).total("milliseconds"));
   const updatedMessage = "updatedMessage";
   const userId = getMockSession().user.id;
-  const getCallBackgroundUrl = (slot: number) =>
-    `${MOCK_BLOB_BASE_URL}/${StorageBucket.UserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
   // A second session the caller holds, and a revoke that deletes its row the way better-auth would
   const holdOtherSession = async () => {
     const otherSession = createMockSession(userId);
@@ -122,6 +120,8 @@ describe("userRouter", () => {
     );
 
   beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.UserAssets));
+    mockBuckets[StorageBucket.UserAssets] = bucket;
     mockContext = await createMockContext();
     caller = createCallerFactory(userRouter)(mockContext);
   });
@@ -134,11 +134,15 @@ describe("userRouter", () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
     getMockRevokeSession().mockReset();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // The plugin takes a key's permissions only from the server, so this is the one place they are set: to the scopes the
@@ -353,9 +357,11 @@ describe("userRouter", () => {
     expect.hasAssertions();
 
     const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
+    const presignedUrl = new URL(sasUrl);
 
-    expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${StorageBucket.PublicUserAssets}/${userId}/ProfileImage`);
-    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b", new Date(WRITE_SAS_DURATION_MS)));
+    expect(publicUrl).toBe(`${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/${userId}/ProfileImage`);
+    expect(presignedUrl.pathname).toContain(`/${userId}/ProfileImage`);
+    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
   });
 
   test("updates", async () => {
@@ -413,11 +419,11 @@ describe("userRouter", () => {
   test("readCallBackgrounds lists the slots under the caller's own prefix", async () => {
     expect.hasAssertions();
 
-    seedSlots(userId, [0, 2], size);
+    await seedSlots(userId, [0, 2], size);
 
     await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
-      { sasUrl: getMockSasUrl(getCallBackgroundUrl(0), "r", "b", new Date(READ_SAS_DURATION_MS)), slot: 0 },
-      { sasUrl: getMockSasUrl(getCallBackgroundUrl(2), "r", "b", new Date(READ_SAS_DURATION_MS)), slot: 2 },
+      { sasUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 0)}?`), slot: 0 },
+      { sasUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 2)}?`), slot: 2 },
     ]);
   });
 
@@ -426,10 +432,7 @@ describe("userRouter", () => {
   test.each(["a", String(Number.NaN)])("readCallBackgrounds passes over %s under the prefix", async (slotName) => {
     expect.hasAssertions();
 
-    MockContainerDatabase.set(
-      StorageBucket.UserAssets,
-      new Map([[`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size)]]),
-    );
+    await bucket.put(`${getCallBackgroundPrefix(userId)}${slotName}`, Buffer.alloc(size));
     const callBackgrounds = await caller.readCallBackgrounds();
 
     // Never listed, and never reclaimed on a guess either — nothing is published for a name this router did
@@ -441,7 +444,7 @@ describe("userRouter", () => {
   test("readCallBackgrounds drops a slot over the size cap and reclaims it", async () => {
     expect.hasAssertions();
 
-    seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
+    await seedSlots(userId, [0], MAX_CALL_BACKGROUND_SIZE_BYTES + 1);
     const callBackgrounds = await caller.readCallBackgrounds();
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -458,14 +461,14 @@ describe("userRouter", () => {
   test("generateCallBackgroundUploadUrl mints a write target for the slot it is given, occupied or not", async () => {
     expect.hasAssertions();
 
-    seedSlots(
+    await seedSlots(
       userId,
       Array.from({ length: MAX_CALL_BACKGROUNDS }, (_value, slot) => slot),
       size,
     );
 
-    await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 0 })).resolves.toBe(
-      getMockSasUrl(getCallBackgroundUrl(0), "w", "b", new Date(WRITE_SAS_DURATION_MS)),
+    await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 0 })).resolves.toStrictEqual(
+      expect.stringContaining(`/${getCallBackgroundBlobName(userId, 0)}?`),
     );
   });
 
@@ -492,7 +495,7 @@ describe("userRouter", () => {
   test("deleteCallBackground publishes a bounded prefix deletion so a re-upload survives a replay", async () => {
     expect.hasAssertions();
 
-    seedSlots(userId, [0], size);
+    await seedSlots(userId, [0], size);
     await caller.deleteCallBackground({ slot: 0 });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -582,15 +585,10 @@ describe("userRouter", () => {
 
     const dataExport = await insertReadyDataExport(userId, unexpiredAt);
     const link = await caller.generateDataExportLink(dataExport.id);
+    const presignedLink = new URL(link);
 
-    expect(link).toBe(
-      getMockSasUrl(
-        `${MOCK_BLOB_BASE_URL}/${StorageBucket.UserAssets}/${blobName}`,
-        "r",
-        "b",
-        new Date(DATA_EXPORT_LINK_DURATION_MS),
-      ),
-    );
+    expect(presignedLink.pathname).toContain(`/${blobName}`);
+    expect(presignedLink.searchParams.get("X-Amz-Expires")).toBe(String(DATA_EXPORT_LINK_DURATION_MS / 1000));
   });
 
   const insertDataExportWithStatus = async (status: DataExportStatus) =>

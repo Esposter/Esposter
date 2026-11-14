@@ -1,8 +1,8 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
+import { getBucket } from "#server/services/storage/getBucket";
 import { deleteDirectory, deleteTablePartitionEntities } from "@esposter/db";
 import { StorageBucket, StreamTable, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -18,8 +18,8 @@ export const deleteCreatedResources = async (ctx: AuthedContext, ids: ResourceIn
   if (ids.length === 0) return;
 
   await getResultAsync(async () => {
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    await Promise.all(ids.map((id) => deleteDirectory(containerClient, id)));
+    const bucket = getBucket(StorageBucket.ResourceAssets);
+    await Promise.all(ids.map((id) => deleteDirectory(bucket, id)));
   }).match(noop, console.error);
   await getResultAsync(async () => {
     const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);

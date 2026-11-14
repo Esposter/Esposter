@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getBucket } from "#server/services/storage/getBucket";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import {
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
@@ -29,8 +29,8 @@ export const readResourceContentDelta = async (
   if (resource.contentHash !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-  const baseline = await readJsonBlob(containerClient, getContentBlobName(resource.id));
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const baseline = await readJsonBlob(bucket, getContentBlobName(resource.id));
   if (!baseline || createHash("sha256").update(baseline).digest("hex") !== baselineHash)
     throw new TRPCError({ code: "CONFLICT", message: CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE });
 

@@ -11,9 +11,17 @@ import {
   StorageTier,
   usersInAuth,
 } from "@esposter/db-schema";
-import { MockBlobClient } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+
+// Signed with fixed credentials, so the write targets are real presigned urls and nothing reads the account's environment
+vi.mock(import("#server/services/storage/getStorageCredentials"), () => ({
+  getStorageCredentials: () => ({
+    accessKeyId: "accessKeyId",
+    accountId: "accountId",
+    secretAccessKey: "secretAccessKey",
+  }),
+}));
 
 describe(generateReservedMessageFileSasEntities, () => {
   let mockContext: Context;
@@ -72,13 +80,11 @@ describe(generateReservedMessageFileSasEntities, () => {
       .update(usersInAuth)
       .set({ storageBytesUsed: StorageTierQuotaMap[StorageTier.Free] })
       .where(eq(usersInAuth.id, userId));
-    const generateSasUrlSpy = vi.spyOn(MockBlobClient.prototype, "generateSasUrl");
 
     await expect(
       generateReservedMessageFileSasEntities(mockContext.db, userId, roomId, [image]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
 
-    expect(generateSasUrlSpy).not.toHaveBeenCalled();
     await expect(readLedgerEntries()).resolves.toStrictEqual([]);
   });
 });

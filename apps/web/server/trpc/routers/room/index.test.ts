@@ -1,13 +1,16 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { BlobDeletionQueueMessage, StandardMessageEntity } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
-import { getPartitionClauses } from "@esposter/db";
+import { deleteDirectory, getPartitionClauses } from "@esposter/db";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
+import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -17,40 +20,61 @@ import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
-import { DatabaseEntityType, friendsInSocial, MAX_BLOB_DELETION_EVENT_BLOB_NAMES, MessageType, PublicUserColumns, QueueJob, RoomPermission, roomsInMessage, StorageBucket, StreamTable, usersToRoomsInMessage, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { createMockBucket } from "@esposter/db-mock";
 import {
-  getMockSasUrl,
-  MOCK_BLOB_BASE_URL,
-  MockBlockBlobClient,
-  MockContainerDatabase,
-} from "azure-mock";
+  DatabaseEntityType,
+  friendsInSocial,
+  MAX_BLOB_DELETION_EVENT_BLOB_NAMES,
+  MessageType,
+  PublicUserColumns,
+  QueueJob,
+  RoomPermission,
+  roomsInMessage,
+  StorageBucket,
+  StreamTable,
+  usersToRoomsInMessage,
+  WRITE_SAS_DURATION_MS,
+} from "@esposter/db-schema";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
-// Uploaded through the client, so the mock dates the blob now
-const uploadPublicUserAssetBlob = (blobName: string) =>
-  new MockBlockBlobClient("", StorageBucket.PublicUserAssets, blobName).upload(Buffer.alloc(0), 0);
+// Uploaded through the client, so the object is stamped now
+const uploadPublicUserAssetBlob = async (blobName: string) => {
+  const bucket = getBucket(StorageBucket.PublicUserAssets);
+  await bucket.put(blobName, Buffer.alloc(0));
+};
 
 describe("roomRouter", () => {
   let mockContext: Context;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
+  let messageAssets: R2Bucket;
+  let publicUserAssets: R2Bucket;
+  let disposeMessageAssets: () => Promise<void>;
+  let disposePublicUserAssets: () => Promise<void>;
   const name = "name";
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
-  const publicUserAssetsUrlPrefix = `${MOCK_BLOB_BASE_URL}/${StorageBucket.PublicUserAssets}/`;
+  const publicUserAssetsUrlPrefix = `${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/`;
   const getBlobName = (publicUrl: string) => publicUrl.slice(publicUserAssetsUrlPrefix.length);
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
   const createUnlimitedInvite = (inviteRoomId: string) =>
     inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
 
   beforeAll(async () => {
+    ({ bucket: messageAssets, dispose: disposeMessageAssets } = await createMockBucket(StorageBucket.MessageAssets));
+    mockBuckets[StorageBucket.MessageAssets] = messageAssets;
+    ({ bucket: publicUserAssets, dispose: disposePublicUserAssets } = await createMockBucket(
+      StorageBucket.PublicUserAssets,
+    ));
+    mockBuckets[StorageBucket.PublicUserAssets] = publicUserAssets;
     mockContext = await createMockContext();
     roomCaller = createCallerFactory(roomRouter)(mockContext);
     roleCaller = createCallerFactory(roleRouter)(mockContext);
@@ -63,10 +87,16 @@ describe("roomRouter", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    await deleteDirectory(messageAssets);
+    await deleteDirectory(publicUserAssets);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(friendsInSocial);
     await mockContext.db.delete(roomsInMessage);
+  });
+
+  afterAll(async () => {
+    await disposeMessageAssets();
+    await disposePublicUserAssets();
   });
 
   test("creates", async () => {
@@ -173,16 +203,15 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
-    // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the sas url is the exact public
-    // Url plus the mock write-sas query, which is what actually needs asserting. The prefix is spelled out
+    // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the presigned write url names the
+    // Public url's blob and lapses one write duration after it is signed. The prefix is spelled out
     // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
     const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
-
-    // The write address lapses one write duration after the clock it is signed at, which the pinned clock fixes at the epoch
-    const expiresOn = new Date(WRITE_SAS_DURATION_MS);
+    const presignedUrl = new URL(sasUrl);
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
-    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b", expiresOn));
+    expect(presignedUrl.pathname).toContain(`/${getBlobName(publicUrl)}`);
+    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
   });
 
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
@@ -219,8 +248,13 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
-    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
+    // R2 stamps the seeded object with its own clock, so the clock moves on past that stamp by a write window: the
+    // Sweep that clears the image then sees the object as older than its cutoff
+    const seededBlob = await publicUserAssets.head(blobName);
+    assert.exists(seededBlob);
+    vi.setSystemTime(seededBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS + 1);
     const subscription = await roomCaller.onUpdateRoom([newRoom.id]);
     const data = await getFirstEmit(
       () => subscription,
@@ -235,7 +269,7 @@ describe("roomRouter", () => {
       blobNames: [blobName],
       containerName: StorageBucket.PublicUserAssets,
     });
-    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName)).toBe(true);
+    await expect(publicUserAssets.head(blobName)).resolves.not.toBeNull();
   });
 
   // The version being replaced gets no exemption from the age filter: the submitted url is whatever the caller's
@@ -254,7 +288,7 @@ describe("roomRouter", () => {
     await roomCaller.updateRoom({ id: newRoom.id, image: replacementPublicUrl });
 
     expect(MockJobQueueDatabase.size).toBe(0);
-    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(blobName)).toBe(true);
+    await expect(publicUserAssets.head(blobName)).resolves.not.toBeNull();
   });
 
   // The lost-update race the age filter exists for: a save whose form opened before the other admin's upload
@@ -273,7 +307,7 @@ describe("roomRouter", () => {
     await roomCaller.updateRoom({ id: newRoom.id, image: staleUrl, name: updatedName });
 
     expect(MockJobQueueDatabase.size).toBe(0);
-    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(freshBlobName)).toBe(true);
+    await expect(publicUserAssets.head(freshBlobName)).resolves.not.toBeNull();
   });
 
   test("keeps a profile image blob younger than the write sas out of the deletion sweep", async () => {
@@ -282,13 +316,18 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
     const publicUrl = `${publicUserAssetsUrlPrefix}${blobName}`;
-    // Seeded rather than uploaded, so the mock dates it before the write sas window and the sweep collects it
-    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    // Seeded rather than uploaded, so it is stamped before the in-flight upload and the sweep collects it
+    await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.updateRoom({ id: newRoom.id, image: publicUrl });
     const { publicUrl: inFlightPublicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     const inFlightBlobName = getBlobName(inFlightPublicUrl);
-    // Uploaded through the client, so the mock dates it now — the state a second admin's in-flight save is in
+    // Uploaded through the client — the state a second admin's in-flight save is in. R2 stamps it with its own clock,
+    // So the clock is set to that stamp plus a write window: the cutoff the sweep applies is then exactly the upload's
+    // Own time, which it is not older than
     await uploadPublicUserAssetBlob(inFlightBlobName);
+    const inFlightBlob = await publicUserAssets.head(inFlightBlobName);
+    assert.exists(inFlightBlob);
+    vi.setSystemTime(inFlightBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS);
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -297,7 +336,7 @@ describe("roomRouter", () => {
       blobNames: [blobName],
       containerName: StorageBucket.PublicUserAssets,
     });
-    expect(MockContainerDatabase.get(StorageBucket.PublicUserAssets)?.has(inFlightBlobName)).toBe(true);
+    await expect(publicUserAssets.head(inFlightBlobName)).resolves.not.toBeNull();
   });
 
   // The column is free text, so the dropped value is only a blob name if an upload could have written it — the
@@ -413,10 +452,7 @@ describe("roomRouter", () => {
       { length: MAX_BLOB_DELETION_EVENT_BLOB_NAMES + 1 },
       (_value, index) => `${newRoom.id}/${index}`,
     );
-    MockContainerDatabase.set(
-      StorageBucket.MessageAssets,
-      new Map(blobNames.map((blobName) => [blobName, Buffer.alloc(0)])),
-    );
+    await Promise.all(blobNames.map((blobName) => messageAssets.put(blobName, Buffer.alloc(0))));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -433,7 +469,7 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    MockContainerDatabase.set(StorageBucket.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
+    await publicUserAssets.put(blobName, Buffer.alloc(0));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);

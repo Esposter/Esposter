@@ -1,7 +1,7 @@
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readStagedResourceContent } from "#server/services/resource/readStagedResourceContent";
+import { getBucket } from "#server/services/storage/getBucket";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
@@ -37,11 +37,9 @@ describe(readStagedResourceContent, () => {
         [constants.ZSTD_c_windowLog]: getWindowLog(baseline.byteLength, Buffer.byteLength(content)),
       },
     }).toBase64();
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    await writeJsonBlob(containerClient, getContentBlobName(id), baseline.toString());
-    await containerClient
-      .getBlockBlobClient(getStagingContentBlobName(id))
-      .upload(compressedContent, compressedContent.byteLength);
+    const bucket = getBucket(StorageBucket.ResourceAssets);
+    await writeJsonBlob(bucket, getContentBlobName(id), baseline.toString());
+    await bucket.put(getStagingContentBlobName(id), compressedContent);
     const hash = createHash("sha256").update(compressedContent).digest("hex");
     const resource = createResourceListItem({ contentHash: createHash("sha256").update(baseline).digest("hex"), id });
     await bench.compare(

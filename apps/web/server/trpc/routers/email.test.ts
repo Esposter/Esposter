@@ -1,8 +1,10 @@
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
@@ -11,16 +13,20 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
+import { listBlobNames } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, StreamTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
-import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
+import { MockTableDatabase } from "azure-mock";
 import { MjmlNodeType } from "mjml-blocks";
-import { assert, beforeAll, describe, expect, test } from "vitest";
+import { afterAll, assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(emailRouter);
   let caller: DecorateRouterRecord<TRPCRouter["email"]>;
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const name = "name";
   const html = "html";
 
@@ -32,9 +38,15 @@ describe("emailRouter", () => {
       })
     )?.storageBytesUsed;
 
-  beforeAll(() => {
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     caller = getCaller();
     resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("saves and reads content", async () => {
@@ -187,10 +199,8 @@ describe("emailRouter", () => {
     });
     await caller.publishResource({ id: newResource.id });
     const storageBytesUsedWhilePublished = await readStorageBytesUsed(newResource.userId);
-    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
-    assert.exists(container);
-    const readResourceBlobNames = () => [...container.keys()].filter((key) => key.startsWith(`${newResource.id}/`));
-    const storedBlobNamesBeforePurge = readResourceBlobNames();
+    const readResourceBlobNames = () => listBlobNames(bucket, `${newResource.id}/`);
+    const storedBlobNamesBeforePurge = await readResourceBlobNames();
     // The partitions and ledger rows keyed by this email, each read before the purge so it is proved populated
     const readPartitionEntities = (tableName: StreamTable) =>
       [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter(
@@ -215,7 +225,7 @@ describe("emailRouter", () => {
     expect(activityBeforePurge).not.toStrictEqual([]);
     expect(viewsBeforePurge).not.toStrictEqual([]);
     expect(ledgerBeforePurge).not.toStrictEqual([]);
-    expect(readResourceBlobNames()).toStrictEqual([]);
+    await expect(readResourceBlobNames()).resolves.toStrictEqual([]);
     expect(readPartitionEntities(StreamTable.ResourceActivity)).toStrictEqual([]);
     expect(readPartitionEntities(StreamTable.ResourceViews)).toStrictEqual([]);
     await expect(readLedgerEntries()).resolves.toStrictEqual([]);

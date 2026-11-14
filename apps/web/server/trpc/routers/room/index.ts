@@ -5,7 +5,6 @@ import type { CursorPaginationData } from "#shared/models/pagination/cursor/Curs
 import type { RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { escapeLike } from "#server/services/db/escapeLike";
@@ -24,6 +23,9 @@ import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipW
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { lockRoomRow } from "#server/services/room/lockRoomRow";
+import { getBucket } from "#server/services/storage/getBucket";
+import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -50,7 +52,7 @@ import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
 import { updateRoomInputSchema } from "#shared/models/db/room/UpdateRoomInput";
-import { generateWriteSasUrl } from "@esposter/db";
+import { createPresignedPutUrl } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -114,13 +116,11 @@ export const baseRoomRouter = router({
     publicUrl: string;
     sasUrl: string;
   }>(async ({ input: { roomId } }) => {
-    const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
     // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
     // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
     const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${crypto.randomUUID()}`;
-    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-    const sasUrl = await generateWriteSasUrl(blockBlobClient);
-    return { publicUrl: blockBlobClient.url, sasUrl };
+    const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
+    return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
   }),
   joinRoom: standardAuthedProcedure.input(joinRoomInputSchema).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const { room, roomId, user } = await ctx.db.transaction(async (tx) => {
@@ -508,17 +508,17 @@ export const baseRoomRouter = router({
     // Dropped publish orphans a public blob, never the room update
     if (image !== undefined && image !== previousImage)
       await publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {
-        const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
+        const bucket = getBucket(StorageBucket.PublicUserAssets);
         // The age filter decides the whole set, including the version this update drops. Nothing may bypass it:
         // A save carries the image url its form loaded with, which is a *stale* url whenever another admin
         // Uploaded in between — so the row value being replaced is exactly the value that can name the other
         // Admin's seconds-old avatar, and naming it explicitly would delete the live one with no later sweep able
         // To repair it. A version replaced within the window is therefore left for the next image change (or the
         // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
-        const blobNames = await listRoomProfileImageBlobNames(containerClient, id, {
+        const blobNames = await listRoomProfileImageBlobNames(bucket, id, {
           createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
         });
-        return blobNames.filter((blobName) => containerClient.getBlockBlobClient(blobName).url !== image);
+        return blobNames.filter((blobName) => getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) !== image);
       }).match(noop, console.error);
 
     return updatedRoom;

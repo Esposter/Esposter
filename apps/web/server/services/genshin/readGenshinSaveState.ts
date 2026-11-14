@@ -1,6 +1,6 @@
 import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnvelope";
 import type { GenshinSaveState } from "#server/models/genshin/GenshinSaveState";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 
 import { genshinSaveEnvelopeSchema } from "#server/models/genshin/GenshinSaveEnvelope";
 import { getUnreadableSaveError } from "#server/services/blobState/getUnreadableSaveError";
@@ -23,10 +23,7 @@ const parseEnvelope = (json: Buffer): GenshinSaveEnvelope =>
       },
     );
 
-export const readGenshinSaveState = async (
-  containerClient: ContainerClient,
-  userId: string,
-): Promise<GenshinSaveState> => {
-  const { etag, json } = await readBlobState(containerClient, getSaveBlobName(userId));
+export const readGenshinSaveState = async (bucket: R2Bucket, userId: string): Promise<GenshinSaveState> => {
+  const { etag, json } = await readBlobState(bucket, getSaveBlobName(userId));
   return { envelope: json ? parseEnvelope(json) : undefined, etag };
 };

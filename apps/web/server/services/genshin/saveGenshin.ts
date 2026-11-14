@@ -1,11 +1,11 @@
 import type { SaveGenshinInput } from "#server/models/genshin/SaveGenshinInput";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { checkIsGenshinSessionCurrent } from "#server/services/genshin/checkIsGenshinSessionCurrent";
 import { getGenshinSessionReplacedError } from "#server/services/genshin/getGenshinSessionReplacedError";
 import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
+import { getBucket } from "#server/services/storage/getBucket";
 import { StorageBucket, getSaveBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -23,18 +23,18 @@ export const saveGenshin = async (
   userId: string,
   { etag, save, sessionId }: SaveGenshinInput,
 ): Promise<SaveGenshinResult> => {
-  const containerClient = await useContainerClient(StorageBucket.GenshinAssets);
+  const bucket = getBucket(StorageBucket.GenshinAssets);
   const blobName = getSaveBlobName(userId);
   const writeSave = (readEtag: string) =>
-    writeBlobState(containerClient, blobName, JSON.stringify({ save, sessionId }), readEtag);
+    writeBlobState(bucket, blobName, JSON.stringify({ save, sessionId }), readEtag);
   const writtenEtag = await getResultAsync(() => writeSave(etag)).match(
     (written) => written,
     async (error) => {
       // A write refused under its ETag is the blob changed since it was read, the only CONFLICT writeBlobState throws
       if (!(error instanceof TRPCError) || error.code !== "CONFLICT") throw error;
-      const { envelope, etag: currentEtag } = await readGenshinSaveState(containerClient, userId);
+      const { envelope, etag: currentEtag } = await readGenshinSaveState(bucket, userId);
       if (!currentEtag || !checkIsGenshinSessionCurrent(envelope, sessionId)) throw getGenshinSessionReplacedError();
-      return writeGenshinSaveEnvelope(containerClient, userId, { save, sessionId }, currentEtag);
+      return writeGenshinSaveEnvelope(bucket, userId, { save, sessionId }, currentEtag);
     },
   );
   return { etag: writtenEtag, serverNow: Temporal.Now.instant().toString() };

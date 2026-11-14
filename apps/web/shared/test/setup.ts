@@ -53,6 +53,10 @@ vi.mock(
   import("#server/composables/scheduler/useScheduler"),
   () => import("#server/composables/scheduler/useScheduler.test"),
 );
+
+// A bucket binding is read through the Worker's env, which Node does not have. Its buckets are made by the suite that
+// Uses them, into the mock's own record, so the read stays synchronous as the binding is
+vi.mock(import("#server/services/storage/getBucket"), () => import("#server/services/storage/getBucket.test"));
 // The better-auth session is registered here rather than beside the context helpers: it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));

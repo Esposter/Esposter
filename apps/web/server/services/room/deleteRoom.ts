@@ -1,12 +1,12 @@
 import type { Context } from "#server/trpc/context";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
-import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { ownedBy } from "#server/services/db/ownedBy";
 import { roomEventEmitter } from "#server/services/message/events/roomEventEmitter";
+import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
+import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
+import { getBucket } from "#server/services/storage/getBucket";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { StorageBucket, DatabaseEntityType, roomsInMessage } from "@esposter/db-schema";
 import { noop, Operation } from "@esposter/shared";
@@ -32,8 +32,8 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
     publishBlobPrefixDeletion(StorageBucket.MessageAssets, id, undefined).match(noop, console.error),
     // Profile images are a handful, so their listing stays a resolved list rather than a prefix walk
     publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {
-      const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
-      return listRoomProfileImageBlobNames(containerClient, id);
+      const bucket = getBucket(StorageBucket.PublicUserAssets);
+      return listRoomProfileImageBlobNames(bucket, id);
     }).match(noop, console.error),
   ]);
   return deletedRoom;

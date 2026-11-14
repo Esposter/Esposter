@@ -1,47 +1,50 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { createSnapshotObjectStore } from "#server/services/resource/snapshot/createSnapshotObjectStore";
-import { MockRestError } from "azure-mock";
-import { describe, expect, test, vi } from "vitest";
+import { createMockBucket } from "@esposter/db-mock";
+import { StorageBucket } from "@esposter/db-schema";
+import { afterAll, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
+const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
 
-vi.mock(import("#server/composables/azure/container/useContainerClient"), () => ({
-  useContainerClient: () => Promise.resolve(containerClientMock.current),
-}));
+vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 describe(createSnapshotObjectStore, () => {
   const resourceId: ResourceInResource["id"] = crypto.randomUUID();
   const hash = "hash";
   const bytes = new Uint8Array(1);
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
 
-  const getObjectStore = (uploadError: Error) => {
-    containerClientMock.current = {
-      getBlockBlobClient: () => ({ upload: () => Promise.reject(uploadError) }),
-    } as unknown as ContainerClient;
-    return createSnapshotObjectStore(resourceId);
-  };
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+  });
 
-  // A single-shot upload violates `ifNoneMatch: "*"` as 409, Put Blob's own special case for a create-only
-  // Write. A multi-block upload staged and committed separately violates the same condition as the generic 412
-  // Every other conditional write uses — both mean the same thing: this write's twin landed first
-  test.each([
-    ["single-shot upload", 409],
-    ["staged block list commit", 412],
-  ])("reports a %s conflict as a deduplicated write rather than throwing", async (_title, statusCode) => {
+  beforeEach(() => {
+    bucketMock.current = bucket;
+  });
+
+  afterAll(async () => {
+    await dispose();
+  });
+
+  // Write-once: the second write of an address finds the first one stored, and is told so rather than overwriting it
+  test("reports a write to an address already stored as a deduplicated write rather than throwing", async () => {
     expect.hasAssertions();
 
-    const objectStore = await getObjectStore(new MockRestError("", statusCode));
+    const objectStore = await createSnapshotObjectStore(resourceId);
 
+    await expect(objectStore.write(hash, bytes)).resolves.toBe(true);
     await expect(objectStore.write(hash, bytes)).resolves.toBe(false);
   });
 
-  test("rethrows an upload failure that is not a conditional-write conflict", async () => {
+  test("rethrows an upload failure", async () => {
     expect.hasAssertions();
 
-    const uploadError = new MockRestError("", 503);
-    const objectStore = await getObjectStore(uploadError);
+    const uploadError = new Error("upload failed");
+    bucketMock.current = { put: () => Promise.reject(uploadError) } as unknown as R2Bucket;
+    const objectStore = await createSnapshotObjectStore(resourceId);
 
     await expect(objectStore.write(hash, bytes)).rejects.toBe(uploadError);
   });

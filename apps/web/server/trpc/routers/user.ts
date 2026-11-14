@@ -12,7 +12,6 @@ import type {
 import type { SetNonNullable } from "type-fest";
 
 import { auth } from "#server/auth";
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { on } from "#server/services/events/on";
 import { checkIsServableCallBackground } from "#server/services/message/call/checkIsServableCallBackground";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
@@ -21,6 +20,9 @@ import { getDetectedUserStatus } from "#server/services/message/getDetectedUserS
 import { getJobQueue } from "#server/services/queue/getJobQueue";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/queue/publishBlobPrefixDeletion";
+import { getBucket } from "#server/services/storage/getBucket";
+import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
@@ -42,7 +44,7 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { generateReadSasUrl, generateWriteSasUrl } from "@esposter/db";
+import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -125,14 +127,15 @@ export const userRouter = router({
           JSON.stringify({ mimetype, size }),
         );
 
-      const containerClient = await useContainerClient(StorageBucket.UserAssets);
       // No listing stands between the request and the target: the slot is already bounded by its schema, and a
       // Count read here could only ever be out of date - a delete is reclaimed by a worker, so a slot freed a
       // Moment ago would still read as taken and refuse the replacement the user just made room for
-      const blockBlobClient = containerClient.getBlockBlobClient(
+      return createPresignedPutUrl(
+        getStorageCredentials(),
+        StorageBucket.UserAssets,
         getCallBackgroundBlobName(ctx.getSessionPayload.user.id, slot),
+        mimetype,
       );
-      return generateWriteSasUrl(blockBlobClient, { contentType: mimetype });
     }),
   // An export that is another person's is not found rather than refused, so its existence is not disclosed. The
   // Readiness and expiry checks are the service's, since they read the row the same way for every caller
@@ -150,11 +153,9 @@ export const userRouter = router({
     }),
   generateProfileImageUploadUrl: standardAuthedProcedure.mutation<{ publicUrl: string; sasUrl: string }>(
     async ({ ctx }) => {
-      const containerClient = await useContainerClient(StorageBucket.PublicUserAssets);
       const blobName = getUserProfileImageBlobName(ctx.getSessionPayload.user.id);
-      const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-      const sasUrl = await generateWriteSasUrl(blockBlobClient);
-      return { publicUrl: blockBlobClient.url, sasUrl };
+      const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
+      return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
     },
   ),
   onUpsertStatus: standardAuthedProcedure.input(userStatusIdsInputSchema).subscription(async function* ({
@@ -172,8 +173,8 @@ export const userRouter = router({
   }),
   readCallBackgrounds: standardAuthedProcedure.query<CallBackground[]>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    const containerClient = await useContainerClient(StorageBucket.UserAssets);
-    const callBackgroundBlobs = await readCallBackgroundBlobs(containerClient, userId);
+    const bucket = getBucket(StorageBucket.UserAssets);
+    const callBackgroundBlobs = await readCallBackgroundBlobs(bucket, userId);
     // Partitioned in one pass rather than filtered twice, so the cap is applied to each slot exactly once
     const servableCallBackgroundBlobs: CallBackgroundBlob[] = [];
     const unservableBlobNames: string[] = [];
@@ -186,7 +187,7 @@ export const userRouter = router({
     await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
     return Promise.all(
       servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
-        sasUrl: await generateReadSasUrl(containerClient.getBlockBlobClient(name)),
+        sasUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
         slot,
       })),
     );

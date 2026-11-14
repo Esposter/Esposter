@@ -1,28 +1,36 @@
 import type { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import type { Context } from "#server/trpc/context";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
+import type { StorageCredentials } from "@esposter/db";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
+import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockRestError } from "azure-mock";
 import { createHash } from "node:crypto";
-import { Readable } from "node:stream";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { containerClientMock, reserveStorageBytesMock, setMetadataMock } = vi.hoisted(() => ({
-  containerClientMock: {} as { current: ContainerClient },
+const { bucketMock, reserveStorageBytesMock } = vi.hoisted(() => ({
+  bucketMock: {} as { current: R2Bucket },
   reserveStorageBytesMock: vi.fn<typeof reserveStorageBytes>(),
-  setMetadataMock: vi.fn<(blobName: string, metadata: Record<string, string>) => void>(),
 }));
 
-vi.mock(import("#server/composables/azure/container/useContainerClient"), () => ({
-  useContainerClient: () => Promise.resolve(containerClientMock.current),
-}));
+vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 vi.mock(import("#server/services/storage/reserveStorageBytes"), () => ({
   reserveStorageBytes: reserveStorageBytesMock,
 }));
+
+// The signature is the only part a test cannot check without the account's credentials, so it is stood in for by a url
+// Naming the object
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    createPresignedPutUrl: (_credentials: StorageCredentials, _bucketName: StorageBucket, objectKey: string) =>
+      Promise.resolve(`https://sas.example/${objectKey}`),
+  };
+});
 
 describe(generateReservedResourceAssetSasEntities, () => {
   const userId = crypto.randomUUID();
@@ -33,49 +41,31 @@ describe(generateReservedResourceAssetSasEntities, () => {
   const blobName = `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
   const file = { hash, mimetype: "image/png", size: bytes.byteLength };
   const db = {} as Context["db"];
-  // The blobs Azure already holds, with the bytes each one stores. A PUT that lands is what adds to it, so a case marks one
-  // Held the way an upload would
-  let storedBlobs: Map<string, Uint8Array>;
-  // The blobs a touch finds already deleted, so the touch answers not found
-  let goneBlobNames: Set<string>;
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
 
-  beforeEach(() => {
-    storedBlobs = new Map();
-    goneBlobNames = new Set();
-    containerClientMock.current = {
-      getBlobClient: (name: string) => ({
-        setMetadata: (metadata: Record<string, string>) => {
-          setMetadataMock(name, metadata);
-          return storedBlobs.has(name) && !goneBlobNames.has(name)
-            ? Promise.resolve({})
-            : Promise.reject(new MockRestError("", 404));
-        },
-      }),
-      getBlockBlobClient: (name: string) => ({
-        deleteIfExists: () => {
-          storedBlobs.delete(name);
-          return Promise.resolve({ succeeded: true });
-        },
-        download: () => {
-          const stored = storedBlobs.get(name);
-          return stored
-            ? Promise.resolve({ etag: "etag", readableStreamBody: Readable.from([stored]) })
-            : Promise.reject(new MockRestError("", 404));
-        },
-        generateSasUrl: () => Promise.resolve(`https://sas.example/${name}`),
-      }),
-    } as unknown as ContainerClient;
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
   });
 
-  afterEach(() => {
+  beforeEach(() => {
+    bucketMock.current = bucket;
+  });
+
+  afterEach(async () => {
     vi.useRealTimers();
+    await bucket.delete(blobName);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("uploading the same bytes twice gives one address", async () => {
     expect.hasAssertions();
 
     const firstEntity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
-    storedBlobs.set(blobName, bytes);
+    await bucket.put(blobName, bytes);
     const secondEntity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(firstEntity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
@@ -94,19 +84,22 @@ describe(generateReservedResourceAssetSasEntities, () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
-    storedBlobs.set(blobName, bytes);
+    await bucket.put(blobName, bytes);
     const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
-    expect(setMetadataMock).toHaveBeenCalledExactlyOnceWith(blobName, { touchedAt: new Date(0).toISOString() });
+    expect((await bucket.head(blobName))?.customMetadata).toStrictEqual({ touchedAt: new Date(0).toISOString() });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, []);
   });
 
   test("a held asset whose blob disappears before the touch is uploaded again", async () => {
     expect.hasAssertions();
 
-    storedBlobs.set(blobName, bytes);
-    goneBlobNames.add(blobName);
+    // The hash check reads the blob, and the touch that follows finds it gone
+    let reads = 0;
+    bucketMock.current = {
+      get: () => Promise.resolve(reads++ === 0 ? { body: new Response(bytes).body } : null),
+    } as unknown as R2Bucket;
     const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
@@ -120,11 +113,10 @@ describe(generateReservedResourceAssetSasEntities, () => {
   test("a held address whose stored bytes do not hash to it is removed and uploaded again", async () => {
     expect.hasAssertions();
 
-    storedBlobs.set(blobName, Uint8Array.of(1));
+    await bucket.put(blobName, Uint8Array.of(1));
     const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
 
     expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
-    expect(storedBlobs.has(blobName)).toBe(false);
-    expect(setMetadataMock).not.toHaveBeenCalled();
+    expect(await bucket.head(blobName)).toBeNull();
   });
 });

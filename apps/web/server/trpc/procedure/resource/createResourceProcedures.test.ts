@@ -1,13 +1,13 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
-
+import type { R2Bucket, R2Object } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { authMocks, createMockSession } from "#server/auth.test";
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
@@ -28,10 +28,10 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
 import { AZURE_MAX_PAGE_SIZE } from "@esposter/azure";
 import type { Clause } from "@esposter/db-schema";
-import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
+import { deleteDirectory, getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   StorageBucket,
   QueueJob,
@@ -46,17 +46,10 @@ import {
   CompositeKeyPropertyNames,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
-import {
-  getBlobUrl,
-  MockBlobClient,
-  MockContainerDatabase,
-  MockRestError,
-  MockTableClient,
-  MockTableDatabase,
-} from "azure-mock";
+import { MockTableClient, MockTableDatabase } from "azure-mock";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 // The generic resource-procedure matrix is covered ONCE here (via a publishable representative type);
@@ -67,6 +60,8 @@ describe(createResourceProcedures, () => {
   let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   // Dashboard is the publishable representative; Webpage is the FileAssets one
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
   const name = "name";
   const apiKeyName = "apiKeyName";
   const updatedName = "updatedName";
@@ -77,18 +72,21 @@ describe(createResourceProcedures, () => {
   // Back the hash its commit names
   const stageContent = async (id: string, compressedContent: Buffer) => {
     await dashboardCaller.generateUploadContentSasUrl({ id, size: compressedContent.byteLength });
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    await containerClient
-      .getBlockBlobClient(getStagingContentBlobName(id))
-      .upload(compressedContent, compressedContent.byteLength);
+    await bucket.put(getStagingContentBlobName(id), compressedContent);
     return createHash("sha256").update(compressedContent).digest("hex");
   };
 
   beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // Off the epoch, which a channel with no age limit cuts off at: a version written at the epoch is not newer than it
@@ -98,7 +96,7 @@ describe(createResourceProcedures, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     MockTableDatabase.clear();
     // Cascade removes any resourcePublications rows too
@@ -301,8 +299,7 @@ describe(createResourceProcedures, () => {
       contentVersion: 0,
       id: newResource.id,
     });
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    const baseline = await readJsonBlob(containerClient, getContentBlobName(newResource.id));
+    const baseline = await readJsonBlob(bucket, getContentBlobName(newResource.id));
     assert.exists(baseline);
     const dashboard = new Dashboard({ visuals: [new Visual()] });
     const delta = zstdCompressSync(JSON.stringify(dashboard), { dictionary: baseline }).toBase64();
@@ -313,7 +310,7 @@ describe(createResourceProcedures, () => {
       id: newResource.id,
     });
     const content = await dashboardCaller.readResourceContent({ id: newResource.id });
-    const storedContent = await readJsonBlob(containerClient, getContentBlobName(newResource.id));
+    const storedContent = await readJsonBlob(bucket, getContentBlobName(newResource.id));
     assert.exists(storedContent);
 
     expect(savedResource.contentHash).toBe(createHash("sha256").update(baseline).digest("hex"));
@@ -365,9 +362,7 @@ describe(createResourceProcedures, () => {
 
     expect(updatedResource.contentVersion).toBe(1);
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(dashboard)));
-    expect(
-      MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(getStagingContentBlobName(newResource.id)),
-    ).toBe(false);
+    await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toBeNull();
     // The content blob's own charge is all that is left
     expect(storageLedgerEntries.map(({ blobName }) => blobName)).toStrictEqual([getContentBlobName(newResource.id)]);
   });
@@ -391,26 +386,26 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
-    const compressedContent = gzipSync(JSON.stringify(new Dashboard()));
-    const stagedHash = await stageContent(newResource.id, compressedContent);
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    const { etag } = await containerClient
-      .getBlockBlobClient(getStagingContentBlobName(newResource.id))
-      .getProperties();
-    const downloadToBuffer = vi
-      .spyOn(MockBlobClient.prototype, "downloadToBuffer")
-      .mockRejectedValueOnce(new MockRestError("", 412));
+    const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
+    const replacement = gzipSync(JSON.stringify(new Dashboard({ visuals: [new Visual()] })));
+    // Another upload lands on the staged name between its measurement and its download
+    const measure = bucket.head.bind(bucket);
+    vi.spyOn(bucket, "head").mockImplementationOnce(async (blobName) => {
+      const measured = await measure(blobName);
+      await bucket.put(blobName, replacement);
+      return measured;
+    });
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Update, name: Resource, staged content does not match its hash]`,
     );
-    expect(downloadToBuffer).toHaveBeenCalledWith(0, compressedContent.byteLength, { conditions: { ifMatch: etag } });
     await expect(resourceCaller.readResource({ id: newResource.id })).resolves.toHaveProperty("contentVersion", 0);
-    expect(
-      MockContainerDatabase.get(StorageBucket.ResourceAssets)?.get(getStagingContentBlobName(newResource.id)),
-    ).toStrictEqual(compressedContent);
+    await expect(bucket.head(getStagingContentBlobName(newResource.id))).resolves.toHaveProperty(
+      "size",
+      replacement.byteLength,
+    );
   });
 
   test("fails commit staged content larger than the content limit", async () => {
@@ -418,10 +413,10 @@ describe(createResourceProcedures, () => {
 
     const newResource = await dashboardCaller.createResource({ name });
     const stagedHash = await stageContent(newResource.id, gzipSync(JSON.stringify(new Dashboard())));
-    vi.spyOn(MockBlobClient.prototype, "getProperties").mockResolvedValueOnce({
-      _response: { headers: {}, request: {}, status: 200 },
-      contentLength: MAX_RESOURCE_CONTENT_SIZE + 1,
-    } as Awaited<ReturnType<MockBlobClient["getProperties"]>>);
+    vi.spyOn(bucket, "head").mockResolvedValueOnce({
+      etag: '"measured"',
+      size: MAX_RESOURCE_CONTENT_SIZE + 1,
+    } as R2Object);
 
     await expect(
       dashboardCaller.saveStagedResourceContent({ contentVersion: 0, hash: stagedHash, id: newResource.id }),
@@ -613,15 +608,14 @@ describe(createResourceProcedures, () => {
     expect(MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion)?.length ?? 0).toBe(publishedEventCount);
   });
 
-  // The snapshot's blob is still in the mock, so the rejection a swept snapshot raises from the live
-  // `BlobClient.download()` is injected here
+  // The published version's objects are swept out from under its row, which the read answers as an absent version
   test("fails read published content with a swept snapshot", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
     await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
     await dashboardCaller.publishResource({ id: newResource.id });
-    vi.spyOn(MockBlobClient.prototype, "download").mockRejectedValue(new MockRestError("", 404));
+    await deleteDirectory(bucket);
 
     await expect(
       dashboardCaller.readPublishedResourceContent(newResource.id),
@@ -756,9 +750,8 @@ describe(createResourceProcedures, () => {
     });
 
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    const blobUrl = getBlobUrl(StorageBucket.ResourceAssets, blobName);
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(blobUrl) }]);
+    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: expect.stringContaining(`/${blobName}?`) }]);
   });
 
   test("fails generate upload file sas entities with wrong user", async () => {
@@ -779,7 +772,7 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await bucket.put(blobName, Buffer.alloc(1));
 
     await webpageCaller.deleteFile({ blobPath: hash, id: newResource.id });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion) ?? [];
@@ -791,24 +784,24 @@ describe(createResourceProcedures, () => {
         decidedAt: new Date(Date.now() - ASSET_DECISION_CLOCK_MARGIN_MS),
       },
     ]);
-    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.has(blobName)).toBe(true);
+    await expect(bucket.head(blobName)).resolves.not.toBeNull();
   });
 
-  // A version naming an asset the container no longer holds is refused, so a publish that races a file's delete cannot
+  // A version naming an asset the bucket no longer holds is refused, so a publish that races a file's delete cannot
   // Store a page whose image is gone
   test("publishing a version whose asset was just deleted fails", async () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await bucket.put(blobName, Buffer.alloc(1));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });
     // Deleted after the working copy named it, as the file delete does before the release decides on it
-    MockContainerDatabase.get(StorageBucket.ResourceAssets)?.delete(blobName);
+    await bucket.delete(blobName);
 
     await expect(webpageCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Invalid operation: Create, name: Resource, cannot store content naming a missing asset]`,
@@ -820,23 +813,19 @@ describe(createResourceProcedures, () => {
 
     const newResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
-    MockContainerDatabase.set(StorageBucket.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+    await bucket.put(blobName, Buffer.alloc(1));
     await webpageCaller.saveResourceContent({
       content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });
-    // A pass-through spy: the real mock write runs, and the spy records which blobs the publish touched
-    const touchedBlobNames: string[] = [];
-    const setMetadata = MockBlobClient.prototype.setMetadata;
-    vi.spyOn(MockBlobClient.prototype, "setMetadata").mockImplementation(function (this: MockBlobClient, metadata) {
-      touchedBlobNames.push(this.name);
-      return setMetadata.call(this, metadata);
-    });
 
     await webpageCaller.publishResource({ id: newResource.id });
 
-    expect(touchedBlobNames).toStrictEqual([blobName]);
+    // A touch rewrites the asset under its own name, stamping the time the publish touched it
+    const touchedAsset = await bucket.head(blobName);
+    assert.exists(touchedAsset);
+    expect(touchedAsset.customMetadata).toHaveProperty("touchedAt");
   });
 
   test("omits file asset procedures for types without the capability", () => {

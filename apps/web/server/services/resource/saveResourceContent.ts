@@ -4,7 +4,6 @@ import type { SaveResourceContentInput } from "#server/models/resource/SaveResou
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getDevice } from "#server/services/auth/getDevice";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
@@ -19,6 +18,7 @@ import { releaseResourceAssets } from "#server/services/resource/snapshot/releas
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { chargeAndEmitStorageLedgerEntry } from "#server/services/storage/chargeAndEmitStorageLedgerEntry";
+import { getBucket } from "#server/services/storage/getBucket";
 import { SNAPSHOT_INTERVAL_MS, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
@@ -86,11 +86,15 @@ export const saveResourceContent = async (
   // What the owner is charged: the length the compressed blob takes at rest, not the JSON's
   let storedContentSize = 0;
   const serializedContent = JSON.stringify(parsedContent);
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   const contentBlobName = getContentBlobName(id);
   const writeContentBlob = async () => {
     isContentBlobWriteAttempted = true;
-    storedContentSize = (await writeJsonBlob(containerClient, contentBlobName, serializedContent)).size;
+    const storedContentBlob = await writeJsonBlob(bucket, contentBlobName, serializedContent);
+    // Unconditional, so the bucket answers the object it stored, and a null here is a fault rather than a result
+    if (!storedContentBlob)
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The write answered no object" });
+    storedContentSize = storedContentBlob.size;
   };
   // What the blob holds once decoded: the hash so the client can tell whether the bytes it sent are the bytes
   // Stored — a delta save is computed against exactly these — and the size a read picks its transport by, both of

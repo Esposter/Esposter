@@ -2,31 +2,44 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { BlobDeletionQueueMessage, ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { getSnapshotSummary } from "#server/services/resource/snapshot/getSnapshotSummary";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
+import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { SnapshotChannelDefinitionMap } from "#shared/services/resource/SnapshotChannelDefinitionMap";
-import { getContentBlobName, writeJsonBlob } from "@esposter/db";
-import { QueueJob, resourcesInResource, ResourceType, resourceVersionsInResource, SnapshotChannel, SnapshotReason, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { deleteDirectory, getContentBlobName, writeJsonBlob } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
+import {
+  QueueJob,
+  StorageBucket,
+  resourcesInResource,
+  ResourceType,
+  resourceVersionsInResource,
+  SnapshotChannel,
+  SnapshotReason,
+  storageLedgerInStorage,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const seedContentBlob = async (id: ResourceInResource["id"], content: string) => {
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-  await writeJsonBlob(containerClient, getContentBlobName(id), content);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  await writeJsonBlob(bucket, getContentBlobName(id), content);
 };
 
 describe(takeResourceRevision, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
   const name = "name";
   const serializedContent = JSON.stringify({ items: [] });
   // Content that shares nothing with the empty list, so a version holding it promotes to a keyframe of its own
@@ -50,6 +63,8 @@ describe(takeResourceRevision, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -64,11 +79,15 @@ describe(takeResourceRevision, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // The reason and the type's own one-line summary are what make a row choosable, and both are columns so the
@@ -87,8 +106,6 @@ describe(takeResourceRevision, () => {
     const snapshotVersions = await readSnapshotHistory(mockContext.db, resource.id, SnapshotChannel.Revisions);
     const resourceVersion = await readResourceVersion(1);
     assert.exists(resourceVersion);
-    const container = MockContainerDatabase.get(StorageBucket.ResourceAssets);
-    assert.exists(container);
 
     // Dated by the row's own default clock, which the database keeps rather than the pinned one
     expect(takeOne(snapshotVersions)).toStrictEqual({
@@ -101,7 +118,7 @@ describe(takeResourceRevision, () => {
     });
     // Charged for what the object cost to store rather than for a copy of the document
     expect(resourceVersion.storedBytes).toBe(
-      container.get(getSnapshotObjectBlobName(resource.id, resourceVersion.hash))?.byteLength,
+      (await bucket.head(getSnapshotObjectBlobName(resource.id, resourceVersion.hash)))?.size,
     );
     await expect(readStorageBytesUsed()).resolves.toBe(resourceVersion.storedBytes);
   });

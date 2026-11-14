@@ -1,7 +1,6 @@
 import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmojiWithSasUrl";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getDevice } from "#server/services/auth/getDevice";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
@@ -12,6 +11,8 @@ import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEm
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { roomEmojiEventEmitter } from "#server/services/message/events/roomEmojiEventEmitter";
 import { lockRoomRow } from "#server/services/room/lockRoomRow";
+import { getBucket } from "#server/services/storage/getBucket";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -23,7 +24,7 @@ import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRo
 import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
 import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
-import { generateWriteSasUrl } from "@esposter/db";
+import { createPresignedPutUrl } from "@esposter/db";
 import {
   StorageBucket,
   DatabaseEntityType,
@@ -34,7 +35,7 @@ import {
   roomIdSchema,
   RoomPermission,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, Operation } from "@esposter/shared";
+import { noop, Operation } from "@esposter/shared";
 import { and, notExists } from "drizzle-orm";
 
 export const emojiRouter = router({
@@ -44,16 +45,13 @@ export const emojiRouter = router({
     "roomId",
     RateLimiterType.Slow,
   ).mutation<RoomEmojiWithSasUrl>(async ({ ctx, input: { id, name, roomId } }) => {
-    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
+    const bucket = getBucket(StorageBucket.MessageAssets);
     // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
     // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
     // The declared size is an input check the client could lie about, so the row is only created for a blob
     // Whose bytes are actually within the cap — a write SAS cannot constrain what is PUT through it
-    const uploadedProperties = await getResultAsync(() =>
-      containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id)).getProperties(),
-    );
-    const contentLength = uploadedProperties.unwrapOr(undefined)?.contentLength;
-    if (contentLength === undefined || contentLength > MAX_ROOM_EMOJI_SIZE_BYTES)
+    const uploadedObject = await bucket.head(getRoomEmojiBlobName(roomId, id));
+    if (!uploadedObject || uploadedObject.size > MAX_ROOM_EMOJI_SIZE_BYTES)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
 
     if (checkIsUnicodeEmojiSlug(name))
@@ -82,7 +80,7 @@ export const emojiRouter = router({
         roomEmojiContext,
       );
     });
-    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(containerClient, newRoomEmoji);
+    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
     roomEmojiEventEmitter.emit("createRoomEmoji", [roomEmojiWithSasUrl, getDevice(ctx.getSessionPayload)]);
     return roomEmojiWithSasUrl;
   }),
@@ -130,9 +128,13 @@ export const emojiRouter = router({
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
     const id: string = crypto.randomUUID();
-    const containerClient = await useContainerClient(StorageBucket.MessageAssets);
-    const blockBlobClient = containerClient.getBlockBlobClient(getRoomEmojiBlobName(roomId, id));
-    return { id, sasUrl: await generateWriteSasUrl(blockBlobClient, { contentType: mimetype }) };
+    const sasUrl = await createPresignedPutUrl(
+      getStorageCredentials(),
+      StorageBucket.MessageAssets,
+      getRoomEmojiBlobName(roomId, id),
+      mimetype,
+    );
+    return { id, sasUrl };
   }),
   onCreateRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "createRoomEmoji", ({ roomId }) => roomId),
   onDeleteRoomEmoji: getRoomEventSubscription(roomEmojiEventEmitter, "deleteRoomEmoji", ({ roomId }) => roomId),
@@ -141,11 +143,8 @@ export const emojiRouter = router({
   // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
   readRoomEmojis: getMemberProcedure(roomIdSchema, "roomId").query<RoomEmojiWithSasUrl[]>(
     async ({ ctx, input: { roomId } }) => {
-      const [roomEmojis, containerClient] = await Promise.all([
-        ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } }),
-        useContainerClient(StorageBucket.MessageAssets),
-      ]);
-      return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(containerClient, roomEmoji)));
+      const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
+      return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, roomEmoji)));
     },
   ),
   updateRoomEmoji: getPermissionsProcedure(

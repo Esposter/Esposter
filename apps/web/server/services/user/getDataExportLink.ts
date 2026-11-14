@@ -1,9 +1,9 @@
 import type { DataExportInUser } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
-import { generateReadSasUrl } from "@esposter/db";
+import { createPresignedGetUrl } from "@esposter/db";
 import { StorageBucket, DatabaseEntityType, DataExportStatus } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
@@ -13,8 +13,7 @@ export const getDataExportLink = async ({ blobName, expiresAt, id, status }: Dat
   if (status !== DataExportStatus.Ready || !blobName || !expiresAt || expiresAt <= new Date())
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, id);
 
-  const containerClient = await useContainerClient(StorageBucket.UserAssets);
-  return generateReadSasUrl(containerClient.getBlockBlobClient(blobName), {
-    expiresOn: new Date(Date.now() + DATA_EXPORT_LINK_DURATION_MS),
+  return createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, blobName, {
+    expiresInMs: DATA_EXPORT_LINK_DURATION_MS,
   });
 };

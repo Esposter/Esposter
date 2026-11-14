@@ -1,13 +1,12 @@
 import type { Transaction } from "#server/models/db/Transaction";
 import type { Context } from "#server/trpc/context";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { lockSnapshotObjects } from "#server/services/resource/snapshot/lockSnapshotObjects";
+import { getBucket } from "#server/services/storage/getBucket";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
-import { checkIsNotFound } from "@esposter/db";
 import {
   StorageBucket,
   getResourceFileBlobName,
@@ -15,20 +14,14 @@ import {
   resourceVersionAssetsInResource,
   resourceWorkingAssetsInResource,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, settleAll } from "@esposter/shared";
+import { noop, settleAll } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // A candidate written inside the grace window is kept, since an upload that dedupes onto it has just touched it and the
 // Save naming it may not be stored yet. A blob already gone has no window to keep
-const checkIsWithinGrace = async (containerClient: ContainerClient, blobName: string) => {
-  const lastModified = await getResultAsync(() => containerClient.getBlobClient(blobName).getProperties()).match(
-    (properties) => properties.lastModified,
-    (error) => {
-      if (checkIsNotFound(error)) return undefined;
-      throw error;
-    },
-  );
-  return lastModified !== undefined && Date.now() - lastModified.getTime() < ASSET_GRACE_MS;
+const checkIsWithinGrace = async (bucket: R2Bucket, blobName: string) => {
+  const object = await bucket.head(blobName);
+  return object !== null && Date.now() - object.uploaded.getTime() < ASSET_GRACE_MS;
 };
 // The one release every path takes: an eviction, an unpublish, a file delete and a content write each name the asset
 // Hashes they may have just left unreferenced. A candidate is deleted only when no version row and no working-copy row
@@ -59,11 +52,11 @@ export const releaseResourceAssets = async (
     ]);
     const unclaimedHashes = [...new Set(candidateHashes)].filter((hash) => !survivors.has(hash));
 
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+    const bucket = getBucket(StorageBucket.ResourceAssets);
     const graceChecks = await settleAll(
       unclaimedHashes.map((hash) => async () => ({
         hash,
-        isWithinGrace: await checkIsWithinGrace(containerClient, getResourceFileBlobName(resourceId, hash)),
+        isWithinGrace: await checkIsWithinGrace(bucket, getResourceFileBlobName(resourceId, hash)),
       })),
       MAX_CONCURRENT_BLOB_COPIES,
     );

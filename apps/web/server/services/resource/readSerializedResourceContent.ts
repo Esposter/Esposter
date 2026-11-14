@@ -1,12 +1,12 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getBucket } from "#server/services/storage/getBucket";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
 
 // The working copy as the JSON it was serialized to, undefined for a resource created and never saved
 export const readSerializedResourceContent = async (id: ResourceInResource["id"]): Promise<string | undefined> => {
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-  const serializedContent = await readJsonBlob(containerClient, getContentBlobName(id));
+  const bucket = getBucket(StorageBucket.ResourceAssets);
+  const serializedContent = await readJsonBlob(bucket, getContentBlobName(id));
   return serializedContent?.toString();
 };

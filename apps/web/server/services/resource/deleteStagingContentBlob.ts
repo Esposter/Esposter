@@ -1,9 +1,9 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
+import { getBucket } from "#server/services/storage/getBucket";
 import { deleteStorageBlobs } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -12,16 +12,10 @@ import { getResultAsync, noop } from "@esposter/shared";
 // Owner is charged for the content blob alone. Best-effort: the save has already landed, and a blob left here is
 // Overwritten by the next large save or taken by purge with the rest of the directory
 export const deleteStagingContentBlob = async (db: Context["db"], id: ResourceInResource["id"]): Promise<void> => {
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   await getResultAsync(() =>
-    deleteStorageBlobs(
-      db,
-      containerClient,
-      StorageBucket.ResourceAssets,
-      [getStagingContentBlobName(id)],
-      async (userIds) => {
-        await Promise.all(userIds.map((userId) => emitStorageUsage(db, userId)));
-      },
-    ),
+    deleteStorageBlobs(db, bucket, StorageBucket.ResourceAssets, [getStagingContentBlobName(id)], async (userIds) => {
+      await Promise.all(userIds.map((userId) => emitStorageUsage(db, userId)));
+    }),
   ).match(noop, console.error);
 };

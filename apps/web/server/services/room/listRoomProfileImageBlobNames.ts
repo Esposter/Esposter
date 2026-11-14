@@ -1,4 +1,4 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ListBlobNamesOptions } from "@esposter/db";
 import type { RoomInMessage } from "@esposter/db-schema";
 
@@ -6,7 +6,7 @@ import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProf
 import { listBlobNames } from "@esposter/db";
 
 export const listRoomProfileImageBlobNames = (
-  containerClient: ContainerClient,
+  bucket: R2Bucket,
   roomId: RoomInMessage["id"],
   { createdBefore }: ListBlobNamesOptions = {},
-): Promise<string[]> => listBlobNames(containerClient, getRoomProfileImageBlobPrefix(roomId), { createdBefore });
+): Promise<string[]> => listBlobNames(bucket, getRoomProfileImageBlobPrefix(roomId), { createdBefore });

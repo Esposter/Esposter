@@ -1,9 +1,10 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { Database } from "@esposter/db-schema";
 
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { createMockDb } from "@esposter/db-mock";
+import { deleteDirectory, listBlobNames } from "@esposter/db";
+import { createMockBucket, createMockDb } from "@esposter/db-mock";
 import {
   StorageBucket,
   FILES_DIRECTORY_SEGMENT,
@@ -15,14 +16,11 @@ import {
   SnapshotChannel,
   usersInAuth,
 } from "@esposter/db-schema";
-import { MockContainerClient, MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
+const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
 
-vi.mock(import("#server/composables/azure/container/useContainerClient"), () => ({
-  useContainerClient: () => Promise.resolve(containerClientMock.current),
-}));
+vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 // The charge every clone makes is asserted where a real database exists, in the duplicate router test, rather than
 // Faked into this one
@@ -33,11 +31,11 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
     chargeAndCopyBlob: (
       _db: Database,
       _userId: string,
-      _containerName: StorageBucket,
-      containerClient: ContainerClient,
+      _bucketName: StorageBucket,
+      bucket: R2Bucket,
       sourceBlobName: string,
       destinationBlobName: string,
-    ) => original.copyBlob(containerClient, sourceBlobName, destinationBlobName),
+    ) => original.copyBlob(bucket, sourceBlobName, destinationBlobName),
   };
 });
 
@@ -73,28 +71,30 @@ describe(cloneContentAssets, () => {
         usersInAuth: { findFirst: () => Promise.resolve(undefined) },
       },
     }) as unknown as Database;
-  let containerClient: MockContainerClient;
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
+
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+  });
 
   beforeEach(async () => {
-    containerClient = new MockContainerClient("", StorageBucket.ResourceAssets);
-    containerClientMock.current = containerClient as unknown as ContainerClient;
+    bucketMock.current = bucket;
     await Promise.all(
-      [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) =>
-        containerClient.getBlockBlobClient(blobName).upload(blobName, 1),
-      ),
+      [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) => bucket.put(blobName, new Uint8Array(1))),
     );
   });
 
-  afterEach(() => {
-    MockContainerDatabase.clear();
+  afterEach(async () => {
+    await deleteDirectory(bucket);
     vi.restoreAllMocks();
   });
 
-  const getBlobNames = async (prefix: string) => {
-    const blobNames: string[] = [];
-    for await (const { name } of containerClient.listBlobsFlat({ prefix })) blobNames.push(name);
-    return blobNames;
-  };
+  afterAll(async () => {
+    await dispose();
+  });
+
+  const getBlobNames = (prefix: string) => listBlobNames(bucket, prefix);
 
   test("duplicating a document copies its images to the new resource", async () => {
     expect.hasAssertions();
@@ -136,7 +136,7 @@ describe(cloneContentAssets, () => {
   test("skips the copy when the destination already holds the hash", async () => {
     expect.hasAssertions();
 
-    await containerClient.getBlockBlobClient(destinationBlobName).upload(destinationBlobName, 1);
+    await bucket.put(destinationBlobName, new Uint8Array(1));
     const content = { html: `<img src="${getResourceAssetUrl(sourceBlobName)}">` };
     const clonedContent = await cloneContentAssets(
       createDatabase(true),

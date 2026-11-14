@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { R2Bucket } from "@cloudflare/workers-types";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
@@ -7,16 +8,27 @@ import { createMockContext } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { achievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
-import { achievementsInAchievement, ClickerAchievementName } from "@esposter/db-schema";
+import { deleteDirectory } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
+import { achievementsInAchievement, ClickerAchievementName, StorageBucket } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+const { buckets } = vi.hoisted(() => ({ buckets: {} as Record<StorageBucket, R2Bucket> }));
+
+vi.mock(import("#server/services/storage/getBucket"), () => ({
+  getBucket: (storageBucket: StorageBucket) => buckets[storageBucket],
+}));
 
 describe("achievementPlugin", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["_def"]["procedures"]>;
+  let bucket: R2Bucket;
+  let dispose: () => Promise<void>;
 
   beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ClickerAssets));
+    buckets[StorageBucket.ClickerAssets] = bucket;
     mockContext = await createMockContext();
     caller = createCallerFactory(trpcRouter)(mockContext);
   });
@@ -29,8 +41,12 @@ describe("achievementPlugin", () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     await mockContext.db.delete(achievementsInAchievement);
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("mutation succeeds when achievement processing fails", async () => {

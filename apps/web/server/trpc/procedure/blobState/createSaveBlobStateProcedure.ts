@@ -1,8 +1,8 @@
 import type { StorageBucket } from "@esposter/db-schema";
 import type { z } from "zod";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
+import { getBucket } from "#server/services/storage/getBucket";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { getSaveBlobName } from "@esposter/db-schema";
 
@@ -15,9 +15,9 @@ export const createSaveBlobStateProcedure = <TData, TDataInput>(
   inputSchema: z.ZodType<{ data: TData; etag?: string }, { data: TDataInput; etag?: string }>,
 ) =>
   standardAuthedProcedure.input(inputSchema).mutation<{ etag: string }>(async ({ ctx, input }) => {
-    const containerClient = await useContainerClient(container);
+    const bucket = getBucket(container);
     const etag = await writeBlobState(
-      containerClient,
+      bucket,
       getSaveBlobName(ctx.getSessionPayload.user.id),
       JSON.stringify(input.data),
       input.etag,

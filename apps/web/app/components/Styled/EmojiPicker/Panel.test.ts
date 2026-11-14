@@ -16,7 +16,6 @@ import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { getMockSasUrl } from "azure-mock";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
@@ -39,7 +38,7 @@ describe("styledEmojiPickerPanel", () => {
   const customEmoji: CustomEmoji = {
     id: crypto.randomUUID(),
     name,
-    sasUrl: getMockSasUrl("", undefined),
+    sasUrl: "https://example.com/emoji.png",
     slug: name,
     type: EmojiType.Custom,
   };

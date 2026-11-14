@@ -1,8 +1,8 @@
 import type { GenshinSave } from "genshin-world/save";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
+import { getBucket } from "#server/services/storage/getBucket";
 import { transformer } from "#shared/services/trpc/transformer";
 import { StorageBucket, getSaveBlobName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
@@ -30,7 +30,7 @@ const createSave = (bagEntryCount: number): GenshinSave => ({
     quickSwapItemIds: [],
   },
 });
-// Azure acknowledges every write with an ETag, and the next write of the session is conditioned on it
+// R2 acknowledges every write with an ETag, and the next write of the session is conditioned on it
 const getAcknowledgedEtag = (etag: string | undefined) => {
   if (etag === undefined)
     throw new InvalidOperationError(Operation.Update, "genshin save", "the write was acknowledged without an ETag");
@@ -68,14 +68,14 @@ describe(saveGenshin, () => {
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);
     const sessionId = crypto.randomUUID();
-    const containerClient = await useContainerClient(StorageBucket.GenshinAssets);
+    const bucket = getBucket(StorageBucket.GenshinAssets);
     const putUserId = crypto.randomUUID();
     const conflictUserId = crypto.randomUUID();
     const serializedEnvelope = JSON.stringify({ save, sessionId });
     let putEtag = getAcknowledgedEtag(
-      await writeBlobState(containerClient, getSaveBlobName(putUserId), serializedEnvelope, undefined),
+      await writeBlobState(bucket, getSaveBlobName(putUserId), serializedEnvelope, undefined),
     );
-    await writeBlobState(containerClient, getSaveBlobName(conflictUserId), serializedEnvelope, undefined);
+    await writeBlobState(bucket, getSaveBlobName(conflictUserId), serializedEnvelope, undefined);
     await bench.compare(
       bench("PUT under its ETag", async () => {
         const written = await saveGenshin(putUserId, { etag: putEtag, save, sessionId });

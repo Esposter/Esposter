@@ -15,7 +15,6 @@ import {
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
-import { getMockSasUrl } from "azure-mock";
 import { beforeEach, describe, expect, test } from "vitest";
 
 const createMention = (id: string) =>
@@ -26,7 +25,7 @@ describe(useMessageHtml, () => {
   const userId = crypto.randomUUID();
   const roomEmojiId = crypto.randomUUID();
   const name = "name";
-  const sasUrl = getMockSasUrl("", undefined);
+  const sasUrl = "https://example.com/emoji.png";
   const displayName = "displayName";
   const roomEmoji: RoomEmojiWithSasUrl = {
     createdAt: new Date(0),

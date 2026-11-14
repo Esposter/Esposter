@@ -1,9 +1,10 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 
 import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { deleteCreatedResources } from "#server/services/resource/deleteCreatedResources";
 import { createEntity } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   StorageBucket,
   StreamTable,
@@ -12,14 +13,12 @@ import {
   ResourceActivityType,
 } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
-import { MockContainerClient, MockContainerDatabase, MockTableDatabase } from "azure-mock";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { MockTableDatabase } from "azure-mock";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-const { containerClientMock } = vi.hoisted(() => ({ containerClientMock: {} as { current: ContainerClient } }));
+const { bucketMock } = vi.hoisted(() => ({ bucketMock: {} as { current: R2Bucket } }));
 
-vi.mock(import("#server/composables/azure/container/useContainerClient"), () => ({
-  useContainerClient: () => Promise.resolve(containerClientMock.current),
-}));
+vi.mock(import("#server/services/storage/getBucket"), () => ({ getBucket: () => bucketMock.current }));
 
 // Only the row delete is asked of the database here, so the where clause it is handed is the whole contract
 const createContext = () => {
@@ -35,6 +34,8 @@ const readActivityCount = async () => {
 describe(deleteCreatedResources, () => {
   const resourceId = crypto.randomUUID();
   const userId = crypto.randomUUID();
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
   const createActivity = async () => {
     const resourceActivityClient = useStreamTableClient(StreamTable.ResourceActivity);
     await createEntity(
@@ -48,17 +49,21 @@ describe(deleteCreatedResources, () => {
     );
   };
 
+  beforeAll(async () => {
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+  });
+
   beforeEach(() => {
-    containerClientMock.current = new MockContainerClient(
-      "",
-      StorageBucket.ResourceAssets,
-    ) as unknown as ContainerClient;
+    bucketMock.current = bucket;
   });
 
   afterEach(() => {
-    MockContainerDatabase.clear();
     MockTableDatabase.clear();
     vi.restoreAllMocks();
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // The trail is opened at insert time so no create path can forget it, which leaves the rollback holding an
@@ -80,11 +85,11 @@ describe(deleteCreatedResources, () => {
     expect.hasAssertions();
 
     vi.spyOn(console, "error").mockImplementation(noop);
-    containerClientMock.current = {
-      listBlobsFlat: () => {
+    bucketMock.current = {
+      list: () => {
         throw new Error(" ");
       },
-    } as unknown as ContainerClient;
+    } as unknown as R2Bucket;
     await createActivity();
     const { ctx, where } = createContext();
     await deleteCreatedResources(ctx, [resourceId]);

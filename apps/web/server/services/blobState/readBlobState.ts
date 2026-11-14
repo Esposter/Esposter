@@ -1,7 +1,6 @@
-import type { ContainerClient } from "@azure/storage-blob";
+import type { R2Bucket } from "@cloudflare/workers-types";
 
-import { checkIsNotFound, decompressJsonBlob } from "@esposter/db";
-import { getResultAsync } from "@esposter/shared";
+import { decompressJsonBlob } from "@esposter/db";
 
 // A blob's ETag and its stored JSON, from one download: the ETag and the body come off the same response, so the ETag is
 // The one that body was stored under, and a conditional write over it is refused once a later write replaces the body.
@@ -11,17 +10,9 @@ export interface BlobStateRead {
   json?: Buffer;
 }
 
-export const readBlobState = async (containerClient: ContainerClient, blobName: string): Promise<BlobStateRead> => {
-  const downloaded = await getResultAsync(() => containerClient.getBlockBlobClient(blobName).download()).match(
-    (response) => response,
-    (error) => {
-      if (checkIsNotFound(error)) return undefined;
-      throw error;
-    },
-  );
-  if (!downloaded?.readableStreamBody) return {};
-  const compressedJson = Buffer.concat(
-    (await Array.fromAsync(downloaded.readableStreamBody)).map((chunk) => Buffer.from(chunk)),
-  );
-  return { etag: downloaded.etag, json: await decompressJsonBlob(compressedJson) };
+export const readBlobState = async (bucket: R2Bucket, blobName: string): Promise<BlobStateRead> => {
+  const object = await bucket.get(blobName);
+  if (!object) return {};
+  const compressedJson = Buffer.from(await object.arrayBuffer());
+  return { etag: object.etag, json: await decompressJsonBlob(compressedJson) };
 };

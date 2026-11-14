@@ -7,7 +7,6 @@ import { useEmojiStore } from "@/store/message/emoji";
 import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 interface MockSessionValue {
@@ -26,7 +25,6 @@ describe(useEmojiStore, () => {
   });
 
   afterEach(() => {
-    MockContainerDatabase.clear();
     vi.restoreAllMocks();
   });
 

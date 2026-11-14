@@ -1,7 +1,7 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { touchResourceAssetBlob } from "#server/services/resource/touchResourceAssetBlob";
+import { getBucket } from "#server/services/storage/getBucket";
 import { StorageBucket, getResourceFileBlobName, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
 import { settleAll } from "@esposter/shared";
 
@@ -16,11 +16,11 @@ export const touchSnapshotAssets = async (
 ): Promise<Set<string>> => {
   if (assetHashes.size === 0) return new Set();
 
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   const touches = await settleAll(
     Array.from(assetHashes, (hash) => async () => ({
       hash,
-      isStored: await touchResourceAssetBlob(containerClient, getResourceFileBlobName(resourceId, hash)),
+      isStored: await touchResourceAssetBlob(bucket, getResourceFileBlobName(resourceId, hash)),
     })),
     MAX_CONCURRENT_BLOB_COPIES,
   );

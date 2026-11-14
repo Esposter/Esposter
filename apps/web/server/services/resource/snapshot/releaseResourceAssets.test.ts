@@ -2,18 +2,32 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { deleteSnapshotVersions } from "#server/services/resource/snapshot/deleteSnapshotVersions";
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { ASSET_DECISION_CLOCK_MARGIN_MS, ASSET_GRACE_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { getResourceFileBlobName, QueueJob, resourcesInResource, ResourceType, resourceVersionAssetsInResource, resourceVersionsInResource, resourceWorkingAssetsInResource, SnapshotChannel, SnapshotReason, StorageBucket, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { deleteDirectory } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
+import {
+  QueueJob,
+  StorageBucket,
+  getResourceFileBlobName,
+  resourcesInResource,
+  ResourceType,
+  resourceVersionAssetsInResource,
+  resourceVersionsInResource,
+  resourceWorkingAssetsInResource,
+  SnapshotChannel,
+  SnapshotReason,
+  storageLedgerInStorage,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
 import { and, eq } from "drizzle-orm";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 const getFileIdContent = (...fileIds: string[]) => JSON.stringify({ elements: fileIds.map((fileId) => ({ fileId })) });
@@ -22,10 +36,11 @@ describe(releaseResourceAssets, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const otherAssetHash = "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae";
   const assetBytes = new Uint8Array(1);
-  const graceElapsedAt = Temporal.Instant.fromEpochMilliseconds(ASSET_GRACE_MS);
   const getAssetUrl = (hash: string) => getResourceAssetUrl(getResourceFileBlobName(resource.id, hash));
   const getAssetContent = (...hashes: string[]) =>
     JSON.stringify({ sections: hashes.map((hash) => ({ image: getAssetUrl(hash), type: "image" })) });
@@ -36,12 +51,14 @@ describe(releaseResourceAssets, () => {
       { channel: SnapshotChannel.Revisions, reason: SnapshotReason.BeforeImport, version },
       serializedContent,
     );
-  // Uploaded at the moment the clock reads, which is what a re-upload stamps onto the blob
+  // Uploaded at the moment the clock reads, which is what a re-upload stamps onto the object
   const uploadAsset = async (hash: string) => {
-    const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
-    await containerClient
-      .getBlockBlobClient(getResourceFileBlobName(resource.id, hash))
-      .upload(assetBytes, assetBytes.byteLength);
+    await bucket.put(getResourceFileBlobName(resource.id, hash), assetBytes);
+  };
+  // R2 stamps an upload with its own clock, not the one a test fakes, so the grace window is passed by moving the
+  // Clock on from the real time the asset was uploaded at
+  const setGraceElapsed = () => {
+    vi.setSystemTime(Date.now() + ASSET_GRACE_MS);
   };
   const deleteVersion = (version: number) =>
     mockContext.db.transaction((tx) =>
@@ -64,10 +81,11 @@ describe(releaseResourceAssets, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
-    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     resource = takeOne(
       await mockContext.db
         .insert(resourcesInResource)
@@ -79,11 +97,15 @@ describe(releaseResourceAssets, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   test("an asset embedded in a stored version is kept while the version lives", async () => {
@@ -91,7 +113,7 @@ describe(releaseResourceAssets, () => {
 
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -106,7 +128,7 @@ describe(releaseResourceAssets, () => {
     await writeVersion(1, getAssetContent(assetHash));
     await writeVersion(2, getAssetContent(assetHash));
     const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 
@@ -119,7 +141,7 @@ describe(releaseResourceAssets, () => {
 
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(assetHash));
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -132,7 +154,7 @@ describe(releaseResourceAssets, () => {
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(assetHash));
     await writeVersion(2, getFileIdContent());
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -144,7 +166,7 @@ describe(releaseResourceAssets, () => {
 
     await uploadAsset(assetHash);
     await writeVersion(1, getFileIdContent(otherAssetHash));
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -160,7 +182,7 @@ describe(releaseResourceAssets, () => {
 
     await uploadAsset(assetHash);
     await mockContext.db.insert(resourceWorkingAssetsInResource).values({ assetHash, resourceId: resource.id });
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, [assetHash]);
 
@@ -175,7 +197,7 @@ describe(releaseResourceAssets, () => {
     await uploadAsset(assetHash);
     await writeVersion(1, getAssetContent(assetHash));
     const { assetHashes } = await deleteVersion(1);
-    vi.setSystemTime(graceElapsedAt);
+    setGraceElapsed();
 
     await releaseResourceAssets(mockContext.db, resource.id, assetHashes);
 

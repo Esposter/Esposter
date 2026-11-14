@@ -2,7 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { GenerateUploadFileSasEntitiesInput } from "#shared/models/db/message/GenerateUploadFileSasEntitiesInput";
 import type { FileSasEntity, UserInAuth } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
 import { generateUploadFileSasEntities } from "@esposter/db";
 import { StorageBucket } from "@esposter/db-schema";
@@ -16,7 +16,7 @@ export const generateReservedMessageFileSasEntities = async (
   roomId: string,
   files: GenerateUploadFileSasEntitiesInput["files"],
 ): Promise<FileSasEntity[]> =>
-  generateUploadFileSasEntities(await useContainerClient(StorageBucket.MessageAssets), files, roomId, {
+  generateUploadFileSasEntities(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId, {
     reserve: (reservations) => reserveStorageBytes(db, userId, StorageBucket.MessageAssets, reservations),
     withThumbnail: true,
   });

@@ -2,10 +2,11 @@ import type { Context } from "#server/trpc/context";
 import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
 import type { ResourceInResource, UserInAuth } from "@esposter/db-schema";
 
-import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetHeld } from "#server/services/resource/checkIsResourceAssetHeld";
+import { getBucket } from "#server/services/storage/getBucket";
+import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { reserveStorageBytes } from "#server/services/storage/reserveStorageBytes";
-import { generateWriteSasUrl } from "@esposter/db";
+import { createPresignedPutUrl } from "@esposter/db";
 import { StorageBucket, getResourceFileBlobName } from "@esposter/db-schema";
 
 // The write targets for one batch of resource files, each addressed by the hash of its bytes. A file the resource
@@ -21,11 +22,11 @@ export const generateReservedResourceAssetSasEntities = async (
   resourceId: ResourceInResource["id"],
   files: { hash: string; mimetype: string; size: number }[],
 ): Promise<ResourceFileSasEntity[]> => {
-  const containerClient = await useContainerClient(StorageBucket.ResourceAssets);
+  const bucket = getBucket(StorageBucket.ResourceAssets);
   const fileEntries = await Promise.all(
     files.map(async (file) => {
       const blobName = getResourceFileBlobName(resourceId, file.hash);
-      const isHeld = await checkIsResourceAssetHeld(containerClient, blobName, file.hash);
+      const isHeld = await checkIsResourceAssetHeld(bucket, blobName, file.hash);
       return { ...file, blobName, isHeld };
     }),
   );
@@ -43,7 +44,7 @@ export const generateReservedResourceAssetSasEntities = async (
       isHeld,
       sasUrl: isHeld
         ? ""
-        : await generateWriteSasUrl(containerClient.getBlockBlobClient(blobName), { contentType: mimetype }),
+        : await createPresignedPutUrl(getStorageCredentials(), StorageBucket.ResourceAssets, blobName, mimetype),
     })),
   );
 };

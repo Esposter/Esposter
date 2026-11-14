@@ -3,8 +3,11 @@ import type { Context } from "#server/trpc/context";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { deleteDirectory, listBlobNames } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import {
   StorageBucket,
   getResourceFileBlobName,
@@ -16,19 +19,22 @@ import {
   usersInAuth,
 } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
-import { MockBlobClient, MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 
 describe(writeSnapshotVersion, () => {
   let mockContext: Context;
   let ctx: AuthedContext;
   let resource: ResourceInResource;
+  let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+  let dispose: () => Promise<void>;
   const missingAssetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
 
   beforeAll(async () => {
     mockContext = await createMockContext();
     ctx = { ...mockContext, getSessionPayload: getMockSession() };
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
   });
 
   beforeEach(async () => {
@@ -44,11 +50,15 @@ describe(writeSnapshotVersion, () => {
   afterEach(async () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
-    MockContainerDatabase.clear();
+    await deleteDirectory(bucket);
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(resourcesInResource);
     await mockContext.db.delete(storageLedgerInStorage);
     await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
+  afterAll(async () => {
+    await dispose();
   });
 
   // A publish that read content embedding an image, then lost the image to a file delete, must fail here. The version
@@ -73,7 +83,7 @@ describe(writeSnapshotVersion, () => {
       mockContext.db.query.resourceVersionsInResource.findFirst({ where: { resourceId: { eq: resource.id } } }),
     ).resolves.toBeUndefined();
     await expect(mockContext.db.select().from(resourceVersionAssetsInResource)).resolves.toStrictEqual([]);
-    expect(MockContainerDatabase.get(StorageBucket.ResourceAssets)?.size ?? 0).toBe(0);
+    await expect(listBlobNames(bucket, "")).resolves.toStrictEqual([]);
   });
 
   // A touch restarts the grace window of an asset nothing references. The digests are what a document of pasted hashes
@@ -83,7 +93,8 @@ describe(writeSnapshotVersion, () => {
 
     const digests = Array.from({ length: 5 }, (_value, index) => `${index}`.repeat(64));
     const serializedContent = JSON.stringify({ text: digests.join(" ") });
-    const setMetadata = vi.spyOn(MockBlobClient.prototype, "setMetadata");
+    // Each touch reads its object first, so the reads are the requests a touch costs
+    const get = vi.spyOn(bucket, "get");
 
     await writeSnapshotVersion(
       mockContext.db,
@@ -92,9 +103,9 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(setMetadata).toHaveBeenCalledTimes(digests.length);
+    expect(get).toHaveBeenCalledTimes(digests.length);
 
-    setMetadata.mockClear();
+    get.mockClear();
     await writeSnapshotVersion(
       mockContext.db,
       resource,
@@ -102,7 +113,7 @@ describe(writeSnapshotVersion, () => {
       serializedContent,
     );
 
-    expect(setMetadata).not.toHaveBeenCalled();
+    expect(get).not.toHaveBeenCalled();
   });
 
   // The refusal needs to know whether the file is stored, which no row can say. A row named it when the revision was

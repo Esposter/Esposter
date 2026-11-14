@@ -27,7 +27,6 @@ import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { ResourceType } from "@esposter/db-schema";
 import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { getMockSasUrl } from "azure-mock";
 import { http, HttpResponse } from "msw";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -75,7 +74,7 @@ describe(useResourceStore, () => {
   // The staged transport answered at the network: the write target, the PUT to it, and the commit's row, which
   // Carries the hash of what it stored
   const setupStagedSave = (contentHash = "") => {
-    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "w", "b");
+    const sasUrl = `${window.location.origin}/${resourceId}`;
     const generateUploadContentSasUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
       () => sasUrl,
     );
@@ -277,7 +276,7 @@ describe(useResourceStore, () => {
     const loadedContent = createLargeSheetResource(" ");
     const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
     const contentHash = await getSha256Hex(loadedContentBytes);
-    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "r", "b");
+    const sasUrl = `${window.location.origin}/${resourceId}`;
     const saveResourceContentDelta = vi.fn<
       (options: {
         input: { baselineHash: string; contentVersion: number; delta: string; id: string };
@@ -1082,7 +1081,7 @@ describe(useResourceStore, () => {
     assert.exists(resource.value);
     const loadedContent = createLargeSheetResource(" ");
     const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
-    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "r", "b");
+    const sasUrl = `${window.location.origin}/${resourceId}`;
     server.use(http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)));
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id),
