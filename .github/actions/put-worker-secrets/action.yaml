@@ -1,0 +1,33 @@
+name: Put Worker Secrets
+description: Upload one Worker's secrets with wrangler secret bulk. The names come from .github/worker-secrets.json under the Worker's key, and each value is read from Pulumi ESC under the environment's prefix, so no value is written to the log or the tree
+inputs:
+  worker:
+    description: The Worker's key in .github/worker-secrets.json, e.g. `web`
+    required: true
+  directory:
+    description: The Worker's app directory, whose wrangler configuration names the Worker the secrets go to
+    required: true
+runs:
+  using: composite
+  steps:
+    # `pulumi env get` prints a value as it is, so each line of it is masked before the value is used. The file holds every value
+    # the Worker gets, and lives under the runner's temporary directory, which the runner removes when the job ends
+    - name: 🔐 Put the secrets
+      shell: bash
+      env:
+        WORKER: ${{ inputs.worker }}
+        DIRECTORY: ${{ inputs.directory }}
+      run: |
+        set -euo pipefail
+        umask 077
+        secrets_file="$RUNNER_TEMP/$WORKER-secrets.json"
+        echo '{}' > "$secrets_file"
+        for name in $(jq -r --arg worker "$WORKER" '.[$worker][]' "$GITHUB_WORKSPACE/.github/worker-secrets.json"); do
+          value="$(pulumi env get esposter-infra/prod "pulumiConfig.esposter-infra:${CLOUDFLARE_ENV}_${name}" --value string --show-secrets)"
+          while IFS= read -r line; do
+            if [ -n "$line" ]; then echo "::add-mask::$line"; fi
+          done <<< "$value"
+          jq --arg name "$name" --arg value "$value" '. + {($name): $value}' "$secrets_file" > "$secrets_file.next"
+          mv "$secrets_file.next" "$secrets_file"
+        done
+        pnpm -C "$DIRECTORY" exec wrangler secret bulk "$secrets_file"
