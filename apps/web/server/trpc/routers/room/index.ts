@@ -218,12 +218,7 @@ export const baseRoomRouter = router({
     );
 
     await announceRoomMembersJoined(ctx.db, roomId, [user]);
-    await createSystemRoomMessage(
-      roomId,
-      user.id,
-      `${user.name} joined the room.`,
-      ctx.getSessionPayload.session.id,
-    ).match(noop, console.error);
+    await createSystemRoomMessage(roomId, user.id, `${user.name} joined the room.`).match(noop, console.error);
 
     return room;
   }),
@@ -255,12 +250,10 @@ export const baseRoomRouter = router({
           where: { id: { eq: userId } },
         });
         if (leavingMember)
-          await createSystemRoomMessage(
-            userToRoom.roomId,
-            userId,
-            `${leavingMember.name} left the room.`,
-            ctx.getSessionPayload.session.id,
-          ).match(noop, console.error);
+          await createSystemRoomMessage(userToRoom.roomId, userId, `${leavingMember.name} left the room.`).match(
+            noop,
+            console.error,
+          );
       }).match(noop, console.error);
 
       return userToRoom.roomId;
@@ -472,13 +465,9 @@ export const baseRoomRouter = router({
     // One for a rename that never happened. Compared against the stored name, so a trailing space alone is not a
     // Rename. Best-effort behind the update, which has already landed
     if (updatedRoom.name !== previousRoom?.name)
-      await createSystemRoomMessage(
-        id,
-        ctx.getSessionPayload.user.id,
-        updatedRoom.name,
-        ctx.getSessionPayload.session.id,
-        { type: MessageType.EditRoom },
-      ).match(noop, console.error);
+      await createSystemRoomMessage(id, ctx.getSessionPayload.user.id, updatedRoom.name, {
+        type: MessageType.EditRoom,
+      }).match(noop, console.error);
     // The image was cleared or replaced: drop every prior upload the room no longer points at. An update that
     // Resubmits the url it loaded with replaced nothing, so it sweeps nothing — otherwise a settings save that
     // Only renamed the room would pay two blob listings on the request path to delete nothing. Best-effort: a

@@ -2,13 +2,12 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { BlobDeletionQueueMessage, StandardMessageEntity } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { useStreamTableClient } from "#server/composables/streams/useStreamTableClient";
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
-import { deleteDirectory, getPartitionClauses } from "@esposter/db";
+import { deleteDirectory } from "@esposter/db";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
@@ -34,7 +33,6 @@ import {
   RoomPermission,
   roomsInMessage,
   StorageBucket,
-  StreamTable,
   userStatusesInMessage,
   usersToRoomsInMessage,
   WRITE_SAS_DURATION_MS,
@@ -237,12 +235,12 @@ describe("roomRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const newName = "newName";
     await roomCaller.updateRoom({ id: newRoom.id, name: newName });
-    const messagesClient = useStreamTableClient(StreamTable.Messages);
-    const messages = (await messagesClient.list(getPartitionClauses(newRoom.id))) as StandardMessageEntity[];
 
-    expect(messages.map(({ message, type }) => ({ message, type }))).toStrictEqual([
-      { message: newName, type: MessageType.EditRoom },
-    ]);
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ message: newName, type: MessageType.EditRoom }, { userId: getMockSession().user.id }],
+      method: "createMessage",
+      roomId: newRoom.id,
+    });
   });
 
   test("publishes profile image deletion on clear", async () => {

@@ -150,12 +150,10 @@ export const directMessageRouter = router({
     await announceRoomMembersJoined(ctx.db, roomId, addedUsers);
     await Promise.all(
       addedUsers.map((targetUser) =>
-        createSystemRoomMessage(
-          roomId,
-          actorUser.id,
-          `${targetUser.name} was added by ${actorUser.name}.`,
-          ctx.getSessionPayload.session.id,
-        ).match(noop, console.error),
+        createSystemRoomMessage(roomId, actorUser.id, `${targetUser.name} was added by ${actorUser.name}.`).match(
+          noop,
+          console.error,
+        ),
       ),
     );
     return addedUsers;
@@ -217,7 +215,6 @@ export const directMessageRouter = router({
       userId === actorUser.id
         ? `${targetUser.name} left the group.`
         : `${targetUser.name} was removed by ${actorUser.name}.`,
-      ctx.getSessionPayload.session.id,
     ).match(noop, console.error);
     return targetUser;
   }),
