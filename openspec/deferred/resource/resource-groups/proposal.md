@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — Azure-style user-defined grouping of resources in the explorer list.
+Deferred — cloud-portal-style user-defined grouping of resources in the explorer list.
 
 ## What Changes
 

@@ -2,7 +2,7 @@
 
 ## Why
 
-Deferred — Azure lock parity: CanNotDelete / ReadOnly markers enforced by the factory.
+Deferred — cloud-portal lock parity: CanNotDelete / ReadOnly markers enforced by the factory.
 
 ## What Changes
 

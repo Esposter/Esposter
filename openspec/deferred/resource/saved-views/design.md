@@ -1,6 +1,6 @@
 # Saved views on the resource list
 
-Azure "Manage view"-style named view sets: save a filter + column + sort combination under a name and recall it from a views dropdown.
+Cloud-portal "Manage view"-style named view sets: save a filter + column + sort combination under a name and recall it from a views dropdown.
 
 ## Why deferred
 

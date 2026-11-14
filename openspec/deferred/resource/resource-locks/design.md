@@ -1,6 +1,6 @@
 # Resource locks
 
-Azure lock parity: a `CanNotDelete` / `ReadOnly` marker on a resource that the factory enforces on delete/save.
+Cloud-portal lock parity: a `CanNotDelete` / `ReadOnly` marker on a resource that the factory enforces on delete/save.
 
 ## Why deferred
 

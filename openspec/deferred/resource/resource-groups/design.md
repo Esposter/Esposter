@@ -1,6 +1,6 @@
 # Resource groups
 
-Azure-style grouping of resources (the surveyer's `group` column generalized): user-defined folders/groups in the explorer list.
+Cloud-portal-style grouping of resources (the surveyer's `group` column generalized): user-defined folders/groups in the explorer list.
 
 ## Why deferred
 

@@ -1,6 +1,6 @@
 # Publish scheduling
 
-Schedule a publish or unpublish at a future time ("go live Monday 9:00"), via the same Service Bus scheduled-message pattern the scheduled message jobs use.
+Schedule a publish or unpublish at a future time ("go live Monday 9:00"), via the same Durable Object alarm the [scheduled messages](../../../specs/esbabbler/scheduled-messages/design.md) use.
 
 ## Why deferred
 
