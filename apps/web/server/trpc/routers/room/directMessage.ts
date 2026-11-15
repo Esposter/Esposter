@@ -9,7 +9,6 @@ import { createSystemRoomMessage } from "#server/services/message/createSystemRo
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
-import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "#server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
@@ -18,6 +17,7 @@ import { readDirectMessageParticipantIds } from "#server/services/room/directMes
 import { updateDirectMessageParticipantKey } from "#server/services/room/directMessage/updateDirectMessageParticipantKey";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { readJoinedRoomsPage } from "#server/services/room/readJoinedRoomsPage";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
