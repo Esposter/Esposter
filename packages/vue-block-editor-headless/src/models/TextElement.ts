@@ -9,7 +9,7 @@ import { z } from "zod";
 
 // A text box: text drawn in its colour, at its size and at the alignment it sets, which is its left edge when left out. Wrapped at the width the person
 // Set, or unwrapped in auto width, where its width is its widest line. It stores no height, since its height follows from the lines its text wraps to
-export interface TextElement extends ItemEntityType<PositionedElementType.Text> {
+export interface TextElement extends ItemEntityType<typeof PositionedElementType.Text> {
   color: string;
   horizontalAlignment?: HorizontalAlignment;
   id: string;
@@ -28,7 +28,7 @@ export const textElementSchema: z.ZodObject<{
   isWrapped: z.ZodDefault<z.ZodBoolean>;
   text: z.ZodString;
   textSize: z.ZodDefault<typeof textSizeSchema>;
-  type: z.ZodLiteral<PositionedElementType.Text>;
+  type: z.ZodLiteral<typeof PositionedElementType.Text>;
   width: z.ZodNumber;
   x: z.ZodNumber;
   y: z.ZodNumber;

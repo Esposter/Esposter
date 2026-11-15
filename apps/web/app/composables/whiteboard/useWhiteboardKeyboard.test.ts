@@ -28,7 +28,7 @@ const mountKeyboard = (
   selectedIds: Ref<string[]>,
   deletingIds: Ref<string[]>,
   tool: Ref<GestureTool> = ref(GestureTool.Select),
-  shapeKind: Ref<ShapeKind> = ref(ShapeKind.Rectangle),
+  shapeKind: Ref<ShapeKind> = ref<ShapeKind>(ShapeKind.Rectangle),
 ) =>
   mountSuspended(
     defineComponent({

@@ -13,7 +13,7 @@ import { TextSize, textSizeSchema } from "#src/models/TextSize";
 import { z } from "zod";
 
 // An arrow: two ends, each bound to a shape's connection point or free, with its path kind and the text it owns as its label. Its route and arrowheads draw in its colour, at its width, in its dash pattern and at its sketch level, and its label at its size
-export interface ArrowElement extends ItemEntityType<PositionedElementType.Arrow> {
+export interface ArrowElement extends ItemEntityType<typeof PositionedElementType.Arrow> {
   color: string;
   dashPattern: DashPattern;
   end: ArrowEnd;
@@ -37,7 +37,7 @@ export const arrowElementSchema: z.ZodObject<{
   start: typeof arrowEndSchema;
   strokeWidth: z.ZodDefault<typeof strokeWidthSchema>;
   textSize: z.ZodDefault<typeof textSizeSchema>;
-  type: z.ZodLiteral<PositionedElementType.Arrow>;
+  type: z.ZodLiteral<typeof PositionedElementType.Arrow>;
 }> = z.object({
   color: elementColorSchema.default(""),
   dashPattern: dashPatternSchema.default(DashPattern.Solid),

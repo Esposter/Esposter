@@ -19,7 +19,7 @@ import { z } from "zod";
 // A shape: an outline of one kind, placed by its box, with a fill and text its box holds. Its outline draws in its colour, at its width, in its dash
 // Pattern and at its sketch level, and with round corners when its corner style is round. Its text draws at its size, and at the alignments it sets,
 // Which its kind takes until one is set
-export interface ShapeElement extends BoxElement, ItemEntityType<PositionedElementType.Shape>, TextBoxElement {
+export interface ShapeElement extends BoxElement, ItemEntityType<typeof PositionedElementType.Shape>, TextBoxElement {
   color: string;
   cornerStyle: CornerStyle;
   dashPattern: DashPattern;
@@ -38,7 +38,7 @@ export const shapeElementSchema: z.ZodObject<
       fill: typeof elementColorSchema;
       horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
       kind: typeof shapeKindSchema;
-      type: z.ZodLiteral<PositionedElementType.Shape>;
+      type: z.ZodLiteral<typeof PositionedElementType.Shape>;
       verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
     }
 > = z.object({

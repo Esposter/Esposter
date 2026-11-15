@@ -9,7 +9,7 @@ import { strokeWidthSchema } from "#src/models/StrokeWidth";
 import { z } from "zod";
 
 // A freehand stroke: the path of points the pointer took, drawn in its colour at one of the three stroke widths
-export interface StrokeElement extends ItemEntityType<PositionedElementType.Stroke> {
+export interface StrokeElement extends ItemEntityType<typeof PositionedElementType.Stroke> {
   color: string;
   id: string;
   points: Point[];
@@ -21,7 +21,7 @@ export const strokeElementSchema: z.ZodObject<{
   id: z.ZodUUID;
   points: z.ZodArray<typeof pointSchema>;
   strokeWidth: typeof strokeWidthSchema;
-  type: z.ZodLiteral<PositionedElementType.Stroke>;
+  type: z.ZodLiteral<typeof PositionedElementType.Stroke>;
 }> = z.object({
   color: elementColorSchema.default(""),
   id: z.uuidv7(),

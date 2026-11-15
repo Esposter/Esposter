@@ -17,7 +17,7 @@ import { z } from "zod";
 // A sticky note: a box with a fill and text, drawn in the sticky-note look. Its outline draws in its colour, at its width, in its dash pattern and at
 // Its sketch level. Its text draws at its size, and at the alignments it sets, which the note takes by default until one is set
 export interface StickyNoteElement
-  extends BoxElement, ItemEntityType<PositionedElementType.StickyNote>, TextBoxElement {
+  extends BoxElement, ItemEntityType<typeof PositionedElementType.StickyNote>, TextBoxElement {
   color: string;
   dashPattern: DashPattern;
   fill: string;
@@ -32,7 +32,7 @@ export const stickyNoteElementSchema: z.ZodObject<
       dashPattern: z.ZodDefault<typeof dashPatternSchema>;
       fill: z.ZodString;
       horizontalAlignment: z.ZodOptional<typeof horizontalAlignmentSchema>;
-      type: z.ZodLiteral<PositionedElementType.StickyNote>;
+      type: z.ZodLiteral<typeof PositionedElementType.StickyNote>;
       verticalAlignment: z.ZodOptional<typeof verticalAlignmentSchema>;
     }
 > = z.object({
