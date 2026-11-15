@@ -1,12 +1,13 @@
 import { getRoomObject } from "#src/services/room/getRoomObject";
 import { webhookQueueMessageSchema } from "@esposter/db-schema";
 
-// The room's object takes the write as the webhook's app user, named by the payload, and nothing else of the sender.
-// A delivery can arrive more than once. The object writes it under its delivery id, so a redelivery writes nothing new
+// The room's object takes the write as the webhook's app user, named and pictured by the payload, and nothing else of the
+// Sender. A delivery can arrive more than once. The object writes it under its delivery id, so a redelivery writes nothing new
 export const processWebhookHandler = async (body: unknown): Promise<void> => {
   const { deliveryId, payload, webhook } = webhookQueueMessageSchema.parse(body);
   await getRoomObject(webhook.roomId).createWebhookMessage({
     appUserId: webhook.userId,
+    appUserImage: payload.avatar_url ?? "",
     deliveryId,
     message: payload.content,
     senderName: payload.username,

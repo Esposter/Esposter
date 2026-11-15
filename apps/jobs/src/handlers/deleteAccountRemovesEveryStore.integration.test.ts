@@ -2,11 +2,14 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
+import { clearUserObjectCalls, userObjectReplies } from "#src/services/user/getUserObject.test";
 import { chargeStorageLedgerEntry, getContentBlobName, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -34,7 +37,7 @@ import {
 import { generateSecretToken, hashSecretToken, NotFoundError, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -45,6 +48,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 
 const readBlobNamesUnder = async (containerName: StorageBucket, prefix: string) =>
   (await readBlobNames(containerName)).filter((blobName) => blobName.startsWith(prefix));
@@ -96,10 +100,18 @@ describe(deleteAccountHandler, () => {
     ]);
   });
 
+  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
+  beforeEach(() => {
+    roomObjectReplies.set("deleteUserMessages", () => []);
+    roomObjectReplies.set("deleteUserReactions", () => []);
+    userObjectReplies.set("readScheduledMessages", () => []);
+  });
+
   afterEach(async () => {
     vi.restoreAllMocks();
     await clearMockBuckets();
     clearRoomObjectCalls();
+    clearUserObjectCalls();
     await mockDb.delete(usersInAuth);
   });
 
@@ -221,12 +233,14 @@ describe(deleteAccountHandler, () => {
     await expect(readProgramParticipantRows(ownedProgram.id)).resolves.toHaveLength(1);
     await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
 
-    // The member room answers the sweep's two reads. The account's erased message carries one file.
-    // It has no scheduled message left for the sweep to delete
-    roomObjectReplies.set("deleteUserMessages", () => [
-      { files: [{ filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 }] },
-    ]);
-    roomObjectReplies.set("readScheduledMessages", () => []);
+    // The member room's erase answers one of the account's messages, and the message carries one file
+    const erasedMessage = createRoomMessage({
+      files: [{ filename: "", hasThumbnail: false, id: v7(), isSpoiler: false, mimetype: "", size: 0 }],
+      id: 1,
+      message: "message",
+      userId,
+    });
+    roomObjectReplies.set("deleteUserMessages", () => [erasedMessage]);
 
     await deleteAccountHandler({ userId });
 
@@ -282,18 +296,20 @@ describe(deleteAccountHandler, () => {
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
 
-    // The rooms are asked in the order the sweep runs. The owned room is told its online members, then emptied.
+    // The rooms are asked in the order the sweep runs. The owned room is emptied, which tells its online members first.
     // The member room drops the account's messages and reactions, then the account, and tells its online members
     expect(roomObjectCalls).toStrictEqual([
+      { args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id },
       {
-        args: [{ data: { roomId: ownedRoom.id, userId }, type: "deleteRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: ownedRoom.id,
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "deleteUserMessages",
+        roomId: memberRoom.id,
       },
-      { args: [], method: "deleteAll", roomId: ownedRoom.id },
-      { args: [userId], method: "deleteUserMessages", roomId: memberRoom.id },
-      { args: [userId], method: "readScheduledMessages", roomId: memberRoom.id },
-      { args: [userId], method: "deleteUserReactions", roomId: memberRoom.id },
+      {
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "deleteUserReactions",
+        roomId: memberRoom.id,
+      },
       { args: [userId], method: "removeMember", roomId: memberRoom.id },
       {
         args: [{ data: { roomId: memberRoom.id, userId }, type: "leaveRoom" }],

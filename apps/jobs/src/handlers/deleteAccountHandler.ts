@@ -6,6 +6,7 @@ import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAc
 import { deleteAccountOwnedResources } from "#src/services/account/deleteAccountOwnedResources";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { eraseAccountMessages } from "#src/services/account/eraseAccountMessages";
+import { eraseAccountUserObject } from "#src/services/account/eraseAccountUserObject";
 import { removeAccountFromMemberRooms } from "#src/services/account/removeAccountFromMemberRooms";
 import { db } from "#src/services/shared/db";
 import { deleteAccountQueueMessageSchema, usersInAuth } from "@esposter/db-schema";
@@ -22,6 +23,7 @@ export const deleteAccountHandler = async (body: unknown): Promise<void> => {
   await eraseAccountMessages(userId);
   await deleteAccountMemberRoomReactions(userId);
   await removeAccountFromMemberRooms(userId);
+  await eraseAccountUserObject(userId);
   await deleteAccountChargedBlobs(userId);
   await deleteAccountBlobDirectories(userId);
   await deleteAccountDataExportArchives(userId);

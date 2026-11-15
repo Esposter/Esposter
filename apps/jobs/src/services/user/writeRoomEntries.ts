@@ -4,7 +4,8 @@ import type { RoomMessage, UserInAuth } from "@esposter/db-schema";
 
 import { getAccountMemberRoomIds } from "#src/services/account/getAccountMemberRoomIds";
 import { getRoomObject } from "#src/services/room/getRoomObject";
-import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
+import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { readPagesToEnd } from "#src/services/shared/readPagesToEnd";
 import { writeRoomFileEntries } from "#src/services/user/writeRoomFileEntries";
 
 // The person's messages in a room, one page of the room's object at a time, oldest first.
@@ -13,10 +14,10 @@ const readRoomMessagePages = async function* (roomId: string, userId: string): A
   let after: number | undefined;
   let page: RoomMessage[];
   do {
-    page = await getRoomObject(roomId).exportUserMessages({ after, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId });
+    page = await getRoomObject(roomId).exportUserMessages({ after, limit: OBJECT_READ_PAGE_LIMIT, userId });
     yield page;
     after = page.at(-1)?.id;
-  } while (page.length === DATA_EXPORT_MESSAGE_PAGE_LIMIT);
+  } while (page.length === OBJECT_READ_PAGE_LIMIT);
 };
 
 // The messages as one JSON array, encoded page by page as the archive reads them, so the array is never held whole
@@ -39,6 +40,11 @@ export const writeRoomEntries = async (archive: UserDataArchive, userId: UserInA
   const roomIds = await getAccountMemberRoomIds(userId);
   for (const roomId of roomIds) {
     await archive.addEntry(`rooms/${roomId}/messages.json`, encodeMessagesJson(readRoomMessagePages(roomId, userId)));
-    for await (const page of readRoomMessagePages(roomId, userId)) await writeRoomFileEntries(archive, roomId, page);
+    await readPagesToEnd(
+      (after, limit) => getRoomObject(roomId).exportUserMessages({ after, limit, userId }),
+      ({ id }: RoomMessage) => id,
+      OBJECT_READ_PAGE_LIMIT,
+      (page) => writeRoomFileEntries(archive, roomId, page),
+    );
   }
 };

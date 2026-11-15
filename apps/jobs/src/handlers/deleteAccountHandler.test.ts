@@ -2,10 +2,12 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
 import { createUser } from "#src/services/shared/createUser.test";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { readBlobNames } from "#src/services/storage/readBlobNames.test";
 import { seedBlob } from "#src/services/storage/seedBlob.test";
+import { clearUserObjectCalls, userObjectReplies } from "#src/services/user/getUserObject.test";
 import { getContentBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -22,7 +24,7 @@ import {
 import { takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { v7 } from "uuid";
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 let mockDb: Database;
 
@@ -36,6 +38,7 @@ vi.mock(import("#src/services/shared/db"), () => ({
 }));
 vi.mock(import("#src/services/storage/getBucket"), () => import("#src/services/storage/getBucket.test"));
 vi.mock(import("#src/services/room/getRoomObject"), () => import("#src/services/room/getRoomObject.test"));
+vi.mock(import("#src/services/user/getUserObject"), () => import("#src/services/user/getUserObject.test"));
 vi.mock(import("#src/services/account/deleteAccountBlobDirectories"), async (importOriginal) => {
   const { deleteAccountBlobDirectories } = await importOriginal();
   return {
@@ -65,11 +68,19 @@ describe(deleteAccountHandler, () => {
     ]);
   });
 
+  // The beforeEach answers each room and person read a sweep makes with an empty page, so a sweep ends on its first page
+  beforeEach(() => {
+    roomObjectReplies.set("deleteUserMessages", () => []);
+    roomObjectReplies.set("deleteUserReactions", () => []);
+    userObjectReplies.set("readScheduledMessages", () => []);
+  });
+
   afterEach(async () => {
     vi.restoreAllMocks();
     blobSweepFailure.error = undefined;
     await clearMockBuckets();
     clearRoomObjectCalls();
+    clearUserObjectCalls();
     await mockDb.delete(usersInAuth);
   });
 
@@ -116,9 +127,6 @@ describe(deleteAccountHandler, () => {
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
     );
-    // The erase reads what the member room answers: no message of the account's to erase, and no scheduled message
-    roomObjectReplies.set("deleteUserMessages", () => []);
-    roomObjectReplies.set("readScheduledMessages", () => []);
     await seedBlob(StorageBucket.ResourceAssets, getContentBlobName(ownedResource.id));
     await seedBlob(StorageBucket.PublicUserAssets, getUserProfileImageBlobName(userId));
     await seedBlob(StorageBucket.MessageAssets, `${ownedRoom.id}/${fileId}`);
@@ -144,15 +152,17 @@ describe(deleteAccountHandler, () => {
     ).resolves.toStrictEqual([]);
     // Only the first run sends anything: the second finds no owned room and no membership left
     expect(roomObjectCalls).toStrictEqual([
+      { args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id },
       {
-        args: [{ data: { roomId: ownedRoom.id, userId }, type: "deleteRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: ownedRoom.id,
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "deleteUserMessages",
+        roomId: memberRoom.id,
       },
-      { args: [], method: "deleteAll", roomId: ownedRoom.id },
-      { args: [userId], method: "deleteUserMessages", roomId: memberRoom.id },
-      { args: [userId], method: "readScheduledMessages", roomId: memberRoom.id },
-      { args: [userId], method: "deleteUserReactions", roomId: memberRoom.id },
+      {
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "deleteUserReactions",
+        roomId: memberRoom.id,
+      },
       { args: [userId], method: "removeMember", roomId: memberRoom.id },
       {
         args: [{ data: { roomId: memberRoom.id, userId }, type: "leaveRoom" }],

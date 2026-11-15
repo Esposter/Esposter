@@ -2,11 +2,12 @@ import type { Database, RoomMessage } from "@esposter/db-schema";
 
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { clearRoomObjectCalls, roomObjectCalls, roomObjectReplies } from "#src/services/room/getRoomObject.test";
+import { OBJECT_READ_PAGE_LIMIT } from "#src/services/shared/constants";
+import { createRoomMessage } from "#src/services/shared/createRoomMessage.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getBucket } from "#src/services/storage/getBucket";
 import { clearMockBuckets, disposeMockBuckets, openMockBuckets } from "#src/services/storage/getBucket.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
-import { DATA_EXPORT_MESSAGE_PAGE_LIMIT } from "#src/services/user/constants";
 import { getContentBlobName, getFileBlobNames, writeJsonBlob } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import {
@@ -25,7 +26,6 @@ import {
   getSaveBlobName,
   getUserProfileImageBlobName,
   likesInPost,
-  MessageType,
   moderationLogsInMessage,
   moderationNotesInMessage,
   NotificationSeverity,
@@ -83,26 +83,6 @@ const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string)
 };
 const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
   jsonDateParse(readEntryText(entries, entryName));
-// A message as its room's object returns it: the fields the archive reads are given, and the rest hold their least value
-const createRoomMessage = (fields: Partial<RoomMessage> & Pick<RoomMessage, "id" | "message">): RoomMessage => ({
-  appUserId: null,
-  appUserImage: "",
-  createdAt: new Date(0),
-  deletedAt: null,
-  files: [],
-  isEdited: false,
-  isForward: false,
-  isPinned: false,
-  linkPreviewResponse: null,
-  mentions: [],
-  replyToId: null,
-  senderName: null,
-  type: MessageType.Message,
-  updatedAt: new Date(0),
-  userId: null,
-  ...fields,
-});
-
 describe(buildUserDataArchive, () => {
   let resetMockDb: () => Promise<void>;
   const attachmentBytes = new Uint8Array([255]);
@@ -211,14 +191,18 @@ describe(buildUserDataArchive, () => {
     // The room the person is in is asked for their reactions, then for their messages twice: once to write them, and once
     // More to write their attachments. The room they left is never asked
     expect(roomObjectCalls).toStrictEqual([
-      { args: [userId], method: "exportUserReactions", roomId: room.id },
       {
-        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "exportUserReactions",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
       {
-        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
@@ -772,10 +756,7 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    const pagedMessages = Array.from(
-      { length: DATA_EXPORT_MESSAGE_PAGE_LIMIT + 1 },
-      (_value, index) => `${message}${index}`,
-    );
+    const pagedMessages = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => `${message}${index}`);
     // The room's ids run from one, so a page's last id is its size. The room answers each page as the ids after the cursor
     // It is sent, up to the limit
     const pagedRoomMessages = pagedMessages.map((pagedMessage, index) =>
@@ -783,9 +764,7 @@ describe(buildUserDataArchive, () => {
     );
     roomObjectReplies.set("exportUserMessages", (args) => {
       const { after } = z.object({ after: z.number().optional() }).parse(args[0]);
-      return pagedRoomMessages
-        .filter(({ id }) => after === undefined || id > after)
-        .slice(0, DATA_EXPORT_MESSAGE_PAGE_LIMIT);
+      return pagedRoomMessages.filter(({ id }) => after === undefined || id > after).slice(0, OBJECT_READ_PAGE_LIMIT);
     });
 
     await buildUserDataArchive(userId, blobName);
@@ -795,29 +774,85 @@ describe(buildUserDataArchive, () => {
     // The reactions are asked first, then the messages are read in two pages, the first from no cursor and the second from the
     // Last id of the first, and the attachments are read through the same two pages again
     expect(roomObjectCalls).toStrictEqual([
-      { args: [userId], method: "exportUserReactions", roomId: room.id },
       {
-        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "exportUserReactions",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
       {
-        args: [{ after: DATA_EXPORT_MESSAGE_PAGE_LIMIT, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: OBJECT_READ_PAGE_LIMIT, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
       {
-        args: [{ after: undefined, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
       {
-        args: [{ after: DATA_EXPORT_MESSAGE_PAGE_LIMIT, limit: DATA_EXPORT_MESSAGE_PAGE_LIMIT, userId }],
+        args: [{ after: OBJECT_READ_PAGE_LIMIT, limit: OBJECT_READ_PAGE_LIMIT, userId }],
         method: "exportUserMessages",
         roomId: room.id,
       },
     ]);
     expect(messages.map(({ message: text }) => text)).toStrictEqual(pagedMessages);
+  });
+
+  // A person's reactions in a room are read a page at a time, so a room with more of them than one page comes through whole
+  test("archives every page of a person's reactions in a room, asking each page for the key after the one before it", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    const otherUserId = v7();
+    const blobName = `${v7()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
+    // The tags are padded so their order is the order the room keys them in
+    const reactions = Array.from({ length: OBJECT_READ_PAGE_LIMIT + 1 }, (_value, index) => ({
+      emojiTag: `${emojiTag}${String(index).padStart(3, "0")}`,
+      messageId,
+      userIds: [userId],
+    }));
+    // The room answers each page as the reactions after the key it is sent, up to the limit
+    roomObjectReplies.set("exportUserReactions", (args) => {
+      const { after } = z
+        .object({ after: z.object({ emojiTag: z.string(), messageId: z.number() }).optional() })
+        .parse(args[0]);
+      return reactions
+        .filter(({ emojiTag: tag }) => after === undefined || tag > after.emojiTag)
+        .slice(0, OBJECT_READ_PAGE_LIMIT);
+    });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = await readArchiveEntries(blobName);
+
+    expect(readEntryJson(entries, "likes.json")).toStrictEqual(
+      reactions.map(({ emojiTag: tag }) => ({
+        emojiTag: tag,
+        kind: ArchiveLikeKind.Emoji,
+        roomId: room.id,
+        targetId: messageId,
+      })),
+    );
+    const lastKey = { emojiTag: reactions[OBJECT_READ_PAGE_LIMIT - 1]?.emojiTag, messageId };
+    expect(roomObjectCalls.filter(({ method }) => method === "exportUserReactions")).toStrictEqual([
+      {
+        args: [{ after: undefined, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "exportUserReactions",
+        roomId: room.id,
+      },
+      {
+        args: [{ after: lastKey, limit: OBJECT_READ_PAGE_LIMIT, userId }],
+        method: "exportUserReactions",
+        roomId: room.id,
+      },
+    ]);
   });
 
   test("streams an attachment's bytes into the archive, under its room and its file", async () => {

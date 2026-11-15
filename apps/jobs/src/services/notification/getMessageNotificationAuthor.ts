@@ -23,10 +23,12 @@ export const getMessageNotificationAuthor = async ({
     if (userToRoom) return { icon: userToRoom.user.image, title: userToRoom.displayName || userToRoom.user.name };
     else return { title: "" };
   } else if (appUserId) {
-    const appUser = await db.query.appUsersInMessage.findFirst({
-      columns: { image: true, name: true },
-      where: { id: { eq: appUserId } },
+    // The bot's name is its webhook's, so a rename shows on the bot's messages that were posted before it
+    const webhook = await db.query.webhooksInMessage.findFirst({
+      columns: { name: true },
+      where: { userId: { eq: appUserId } },
+      with: { appUser: { columns: { image: true } } },
     });
-    return { icon: appUser?.image, title: appUser?.name ?? "" };
+    return { icon: webhook?.appUser.image, title: webhook?.name ?? "" };
   } else return { title: "" };
 };

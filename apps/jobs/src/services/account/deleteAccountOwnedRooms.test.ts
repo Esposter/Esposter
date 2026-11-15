@@ -73,14 +73,7 @@ describe(deleteAccountOwnedRooms, () => {
 
     await deleteAccountOwnedRooms(userId);
 
-    expect(roomObjectCalls).toStrictEqual([
-      {
-        args: [{ data: { roomId: ownedRoom.id, userId }, type: "deleteRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: ownedRoom.id,
-      },
-      { args: [], method: "deleteAll", roomId: ownedRoom.id },
-    ]);
+    expect(roomObjectCalls).toStrictEqual([{ args: [{ userId }], method: "deleteAll", roomId: ownedRoom.id }]);
     await expect(
       mockDb.select({ roomId: moderationLogsInMessage.roomId }).from(moderationLogsInMessage),
     ).resolves.toStrictEqual([{ roomId: otherRoom.id }]);
@@ -93,25 +86,6 @@ describe(deleteAccountOwnedRooms, () => {
     ]);
     await expect(mockDb.select({ id: roomsInMessage.id }).from(roomsInMessage)).resolves.toStrictEqual([
       { id: otherRoom.id },
-    ]);
-  });
-
-  test("asks an owned room to tell its online members it is deleted, before it empties the object", async () => {
-    expect.hasAssertions();
-
-    const userId = v7();
-    await mockDb.insert(usersInAuth).values(createUser(userId));
-    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
-
-    await deleteAccountOwnedRooms(userId);
-
-    expect(roomObjectCalls).toStrictEqual([
-      {
-        args: [{ data: { roomId: ownedRoom.id, userId }, type: "deleteRoom" }],
-        method: "notifyOnlineMembers",
-        roomId: ownedRoom.id,
-      },
-      { args: [], method: "deleteAll", roomId: ownedRoom.id },
     ]);
   });
 });

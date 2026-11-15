@@ -12,7 +12,8 @@ import { exhaustiveGuard, RoutePath } from "@esposter/shared";
 // The same questions — what it says, where it goes, whose it is — so the delivery below it never branches on type
 // Again: it reads AppNotificationTypeChannelMap and fans out.
 //
-// Undefined means there is nothing to deliver, which only a message can be: everything else knows its own copy.
+// Undefined means there is nothing to deliver: a message that renders to nothing, or a reminder with no room to open.
+// Everything else knows its own copy.
 export const resolveNotification = async (
   data: NotificationQueueMessage,
 ): Promise<ResolvedNotification | undefined> => {
@@ -58,8 +59,16 @@ export const resolveNotification = async (
         userIds,
       };
     }
-    case AppNotificationType.Reminder:
+    case AppNotificationType.Reminder: {
+      // A reminder in a room that does not exist has no room to open, so it is dropped rather than sent to a dead link
+      const room = await db.query.roomsInMessage.findFirst({
+        columns: { id: true },
+        where: { id: { eq: data.roomId } },
+      });
+      if (!room) return undefined;
+
       return { body: data.text, path: RoutePath.Messages(data.roomId), title: "Reminder", userIds: [data.userId] };
+    }
     case AppNotificationType.ResourceOperation:
       return { body: data.body ?? "", path: data.path, title: data.title, userIds: [data.userId] };
     case AppNotificationType.TodoReminder:
