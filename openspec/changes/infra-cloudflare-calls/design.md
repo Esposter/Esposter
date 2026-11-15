@@ -16,7 +16,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Calls m
 | `@livekit/track-processors` virtual backgrounds                 | `@cloudflare/realtimekit-virtual-background`                                                   |
 | active speakers, connection quality                             | the meeting's active-speaker and network-quality events                                        |
 
-The user-facing call — devices, push-to-talk, per-user volume, screenshare, picture-in-picture, hand raise, camera and mute state — keeps its stores and components; only `useLiveKitStore` and the services under `app/services/message/room/liveKit` change underneath them.
+The user-facing call — devices, push-to-talk, per-user volume, screenshare, picture-in-picture, hand raise, camera and mute state — keeps its stores and components; only `useRealtimeStore` and the services under `app/services/message/room/realtime` change underneath them.
 
 ## Revoking a permission mid-call
 
@@ -28,15 +28,15 @@ The four presets — camera alone, and camera with microphone, screen share or b
 
 ## Key files
 
-| File                                                            | Role after the change                          |
-| :-------------------------------------------------------------- | :--------------------------------------------- |
-| `apps/web/server/services/livekit/createLiveKitToken.ts`        | replaced by the participant add                |
-| `apps/web/server/services/livekit/updateLiveKitTrackSources.ts` | replaced by the preset switch                  |
-| `apps/web/server/services/livekit/removeLiveKitParticipant.ts`  | replaced by the participant removal            |
-| `apps/web/server/api/webhooks/livekit.post.ts`                  | replaced by the RealtimeKit webhook route      |
-| `apps/web/server/services/message/call/joinLiveKitCall.ts`      | joins the meeting                              |
-| `apps/web/app/store/message/room/liveKit.ts`                    | replaced by the RealtimeKit store              |
-| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`  | an audio middleware                            |
-| `apps/web/shared/models/environment/WebEnvironmentVariables.ts` | RealtimeKit's app id and key replace LiveKit's |
-| `livekit-server/Dockerfile`                                     | deleted                                        |
-| `livekit-monitor/Dockerfile`                                    | deleted                                        |
+| File                                                                     | Role after the change                                           |
+| :----------------------------------------------------------------------- | :-------------------------------------------------------------- |
+| `apps/realtime/src/services/realtimeKit/addRealtimeKitParticipant.ts`    | the participant add, which returns the auth token               |
+| `apps/realtime/src/durableObjects/CallObject.ts`                         | the preset switch in `updatePresets`                            |
+| `apps/realtime/src/services/realtimeKit/removeRealtimeKitParticipant.ts` | the participant removal                                         |
+| `apps/web/server/api/webhooks/realtimekit.post.ts`                       | replaced by the RealtimeKit webhook route                       |
+| `apps/web/server/trpc/routers/call/index.ts`                             | the `joinCall` procedure, which joins through the call's object |
+| `apps/web/app/store/message/room/realtime.ts`                            | the RealtimeKit store                                           |
+| `apps/web/app/models/message/room/call/MicrophoneProcessor.ts`           | an audio middleware                                             |
+| `apps/web/shared/models/environment/WebEnvironmentVariables.ts`          | RealtimeKit's app id and key replace LiveKit's                  |
+| `livekit-server/Dockerfile`                                              | deleted                                                         |
+| `livekit-monitor/Dockerfile`                                             | deleted                                                         |

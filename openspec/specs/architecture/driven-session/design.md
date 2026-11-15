@@ -12,9 +12,9 @@ An accepted request takes the driven user by the fixed id `DRIVEN_USER_ID`, and 
 
 The seed, `pnpm -C scripts dev:seed`, writes the local D1 databases the dev server reads. It runs against Miniflare's local D1 files under the persistence root `nuxt dev` gives its local Miniflare, so the rows it writes are the ones the dev server serves once it starts. Nothing the seed runs reaches a deployed database: its bindings are local files, so there is no remote address to refuse.
 
-The seed first migrates the `core` database from the app's own migrations folder, then writes the smallest dataset that opens each signed-in page. That is the driven user and one friend, one friendship between them, one room the driven user owns and is the only member of, the room's everyone role, one note the driven user owns, and one message from the driven user in that room, written through the same message store the app's send path writes to. The seed writes no drafts and no achievements, so those pages open signed in and list nothing.
+The seed first migrates the `core` database from the app's own migrations folder, then writes the smallest dataset that opens each signed-in page. That is the driven user and one friend, one friendship between them, one room the driven user owns and is the only member of, the room's everyone role, and one note the driven user owns. The seed writes no messages, drafts or achievements, so the rooms open with no messages in them, and the drafts and achievements pages list nothing.
 
-Every row has a fixed id, and inserts ignore a row the database already holds. A rerun therefore converges on the same rows, and the message is replaced in place rather than copied.
+Every row has a fixed id, and inserts ignore a row the database already holds. A rerun therefore converges on the same rows.
 
 The driver seeds, starts the dev server, and then posts to the route once through its browser context's own request client, so the cookie lands in the jar that every later navigation reads. The commands are owned by the driven-browser reference, `.agents/skills/run-app/references/driven-browser.md`.
 
@@ -48,7 +48,6 @@ flowchart TB
 | `scripts/src/devSeed/index.ts`                                 | The seed's entry, which runs through the timing wrapper.                                |
 | `scripts/src/services/devSeed/runDevSeed.ts`                   | The run: migrates the local databases and writes the dataset into them.                 |
 | `scripts/src/services/devSeed/seedDevDataset.ts`               | The write order of the dataset.                                                         |
-| `scripts/src/services/devSeed/writeSeedMessages.ts`            | The message's rows, under a fixed row key.                                              |
 | `scripts/src/services/devSeed/constants.ts`                    | The seed's friend id, the fixed row time and the persistence root the seed writes into. |
 | `scripts/package.json`                                         | Declares the `dev:seed` script.                                                         |
 | `.agents/skills/run-app/references/driven-browser.md`          | The driver's steps, which post to the route once per run.                               |

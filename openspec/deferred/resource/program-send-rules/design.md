@@ -70,7 +70,7 @@ The planner takes each audience person with their run record and whether they re
 | File                                                                         | Role                                                                        |
 | ---------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
 | `apps/web/shared/models/resource/program/ProgramResource.ts`                 | the program content, which gains the rules section                          |
-| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant record, which gains the three dispatch fields               |
+| `packages/db-schema/src/schema/resource/programParticipantsInResource.ts`    | the participant record, which gains the three dispatch fields               |
 | `apps/web/server/services/program/generateProgramParticipants.ts`            | the issue of a link per person, called by a dispatch instead of by a button |
 | `apps/web/server/services/program/issueProgramInvites.ts`                    | the invite and reminder export's read, which takes its people from the plan |
 | `apps/web/server/services/program/readProgramStatusRows.ts`                  | the status join, which carries the dispatch facts                           |

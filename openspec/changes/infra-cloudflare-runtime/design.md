@@ -50,7 +50,7 @@ Each Worker declares every variable it reads in its schema, and [the environment
 | :--------------------------------------------------------------- | :-------------------------------------------------------- |
 | `apps/web/configuration/nitro.ts`                                | the `cloudflare_module` preset, no brotli                 |
 | `apps/web/configuration/modules.ts`                              | the tRPC module's WebSocket endpoint, unchanged path      |
-| `apps/web/server/plugins/webpush.ts`                             | removed; VAPID details set where a push is sent           |
+| the web push Nitro plugin                                        | removed; VAPID details set where a push is sent           |
 | `apps/web/server/plugins/environment.ts`                         | environment validated per isolate                         |
 | `apps/web/server/services/resource/readResourceContentDelta.ts`  | zstd decoded without `node:zlib`                          |
 | `apps/web/server/services/resource/readStagedResourceContent.ts` | gunzip through `DecompressionStream`                      |

@@ -34,7 +34,7 @@ Guard clauses over nested conditionals. `InvalidOperationError` for impossible s
 
 ## Testing — 10 / 10
 
-Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Azure Functions logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `app.eventGrid(...)` registration glue, has no test of its own, since a test of that wiring fails only on a deliberate edit.
+Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Queue job logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `queue` entry in `apps/jobs/src/worker.ts`, has no test of its own, since a test of that wiring fails only on a deliberate edit.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 

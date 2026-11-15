@@ -28,18 +28,18 @@ A scheduled message and a TodoList reminder are alarms on the object that owns t
 
 ## Key files
 
-| File                                                                           | Role after the change                              |
-| :----------------------------------------------------------------------------- | :------------------------------------------------- |
-| `packages/db-schema/src/models/azure/function/AzureFunction.ts`                | renamed to the queue job enum                      |
-| `packages/db-schema/src/services/azure/eventGrid/publishNotification.ts`       | sends to the notification queue                    |
-| `packages/db-schema/src/services/azure/eventGrid/createEventGridEvent.ts`      | deleted                                            |
-| `packages/db/src/services/azure/serviceBus/enqueueScheduledMessageJob.ts`      | an alarm row on the room's object                  |
-| `packages/db/src/services/azure/serviceBus/enqueueTodoReminder.ts`             | an alarm row on the person's object                |
-| `apps/jobs/package.json`, `apps/realtime/package.json`                         | a Worker: `wrangler`, no `@azure/functions`        |
-| `apps/jobs/src/functions/purgeDeletedResources.ts`                             | replaced by the Cron Trigger's `scheduled` handler |
-| `apps/jobs/src/functions/replayDeadLetterEvent.ts`                             | deleted                                            |
-| `apps/jobs/src/hooks/appStart.ts`                                              | deleted                                            |
-| `apps/jobs/src/services/message/createAndBroadcastMessage.ts`                  | calls the room's object                            |
-| `apps/jobs/src/services/storage/broadcastStorageUsage.ts`                      | calls the person's object                          |
-| `apps/web/server/services/azure/webPubSub/generateWebPubSubClientAccessUrl.ts` | deleted                                            |
-| `apps/web/app/services/azure/webPubSub/startWebPubSubClient.ts`                | deleted                                            |
+| File                                                           | Role after the change                              |
+| :------------------------------------------------------------- | :------------------------------------------------- |
+| `packages/db-schema/src/models/queue/QueueJob.ts`              | renamed to the queue job enum                      |
+| `packages/db-schema/src/services/queue/publishNotification.ts` | sends to the notification queue                    |
+| the Event Grid envelope                                        | deleted                                            |
+| `apps/realtime/src/durableObjects/RoomObject.ts`               | an alarm row on the room's object                  |
+| `apps/realtime/src/durableObjects/UserObject.ts`               | an alarm row on the person's object                |
+| `apps/jobs/package.json`, `apps/realtime/package.json`         | a Worker: `wrangler`, no `@azure/functions`        |
+| `apps/jobs/src/worker.ts`                                      | replaced by the Cron Trigger's `scheduled` handler |
+| the Event Grid dead-letter replay                              | deleted                                            |
+| the app-start hook                                             | deleted                                            |
+| `apps/jobs/src/services/room/getRoomObject.ts`                 | calls the room's object                            |
+| `apps/jobs/src/services/storage/broadcastStorageUsage.ts`      | calls the person's object                          |
+| the Web PubSub client access URL                               | deleted                                            |
+| the Web PubSub client                                          | deleted                                            |

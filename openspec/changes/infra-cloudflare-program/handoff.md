@@ -32,7 +32,7 @@ Landed but not yet ticked, because each task's own verification has not been run
 - UUIDv7 everywhere (2.2).
 - The RealtimeKit provisioning command (5.1), with dev and prod provisioned.
 - The dead-letter consumer.
-- `packages/azure` deleted.
+- `@esposter/azure` deleted.
 
 A session ticks each of these after running its verification.
 

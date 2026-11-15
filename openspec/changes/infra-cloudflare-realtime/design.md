@@ -57,7 +57,7 @@ A room deleted or a member removed closes that member's sockets on the room's ob
 
 tRPC's WebSocket server keeps one in-memory async generator per subscription, which pins an object awake for as long as a socket is open. The objects use the WebSocket hibernation API instead: a socket is accepted with tags for its user, session and device, the object is evicted while no message is in flight, and a broadcast is a loop over `getWebSockets(tag?)` writing one JSON frame. Idle sockets cost no duration. Every frame is `{ type, data }`, a member of a discriminated union per object — `RoomEvent`, `CallEvent`, `UserEvent` — declared once in `packages/db-schema` with its Zod schema beside the other contracts both Workers share, so the objects write and the client reads the same types. A broadcast can exclude a tag, so the sender's own socket does not receive the echo of its write; a knocker is admitted to the call socket before it is joined, so it hears its own admission. Queries and mutations stay on tRPC over HTTP.
 
-A client holds at most three sockets: its user socket on every signed-in page, a room socket while a room is open, and a call socket while in a call. Each is opened through the web Worker at `/ws/user`, `/ws/room/:roomId` or `/ws/call/:callSessionId`, which reads the session, checks membership or call admission against D1, and forwards the upgrade to the object with the verified identity in headers only the object reads. One client-side connection manager owns the three sockets, reconnects with backoff, and dispatches each event to the store handler the matching subscription called before. The room socket connects with `?after=<last message id>` and the object first replays every message after it, then goes live, so a reconnect misses nothing; the client then refreshes the loaded window for edits made while it was away.
+A client holds at most the three sockets that the [Cloudflare services](../../specs/architecture/cloudflare-services/design.md) page lists. Each is opened through the web Worker at `/ws/user`, `/ws/room/:roomId` or `/ws/call/:callSessionId`, which reads the session, checks membership or call admission against D1, and forwards the upgrade to the object with the verified identity in headers only the object reads. One client-side connection manager owns the three sockets, reconnects with backoff, and dispatches each event to the store handler the matching subscription called before. The room socket connects with `?after=<last message id>` and the object first replays every message after it, then goes live, so a reconnect misses nothing; the client then refreshes the loaded window for edits made while it was away.
 
 ## Scheduled work is an alarm on its owner
 
@@ -95,19 +95,19 @@ The Worker was named for Azure's functions and covered two jobs, so it split onc
 
 ## Key files
 
-| File                                                  | Role after the change                                              |
-| :---------------------------------------------------- | :----------------------------------------------------------------- |
-| `apps/realtime/src/durableObjects/RoomObject.ts`      | messages, reactions, search, scheduled messages, room sockets      |
-| `apps/realtime/src/durableObjects/CallObject.ts`      | call participants and knockers, call sockets                       |
-| `apps/realtime/src/durableObjects/UserObject.ts`      | a person's sockets, sent and scheduled index, reminders            |
-| `apps/realtime/src/durableObjects/Scheduler.ts`       | deleted                                                            |
-| `apps/web/server/middleware/trpcDurableObject.ts`     | deleted                                                            |
-| `apps/web/server/routes/_internal/publish.post.ts`    | deleted                                                            |
-| `apps/web/server/routes/ws/`                          | authenticate and forward the three socket kinds                    |
-| `apps/web/server/services/**/events/*EventEmitter.ts` | deleted; their events become `RoomEvent`, `CallEvent`, `UserEvent` |
-| `packages/db-schema/src/models/realtime/`             | the three event unions and their schemas                           |
-| `apps/web/app/composables/realtime/`                  | the connection manager and the event dispatch                      |
-| `packages/trpc-nuxt-module`                           | its WebSocket handler is no longer used by the app                 |
+| File                                             | Role after the change                                              |
+| :----------------------------------------------- | :----------------------------------------------------------------- |
+| `apps/realtime/src/durableObjects/RoomObject.ts` | messages, reactions, search, scheduled messages, room sockets      |
+| `apps/realtime/src/durableObjects/CallObject.ts` | call participants and knockers, call sockets                       |
+| `apps/realtime/src/durableObjects/UserObject.ts` | a person's sockets, sent and scheduled index, reminders            |
+| the `Scheduler` object                           | deleted                                                            |
+| the tRPC Durable Object middleware               | deleted                                                            |
+| the internal publish route                       | deleted                                                            |
+| `apps/web/server/routes/ws/`                     | authenticate and forward the three socket kinds                    |
+| the in-process EventEmitters                     | deleted; their events become `RoomEvent`, `CallEvent`, `UserEvent` |
+| `packages/db-schema/src/models/realtime/`        | the three event unions and their schemas                           |
+| `apps/web/app/composables/realtime/`             | the connection manager and the event dispatch                      |
+| `packages/trpc-nuxt-module`                      | its WebSocket handler is no longer used by the app                 |
 
 ## Sources
 

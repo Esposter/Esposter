@@ -27,7 +27,7 @@ A caller is its context. `createMockContext(authSession?)` acts as the default i
   const memberRoomCaller = await createMockCaller(roomRouter, await createMockAuthSession(mockContext.db));
   ```
 
-  `createMockCaller(router, authSession?)` is the one helper for a second caller; a suite never keeps a local `createRoomCaller` twin of it.
+  `createMockCaller(router, authSession?)` is the one helper for a second caller; a suite never keeps a local room-caller twin of it.
 
 - **`createMockUser(db)`** is a second user for the test to _act on_ rather than _act as_: it returns the user alone.
 - **Two devices of one person** are two auth sessions of one user, each its own context. A test whose behaviour turns on `session.id` builds them explicitly rather than expecting a fresh session per call.

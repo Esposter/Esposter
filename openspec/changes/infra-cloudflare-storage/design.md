@@ -20,14 +20,14 @@ Inside a Worker the binding is used directly: `bucket.get`, `bucket.put`, `bucke
 
 ## Key files
 
-| File                                                                    | Role after the change                            |
-| :---------------------------------------------------------------------- | :----------------------------------------------- |
-| `packages/db-schema/src/models/azure/container/AzureContainer.ts`       | renamed to the bucket enum                       |
-| `packages/db/src/services/azure/container/generateWritePresignedUrl.ts` | the presigned PUT                                |
-| `packages/db/src/services/azure/container/generateReadPresignedUrl.ts`  | the presigned GET                                |
-| `packages/db/src/services/azure/container/readJsonBlob.ts`              | moved under `services/storage`, over the binding |
-| `apps/web/app/services/file/uploadFileToSas.ts`                         | one presigned PUT                                |
-| `apps/web/app/services/azure/container/uploadBlocks.ts`                 | deleted                                          |
-| `apps/web/app/services/azure/container/commitBlockList.ts`              | deleted                                          |
-| `apps/web/server/composables/azure/container/useContainerClient.ts`     | replaced by the bucket binding                   |
-| `apps/web/server/api/resource-assets/[...path].get.ts`                  | redirects to a presigned GET                     |
+| File                                                        | Role after the change                            |
+| :---------------------------------------------------------- | :----------------------------------------------- |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`    | renamed to the bucket enum                       |
+| `packages/db/src/services/storage/createPresignedPutUrl.ts` | the presigned PUT                                |
+| `packages/db/src/services/storage/createPresignedGetUrl.ts` | the presigned GET                                |
+| `packages/db/src/services/storage/readJsonBlob.ts`          | moved under `services/storage`, over the binding |
+| `apps/web/app/services/file/uploadFileToUrl.ts`             | one presigned PUT                                |
+| the block upload                                            | deleted                                          |
+| the block-list commit                                       | deleted                                          |
+| the container client composable                             | replaced by the bucket binding                   |
+| `apps/web/server/api/resource-assets/[...path].get.ts`      | redirects to a presigned GET                     |

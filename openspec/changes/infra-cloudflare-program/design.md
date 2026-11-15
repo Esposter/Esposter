@@ -112,22 +112,22 @@ The cutover is the last part and runs after the branch is merged.
 
 ## Key files
 
-| File                                                                    | Role after the program                                        |
-| :---------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `apps/web/configuration/nitro.ts`                                       | the `cloudflare_module` preset and its Durable Object binding |
-| `apps/web/server/db/index.ts`                                           | the Drizzle client over the `core` D1 binding                 |
-| `packages/db-schema/src/pgTable.ts`                                     | replaced by the SQLite table factory                          |
-| `packages/db-schema/drizzle.config.ts`                                  | the SQLite dialect and the D1 migrations folder               |
-| `packages/db/src/services/azure/table/getTableClient.ts`                | replaced by typed tables in `core`                            |
-| `packages/db/src/services/azure/container/generateWritePresignedUrl.ts` | replaced by the presigned R2 PUT                              |
-| `packages/db-schema/src/models/azure/function/AzureFunction.ts`         | renamed to the queue job enum                                 |
-| `apps/realtime/package.json`                                            | the realtime Worker                                           |
-| `apps/jobs/package.json`                                                | the jobs Worker                                               |
-| `apps/web/server/api/webhooks/livekit.post.ts`                          | replaced by the RealtimeKit webhook                           |
-| `apps/infra/src/index.ts`                                               | the Cloudflare provider folder beside GitHub                  |
-| `packages/db-mock/src/createMockDb.ts`                                  | the Miniflare D1 test database                                |
-| `packages/azure-mock/package.json`                                      | deleted                                                       |
-| `packages/azure/package.json`                                           | deleted                                                       |
-| `livekit-server/Dockerfile`                                             | deleted                                                       |
-| `livekit-monitor/Dockerfile`                                            | deleted                                                       |
-| `openspec/specs/architecture/cloudflare-services/design.md`             | rewritten as the Cloudflare services page at the cutover      |
+| File                                                        | Role after the program                                        |
+| :---------------------------------------------------------- | :------------------------------------------------------------ |
+| `apps/web/configuration/nitro.ts`                           | the `cloudflare_module` preset and its Durable Object binding |
+| `apps/web/server/db/index.ts`                               | the Drizzle client over the `core` D1 binding                 |
+| `packages/db-schema/src/sqliteTable.ts`                     | replaced by the SQLite table factory                          |
+| `packages/db-schema/drizzle.config.ts`                      | the SQLite dialect and the D1 migrations folder               |
+| the Azure Table client                                      | replaced by typed tables in `core`                            |
+| `packages/db/src/services/storage/createPresignedPutUrl.ts` | replaced by the presigned R2 PUT                              |
+| `packages/db-schema/src/models/queue/QueueJob.ts`           | renamed to the queue job enum                                 |
+| `apps/realtime/package.json`                                | the realtime Worker                                           |
+| `apps/jobs/package.json`                                    | the jobs Worker                                               |
+| `apps/web/server/api/webhooks/realtimekit.post.ts`          | replaced by the RealtimeKit webhook                           |
+| `apps/infra/src/index.ts`                                   | the Cloudflare provider folder beside GitHub                  |
+| `packages/db-mock/src/createMockDb.ts`                      | the Miniflare D1 test database                                |
+| the `azure-mock` package                                    | deleted                                                       |
+| the `@esposter/azure` package                               | deleted                                                       |
+| `livekit-server/Dockerfile`                                 | deleted                                                       |
+| `livekit-monitor/Dockerfile`                                | deleted                                                       |
+| `openspec/specs/architecture/cloudflare-services/design.md` | rewritten as the Cloudflare services page at the cutover      |

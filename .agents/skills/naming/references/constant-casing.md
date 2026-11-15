@@ -17,7 +17,7 @@ rather than for one value.
 
 **The file is what earns the PascalCase, not the data structure.** A `Set` sharing a `constants.ts` with its
 siblings has no file to be named after, so it is a fixed list under the next heading and takes the scalar's
-casing — `TEMPORAL_DATE_TYPES`, `OPERATION_PREFIXES`, `ALLOWED_ROOTS`. Read the other way, every membership set in
+casing — `TEMPORAL_DATE_TYPES`, `OPERATION_PREFIXES`, `ALERTED_ERROR_CODES`. Read the other way, every membership set in
 the repo would be PascalCase and the one-map-per-file rule would have nothing left to mean.
 
 `apps/infra` is the one package this does not reach: a constant there is one per file named after that file,

@@ -23,7 +23,7 @@ flowchart TD
   Empty -- "something to search on" --> Read["useReadSearchedMessages"]
 ```
 
-Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produces a filter the input schema rejects, one `filtersToClauses` throws on, or one that silently matches nothing. **Only a picker gives a filter its value.**
+Enter never writes typed text into a chip either. No typed text can be the userId, room id, media kind, date or boolean a filter needs, so filling a chip from the field produces a filter the input schema rejects, one `getRoomSearchConditions` throws on, or one that silently matches nothing. **Only a picker gives a filter its value.**
 
 ## The field and its panel
 
@@ -118,7 +118,7 @@ A deleted account's messages keep their place in their rooms, but not their text
 | `app/composables/message/message/useReadMessageCreators.ts`              | The authors a page of messages names, read before the page lands                                                |
 | `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
 | `server/services/message/searchMessages.ts`                              | Condition assembly and the paged FTS5 read                                                                      |
-| `server/services/search/getSearchExpression.ts`                          | The user text as literal FTS5 words                                                                             |
+| `packages/shared/src/services/search/getSearchExpression.ts`             | The user text as literal FTS5 words                                                                             |
 
 ## Sources
 

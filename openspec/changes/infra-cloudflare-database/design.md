@@ -51,15 +51,15 @@ Rejected: a second `streams` database holding Azure Table's model as generic row
 
 | File                                                           | Role after the change                      |
 | :------------------------------------------------------------- | :----------------------------------------- |
-| `packages/db-schema/src/pgTable.ts`                            | replaced by the SQLite table factory       |
-| `packages/db-schema/src/models/PgTable.ts`                     | replaced by its SQLite type                |
+| `packages/db-schema/src/sqliteTable.ts`                        | replaced by the SQLite table factory       |
+| `packages/db-schema/src/models/SqliteTable.ts`                 | replaced by its SQLite type                |
 | `packages/db-schema/src/createMetadataSchema.ts`               | SQLite timestamps                          |
 | `packages/db-schema/src/services/shared/createNameCheckSql.ts` | SQLite check SQL, as every sibling helper  |
 | `packages/db-schema/drizzle.config.ts`                         | the `core` SQLite configuration            |
-| `packages/db-schema/src/models/azure/table/AzureTable.ts`      | renamed to the stream table enum           |
-| `packages/db/src/services/azure/table/getTableClient.ts`       | replaced by the D1 stream table client     |
-| `packages/db/src/services/azure/search/getSearchClient.ts`     | replaced by FTS5 queries                   |
+| the Azure Table name enum                                      | deleted with the streams layer             |
+| the Azure Table client                                         | replaced by typed tables in `core`         |
+| the Azure AI Search client                                     | replaced by FTS5 queries                   |
 | `apps/web/server/db/index.ts`                                  | Drizzle over the `core` binding            |
 | `apps/web/server/services/message/searchMessages.ts`           | reads `messages_search`                    |
 | `packages/db-mock/src/createMockDb.ts`                         | Miniflare's D1 with both migration folders |
-| `packages/azure-mock/package.json`                             | deleted                                    |
+| the `azure-mock` package                                       | deleted                                    |

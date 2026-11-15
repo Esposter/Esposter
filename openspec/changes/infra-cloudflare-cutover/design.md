@@ -31,7 +31,7 @@ flowchart TD
     REHV -->|"yes"| PRE["prod snapshot, then live pre-copy: assign-ids, objects, core, tables"]
   end
   PRE --> FREEZE["freeze: Railway app removed, Functions drained then stopped"]
-  FREEZE --> DELTA["assign-ids, then the delta: objects, all of Postgres, entities and rooms changed since the pre-copy"]
+  FREEZE --> DELTA["assign-ids, then the delta since the pre-copy"]
   DELTA --> RESCH["rewrite-urls, reschedule pending jobs"]
   RESCH --> V{"verify: rows, keys, foreign keys, room counts, object hashes"}
   V -->|"fails"| ABORT["abort: restart Railway app and Functions, nothing lost"]
@@ -137,5 +137,5 @@ The [realtime](../infra-cloudflare-realtime/design.md) design moves each room's 
 2. Pending jobs move only inside the freeze. `message.scheduledMessageJobs` has no D1 table: `assign-ids` gives each pending row a new id, `copy-tables --delta` imports the pending scheduled messages into their rooms' objects (a reply names its root by the root's number, and a root never numbered sends it to the room), and `reschedule` arms the pending message reminders on their owners' objects. The live copy imports none of them, because a job cancelled after the pre-copy would stay in its object: no route deletes one.
 3. `verify` compares a room's count and newest number, not its text. Checking that message text survives needs the room summary route to return a sample of messages, which it does not yet.
 4. The UUIDv4 assumption for the Postgres ids is unverified until the rehearsal reads real rows.
-5. A full `copy-objects` that ran before a change to the rewrite left objects under keys the rewrite no longer produces, and a delta copies only what changed since the pre-copy. So after such a change the `checkpoints/copy-objects/` objects in the environment's archive are deleted and the full copy runs again before the freeze: it copies each object under its new key, and the freeze's delta deletes the old keys, which Azure no longer names under the rewrite. The production pre-copy of 2026-11-14 ran before the version-digit rewrite and is re-run this way.
+5. A full `copy-objects` that ran before a change to the rewrite left objects under keys the rewrite no longer produces, and a delta copies only what changed since the pre-copy. So after such a change the `checkpoints/copy-objects/` objects in the environment's archive are deleted and the full copy runs again before the freeze: it copies each object under its new key, and the freeze's delta deletes the old keys, which Azure no longer names under the rewrite. Any pre-copy taken before the version-digit rewrite is re-run this way.
 6. `copy-tables` skips a row whose parent the core database does not hold yet, and its `--delta` lists only the rows Azure changed since the pre-copy, so a skipped row Azure never touched again is never copied. Each run prints its skipped count. When `verify` reports a shortfall after the delta, the `checkpoints/copy-tables/` objects in the archive are deleted and the full copy runs again inside the freeze, which revisits every row with its parents now in place.

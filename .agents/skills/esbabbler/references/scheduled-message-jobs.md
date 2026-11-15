@@ -12,6 +12,6 @@ The reminder's flow:
 3. A failed publish keeps the row. The alarm is re-armed `REMINDER_RETRY_DELAY_MS` later (`apps/realtime/src/services/reminder/constants.ts`), so a row that stays overdue is never left without an alarm.
 4. `cancelScheduledMessageJob` on a reminder calls `removeReminder`, which deletes the row and re-arms the alarm, so cancelling the next-due reminder moves the alarm to the one after it.
 
-Delivery is at least once. A crash between the publish and the delete publishes the reminder again on the retry. The notification's own retries and delivery belong to the notification path ([notifications](../../../../openspec/specs/architecture/notifications/design.md)).
+How often a delivery can repeat is set out in the [scheduled messages](../../../../openspec/specs/esbabbler/scheduled-messages/design.md) design. The notification's own retries and delivery belong to the notification path ([notifications](../../../../openspec/specs/architecture/notifications/design.md)).
 
 The Scheduled tab reads both kinds through `message.scheduledMessageJob.readMyScheduledMessageJobs` and counts them through `readMyScheduledMessageJobsCount`. Both merge the index with the reminders, and a row whose room no longer exists is left out.
