@@ -52,8 +52,7 @@
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
-    "tsdown": "catalog:",
-    "type-fest": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@pulumi/github": "catalog:",

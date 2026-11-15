@@ -8,13 +8,11 @@ import type {
   FileEntity,
   RoomActor,
   RoomEvent,
-  RoomImport,
   RoomMessage,
   RoomObjectRpc,
   RoomReaction,
   RoomSearchInput,
   RoomSearchResult,
-  RoomSummary,
   ScheduledRoomMessage,
   UserEvent,
   UserStatusInMessage,
@@ -54,7 +52,7 @@ import {
 } from "@esposter/db-schema";
 import roomMigrations from "@esposter/db-schema/objects/room/migrations/migrations";
 import { chunk, getResultAsync, getSearchExpression, noop, NotFoundError } from "@esposter/shared";
-import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, max, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, getTableColumns, gt, inArray, isNull, lt, lte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 
 // The columns a message is read by.
@@ -279,59 +277,6 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
     return this.db.select().from(messageEmojisInRoom).where(getReactedByWhere(userId)).all();
   }
 
-  // The cutover's copy of a room's history.
-  // Every row is written under the number the cutover gave it, in one synchronous transaction.
-  // So a re-run rewrites the same rows and an edited row overwrites its own.
-  // Each copied send is indexed in its sender's object as a live send is.
-  // Nothing is broadcast, notified or marked active: this is history, not a send
-  async importRoom(input: RoomImport): Promise<RoomSummary> {
-    this.db.transaction((transaction) => {
-      for (const message of input.messages) {
-        const row = { ...message, deletedAt: null, filenames: getFilenames(message.files), webhookDeliveryId: null };
-        const { id: _id, ...updatedColumns } = row;
-        transaction
-          .insert(messagesInRoom)
-          .values(row)
-          .onConflictDoUpdate({ set: updatedColumns, target: messagesInRoom.id })
-          .run();
-      }
-      for (const reaction of input.reactions)
-        transaction
-          .insert(messageEmojisInRoom)
-          .values(reaction)
-          .onConflictDoUpdate({
-            set: { userIds: reaction.userIds },
-            target: [messageEmojisInRoom.messageId, messageEmojisInRoom.emojiTag],
-          })
-          .run();
-      for (const scheduledMessage of input.scheduledMessages) {
-        const { id: _id, ...updatedColumns } = scheduledMessage;
-        transaction
-          .insert(scheduledMessagesInRoom)
-          .values(scheduledMessage)
-          .onConflictDoUpdate({ set: updatedColumns, target: scheduledMessagesInRoom.id })
-          .run();
-      }
-    });
-    await this.#armAlarm();
-    // One request to each sender's object per copied row, each best-effort: a failed one costs only its own index
-    await Promise.all([
-      ...input.scheduledMessages.map(({ id, runAt, userId }) =>
-        this.#notifyUser(userId, (user) => user.addScheduledMessage({ roomId: this.#roomId, runAt, scheduledId: id })),
-      ),
-      ...input.messages.flatMap(({ createdAt, id, userId }) =>
-        userId === null
-          ? []
-          : [
-              this.#notifyUser(userId, (user) =>
-                user.addSentMessage({ createdAt, messageId: id, roomId: this.#roomId }),
-              ),
-            ],
-      ),
-    ]);
-    return this.summarizeRoom();
-  }
-
   // The members attached here are the ones a room-list event reaches, so a member who has left is not sent the event
   async notifyOnlineMembers(event: UserEvent): Promise<void> {
     const onlineMembers = this.db.select().from(onlineMembersInRoom).all();
@@ -468,17 +413,6 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
 
   setMemberStatus(status: UserStatusInMessage): void {
     this.broadcast({ data: status, type: "upsertStatus" });
-  }
-
-  // What verify compares with what Azure held: every row the room has, a deleted message's tombstone included.
-  // Azure also held the number of the newest. Nothing is written or broadcast
-  summarizeRoom(): RoomSummary {
-    const [summary] = this.db
-      .select({ messageCount: count(), newestId: max(messagesInRoom.id) })
-      .from(messagesInRoom)
-      .all();
-    // SQLite answers max() of no rows with null, which the summary carries as an absent newest id
-    return { messageCount: summary?.messageCount ?? 0, newestId: summary?.newestId ?? undefined };
   }
 
   unpinMessage(id: number, actor: RoomActor): null | RoomMessage {

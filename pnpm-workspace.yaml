@@ -30,9 +30,7 @@ bail: false
 
 catalog:
   "@arethetypeswrong/core": ^0.18.5
-  "@azure/data-tables": ^13.3.2
   "@azure/identity": ^4.14.1
-  "@azure/storage-blob": ^12.34.0
   "@better-auth/api-key": ^1.7.25
   "@better-auth/drizzle-adapter": ^1.7.25
   "@cloudflare/realtimekit": ^2.0.4
@@ -191,7 +189,6 @@ catalog:
   phaser4-rex-plugins: ^4.2.0
   pinia: ^4.1.0
   playwright: ^1.65.1
-  postgres: ^4.1.1
   publint: ^0.3.25
   re2js: ^2.10.0
   read-excel-file: ^9.3.17

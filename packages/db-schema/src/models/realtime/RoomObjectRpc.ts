@@ -1,9 +1,7 @@
 import type { Filter } from "#src/models/message/filter/Filter";
 import type { RoomEvent } from "#src/models/realtime/RoomEvent";
-import type { RoomImport } from "#src/models/realtime/RoomImport";
 import type { RoomMessage } from "#src/models/realtime/RoomMessage";
 import type { RoomReaction } from "#src/models/realtime/RoomReaction";
-import type { RoomSummary } from "#src/models/realtime/RoomSummary";
 import type { UserEvent } from "#src/models/realtime/UserEvent";
 import type { FileEntity } from "#src/models/streams/FileEntity";
 import type { UserStatusInMessage } from "#src/schema/message/userStatusesInMessage";
@@ -69,10 +67,6 @@ export interface RoomObjectRpc {
   exportUserMessages: (input: { after?: number; limit: number; userId: string }) => RoomMessage[];
   // The reactions a user is one of the reactors of in this room, each with every reactor it has
   exportUserReactions: (userId: string) => RoomReaction[];
-  // The cutover's import of a room's copied history. Each row is written under the number the cutover gave it, so a re-run
-  // Writes the same rows again, and each sent message is indexed in its sender's object as a live send is. Returns the
-  // Room's summary after the write
-  importRoom: (input: RoomImport) => Promise<RoomSummary>;
   // A room-list event the room's own write raised, sent to each member online in the room through that member's object
   notifyOnlineMembers: (event: UserEvent) => Promise<void>;
   pinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
@@ -90,7 +84,6 @@ export interface RoomObjectRpc {
   searchMessages: (input: RoomSearchInput) => RoomSearchResult;
   // A status the person set, which every room they are in shows
   setMemberStatus: (status: UserStatusInMessage) => void;
-  summarizeRoom: () => RoomSummary;
   unpinMessage: (id: number, actor: RoomActor) => null | RoomMessage;
   updateMessage: (input: { id: number; mentions: string[]; message: string }, actor: RoomActor) => null | RoomMessage;
   updateScheduledMessage: (
