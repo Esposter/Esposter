@@ -22,9 +22,14 @@ export const forEachConcurrently = async <T>(
       });
     }
   };
-  const lanes = await Promise.allSettled(Array.from({ length: concurrency }, runLane));
-  const rejected = lanes.find((lane) => lane.status === "rejected");
-  if (rejected?.status === "rejected") throw rejected.reason;
+  // A lane's own failure, the listing's, is recorded beside the calls' in the order it happened, so the first wins
+  await Promise.all(
+    Array.from({ length: concurrency }, () =>
+      getResultAsync(runLane).match(noop, (error) => {
+        failures.push(error);
+      }),
+    ),
+  );
   const [failure] = failures;
   if (failure) throw failure;
 };

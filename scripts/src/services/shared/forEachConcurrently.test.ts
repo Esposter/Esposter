@@ -58,4 +58,25 @@ describe(forEachConcurrently, () => {
     );
     expect(settled).toContain("b");
   });
+
+  test("rejects with a call's failure ahead of a listing failure that came after it", async () => {
+    expect.hasAssertions();
+
+    const run = forEachConcurrently(
+      (async function* () {
+        yield "a";
+        await new Promise((resolve) => setTimeout(resolve));
+        throw new InvalidOperationError(Operation.Read, "listing", "failed");
+      })(),
+      limit,
+      async (item) => {
+        await Promise.resolve();
+        throw new InvalidOperationError(Operation.Create, item, "failed");
+      },
+    );
+
+    await expect(run).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: Invalid operation: Create, name: a, failed]`,
+    );
+  });
 });
