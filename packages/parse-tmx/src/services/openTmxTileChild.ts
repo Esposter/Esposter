@@ -8,7 +8,7 @@ import { openTmxProperties } from "#src/services/openTmxProperties";
 
 // A tile holds an animation, an image and its object group and properties
 export const openTmxTileChild = (
-  parent: Extract<TMXFrame, { tag: TMXTagName.Tile }>,
+  parent: Extract<TMXFrame, { tag: typeof TMXTagName.Tile }>,
   tag: TMXTagName | undefined,
   attributes: TMXAttributes,
 ): TMXFrame | undefined => {

@@ -11,7 +11,14 @@ import { openTmxProperties } from "#src/services/openTmxProperties";
 
 type TMXLayerChildParent = Extract<
   TMXFrame,
-  { tag: TMXTagName.Chunk | TMXTagName.Data | TMXTagName.Group | TMXTagName.ImageLayer | TMXTagName.Layer }
+  {
+    tag:
+      | typeof TMXTagName.Chunk
+      | typeof TMXTagName.Data
+      | typeof TMXTagName.Group
+      | typeof TMXTagName.ImageLayer
+      | typeof TMXTagName.Layer;
+  }
 >;
 
 // A group holds layers, an image layer its image and a tile layer its data, and each holds its properties

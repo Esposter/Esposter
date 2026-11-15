@@ -1,8 +1,5 @@
-export enum Flipped {
-  Diagonally = 0x20000000,
-  Vertically = 0x40000000,
-  Horizontally = 0x80000000,
-}
+export const Flipped = { Diagonally: 0x20000000, Vertically: 0x40000000, Horizontally: 0x80000000 } as const;
+export type Flipped = (typeof Flipped)[keyof typeof Flipped];
 
 export const Flippeds: readonly Flipped[] = Object.values(Flipped).filter(
   (value): value is Flipped => typeof value === "number",

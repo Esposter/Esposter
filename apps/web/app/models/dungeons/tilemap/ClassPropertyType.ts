@@ -2,7 +2,7 @@ import type { TiledObjectProperty } from "@/models/dungeons/tilemap/TiledObjectP
 import type { ItemEntityType } from "@esposter/shared";
 import type { PropertyType } from "parse-tmx";
 
-export interface ClassPropertyType extends ItemEntityType<PropertyType.Class> {
+export interface ClassPropertyType extends ItemEntityType<typeof PropertyType.Class> {
   color: string;
   drawFill: boolean;
   id: number;

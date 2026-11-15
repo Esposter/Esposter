@@ -8,7 +8,7 @@ import { createTextProperties } from "#src/services/createTextProperties";
 import { openTmxProperties } from "#src/services/openTmxProperties";
 import { parsePoints } from "#src/services/parsePoints";
 
-type TMXObjectChildParent = Extract<TMXFrame, { tag: TMXTagName.Object | TMXTagName.Objectgroup }>;
+type TMXObjectChildParent = Extract<TMXFrame, { tag: typeof TMXTagName.Object | typeof TMXTagName.Objectgroup }>;
 
 // An object group holds objects, and an object holds the one shape it is, its properties and a text's content. A shape
 // Is read off its element, so a point, ellipse, polygon or polyline child sets it on open.

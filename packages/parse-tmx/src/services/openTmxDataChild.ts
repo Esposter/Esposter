@@ -18,7 +18,7 @@ const chunkAttributeKindMap = {
 // Infinite maps write a layer's cells as chunks, each with its own queued data in the encoding the layer's data wrote.
 // A `<tile>` cell is recorded as its gid, which is the form a data element with no encoding takes.
 export const openTmxDataChild = (
-  parent: Extract<TMXFrame, { tag: TMXTagName.Chunk | TMXTagName.Data }>,
+  parent: Extract<TMXFrame, { tag: typeof TMXTagName.Chunk | typeof TMXTagName.Data }>,
   tag: TMXTagName | undefined,
   attributes: TMXAttributes,
   context: TMXReadContext,

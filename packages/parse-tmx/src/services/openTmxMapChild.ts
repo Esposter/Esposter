@@ -17,7 +17,7 @@ const externalTilesetAttributeKindMap = {
 
 // The children a map element does not model are skipped, and any other child is refused by name
 export const openTmxMapChild = (
-  parent: Extract<TMXFrame, { tag: TMXTagName.Map }>,
+  parent: Extract<TMXFrame, { tag: typeof TMXTagName.Map }>,
   name: string,
   tag: TMXTagName | undefined,
   attributes: TMXAttributes,

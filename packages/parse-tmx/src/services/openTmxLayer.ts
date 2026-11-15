@@ -33,7 +33,7 @@ const layerAttributeKindMap = {
 // A layer or group joins the list its parent keeps, in the order the document gives them, which is the draw order
 export const openTmxLayer = (
   layers: (TMXGroupLayerParsed | TMXLayerParsed)[],
-  tag: TMXTagName.Group | TMXTagName.ImageLayer | TMXTagName.Layer | TMXTagName.Objectgroup,
+  tag: typeof TMXTagName.Group | typeof TMXTagName.ImageLayer | typeof TMXTagName.Layer | typeof TMXTagName.Objectgroup,
   attributes: TMXAttributes,
 ): TMXFrame => {
   if (tag === TMXTagName.Group) {

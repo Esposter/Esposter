@@ -6,7 +6,7 @@ import { Compression } from "#src/models/Compression";
 // Which already returns the narrower type.
 export const getDecompressedBytes: (
   bytes: Uint8Array<ArrayBuffer>,
-  compression: Compression.Gzip | Compression.Zlib,
+  compression: typeof Compression.Gzip | typeof Compression.Zlib,
 ) => Promise<Uint8Array<ArrayBuffer>> = async (bytes, compression) => {
   const format = compression === Compression.Gzip ? "gzip" : "deflate";
   const decompressedTileStream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream(format));

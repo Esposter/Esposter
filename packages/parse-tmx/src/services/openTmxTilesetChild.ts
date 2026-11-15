@@ -15,7 +15,7 @@ const tileAttributeKindMap = {
 
 // A tileset holds its image, when it has one, and its tiles
 export const openTmxTilesetChild = (
-  parent: Extract<TMXFrame, { tag: TMXTagName.Tileset }>,
+  parent: Extract<TMXFrame, { tag: typeof TMXTagName.Tileset }>,
   tag: TMXTagName | undefined,
   attributes: TMXAttributes,
 ): TMXFrame | undefined => {

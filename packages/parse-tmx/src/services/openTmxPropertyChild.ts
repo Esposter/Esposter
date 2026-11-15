@@ -11,7 +11,7 @@ const propertyAttributeKindMap = { name: AttributeKind.RequiredString } as const
 
 // A property's value is read once it closes, since its character data is what it holds when it has no value attribute
 export const openTmxPropertyChild = (
-  parent: Extract<TMXFrame, { tag: TMXTagName.Properties }>,
+  parent: Extract<TMXFrame, { tag: typeof TMXTagName.Properties }>,
   tag: TMXTagName | undefined,
   attributes: TMXAttributes,
 ): TMXFrame | undefined => {

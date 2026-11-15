@@ -10,9 +10,9 @@ type TMXAttributeValues<Table extends Record<string, AttributeKind>> = {
 } & {
   [Name in keyof Table as Table[Name] extends TMXRequiredKind ? never : Name]?: TMXAttributeValue<Table[Name]>;
 };
-type TMXNumberKind = AttributeKind.Number | AttributeKind.RequiredNumber;
+type TMXNumberKind = typeof AttributeKind.Number | typeof AttributeKind.RequiredNumber;
 
-type TMXRequiredKind = AttributeKind.RequiredNumber | AttributeKind.RequiredString;
+type TMXRequiredKind = typeof AttributeKind.RequiredNumber | typeof AttributeKind.RequiredString;
 
 // An optional attribute left out, or a number written empty, is absent, since `Number("")` would read it as zero.
 // A required one is written as zero, or empty for a String, so the model's key is always there.
