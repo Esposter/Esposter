@@ -15,13 +15,22 @@ describe(useCreator, () => {
   const displayName = "displayName";
   const user = createUser({ name: "globalName" });
   // A webhook row has no member author, and carries the app user it was sent under and that user's name
-  const createWebhookMessage = (appUserId: string, senderName: string) => ({
+  const createWebhookMessage = (appUserId: string, senderName: null | string) => ({
     ...createOptimisticMessage({ roomId, type: MessageType.Message }, user.id),
     appUserId,
     senderName,
     type: MessageType.Webhook,
     userId: null,
   });
+  // The bot a webhook is sent under, as the app user cache holds it
+  const cachedAppUser = {
+    createdAt: new Date(0),
+    deletedAt: null,
+    id: v7(),
+    image: "",
+    name: "appUserName",
+    updatedAt: new Date(0),
+  };
 
   beforeEach(() => {
     const userStore = useUserStore();
@@ -60,21 +69,26 @@ describe(useCreator, () => {
   test("names a webhook creator from its app user", () => {
     expect.hasAssertions();
 
-    const appUser = {
-      createdAt: new Date(0),
-      deletedAt: null,
-      id: v7(),
-      image: "",
-      name: "appUserName",
-      updatedAt: new Date(0),
-    };
     const appUserStore = useAppUserStore();
     const { appUserMap } = storeToRefs(appUserStore);
-    appUserMap.value.set(appUser.id, appUser);
-    const message = createWebhookMessage(appUser.id, appUser.name);
+    appUserMap.value.set(cachedAppUser.id, cachedAppUser);
+    const message = createWebhookMessage(cachedAppUser.id, cachedAppUser.name);
     const creator = useCreator(() => message);
 
-    expect(creator.value?.name).toBe(appUser.name);
+    expect(creator.value?.name).toBe(cachedAppUser.name);
+  });
+
+  // A delivery that carries no sender name of its own is named by the bot it was sent under, as the cache holds it
+  test("falls back to the app user's name for a webhook with no sender name", () => {
+    expect.hasAssertions();
+
+    const appUserStore = useAppUserStore();
+    const { appUserMap } = storeToRefs(appUserStore);
+    appUserMap.value.set(cachedAppUser.id, cachedAppUser);
+    const message = createWebhookMessage(cachedAppUser.id, null);
+    const creator = useCreator(() => message);
+
+    expect(creator.value?.name).toBe(cachedAppUser.name);
   });
 
   // An offline webhook's app user is not cached, so the identity its message carries is what names it

@@ -1,5 +1,5 @@
+import type { useCallObject } from "#server/composables/realtime/useCallObject";
 import type { db } from "#server/db";
-import type { getCallObject } from "#server/services/message/call/getCallObject";
 import type { RequestEvent } from "nuxt/server";
 
 import callWebhook from "#server/api/webhooks/realtimekit.post";
@@ -29,8 +29,8 @@ vi.mock(
 vi.mock(import("#server/services/message/call/checkIsCallConnectionAdmitted"), () => ({
   checkIsCallConnectionAdmitted: vi.fn<(...args: unknown[]) => Promise<boolean>>(),
 }));
-vi.mock(import("#server/services/message/call/getCallObject"), () => ({
-  getCallObject: () => callObject as unknown as ReturnType<typeof getCallObject>,
+vi.mock(import("#server/composables/realtime/useCallObject"), () => ({
+  useCallObject: () => callObject as unknown as ReturnType<typeof useCallObject>,
 }));
 
 const createEvent = (body: ArrayBuffer, signature: string) =>
@@ -84,5 +84,20 @@ describe("api/webhooks/realtimekit", () => {
 
     expect(callObject.removeConnection).toHaveBeenCalledExactlyOnceWith({ sessionId });
     expect(callObject.participantJoined).not.toHaveBeenCalled();
+  });
+
+  test("answers 401 to a signature that is not base64, rather than failing the request", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => Promise.resolve(Response.json({ data: { publicKey: signer.publicKeyPem } }))),
+    );
+    const event = createEvent(new ArrayBuffer(0), "not base64!");
+
+    const response = await callWebhook(event);
+
+    expect(event.res.status).toBe(401);
+    expect(response).toStrictEqual({ message: "Invalid RealtimeKit webhook." });
   });
 });

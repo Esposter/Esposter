@@ -33,6 +33,8 @@ describe("inviteRouter", () => {
   const name = "name";
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
+  const epoch = new Date(0);
+  const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
   // A link that never lapses, which is what every test not about expiry or exhaustion reads through. It creates as the
   // Default caller unless a test names the one acting
   const createUnlimitedInvite = (inviteRoomId: string, caller = inviteCaller) =>
@@ -140,11 +142,9 @@ describe("inviteRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
     const usableInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
-    const epoch = new Date(0);
-    const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
     const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
-    // Paging sorts by id, so the ids descend in the order the rows are listed: the two lapsed links fill a two-row page
-    // Random codes would make that order a coin flip, and the usable one sits behind them
+    // Paging sorts newest first, and these rows are created in the order their codes descend, so the two lapsed links
+    // Fill a two-row page and the usable one sits behind them
     await mockContext.db.insert(invitesInMessage).values([
       { createdAt: twoSecondsIn, expiresAt: epoch, id: "c".repeat(SECRET_TOKEN_LENGTH), roomId: newRoom.id, userId },
       { createdAt: oneSecondIn, expiresAt: epoch, id: "b".repeat(SECRET_TOKEN_LENGTH), roomId: newRoom.id, userId },
@@ -164,6 +164,24 @@ describe("inviteRouter", () => {
     expect(lapsedPage.items).toStrictEqual([]);
     expect(lapsedPage.hasMore).toBe(true);
     expect(usablePage.items.map(({ id }) => id)).toStrictEqual([usableInviteId]);
+  });
+
+  // An invite's code is a random secret, so the list cannot read creation order off it: the older link here carries the
+  // Larger code, and the newer one still lists first
+  test("lists room invites newest first, whatever their codes sort to", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const { id: userId } = getMockSession().user;
+    const olderInviteId = "b".repeat(SECRET_TOKEN_LENGTH);
+    const newerInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
+    await mockContext.db.insert(invitesInMessage).values([
+      { createdAt: epoch, id: olderInviteId, roomId: newRoom.id, userId },
+      { createdAt: oneSecondIn, id: newerInviteId, roomId: newRoom.id, userId },
+    ]);
+    const page = await inviteCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
+
+    expect(page.items.map(({ id }) => id)).toStrictEqual([newerInviteId, olderInviteId]);
   });
 
   test("creating again replaces the previous invite", async () => {

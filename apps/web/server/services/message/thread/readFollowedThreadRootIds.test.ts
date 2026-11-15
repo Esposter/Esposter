@@ -3,8 +3,9 @@ import type { Database } from "@esposter/db-schema";
 
 import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
 import { createMockDb } from "@esposter/db-mock";
-import { roomsInMessage, threadFollowsInMessage, usersInAuth } from "@esposter/db-schema";
-import { afterAll, afterEach, beforeAll, describe, expect, test } from "vitest";
+import { MAX_FOLLOWED_THREADS, roomsInMessage, threadFollowsInMessage, usersInAuth } from "@esposter/db-schema";
+import { chunk } from "@esposter/shared";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe(readFollowedThreadRootIds, () => {
   const userId = "8f1c6a2e-4b7d-7e9a-8c31-2d5f7a9b0c11";
@@ -18,6 +19,11 @@ describe(readFollowedThreadRootIds, () => {
     db = mockDatabase.db;
   });
 
+  beforeEach(async () => {
+    await db.insert(usersInAuth).values({ email: "ann@example.com", emailVerified: false, id: userId, name: "Ann" });
+    await db.insert(roomsInMessage).values({ id: roomId, name: "room", userId });
+  });
+
   afterEach(async () => {
     await mockDatabase.reset();
   });
@@ -29,8 +35,6 @@ describe(readFollowedThreadRootIds, () => {
   test("lists the followed roots newest first, by their integer ids, whatever order the follows were recorded in", async () => {
     expect.hasAssertions();
 
-    await db.insert(usersInAuth).values({ email: "ann@example.com", emailVerified: false, id: userId, name: "Ann" });
-    await db.insert(roomsInMessage).values({ id: roomId, name: "room", userId });
     await db.insert(threadFollowsInMessage).values([
       { roomId, threadRootId: 4, userId },
       { roomId, threadRootId: 12, userId },
@@ -38,5 +42,22 @@ describe(readFollowedThreadRootIds, () => {
     ]);
 
     await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual([12, 7, 4]);
+  });
+
+  test("returns every followed root past the drawer's cap, so an older thread keeps its follow state", async () => {
+    expect.hasAssertions();
+
+    const followCount = MAX_FOLLOWED_THREADS + 1;
+    const follows = Array.from({ length: followCount }, (_value, index) => ({
+      roomId,
+      threadRootId: index + 1,
+      userId,
+    }));
+    // Each row binds six parameters and a D1 statement binds at most a hundred, so the rows go in statements of ten
+    await Promise.all(chunk(follows, 10).map((batch) => db.insert(threadFollowsInMessage).values(batch)));
+
+    await expect(readFollowedThreadRootIds(db, roomId, userId)).resolves.toStrictEqual(
+      Array.from({ length: followCount }, (_value, index) => followCount - index),
+    );
   });
 });
