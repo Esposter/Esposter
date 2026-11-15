@@ -363,7 +363,8 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
-  // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather than dropped
+  // Each TodoList reminder is removed only once its notification is queued, so a failed send is retried rather than dropped.
+  // The delete holds only for the due time the alarm read, so a row a save re-dated while the send was in flight stays armed
   async #sendDueTodoReminders(now: Date): Promise<void> {
     const dueReminders = await this.db
       .select()
@@ -386,6 +387,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
               and(
                 eq(todoRemindersInUser.resourceId, reminder.resourceId),
                 eq(todoRemindersInUser.itemId, reminder.itemId),
+                eq(todoRemindersInUser.dueAt, reminder.dueAt),
               ),
             );
       }),

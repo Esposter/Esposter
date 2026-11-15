@@ -235,6 +235,35 @@ describe(UserObject, () => {
     await expect(state.ctx.storage.getAlarm()).resolves.toBeNull();
   });
 
+  // A save that re-dates the item while its reminder is being sent replaces the row, and the alarm's delete must leave
+  // The new one armed
+  test("the reminder alarm keeps a reminder a save re-dated while it was sending", async () => {
+    expect.hasAssertions();
+
+    const { object, state } = createUserObject();
+    const resourceId = v7();
+    const itemId = v7();
+    const dueAt = new Date(Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    const reDatedDueAt = new Date(dueAt.getTime() + Temporal.Duration.from({ minutes: 1 }).total("milliseconds"));
+    await object.reconcileTodoReminders({
+      cancelledItemIds: [],
+      reminders: [{ dueAt, itemId, resourceId }],
+      resourceId,
+    });
+    vi.mocked(sendTodoReminder).mockImplementationOnce(() =>
+      object.reconcileTodoReminders({
+        cancelledItemIds: [],
+        reminders: [{ dueAt: reDatedDueAt, itemId, resourceId }],
+        resourceId,
+      }),
+    );
+
+    vi.setSystemTime(dueAt);
+    await object.alarm();
+
+    await expect(state.ctx.storage.getAlarm()).resolves.toBe(reDatedDueAt.getTime());
+  });
+
   test("the reminder alarm notifies the person of each due reminder once, and re-arms for the one after", async () => {
     expect.hasAssertions();
 
