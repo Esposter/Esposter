@@ -1,10 +1,11 @@
 /* oxlint-disable no-await-in-loop -- Each step reads the last: a send's slowmode check reads the clock an earlier send in the loop wrote, and messages enter the list in run order */
-import type { UserObject } from "#src/durableObjects/UserObject";
+import type { NewMessage } from "#src/models/room/NewMessage";
+import type { NotifyUser } from "#src/models/room/NotifyUser";
+import type { SendOptions } from "#src/models/room/SendOptions";
 import type {
   CreateRoomMessageInput,
   CreateWebhookRoomMessageInput,
   FileEntity,
-  LinkPreviewResponse,
   RoomActor,
   RoomEvent,
   RoomImport,
@@ -29,7 +30,11 @@ import {
   ROOM_MEMBER_REMOVED_CODE,
   ROOM_STATE_ID,
 } from "#src/services/room/constants";
+import { getFilenames } from "#src/services/room/getFilenames";
+import { getMessageRow } from "#src/services/room/getMessageRow";
+import { getReactedByWhere } from "#src/services/room/getReactedByWhere";
 import { getRoomSearchConditions } from "#src/services/room/getRoomSearchConditions";
+import { getSendOptions } from "#src/services/room/getSendOptions";
 import { createReplyThreadFollows, getMessageCreationRejection } from "@esposter/db";
 import {
   AppNotificationType,
@@ -60,71 +65,6 @@ const {
   webhookDeliveryId: _webhookDeliveryId,
   ...messageColumns
 } = getTableColumns(messagesInRoom);
-
-// The fields a message is written from, whichever kind of sender wrote it
-interface MessageFields {
-  appUserId?: string;
-  appUserImage?: string;
-  files?: FileEntity[];
-  isForward?: boolean;
-  linkPreviewResponse?: LinkPreviewResponse | null;
-  mentions?: string[];
-  message: string;
-  replyToId?: number;
-  senderName?: string;
-  type: MessageType;
-  userId?: string;
-  webhookDeliveryId?: string;
-}
-
-type NewMessage = typeof messagesInRoom.$inferInsert;
-type NotifyUser = (user: DurableObjectStub<UserObject>) => Promise<unknown>;
-
-interface SendOptions {
-  excludeTag?: string;
-}
-
-const getFilenames = (files: FileEntity[]): string => files.map(({ filename }) => filename).join(" ");
-
-const getMessageRow = (
-  {
-    appUserId,
-    appUserImage = "",
-    files = [],
-    isForward = false,
-    linkPreviewResponse = null,
-    mentions = [],
-    message,
-    replyToId,
-    senderName,
-    type,
-    userId,
-    webhookDeliveryId,
-  }: MessageFields,
-  now: Date,
-): NewMessage => ({
-  appUserId: appUserId ?? null,
-  appUserImage,
-  createdAt: now,
-  filenames: getFilenames(files),
-  files,
-  isEdited: false,
-  isForward,
-  isPinned: false,
-  linkPreviewResponse,
-  mentions,
-  message,
-  replyToId: replyToId ?? null,
-  senderName: senderName ?? null,
-  type,
-  updatedAt: now,
-  userId: userId ?? null,
-  webhookDeliveryId: webhookDeliveryId ?? null,
-});
-
-// A write from a device excludes that device's own socket, so the device that made it does not hear its echo
-const getSendOptions = ({ deviceId }: RoomActor): SendOptions =>
-  deviceId === undefined ? {} : { excludeTag: `device:${deviceId}` };
 
 // One Room object per room. Its SQLite holds the room's messages, their reactions and their search index.
 // It also holds the scheduled messages still to send and the members online. Its sockets are the room's viewers.
@@ -310,8 +250,8 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   deleteUserReactions(userId: string): void {
-    for (const reaction of this.db.select().from(messageEmojisInRoom).all())
-      if (reaction.userIds.includes(userId)) this.#removeReactor(reaction, userId, {});
+    const reactions = this.db.select().from(messageEmojisInRoom).where(getReactedByWhere(userId)).all();
+    for (const reaction of reactions) this.#removeReactor(reaction, userId, {});
   }
 
   detachMember(userId: string, status: UserStatusInMessage): void {
@@ -336,11 +276,7 @@ export class RoomObject extends RealtimeObject<RoomEvent> implements RoomObjectR
   }
 
   exportUserReactions(userId: string): RoomReaction[] {
-    return this.db
-      .select()
-      .from(messageEmojisInRoom)
-      .all()
-      .filter(({ userIds }) => userIds.includes(userId));
+    return this.db.select().from(messageEmojisInRoom).where(getReactedByWhere(userId)).all();
   }
 
   // The cutover's copy of a room's history.

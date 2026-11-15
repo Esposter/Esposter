@@ -296,24 +296,22 @@ describe(RoomObject, () => {
 
     const { object } = createRoomObject();
     const optionId = v7();
+    // A label is free text, so one shaped like a timestamp is written back as it was typed rather than as a Date
+    const label = "1970-01-01T00:00:00Z";
     const poll = await object.createMessage(
       {
-        message: JSON.stringify({ options: [{ id: optionId, label: "label" }], question: "question", votes: {} }),
+        message: JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: {} }),
         type: MessageType.Poll,
       },
       actor,
     );
 
     expect(object.votePoll({ id: poll.id, optionId }, otherActor)?.message).toBe(
-      JSON.stringify({
-        options: [{ id: optionId, label: "label" }],
-        question: "question",
-        votes: { [otherUserId]: optionId },
-      }),
+      JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: { [otherUserId]: optionId } }),
     );
 
     expect(object.votePoll({ id: poll.id }, otherActor)?.message).toBe(
-      JSON.stringify({ options: [{ id: optionId, label: "label" }], question: "question", votes: {} }),
+      JSON.stringify({ options: [{ id: optionId, label }], question: "question", votes: {} }),
     );
   });
 

@@ -250,13 +250,14 @@ describe(UserObject, () => {
       reminders: [{ dueAt, itemId, resourceId }],
       resourceId,
     });
-    vi.mocked(sendTodoReminder).mockImplementationOnce(() =>
-      object.reconcileTodoReminders({
+    // The save lands while the reminder is sending, so it runs inside the send rather than before it
+    vi.mocked(sendTodoReminder).mockImplementationOnce(async () => {
+      await object.reconcileTodoReminders({
         cancelledItemIds: [],
         reminders: [{ dueAt: reDatedDueAt, itemId, resourceId }],
         resourceId,
-      }),
-    );
+      });
+    });
 
     vi.setSystemTime(dueAt);
     await object.alarm();

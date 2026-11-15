@@ -34,7 +34,7 @@ import {
   userClientFrameSchema,
 } from "@esposter/db-schema";
 import userMigrations from "@esposter/db-schema/objects/user/migrations/migrations";
-import { getResultAsync, jsonDateParse, noop } from "@esposter/shared";
+import { getResult, getResultAsync, jsonDateParse, noop } from "@esposter/shared";
 import { and, asc, eq, gt, inArray, lt, lte, or, sql } from "drizzle-orm";
 
 // One User object per person: its SQLite indexes the messages they sent and their pending scheduled messages.
@@ -44,10 +44,8 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   protected readonly db = createDurableObjectDatabase(this.ctx, userMigrations.migrations);
   readonly #userId = getObjectName(this.ctx, "UserObject");
 
-  // The person's own events, each to every tab they have open
   acceptFriendRequest(input: { receiverUser: PublicUser; senderUser: PublicUser }): Promise<void> {
-    this.broadcast({ data: input, type: "acceptFriendRequest" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: input, type: "acceptFriendRequest" });
   }
 
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
@@ -85,8 +83,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
 
   // A room-list event sent to every tab the person has open, whichever room's write or D1 change raised it
   broadcastEvent(event: UserEvent): Promise<void> {
-    this.broadcast(event);
-    return Promise.resolve();
+    return this.#broadcastToTabs(event);
   }
 
   // A revoked session's sockets close here and no other session's do.
@@ -97,13 +94,11 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   declineFriendRequest(input: Pick<FriendRequestInSocial, "receiverId" | "senderId">): Promise<void> {
-    this.broadcast({ data: input, type: "declineFriendRequest" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: input, type: "declineFriendRequest" });
   }
 
   deleteFriend(input: Pick<FriendInSocial, "receiverId" | "senderId">): Promise<void> {
-    this.broadcast({ data: input, type: "deleteFriend" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: input, type: "deleteFriend" });
   }
 
   // The first socket brings the person online and the last one to close takes them offline.
@@ -211,8 +206,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   replaceSession(sessionId: string): Promise<void> {
-    this.broadcast({ data: { sessionId }, type: "replaceSession" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: { sessionId }, type: "replaceSession" });
   }
 
   roomActivity(roomId: string, updatedAt: Date): void {
@@ -233,23 +227,19 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   sendFriendRequest(friendRequest: FriendRequestInSocialWithRelations): Promise<void> {
-    this.broadcast({ data: friendRequest, type: "sendFriendRequest" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: friendRequest, type: "sendFriendRequest" });
   }
 
   updateAchievement(userAchievements: UserAchievementInAchievementWithRelations[]): Promise<void> {
-    this.broadcast({ data: userAchievements, type: "updateAchievement" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: userAchievements, type: "updateAchievement" });
   }
 
   updateUsage(storageUsage: StorageUsage): Promise<void> {
-    this.broadcast({ data: storageUsage, type: "updateUsage" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: storageUsage, type: "updateUsage" });
   }
 
   updateUserToRoom(userToRoom: UserToRoomInMessage): Promise<void> {
-    this.broadcast({ data: userToRoom, type: "updateUserToRoom" });
-    return Promise.resolve();
+    return this.#broadcastToTabs({ data: userToRoom, type: "updateUserToRoom" });
   }
 
   async upsertStatus(status: Parameters<UserObjectRpc["upsertStatus"]>[0]): Promise<void> {
@@ -264,11 +254,13 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     await this.#syncTopicSubscriptions(watchedTopics, this.#readAllWatchedTopics(ws));
   }
 
-  // A tab watches or unwatches the topics of its mounted queries. The object subscribes to a topic on the first of the
-  // Person's tabs watching it and unsubscribes on the last, so a topic holds each person once however many tabs they have
+  // A tab watches or unwatches the topics of its mounted queries.
+  // The object subscribes to a topic on the first of the person's tabs watching it and unsubscribes on the last.
+  // So a topic holds each person once, however many tabs they have
   override async webSocketMessage(ws: WebSocket, message: ArrayBuffer | string) {
     if (typeof message !== "string") return;
-    const frame = userClientFrameSchema.safeParse(jsonDateParse(message));
+    const parsedJson: unknown = getResult(() => jsonDateParse(message)).unwrapOr(undefined);
+    const frame = userClientFrameSchema.safeParse(parsedJson);
     if (!frame.success) return;
 
     const watchedTopics = this.#readAllWatchedTopics();
@@ -315,7 +307,12 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     else await this.ctx.storage.deleteAlarm();
   }
 
-  // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on
+  // The person's own events, each to every tab they have open
+  #broadcastToTabs(event: UserEvent): Promise<void> {
+    this.broadcast(event);
+    return Promise.resolve();
+  }
+
   // Every topic the person's open tabs watch, leaving out a socket that is closing
   #readAllWatchedTopics(closingSocket?: WebSocket): Set<Topic> {
     return new Set(
@@ -326,6 +323,7 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     );
   }
 
+  // Presence reaches the rooms after the response, so a slow room never delays the socket it was opened on
   #reportPresence(userId: string, isConnected: boolean) {
     this.ctx.waitUntil(
       getResultAsync(() => setUserConnectedInRooms(userId, isConnected)).match(noop, (error) => {

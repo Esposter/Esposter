@@ -86,17 +86,12 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
   // Each connection is then dropped at RealtimeKit, best-effort.
   // A failed kick is logged rather than failing the eviction
   async evictUser({ callSessionId, userId }: { callSessionId: string; userId: string }): Promise<CallLeave[]> {
-    const { meetingId } = this.#readCallState();
     const sessionIds = this.#readSessionIdsOf(userId);
     const leaves = sessionIds.flatMap((sessionId) => {
       const leave = this.#removeParticipant(callSessionId, sessionId);
       return leave ? [leave] : [];
     });
-    await Promise.all(
-      sessionIds.map((sessionId) =>
-        getResultAsync(() => removeRealtimeKitParticipant(meetingId, sessionId)).match(noop, console.error),
-      ),
-    );
+    await Promise.all(sessionIds.map((sessionId) => this.removeConnection({ sessionId })));
     return leaves;
   }
 
@@ -195,9 +190,11 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     isCameraEnabled: boolean;
     sessionId: string;
   }): boolean {
-    const isUpdated = this.#updateParticipant(sessionId, { isCameraEnabled });
-    if (isUpdated) this.broadcast({ data: { callSessionId, id: sessionId, isCameraEnabled }, type: "videoChanged" });
-    return isUpdated;
+    return this.#updateFlag(
+      sessionId,
+      { isCameraEnabled },
+      { data: { callSessionId, id: sessionId, isCameraEnabled }, type: "videoChanged" },
+    );
   }
 
   setHandRaised({
@@ -209,9 +206,11 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     isHandRaised: boolean;
     sessionId: string;
   }): boolean {
-    const isUpdated = this.#updateParticipant(sessionId, { isHandRaised });
-    if (isUpdated) this.broadcast({ data: { callSessionId, id: sessionId, isHandRaised }, type: "handRaisedChanged" });
-    return isUpdated;
+    return this.#updateFlag(
+      sessionId,
+      { isHandRaised },
+      { data: { callSessionId, id: sessionId, isHandRaised }, type: "handRaisedChanged" },
+    );
   }
 
   setMuted({
@@ -223,9 +222,11 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     isMuted: boolean;
     sessionId: string;
   }): boolean {
-    const isUpdated = this.#updateParticipant(sessionId, { isMuted });
-    if (isUpdated) this.broadcast({ data: { callSessionId, id: sessionId, isMuted }, type: "muteChanged" });
-    return isUpdated;
+    return this.#updateFlag(
+      sessionId,
+      { isMuted },
+      { data: { callSessionId, id: sessionId, isMuted }, type: "muteChanged" },
+    );
   }
 
   // Takes publishing away from, or gives it back to, every connection a user holds in the call.
@@ -541,6 +542,17 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
         },
       );
     }
+  }
+
+  // Writes one of a participant's flags, and broadcasts the event for it only when a participant was updated
+  #updateFlag(
+    sessionId: string,
+    values: Partial<Pick<CallParticipant, "isCameraEnabled" | "isHandRaised" | "isMuted">>,
+    event: CallEvent,
+  ): boolean {
+    const isUpdated = this.#updateParticipant(sessionId, values);
+    if (isUpdated) this.broadcast(event);
+    return isUpdated;
   }
 
   #updateParticipant(
