@@ -6,6 +6,6 @@ import type { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMe
 // A message to a terrain worker: the ground it loads before its first tile, the regions' grounds laid over it so far, or
 // A tile it computes over that ground
 export type TerrainWorkerMessage =
-  | { ground: TerrainWorkerGround; kind: TerrainWorkerMessageKind.Load }
-  | { kind: TerrainWorkerMessageKind.RegionGrounds; regionGrounds: RegionGround[] }
-  | { kind: TerrainWorkerMessageKind.Tile; request: TerrainTileRequest };
+  | { ground: TerrainWorkerGround; kind: typeof TerrainWorkerMessageKind.Load }
+  | { kind: typeof TerrainWorkerMessageKind.RegionGrounds; regionGrounds: RegionGround[] }
+  | { kind: typeof TerrainWorkerMessageKind.Tile; request: TerrainTileRequest };

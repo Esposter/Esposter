@@ -31,12 +31,12 @@ describe(createTurquoiseHuntPassiveModule, () => {
     hit: TRAVELER_KIT.plungeCollision,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
   const createReactionTriggered = (reactionType: ReactionType, striker: Combatant) => ({
     enemy,
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ reactionType }],
     striker,
   });

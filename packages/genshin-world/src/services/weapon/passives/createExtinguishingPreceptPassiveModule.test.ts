@@ -18,7 +18,7 @@ describe(createExtinguishingPreceptPassiveModule, () => {
   const extinguishingPreceptPassiveModule = createExtinguishingPreceptPassiveModule([0.1, 0, 0.05, 4, 10]);
   const attackBonusPerSecond = 0.05;
   const wielder: Combatant = createWielderCombatant();
-  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const onField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: true })];
   const offField: DeployedCombatant[] = [createDeployedCombatant(wielder, { isOnField: false })];
 

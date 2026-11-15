@@ -143,7 +143,7 @@ describe("benison stacks", () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 
   // An enemy hit the striker lands with the attack tag given
-  const createEnemyHit = (striker: Combatant, attackTag = AttackTag.NormalAttack): KitEvent => ({
+  const createEnemyHit = (striker: Combatant, attackTag: AttackTag = AttackTag.NormalAttack): KitEvent => ({
     attackTag,
     element: Element.Hydro,
     enemy,

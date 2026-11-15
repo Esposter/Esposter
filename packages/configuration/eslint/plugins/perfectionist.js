@@ -22,8 +22,17 @@ export default defineConfig({
     ],
     // A citty command reads its positional arguments in the order they are declared, so the objects inside a
     // `defineCommand` call, and an arguments object shared between commands (named `…Args`), keep the order written
+    // A numeric value set (a PascalCase const object of numbers) is ordered by its values, as a numeric enum was
     "perfectionist/sort-objects": [
       "error",
+      {
+        sortBy: "value",
+        type: "natural",
+        useConfigurationIf: {
+          matchesAstSelector:
+            "VariableDeclarator[id.name=/^[A-Z][a-z]/] > TSAsExpression > ObjectExpression:not(:has(> Property:not([value.value=type(number)])))",
+        },
+      },
       {
         type: "unsorted",
         useConfigurationIf: { callingFunctionNamePattern: { pattern: "^defineCommand$", scope: "deep" } },

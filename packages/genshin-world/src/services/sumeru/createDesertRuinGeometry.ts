@@ -15,10 +15,10 @@ const SQUARE_TURN = Math.PI / 4;
 const OBELISK_SHAFT_SHARE = 0.9;
 const OBELISK_TAPER = 0.5;
 
-type ColonnadePiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.Colonnade }>;
-type HalfBuriedHallPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.HalfBuriedHall }>;
-type ObeliskPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.Obelisk }>;
-type SteppedPyramidPiece = Extract<DesertRuinPiece, { kind: DesertRuinPieceKind.SteppedPyramid }>;
+type ColonnadePiece = Extract<DesertRuinPiece, { kind: typeof DesertRuinPieceKind.Colonnade }>;
+type HalfBuriedHallPiece = Extract<DesertRuinPiece, { kind: typeof DesertRuinPieceKind.HalfBuriedHall }>;
+type ObeliskPiece = Extract<DesertRuinPiece, { kind: typeof DesertRuinPieceKind.Obelisk }>;
+type SteppedPyramidPiece = Extract<DesertRuinPiece, { kind: typeof DesertRuinPieceKind.SteppedPyramid }>;
 
 // A row of columns, each a tapering shaft under a flared capital, centred on the piece's position
 const createColonnade = ({

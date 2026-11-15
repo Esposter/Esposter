@@ -21,7 +21,7 @@ const collectNameTextIds = (value: unknown, textIds: Set<string>): void => {
 
 describe("name text loader map", () => {
   // The text datasets hold the words a `nameTextId` points at, so they are never a source of one
-  const TEXT_DATASETS: ReadonlySet<string> = new Set([
+  const TEXT_DATASETS: ReadonlySet<string> = new Set<GameDataset>([
     GameDataset.AchievementText,
     GameDataset.ArchiveText,
     GameDataset.GcgText,

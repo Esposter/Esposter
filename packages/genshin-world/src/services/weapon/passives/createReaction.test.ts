@@ -9,7 +9,7 @@ import { describe } from "vitest";
 // The reaction a striker triggers on an enemy, one reaction of the given type and element, as the kit's event carries it
 export const createReaction = (striker: Combatant, enemy: Enemy, reactionType: ReactionType, element: Element) => ({
   enemy,
-  kind: KitEventKind.ReactionTriggered as const,
+  kind: KitEventKind.ReactionTriggered,
   reactions: [{ element, reactionType }],
   striker,
 });

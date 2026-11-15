@@ -90,7 +90,7 @@ describe(createGorouKitBehaviour, () => {
   const THIRD_CHARACTER_ID = 10_000_029;
 
   // A Geo hit from the striker on an enemy standing at the point
-  const createHit = (striker: Combatant, point: GroundPoint, element = Element.Geo): KitEvent => ({
+  const createHit = (striker: Combatant, point: GroundPoint, element: Element = Element.Geo): KitEvent => ({
     element,
     enemy: { ...enemy, position: point },
     kind: KitEventKind.EnemyHit,

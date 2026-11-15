@@ -5,5 +5,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitCrystallizeShardPickedUpEvent {
   characterId: number;
   element: Element;
-  kind: KitEventKind.CrystallizeShardPickedUp;
+  kind: typeof KitEventKind.CrystallizeShardPickedUp;
 }

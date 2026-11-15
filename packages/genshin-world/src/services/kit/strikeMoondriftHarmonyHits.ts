@@ -1,7 +1,7 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
-import { EnemyState } from "#src/models/enemy/EnemyState";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { strikeLunarReaction } from "#src/services/kit/strikeLunarReaction";
 import { runDownSeconds } from "#src/services/runDownSeconds";
 
@@ -11,7 +11,7 @@ import { runDownSeconds } from "#src/services/runDownSeconds";
 export const strikeMoondriftHarmonyHits = (stepSeconds: number, context: KitContext): void => {
   for (const enemy of context.enemyMap.values()) {
     if (enemy.moondriftHarmonyHits.length === 0) continue;
-    if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) {
+    if (!checkIsEnemyStrikable(enemy)) {
       enemy.moondriftHarmonyHits = [];
       continue;
     }

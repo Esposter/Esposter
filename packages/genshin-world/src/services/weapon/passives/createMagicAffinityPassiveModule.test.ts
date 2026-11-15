@@ -10,7 +10,7 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { getBuff } from "#src/services/weapon/passives/getBuff.test";
 import { describe, expect, test } from "vitest";
 
-const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
+const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed });
 describe(createMagicAffinityPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // The per-stack normal and charged attack DMG bonus, a synthetic value rather than the weapon's row

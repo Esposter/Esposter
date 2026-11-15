@@ -8,6 +8,6 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitElementAppliedEvent {
   element: Element;
   enemy: Enemy;
-  kind: KitEventKind.ElementApplied;
+  kind: typeof KitEventKind.ElementApplied;
   striker: Combatant;
 }

@@ -234,7 +234,7 @@ describe(createCynoKitBehaviour, () => {
     const kitEffectState = castAction(CYNO_KIT.elementalBurst, combatant);
     const reaction = {
       enemy,
-      kind: KitEventKind.ReactionTriggered as const,
+      kind: KitEventKind.ReactionTriggered,
       reactions: [{ element: Element.Electro, reactionType: ReactionType.Superconduct }],
       striker: combatant,
     };

@@ -41,7 +41,7 @@ const emit = defineEmits<{ begin: []; finish: []; held: [] }>();
 // Which have nothing left to wait on once the page has loaded, so it sweeps at its fastest. Each phase says when it is
 // Done, so the handoffs are the screens' own timings rather than a host's, and `begin` tells the host the door has been
 // Opened
-const phase = ref(OpeningPhase.Splash);
+const phase = ref<OpeningPhase>(OpeningPhase.Splash);
 const timeOfDay = getLoginTimeOfDay(Temporal.Now.plainTimeISO());
 // The title logo is read before the first splash and the login screen's records while the splashes play, so on a warm
 // Cache neither adds a wait; a phase whose read has not arrived holds the white the splashes play on, and a read that

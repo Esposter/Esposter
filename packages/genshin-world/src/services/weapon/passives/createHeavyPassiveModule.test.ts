@@ -13,7 +13,7 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 const createNormalAttackLanded = () => ({
   action: takeOne(TRAVELER_KIT.normalAttacks, 0),
-  kind: KitEventKind.NormalAttackLanded as const,
+  kind: KitEventKind.NormalAttackLanded,
 });
 
 describe(createHeavyPassiveModule, () => {

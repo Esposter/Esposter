@@ -33,7 +33,7 @@ describe(getTravelerConstellations, () => {
     expect.hasAssertions();
 
     expect(
-      getTravelerConstellations(CONSTELLATION_KIT, SKILL_KIT, Element.Electro, new Set([Element.Electro])),
+      getTravelerConstellations(CONSTELLATION_KIT, SKILL_KIT, Element.Electro, new Set<Element>([Element.Electro])),
     ).toStrictEqual([CONSTELLATION]);
   });
 

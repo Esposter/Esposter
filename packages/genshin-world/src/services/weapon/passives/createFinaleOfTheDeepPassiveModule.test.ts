@@ -19,7 +19,7 @@ const clearHealth = (bondOfLifeShare: number) => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0,
   isFallRefused: false,
-  kind: KitEventKind.HealthChanged as const,
+  kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 });
 
@@ -29,7 +29,7 @@ describe(createFinaleOfTheDeepPassiveModule, () => {
   // Worth a fifth of Max HP once every six seconds, and 3% of the HP a Bond of Life cleared as flat ATK, at most 90,
   // For eight seconds after it is cleared
   const finaleOfTheDeepPassiveModule = createFinaleOfTheDeepPassiveModule([0.1, 12, 0.2, 0.03, 90, 8, 6]);
-  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
 
   test("an Elemental Skill raises the wielder's ATK by the rank's percentage for the rank's seconds, and grants a Bond of Life worth the rank's share of its Max HP", () => {
     expect.hasAssertions();

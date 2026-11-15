@@ -6,11 +6,8 @@ import { TransformativeReactionType } from "#src/models/combat/TransformativeRea
 import { mergeObjectsStrict } from "@esposter/shared";
 
 // The reactions that deal no damage: Crystallize drops a shard, Frozen freezes the target, and Quicken leaves its aura
-enum BaseReactionType {
-  Crystallize = "Crystallize",
-  Frozen = "Frozen",
-  Quicken = "Quicken",
-}
+const BaseReactionType = { Crystallize: "Crystallize", Frozen: "Frozen", Quicken: "Quicken" } as const;
+type BaseReactionType = (typeof BaseReactionType)[keyof typeof BaseReactionType];
 
 // Every reaction two elements trigger, the Lunar and Stellar ones a party turns them into among them
 export const ReactionType = mergeObjectsStrict(

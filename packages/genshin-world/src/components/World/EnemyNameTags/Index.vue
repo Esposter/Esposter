@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyKind } from "#src/models/enemy/EnemyKind";
-import type { EnemyKindId } from "#src/models/enemy/EnemyKindId";
 import type { ElementalSight } from "#src/models/sight/ElementalSight";
 import type { SightNameTag } from "#src/models/sight/SightNameTag";
 import type { Camera } from "three";
@@ -16,7 +15,7 @@ import { Vector3 } from "three";
 interface Props {
   elementalSight: ElementalSight;
   // The kinds the world places by their id, whose text ids an enemy's name is read by
-  enemyKindMap: ReadonlyMap<EnemyKindId, EnemyKind>;
+  enemyKindMap: ReadonlyMap<number, EnemyKind>;
   // The enemies in the world by their spawn key, whose names the sight shows once they lie within its reach
   enemyMap: Map<string, Enemy>;
   // The camera the world is drawn through, none until the canvas has one

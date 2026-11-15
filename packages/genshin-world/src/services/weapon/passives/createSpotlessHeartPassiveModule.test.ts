@@ -27,14 +27,14 @@ describe(createSpotlessHeartPassiveModule, () => {
   // Synthetic params, not the weapon's row: half of the wielder's DEF, an unread second value, a one-second cooldown
   // And a clear of two tenths of a second
   const spotlessHeartPassiveModule = createSpotlessHeartPassiveModule([0.5, 1, 1, 0.2]);
-  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
   const createSkillDamageTaken = () => ({
     attackTag: AttackTag.ElementalSkill,
     enemy,
     hit: TRAVELER_KIT.plungeCollision,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
 

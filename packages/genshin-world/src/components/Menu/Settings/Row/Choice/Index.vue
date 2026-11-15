@@ -17,11 +17,11 @@ interface Props {
     SettingsRow,
     {
       kind:
-        | SettingsRowKind.Action
-        | SettingsRowKind.Choice
-        | SettingsRowKind.Language
-        | SettingsRowKind.Quality
-        | SettingsRowKind.Toggle;
+        | typeof SettingsRowKind.Action
+        | typeof SettingsRowKind.Choice
+        | typeof SettingsRowKind.Language
+        | typeof SettingsRowKind.Quality
+        | typeof SettingsRowKind.Toggle;
     }
   >;
 }

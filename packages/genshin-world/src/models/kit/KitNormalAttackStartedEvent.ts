@@ -6,5 +6,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitNormalAttackStartedEvent {
   action: KitAction;
   isFirstStrike: boolean;
-  kind: KitEventKind.NormalAttackStarted;
+  kind: typeof KitEventKind.NormalAttackStarted;
 }

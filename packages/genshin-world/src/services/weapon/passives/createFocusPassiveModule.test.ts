@@ -33,7 +33,7 @@ describe(createFocusPassiveModule, () => {
     hit: TRAVELER_KIT.plungeCollision,
     isCritical,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
 

@@ -10,5 +10,5 @@ export interface KitEnergyParticleCollectedEvent {
   count: number;
   element?: Element;
   energyDropKind: EnergyDropKind;
-  kind: KitEventKind.EnergyParticleCollected;
+  kind: typeof KitEventKind.EnergyParticleCollected;
 }

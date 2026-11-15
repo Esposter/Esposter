@@ -11,7 +11,7 @@ import { ref } from "vue";
 // Of those fetched into the cache with the bytes loaded and pending that the loading screen shows. `onHeld` is called
 // Once every file is held. Each call plans again, so the files already held are not fetched twice
 export const useCharacterPackPreload = (gameDataBaseUrl: string, onHeld: () => void) => {
-  const status = ref(CharacterPackPreloadStatus.Idle);
+  const status = ref<CharacterPackPreloadStatus>(CharacterPackPreloadStatus.Idle);
   const loadedBytes = ref(0);
   const pendingBytes = ref(0);
   const preload = async (): Promise<void> => {

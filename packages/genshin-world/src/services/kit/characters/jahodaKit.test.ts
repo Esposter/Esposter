@@ -336,7 +336,7 @@ describe(createJahodaKitBehaviour, () => {
     for (let frame = 0; frame < 300; frame++) strikes.push(...stepKitTestEffects(1 / 60, context));
     expect(strikes.length).toBeGreaterThan(0);
     expect(new Set(strikes.map(({ hit }) => hit.internalCooldownTag))).toStrictEqual(
-      new Set([InternalCooldownTag.JahodaRobotStrike]),
+      new Set<InternalCooldownTag>([InternalCooldownTag.JahodaRobotStrike]),
     );
   });
 
@@ -349,7 +349,7 @@ describe(createJahodaKitBehaviour, () => {
       for (const { hit, hitbox } of stepKitTestEffects(1 / 60, context))
         if (hitbox !== undefined) meowballs.push({ element: hit.element, frame });
     expect(meowballs.map(({ frame }) => frame)).toStrictEqual([129, 245, 361, 477, 593, 709, 825, 941, 1057, 1173]);
-    expect(new Set(meowballs.map(({ element }) => element))).toStrictEqual(new Set([Element.Pyro]));
+    expect(new Set(meowballs.map(({ element }) => element))).toStrictEqual(new Set<Element>([Element.Pyro]));
   });
 
   test("below Ascendant Gleam, a full flask's drain fires no Meowball", () => {

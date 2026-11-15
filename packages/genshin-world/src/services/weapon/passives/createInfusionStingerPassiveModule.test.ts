@@ -23,7 +23,7 @@ describe(createInfusionStingerPassiveModule, () => {
   const createEnemyHit = (element: Element | undefined) => ({
     element,
     enemy,
-    kind: KitEventKind.EnemyHit as const,
+    kind: KitEventKind.EnemyHit,
     striker: wielder,
   });
 

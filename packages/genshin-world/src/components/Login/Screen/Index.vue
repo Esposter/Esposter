@@ -68,7 +68,7 @@ const shownPlayerName = computed(
 const isSpinnerShown = ref(false);
 // Whether the door has risen into place, which the door's own interface waits on
 const isDoorFormed = ref(false);
-const statusStep = ref(LoginStatusStep.PreparingDownload);
+const statusStep = ref<LoginStatusStep>(LoginStatusStep.PreparingDownload);
 // The share of loading shown, which runs toward loading's own no faster than the bar's fill
 const shownProgress = ref(0);
 // The share of the way to the door flown, from the title at 0 to the door at 1: the screen's clock for when the door is

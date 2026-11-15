@@ -9,7 +9,7 @@ export interface RockLandmark {
   boxes: readonly (readonly number[])[];
   hull: string;
   id: string;
-  kind: LandmarkKind.Rock;
+  kind: typeof LandmarkKind.Rock;
   place: [number, number, number];
   scale: [number, number, number];
   turn: [number, number, number, number];

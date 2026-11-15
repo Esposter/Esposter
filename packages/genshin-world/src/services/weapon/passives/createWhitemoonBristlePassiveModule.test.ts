@@ -35,7 +35,7 @@ describe(createWhitemoonBristlePassiveModule, () => {
     hit,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
   // The base damage Foliar Incision adds to a strike of the attack tag, read through the kit's context

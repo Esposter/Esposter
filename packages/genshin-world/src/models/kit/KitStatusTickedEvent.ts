@@ -5,6 +5,6 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // A status on an enemy that strikes on its own schedule fell due: the enemy and the status
 export interface KitStatusTickedEvent {
   enemy: Enemy;
-  kind: KitEventKind.StatusTicked;
+  kind: typeof KitEventKind.StatusTicked;
   status: EnemyStatus;
 }

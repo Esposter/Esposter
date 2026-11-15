@@ -16,7 +16,7 @@ export interface DomainEntranceLandmark extends BaseLandmark {
   arrival: LandmarkArrival;
   domainKind: DomainKind;
   entryId: number;
-  kind: LandmarkKind.DomainEntrance;
+  kind: typeof LandmarkKind.DomainEntrance;
   titleTextKey: GameTextKey;
 }
 

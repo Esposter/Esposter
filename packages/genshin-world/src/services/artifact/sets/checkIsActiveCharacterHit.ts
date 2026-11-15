@@ -10,7 +10,7 @@ export const checkIsActiveCharacterHit = (
   event: KitEvent,
   party: Party,
   combatant: Combatant,
-): event is Extract<KitEvent, { kind: KitEventKind.DamageTaken }> =>
+): event is Extract<KitEvent, { kind: typeof KitEventKind.DamageTaken }> =>
   event.kind === KitEventKind.DamageTaken &&
   event.striker.characterId === combatant.characterId &&
   getActiveCharacterId(party) === combatant.characterId;

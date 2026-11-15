@@ -27,7 +27,7 @@ describe(createSeasonedSymphonyPassiveModule, () => {
     characterId: healedCharacterId,
     healthShare: 0.2,
     isFallRefused: false,
-    kind: KitEventKind.HealthChanged as const,
+    kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
     sourceCharacterId,
   });

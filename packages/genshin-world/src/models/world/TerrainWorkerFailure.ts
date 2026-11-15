@@ -4,5 +4,5 @@ import type { TerrainWorkerMessageKind } from "#src/models/world/TerrainWorkerMe
 // Than waiting on it
 export interface TerrainWorkerFailure {
   key: number;
-  kind: TerrainWorkerMessageKind.Failed;
+  kind: typeof TerrainWorkerMessageKind.Failed;
 }

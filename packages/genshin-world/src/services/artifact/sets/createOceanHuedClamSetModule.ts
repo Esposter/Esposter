@@ -48,7 +48,8 @@ const createSeaDyedFoamBurst =
     const owner = context.characterIdCombatantMap.get(characterId);
     for (const enemy of context.enemyMap.values())
       if (
-        ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
+        enemy.state !== EnemyState.Dead &&
+        enemy.state !== EnemyState.Return &&
         checkIsInKitField({ centre: context.body.position, radius: OCEAN_HUED_CLAM_FOAM_RADIUS }, enemy.position)
       )
         strikeReactionDamage(enemy, undefined, damageShare * gatheredHp, owner, context);

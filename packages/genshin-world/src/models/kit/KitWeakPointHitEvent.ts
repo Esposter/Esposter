@@ -5,6 +5,6 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // A hit landed on an enemy's weak point: the enemy, and the combatant that dealt the hit
 export interface KitWeakPointHitEvent {
   enemy: Enemy;
-  kind: KitEventKind.WeakPointHit;
+  kind: typeof KitEventKind.WeakPointHit;
   striker: Combatant;
 }

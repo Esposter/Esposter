@@ -163,7 +163,7 @@ export const renderWitnessTargets = async (
       : geometryNormal;
     const emission =
       mesh.material instanceof StoneNodeMaterial ? (mesh.material.emissiveNode as Node<"vec3"> | null) : null;
-    const targetNodeMap: Record<Exclude<WitnessTarget, WitnessTarget.Shadow>, Node<"vec4">> = {
+    const targetNodeMap: Record<Exclude<WitnessTarget, typeof WitnessTarget.Shadow>, Node<"vec4">> = {
       [WitnessTarget.Albedo]: vec4(albedo ?? vec3(1), 1),
       [WitnessTarget.Depth]: vec4(positionView.z.negate(), 0, 0, 1),
       [WitnessTarget.Emission]: vec4(emission ?? vec3(0), 1),

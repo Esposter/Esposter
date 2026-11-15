@@ -4,5 +4,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 export interface KitBurstUsedEvent {
   characterId: number;
   energyCost: number;
-  kind: KitEventKind.BurstUsed;
+  kind: typeof KitEventKind.BurstUsed;
 }

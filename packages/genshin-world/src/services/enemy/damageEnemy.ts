@@ -4,6 +4,7 @@ import type { EnergyDrop } from "#src/models/enemy/EnergyDrop";
 
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { checkIsEnemyShieldBroken } from "#src/services/enemy/checkIsEnemyShieldBroken";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { PoiseTypeSettingsMap } from "#src/services/enemy/PoiseTypeSettingsMap";
 import { setEnemyState } from "#src/services/enemy/setEnemyState";
 
@@ -13,7 +14,7 @@ import { setEnemyState } from "#src/services/enemy/setEnemyState";
 // Enemy on its attacker. A returning or dead enemy is immune, and any other hit restarts the seconds since the enemy was
 // Last hit. It returns the energy the hit dropped
 export const damageEnemy = (enemy: Enemy, { damage, poiseDamage }: EnemyHit): EnergyDrop[] => {
-  if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) return [];
+  if (!checkIsEnemyStrikable(enemy)) return [];
   enemy.hitSeconds = 0;
   const { energyDrops, poiseType } = enemy.traits;
   const shieldTakenDamage = enemy.shield ? Math.min(enemy.shield.health, damage) : 0;
@@ -39,6 +40,7 @@ export const damageEnemy = (enemy: Enemy, { damage, poiseDamage }: EnemyHit): En
   if (isPoiseBroken || enemy.poise === 0 || isShieldBroken) {
     if (!isPoiseBroken) enemy.poiseBrokenSeconds = resetSeconds;
     setEnemyState(enemy, EnemyState.Stagger);
-  } else if ([EnemyState.Alert, EnemyState.Idle].includes(enemy.state)) setEnemyState(enemy, EnemyState.Chase);
+  } else if (enemy.state === EnemyState.Alert || enemy.state === EnemyState.Idle)
+    setEnemyState(enemy, EnemyState.Chase);
   return droppedEnergy;
 };

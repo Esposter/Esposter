@@ -6,6 +6,6 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // Party and the interval since the last burst has run out, with the combatant whose hit set it off
 export interface KitNightsoulBurstEvent {
   enemy: Enemy;
-  kind: KitEventKind.NightsoulBurst;
+  kind: typeof KitEventKind.NightsoulBurst;
   striker: Combatant;
 }

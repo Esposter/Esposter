@@ -14,7 +14,5 @@ export const OUTCROP_FIGHT_RADIUS = 6;
 // Until the game's touch range is measured
 export const OUTCROP_TOUCH_RADIUS = 4;
 export const OUTCROP_CAMP_LEVEL = 1;
-// The kinds a fight's members are drawn from: every kind the world places, read off the enum's numeric values
-export const OUTCROP_CAMP_ENEMY_KIND_IDS = Object.values(EnemyKindId).filter(
-  (value): value is EnemyKindId => typeof value === "number",
-);
+// The kinds a fight's members are drawn from: every kind the world places
+export const OUTCROP_CAMP_ENEMY_KIND_IDS = Object.values(EnemyKindId);

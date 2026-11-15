@@ -26,7 +26,7 @@ describe(createInfusionScrollPassiveModule, () => {
 
   const createReaction = (striker: Combatant) => ({
     enemy,
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ element: Element.Pyro, reactionType: ReactionType.Melt }],
     striker,
   });

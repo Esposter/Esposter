@@ -10,6 +10,6 @@ export interface KitEnemyHitEvent {
   attackTag?: AttackTag;
   element?: Element;
   enemy: Enemy;
-  kind: KitEventKind.EnemyHit;
+  kind: typeof KitEventKind.EnemyHit;
   striker: Combatant;
 }

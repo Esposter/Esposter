@@ -30,14 +30,14 @@ describe(createByakuyaKougetsuPassiveModule, () => {
   // Each Normal Attack that hits restores 0.5 Energy, once every 0.5 seconds
   const byakuyaKougetsuPassiveModule = createByakuyaKougetsuPassiveModule([0, 0.05, 3, 0.5, 0.5]);
   const wielder: Combatant = createWielderCombatant();
-  const burstUsed = { characterId: TRAVELER_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed as const };
+  const burstUsed = { characterId: TRAVELER_CHARACTER_ID, energyCost: 60, kind: KitEventKind.BurstUsed };
   const normalAttackHit = {
     attackTag: AttackTag.NormalAttack,
     enemy,
     hit: TRAVELER_KIT.plungeCollision,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   };
 

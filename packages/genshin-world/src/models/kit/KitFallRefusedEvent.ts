@@ -4,5 +4,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // Is sent just before this event
 export interface KitFallRefusedEvent {
   characterId: number;
-  kind: KitEventKind.FallRefused;
+  kind: typeof KitEventKind.FallRefused;
 }

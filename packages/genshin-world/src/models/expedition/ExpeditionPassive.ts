@@ -9,13 +9,13 @@ export type ExpeditionPassive = ExpeditionRewardPassive | ExpeditionTimePassive;
 
 interface ExpeditionRewardPassive {
   hours: number;
-  kind: ExpeditionPassiveKind.Reward;
+  kind: typeof ExpeditionPassiveKind.Reward;
   percent: number;
   proudSkillGroupId: number;
   region: ExpeditionRegion;
 }
 interface ExpeditionTimePassive {
-  kind: ExpeditionPassiveKind.Time;
+  kind: typeof ExpeditionPassiveKind.Time;
   percent: number;
   proudSkillGroupId: number;
   region: ExpeditionRegion;

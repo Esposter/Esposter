@@ -5,6 +5,6 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // A damage defeated an enemy: the enemy, and the combatant whose hit, tick or reach it was, if one owns it
 export interface KitEnemyDefeatedEvent {
   enemy: Enemy;
-  kind: KitEventKind.EnemyDefeated;
+  kind: typeof KitEventKind.EnemyDefeated;
   striker?: Combatant;
 }

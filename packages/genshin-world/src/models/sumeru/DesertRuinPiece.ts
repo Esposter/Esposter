@@ -3,10 +3,10 @@ import type { GroundPoint } from "genshin-engine";
 
 // A piece of a desert ruin standing at its position on the ground, in metres
 export type DesertRuinPiece =
-  | { baseRadius: number; height: number; kind: DesertRuinPieceKind.Obelisk; position: GroundPoint }
+  | { baseRadius: number; height: number; kind: typeof DesertRuinPieceKind.Obelisk; position: GroundPoint }
   | {
       baseRadius: number;
-      kind: DesertRuinPieceKind.SteppedPyramid;
+      kind: typeof DesertRuinPieceKind.SteppedPyramid;
       position: GroundPoint;
       stepCount: number;
       stepHeight: number;
@@ -14,7 +14,7 @@ export type DesertRuinPiece =
   | {
       buriedHeight: number;
       height: number;
-      kind: DesertRuinPieceKind.HalfBuriedHall;
+      kind: typeof DesertRuinPieceKind.HalfBuriedHall;
       length: number;
       position: GroundPoint;
       width: number;
@@ -24,6 +24,6 @@ export type DesertRuinPiece =
       columnHeight: number;
       columnRadius: number;
       columnSpacing: number;
-      kind: DesertRuinPieceKind.Colonnade;
+      kind: typeof DesertRuinPieceKind.Colonnade;
       position: GroundPoint;
     };

@@ -23,7 +23,9 @@ export const createIsshinArtClarityPassiveModule = (params: number[]): PassiveMo
         event.kind !== KitEventKind.DamageTaken ||
         event.striker.characterId !== combatant.characterId ||
         event.attackTag === undefined ||
-        ![AttackTag.ChargedAttack, AttackTag.NormalAttack, AttackTag.PlungingAttack].includes(event.attackTag)
+        (event.attackTag !== AttackTag.ChargedAttack &&
+          event.attackTag !== AttackTag.NormalAttack &&
+          event.attackTag !== AttackTag.PlungingAttack)
       )
         return;
       if (

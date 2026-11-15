@@ -6,7 +6,7 @@ import { ref } from "vue";
 // World. A screen is a thing no feature owns and many read, so it is the session's, and it is the world's again when the
 // Session ends
 export const useWorldScreenStore = defineStore("world/screen", () => {
-  const screenKind = ref(ScreenKind.World);
+  const screenKind = ref<ScreenKind>(ScreenKind.World);
   const closeScreen = () => {
     screenKind.value = ScreenKind.World;
   };

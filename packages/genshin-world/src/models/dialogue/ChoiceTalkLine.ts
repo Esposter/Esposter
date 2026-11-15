@@ -8,7 +8,7 @@ import { z } from "zod";
 // One of the Traveler's replies, offered with the mark the game draws beside it
 export interface ChoiceTalkLine extends BaseTalkLine {
   icon: DialogueChoiceIcon;
-  kind: TalkLineKind.Choice;
+  kind: typeof TalkLineKind.Choice;
 }
 
 export const choiceTalkLineSchema = baseTalkLineSchema.safeExtend({

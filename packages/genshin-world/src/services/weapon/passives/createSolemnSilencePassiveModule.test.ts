@@ -30,7 +30,7 @@ describe(createSolemnSilencePassiveModule, () => {
   const solemnSilencePassiveModule = createSolemnSilencePassiveModule([0.25, 3, 0.5, 0]);
   const createReaction = (striker: Combatant) => ({
     enemy,
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ element: Element.Pyro, reactionType: ReactionType.Overloaded }],
     striker,
   });

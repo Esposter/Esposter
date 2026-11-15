@@ -11,6 +11,7 @@ import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { STELLAR_SWIRL_ANEMO_COEFFICIENT } from "#src/services/combat/damage/constants";
 import { checkHasEnemyWeakPoints } from "#src/services/enemy/checkHasEnemyWeakPoints";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { addCrystallizeShards } from "#src/services/kit/addCrystallizeShards";
 import { addDendroCores } from "#src/services/kit/addDendroCores";
 import { addMoondrifts } from "#src/services/kit/addMoondrifts";
@@ -82,8 +83,7 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     const reaches: [Enemy, TransformativeReaction][] = [];
     strikeKitDendroCores(kitEffectState, party, targetedStrike, pricedCombatant);
     for (const enemy of enemyMap.values()) {
-      if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(targetedStrike, enemy))
-        continue;
+      if (!checkIsEnemyStrikable(enemy) || checkIsOutOfStrikeReach(targetedStrike, enemy)) continue;
       // The first enemy the strike lands on takes the flag an effect given once per attack reads
       const isFirstEnemyStruck = !isStruck;
       isStruck = true;

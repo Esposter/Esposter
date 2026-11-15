@@ -2,9 +2,9 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
 import { Element } from "#src/models/Element";
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { STELLAR_VORTEX_LEVEL_TWO_STACKS } from "#src/services/combat/damage/constants";
 import { getStellarVortexCoefficient } from "#src/services/combat/damage/getStellarVortexCoefficient";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { STELLAR_VORTEX_LEVEL_ONE_RADIUS, STELLAR_VORTEX_LEVEL_TWO_RADIUS } from "#src/services/kit/constants";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { strikeStellarReaction } from "#src/services/kit/strikeStellarReaction";
@@ -17,7 +17,7 @@ export const detonateStellarVortex = (vortex: KitSummon, context: KitContext): v
     stacks >= STELLAR_VORTEX_LEVEL_TWO_STACKS ? STELLAR_VORTEX_LEVEL_TWO_RADIUS : STELLAR_VORTEX_LEVEL_ONE_RADIUS;
   const coefficient = getStellarVortexCoefficient(stacks);
   for (const enemy of context.enemyMap.values()) {
-    if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) continue;
+    if (!checkIsEnemyStrikable(enemy)) continue;
     if (!checkIsInKitField({ centre: vortex.body.position, radius }, enemy.position)) continue;
     strikeStellarReaction(enemy, Element.Cryo, coefficient, new Set([combatant.characterId]), combatant, context);
   }

@@ -54,7 +54,7 @@ const emit = defineEmits<{
   useLongTermEncounterPoints: [];
 }>();
 // The book opens at its experience
-const tab = ref(HandbookTab.Experience);
+const tab = ref<HandbookTab>(HandbookTab.Experience);
 </script>
 
 <template>

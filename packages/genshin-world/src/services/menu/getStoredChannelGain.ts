@@ -5,5 +5,5 @@ import { getStoredGenshinSettings } from "#src/services/menu/getStoredGenshinSet
 
 // The gain a channel plays at as the device keeps it now, for the sounds that start outside the Settings screen. A
 // Blocked store is logged and read as no stored settings, so the sound plays at its default level
-export const getStoredChannelGain = (channel: VolumeSetting.Music | VolumeSetting.Sfx): number =>
+export const getStoredChannelGain = (channel: typeof VolumeSetting.Music | typeof VolumeSetting.Sfx): number =>
   getChannelGain(getStoredGenshinSettings(), channel);

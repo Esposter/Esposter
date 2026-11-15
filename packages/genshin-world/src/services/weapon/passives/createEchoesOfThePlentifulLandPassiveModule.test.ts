@@ -7,7 +7,7 @@ import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapo
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
-const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
+const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed });
 
 describe(createEchoesOfThePlentifulLandPassiveModule, () => {
   // Synthetic params: half a point of Normal Attack DMG for each thousand Max HP, up to two points, for three seconds

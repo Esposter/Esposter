@@ -5,5 +5,5 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // From the team's effects
 export interface KitEffectExpiredEvent {
   effect: KitEffect;
-  kind: KitEventKind.EffectExpired;
+  kind: typeof KitEventKind.EffectExpired;
 }

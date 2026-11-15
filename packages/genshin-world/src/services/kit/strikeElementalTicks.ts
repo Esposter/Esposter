@@ -6,7 +6,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitContext } from "#src/models/kit/KitContext";
 
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
-import { EnemyState } from "#src/models/enemy/EnemyState";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { getEnemyKind } from "#src/services/enemy/getEnemyKind";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { damageKitEnemy } from "#src/services/kit/damageKitEnemy";
@@ -73,7 +73,7 @@ export const strikeElementalTicks = (context: KitContext): void => {
     const { burningCombatant, electroChargedCombatant, elementalReactions: reactions } = enemy;
     if (reactions.length === 0) continue;
     enemy.elementalReactions = [];
-    if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) continue;
+    if (!checkIsEnemyStrikable(enemy)) continue;
     const kind = getEnemyKind(enemyTables.enemyKindMap, enemy.enemyKindId);
     // Only a Burning tick's Pyro triggers reactions of its own, so every reaction but Electro-Charged's is Burning's
     strikeOwnedTicks(

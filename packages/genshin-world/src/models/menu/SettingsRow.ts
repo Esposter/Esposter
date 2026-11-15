@@ -9,12 +9,12 @@ import type { GameLanguage, GameText, GameTextKey } from "genshin-text";
 // An action's words, a list of the world's own (the quality or the game language), a range or a volume the world sets
 // Across its track, a slider the world does not back, drawn at its value on that track, or a toggle the world flips
 export type SettingsRow = (
-  | { getValue: (gameText: GameText, language: GameLanguage) => string; kind: SettingsRowKind.Choice }
-  | { kind: SettingsRowKind.Action; valueKey: GameTextKey }
-  | { kind: SettingsRowKind.Language }
-  | { kind: SettingsRowKind.Quality }
-  | { kind: SettingsRowKind.Range; range: SettingRange; setting: RangeSetting }
-  | { kind: SettingsRowKind.Slider; range: SettingRange; value: number }
-  | { kind: SettingsRowKind.Toggle; setting: ToggleSetting }
-  | { kind: SettingsRowKind.Volume; range: SettingRange; setting: VolumeSetting }
+  | { getValue: (gameText: GameText, language: GameLanguage) => string; kind: typeof SettingsRowKind.Choice }
+  | { kind: typeof SettingsRowKind.Action; valueKey: GameTextKey }
+  | { kind: typeof SettingsRowKind.Language }
+  | { kind: typeof SettingsRowKind.Quality }
+  | { kind: typeof SettingsRowKind.Range; range: SettingRange; setting: RangeSetting }
+  | { kind: typeof SettingsRowKind.Slider; range: SettingRange; value: number }
+  | { kind: typeof SettingsRowKind.Toggle; setting: ToggleSetting }
+  | { kind: typeof SettingsRowKind.Volume; range: SettingRange; setting: VolumeSetting }
 ) & { labelKey: GameTextKey };

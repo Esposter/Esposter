@@ -16,8 +16,8 @@ describe(createIwakuraSuccessionPassiveModule, () => {
   // Three-second cooldown, and four Energy a seed
   const iwakuraSuccessionPassiveModule = createIwakuraSuccessionPassiveModule([24, 2, 3, 4]);
   const SEED_ID = "succession";
-  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
-  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+  const SKILL_USED = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed };
 
   test("a skill use gains a seed, and a second use inside the cooldown gains none", () => {
     expect.hasAssertions();

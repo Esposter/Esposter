@@ -90,7 +90,7 @@ describe(useWorldCombat, () => {
         .map(([characterId]) => characterId),
     ];
     const { kitContext } = createCombat(
-      { travelerElement: shallowRef(Element.Anemo) },
+      { travelerElement: shallowRef<Element>(Element.Anemo) },
       {
         savedCharacters: characterIds.map((characterId) => createCharacter(characterId, statTables.characterDataMap)),
         savedParty: createParty(characterIds),

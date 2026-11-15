@@ -7,7 +7,7 @@ import { z } from "zod";
 // A line said aloud: its speaker's name by text id, "" for a narration, and the voice-over the game files it under,
 // "" for an unvoiced line
 export interface SpokenTalkLine extends BaseTalkLine {
-  kind: TalkLineKind.Spoken;
+  kind: typeof TalkLineKind.Spoken;
   // The speaker's role under the name by text id, "" for none
   speakerRoleTextId: string;
   speakerTextId: string;

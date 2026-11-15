@@ -7,7 +7,7 @@ import { z } from "zod";
 
 // A landmark tree, such as Windrise's great oak, built by the tree kit from its species' parameters
 export interface TreeLandmark extends BaseLandmark {
-  kind: LandmarkKind.Tree;
+  kind: typeof LandmarkKind.Tree;
   species: TreeSpecies;
 }
 

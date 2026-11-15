@@ -98,7 +98,7 @@ describe(createZibaiKitBehaviour, () => {
 
     expect(stance?.combatant.kit.normalAttacks).toHaveLength(4);
     expect(normalAttackHits.every((hit) => hit.element === Element.Geo)).toBe(true);
-    expect(new Set(chargedAttackHits.map(({ element }) => element))).toStrictEqual(new Set([Element.Geo]));
+    expect(new Set(chargedAttackHits.map(({ element }) => element))).toStrictEqual(new Set<Element>([Element.Geo]));
     expect(stance?.secondsRemaining).toBeGreaterThan(0);
   });
 

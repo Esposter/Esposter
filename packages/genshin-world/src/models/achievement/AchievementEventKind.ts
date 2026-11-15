@@ -3,16 +3,17 @@
 // Type, an item the bag takes in by its id, a quest's own id finished, a parent quest's, the main quest that holds
 // Its sub-quests, finished once its last sub-quest is, a statue's level reached by its city, a transport point unlocked by its id, a waypoint, and
 // A weapon forged by its rarity in stars
-export enum AchievementEventKind {
-  ChestOpened = "ChestOpened",
-  ItemCrafted = "ItemCrafted",
-  ItemObtained = "ItemObtained",
-  MaterialObtained = "MaterialObtained",
-  MonsterDefeated = "MonsterDefeated",
-  OfferingLevelReached = "OfferingLevelReached",
-  ParentQuestFinished = "ParentQuestFinished",
-  QuestFinished = "QuestFinished",
-  StatueLevelReached = "StatueLevelReached",
-  TransPointUnlocked = "TransPointUnlocked",
-  WeaponForged = "WeaponForged",
-}
+export const AchievementEventKind = {
+  ChestOpened: "ChestOpened",
+  ItemCrafted: "ItemCrafted",
+  ItemObtained: "ItemObtained",
+  MaterialObtained: "MaterialObtained",
+  MonsterDefeated: "MonsterDefeated",
+  OfferingLevelReached: "OfferingLevelReached",
+  ParentQuestFinished: "ParentQuestFinished",
+  QuestFinished: "QuestFinished",
+  StatueLevelReached: "StatueLevelReached",
+  TransPointUnlocked: "TransPointUnlocked",
+  WeaponForged: "WeaponForged",
+} as const;
+export type AchievementEventKind = (typeof AchievementEventKind)[keyof typeof AchievementEventKind];

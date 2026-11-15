@@ -5,7 +5,7 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { z } from "zod";
 
 export interface WeeklyTrounceBlossomSave extends TrounceBlossomSaveBase {
-  kind: BlossomKind.WeeklyBoss;
+  kind: typeof BlossomKind.WeeklyBoss;
 }
 
 export const weeklyTrounceBlossomSaveSchema = z.object({

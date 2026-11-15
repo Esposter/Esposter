@@ -21,6 +21,5 @@ export const createAbyssHalfCamp = (
     return { count: 1, enemyKindId };
   });
   // Every describe names its kind, so the camp draws no stand-in and never reads the random source
-  // oxlint-disable-next-line typescript/no-unsafe-enum-assignment -- a kind only a Spiral Abyss chamber fights is not an EnemyKindId member (packages/genshin-world/src/models/enemy/EnemyKindId.ts:4), so the describe's monster id is placed as the number it is
   return createDomainArenaCamp(areaId, campId, center, wave, monsterLevel, () => 0);
 };

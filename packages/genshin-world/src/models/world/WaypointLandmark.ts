@@ -9,7 +9,7 @@ import { z } from "zod";
 // A Teleport Waypoint, which exploring jumps to as the game teleports to it, named by the area it stands in
 export interface WaypointLandmark extends BaseLandmark {
   arrival: LandmarkArrival;
-  kind: LandmarkKind.TeleportWaypoint;
+  kind: typeof LandmarkKind.TeleportWaypoint;
 }
 
 export const waypointLandmarkSchema = baseLandmarkSchema.safeExtend({

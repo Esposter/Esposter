@@ -24,7 +24,7 @@ describe(createSkyPiercingFangPassiveModule, () => {
   // Synthetic params, not the weapon's row: a burst gives Movement SPD of a fifth and Normal Attack SPD of three
   // Tenths, and Normal and Charged hits deal half of ATK more as base damage, for four seconds
   const skyPiercingFangPassiveModule = createSkyPiercingFangPassiveModule([0.1, 0.2, 0.3, 0.5, 4]);
-  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed };
 
   test("a burst raises the wielder's Movement SPD and Normal Attack SPD for four seconds", () => {
     expect.hasAssertions();

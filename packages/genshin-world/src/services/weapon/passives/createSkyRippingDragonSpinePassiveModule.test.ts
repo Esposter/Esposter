@@ -25,7 +25,7 @@ describe(createSkyRippingDragonSpinePassiveModule, () => {
   // Synthetic params, not the weapon's row: a vacuum blade of half of ATK for each of three Normal or Charged Attack
   // Hits after a burst, for two seconds
   const skyRippingDragonSpinePassiveModule = createSkyRippingDragonSpinePassiveModule([0.1, 0.5, 2, 3]);
-  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed as const };
+  const BURST_USED = { characterId: TRAVELER_CHARACTER_ID, energyCost: 40, kind: KitEventKind.BurstUsed };
   const createAttackDamageTaken = (attackTag: AttackTag): KitEvent => ({
     attackTag,
     enemy,

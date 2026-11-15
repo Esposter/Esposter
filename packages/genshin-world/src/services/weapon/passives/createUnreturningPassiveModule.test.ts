@@ -29,7 +29,7 @@ describe(createUnreturningPassiveModule, () => {
     hit: { ...TRAVELER_KIT.plungeCollision, weakPoint },
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
 

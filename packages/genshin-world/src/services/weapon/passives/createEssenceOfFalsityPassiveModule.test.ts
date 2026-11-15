@@ -14,7 +14,7 @@ import { createWielderCombatant } from "#src/services/weapon/passives/createWiel
 import { describe, expect, test } from "vitest";
 
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const });
+const createSkillUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed });
 
 describe(createEssenceOfFalsityPassiveModule, () => {
   // Essence of Falsity with synthetic params: 10% CRIT Rate, 50 Elemental Mastery for three seconds after an Elemental
@@ -24,7 +24,7 @@ describe(createEssenceOfFalsityPassiveModule, () => {
   const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const createLunarBloom = () => ({
     enemy,
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ reactionType: ReactionType.LunarBloom }],
     striker: wielder,
   });

@@ -11,7 +11,7 @@ import { page } from "vitest/browser";
 
 describe("dialogueTalk", () => {
   const spokenLine = {
-    kind: TalkLineKind.Spoken as const,
+    kind: TalkLineKind.Spoken,
     nextLineIds: [],
     speakerRoleTextId: "",
     speakerTextId: "sara",

@@ -24,7 +24,7 @@ describe(createDeathlyPactPassiveModule, () => {
     characterId: TRAVELER_CHARACTER_ID,
     healthShare: 0,
     isFallRefused: false,
-    kind: KitEventKind.HealthChanged as const,
+    kind: KitEventKind.HealthChanged,
     overflowHealthShare: 0,
   };
 

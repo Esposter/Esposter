@@ -29,7 +29,7 @@ describe(createCouragePassiveModule, () => {
     hit: TRAVELER_KIT.plungeCollision,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
 

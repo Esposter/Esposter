@@ -24,7 +24,7 @@ describe(createOathOfQhapaqNanPassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   const createReactionTriggered = (reactionType: ReactionType) => ({
     enemy,
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ reactionType }],
     striker: wielder,
   });

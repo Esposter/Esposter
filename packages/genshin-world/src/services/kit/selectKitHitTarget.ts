@@ -11,7 +11,9 @@ export const selectKitHitTarget = (hit: KitHit, body: KitBody, enemies: Iterable
   if (hit.targetIndex === undefined) return undefined;
   const reachedEnemies = [...enemies].filter(
     (enemy) =>
-      ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) && checkIsInAttackArea(hit.hitArea, body, enemy),
+      enemy.state !== EnemyState.Dead &&
+      enemy.state !== EnemyState.Return &&
+      checkIsInAttackArea(hit.hitArea, body, enemy),
   );
   if (reachedEnemies.length === 0) return undefined;
   return reachedEnemies[hit.targetIndex % reachedEnemies.length];

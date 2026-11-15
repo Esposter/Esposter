@@ -55,7 +55,7 @@ const readEnergyAfterReactions = (constellationCount: number, reactions: Reactio
   const party = createParty([INEFFA_CHARACTER_ID]);
   const event = {
     enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions,
     striker: combatant,
   };

@@ -11,7 +11,7 @@ export interface KitReactionTriggeredEvent {
   enemy: Enemy;
   // Whether a summon's hit, a gadget in gcsim's terms, triggered them
   isGadget?: true;
-  kind: KitEventKind.ReactionTriggered;
+  kind: typeof KitEventKind.ReactionTriggered;
   reactions: Reaction[];
   striker: Combatant;
 }

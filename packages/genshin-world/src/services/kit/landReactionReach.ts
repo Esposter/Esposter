@@ -61,7 +61,8 @@ export const landReactionReach = (
     .filter(
       ({ distance, enemy }) =>
         enemy !== origin &&
-        ![EnemyState.Dead, EnemyState.Return].includes(enemy.state) &&
+        enemy.state !== EnemyState.Dead &&
+        enemy.state !== EnemyState.Return &&
         distance <= radius + ENEMY_CAPSULE_RADIUS &&
         (reactionType !== TransformativeReactionType.ElectroCharged || enemy.elementalState.auras.has(AuraType.Hydro)),
     )

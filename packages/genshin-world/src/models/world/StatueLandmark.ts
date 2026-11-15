@@ -6,7 +6,7 @@ import { z } from "zod";
 
 // A Statue of The Seven, one per area, which exploring jumps to as the game fast-travels
 export interface StatueLandmark extends BaseLandmark {
-  kind: LandmarkKind.StatueOfTheSeven;
+  kind: typeof LandmarkKind.StatueOfTheSeven;
 }
 
 export const statueLandmarkSchema = baseLandmarkSchema.safeExtend({

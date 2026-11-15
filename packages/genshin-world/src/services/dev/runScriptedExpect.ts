@@ -9,7 +9,7 @@ import { readScriptedField } from "#src/services/dev/readScriptedField";
 // One key of the record the line answers, so the `state` line's place compares as its own value
 export const runScriptedExpect = (
   driver: ScriptedSessionDriver,
-  step: Extract<ScriptedStep, { kind: ScriptedStepKind.Expect }>,
+  step: Extract<ScriptedStep, { kind: typeof ScriptedStepKind.Expect }>,
 ): ScriptedSessionOutcome => {
   const result = driver.run(step.line);
   if (!result.ok) return { error: `expect ${step.line} refused: ${result.error}`, ok: false };

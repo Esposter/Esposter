@@ -29,7 +29,7 @@ describe(createEvernightDuetPassiveModule, () => {
     hit: wielder.kit.plungeCollision,
     isCritical: false,
     isDefeated: false,
-    kind: KitEventKind.DamageTaken as const,
+    kind: KitEventKind.DamageTaken,
     striker: wielder,
   });
 

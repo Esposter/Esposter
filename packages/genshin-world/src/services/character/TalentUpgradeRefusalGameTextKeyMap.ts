@@ -7,4 +7,4 @@ export const TalentUpgradeRefusalGameTextKeyMap = {
   [TalentUpgradeRefusal.Materials]: GameTextKey.TalentMaterialsShort,
   [TalentUpgradeRefusal.Mora]: GameTextKey.TalentMoraShort,
   [TalentUpgradeRefusal.Phase]: GameTextKey.TalentPhaseShort,
-} as const satisfies Record<Exclude<TalentUpgradeRefusal, TalentUpgradeRefusal.LastLevel>, GameTextKey>;
+} as const satisfies Record<Exclude<TalentUpgradeRefusal, typeof TalentUpgradeRefusal.LastLevel>, GameTextKey>;

@@ -5,7 +5,7 @@ import { z } from "zod";
 // Spawns in place of a stand-in
 export interface DomainChallengeEnemy {
   count: number;
-  enemyKindId?: EnemyKindId;
+  enemyKindId?: number;
   name: string;
 }
 

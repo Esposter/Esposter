@@ -59,7 +59,7 @@ export const applyElement = (
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];
   const wasElectroCharged = checkIsElectroCharged(auras);
-  const isHydroHidden = auras.has(AuraType.Freeze) && [Element.Electro, Element.Pyro].includes(element);
+  const isHydroHidden = auras.has(AuraType.Freeze) && (element === Element.Electro || element === Element.Pyro);
   const reactions: Reaction[] = [];
   let remainingGauge = gauge;
   for (const { auraTypes, coefficient, ...stepReaction } of steps) {

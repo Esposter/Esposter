@@ -18,7 +18,7 @@ export const decayAuras = (auras: Map<AuraType, Aura>, deltaSeconds: number): vo
     if (auraType === AuraType.Freeze) {
       aura.gauge -= (aura.decayRate + (FREEZE_DECAY_ACCELERATION * deltaSeconds) / 2) * deltaSeconds;
       aura.decayRate += FREEZE_DECAY_ACCELERATION * deltaSeconds;
-    } else if (isBurning && [AuraType.Dendro, AuraType.Quicken].includes(auraType))
+    } else if (isBurning && (auraType === AuraType.Dendro || auraType === AuraType.Quicken))
       aura.gauge -= Math.max(BURNING_MINIMUM_DRAIN_RATE, BURNING_DRAIN_PER_DECAY_RATE * aura.decayRate) * deltaSeconds;
     else aura.gauge -= aura.decayRate * deltaSeconds;
 

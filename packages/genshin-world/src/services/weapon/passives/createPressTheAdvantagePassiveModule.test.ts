@@ -24,11 +24,7 @@ describe(createPressTheAdvantagePassiveModule, () => {
   const wielder: Combatant = createWielderCombatant();
   // A synthetic fifth ATK for four seconds a stack, not the weapon's row
   const pressTheAdvantagePassiveModule = createPressTheAdvantagePassiveModule([0.2, 4]);
-  const createDefeat = (striker: Combatant | undefined) => ({
-    enemy,
-    kind: KitEventKind.EnemyDefeated as const,
-    striker,
-  });
+  const createDefeat = (striker: Combatant | undefined) => ({ enemy, kind: KitEventKind.EnemyDefeated, striker });
 
   test("a defeat by the wielder adds a stack of the rank's ATK bonus for its seconds", () => {
     expect.hasAssertions();

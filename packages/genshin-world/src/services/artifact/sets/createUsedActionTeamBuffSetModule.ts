@@ -14,7 +14,7 @@ export const createUsedActionTeamBuffSetModule = ({
   seconds,
   source,
 }: {
-  actions: (CombatTalent.ElementalBurst | CombatTalent.ElementalSkill)[];
+  actions: (typeof CombatTalent.ElementalBurst | typeof CombatTalent.ElementalSkill)[];
   amount: number;
   attribute: Attribute;
   seconds: number;

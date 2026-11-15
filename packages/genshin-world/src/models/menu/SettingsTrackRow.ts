@@ -5,5 +5,5 @@ import type { SettingsRowKind } from "#src/models/menu/SettingsRowKind";
 // Drawn at the value it holds
 export type SettingsTrackRow = Extract<
   SettingsRow,
-  { kind: SettingsRowKind.Range | SettingsRowKind.Slider | SettingsRowKind.Volume }
+  { kind: typeof SettingsRowKind.Range | typeof SettingsRowKind.Slider | typeof SettingsRowKind.Volume }
 >;

@@ -10,8 +10,8 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
@@ -87,7 +87,7 @@ const findShootingStarTarget = ({ body, enemyMap }: KitContext): Enemy | undefin
   let target: Enemy | undefined;
   let targetDistance = Number.POSITIVE_INFINITY;
   for (const enemy of enemyMap.values()) {
-    if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state)) continue;
+    if (!checkIsEnemyStrikable(enemy)) continue;
     const distance = Math.hypot(enemy.position.x - body.position.x, enemy.position.z - body.position.z);
     if (distance <= SHOOTING_STAR_REACH && distance < targetDistance) {
       target = enemy;

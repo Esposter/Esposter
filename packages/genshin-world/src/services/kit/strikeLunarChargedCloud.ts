@@ -1,10 +1,10 @@
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { GroundPoint } from "genshin-engine";
 
-import { EnemyState } from "#src/models/enemy/EnemyState";
 import { checkIsAmountReached } from "#src/services/checkIsAmountReached";
 import { checkIsElectroCharged } from "#src/services/combat/aura/checkIsElectroCharged";
 import { LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS } from "#src/services/combat/aura/constants";
+import { checkIsEnemyStrikable } from "#src/services/enemy/checkIsEnemyStrikable";
 import { ENEMY_CAPSULE_RADIUS } from "#src/services/enemy/constants";
 import { strikeLunarCharged } from "#src/services/kit/strikeLunarCharged";
 import { LUNAR_CHARGED_CLOUD_RADIUS, LUNAR_CHARGED_CLOUD_TICK_SECONDS } from "#src/services/party/constants";
@@ -21,7 +21,7 @@ export const strikeLunarChargedCloud = (stepSeconds: number, position: GroundPoi
     for (const enemy of context.enemyMap.values()) {
       const { elementalState } = enemy;
       if (
-        [EnemyState.Dead, EnemyState.Return].includes(enemy.state) ||
+        !checkIsEnemyStrikable(enemy) ||
         !elementalState.isLunarCharged ||
         !checkIsElectroCharged(elementalState.auras) ||
         elementalState.seconds - elementalState.lunarChargedSeconds < LUNAR_CHARGED_INTERNAL_COOLDOWN_SECONDS ||

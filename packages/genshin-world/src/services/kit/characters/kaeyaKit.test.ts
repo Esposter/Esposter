@@ -92,7 +92,11 @@ const defeatEnemy = (combatant: Combatant, context: KitContext) =>
   );
 
 // The energy the party holds after a use of Frostgnaw that freezes the given number of opponents, at the given ascension
-const getEnergyAfterFreezes = (ascension: number, freezes: number, attackTag = AttackTag.ElementalSkill): number => {
+const getEnergyAfterFreezes = (
+  ascension: number,
+  freezes: number,
+  attackTag: AttackTag = AttackTag.ElementalSkill,
+): number => {
   const combatant: Combatant = {
     ...createKaeyaCombatant(),
     ascension,

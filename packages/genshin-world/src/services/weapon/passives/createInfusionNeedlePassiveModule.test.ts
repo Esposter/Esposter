@@ -16,11 +16,11 @@ const createParticleCollected = () => ({
   characterId: TRAVELER_CHARACTER_ID,
   count: 1,
   energyDropKind: EnergyDropKind.Particle,
-  kind: KitEventKind.EnergyParticleCollected as const,
+  kind: KitEventKind.EnergyParticleCollected,
 });
 const createNormalAttackLanded = () => ({
   action: takeOne(TRAVELER_KIT.normalAttacks, 0),
-  kind: KitEventKind.NormalAttackLanded as const,
+  kind: KitEventKind.NormalAttackLanded,
 });
 
 describe(createInfusionNeedlePassiveModule, () => {

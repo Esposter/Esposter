@@ -16,7 +16,7 @@ const createParticleCollected = (characterId: number) => ({
   characterId,
   count: 2,
   energyDropKind: EnergyDropKind.Particle,
-  kind: KitEventKind.EnergyParticleCollected as const,
+  kind: KitEventKind.EnergyParticleCollected,
 });
 
 describe(createParticleHealPassiveModule, () => {

@@ -13,11 +13,8 @@ import { getBlurWeights } from "#src/services/shared/getBlurWeights";
 import { takeOne } from "@esposter/shared";
 
 // The reductions a surface reads in its first submit, each a slot of the partial sums
-enum Slot {
-  Count = 0,
-  Sum = 1,
-  FirstBand = 2,
-}
+const Slot = { Count: 0, Sum: 1, FirstBand: 2 } as const;
+type Slot = (typeof Slot)[keyof typeof Slot];
 
 // A surface's statistics over the pixels its mask holds, computed on the GPU: the variance of its luminance, then the
 // Mean square of each octave band's detail, finest first, each band the difference between a level and the next

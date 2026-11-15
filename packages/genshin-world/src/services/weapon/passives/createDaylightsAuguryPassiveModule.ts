@@ -11,7 +11,7 @@ import { takeOne } from "@esposter/shared";
 const ASHEN_NIGHTSTAR_ID = "ashenNightstar";
 const ASHEN_NIGHTSTAR_MAXIMUM_STACKS = 4;
 
-const STACKING_ATTACK_TAGS = new Set([
+const STACKING_ATTACK_TAGS = new Set<AttackTag>([
   AttackTag.ChargedAttack,
   AttackTag.ElementalBurst,
   AttackTag.ElementalSkill,
@@ -35,7 +35,8 @@ export const createDaylightsAuguryPassiveModule = (params: number[]): PassiveMod
       },
     ],
     getStrikeDamageBonus: (strike) =>
-      strike.attackTag !== undefined && [AttackTag.ElementalBurst, AttackTag.ElementalSkill].includes(strike.attackTag)
+      strike.attackTag !== undefined &&
+      (strike.attackTag === AttackTag.ElementalBurst || strike.attackTag === AttackTag.ElementalSkill)
         ? damageBonus
         : 0,
     onKitEvent: (event, { kitEffectState }, combatant) => {

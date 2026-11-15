@@ -8,11 +8,7 @@ import { createGildingPassiveModule } from "#src/services/weapon/passives/create
 import { createWielderCombatant } from "#src/services/weapon/passives/createWielderCombatant.test";
 import { describe, expect, test } from "vitest";
 
-const createBurstUsed = () => ({
-  characterId: TRAVELER_CHARACTER_ID,
-  energyCost: 0,
-  kind: KitEventKind.BurstUsed as const,
-});
+const createBurstUsed = () => ({ characterId: TRAVELER_CHARACTER_ID, energyCost: 0, kind: KitEventKind.BurstUsed });
 
 describe(createGildingPassiveModule, () => {
   // Gilding with synthetic params: eight seconds, a tick every two seconds, and on each tick three energy and 5%

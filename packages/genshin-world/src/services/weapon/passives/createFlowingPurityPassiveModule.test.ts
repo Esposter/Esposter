@@ -19,7 +19,7 @@ const clearHealth = (bondOfLifeShare: number) => ({
   characterId: TRAVELER_CHARACTER_ID,
   healthShare: 0,
   isFallRefused: false,
-  kind: KitEventKind.HealthChanged as const,
+  kind: KitEventKind.HealthChanged,
   overflowHealthShare: 0,
 });
 
@@ -29,7 +29,7 @@ describe(createFlowingPurityPassiveModule, () => {
   // A bond of Life worth a fifth of Max HP once every six seconds, and 3% All Elemental DMG Bonus for every 1,000 HP
   // The bond cleared, at most 9%, for eight seconds
   const flowingPurityPassiveModule = createFlowingPurityPassiveModule([0.1, 12, 0.2, 0.03, 0.09, 8, 6]);
-  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed as const };
+  const skillUsed = { characterId: TRAVELER_CHARACTER_ID, kind: KitEventKind.SkillUsed };
 
   test("an Elemental Skill raises every element's DMG Bonus by the rank's percentage for the rank's seconds, and grants a Bond of Life worth the rank's share of Max HP", () => {
     expect.hasAssertions();

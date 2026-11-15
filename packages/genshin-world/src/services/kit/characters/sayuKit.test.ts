@@ -68,7 +68,7 @@ const readEnergyAfterSwirls = (constellationCount: number, isOnField: boolean, t
   const context = createKitTestContext(combatant, { activeCombatant: isOnField ? combatant : other, party });
   const event = {
     enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
-    kind: KitEventKind.ReactionTriggered as const,
+    kind: KitEventKind.ReactionTriggered,
     reactions: [{ element: Element.Anemo, reactionType: ReactionType.Swirl, spreadGauge: 1 }],
     striker: combatant,
   };
@@ -99,7 +99,7 @@ describe(createSayuKitBehaviour, () => {
     }
 
     expect(strikeAttackTags.length).toBeGreaterThan(0);
-    expect(new Set(strikeAttackTags)).toStrictEqual(new Set([AttackTag.ElementalBurst]));
+    expect(new Set(strikeAttackTags)).toStrictEqual(new Set<AttackTag>([AttackTag.ElementalBurst]));
   });
 
   test("a passive takes effect at its ascension phase", () => {

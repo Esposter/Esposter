@@ -6,6 +6,6 @@ export interface KitShieldAbsorbedEvent {
   amount: number;
   characterId: number;
   health: number;
-  kind: KitEventKind.ShieldAbsorbed;
+  kind: typeof KitEventKind.ShieldAbsorbed;
   struckCharacterId: number;
 }

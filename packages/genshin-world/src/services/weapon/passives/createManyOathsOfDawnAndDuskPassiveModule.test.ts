@@ -44,7 +44,7 @@ describe(createManyOathsOfDawnAndDuskPassiveModule, () => {
       party: createParty([TRAVELER_CHARACTER_ID, OTHER_CHARACTER_ID]),
     });
   // The DMG Bonus a strike of the wielder's of the given kind takes from its Seals
-  const priceStrike = (context: KitContext, attackTag = AttackTag.ElementalSkill): number => {
+  const priceStrike = (context: KitContext, attackTag: AttackTag = AttackTag.ElementalSkill): number => {
     const strike: KitStrike = { attackTag, body: context.body, combatant: wielder, hit: TRAVELER_KIT.plungeCollision };
     return wielder.kit.getStrikeDamageBonus?.(strike, enemy, context.party, context.kitEffectState.effects) ?? 0;
   };

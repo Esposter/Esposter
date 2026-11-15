@@ -92,7 +92,7 @@ describe(createRebelliousGuardianPassiveModule, () => {
       characterId: TRAVELER_CHARACTER_ID,
       healthShare: -0.1,
       isFallRefused: false,
-      kind: KitEventKind.HealthChanged as const,
+      kind: KitEventKind.HealthChanged,
       overflowHealthShare: 0,
     };
     rebelliousGuardianPassiveModule.onKitEvent?.(loss, context, wielder);

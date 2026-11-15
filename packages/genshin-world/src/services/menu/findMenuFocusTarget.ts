@@ -10,8 +10,8 @@ export const findMenuFocusTarget = (
 ): number | undefined => {
   const from = rectangles[fromIndex];
   if (!from) return undefined;
-  const isHorizontal = [MenuDirection.Left, MenuDirection.Right].includes(direction);
-  const sign = [MenuDirection.Down, MenuDirection.Right].includes(direction) ? 1 : -1;
+  const isHorizontal = direction === MenuDirection.Left || direction === MenuDirection.Right;
+  const sign = direction === MenuDirection.Down || direction === MenuDirection.Right ? 1 : -1;
   let targetIndex: number | undefined;
   let targetScore = Infinity;
   for (const [index, rectangle] of rectangles.entries()) {

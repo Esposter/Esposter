@@ -12,6 +12,6 @@ export interface KitDamageTakenEvent {
   hit: KitHit;
   isCritical: boolean;
   isDefeated: boolean;
-  kind: KitEventKind.DamageTaken;
+  kind: typeof KitEventKind.DamageTaken;
   striker: Combatant;
 }

@@ -155,15 +155,15 @@ const CONSTELLATION_6_SECONDS = 8;
 const CONSTELLATION_6_BUFFS = new Map<ReactionType, { elements: Set<Element>; id: string }>([
   [
     LunarReactionType.LunarBloom,
-    { elements: new Set([Element.Dendro, Element.Hydro]), id: "columbina-c6-lunar-bloom" },
+    { elements: new Set<Element>([Element.Dendro, Element.Hydro]), id: "columbina-c6-lunar-bloom" },
   ],
   [
     LunarReactionType.LunarCharged,
-    { elements: new Set([Element.Electro, Element.Hydro]), id: "columbina-c6-lunar-charged" },
+    { elements: new Set<Element>([Element.Electro, Element.Hydro]), id: "columbina-c6-lunar-charged" },
   ],
   [
     LunarReactionType.LunarCrystallize,
-    { elements: new Set([Element.Geo, Element.Hydro]), id: "columbina-c6-lunar-crystallize" },
+    { elements: new Set<Element>([Element.Geo, Element.Hydro]), id: "columbina-c6-lunar-crystallize" },
   ],
 ]);
 
@@ -215,7 +215,7 @@ const pickGravityReaction = (gravity: Gravity, { characterIdCombatantMap, party 
     (characterId) => characterIdCombatantMap.get(characterId)?.element,
   );
   const countOf = (element: Element): number => elements.filter((member) => member === element).length;
-  let reactionType = LunarReactionType.LunarCharged;
+  let reactionType: LunarReactionType = LunarReactionType.LunarCharged;
   let leaderCount = -1;
   for (const [element, elementReactionType] of ELEMENT_REACTION_TYPES)
     if (countOf(element) > leaderCount) {

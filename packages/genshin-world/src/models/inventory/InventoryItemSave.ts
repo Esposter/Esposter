@@ -15,13 +15,13 @@ interface ArtifactInventoryItemSave {
   artifact: Artifact;
   id: number;
   itemId: number;
-  kind: InventoryItemKind.Artifact;
+  kind: typeof InventoryItemKind.Artifact;
   quantity: 1;
 }
 interface StackInventoryItemSave {
   id: number;
   itemId: number;
-  kind: InventoryItemKind.Stack;
+  kind: typeof InventoryItemKind.Stack;
   quantity: number;
 }
 interface WeaponInventoryItemSave {
@@ -29,7 +29,7 @@ interface WeaponInventoryItemSave {
   experience: number;
   id: number;
   itemId: number;
-  kind: InventoryItemKind.Weapon;
+  kind: typeof InventoryItemKind.Weapon;
   level: number;
   quantity: 1;
   refinement: number;

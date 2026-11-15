@@ -6,4 +6,4 @@ export const BlossomClaimResinMap = {
   [BlossomKind.Domain]: 20,
   [BlossomKind.LeyLine]: 20,
   [BlossomKind.NormalBoss]: 40,
-} as const satisfies Record<Exclude<BlossomKind, BlossomKind.WeeklyBoss>, number>;
+} as const satisfies Record<Exclude<BlossomKind, typeof BlossomKind.WeeklyBoss>, number>;

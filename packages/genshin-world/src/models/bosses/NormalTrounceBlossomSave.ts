@@ -5,7 +5,7 @@ import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { z } from "zod";
 
 export interface NormalTrounceBlossomSave extends TrounceBlossomSaveBase {
-  kind: BlossomKind.NormalBoss;
+  kind: typeof BlossomKind.NormalBoss;
   uniqueDropId: number;
 }
 

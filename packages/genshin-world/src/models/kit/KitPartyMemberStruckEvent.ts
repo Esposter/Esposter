@@ -5,7 +5,7 @@ import type { KitEventKind } from "#src/models/kit/KitEventKind";
 // Team took any of it, so a strike a shield absorbed whole is told as well as one that cost the member HP
 export interface KitPartyMemberStruckEvent {
   isShielded: boolean;
-  kind: KitEventKind.PartyMemberStruck;
+  kind: typeof KitEventKind.PartyMemberStruck;
   striker: Enemy;
   struckCharacterId: number;
 }

@@ -43,8 +43,8 @@ interface Bought {
 
 // A good on offer: a Fate the shop's dataset gives, or a character or weapon of the rotation
 type Offer =
-  | { good: PaimonsBargainsGood; kind: ShopOfferKind.Character | ShopOfferKind.Weapon }
-  | { good: ShopGood; kind: ShopOfferKind.Fate };
+  | { good: PaimonsBargainsGood; kind: typeof ShopOfferKind.Character | typeof ShopOfferKind.Weapon }
+  | { good: ShopGood; kind: typeof ShopOfferKind.Fate };
 interface Props {
   // The Adventure Rank the player has reached, which opens the Fates the shop sells from it
   adventureRank: number;

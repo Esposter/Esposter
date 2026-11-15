@@ -79,8 +79,8 @@ describe(createLynetteKitBehaviour, () => {
   // Gives the team
   const readSynergyBuffs = (ascension: number): KitEffectState["effects"] => {
     const lynette = { ...createLynetteCombatant(), ascension, element: Element.Anemo };
-    const pyro = { ...createLynetteCombatant(), characterId: 1, element: Element.Pyro };
-    const hydro = { ...createLynetteCombatant(), characterId: 2, element: Element.Hydro };
+    const pyro: Combatant = { ...createLynetteCombatant(), characterId: 1, element: Element.Pyro };
+    const hydro: Combatant = { ...createLynetteCombatant(), characterId: 2, element: Element.Hydro };
     const kitEffectState: KitEffectState = { effects: [] };
     LYNETTE_KIT.elementalBurst.onStart?.(
       createKitTestContext(lynette, {

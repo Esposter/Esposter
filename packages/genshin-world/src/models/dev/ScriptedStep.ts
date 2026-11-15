@@ -5,7 +5,7 @@ import type { ScriptedStepKind } from "#src/models/dev/ScriptedStepKind";
 // Whole value
 export type ScriptedStep =
   | string
-  | { equals: string; field?: string; kind: ScriptedStepKind.Expect; line: string }
-  | { kind: ScriptedStepKind.Load }
-  | { kind: ScriptedStepKind.Save }
-  | { kind: ScriptedStepKind.Wait; seconds: number };
+  | { equals: string; field?: string; kind: typeof ScriptedStepKind.Expect; line: string }
+  | { kind: typeof ScriptedStepKind.Load }
+  | { kind: typeof ScriptedStepKind.Save }
+  | { kind: typeof ScriptedStepKind.Wait; seconds: number };

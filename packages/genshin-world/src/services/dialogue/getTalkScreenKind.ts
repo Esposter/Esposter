@@ -10,7 +10,7 @@ export const getTalkScreenKind = (
   talkId: string,
   residents: readonly Resident[],
   vendorShopTypeMap?: Partial<Record<string, number>>,
-): ScreenKind.Dialogue | ScreenKind.Reputation | ScreenKind.Shop => {
+): typeof ScreenKind.Dialogue | typeof ScreenKind.Reputation | typeof ScreenKind.Shop => {
   if (residents.some((resident) => resident.keepsReputation && resident.talkId === talkId))
     return ScreenKind.Reputation;
   return getTalkVendorShopId(talkId, residents, vendorShopTypeMap) === undefined
