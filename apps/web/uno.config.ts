@@ -196,8 +196,10 @@ export default defineConfig({
   // Holds only the utilities of modules transformed so far, and a page first reached by client navigation — or a
   // Component behind `<ClientOnly>` — renders without the ones only it uses until a reload. The pipeline filter still
   // Applies, so a `.ts` file contributes only when it opts in with `@unocss-include` — which is decided by reading it,
-  // So test files, which never opt in, are left out of the glob rather than opened and discarded
-  content: { filesystem: ["**/*.{ts,vue}", "!**/*.{bench,test,test-d}.ts"] },
+  // So test files, which never opt in, are left out of the glob rather than opened and discarded. UnoCSS globs from the
+  // Process's directory as well as the Vite root, and from there `node_modules` reaches every workspace package and its
+  // Dependencies through their links: read at startup and each watched, they ran the dev server out of file descriptors
+  content: { filesystem: ["**/*.{ts,vue}", "!**/*.{bench,test,test-d}.ts", "!**/node_modules/**"] },
   outputToCssLayers: { cssLayerName: (layer) => (layer === "properties" ? null : `uno-${layer}`) },
   // Each design style's tokens as one rule on its `data-ui-style` value, written here so they are static CSS rather
   // Than a stylesheet built at runtime. A theme scope carries the attribute as well as the root, because a token that
