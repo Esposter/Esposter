@@ -15,12 +15,12 @@ import {
   storageLedgerInStorage,
   StorageTierQuotaMap,
   usersInAuth,
-  WRITE_SAS_DURATION_MS,
+  WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq, gt, isNull, lte, ne, or, sql } from "drizzle-orm";
 
-// The gate every upload SAS passes through. A read-then-check would let a client firing many upload requests at once
+// The gate every upload presigned url passes through. A read-then-check would let a client firing many upload requests at once
 // Have them all read the same low usage and all pass. So the check is the insert's own guard: one statement inserts
 // Every reservation from the user's row only while the quota and the outstanding-reservation cap still hold over the
 // Holds other than these, and the batch is atomic, so a refused reserve leaves no hold behind. The counter itself only
@@ -36,11 +36,11 @@ export const reserveStorageBytes = async (
 
   const declaredBytes = reservations.reduce((total, { declaredBytes: bytes }) => total + bytes, 0);
   const now = new Date();
-  const expiresAt = new Date(now.getTime() + WRITE_SAS_DURATION_MS);
+  const expiresAt = new Date(now.getTime() + WRITE_PRESIGNED_URL_DURATION_MS);
   // A row must outlive every `BlobCreated` that can still name it, or a retry of one whose blob did land finds
-  // No row, charges nothing and reports no failure. The completion allowance is the SAS's own duration reused, so
+  // No row, charges nothing and reports no failure. The completion allowance is the presigned url's own duration reused, so
   // Nothing new can drift from the policy (openspec/specs/resource/storage-quotas/design.md)
-  const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_SAS_DURATION_MS));
+  const collectableBefore = new Date(now.getTime() - (QUEUE_DELIVERY_TTL_MS + WRITE_PRESIGNED_URL_DURATION_MS));
   // The reservations travel as one JSON bind, so the statement's parameters do not grow with the number of blobs
   const reservationsJson = JSON.stringify(
     reservations.map(({ blobName, declaredBytes: bytes }) => ({ blobName, declaredBytes: bytes })),

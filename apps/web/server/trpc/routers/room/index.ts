@@ -77,7 +77,7 @@ import {
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
   UserToRoomInMessageRelations,
-  WRITE_SAS_DURATION_MS,
+  WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
@@ -119,12 +119,16 @@ export const baseRoomRouter = router({
       staticReason:
         "Answers a presigned upload url for a blob no reader shows until updateRoom saves it as the room's image",
     })
-    .mutation<{ publicUrl: string; sasUrl: string }>(async ({ input: { roomId } }) => {
+    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ input: { roomId } }) => {
       // A unique segment per upload so a re-upload never lands on a prior blob name — that is what lets the cleanup
       // On image change (below) delete stale versions without a delayed delete ever removing a freshly uploaded one
       const blobName = `${getRoomProfileImageBlobPrefix(roomId)}/${v7()}`;
-      const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
-      return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
+      const presignedUrl = await createPresignedPutUrl(
+        getStorageCredentials(),
+        StorageBucket.PublicUserAssets,
+        blobName,
+      );
+      return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),
   joinRoom: getTopicsProcedure(standardAuthedProcedure.input(joinRoomInputSchema), ({ ctx, output }) => {
     const roomId = selectRoomInMessageSchema.pick({ id: true }).parse(output).id;
@@ -498,7 +502,7 @@ export const baseRoomRouter = router({
         // To repair it. A version replaced within the window is therefore left for the next image change (or the
         // Room's deletion) to collect, which is the same deferral every other in-flight upload gets
         const blobNames = await listRoomProfileImageBlobNames(bucket, id, {
-          createdBefore: new Date(Date.now() - WRITE_SAS_DURATION_MS),
+          createdBefore: new Date(Date.now() - WRITE_PRESIGNED_URL_DURATION_MS),
         });
         return blobNames.filter((blobName) => getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) !== image);
       }).match(noop, console.error);

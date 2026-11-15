@@ -2,7 +2,7 @@ import type { CallBackground } from "#shared/models/message/call/CallBackground"
 import type { UserSettingsInMessage } from "@esposter/db-schema";
 
 import { MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
+import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { CallVirtualBackgroundDefinitions } from "@/services/message/room/call/CallVirtualBackgroundDefinitions";
 import { CALL_BACKGROUND_UPLOAD_KEY } from "@/services/message/room/call/constants";
@@ -35,20 +35,20 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
 
     await executeMutation(
       async () => {
-        const sasUrl = await $trpc.user.generateCallBackgroundUploadUrl.mutate({
+        const presignedUrl = await $trpc.user.generateCallBackgroundUploadUrl.mutate({
           mimetype: file.type,
           size: file.size,
           slot,
         });
         await uploadFilesToPresignedUrls({
           files: [file],
-          generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+          generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
         });
       },
       {
         key: CALL_BACKGROUND_UPLOAD_KEY,
         // Re-read rather than appended optimistically: the listing is the index, and it is also where the size
-        // A write SAS could not bound is checked - so a slot that landed over the cap never reaches the picker
+        // A presigned write url could not bound is checked - so a slot that landed over the cap never reaches the picker
         onSuccess: () => refetchCallBackgrounds(),
       },
     );
@@ -72,7 +72,7 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
     });
   };
   // One selection, two kinds of background: a preset resolves to the static path it ships as, a slot to a
-  // Freshly signed read SAS, and anything resolving to neither is no background at all - the state the
+  // Freshly signed presigned read url, and anything resolving to neither is no background at all - the state the
   // Picker's None entry already selects. That is what makes a deleted slot degrade instead of publishing a
   // Camera track with a broken image composited behind it
   const readVirtualBackgroundImagePath = async (virtualBackground: UserSettingsInMessage["virtualBackground"]) => {
@@ -81,11 +81,11 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
     // Re-read rather than resolve from the session cache, and only a slot ever gets here so a preset still pays
     // Nothing. A cached listing is wrong in both directions over the life of a session: it holds a slot another
     // Device has deleted, whose url would resolve to a blob that is gone rather than to no background, and its
-    // Read SAS expires while the session stays open
+    // Presigned read urls expires while the session stays open
     await refetchCallBackgrounds();
     return (
       callBackgrounds.value.find((callBackground) => getCallBackgroundSelection(callBackground) === virtualBackground)
-        ?.sasUrl ?? ""
+        ?.presignedUrl ?? ""
     );
   };
   return {

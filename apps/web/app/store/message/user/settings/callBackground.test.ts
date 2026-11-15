@@ -10,7 +10,7 @@ import { describe, expect, test, vi } from "vitest";
 
 describe(useCallBackgroundStore, () => {
   const { trpcMsw } = setupMswTrpc();
-  const callBackground: CallBackground = { sasUrl: "sasUrl", slot: 0 };
+  const callBackground: CallBackground = { presignedUrl: "presignedUrl", slot: 0 };
 
   test("resolves a slot to its signed url", async () => {
     expect.hasAssertions();
@@ -20,7 +20,7 @@ describe(useCallBackgroundStore, () => {
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
 
     await expect(readVirtualBackgroundImagePath(getCallBackgroundSelection(callBackground))).resolves.toBe(
-      callBackground.sasUrl,
+      callBackground.presignedUrl,
     );
   });
 
@@ -37,7 +37,7 @@ describe(useCallBackgroundStore, () => {
   });
 
   // The listing the picker renders from is cached for the session, so resolving through it would hand the
-  // Processor a url for a blob another device deleted — and a read SAS that expires while the session stays open
+  // Processor a url for a blob another device deleted — and a presigned read url that expires while the session stays open
   test("re-reads the listing rather than resolving a slot from a warm cache", async () => {
     expect.hasAssertions();
 
@@ -73,7 +73,7 @@ describe(useCallBackgroundStore, () => {
   test("a rejected delete does not resurrect a slot deleted beside it", async () => {
     expect.hasAssertions();
 
-    const callBackgrounds = [callBackground, { sasUrl: "sasUrl", slot: 1 }];
+    const callBackgrounds = [callBackground, { presignedUrl: "presignedUrl", slot: 1 }];
     trpcMsw.user.readCallBackgrounds.query(() => callBackgrounds);
     trpcMsw.user.deleteCallBackground.mutation(({ input }) => {
       if (input.slot === 0) throw new Error(" ");

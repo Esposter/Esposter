@@ -43,13 +43,13 @@ A resource type gets all of this without writing anything. Every type's content 
 
 A large object outside resource content composes the same pieces rather than a second framework:
 
-| Need                            | Piece                                                                 |
-| ------------------------------- | --------------------------------------------------------------------- |
-| a write the owner's quota holds | `generateReservedWriteSasUrl` on the server, one PUT from the browser |
-| a read the server authorizes    | `createPresignedGetUrl` from `@esposter/db`, fetched by the browser   |
-| the size a body will cross at   | `getRequestBodyByteLength`                                            |
-| a hash both ends agree on       | `getSha256Hex` in the browser, `node:crypto` on the server            |
-| a history that costs its edits  | the `keyframe-store` package                                          |
+| Need                            | Piece                                                                       |
+| ------------------------------- | --------------------------------------------------------------------------- |
+| a write the owner's quota holds | `generateReservedWritePresignedUrl` on the server, one PUT from the browser |
+| a read the server authorizes    | `createPresignedGetUrl` from `@esposter/db`, fetched by the browser         |
+| the size a body will cross at   | `getRequestBodyByteLength`                                                  |
+| a hash both ends agree on       | `getSha256Hex` in the browser, `node:crypto` on the server                  |
+| a history that costs its edits  | the `keyframe-store` package                                                |
 
 No generic transport abstraction sits above them, because resource content is the only document shape that grows past one body today. A second shape is what would earn one, and it would be shaped by the two it serves.
 

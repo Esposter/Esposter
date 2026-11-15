@@ -2,11 +2,11 @@ import type { CreateRoomEmojiInput } from "#shared/models/db/roomEmoji/CreateRoo
 import type { DeleteRoomEmojiInput } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
 import type { UpdateRoomEmojiInput } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import type { CustomEmoji } from "@/models/message/emoji/CustomEmoji";
-import type { RoomEmojiWithSasUrl, RoomInMessage } from "@esposter/db-schema";
+import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
 import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { getSingleFileSasEntities } from "@/services/file/getSingleFileSasEntities";
+import { getSingleFilePresignedUrlEntities } from "@/services/file/getSingleFilePresignedUrlEntities";
 import { uploadFilesToPresignedUrls } from "@/services/file/uploadFilesToPresignedUrls";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { getRestoredItems } from "@/services/shared/getRestoredItems";
@@ -16,7 +16,7 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   const { $trpc } = useNuxtApp();
   const roomStore = useRoomStore();
-  const { getSlice, items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithSasUrl>(
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<RoomEmojiWithPresignedUrl>(
     () => roomStore.scopedRoomId,
   );
   // `items` is the reading view — whichever room the screen is scoped to. Writing through it would file a row
@@ -24,18 +24,21 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   // Room they are for: a read, a mutation and a subscription all know their room, and each names it once up front
   const getRoomOperationData = (roomId: RoomInMessage["id"]) =>
     createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.RoomEmoji);
-  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<RoomEmojiWithSasUrl, RoomInMessage["id"]>();
-  const storeCreateRoomEmoji = (roomId: RoomInMessage["id"], newRoomEmoji: RoomEmojiWithSasUrl) => {
+  const { readWithReplayedPushes, recordReadingPush } = useReadingPushes<
+    RoomEmojiWithPresignedUrl,
+    RoomInMessage["id"]
+  >();
+  const storeCreateRoomEmoji = (roomId: RoomInMessage["id"], newRoomEmoji: RoomEmojiWithPresignedUrl) => {
     recordReadingPush(roomId, { item: newRoomEmoji, type: "set" });
     getRoomOperationData(roomId).createRoomEmoji(newRoomEmoji);
   };
-  const storeDeleteRoomEmoji = (roomId: RoomInMessage["id"], ids: { id: RoomEmojiWithSasUrl["id"] }) => {
+  const storeDeleteRoomEmoji = (roomId: RoomInMessage["id"], ids: { id: RoomEmojiWithPresignedUrl["id"] }) => {
     recordReadingPush(roomId, { checkIsRemoved: (roomEmoji) => roomEmoji.id === ids.id, type: "remove" });
     getRoomOperationData(roomId).deleteRoomEmoji(ids);
   };
   const storeUpdateRoomEmoji = (
     roomId: RoomInMessage["id"],
-    updatedRoomEmoji: Partial<RoomEmojiWithSasUrl> & Pick<RoomEmojiWithSasUrl, "id">,
+    updatedRoomEmoji: Partial<RoomEmojiWithPresignedUrl> & Pick<RoomEmojiWithPresignedUrl, "id">,
   ) => {
     recordReadingPush(roomId, { id: updatedRoomEmoji.id, patch: updatedRoomEmoji, type: "patch" });
     getRoomOperationData(roomId).updateRoomEmoji(updatedRoomEmoji);
@@ -43,7 +46,7 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   // What every picking surface consumes. The name is the slug: it is already drawn from the dataset's slug
   // Charset, so search, `:` completion and the recents list treat both vocabularies identically
   const customEmojis = computed<CustomEmoji[]>(() =>
-    items.value.map(({ id, name, sasUrl }) => ({ id, name, sasUrl, slug: name, type: EmojiType.Custom })),
+    items.value.map(({ id, name, presignedUrl }) => ({ id, name, presignedUrl, slug: name, type: EmojiType.Custom })),
   );
   // Keyed by id because that is what a stored reaction and a message token both name — a rename must never
   // Strand either of them
@@ -76,14 +79,14 @@ export const useRoomEmojiStore = defineStore("message/room/emoji", () => {
   ) => {
     await executeCreateRoomEmojiMutation(
       async () => {
-        const { id, sasUrl } = await $trpc.room.emoji.generateUploadRoomEmojiSasEntity.query({
+        const { id, presignedUrl } = await $trpc.room.emoji.generateUploadRoomEmojiPresignedUrlEntity.query({
           mimetype: file.type,
           roomId,
           size: file.size,
         });
         await uploadFilesToPresignedUrls({
           files: [file],
-          generateUploadFileSasEntities: getSingleFileSasEntities(sasUrl),
+          generateUploadFilePresignedUrlEntities: getSingleFilePresignedUrlEntities(presignedUrl),
         });
         return $trpc.room.emoji.createRoomEmoji.mutate({ id, name, roomId });
       },

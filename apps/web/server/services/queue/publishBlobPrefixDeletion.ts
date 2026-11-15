@@ -13,7 +13,7 @@ import { getResultAsync } from "@esposter/shared";
 // `createdBefore` is stated by every caller rather than defaulted, because both answers are load-bearing and
 // Neither is safe to inherit: a bound the caller wanted and did not get lets a replay delete what was written
 // After the decision, and a bound on a prefix nothing will ever own again permanently strands every blob that
-// Landed after it (an upload holding a still-valid write SAS when its room was deleted has no later sweep).
+// Landed after it (an upload holding a still-valid presigned write url when its room was deleted has no later sweep).
 export const publishBlobPrefixDeletion = (
   containerName: StorageBucket,
   prefix: string,

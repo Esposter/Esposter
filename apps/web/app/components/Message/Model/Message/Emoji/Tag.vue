@@ -8,7 +8,14 @@ const { customEmoji, customEmojiId, description } = useEmojiTag(() => emojiTag);
 </script>
 
 <template>
-  <NuxtImg v-if="customEmoji" :alt="description" :src="customEmoji.sasUrl" size="[1em]" inline-block object-contain />
+  <NuxtImg
+    v-if="customEmoji"
+    :alt="description"
+    :src="customEmoji.presignedUrl"
+    size="[1em]"
+    inline-block
+    object-contain
+  />
   <!-- The emoji this reaction names has been deleted. The reaction is still real and still counts, so it renders
        as a placeholder rather than disappearing or printing its own tag -->
   <span

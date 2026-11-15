@@ -24,7 +24,7 @@ flowchart TD
   drop["Composer drop"] --> validate[useUploadFiles checks size and category]
   validate -->|rejected| alert["Upload alert"]
   validate -->|ok| thumb[generateImageThumbnail downscales images to WebP]
-  validate --> sas[message.generateUploadFileSasEntities]
+  validate --> sas[message.generateUploadFilePresignedUrlEntities]
   sas --> enforce[Server<br/>re-checks limits, issues presigned PUT URLs]
   enforce --> upload[uploadFilesToPresignedUrls PUTs the original file]
   thumb --> upthumb["Thumbnail upload"]
@@ -61,12 +61,12 @@ Two columns on `rooms` (`packages/db-schema/src/schema/message/roomsInMessage.ts
 
 ## Procedures
 
-| Procedure                                  | Auth        | Input                               | Purpose                                                                                    |
-| :----------------------------------------- | :---------- | :---------------------------------- | :----------------------------------------------------------------------------------------- |
-| `message.generateUploadFileSasEntities`    | Room member | files (filename, mimetype, size)    | Check the declared limits, issue presigned PUT URLs for the original and its thumbnail     |
-| `message.generateDownloadThumbnailSasUrls` | Room member | file ids                            | Presigned GET URLs for the `.thumb` objects the message list renders                       |
-| `message.searchMessages`                   | Room member | query, filters                      | `has: file` lists a room's attachments — see [message search](../message-search/design.md) |
-| `room.updateRoom`                          | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group                                 |
+| Procedure                                        | Auth        | Input                               | Purpose                                                                                    |
+| :----------------------------------------------- | :---------- | :---------------------------------- | :----------------------------------------------------------------------------------------- |
+| `message.generateUploadFilePresignedUrlEntities` | Room member | files (filename, mimetype, size)    | Check the declared limits, issue presigned PUT URLs for the original and its thumbnail     |
+| `message.generateDownloadThumbnailPresignedUrls` | Room member | file ids                            | Presigned GET URLs for the `.thumb` objects the message list renders                       |
+| `message.searchMessages`                         | Room member | query, filters                      | `has: file` lists a room's attachments — see [message search](../message-search/design.md) |
+| `room.updateRoom`                                | ManageRoom  | room fields incl. attachment limits | Persist per-room limits from the settings Moderation group                                 |
 
 ## Deletion is eventual, not guaranteed
 
@@ -89,7 +89,7 @@ Removing an attachment (`deleteFile`), deleting a message with attachments, or d
 | `apps/web/app/components/Message/Model/FileRenderer/Image.vue`                   | Renders the thumbnail inline, original in the viewer              |
 | `packages/db-schema/src/schema/message/roomsInMessage.ts`                        | `maxFileSizeBytes` + `allowedMimeCategories` columns              |
 | `packages/db-schema/src/services/file/getMimeCategory.ts`                        | Mimetype to coarse category mapping                               |
-| `packages/db/src/services/storage/generateUploadFileSasEntities.ts`              | Issues the original and sibling thumbnail presigned PUTs          |
+| `packages/db/src/services/storage/generateUploadFilePresignedUrlEntities.ts`     | Issues the original and sibling thumbnail presigned PUTs          |
 | `packages/db/src/services/storage/createPresignedPutUrl.ts`                      | The presigned PUT the targets are signed with                     |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Attachments/Index.vue` | Room-settings Moderation page editing the limits                  |
 | `apps/web/server/services/queue/publishBlobDeletion.ts`                          | chunked, best-effort blob deletion shared by every delete         |

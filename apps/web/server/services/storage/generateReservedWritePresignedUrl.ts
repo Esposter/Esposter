@@ -10,14 +10,14 @@ import { createPresignedPutUrl } from "@esposter/db";
 // Resource's staging blob. Signed and reserved in one call, so a write target nothing accounts for cannot be handed
 // Out. The staging blob is always the gzip the client PUTs, so the target is signed for that type
 // See openspec/specs/resource/storage-quotas/design.md
-export const generateReservedWriteSasUrl = async (
+export const generateReservedWritePresignedUrl = async (
   db: Context["db"],
   userId: UserInAuth["id"],
   containerName: StorageBucket,
   blobName: string,
   declaredBytes: number,
 ): Promise<string> => {
-  const sasUrl = await createPresignedPutUrl(getStorageCredentials(), containerName, blobName, MimeType.Gzip);
+  const presignedUrl = await createPresignedPutUrl(getStorageCredentials(), containerName, blobName, MimeType.Gzip);
   await reserveStorageBytes(db, userId, containerName, [{ blobName, declaredBytes }]);
-  return sasUrl;
+  return presignedUrl;
 };

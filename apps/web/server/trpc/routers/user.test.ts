@@ -37,7 +37,7 @@ import {
   StorageBucket,
   UserStatus,
   userStatusesInMessage,
-  WRITE_SAS_DURATION_MS,
+  WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { eq } from "drizzle-orm";
@@ -250,12 +250,12 @@ describe("userRouter", () => {
   test("generates profile image upload url", async () => {
     expect.hasAssertions();
 
-    const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
-    const presignedUrl = new URL(sasUrl);
+    const { presignedUrl, publicUrl } = await caller.generateProfileImageUploadUrl();
+    const parsedPresignedUrl = new URL(presignedUrl);
 
     expect(publicUrl).toBe(`${TEST_ORIGIN}/${StorageBucket.PublicUserAssets}/${userId}/ProfileImage`);
-    expect(presignedUrl.pathname).toContain(`/${userId}/ProfileImage`);
-    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
+    expect(parsedPresignedUrl.pathname).toContain(`/${userId}/ProfileImage`);
+    expect(parsedPresignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
   });
 
   test("updates", async () => {
@@ -320,8 +320,8 @@ describe("userRouter", () => {
     await seedSlots(userId, [0, 2], size);
 
     await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
-      { sasUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 0)}?`), slot: 0 },
-      { sasUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 2)}?`), slot: 2 },
+      { presignedUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 0)}?`), slot: 0 },
+      { presignedUrl: expect.stringContaining(`/${getCallBackgroundBlobName(userId, 2)}?`), slot: 2 },
     ]);
   });
 

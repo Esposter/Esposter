@@ -4,19 +4,19 @@ Sits beside the owner's-alone declaration in [agent keys](../agent-keys/design.m
 
 ## One tool per operation
 
-| Operation                 | Procedure                                                         | How it is served                                                                   |
-| ------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Create                    | `resource.createResource`                                         | taking a type and a name, through the `createResourceRow` the factory calls        |
-| Rename and tag            | `resource.updateResource`                                         | typeless, the factory's body, which names no type                                  |
-| Bin and restore           | `resource.deleteResources`, `resource.restoreResources`           | opted in — a binned resource comes back whole                                      |
-| Duplicate                 | `resource.duplicateResource`                                      | opted in                                                                           |
-| Read one, publication too | `resource.readResource`                                           | opted in                                                                           |
-| Publish and unpublish     | `resource.publishResource`, `resource.unpublishResource`          | dispatched to the type's own generated procedure                                   |
-| Upload and remove a file  | `resource.generateUploadFileSasEntities`, `resource.deleteFile`   | dispatched — the agent's own shell PUTs the bytes to the signed URL                |
-| References                | `resource.readResourceReferences`                                 | opted in — what this resource links to, and what links to it                       |
-| Activity                  | `resource.readActivities`                                         | opted in                                                                           |
-| History                   | `resource.readSnapshotHistory`, `resource.restoreSnapshotVersion` | opted in — a restore takes a revision first, so it is undone as easily             |
-| Datasets                  | `dataset.readDataset`                                             | opted in — a Sheet's rows, a Survey's responses or a Program's status as one table |
+| Operation                 | Procedure                                                                | How it is served                                                                   |
+| ------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
+| Create                    | `resource.createResource`                                                | taking a type and a name, through the `createResourceRow` the factory calls        |
+| Rename and tag            | `resource.updateResource`                                                | typeless, the factory's body, which names no type                                  |
+| Bin and restore           | `resource.deleteResources`, `resource.restoreResources`                  | opted in — a binned resource comes back whole                                      |
+| Duplicate                 | `resource.duplicateResource`                                             | opted in                                                                           |
+| Read one, publication too | `resource.readResource`                                                  | opted in                                                                           |
+| Publish and unpublish     | `resource.publishResource`, `resource.unpublishResource`                 | dispatched to the type's own generated procedure                                   |
+| Upload and remove a file  | `resource.generateUploadFilePresignedUrlEntities`, `resource.deleteFile` | dispatched — the agent's own shell PUTs the bytes to the signed URL                |
+| References                | `resource.readResourceReferences`                                        | opted in — what this resource links to, and what links to it                       |
+| Activity                  | `resource.readActivities`                                                | opted in                                                                           |
+| History                   | `resource.readSnapshotHistory`, `resource.restoreSnapshotVersion`        | opted in — a restore takes a revision first, so it is undone as easily             |
+| Datasets                  | `dataset.readDataset`                                                    | opted in — a Sheet's rows, a Survey's responses or a Program's status as one table |
 
 Linking needs no tool: a reference is a field declared with `createResourceLinkSchema`, so writing it through the content tools is linking, and the save projects it into the [resource-link index](../../resource-links/design.md).
 

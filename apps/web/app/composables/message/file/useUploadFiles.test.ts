@@ -16,7 +16,7 @@ import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadFileToUrlMock } = vi.hoisted(() => ({
-  uploadFileToUrlMock: vi.fn<(blob: Blob, sasUrl: string) => Promise<void>>(),
+  uploadFileToUrlMock: vi.fn<(blob: Blob, presignedUrl: string) => Promise<void>>(),
 }));
 
 vi.mock(import("@/services/file/uploadFileToUrl"), () => ({ uploadFileToUrl: uploadFileToUrlMock }));
@@ -38,15 +38,17 @@ describe(useUploadFiles, () => {
   const fileId = v7();
   // The grant the server mints beside each write target — the composer hands it back to reclaim the upload
   const token = "token";
-  const sasUrl = "sasUrl";
-  const thumbnailSasUrl = "thumbnailSasUrl";
-  const slowSasUrl = "slowSasUrl";
+  const presignedUrl = "presignedUrl";
+  const thumbnailPresignedUrl = "thumbnailPresignedUrl";
+  const slowPresignedUrl = "slowPresignedUrl";
 
   beforeEach(() => {
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
     setCurrentRoomId(roomId);
-    trpcMsw.message.generateUploadFileSasEntities.mutation(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]);
+    trpcMsw.message.generateUploadFilePresignedUrlEntities.mutation(() => [
+      { id: fileId, presignedUrl, thumbnailPresignedUrl, token },
+    ]);
     vi.spyOn(globalThis.URL, "createObjectURL").mockReturnValue("blob:url");
     vi.spyOn(globalThis.URL, "revokeObjectURL").mockImplementation(noop);
   });
@@ -69,7 +71,7 @@ describe(useUploadFiles, () => {
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
-      url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
+      url === thumbnailPresignedUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);
 
@@ -101,7 +103,7 @@ describe(useUploadFiles, () => {
   test("shows the storage refusal and seeds no attachment when the allowance refuses the drop", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.generateUploadFileSasEntities.mutation(() => {
+    trpcMsw.message.generateUploadFilePresignedUrlEntities.mutation(() => {
       throw new TRPCError({ code: "FORBIDDEN", message: STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE });
     });
     const uploadFileStore = useUploadFileStore();
@@ -163,14 +165,14 @@ describe(useUploadFiles, () => {
 
     const slowFileId = v7();
     let isSlowUploadFinished = false;
-    trpcMsw.message.generateUploadFileSasEntities.mutation(() => [
-      { id: fileId, sasUrl, token },
-      { id: slowFileId, sasUrl: slowSasUrl, token },
+    trpcMsw.message.generateUploadFilePresignedUrlEntities.mutation(() => [
+      { id: fileId, presignedUrl, token },
+      { id: slowFileId, presignedUrl: slowPresignedUrl, token },
     ]);
     const deleteUploadFiles = vi.fn<(options: { input: DeleteUploadFilesInput }) => void>();
     trpcMsw.message.deleteUploadFiles.mutation(deleteUploadFiles);
     uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
-      url === slowSasUrl
+      url === slowPresignedUrl
         ? new Promise<void>((resolve) => {
             setTimeout(() => {
               isSlowUploadFinished = true;
@@ -193,7 +195,7 @@ describe(useUploadFiles, () => {
   });
 
   // The renderer reads this instead of inferring a missing thumbnail from a failed image load — that signal is
-  // Indistinguishable from an expired read SAS, and every reading of it is wrong for the other case.
+  // Indistinguishable from an expired presigned read url, and every reading of it is wrong for the other case.
   test("records which files got a thumbnail blob", async () => {
     expect.hasAssertions();
 
@@ -211,7 +213,7 @@ describe(useUploadFiles, () => {
     const uploadFileStore = useUploadFileStore();
     const { getComposerFiles } = uploadFileStore;
     uploadFileToUrlMock.mockImplementation((_blob: Blob, url: string) =>
-      url === thumbnailSasUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
+      url === thumbnailPresignedUrl ? Promise.reject(new Error(filename)) : Promise.resolve(),
     );
     await useUploadFiles(target)([createFile()]);
 

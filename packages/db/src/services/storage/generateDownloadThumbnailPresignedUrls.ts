@@ -5,7 +5,7 @@ import { createPresignedGetUrl } from "#src/services/storage/createPresignedGetU
 import { getThumbnailBlobName } from "#src/services/storage/getThumbnailBlobName";
 import { THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
 
-export const generateDownloadThumbnailSasUrls = (
+export const generateDownloadThumbnailPresignedUrls = (
   credentials: StorageCredentials,
   bucket: StorageBucket,
   files: Pick<FileEntity, "id">[],

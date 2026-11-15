@@ -3,7 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { StorageCredentials } from "@esposter/db";
 
-import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
+import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
 import { createMockBucket } from "@esposter/db-mock";
 import { FILES_DIRECTORY_SEGMENT, StorageBucket } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -33,7 +33,7 @@ vi.mock(import("@esposter/db"), async (importOriginal) => {
   };
 });
 
-describe(generateReservedResourceAssetSasEntities, () => {
+describe(generateReservedResourceAssetPresignedUrlEntities, () => {
   const userId = v7();
   const resourceId = v7();
   // The file's bytes and the address they hash to. A held address is trusted only as far as the bytes under it hash to it
@@ -65,12 +65,16 @@ describe(generateReservedResourceAssetSasEntities, () => {
   test("uploading the same bytes twice gives one address", async () => {
     expect.hasAssertions();
 
-    const firstEntity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+    const firstEntity = takeOne(
+      await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]),
+    );
     await bucket.put(blobName, bytes);
-    const secondEntity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+    const secondEntity = takeOne(
+      await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]),
+    );
 
-    expect(firstEntity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
-    expect(secondEntity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
+    expect(firstEntity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
+    expect(secondEntity).toStrictEqual({ id: hash, isHeld: true, presignedUrl: "" });
     expect(secondEntity.id).toBe(firstEntity.id);
     // Only the first upload reserves, so the owner's storage usage does not grow for the second
     expect(reserveStorageBytesMock).toHaveBeenNthCalledWith(1, db, userId, StorageBucket.ResourceAssets, [
@@ -86,9 +90,9 @@ describe(generateReservedResourceAssetSasEntities, () => {
 
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     await bucket.put(blobName, bytes);
-    const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+    const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
-    expect(entity).toStrictEqual({ id: hash, isHeld: true, sasUrl: "" });
+    expect(entity).toStrictEqual({ id: hash, isHeld: true, presignedUrl: "" });
     expect((await bucket.head(blobName))?.customMetadata).toStrictEqual({ touchedAt: new Date(0).toISOString() });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, []);
   });
@@ -101,9 +105,9 @@ describe(generateReservedResourceAssetSasEntities, () => {
     bucketMock.current = {
       get: () => Promise.resolve(reads++ === 0 ? { body: new Response(bytes).body } : null),
     } as unknown as R2Bucket;
-    const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+    const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
-    expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
+    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
     expect(reserveStorageBytesMock).toHaveBeenCalledExactlyOnceWith(db, userId, StorageBucket.ResourceAssets, [
       { blobName, declaredBytes: file.size },
     ]);
@@ -115,9 +119,9 @@ describe(generateReservedResourceAssetSasEntities, () => {
     expect.hasAssertions();
 
     await bucket.put(blobName, Uint8Array.of(1));
-    const entity = takeOne(await generateReservedResourceAssetSasEntities(db, userId, resourceId, [file]));
+    const entity = takeOne(await generateReservedResourceAssetPresignedUrlEntities(db, userId, resourceId, [file]));
 
-    expect(entity).toStrictEqual({ id: hash, isHeld: false, sasUrl: `https://sas.example/${blobName}` });
+    expect(entity).toStrictEqual({ id: hash, isHeld: false, presignedUrl: `https://sas.example/${blobName}` });
     await expect(bucket.head(blobName)).resolves.toBeNull();
   });
 });

@@ -64,10 +64,10 @@ describe(createResourceProcedures, () => {
   const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
   const size = 1;
-  // Uploads a staged save the way the client does — through the write target its SAS query reserves — and hands
+  // Uploads a staged save the way the client does — through the write target its presigned url query reserves — and hands
   // Back the hash its commit names
   const stageContent = async (id: string, compressedContent: Buffer) => {
-    await dashboardCaller.generateUploadContentSasUrl({ id, size: compressedContent.byteLength });
+    await dashboardCaller.generateUploadContentPresignedUrl({ id, size: compressedContent.byteLength });
     await bucket.put(getStagingContentBlobName(id), compressedContent);
     return createHash("sha256").update(compressedContent).digest("hex");
   };
@@ -736,14 +736,16 @@ describe(createResourceProcedures, () => {
     expect.hasAssertions();
 
     const newResource = await webpageCaller.createResource({ name });
-    const sasEntities = await webpageCaller.generateUploadFileSasEntities({
+    const presignedUrlEntities = await webpageCaller.generateUploadFilePresignedUrlEntities({
       files: [{ hash, mimetype, size }],
       id: newResource.id,
     });
 
     const blobName = `${getResourceFilesDirectoryName(newResource.id)}/${hash}`;
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: expect.stringContaining(`/${blobName}?`) }]);
+    expect(presignedUrlEntities).toStrictEqual([
+      { id: hash, isHeld: false, presignedUrl: expect.stringContaining(`/${blobName}?`) },
+    ]);
   });
 
   test("fails generate upload file sas entities with wrong user", async () => {
@@ -753,10 +755,9 @@ describe(createResourceProcedures, () => {
     const otherUserAuthSession = await createMockAuthSession(mockContext.db);
 
     await expect(
-      createCallerFactory(webpageRouter)(await createMockContext(otherUserAuthSession)).generateUploadFileSasEntities({
-        files: [{ hash, mimetype, size }],
-        id: newResource.id,
-      }),
+      createCallerFactory(webpageRouter)(
+        await createMockContext(otherUserAuthSession),
+      ).generateUploadFilePresignedUrlEntities({ files: [{ hash, mimetype, size }], id: newResource.id }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -835,7 +836,7 @@ describe(createResourceProcedures, () => {
     const nonFileAssetsProcedures = new Set(Object.keys(dashboardRouter._def.procedures));
 
     expect(fileAssetsProcedures.difference(nonFileAssetsProcedures)).toStrictEqual(
-      new Set(["deleteFile", "generateUploadFileSasEntities"]),
+      new Set(["deleteFile", "generateUploadFilePresignedUrlEntities"]),
     );
     expect(nonFileAssetsProcedures.difference(fileAssetsProcedures)).toStrictEqual(new Set());
   });

@@ -1,6 +1,6 @@
 import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMySentMessagesResult";
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
-import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
+import type { MessageFilePresignedUrlEntity } from "#shared/models/message/file/MessageFilePresignedUrlEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
 import type { RoomMessage, Topic } from "@esposter/db-schema";
@@ -11,7 +11,7 @@ import { createSystemRoomMessage } from "#server/services/message/createSystemRo
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
-import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
+import { generateReservedMessageFilePresignedUrlEntities } from "#server/services/message/file/generateReservedMessageFilePresignedUrlEntities";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { publishDeletedMessageFiles } from "#server/services/message/moderation/publishDeletedMessageFiles";
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
@@ -45,9 +45,9 @@ import { deleteMessageInputSchema } from "#shared/models/db/message/DeleteMessag
 import { deleteUploadFilesInputSchema } from "#shared/models/db/message/DeleteUploadFilesInput";
 import { followThreadInputSchema } from "#shared/models/db/message/FollowThreadInput";
 import { forwardMessageInputSchema } from "#shared/models/db/message/ForwardMessageInput";
-import { generateDownloadFileSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadFileSasUrlsInput";
-import { generateDownloadThumbnailSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadThumbnailSasUrlsInput";
-import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/message/GenerateUploadFileSasEntitiesInput";
+import { generateDownloadFilePresignedUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadFilePresignedUrlsInput";
+import { generateDownloadThumbnailPresignedUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadThumbnailPresignedUrlsInput";
+import { generateUploadFilePresignedUrlEntitiesInputSchema } from "#shared/models/db/message/GenerateUploadFilePresignedUrlEntitiesInput";
 import { pinMessageInputSchema } from "#shared/models/db/message/PinMessageInput";
 import { readMessagesByIdsInputSchema } from "#shared/models/db/message/ReadMessagesByIdsInput";
 import { readMessagesInputSchema } from "#shared/models/db/message/ReadMessagesInput";
@@ -64,8 +64,8 @@ import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import {
   cloneFiles,
   createThreadFollow,
-  generateDownloadFileSasUrls,
-  generateDownloadThumbnailSasUrls,
+  generateDownloadFilePresignedUrls,
+  generateDownloadThumbnailPresignedUrls,
   getFileBlobNames,
   getFilesBlobNames,
   getMentionIds,
@@ -152,12 +152,12 @@ export const baseMessageRouter = router({
       );
       await publishDeletedMessageFiles(input.roomId, [deletedMessage]);
     }),
-  // Reclaims blobs that were uploaded against a write SAS but never reached a message — the composer's revert
+  // Reclaims blobs that were uploaded against a presigned write url but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
   // Away is referenced by no message at all, so the bytes would sit in the bucket until the whole room is deleted.
   // Membership cannot be the check: an unreferenced upload and a posted attachment share one room-scoped namespace, and
   // Every member reads every attachment's id off the wire, so a name-only delete destroys anyone's posted attachment.
-  // The caller presents the grant it was handed when the SAS was minted
+  // The caller presents the grant it was handed when the presigned url was minted
   deleteUploadFiles: getMemberProcedure(deleteUploadFilesInputSchema, "roomId")
     .meta({ staticReason: "It removes blobs no message names, so no reader shows what it deletes" })
     .mutation<void>(async ({ ctx, input: { files, roomId } }) => {
@@ -244,19 +244,25 @@ export const baseMessageRouter = router({
         console.error(`Failed to forward message to room ${rejectedRoomId}:`, reason);
       throw takeOne(rejections).reason;
     }),
-  generateDownloadFileSasUrls: getMemberProcedure(generateDownloadFileSasUrlsInputSchema, "roomId")
+  generateDownloadFilePresignedUrls: getMemberProcedure(generateDownloadFilePresignedUrlsInputSchema, "roomId")
     .meta({ staticReason: "A presigned download url, which no other reader shows" })
     .query<string[]>(({ input: { files, roomId } }) =>
-      generateDownloadFileSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
+      generateDownloadFilePresignedUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
     ),
-  generateDownloadThumbnailSasUrls: getMemberProcedure(generateDownloadThumbnailSasUrlsInputSchema, "roomId")
+  generateDownloadThumbnailPresignedUrls: getMemberProcedure(
+    generateDownloadThumbnailPresignedUrlsInputSchema,
+    "roomId",
+  )
     .meta({ staticReason: "A presigned download url, which no other reader shows" })
     .query<string[]>(({ input: { files, roomId } }) =>
-      generateDownloadThumbnailSasUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
+      generateDownloadThumbnailPresignedUrls(getStorageCredentials(), StorageBucket.MessageAssets, files, roomId),
     ),
-  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId")
+  generateUploadFilePresignedUrlEntities: getMemberProcedure(
+    generateUploadFilePresignedUrlEntitiesInputSchema,
+    "roomId",
+  )
     .meta({ staticReason: "A presigned upload target and its grant, which no other reader shows" })
-    .mutation<MessageFileSasEntity[]>(async ({ ctx, input: { files, roomId } }) => {
+    .mutation<MessageFilePresignedUrlEntity[]>(async ({ ctx, input: { files, roomId } }) => {
       const room = await requireEntity(
         ctx.db.query.roomsInMessage.findFirst({
           columns: { allowedMimeCategories: true, maxFileSizeBytes: true },
@@ -265,10 +271,10 @@ export const baseMessageRouter = router({
         DatabaseEntityType.Room,
         roomId,
       );
-      // The mime category is checked here on the declared type only: the write SAS's content type is a response
+      // The mime category is checked here on the declared type only: the presigned write url's content type is a response
       // Header override applied when the url is read, so it does not limit what the PUT stores. Nor does the size —
-      // `size` is whatever the client declared, an upload SAS carries no length constraint, and the block PUT never
-      // Passes back through Nitro, so a client that under-declares can write past this cap until the SAS expires.
+      // `size` is whatever the client declared, an upload presigned url carries no length constraint, and the block PUT never
+      // Passes back through Nitro, so a client that under-declares can write past this cap until the presigned url expires.
       // Checking it here rejects the honest oversized drop early; it is not a defence against a client that lies.
       // See openspec/specs/esbabbler/file-media/design.md.
       const maxFileSizeBytes = Math.min(room.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
@@ -277,10 +283,17 @@ export const baseMessageRouter = router({
           throw getInvalidOperationError(Operation.Create, DatabaseEntityType.File, JSON.stringify({ mimetype, size }));
       // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
       // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
-      const fileSasEntities = await generateReservedMessageFileSasEntities(ctx.db, ctx.user.id, roomId, files);
+      const filePresignedUrlEntities = await generateReservedMessageFilePresignedUrlEntities(
+        ctx.db,
+        ctx.user.id,
+        roomId,
+        files,
+      );
       // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
-      return fileSasEntities.map((fileSasEntity) =>
-        Object.assign(fileSasEntity, { token: createUploadFileToken(ctx.user.id, roomId, fileSasEntity.id) }),
+      return filePresignedUrlEntities.map((filePresignedUrlEntity) =>
+        Object.assign(filePresignedUrlEntity, {
+          token: createUploadFileToken(ctx.user.id, roomId, filePresignedUrlEntity.id),
+        }),
       );
     }),
   pinMessage: getMessageProcedure(pinMessageInputSchema, MessageOperation.Pin)

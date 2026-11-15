@@ -8,7 +8,7 @@ Part of the [Cloudflare program](../infra-cloudflare-program/design.md). Every B
 
 ## Presigned URLs
 
-R2's bindings cannot sign a URL, so signing uses `aws4fetch` against the S3 endpoint with an R2 API token held in the Worker's secrets. `generateWriteSasUrl` and `generateReadSasUrl` become `createPresignedPutUrl` and `createPresignedGetUrl`, keeping their durations. A presigned URL cannot use a custom domain, so a private read URL is on the account's S3 endpoint.
+R2's bindings cannot sign a URL, so signing uses `aws4fetch` against the S3 endpoint with an R2 API token held in the Worker's secrets. `generateWritePresignedUrl` and `generateReadPresignedUrl` become `createPresignedPutUrl` and `createPresignedGetUrl`, keeping their durations. A presigned URL cannot use a custom domain, so a private read URL is on the account's S3 endpoint.
 
 ## Uploads
 
@@ -20,14 +20,14 @@ Inside a Worker the binding is used directly: `bucket.get`, `bucket.put`, `bucke
 
 ## Key files
 
-| File                                                                | Role after the change                            |
-| :------------------------------------------------------------------ | :----------------------------------------------- |
-| `packages/db-schema/src/models/azure/container/AzureContainer.ts`   | renamed to the bucket enum                       |
-| `packages/db/src/services/azure/container/generateWriteSasUrl.ts`   | the presigned PUT                                |
-| `packages/db/src/services/azure/container/generateReadSasUrl.ts`    | the presigned GET                                |
-| `packages/db/src/services/azure/container/readJsonBlob.ts`          | moved under `services/storage`, over the binding |
-| `apps/web/app/services/file/uploadFileToSas.ts`                     | one presigned PUT                                |
-| `apps/web/app/services/azure/container/uploadBlocks.ts`             | deleted                                          |
-| `apps/web/app/services/azure/container/commitBlockList.ts`          | deleted                                          |
-| `apps/web/server/composables/azure/container/useContainerClient.ts` | replaced by the bucket binding                   |
-| `apps/web/server/api/resource-assets/[...path].get.ts`              | redirects to a presigned GET                     |
+| File                                                                    | Role after the change                            |
+| :---------------------------------------------------------------------- | :----------------------------------------------- |
+| `packages/db-schema/src/models/azure/container/AzureContainer.ts`       | renamed to the bucket enum                       |
+| `packages/db/src/services/azure/container/generateWritePresignedUrl.ts` | the presigned PUT                                |
+| `packages/db/src/services/azure/container/generateReadPresignedUrl.ts`  | the presigned GET                                |
+| `packages/db/src/services/azure/container/readJsonBlob.ts`              | moved under `services/storage`, over the binding |
+| `apps/web/app/services/file/uploadFileToSas.ts`                         | one presigned PUT                                |
+| `apps/web/app/services/azure/container/uploadBlocks.ts`                 | deleted                                          |
+| `apps/web/app/services/azure/container/commitBlockList.ts`              | deleted                                          |
+| `apps/web/server/composables/azure/container/useContainerClient.ts`     | replaced by the bucket binding                   |
+| `apps/web/server/api/resource-assets/[...path].get.ts`                  | redirects to a presigned GET                     |

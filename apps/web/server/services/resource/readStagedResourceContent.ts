@@ -20,7 +20,7 @@ const gunzipWithinLimit = async (compressedContent: Uint8Array<ArrayBuffer>) => 
   }
   return new Blob(chunks).text();
 };
-// A write SAS carries no length, so the staged bytes are measured here rather than trusted: the size before the
+// A presigned write url carries no length, so the staged bytes are measured here rather than trusted: the size before the
 // Download is allocated, the hash against what the client says it uploaded, and the inflation capped so a small
 // Archive that expands past the content limit stops at it instead of filling the heap. The gzip of a document
 // Under the limit is smaller than the document, so the limit bounds both

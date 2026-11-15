@@ -68,7 +68,7 @@ onMounted(async () => {
             :="activatorProps"
             aria-label="Uploaded background"
             :aria-pressed="selectedVirtualBackground === getCallBackgroundSelection(callBackground)"
-            :style="{ backgroundImage: `url(${callBackground.sasUrl})` }"
+            :style="{ backgroundImage: `url(${callBackground.presignedUrl})` }"
             type="button"
             class="aria-pressed:shadow-[0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
             size-full

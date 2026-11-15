@@ -4,7 +4,7 @@ Gap 1 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
 
 ## Why
 
-A message upload reaches Azure through a write SAS, and nothing measures or charges it. The room's size cap is checked against the size the uploader declares, and no reader looks at the committed blob ([file media](../../specs/esbabbler/file-media/design.md) admits this). The storage allowance counts resource files only, and the `BlobCreated` reconcile is scoped to the resource-assets container. So the storage bill for `message-assets` has no bound: any client can keep writing for as long as a SAS lives, and every byte it writes is free.
+A message upload reaches Azure through a presigned write url, and nothing measures or charges it. The room's size cap is checked against the size the uploader declares, and no reader looks at the committed blob ([file media](../../specs/esbabbler/file-media/design.md) admits this). The storage allowance counts resource files only, and the `BlobCreated` reconcile is scoped to the resource-assets container. So the storage bill for `message-assets` has no bound: any client can keep writing for as long as a presigned url lives, and every byte it writes is free.
 
 The [room attachment quota](../../deferred/esbabbler/room-attachment-quota/design.md) idea is the room-scoped version of the same fix. It is deferred because its owner-facing surface is not worth building yet. This change does not build that surface.
 

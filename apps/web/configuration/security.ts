@@ -102,7 +102,7 @@ export const security: NuxtConfig["security"] = {
     xFrameOptions: "DENY",
   },
   rateLimiter: false,
-  // No route takes a larger body, since files travel to Blob Storage by SAS. Any route that takes one
+  // No route takes a larger body, since files travel to Blob Storage by presigned url. Any route that takes one
   // Names its own limit in a route rule
   requestSizeLimiter: { maxRequestSizeInBytes: MAX_REQUEST_SIZE },
   // The module has no XSS validator: its filter rejects ordinary text a message carries, and passes a script once

@@ -1,5 +1,5 @@
 import type { Context } from "#server/trpc/context";
-import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceInResource, UserInAuth } from "@esposter/db-schema";
 
 import { checkIsResourceAssetHeld } from "#server/services/resource/checkIsResourceAssetHeld";
@@ -14,14 +14,14 @@ import { getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
 // Time moves instead, so the Collection's grace window restarts from this upload, and the client skips the PUT. A held
 // Blob that is gone by the time it is touched is no longer held, and bytes that do not hash to the name are removed rather
 // Than held, so the file is reserved and signed like any other. Any other file is reserved
-// Against the owner's quota and given a write SAS for exactly its hash name. The reserve runs before the response, so a
+// Against the owner's quota and given a presigned write url for exactly its hash name. The reserve runs before the response, so a
 // Rejection is a write target the client never receives.
-export const generateReservedResourceAssetSasEntities = async (
+export const generateReservedResourceAssetPresignedUrlEntities = async (
   db: Context["db"],
   userId: UserInAuth["id"],
   resourceId: ResourceInResource["id"],
   files: { hash: string; mimetype: string; size: number }[],
-): Promise<ResourceFileSasEntity[]> => {
+): Promise<ResourceFilePresignedUrlEntity[]> => {
   const bucket = getBucket(StorageBucket.ResourceAssets);
   const fileEntries = await Promise.all(
     files.map(async (file) => {
@@ -42,7 +42,7 @@ export const generateReservedResourceAssetSasEntities = async (
     fileEntries.map(async ({ blobName, hash, isHeld, mimetype }) => ({
       id: hash,
       isHeld,
-      sasUrl: isHeld
+      presignedUrl: isHeld
         ? ""
         : await createPresignedPutUrl(getStorageCredentials(), StorageBucket.ResourceAssets, blobName, mimetype),
     })),

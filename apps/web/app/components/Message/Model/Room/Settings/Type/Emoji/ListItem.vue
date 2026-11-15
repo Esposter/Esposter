@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import type { RoomEmojiWithSasUrl, RoomInMessage } from "@esposter/db-schema";
+import type { RoomEmojiWithPresignedUrl, RoomInMessage } from "@esposter/db-schema";
 
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { selectRoomEmojiInMessageSchema } from "@esposter/db-schema";
 
 interface Props {
-  roomEmoji: RoomEmojiWithSasUrl;
+  roomEmoji: RoomEmojiWithPresignedUrl;
   roomId: RoomInMessage["id"];
 }
 
@@ -27,7 +27,7 @@ watch(
 <!-- The emoji, its name as the field that renames it, and the button that deletes it -->
 <template>
   <div role="listitem" flex gap-2 items-center>
-    <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.sasUrl" shrink-0 size-8 object-contain />
+    <NuxtImg :alt="getEmojiShortcode(roomEmoji.name)" :src="roomEmoji.presignedUrl" shrink-0 size-8 object-contain />
     <MessageModelRoomEmojiNameField
       v-model="editedName"
       is-label-hidden

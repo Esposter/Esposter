@@ -7,7 +7,7 @@ import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadStore } from "@/store/message/thread";
-import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import {
   checkIsServer,
   chunk,
@@ -53,7 +53,7 @@ export const useFileStore = defineStore("message/file", () => {
   };
   // The room the message was sent to, never the current one: a subscription handler is queued behind the ones
   // Before it, so a message that arrives just before a room switch is handled after `currentRoomId` has already
-  // Moved on. Read against the wrong room the SAS query names file ids that room does not own, so it rejects
+  // Moved on. Read against the wrong room the presigned url query names file ids that room does not own, so it rejects
   // And every attachment on that message renders broken.
   MessageHookMap[Operation.Create].register(async ({ files, roomId }) => {
     if (files.length === 0) return;
@@ -80,21 +80,21 @@ export const useFileStore = defineStore("message/file", () => {
     const roomFileUrlMap = getData(roomId);
     if (!roomFileUrlMap) return;
 
-    const expiringAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
+    const expiringAt = Date.now() + READ_PRESIGNED_URL_REFRESH_INTERVAL_MS;
     const expiringFiles = getRoomFiles(roomId).filter((file) => {
       const fileUrl = roomFileUrlMap.get(file.id);
       if (!fileUrl) return false;
       else if (fileUrl.expiresAt <= expiringAt) return true;
       // A file that recorded a thumbnail but holds no thumbnail url was only half re-minted: the thumbnail
       // Query resolves to nothing on failure rather than failing the batch the bubble needs. Its original
-      // Came back with a full expiry, so without this the entry sits outside the margin for a whole SAS
+      // Came back with a full expiry, so without this the entry sits outside the margin for a whole presigned url
       // Duration and the room serves multi-megabyte originals until reload. Eligible, it retries next tick.
       else return checkHasThumbnail(file) && !fileUrl.thumbnailUrl;
     });
     await readFileUrls(roomId, expiringFiles);
   };
-  // Read SAS urls expire, and the only other thing that mints them is a page read — which skips every file it
-  // Already holds a url for. A room left open past the SAS duration would therefore render every attachment
+  // Presigned read urls expire, and the only other thing that mints them is a page read — which skips every file it
+  // Already holds a url for. A room left open past the presigned url duration would therefore render every attachment
   // Broken and fail every download until reload. Sweeping re-mints only the entries inside the refresh margin;
   // A tick that finds none issues no query at all, which is the overwhelmingly common case.
   // A sweep that rejects is never retried by anything, so it swallows: the next tick re-reads the same expiring
@@ -109,7 +109,8 @@ export const useFileStore = defineStore("message/file", () => {
       await Promise.all(Array.from(roomIds, (roomId) => refreshExpiringRoomFileUrls(roomId)));
     }).match(noop, console.error);
   // The server renders once and discards the store, so the timer would only ever be a leak there.
-  if (!checkIsServer()) useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_SAS_REFRESH_INTERVAL_MS);
+  if (!checkIsServer())
+    useIntervalFn(getSynchronizedFunction(refreshExpiringFileUrls), READ_PRESIGNED_URL_REFRESH_INTERVAL_MS);
   // The gallery the viewer walks: everything that has something to look at and a url to look at it through. A PDF
   // Opens its own dialog from its own renderer and audio plays from the row, so pulling either in would mean two
   // Dialogs racing for one click. Named by the room the viewed file's message is in, which the thread pane can hold

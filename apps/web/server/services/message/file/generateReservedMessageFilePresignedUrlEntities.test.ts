@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
-import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
+import { generateReservedMessageFilePresignedUrlEntities } from "#server/services/message/file/generateReservedMessageFilePresignedUrlEntities";
 import { createMockContext, createMockUser } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import {
@@ -25,7 +25,7 @@ vi.mock(import("#server/services/storage/getStorageCredentials"), () => ({
   }),
 }));
 
-describe(generateReservedMessageFileSasEntities, () => {
+describe(generateReservedMessageFilePresignedUrlEntities, () => {
   let mockContext: Context;
   let userId: string;
   const roomId = v7();
@@ -48,10 +48,12 @@ describe(generateReservedMessageFileSasEntities, () => {
   test("attachment uploaded within the allowance reserves its original and thumbnail under the uploader", async () => {
     expect.hasAssertions();
 
-    const [sasEntity] = await generateReservedMessageFileSasEntities(mockContext.db, userId, roomId, [image]);
+    const [presignedUrlEntity] = await generateReservedMessageFilePresignedUrlEntities(mockContext.db, userId, roomId, [
+      image,
+    ]);
     const ledgerEntries = await readLedgerEntries();
 
-    expect(sasEntity?.thumbnailSasUrl).toBeDefined();
+    expect(presignedUrlEntity?.thumbnailPresignedUrl).toBeDefined();
     expect(ledgerEntries).toHaveLength(2);
     expect(
       ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted((left, right) => left - right),
@@ -63,12 +65,12 @@ describe(generateReservedMessageFileSasEntities, () => {
   test("reserves only the original of a file that has no thumbnail", async () => {
     expect.hasAssertions();
 
-    const [sasEntity] = await generateReservedMessageFileSasEntities(mockContext.db, userId, roomId, [
+    const [presignedUrlEntity] = await generateReservedMessageFilePresignedUrlEntities(mockContext.db, userId, roomId, [
       { filename, mimetype: MimeType.Pdf, size },
     ]);
     const ledgerEntries = await readLedgerEntries();
 
-    expect(sasEntity?.thumbnailSasUrl).toBeUndefined();
+    expect(presignedUrlEntity?.thumbnailPresignedUrl).toBeUndefined();
     expect(ledgerEntries.map(({ declaredBytes }) => declaredBytes)).toStrictEqual([size]);
   });
 
@@ -82,7 +84,7 @@ describe(generateReservedMessageFileSasEntities, () => {
       .where(eq(usersInAuth.id, userId));
 
     await expect(
-      generateReservedMessageFileSasEntities(mockContext.db, userId, roomId, [image]),
+      generateReservedMessageFilePresignedUrlEntities(mockContext.db, userId, roomId, [image]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
 
     await expect(readLedgerEntries()).resolves.toStrictEqual([]);

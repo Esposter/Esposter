@@ -34,7 +34,7 @@ export const blobDeletionQueueMessageSchema = z.union([
     // This bound a redelivery would enumerate — and delete — blobs written after the deletion was decided.
     // Omitted only where the prefix can never be re-owned (a deleted room): there is no later writer for a
     // Retry to destroy, and this is the sole sweep of that prefix, so a bound would strand every upload
-    // Whose write SAS was still live when the owner deleted
+    // Whose presigned write url was still live when the owner deleted
     createdBefore: z.coerce.date().optional(),
     prefix: z.string().min(1),
   }),

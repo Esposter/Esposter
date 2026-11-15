@@ -1,5 +1,5 @@
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
-import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { StorageStatusError } from "@/models/file/StorageStatusError";
@@ -16,18 +16,18 @@ import { getResultAsync } from "@esposter/shared";
 export const useUploadResourceFile = (type: FileAssetsResourceType, id: MaybeRefOrGetter<string>) => {
   const getResourceRouter = useResourceRouter();
   return async (file: File, hash?: string) => {
-    const { generateUploadFileSasEntities } = getResourceRouter(type);
+    const { generateUploadFilePresignedUrlEntities } = getResourceRouter(type);
     const idValue = toValue(id);
     // A caller that has already hashed the bytes passes the hash, so they are read and hashed once
     const fileHash = hash ?? (await getSha256Hex(new Uint8Array(await file.arrayBuffer())));
     const assetUrl = getResourceAssetUrl(getResourceFileBlobName(idValue, fileHash));
     return getResultAsync(() =>
-      uploadFilesToPresignedUrls<ResourceFileSasEntity>({
+      uploadFilesToPresignedUrls<ResourceFilePresignedUrlEntity>({
         checkIsUploadSkipped: ({ isHeld }) => isHeld,
         files: [file],
-        // UploadFileToSas describes the batch by its name, type and size, so the hash is carried in alongside them
-        generateUploadFileSasEntities: (files) =>
-          generateUploadFileSasEntities.query({
+        // UploadFileToPresignedUrl describes the batch by its name, type and size, so the hash is carried in alongside them
+        generateUploadFilePresignedUrlEntities: (files) =>
+          generateUploadFilePresignedUrlEntities.query({
             files: files.map((fileEntity) => ({ ...fileEntity, hash: fileHash })),
             id: idValue,
           }),

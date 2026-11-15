@@ -30,10 +30,10 @@ describe(useUploadResourceFile, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = v7();
   const fileId = v7();
-  const sasUrl = "sasUrl";
+  const presignedUrl = "presignedUrl";
 
-  const generateUploadFileSasEntities = () => {
-    trpcMsw.webpage.generateUploadFileSasEntities.query(() => [{ id: fileId, isHeld: false, sasUrl }]);
+  const generateUploadFilePresignedUrlEntities = () => {
+    trpcMsw.webpage.generateUploadFilePresignedUrlEntities.query(() => [{ id: fileId, isHeld: false, presignedUrl }]);
   };
 
   // The commit is refused with 412 when the bytes are already stored at this address, which is the same address
@@ -41,7 +41,7 @@ describe(useUploadResourceFile, () => {
   test("uploading bytes already held gives the same address", async () => {
     expect.hasAssertions();
 
-    generateUploadFileSasEntities();
+    generateUploadFilePresignedUrlEntities();
     uploadFileToUrlMock.mockRejectedValue(new StorageStatusError(Operation.Create, "uploadFileToUrl", 412));
     const file = createFile();
     const hash = await getSha256Hex(new Uint8Array(await file.arrayBuffer()));
@@ -53,7 +53,7 @@ describe(useUploadResourceFile, () => {
   test("uploading bytes whose hash the caller passes does not hash them again", async () => {
     expect.hasAssertions();
 
-    generateUploadFileSasEntities();
+    generateUploadFilePresignedUrlEntities();
     uploadFileToUrlMock.mockResolvedValue();
     const hash = "a".repeat(64);
     const assetUrl = await useUploadResourceFile(ResourceType.Webpage, resourceId)(createFile(), hash);
@@ -66,7 +66,7 @@ describe(useUploadResourceFile, () => {
   test("fails an upload whose commit is refused for another reason", async () => {
     expect.hasAssertions();
 
-    generateUploadFileSasEntities();
+    generateUploadFilePresignedUrlEntities();
     uploadFileToUrlMock.mockRejectedValue(new StorageStatusError(Operation.Create, "uploadFileToUrl", 403));
 
     const uploadResourceFile = useUploadResourceFile(ResourceType.Webpage, resourceId);
@@ -80,11 +80,11 @@ describe(useUploadResourceFile, () => {
   test("uploads the file create-only", async () => {
     expect.hasAssertions();
 
-    generateUploadFileSasEntities();
+    generateUploadFilePresignedUrlEntities();
     uploadFileToUrlMock.mockResolvedValue();
     const file = createFile();
     await useUploadResourceFile(ResourceType.Webpage, resourceId)(file);
 
-    expect(uploadFileToUrlMock).toHaveBeenCalledExactlyOnceWith(file, sasUrl, { isCreateOnly: true });
+    expect(uploadFileToUrlMock).toHaveBeenCalledExactlyOnceWith(file, presignedUrl, { isCreateOnly: true });
   });
 });

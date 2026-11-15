@@ -5,7 +5,7 @@ import { getIpAddress } from "#server/services/request/getIpAddress";
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
 import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
-  RESOURCE_ASSET_SAS_DURATION_MS,
+  RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS,
 } from "#server/services/resource/constants";
 import { readResourceAccess } from "#server/services/resource/readResourceAccess";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
   // <video> still embeds it, since those ignore Content-Disposition
   const presignedUrl = await createPresignedGetUrl(getStorageCredentials(), StorageBucket.ResourceAssets, blobName, {
     contentDisposition: "attachment",
-    expiresInMs: RESOURCE_ASSET_SAS_DURATION_MS,
+    expiresInMs: RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS,
   });
   event.res.headers.set("Cache-Control", `private, max-age=${RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS}`);
   return sendRedirect(event, presignedUrl, 302);

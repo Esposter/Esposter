@@ -7,7 +7,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useFileStore } from "@/store/message/file";
 import { useThreadStore } from "@/store/message/thread";
-import { MessageType, READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { MessageType, READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 import { MAX_READ_LIMIT, Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
@@ -39,12 +39,12 @@ describe(useFileStore, () => {
   });
 
   // A page read only mints urls for files it does not already hold, so nothing else re-mints a cached one.
-  // Without this sweep a room left open past READ_SAS_DURATION_MS renders every attachment broken until
+  // Without this sweep a room left open past READ_PRESIGNED_URL_DURATION_MS renders every attachment broken until
   // Reload — the failure the expiry check alone was assumed, wrongly, to cover.
   test("re-mints a cached url that has aged into the refresh margin", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(() => [freshUrl]);
     // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
     // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
     vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
@@ -56,8 +56,8 @@ describe(useFileStore, () => {
       createOptimisticMessage({ files: [plainTextFile], message: filename, roomId, type: MessageType.Message }, v7()),
     );
     // Inside the margin, so the very next sweep must replace it rather than wait for it to actually die.
-    fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS / 2, url: staleUrl });
-    await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
+    fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_PRESIGNED_URL_REFRESH_INTERVAL_MS / 2, url: staleUrl });
+    await vi.advanceTimersByTimeAsync(READ_PRESIGNED_URL_REFRESH_INTERVAL_MS);
     // The sweep is fire-and-forget, so drain it rather than polling for its effect.
     await waitForSynchronizedFunctions();
 
@@ -136,7 +136,7 @@ describe(useFileStore, () => {
         v7(),
       ),
     ];
-    trpcMsw.message.generateDownloadFileSasUrls.query(() => [freshUrl]);
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(() => [freshUrl]);
 
     await readFileUrls(otherRoomId, [file]);
 
@@ -150,10 +150,10 @@ describe(useFileStore, () => {
   test("re-mints in batches when more urls expire than one query accepts", async () => {
     expect.hasAssertions();
 
-    const generateDownloadFileSasUrls = vi.fn<(options: { input: { files: unknown[] } }) => string[]>(({ input }) =>
-      input.files.map(() => freshUrl),
+    const generateDownloadFilePresignedUrls = vi.fn<(options: { input: { files: unknown[] } }) => string[]>(
+      ({ input }) => input.files.map(() => freshUrl),
     );
-    trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(generateDownloadFilePresignedUrls);
     // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
     // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
     vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
@@ -173,23 +173,23 @@ describe(useFileStore, () => {
       createOptimisticMessage({ files, message: filename, roomId, type: MessageType.Message }, v7()),
     );
     for (const { id } of files)
-      fileUrlMap.value.set(id, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS / 2, url: staleUrl });
-    await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
+      fileUrlMap.value.set(id, { expiresAt: Date.now() + READ_PRESIGNED_URL_REFRESH_INTERVAL_MS / 2, url: staleUrl });
+    await vi.advanceTimersByTimeAsync(READ_PRESIGNED_URL_REFRESH_INTERVAL_MS);
     await waitForSynchronizedFunctions();
 
-    expect(generateDownloadFileSasUrls).toHaveBeenCalledTimes(2);
+    expect(generateDownloadFilePresignedUrls).toHaveBeenCalledTimes(2);
 
     expect(fileUrlMap.value.get(takeOne(files, MAX_READ_LIMIT).id)?.url).toBe(freshUrl);
   });
 
   // A subscription handler is queued behind the ones before it, so a message that arrives just before a room
-  // Switch is handled once the current room already names the next one. Read against that room the SAS query
+  // Switch is handled once the current room already names the next one. Read against that room the presigned url query
   // Names file ids it does not own and is rejected, leaving every attachment on the message broken.
   test("mints an incoming message's urls under the room it was sent to", async () => {
     expect.hasAssertions();
 
     const queriedRoomIds: string[] = [];
-    trpcMsw.message.generateDownloadFileSasUrls.query(({ input }) => {
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(({ input }) => {
       queriedRoomIds.push(input.roomId);
       return [freshUrl];
     });
@@ -229,16 +229,19 @@ describe(useFileStore, () => {
   test("issues no query while every cached url is comfortably valid", async () => {
     expect.hasAssertions();
 
-    const generateDownloadFileSasUrls = vi.fn<() => string[]>(() => [freshUrl]);
-    trpcMsw.message.generateDownloadFileSasUrls.query(generateDownloadFileSasUrls);
+    const generateDownloadFilePresignedUrls = vi.fn<() => string[]>(() => [freshUrl]);
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(generateDownloadFilePresignedUrls);
     // The sweep's interval and the clock it compares against, never `setTimeout`: tRPC's batch link dispatches on
     // One, and a dispatch armed under a frozen clock never fires for any call in the file after it
     vi.useFakeTimers({ toFake: ["Date", "setInterval", "clearInterval"] });
     const fileStore = useFileStore();
     const { fileUrlMap } = storeToRefs(fileStore);
-    fileUrlMap.value.set(fileId, { expiresAt: Date.now() + READ_SAS_REFRESH_INTERVAL_MS * 10, url: staleUrl });
-    await vi.advanceTimersByTimeAsync(READ_SAS_REFRESH_INTERVAL_MS);
+    fileUrlMap.value.set(fileId, {
+      expiresAt: Date.now() + READ_PRESIGNED_URL_REFRESH_INTERVAL_MS * 10,
+      url: staleUrl,
+    });
+    await vi.advanceTimersByTimeAsync(READ_PRESIGNED_URL_REFRESH_INTERVAL_MS);
 
-    expect(generateDownloadFileSasUrls).not.toHaveBeenCalled();
+    expect(generateDownloadFilePresignedUrls).not.toHaveBeenCalled();
   });
 });

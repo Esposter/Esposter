@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
+import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { useMessageHtml } from "@/composables/message/useMessageHtml";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
@@ -26,15 +26,15 @@ describe(useMessageHtml, () => {
   const userId = v7();
   const roomEmojiId = v7();
   const name = "name";
-  const sasUrl = "https://example.com/emoji.png";
+  const presignedUrl = "https://example.com/emoji.png";
   const displayName = "displayName";
-  const roomEmoji: RoomEmojiWithSasUrl = {
+  const roomEmoji: RoomEmojiWithPresignedUrl = {
     createdAt: new Date(0),
     deletedAt: null,
     id: roomEmojiId,
     name,
+    presignedUrl,
     roomId,
-    sasUrl,
     updatedAt: new Date(0),
   };
   const createCustomEmojiNode = (id: string) =>
@@ -69,7 +69,7 @@ describe(useMessageHtml, () => {
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
     expect(messageHtml.value).toBe(
-      `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${roomEmojiId}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}"><img class="custom-emoji" src="${sasUrl.replaceAll("&", "&amp;")}" alt=":${name}:" ></span>`,
+      `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${roomEmojiId}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}"><img class="custom-emoji" src="${presignedUrl.replaceAll("&", "&amp;")}" alt=":${name}:" ></span>`,
     );
   });
 
@@ -91,7 +91,7 @@ describe(useMessageHtml, () => {
     storeCreateRoomEmoji(roomId, roomEmoji);
 
     expect(roomEmojiStore.customEmojis).toStrictEqual([
-      { id: roomEmojiId, name, sasUrl, slug: name, type: EmojiType.Custom },
+      { id: roomEmojiId, name, presignedUrl, slug: name, type: EmojiType.Custom },
     ]);
   });
 });

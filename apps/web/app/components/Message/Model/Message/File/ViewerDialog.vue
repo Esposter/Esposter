@@ -32,7 +32,7 @@ const { isZoomed, panzoom } = usePanZoom(image, {
 });
 const index = computed(() => viewableFiles.value.findIndex(({ id }) => id === viewingFileId.value));
 // Read by id rather than captured when the viewer opened, so the store's refresh sweep re-minting an expiring
-// Read SAS reaches a viewer that is still on screen
+// Presigned read urls reaches a viewer that is still on screen
 const url = computed(() => (file.value ? (getFileUrlMap(viewingRoomId.value)?.get(file.value.id)?.url ?? "") : ""));
 const view = (offset: number) => {
   const nextFile = viewableFiles.value[index.value + offset];

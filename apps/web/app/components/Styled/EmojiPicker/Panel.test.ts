@@ -40,7 +40,7 @@ describe("styledEmojiPickerPanel", () => {
   const customEmoji: CustomEmoji = {
     id: v7(),
     name,
-    sasUrl: "https://example.com/emoji.png",
+    presignedUrl: "https://example.com/emoji.png",
     slug: name,
     type: EmojiType.Custom,
   };

@@ -5,7 +5,7 @@ The quickest way to let a large document save would be to raise `maxRequestSizeI
 ## Why not
 
 - **Every procedure inherits it.** The tRPC endpoint is one route, so a per-route override is still a raise for every procedure behind it. Any authenticated caller could then send bodies of that size to procedures that were never meant to parse them.
-- **The server stays in the data path.** Each large autosave would stream the whole document through the app server on the owner's connection. Blob Storage accepts that upload directly, and the SAS flow the app already uses for attachments is built for exactly that.
+- **The server stays in the data path.** Each large autosave would stream the whole document through the app server on the owner's connection. Blob Storage accepts that upload directly, and the presigned url flow the app already uses for attachments is built for exactly that.
 - **It ties a product ceiling to a transport one.** How large a document a resource may hold is its own constant, `MAX_RESOURCE_CONTENT_SIZE`, taken from the reference product. A request limit raised until documents fit would make the two one number again, and every later change to either would move the other.
 - **The number stops having a source.** `MAX_REQUEST_SIZE` is the app's own constant, set once for every procedure. A raised value is a number picked because one file needed it.
 

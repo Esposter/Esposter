@@ -6,7 +6,7 @@ const { file, isPreview, thumbnailUrl = "" } = defineProps<FileRendererComponent
 // It rides the same batched read as the original url, so a rendered list costs no extra query per image.
 const inlineThumbnailUrl = computed(() => (isPreview || !file.hasThumbnail ? "" : thumbnailUrl));
 // Whether the thumbnail blob exists is recorded on the file by the upload that wrote it (`hasThumbnail`), so
-// A load error here can only ever mean this url went stale — the read SAS expired ahead of the store's sweep.
+// A load error here can only ever mean this url went stale — the presigned read url expired ahead of the store's sweep.
 // Remembering which url failed is therefore enough and terminates on its own: the sweep re-mints, the new url
 // Is not in the set, and the thumbnail comes back. A flag latched on the error instead never recovers, and
 // Downgrades every image in the room to its full-resolution original for the component's whole lifetime

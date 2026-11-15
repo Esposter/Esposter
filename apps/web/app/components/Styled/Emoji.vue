@@ -19,7 +19,7 @@ defineProps<Props>();
   <NuxtImg
     v-if="emoji.type === EmojiType.Custom"
     :alt="emoji.name"
-    :src="emoji.sasUrl"
+    :src="emoji.presignedUrl"
     size="[1em]"
     inline-block
     object-contain

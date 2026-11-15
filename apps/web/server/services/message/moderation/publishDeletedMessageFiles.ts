@@ -6,7 +6,7 @@ import { StorageBucket } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 // Queues the attachments of messages a delete has just committed. Hiding the messages leaves their attachments reachable
-// To anyone still holding a read SAS minted before the delete, and no other delete path reclaims them afterwards, so the
+// To anyone still holding a presigned read url minted before the delete, and no other delete path reclaims them afterwards, so the
 // Blobs are queued for deletion behind the write (openspec/specs/architecture/persist-then-notify/design.md)
 export const publishDeletedMessageFiles = async (roomId: string, messages: RoomMessage[]): Promise<void> => {
   await publishBlobDeletion(

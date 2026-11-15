@@ -60,7 +60,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
     setUploadingCount(key, Math.max((getUploadingCount(key) ?? 0) - 1, 0));
   };
   // Every composer write is keyed by the composer the files were attached TO, never through a ref that resolves
-  // To whichever composer is CURRENT the moment it is read: an upload awaits a SAS round trip and the blob PUTs
+  // To whichever composer is CURRENT the moment it is read: an upload awaits a presigned url round trip and the blob PUTs
   // First. A user who switches rooms — or opens another thread — during that await would seed one composer's
   // Attachments into another's — sending there produces a message whose blobs live under the room they left, so
   // Every attachment renders permanently broken — and the matching revert would find nothing to take back out,
@@ -93,7 +93,7 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   };
   // Recorded by the only thing that knows it — the upload that wrote the thumbnail blob. The renderer would
   // Otherwise have to infer a missing thumbnail from a failed image load, which is the same signal an expired
-  // Read SAS gives it.
+  // Presigned read urls gives it.
   const storeUploadFileThumbnails = (target: ComposerTarget, ids: string[]) => {
     const key = getComposerKey(target);
     const composerFiles = getFiles(key);

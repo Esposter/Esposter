@@ -80,16 +80,16 @@ describe(useResourceStore, () => {
   // The staged transport answered at the network: the write target, the PUT to it, and the commit's row, which
   // Carries the hash of what it stored
   const setupStagedSave = (contentHash = "") => {
-    const sasUrl = `${window.location.origin}/${resourceId}`;
-    const generateUploadContentSasUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
-      () => sasUrl,
+    const presignedUrl = `${window.location.origin}/${resourceId}`;
+    const generateUploadContentPresignedUrl = vi.fn<(options: { input: { id: string; size: number } }) => string>(
+      () => presignedUrl,
     );
     const saveStagedResourceContent = vi.fn<
       (options: { input: { contentVersion: number; hash: string; id: string } }) => ResourceInResource
     >(() => ({ ...createResource(resourceId), contentHash, contentVersion: 1 }));
-    trpcMsw.sheet.generateUploadContentSasUrl.query(generateUploadContentSasUrl);
+    trpcMsw.sheet.generateUploadContentPresignedUrl.query(generateUploadContentPresignedUrl);
     trpcMsw.sheet.saveStagedResourceContent.mutation(saveStagedResourceContent);
-    return { generateUploadContentSasUrl, saveStagedResourceContent };
+    return { generateUploadContentPresignedUrl, saveStagedResourceContent };
   };
 
   beforeEach(() => {
@@ -228,7 +228,7 @@ describe(useResourceStore, () => {
   ])("stages a save when %s is over the request limit and commits it by its hash", async (_title, enlarge) => {
     expect.hasAssertions();
 
-    const { generateUploadContentSasUrl, saveStagedResourceContent } = setupStagedSave();
+    const { generateUploadContentPresignedUrl, saveStagedResourceContent } = setupStagedSave();
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
     await readResource();
@@ -240,7 +240,7 @@ describe(useResourceStore, () => {
 
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
-    expect(takeOne(generateUploadContentSasUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
+    expect(takeOne(generateUploadContentPresignedUrl.mock.calls, 0)[0].input.size).toBeLessThan(MAX_REQUEST_SIZE);
     expect(input).toStrictEqual({ contentVersion: 0, hash: expect.stringMatching(/^[\da-f]{64}$/u), id: resourceId });
   });
 
@@ -281,7 +281,7 @@ describe(useResourceStore, () => {
     const loadedContent = createLargeSheetResource(" ");
     const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
     const contentHash = await getSha256Hex(loadedContentBytes);
-    const sasUrl = `${window.location.origin}/${resourceId}`;
+    const presignedUrl = `${window.location.origin}/${resourceId}`;
     const saveResourceContentDelta = vi.fn<
       (options: {
         input: { baselineHash: string; contentVersion: number; delta: string; id: string };
@@ -293,7 +293,7 @@ describe(useResourceStore, () => {
       contentSize: loadedContentBytes.byteLength,
       publication: null,
     }));
-    trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl);
+    trpcMsw.sheet.generateReadContentPresignedUrl.query(() => presignedUrl);
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
     const resourceStore = useResourceStore();
     const { readContent, readResource, saveContent } = resourceStore;
@@ -1086,14 +1086,14 @@ describe(useResourceStore, () => {
     assert.exists(resource.value);
     const loadedContent = createLargeSheetResource(" ");
     const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
-    const sasUrl = `${window.location.origin}/${resourceId}`;
+    const presignedUrl = `${window.location.origin}/${resourceId}`;
     server.use(http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)));
     trpcMsw.resource.readResource.query(({ input }) => ({
       ...createResource(input.id),
       contentSize: loadedContentBytes.byteLength,
       publication: null,
     }));
-    trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl);
+    trpcMsw.sheet.generateReadContentPresignedUrl.query(() => presignedUrl);
     const { saveStagedResourceContent } = setupStagedSave();
     const saveResourceContentDelta = vi.fn<() => ResourceInResource>(() => createResource(resourceId));
     trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);

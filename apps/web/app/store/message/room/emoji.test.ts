@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { RoomEmojiWithSasUrl } from "@esposter/db-schema";
+import type { RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
@@ -9,14 +9,14 @@ import { describe, expect, test } from "vitest";
 describe(useRoomEmojiStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
-  const sasUrl = "https://example.com/emoji.png";
-  const createRoomEmoji = (): RoomEmojiWithSasUrl => ({
+  const presignedUrl = "https://example.com/emoji.png";
+  const createRoomEmoji = (): RoomEmojiWithPresignedUrl => ({
     createdAt: new Date(0),
     deletedAt: null,
     id: v7(),
     name: "name",
+    presignedUrl,
     roomId,
-    sasUrl,
     updatedAt: new Date(0),
   });
 

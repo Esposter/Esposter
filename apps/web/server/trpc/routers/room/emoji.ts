@@ -1,11 +1,11 @@
-import type { RoomEmojiInMessage, RoomEmojiWithSasUrl } from "@esposter/db-schema";
+import type { RoomEmojiInMessage, RoomEmojiWithPresignedUrl } from "@esposter/db-schema";
 
 import { RateLimiterType } from "#server/models/rateLimiter/RateLimiterType";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { inRoom } from "#server/services/db/inRoom";
 import { checkIsUnicodeEmojiSlug } from "#server/services/message/emoji/checkIsUnicodeEmojiSlug";
 import { getRoomEmojiNameQuery } from "#server/services/message/emoji/getRoomEmojiNameQuery";
-import { getRoomEmojiWithSasUrl } from "#server/services/message/emoji/getRoomEmojiWithSasUrl";
+import { getRoomEmojiWithPresignedUrl } from "#server/services/message/emoji/getRoomEmojiWithPresignedUrl";
 import { readRoomEmojiCount } from "#server/services/message/emoji/readRoomEmojiCount";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
@@ -20,7 +20,7 @@ import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedu
 import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissionsProcedure";
 import { createRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/CreateRoomEmojiInput";
 import { deleteRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/DeleteRoomEmojiInput";
-import { generateUploadRoomEmojiSasEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiSasEntityInput";
+import { generateUploadRoomEmojiPresignedUrlEntityInputSchema } from "#shared/models/db/roomEmoji/GenerateUploadRoomEmojiPresignedUrlEntityInput";
 import { updateRoomEmojiInputSchema } from "#shared/models/db/roomEmoji/UpdateRoomEmojiInput";
 import { MAX_ROOM_EMOJI_SIZE_BYTES, MAX_ROOM_EMOJIS } from "#shared/services/message/constants";
 import { createPresignedPutUrl } from "@esposter/db";
@@ -45,12 +45,12 @@ export const emojiRouter = router({
   createRoomEmoji: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageEmojis, createRoomEmojiInputSchema, "roomId", RateLimiterType.Slow),
     ({ input: { roomId } }) => [getTopic(TopicKind.Room, roomId)],
-  ).mutation<RoomEmojiWithSasUrl>(async ({ ctx, input: { id, name, roomId } }) => {
+  ).mutation<RoomEmojiWithPresignedUrl>(async ({ ctx, input: { id, name, roomId } }) => {
     const bucket = getBucket(StorageBucket.MessageAssets);
-    // The row may only name a blob that landed. Nothing else proves the upload happened: the write SAS was
+    // The row may only name a blob that landed. Nothing else proves the upload happened: the presigned write url was
     // Handed out before the PUT, so a create that skipped it would list an emoji that renders as a broken image
     // The declared size is an input check the client could lie about, so the row is only created for a blob
-    // Whose bytes are actually within the cap — a write SAS cannot constrain what is PUT through it
+    // Whose bytes are actually within the cap — a presigned write url cannot constrain what is PUT through it
     const uploadedObject = await bucket.head(getRoomEmojiBlobName(roomId, id));
     if (!uploadedObject || uploadedObject.size > MAX_ROOM_EMOJI_SIZE_BYTES)
       throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, id);
@@ -93,10 +93,10 @@ export const emojiRouter = router({
       DatabaseEntityType.RoomEmoji,
       roomEmojiContext,
     );
-    const roomEmojiWithSasUrl = await getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, newRoomEmoji);
+    const roomEmojiWithPresignedUrl = await getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, newRoomEmoji);
     const actor = getRoomActor(ctx);
-    await broadcastRoomEvent(roomId, { data: roomEmojiWithSasUrl, type: "createRoomEmoji" }, actor);
-    return roomEmojiWithSasUrl;
+    await broadcastRoomEvent(roomId, { data: roomEmojiWithPresignedUrl, type: "createRoomEmoji" }, actor);
+    return roomEmojiWithPresignedUrl;
   }),
   deleteRoomEmoji: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageEmojis, deleteRoomEmojiInputSchema, "roomId"),
@@ -123,9 +123,9 @@ export const emojiRouter = router({
     );
     return deletedRoomEmoji;
   }),
-  generateUploadRoomEmojiSasEntity: getPermissionsProcedure(
+  generateUploadRoomEmojiPresignedUrlEntity: getPermissionsProcedure(
     RoomPermission.ManageEmojis,
-    generateUploadRoomEmojiSasEntityInputSchema,
+    generateUploadRoomEmojiPresignedUrlEntityInputSchema,
     "roomId",
     RateLimiterType.Slow,
   )
@@ -133,7 +133,7 @@ export const emojiRouter = router({
       staticReason:
         "Answers a write url and an id for an emoji no reader shows until createRoomEmoji names the blob it uploaded",
     })
-    .query<{ id: string; sasUrl: string }>(async ({ ctx, input: { mimetype, roomId, size } }) => {
+    .query<{ id: string; presignedUrl: string }>(async ({ ctx, input: { mimetype, roomId, size } }) => {
       if (size > MAX_ROOM_EMOJI_SIZE_BYTES || getMimeCategory(mimetype) !== MimeCategory.Image)
         throw getInvalidOperationError(
           Operation.Create,
@@ -147,21 +147,23 @@ export const emojiRouter = router({
         throw getInvalidOperationError(Operation.Create, DatabaseEntityType.RoomEmoji, roomId);
 
       const id: string = v7();
-      const sasUrl = await createPresignedPutUrl(
+      const presignedUrl = await createPresignedPutUrl(
         getStorageCredentials(),
         StorageBucket.MessageAssets,
         getRoomEmojiBlobName(roomId, id),
         mimetype,
       );
-      return { id, sasUrl };
+      return { id, presignedUrl };
     }),
   // Membership rather than the `ManageEmojis` its panel is gated on: the picker and every rendered message read
   // This, so the list is already the room's to see — the panel is a management surface over public-to-the-room data
   readRoomEmojis: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
     getTopic(TopicKind.Room, roomId),
-  ]).query<RoomEmojiWithSasUrl[]>(async ({ ctx, input: { roomId } }) => {
+  ]).query<RoomEmojiWithPresignedUrl[]>(async ({ ctx, input: { roomId } }) => {
     const roomEmojis = await ctx.db.query.roomEmojisInMessage.findMany({ where: { roomId: { eq: roomId } } });
-    return Promise.all(roomEmojis.map((roomEmoji) => getRoomEmojiWithSasUrl(StorageBucket.MessageAssets, roomEmoji)));
+    return Promise.all(
+      roomEmojis.map((roomEmoji) => getRoomEmojiWithPresignedUrl(StorageBucket.MessageAssets, roomEmoji)),
+    );
   }),
   updateRoomEmoji: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageEmojis, updateRoomEmojiInputSchema, "roomId"),

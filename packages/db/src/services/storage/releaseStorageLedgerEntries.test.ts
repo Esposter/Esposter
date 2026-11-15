@@ -79,7 +79,7 @@ describe(releaseStorageLedgerEntries, () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntry(db, containerName, blobName, actualBytes);
-    // The SAS outlives one PUT, so a second upload replaces the blob — the counter must follow it rather
+    // The presigned url outlives one PUT, so a second upload replaces the blob — the counter must follow it rather
     // Than keep charging for the size the first one had
     await reconcileStorageLedgerEntry(db, containerName, blobName, overwrittenBytes);
 

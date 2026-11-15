@@ -8,19 +8,19 @@ This is not profile imagery — the profile image is user-editable separately ([
 
 An upload writes to `{userId}/CallBackground/{slot}` in the `user-assets` container, which is private, where the slot is an index below the cap. This is the same trick the profile image uses: the blob name is **derived, not allocated**, so the number of blobs a user can hold is bounded by construction. There is no table, no id, no ledger row and nothing to reconcile — the cost of the feature is a fixed number of images per user, and re-uploading a slot overwrites it.
 
-The container is the **private** one, because the only consumer of a background is the uploader's own browser. Reads are therefore a short-lived read SAS, the same shape resource-asset reads sign ([file uploads](../../../architecture/file-uploads/design.md)), rather than a permanently public url.
+The container is the **private** one, because the only consumer of a background is the uploader's own browser. Reads are therefore a short-lived presigned read url, the same shape resource-asset reads sign ([file uploads](../../../architecture/file-uploads/design.md)), rather than a permanently public url.
 
 The list is the container listing under that prefix. Nothing has to be kept in step with it, which is the point of deriving the name.
 
 **The client picks the slot, and the server signs whatever slot it is asked for.** A listing cannot allocate durably: a delete is reclaimed by a worker, so a slot freed a moment ago still reads as taken and would refuse the replacement the user just made room for, and two concurrent requests read the same free one anyway. The client is the only party holding a view that already accounts for the delete it just made. Nothing is lost by trusting it, because the bound was never the count — there are only `MAX_CALL_BACKGROUNDS` names, the request schema enforces that range, and the worst a client can do with a slot it names deliberately is overwrite its own image.
 
-**The size cap is the stored byte length, and the listing is where it is read.** A write SAS cannot bound what is PUT through it, so the size the picker checked before asking for a target is an early no rather than the guarantee — the same split [custom emoji](../../custom-emoji/design.md) has. A listing already carries each blob's `contentLength`, so a slot that came back over the cap is dropped from the list the picker receives and its blob reclaimed through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
+**The size cap is the stored byte length, and the listing is where it is read.** A presigned write url cannot bound what is PUT through it, so the size the picker checked before asking for a target is an early no rather than the guarantee — the same split [custom emoji](../../custom-emoji/design.md) has. A listing already carries each blob's `contentLength`, so a slot that came back over the cap is dropped from the list the picker receives and its blob reclaimed through the standard blob-deletion event. That costs no extra round trip and needs no row to hang a check on, which is what keeps the no-table property intact.
 
 ## Remembering the choice
 
-`userSettingsInMessage.virtualBackground` is a text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](../../settings/design.md)). It holds either a preset's id, its member of `CallVirtualBackground`, or a slot name; the client resolves a slot to a freshly signed read SAS and a preset to its bundled url, and the empty value means no background. The id is a name rather than a url, so a rebuild that changes the file's url leaves every saved choice valid ([static assets](../../../architecture/static-assets/design.md)).
+`userSettingsInMessage.virtualBackground` is a text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](../../settings/design.md)). It holds either a preset's id, its member of `CallVirtualBackground`, or a slot name; the client resolves a slot to a freshly signed presigned read url and a preset to its bundled url, and the empty value means no background. The id is a name rather than a url, so a rebuild that changes the file's url leaves every saved choice valid ([static assets](../../../architecture/static-assets/design.md)).
 
-**Resolving a slot re-reads the listing rather than the session cache.** The cache the picker renders from goes wrong in both directions over the life of a session: it holds a slot another device has deleted, which would resolve to a url whose blob is gone instead of to no background, and the read SAS it is holding expires while the session stays open. Only a slot ever reaches that path, so a preset still pays nothing.
+**Resolving a slot re-reads the listing rather than the session cache.** The cache the picker renders from goes wrong in both directions over the life of a session: it holds a slot another device has deleted, which would resolve to a url whose blob is gone instead of to no background, and the presigned read url it is holding expires while the session stays open. Only a slot ever reaches that path, so a preset still pays nothing.
 
 A preset's id can never collide with a slot number, since ids are names and slots are numbers, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: a background picked once carries into every later call and session, rather than being re-picked for each tab.
 
@@ -40,7 +40,7 @@ flowchart TD
   picker -->|"select"| settings[("userSettings.virtualBackground")]
   settings --> resolve{"preset path or slot?"}
   resolve -->|preset| static["Bundled url from the preset's id"]
-  resolve -->|slot| read["Short-lived read SAS"]
+  resolve -->|slot| read["Short-lived presigned read url"]
   resolve -->|"neither — a deleted slot"| none["Middleware removed — no background"]
   static --> processor["RealtimeKit video middleware on the local camera track"]
   read --> processor
@@ -75,6 +75,6 @@ A call left while a background is still being read ends that apply quietly. The 
 
 Cropping and aspect ratio are the processor's problem, not ours — it already composites a preset SVG behind an arbitrary camera aspect, and an uploaded image goes through the same path with no new fitting logic. Only the presets are rasterized: a slot arrives as a signed url the processor takes directly.
 
-The mime category is checked when the write target is minted, and that is all it is: a write SAS constrains the blob name it may be PUT to, never the bytes or the type they arrive as ([file uploads](../../../architecture/file-uploads/design.md)). The listing does not re-check it either, because there is nothing there to check: the stored content type is set by the same client on the same upload, so it is the claim again rather than evidence about it. Signing it into the read SAS would be worse than leaving it off — it would let an uploader choose the type their own blob is served as.
+The mime category is checked when the write target is minted, and that is all it is: a presigned write url constrains the blob name it may be PUT to, never the bytes or the type they arrive as ([file uploads](../../../architecture/file-uploads/design.md)). The listing does not re-check it either, because there is nothing there to check: the stored content type is set by the same client on the same upload, so it is the claim again rather than evidence about it. Signing it into the presigned read url would be worse than leaving it off — it would let an uploader choose the type their own blob is served as.
 
 That is not a check on the bytes either way, and no upload path in the app has one ([upload content validation](../../../../deferred/architecture/upload-content-validation/design.md)) — a slot is composited into the uploader's own camera track and reaches nobody else, so the exposure is a decoder bug in their own browser.

@@ -1,7 +1,7 @@
 import type { FileEntity, RoomInMessage } from "@esposter/db-schema";
 
 import { useFileStore } from "@/store/message/file";
-import { READ_SAS_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
+import { READ_PRESIGNED_URL_REFRESH_INTERVAL_MS } from "@esposter/db-schema";
 
 export const useReadFiles = () => {
   const fileStore = useFileStore();
@@ -9,7 +9,7 @@ export const useReadFiles = () => {
   return async (roomId: RoomInMessage["id"], files: FileEntity[]) => {
     // A url inside the refresh margin is treated as already gone, so nothing is handed to the renderer that
     // Could expire while it is on screen — the store's sweep uses the same margin.
-    const expiringAt = Date.now() + READ_SAS_REFRESH_INTERVAL_MS;
+    const expiringAt = Date.now() + READ_PRESIGNED_URL_REFRESH_INTERVAL_MS;
     const newFiles = files.filter(({ id }) => {
       // The room the files were read for, never the one on screen: a thread pane shows another room's messages
       const fileUrl = getFileUrlMap(roomId)?.get(id);

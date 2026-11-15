@@ -16,7 +16,7 @@ const emit = defineEmits<{ "update:delete-mode": [value: true]; "update:update-m
 const dataStore = useDataStore();
 const { updateMessage } = dataStore;
 // The stored markup, never the rendered output: the render resolves a mention to the reader's own display name
-// And a custom emoji to a read SAS that expires, so saving what was rendered would persist both
+// And a custom emoji to a presigned read url that expires, so saving what was rendered would persist both
 const editedMessageHtml = ref(message.message);
 const saveMessage = useSaveRichTextEdit(
   editedMessageHtml,

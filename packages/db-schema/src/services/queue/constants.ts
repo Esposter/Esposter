@@ -2,7 +2,7 @@ import { KIBIBYTE } from "@esposter/shared";
 
 // How long a message can still be delivered after it was sent, and so how long a row a handler needs in order to apply
 // It must outlive. The storage ledger is the one that obeys it: a hold stays counted for exactly this window plus the
-// Write SAS, so a reconcile for a blob can still arrive after the hold would otherwise have been collected.
+// Write presigned url, so a reconcile for a blob can still arrive after the hold would otherwise have been collected.
 // Design: openspec/specs/resource/storage-quotas/design.md
 const QUEUE_DELIVERY_TTL = Temporal.Duration.from({ hours: 1 });
 export const QUEUE_DELIVERY_TTL_MS: number = QUEUE_DELIVERY_TTL.total("milliseconds");

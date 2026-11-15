@@ -1,5 +1,5 @@
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
-import { roomEmojiWithSasUrlSchema } from "#src/models/message/emoji/RoomEmojiWithSasUrl";
+import { roomEmojiWithPresignedUrlSchema } from "#src/models/message/emoji/RoomEmojiWithPresignedUrl";
 import { revokeRoleInputSchema } from "#src/models/message/RevokeRoleInput";
 import { timeoutUserAdminActionInputSchema } from "#src/models/message/TimeoutUserAdminActionInput";
 import { typingSchema } from "#src/models/message/Typing";
@@ -31,7 +31,10 @@ const deleteEmojiEventSchema = z.object({
   data: roomReactionSchema.pick({ emojiTag: true, messageId: true }),
   type: z.literal("deleteEmoji"),
 });
-const createRoomEmojiEventSchema = z.object({ data: roomEmojiWithSasUrlSchema, type: z.literal("createRoomEmoji") });
+const createRoomEmojiEventSchema = z.object({
+  data: roomEmojiWithPresignedUrlSchema,
+  type: z.literal("createRoomEmoji"),
+});
 const updateRoomEmojiEventSchema = z.object({
   data: selectRoomEmojiInMessageSchema,
   type: z.literal("updateRoomEmoji"),

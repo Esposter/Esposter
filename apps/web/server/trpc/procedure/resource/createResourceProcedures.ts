@@ -6,7 +6,7 @@ import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsR
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
-import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
 import type { z } from "zod";
@@ -14,10 +14,10 @@ import type { z } from "zod";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
-import { RESOURCE_ASSET_SAS_DURATION_MS } from "#server/services/resource/constants";
+import { RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
-import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
+import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
 import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
@@ -41,7 +41,7 @@ import { withResourceObjectLock } from "#server/services/resource/snapshot/withR
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
-import { generateReservedWriteSasUrl } from "#server/services/storage/generateReservedWriteSasUrl";
+import { generateReservedWritePresignedUrl } from "#server/services/storage/generateReservedWritePresignedUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -53,8 +53,8 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
-import { generateUploadContentSasUrlInputSchema } from "#shared/models/db/resource/GenerateUploadContentSasUrlInput";
-import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
+import { generateUploadContentPresignedUrlInputSchema } from "#shared/models/db/resource/GenerateUploadContentPresignedUrlInput";
+import { generateUploadFilePresignedUrlEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFilePresignedUrlEntitiesInput";
 import { readPublishedVersionContentInputSchema } from "#shared/models/db/resource/ReadPublishedVersionContentInput";
 import { readResourcesInputSchema } from "#shared/models/db/resource/ReadResourcesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
@@ -155,19 +155,19 @@ export const createResourceProcedures = <TType extends ResourceType>(
     }),
     // A document larger than one request body is read straight from Blob Storage, so the server signs the read
     // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
-    generateReadContentSasUrl: getOwnerProcedure(type, resourceIdInputSchema, "id")
+    generateReadContentPresignedUrl: getOwnerProcedure(type, resourceIdInputSchema, "id")
       .meta({ staticReason: "The presigned address the content is read through, which names no state a reader shows" })
       .query<string>(({ input: { id } }) => {
         const contentBlobName = getContentBlobName(id);
         return createPresignedGetUrl(getStorageCredentials(), StorageBucket.ResourceAssets, contentBlobName, {
-          expiresInMs: RESOURCE_ASSET_SAS_DURATION_MS,
+          expiresInMs: RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS,
         });
       }),
     // The write target of a staged save, held against the owner's quota for the gzip's size like any upload
-    generateUploadContentSasUrl: getOwnerProcedure(type, generateUploadContentSasUrlInputSchema, "id")
+    generateUploadContentPresignedUrl: getOwnerProcedure(type, generateUploadContentPresignedUrlInputSchema, "id")
       .meta({ staticReason: "The write target of a staged save, which no reader shows until the save lands" })
       .query<string>(({ ctx, input: { id, size } }) =>
-        generateReservedWriteSasUrl(
+        generateReservedWritePresignedUrl(
           ctx.db,
           ctx.user.id,
           StorageBucket.ResourceAssets,
@@ -253,7 +253,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       updateResourceRow(ctx, ctx.resource, { name, tags }),
     ),
   };
-  // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived SAS urls and reads resolve
+  // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived presigned urls and reads resolve
   // Through the /api/resource-assets endpoint (content embeds only stable urls, never a signature). An asset is never
   // Deleted here: the file's hash is handed to the release path, which deletes it only once no stored version names it
   const fileAssetsProcedures = {
@@ -264,10 +264,14 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // The path is the file's hash (ASSET_HASH_REGEX), so the release sees exactly the address that was removed
       await releaseResourceAssets(ctx.db, id, [blobPath]);
     }),
-    generateUploadFileSasEntities: getOwnerProcedure(type, generateUploadFileSasEntitiesInputSchema, "id")
+    generateUploadFilePresignedUrlEntities: getOwnerProcedure(
+      type,
+      generateUploadFilePresignedUrlEntitiesInputSchema,
+      "id",
+    )
       .meta({ staticReason: "The upload addresses of a file, which no reader shows until the file is saved" })
-      .query<ResourceFileSasEntity[]>(({ ctx, input: { files, id } }) =>
-        generateReservedResourceAssetSasEntities(ctx.db, ctx.user.id, id, files),
+      .query<ResourceFilePresignedUrlEntity[]>(({ ctx, input: { files, id } }) =>
+        generateReservedResourceAssetPresignedUrlEntities(ctx.db, ctx.user.id, id, files),
       ),
   };
   const publishProcedures = {

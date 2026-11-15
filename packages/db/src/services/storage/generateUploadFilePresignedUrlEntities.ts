@@ -1,5 +1,5 @@
 import type { StorageCredentials } from "#src/models/storage/StorageCredentials";
-import type { FileEntity, FileSasEntity, StorageBucket } from "@esposter/db-schema";
+import type { FileEntity, FilePresignedUrlEntity, StorageBucket } from "@esposter/db-schema";
 
 import { createPresignedPutUrl } from "#src/services/storage/createPresignedPutUrl";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
@@ -8,7 +8,7 @@ import { v7 } from "uuid";
 
 // Every target is named before the first is signed, and `reserve` is handed the whole set before any url exists, so a
 // Refused reserve throws with no write target minted. The caller's reserve decides what the bytes are charged against
-export const generateUploadFileSasEntities = async (
+export const generateUploadFilePresignedUrlEntities = async (
   credentials: StorageCredentials,
   bucket: StorageBucket,
   files: (Pick<FileEntity, "filename" | "mimetype"> & { size: number })[],
@@ -17,7 +17,7 @@ export const generateUploadFileSasEntities = async (
     reserve: (reservations: { blobName: string; declaredBytes: number }[]) => Promise<void>;
     withThumbnail?: boolean;
   },
-): Promise<FileSasEntity[]> => {
+): Promise<FilePresignedUrlEntity[]> => {
   const uploads = files.map(({ filename, mimetype, size }) => {
     const id: string = v7();
     const { blobName, thumbnailBlobName } = getFileBlobNames(prefix, id, filename);
@@ -39,12 +39,12 @@ export const generateUploadFileSasEntities = async (
 
   return Promise.all(
     uploads.map(async ({ blobName, hasThumbnail, id, mimetype, thumbnailBlobName }) => {
-      const entity: FileSasEntity = {
+      const entity: FilePresignedUrlEntity = {
         id,
-        sasUrl: await createPresignedPutUrl(credentials, bucket, blobName, mimetype),
+        presignedUrl: await createPresignedPutUrl(credentials, bucket, blobName, mimetype),
       };
       if (hasThumbnail)
-        entity.thumbnailSasUrl = await createPresignedPutUrl(
+        entity.thumbnailPresignedUrl = await createPresignedPutUrl(
           credentials,
           bucket,
           thumbnailBlobName,

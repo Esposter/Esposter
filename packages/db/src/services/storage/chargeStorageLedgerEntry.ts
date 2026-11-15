@@ -3,7 +3,7 @@ import type { Database, StorageBucket, StorageLedgerEntryInStorage, UserInAuth }
 import { reconcileStorageLedgerEntry } from "#src/services/storage/reconcileStorageLedgerEntry";
 import { storageLedgerInStorage } from "@esposter/db-schema";
 
-// The counter's other writer: a blob the server itself wrote, whose size it already knows. There is no SAS and
+// The counter's other writer: a blob the server itself wrote, whose size it already knows. There is no presigned url and
 // So no reserve — the bytes are stored by the time this runs, and the client was never in the data path, so
 // There is nothing to gate and nothing to overshoot. It charges after the fact rather than holding space first,
 // Which is also why a save is never rejected for being over quota: the upload it would refuse has already

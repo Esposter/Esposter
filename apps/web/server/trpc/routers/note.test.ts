@@ -6,7 +6,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { MimeType } from "#shared/models/file/MimeType";
 import { NoteMarkdownWriteMode } from "#shared/models/resource/note/NoteMarkdownWriteMode";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import { getResourceFileBlobName, ResourceType, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import { getResourceFileBlobName, ResourceType, WRITE_PRESIGNED_URL_DURATION_MS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -32,20 +32,20 @@ describe("noteRouter", () => {
 
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const newResource = await caller.createResource({ name });
-    const sasEntities = await caller.generateUploadFileSasEntities({
+    const presignedUrlEntities = await caller.generateUploadFilePresignedUrlEntities({
       files: [{ hash, mimetype, size }],
       id: newResource.id,
     });
 
     const blobName = getResourceFileBlobName(newResource.id, hash);
-    const sasEntity = takeOne(sasEntities);
-    const sasUrl = new URL(sasEntity.sasUrl);
+    const presignedUrlEntity = takeOne(presignedUrlEntities);
+    const presignedUrl = new URL(presignedUrlEntity.presignedUrl);
 
-    expect(sasEntities).toHaveLength(1);
-    expect(sasEntity.id).toBe(hash);
-    expect(sasEntity.isHeld).toBe(false);
-    expect(sasUrl.pathname.endsWith(`/${blobName}`)).toBe(true);
-    expect(sasUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
+    expect(presignedUrlEntities).toHaveLength(1);
+    expect(presignedUrlEntity.id).toBe(hash);
+    expect(presignedUrlEntity.isHeld).toBe(false);
+    expect(presignedUrl.pathname.endsWith(`/${blobName}`)).toBe(true);
+    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
   });
 
   test("saves and reads content", async () => {

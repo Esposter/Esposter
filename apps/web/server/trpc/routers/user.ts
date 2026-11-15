@@ -166,10 +166,14 @@ export const userRouter = router({
       staticReason:
         "A presigned upload url: the image changes when the client saves it through updateUser, which publishes the topic",
     })
-    .mutation<{ publicUrl: string; sasUrl: string }>(async ({ ctx }) => {
+    .mutation<{ presignedUrl: string; publicUrl: string }>(async ({ ctx }) => {
       const blobName = getUserProfileImageBlobName(ctx.user.id);
-      const sasUrl = await createPresignedPutUrl(getStorageCredentials(), StorageBucket.PublicUserAssets, blobName);
-      return { publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName), sasUrl };
+      const presignedUrl = await createPresignedPutUrl(
+        getStorageCredentials(),
+        StorageBucket.PublicUserAssets,
+        blobName,
+      );
+      return { presignedUrl, publicUrl: getPublicAssetUrl(StorageBucket.PublicUserAssets, blobName) };
     }),
   readCallBackgrounds: getTopicsProcedure(standardAuthedProcedure, userTopics).query<CallBackground[]>(
     async ({ ctx }) => {
@@ -188,7 +192,7 @@ export const userRouter = router({
       await publishBlobDeletion(StorageBucket.UserAssets, unservableBlobNames).match(noop, console.error);
       return Promise.all(
         servableCallBackgroundBlobs.map(async ({ name, slot }) => ({
-          sasUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
+          presignedUrl: await createPresignedGetUrl(getStorageCredentials(), StorageBucket.UserAssets, name),
           slot,
         })),
       );

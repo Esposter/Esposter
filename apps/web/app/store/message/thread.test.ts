@@ -112,7 +112,7 @@ describe(useThreadStore, () => {
       userId,
     );
     trpcMsw.message.readThread.query(() => [reply]);
-    trpcMsw.message.generateDownloadFileSasUrls.query(() => [url]);
+    trpcMsw.message.generateDownloadFilePresignedUrls.query(() => [url]);
     await mountThreadDrawer();
     const openThread = useOpenThread();
     const fileStore = useFileStore();

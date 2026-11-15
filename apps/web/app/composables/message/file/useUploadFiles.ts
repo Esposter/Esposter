@@ -1,4 +1,4 @@
-import type { MessageFileSasEntity } from "#shared/models/message/file/MessageFileSasEntity";
+import type { MessageFilePresignedUrlEntity } from "#shared/models/message/file/MessageFilePresignedUrlEntity";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
 
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
@@ -41,9 +41,9 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
     }
 
     const room = rooms.value.find(({ id }) => id === targetValue.roomId);
-    // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the SAS query.
+    // Mirror the server chokepoint's platform-cap clamp so a room limit above the cap fails here, not at the presigned url query.
     const maxFileSizeBytes = Math.min(room?.maxFileSizeBytes || MAX_FILE_REQUEST_SIZE, MAX_FILE_REQUEST_SIZE);
-    // Validate before the SAS query and before rendering metadata so a rejected file is surfaced loudly. One
+    // Validate before the presigned url query and before rendering metadata so a rejected file is surfaced loudly. One
     // Rejected file rejects the whole drop, naming it, rather than silently uploading the rest of the selection.
     for (const file of newFiles)
       if (!validateFileWithAlert(file, maxFileSizeBytes)) return;
@@ -63,23 +63,27 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
     // The send button gates on the room's upload count, so leaving either behind strands the room's composer.
     // Whatever already reached blob storage goes with it, through the same discard the composer's own delete
     // Affordance uses: a row that leaves the list without being sent is a blob nothing can ever name again.
-    let seededFileSasEntities: MessageFileSasEntity[] = [];
+    let seededFilePresignedUrlEntities: MessageFilePresignedUrlEntity[] = [];
     await withFinalizerAsync(
       () =>
         getResultAsync(async () => {
-          const fileSasEntities = await uploadFilesToPresignedUrls({
+          const filePresignedUrlEntities = await uploadFilesToPresignedUrls({
             files: newFiles,
-            generateUploadFileSasEntities: (uploadFiles) =>
-              $trpc.message.generateUploadFileSasEntities.mutate({ files: uploadFiles, roomId }),
+            generateUploadFilePresignedUrlEntities: (uploadFiles) =>
+              $trpc.message.generateUploadFilePresignedUrlEntities.mutate({ files: uploadFiles, roomId }),
             onUploadProgress: ({ id }, progress) => {
               storeUploadFileProgress(targetValue, id, progress);
             },
-            onUploadStart: (newFileSasEntities) => {
-              seededFileSasEntities = newFileSasEntities;
+            onUploadStart: (newFilePresignedUrlEntities) => {
+              seededFilePresignedUrlEntities = newFilePresignedUrlEntities;
               // Seed each file's metadata + object url once the write targets exist so Vue renders progress
               storeUploadFiles(
                 targetValue,
-                newFileSasEntities.map(({ id, token }, index) => ({ file: takeOne(newFiles, index), id, token })),
+                newFilePresignedUrlEntities.map(({ id, token }, index) => ({
+                  file: takeOne(newFiles, index),
+                  id,
+                  token,
+                })),
               );
             },
           });
@@ -87,16 +91,16 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
           // Thumbnail blob is missing, so a failed downscale or a failed thumbnail PUT costs a bigger image,
           // Never an attachment. Reverting here instead would throw away originals that uploaded perfectly.
           // Which ones landed is recorded on the file itself — the renderer must not have to tell a thumbnail
-          // That was never written apart from one whose read SAS expired, since both reach it as a load error
+          // That was never written apart from one whose presigned read url expired, since both reach it as a load error
           const thumbnails = await thumbnailsPromise;
-          const thumbnailUploads = fileSasEntities.flatMap(({ id, thumbnailSasUrl }, index) => {
+          const thumbnailUploads = filePresignedUrlEntities.flatMap(({ id, thumbnailPresignedUrl }, index) => {
             const thumbnail = takeOne(thumbnails, index);
-            return thumbnailSasUrl && thumbnail ? [{ id, sasUrl: thumbnailSasUrl, thumbnail }] : [];
+            return thumbnailPresignedUrl && thumbnail ? [{ id, presignedUrl: thumbnailPresignedUrl, thumbnail }] : [];
           });
           const thumbnailIds = (
             await Promise.all(
-              thumbnailUploads.map(({ id, sasUrl, thumbnail }) =>
-                getResultAsync(() => uploadFileToUrl(thumbnail, sasUrl))
+              thumbnailUploads.map(({ id, presignedUrl, thumbnail }) =>
+                getResultAsync(() => uploadFileToUrl(thumbnail, presignedUrl))
                   .map(() => [id])
                   .orTee(console.error)
                   .unwrapOr([]),
@@ -107,7 +111,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
         }).match(noop, async (error) => {
           await discardUploadFiles(
             targetValue,
-            seededFileSasEntities.map(({ id }) => id),
+            seededFilePresignedUrlEntities.map(({ id }) => id),
           );
           createErrorAlert(error);
         }),

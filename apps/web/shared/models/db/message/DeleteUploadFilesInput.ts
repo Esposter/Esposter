@@ -7,7 +7,7 @@ export const deleteUploadFilesInputSchema = z.object({
   files: createUniqueArraySchema(
     z.object({
       ...fileEntitySchema.pick({ filename: true, id: true }).shape,
-      // The grant this member was handed when the write SAS was minted — see createUploadFileToken
+      // The grant this member was handed when the presigned write url was minted — see createUploadFileToken
       token: z.string().min(1).max(UPLOAD_FILE_TOKEN_MAX_LENGTH),
     }),
     "id",

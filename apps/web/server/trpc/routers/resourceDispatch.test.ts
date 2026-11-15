@@ -1,6 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { R2Bucket } from "@cloudflare/workers-types";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -15,7 +15,12 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { deleteDirectory } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { getResourceFilesDirectoryName, McpScope, StorageBucket, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import {
+  getResourceFilesDirectoryName,
+  McpScope,
+  StorageBucket,
+  WRITE_PRESIGNED_URL_DURATION_MS,
+} from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { createHash } from "node:crypto";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -101,17 +106,17 @@ describe("resourceDispatchRouter", () => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const webpageResource = await webpageCaller.createResource({ name });
-    const sasEntities = await callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
-      files: [{ hash, mimetype, size }],
-      id: webpageResource.id,
-    });
+    const presignedUrlEntities = await callAgentTool<ResourceFilePresignedUrlEntity[]>(
+      "resource_generateUploadFilePresignedUrlEntities",
+      { files: [{ hash, mimetype, size }], id: webpageResource.id },
+    );
     const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
-    const { sasUrl } = takeOne(sasEntities);
-    const presignedUrl = new URL(sasUrl);
+    const { presignedUrl } = takeOne(presignedUrlEntities);
+    const parsedPresignedUrl = new URL(presignedUrl);
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl }]);
-    expect(presignedUrl.pathname).toContain(`/${blobName}`);
-    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
+    expect(presignedUrlEntities).toStrictEqual([{ id: hash, isHeld: false, presignedUrl }]);
+    expect(parsedPresignedUrl.pathname).toContain(`/${blobName}`);
+    expect(parsedPresignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
     await expect(bucket.head(blobName)).resolves.toBeNull();
   });
 
@@ -123,18 +128,18 @@ describe("resourceDispatchRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = `${getResourceFilesDirectoryName(webpageResource.id)}/${hash}`;
     const requestUploadAddress = () =>
-      callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
+      callAgentTool<ResourceFilePresignedUrlEntity[]>("resource_generateUploadFilePresignedUrlEntities", {
         files: [{ hash, mimetype, size }],
         id: webpageResource.id,
       });
 
     await expect(requestUploadAddress()).resolves.toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: expect.stringContaining(`/${blobName}?`) },
+      { id: hash, isHeld: false, presignedUrl: expect.stringContaining(`/${blobName}?`) },
     ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_SAS_DURATION_MS / 2));
+    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(WRITE_PRESIGNED_URL_DURATION_MS / 2));
     await bucket.put(blobName, heldBytes);
 
-    await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
+    await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, presignedUrl: "" }]);
   });
 });

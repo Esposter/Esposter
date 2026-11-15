@@ -1,10 +1,10 @@
 import type { Context } from "#server/trpc/context";
 import type { DeleteFileInput } from "#shared/models/db/resource/DeleteFileInput";
-import type { GenerateUploadFileSasEntitiesInput } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
+import type { GenerateUploadFilePresignedUrlEntitiesInput } from "#shared/models/db/resource/GenerateUploadFilePresignedUrlEntitiesInput";
 import type { ResourceIdInput } from "#shared/models/db/resource/ResourceIdInput";
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
-import type { ResourceFileSasEntity } from "#shared/models/resource/ResourceFileSasEntity";
+import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
 import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
@@ -20,7 +20,7 @@ import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { whiteboardRouter } from "#server/trpc/routers/whiteboard";
 import { deleteFileInputSchema } from "#shared/models/db/resource/DeleteFileInput";
-import { generateUploadFileSasEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFileSasEntitiesInput";
+import { generateUploadFilePresignedUrlEntitiesInputSchema } from "#shared/models/db/resource/GenerateUploadFilePresignedUrlEntitiesInput";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { McpScope, ResourceType } from "@esposter/db-schema";
@@ -29,7 +29,9 @@ import { Operation } from "@esposter/shared";
 // The file procedures each type with file assets generates, called the same way
 interface FileCaller {
   deleteFile: (input: DeleteFileInput) => Promise<void>;
-  generateUploadFileSasEntities: (input: GenerateUploadFileSasEntitiesInput) => Promise<ResourceFileSasEntity[]>;
+  generateUploadFilePresignedUrlEntities: (
+    input: GenerateUploadFilePresignedUrlEntitiesInput,
+  ) => Promise<ResourceFilePresignedUrlEntity[]>;
 }
 
 // The publish procedures each publishable type's own router generates, called in process as the browser's per-type
@@ -77,7 +79,11 @@ export const resourceDispatchRouter = router({
       throw getInvalidOperationError(Operation.Update, type, "does not take files");
     return fileCallers[type](ctx).deleteFile(input);
   }),
-  generateUploadFileSasEntities: getOwnerProcedure(undefined, generateUploadFileSasEntitiesInputSchema, "id")
+  generateUploadFilePresignedUrlEntities: getOwnerProcedure(
+    undefined,
+    generateUploadFilePresignedUrlEntitiesInputSchema,
+    "id",
+  )
     .meta({
       mcp: {
         description:
@@ -86,11 +92,11 @@ export const resourceDispatchRouter = router({
       },
       staticReason: "The upload addresses of a file, which no reader shows until the file is saved",
     })
-    .mutation<ResourceFileSasEntity[]>(({ ctx, input }) => {
+    .mutation<ResourceFilePresignedUrlEntity[]>(({ ctx, input }) => {
       const { type } = ctx.resource;
       if (!checkHasCapability(type, "fileAssets"))
         throw getInvalidOperationError(Operation.Read, type, "does not take files");
-      return fileCallers[type](ctx).generateUploadFileSasEntities(input);
+      return fileCallers[type](ctx).generateUploadFilePresignedUrlEntities(input);
     }),
   publishResource: getTopicsProcedure(
     getOwnerProcedure(undefined, resourceIdInputSchema, "id").meta({

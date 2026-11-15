@@ -5,7 +5,7 @@ import type { Database } from "@esposter/db-schema";
 import { SnapshotChannel } from "@esposter/db-schema";
 
 // Whether a caller may read one asset — the single definition of the question, asked by the serving endpoint before
-// It signs a SAS and by the duplicate clone before it copies a blob. The clone copies whatever url the caller's content
+// It signs a presigned url and by the duplicate clone before it copies a blob. The clone copies whatever url the caller's content
 // Names, so a check living only on the read path would let anyone holding a url they cannot open paste it into their
 // Own resource and have the clone re-serve the owner's private blob. A url the caller may not read is data rather than
 // An error: the clone carries it verbatim, so a shared blueprint keeps rendering for whoever can already see its assets

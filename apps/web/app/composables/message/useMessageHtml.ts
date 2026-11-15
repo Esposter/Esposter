@@ -45,7 +45,9 @@ export const useMessageHtml = (message: MaybeRefOrGetter<string>, roomId?: Maybe
       if (!roomEmoji) continue;
 
       const shortcode = getEmojiShortcode(roomEmoji.name);
-      customEmoji.set_content(`<img class="custom-emoji" src="${escapeHtml(roomEmoji.sasUrl)}" alt="${shortcode}" />`);
+      customEmoji.set_content(
+        `<img class="custom-emoji" src="${escapeHtml(roomEmoji.presignedUrl)}" alt="${shortcode}" />`,
+      );
     }
     // A spoiler is a control a reader activates, so it is announced and focusable as one. Its reveal is the one
     // Thing the reader's own click changes, and it lives on the element rather than in the stored message

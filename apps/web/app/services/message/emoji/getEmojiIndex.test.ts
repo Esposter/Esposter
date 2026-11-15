@@ -149,7 +149,7 @@ describe(searchEmojis, () => {
     const customEmoji: CustomEmoji = {
       id: v7(),
       name: "thumbs_up_parrot",
-      sasUrl: "https://storage.test/emoji",
+      presignedUrl: "https://storage.test/emoji",
       slug: "thumbs_up_parrot",
       type: EmojiType.Custom,
     };

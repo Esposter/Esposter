@@ -5,7 +5,7 @@ import { createPresignedGetUrl } from "#src/services/storage/createPresignedGetU
 import { getAttachmentContentDisposition } from "#src/services/storage/getAttachmentContentDisposition";
 import { getFileBlobNames } from "#src/services/storage/getFileBlobNames";
 
-export const generateDownloadFileSasUrls = (
+export const generateDownloadFilePresignedUrls = (
   credentials: StorageCredentials,
   bucket: StorageBucket,
   files: Pick<FileEntity, "filename" | "id" | "mimetype">[],

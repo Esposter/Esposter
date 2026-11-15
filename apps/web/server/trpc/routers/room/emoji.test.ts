@@ -49,7 +49,7 @@ describe("emojiRouter", () => {
     await bucket.put(getRoomEmojiBlobName(roomId, id), body);
   };
   const createRoomEmoji = async (emojiName = name) => {
-    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
     await uploadRoomEmojiBlob(id);
     return roomEmojiCaller.createRoomEmoji({ id, name: emojiName, roomId });
   };
@@ -74,27 +74,27 @@ describe("emojiRouter", () => {
     await dispose();
   });
 
-  test("fails generateUploadRoomEmojiSasEntity with anything but an image", async () => {
+  test("fails generateUploadRoomEmojiPresignedUrlEntity with anything but an image", async () => {
     expect.hasAssertions();
 
     await expect(
-      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype: MimeType.Pdf, roomId, size }),
+      roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype: MimeType.Pdf, roomId, size }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype: MimeType.Pdf, size }))}]`,
     );
   });
 
-  test("fails generateUploadRoomEmojiSasEntity with a file past the emoji size cap", async () => {
+  test("fails generateUploadRoomEmojiPresignedUrlEntity with a file past the emoji size cap", async () => {
     expect.hasAssertions();
 
     await expect(
-      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size: oversizedSize }),
+      roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size: oversizedSize }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, JSON.stringify({ mimetype, size: oversizedSize }))}]`,
     );
   });
 
-  test("fails generateUploadRoomEmojiSasEntity with a room that already holds its cap", async () => {
+  test("fails generateUploadRoomEmojiPresignedUrlEntity with a room that already holds its cap", async () => {
     expect.hasAssertions();
 
     const roomEmojiRows = Array.from({ length: MAX_ROOM_EMOJIS }, (_value, index) => ({
@@ -107,7 +107,7 @@ describe("emojiRouter", () => {
     );
 
     await expect(
-      roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
+      roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, roomId)}]`);
   });
 
@@ -118,7 +118,7 @@ describe("emojiRouter", () => {
 
     expect(roomEmoji.name).toBe(name);
     expect(roomEmoji.roomId).toBe(roomId);
-    expect(roomEmoji.sasUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
+    expect(roomEmoji.presignedUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
     expect(roomObjectCalls).toContainEqual({
       args: [{ data: roomEmoji, type: "createRoomEmoji" }, {}],
       method: "broadcastEvent",
@@ -129,7 +129,7 @@ describe("emojiRouter", () => {
   test("fails createRoomEmoji with an id whose blob never landed", async () => {
     expect.hasAssertions();
 
-    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
 
     await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${getRoomEmojiErrorMessage(Operation.Create, id)}]`,
@@ -149,7 +149,7 @@ describe("emojiRouter", () => {
   test("fails createRoomEmoji with a blob larger than the cap whatever size was declared", async () => {
     expect.hasAssertions();
 
-    const { id } = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const { id } = await roomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
     await uploadRoomEmojiBlob(id, "a".repeat(MAX_ROOM_EMOJI_SIZE_BYTES + 1));
 
     await expect(roomEmojiCaller.createRoomEmoji({ id, name, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -167,7 +167,7 @@ describe("emojiRouter", () => {
     );
   });
 
-  test(`fails generateUploadRoomEmojiSasEntity for a member without ${RoomPermission.ManageEmojis}`, async () => {
+  test(`fails generateUploadRoomEmojiPresignedUrlEntity for a member without ${RoomPermission.ManageEmojis}`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
@@ -177,7 +177,7 @@ describe("emojiRouter", () => {
     );
 
     await expect(
-      memberRoomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size }),
+      memberRoomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
@@ -189,7 +189,7 @@ describe("emojiRouter", () => {
       emojiRouter,
       await createMockAuthSession(mockContext.db, member),
     );
-    const { id } = await memberRoomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
+    const { id } = await memberRoomEmojiCaller.generateUploadRoomEmojiPresignedUrlEntity({ mimetype, roomId, size });
     await uploadRoomEmojiBlob(id);
     const roomEmoji = await memberRoomEmojiCaller.createRoomEmoji({ id, name, roomId });
 
@@ -283,6 +283,6 @@ describe("emojiRouter", () => {
     const roomEmojis = await memberRoomEmojiCaller.readRoomEmojis({ roomId });
 
     expect(roomEmojis).toHaveLength(1);
-    expect(takeOne(roomEmojis).sasUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
+    expect(takeOne(roomEmojis).presignedUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
   });
 });

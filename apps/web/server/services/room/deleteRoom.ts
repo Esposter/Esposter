@@ -33,7 +33,7 @@ export const deleteRoom = async ({ db, user }: Pick<AuthedContext, "db" | "user"
     // Enumerating a long-lived room's blobs inline would hold the owner's delete open until it timed out.
     // Unbounded in time, unlike every other prefix sweep: the room row is gone, so nothing can re-own this
     // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
-    // Of any member still holding a write SAS when the owner deleted, billed and downloadable forever
+    // Of any member still holding a presigned write url when the owner deleted, billed and downloadable forever
     publishBlobPrefixDeletion(StorageBucket.MessageAssets, id, undefined).match(noop, console.error),
     // Profile images are a handful, so their listing stays a resolved list rather than a prefix walk
     publishBlobDeletion(StorageBucket.PublicUserAssets, async () => {

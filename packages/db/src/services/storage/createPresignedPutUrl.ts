@@ -3,7 +3,7 @@ import type { StorageBucket } from "@esposter/db-schema";
 
 import { PresignedUrlMethod } from "#src/models/storage/PresignedUrlMethod";
 import { presignStorageUrl } from "#src/services/storage/presignStorageUrl";
-import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
+import { WRITE_PRESIGNED_URL_DURATION_MS } from "@esposter/db-schema";
 
 // The url a client PUTs one object to. A given content type is part of the signature, so the upload has to send the type it
 // Was signed with. Without one, the signature leaves the type open, for a caller that only learns the file's type from the
@@ -16,6 +16,6 @@ export const createPresignedPutUrl = (
   contentType?: string,
 ) =>
   presignStorageUrl(credentials, PresignedUrlMethod.Put, bucket, objectKey, {
-    expiresInMs: WRITE_SAS_DURATION_MS,
+    expiresInMs: WRITE_PRESIGNED_URL_DURATION_MS,
     headers: contentType ? { "Content-Type": contentType } : undefined,
   });

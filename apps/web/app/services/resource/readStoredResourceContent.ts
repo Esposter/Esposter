@@ -11,7 +11,7 @@ export const readStoredResourceContent = async (
   resourceRouter: ResourceRouter<ResourceType>,
   id: ResourceInResource["id"],
 ): Promise<Uint8Array<ArrayBuffer>> => {
-  const presignedUrl = await resourceRouter.generateReadContentSasUrl.query({ id });
+  const presignedUrl = await resourceRouter.generateReadContentPresignedUrl.query({ id });
   const response = await fetch(presignedUrl);
   if (!response.ok) throw new StorageStatusError(Operation.Read, readStoredResourceContent.name, response.status);
   return new Uint8Array(await response.arrayBuffer());

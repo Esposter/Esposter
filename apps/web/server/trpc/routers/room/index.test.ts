@@ -36,7 +36,7 @@ import {
   StorageBucket,
   userStatusesInMessage,
   usersToRoomsInMessage,
-  WRITE_SAS_DURATION_MS,
+  WRITE_PRESIGNED_URL_DURATION_MS,
 } from "@esposter/db-schema";
 import { chunk, InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
@@ -206,16 +206,16 @@ describe("roomRouter", () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
-    const { publicUrl, sasUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
+    const { presignedUrl, publicUrl } = await roomCaller.generateProfileImageUploadUrl({ roomId: newRoom.id });
     // The leaf is a per-upload uuid, so the knowable part is the versioned prefix; the presigned write url names the
     // Public url's blob and lapses one write duration after it is signed. The prefix is spelled out
     // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
     const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
-    const presignedUrl = new URL(sasUrl);
+    const parsedPresignedUrl = new URL(presignedUrl);
 
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
-    expect(presignedUrl.pathname).toContain(`/${getBlobName(publicUrl)}`);
-    expect(presignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_SAS_DURATION_MS / 1000));
+    expect(parsedPresignedUrl.pathname).toContain(`/${getBlobName(publicUrl)}`);
+    expect(parsedPresignedUrl.searchParams.get("X-Amz-Expires")).toBe(String(WRITE_PRESIGNED_URL_DURATION_MS / 1000));
   });
 
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {
@@ -258,7 +258,9 @@ describe("roomRouter", () => {
     // Sweep that clears the image then sees the object as older than its cutoff
     const seededBlob = await publicUserAssets.head(blobName);
     assert.exists(seededBlob);
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(seededBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS + 1));
+    vi.setSystemTime(
+      Temporal.Instant.fromEpochMilliseconds(seededBlob.uploaded.getTime() + WRITE_PRESIGNED_URL_DURATION_MS + 1),
+    );
     const data = await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);
@@ -327,7 +329,9 @@ describe("roomRouter", () => {
     await uploadPublicUserAssetBlob(inFlightBlobName);
     const inFlightBlob = await publicUserAssets.head(inFlightBlobName);
     assert.exists(inFlightBlob);
-    vi.setSystemTime(Temporal.Instant.fromEpochMilliseconds(inFlightBlob.uploaded.getTime() + WRITE_SAS_DURATION_MS));
+    vi.setSystemTime(
+      Temporal.Instant.fromEpochMilliseconds(inFlightBlob.uploaded.getTime() + WRITE_PRESIGNED_URL_DURATION_MS),
+    );
     await roomCaller.updateRoom({ id: newRoom.id, image: "" });
     const blobDeletionEvents = MockJobQueueDatabase.get(QueueJob.ProcessBlobDeletion);
     assert.exists(blobDeletionEvents);

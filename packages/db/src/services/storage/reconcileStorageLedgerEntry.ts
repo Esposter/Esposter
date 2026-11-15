@@ -10,7 +10,7 @@ import { and, eq, exists, isNull, sql } from "drizzle-orm";
 // Is already carrying for this blob — zero until the first reconcile — and the adjustment is the difference
 // Against it, which makes this right in all three cases at once: the first event adds the whole object, a
 // Redelivery computes a zero delta instead of double-counting, and a re-upload to the same write target (the
-// SAS outlives one PUT) corrects the counter rather than stranding the old size on it.
+// Presigned url outlives one PUT) corrects the counter rather than stranding the old size on it.
 //
 // `sequencer` is the event's place in this blob's write order. Event Grid delivers at-least-once and unordered,
 // So two writes to one name can have their events arrive reversed — and being idempotent does not save this:

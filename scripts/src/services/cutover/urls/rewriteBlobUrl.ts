@@ -16,7 +16,7 @@ export const rewriteBlobUrl = (value: string, publicAssetsBaseUrl: string): stri
       container,
       "is not a container with a bucket, so its URL has no target",
     );
-  // The query string is a SAS token, which the public route never needs and the copy must not keep
+  // The query string is a presigned url token, which the public route never needs and the copy must not keep
   const key = keySegments.map((segment) => encodeURIComponent(decodeURIComponent(segment))).join("/");
   return `${publicAssetsBaseUrl.replace(/\/$/u, "")}/${container}/${key}`;
 };
