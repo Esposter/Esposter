@@ -11,7 +11,7 @@ export const surveyDropdownNodeType: {
   label: string;
   propsSchema: typeof surveyDropdownNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyDropdownNode>["slots"];
-  type: SurveyNodeType.Dropdown;
+  type: typeof SurveyNodeType.Dropdown;
 } = {
   createDefaultProps: () => surveyDropdownNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyDropdownNodePropsSchema,

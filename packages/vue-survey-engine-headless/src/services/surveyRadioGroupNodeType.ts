@@ -11,7 +11,7 @@ export const surveyRadioGroupNodeType: {
   label: string;
   propsSchema: typeof surveyRadioGroupNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyRadioGroupNode>["slots"];
-  type: SurveyNodeType.RadioGroup;
+  type: typeof SurveyNodeType.RadioGroup;
 } = {
   createDefaultProps: () => surveyRadioGroupNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyRadioGroupNodePropsSchema,

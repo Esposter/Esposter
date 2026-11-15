@@ -11,7 +11,7 @@ export const surveyCheckboxNodeType: {
   label: string;
   propsSchema: typeof surveyCheckboxNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyCheckboxNode>["slots"];
-  type: SurveyNodeType.Checkbox;
+  type: typeof SurveyNodeType.Checkbox;
 } = {
   createDefaultProps: () => surveyCheckboxNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyCheckboxNodePropsSchema,

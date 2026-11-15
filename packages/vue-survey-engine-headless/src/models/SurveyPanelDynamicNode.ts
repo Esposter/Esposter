@@ -3,4 +3,4 @@ import type { SurveyPanelDynamicNodeProps } from "#src/models/SurveyPanelDynamic
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A dynamic panel question node: the dynamic panel kind's props, under its type tag
-export type SurveyPanelDynamicNode = BlockNode<SurveyNodeType.PanelDynamic, SurveyPanelDynamicNodeProps>;
+export type SurveyPanelDynamicNode = BlockNode<typeof SurveyNodeType.PanelDynamic, SurveyPanelDynamicNodeProps>;

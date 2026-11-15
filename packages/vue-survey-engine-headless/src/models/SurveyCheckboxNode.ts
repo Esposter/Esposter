@@ -3,4 +3,4 @@ import type { SurveyNodeType } from "#src/models/SurveyNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A checkboxes node: the checkbox kind's props, under its type tag
-export type SurveyCheckboxNode = BlockNode<SurveyNodeType.Checkbox, SurveyCheckboxNodeProps>;
+export type SurveyCheckboxNode = BlockNode<typeof SurveyNodeType.Checkbox, SurveyCheckboxNodeProps>;

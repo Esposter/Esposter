@@ -3,4 +3,4 @@ import type { SurveyRadioGroupNodeProps } from "#src/models/SurveyRadioGroupNode
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A radio group node: the radio group kind's props, under its type tag
-export type SurveyRadioGroupNode = BlockNode<SurveyNodeType.RadioGroup, SurveyRadioGroupNodeProps>;
+export type SurveyRadioGroupNode = BlockNode<typeof SurveyNodeType.RadioGroup, SurveyRadioGroupNodeProps>;

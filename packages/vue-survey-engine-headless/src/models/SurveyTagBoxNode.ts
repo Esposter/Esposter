@@ -3,4 +3,4 @@ import type { SurveyTagBoxNodeProps } from "#src/models/SurveyTagBoxNodeProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A tag box node: the tag box kind's props, under its type tag
-export type SurveyTagBoxNode = BlockNode<SurveyNodeType.TagBox, SurveyTagBoxNodeProps>;
+export type SurveyTagBoxNode = BlockNode<typeof SurveyNodeType.TagBox, SurveyTagBoxNodeProps>;

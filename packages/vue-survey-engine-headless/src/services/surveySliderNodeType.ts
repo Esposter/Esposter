@@ -11,7 +11,7 @@ export const surveySliderNodeType: {
   label: string;
   propsSchema: typeof surveySliderNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveySliderNode>["slots"];
-  type: SurveyNodeType.Slider;
+  type: typeof SurveyNodeType.Slider;
 } = {
   createDefaultProps: () => surveySliderNodePropsSchema.parse({ name: "question" }),
   formSchema: surveySliderNodePropsSchema,

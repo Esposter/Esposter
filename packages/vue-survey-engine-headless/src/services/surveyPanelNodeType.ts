@@ -12,7 +12,7 @@ export const surveyPanelNodeType: {
   label: string;
   propsSchema: typeof surveyPanelNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyPanelNode>["slots"];
-  type: SurveyNodeType.Panel;
+  type: typeof SurveyNodeType.Panel;
 } = {
   createDefaultProps: () => surveyPanelNodePropsSchema.parse({}),
   formSchema: surveyPanelNodePropsSchema,

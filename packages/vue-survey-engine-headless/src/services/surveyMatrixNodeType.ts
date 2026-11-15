@@ -11,7 +11,7 @@ export const surveyMatrixNodeType: {
   label: string;
   propsSchema: typeof surveyMatrixNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyMatrixNode>["slots"];
-  type: SurveyNodeType.Matrix;
+  type: typeof SurveyNodeType.Matrix;
 } = {
   createDefaultProps: () => surveyMatrixNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyMatrixNodePropsSchema,

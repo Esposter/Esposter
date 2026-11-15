@@ -12,7 +12,7 @@ export const surveyPanelDynamicNodeType: {
   label: string;
   propsSchema: typeof surveyPanelDynamicNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyPanelDynamicNode>["slots"];
-  type: SurveyNodeType.PanelDynamic;
+  type: typeof SurveyNodeType.PanelDynamic;
 } = {
   createDefaultProps: () => surveyPanelDynamicNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyPanelDynamicNodePropsSchema,

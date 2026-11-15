@@ -11,7 +11,7 @@ export const surveyMultipleTextNodeType: {
   label: string;
   propsSchema: typeof surveyMultipleTextNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyMultipleTextNode>["slots"];
-  type: SurveyNodeType.MultipleText;
+  type: typeof SurveyNodeType.MultipleText;
 } = {
   createDefaultProps: () => surveyMultipleTextNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyMultipleTextNodePropsSchema,

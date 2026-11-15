@@ -11,7 +11,7 @@ export const surveyButtonGroupNodeType: {
   label: string;
   propsSchema: typeof surveyButtonGroupNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyButtonGroupNode>["slots"];
-  type: SurveyNodeType.ButtonGroup;
+  type: typeof SurveyNodeType.ButtonGroup;
 } = {
   createDefaultProps: () => surveyButtonGroupNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyButtonGroupNodePropsSchema,

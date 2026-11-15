@@ -11,7 +11,7 @@ export const surveyRankingNodeType: {
   label: string;
   propsSchema: typeof surveyRankingNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyRankingNode>["slots"];
-  type: SurveyNodeType.Ranking;
+  type: typeof SurveyNodeType.Ranking;
 } = {
   createDefaultProps: () => surveyRankingNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyRankingNodePropsSchema,

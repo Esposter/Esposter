@@ -11,7 +11,7 @@ export const surveyImageNodeType: {
   label: string;
   propsSchema: typeof surveyImageNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyImageNode>["slots"];
-  type: SurveyNodeType.Image;
+  type: typeof SurveyNodeType.Image;
 } = {
   createDefaultProps: () => surveyImageNodePropsSchema.parse({ name: "image" }),
   formSchema: surveyImageNodePropsSchema,

@@ -11,7 +11,7 @@ export const surveyBooleanNodeType: {
   label: string;
   propsSchema: typeof surveyBooleanNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyBooleanNode>["slots"];
-  type: SurveyNodeType.Boolean;
+  type: typeof SurveyNodeType.Boolean;
 } = {
   createDefaultProps: () => surveyBooleanNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyBooleanNodePropsSchema,

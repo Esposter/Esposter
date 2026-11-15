@@ -3,4 +3,4 @@ import type { SurveyNodeType } from "#src/models/SurveyNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A dynamic matrix question node: the dynamic matrix kind's props, under its type tag
-export type SurveyMatrixDynamicNode = BlockNode<SurveyNodeType.MatrixDynamic, SurveyMatrixDynamicNodeProps>;
+export type SurveyMatrixDynamicNode = BlockNode<typeof SurveyNodeType.MatrixDynamic, SurveyMatrixDynamicNodeProps>;

@@ -11,7 +11,7 @@ export const surveyMatrixDynamicNodeType: {
   label: string;
   propsSchema: typeof surveyMatrixDynamicNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyMatrixDynamicNode>["slots"];
-  type: SurveyNodeType.MatrixDynamic;
+  type: typeof SurveyNodeType.MatrixDynamic;
 } = {
   createDefaultProps: () => surveyMatrixDynamicNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyMatrixDynamicNodePropsSchema,

@@ -3,4 +3,4 @@ import type { SurveySliderNodeProps } from "#src/models/SurveySliderNodeProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A slider question node: the slider kind's props, under its type tag
-export type SurveySliderNode = BlockNode<SurveyNodeType.Slider, SurveySliderNodeProps>;
+export type SurveySliderNode = BlockNode<typeof SurveyNodeType.Slider, SurveySliderNodeProps>;

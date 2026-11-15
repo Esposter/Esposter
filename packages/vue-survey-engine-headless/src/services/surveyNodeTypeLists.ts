@@ -4,7 +4,7 @@ import type { SurveyTemplateNode } from "#src/models/SurveyTemplateNode";
 import { SurveyNodeType } from "#src/models/SurveyNodeType";
 
 // The types the root accepts: pages only
-export const SURVEY_ROOT_NODE_TYPES: SurveyNodeType.Page[] = [SurveyNodeType.Page];
+export const SURVEY_ROOT_NODE_TYPES: (typeof SurveyNodeType.Page)[] = [SurveyNodeType.Page];
 
 // The types a page or a panel accepts: every type but a page
 export const SURVEY_PLACEABLE_NODE_TYPES: SurveyPlaceableNode["type"][] = Object.values(SurveyNodeType).filter(

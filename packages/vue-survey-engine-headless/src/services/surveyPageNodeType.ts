@@ -12,7 +12,7 @@ export const surveyPageNodeType: {
   label: string;
   propsSchema: typeof surveyPageNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyPageNode>["slots"];
-  type: SurveyNodeType.Page;
+  type: typeof SurveyNodeType.Page;
 } = {
   createDefaultProps: () => surveyPageNodePropsSchema.parse({}),
   formSchema: surveyPageNodePropsSchema,

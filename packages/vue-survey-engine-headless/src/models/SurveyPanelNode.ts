@@ -3,4 +3,4 @@ import type { SurveyPanelNodeProps } from "#src/models/SurveyPanelNodeProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A panel node: the panel kind's props, under its type tag
-export type SurveyPanelNode = BlockNode<SurveyNodeType.Panel, SurveyPanelNodeProps>;
+export type SurveyPanelNode = BlockNode<typeof SurveyNodeType.Panel, SurveyPanelNodeProps>;

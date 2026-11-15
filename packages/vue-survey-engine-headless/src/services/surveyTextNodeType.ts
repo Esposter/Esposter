@@ -11,7 +11,7 @@ export const surveyTextNodeType: {
   label: string;
   propsSchema: typeof surveyTextNodePropsSchema;
   slots: SurveyNodeTypeDefinition<SurveyTextNode>["slots"];
-  type: SurveyNodeType.Text;
+  type: typeof SurveyNodeType.Text;
 } = {
   createDefaultProps: () => surveyTextNodePropsSchema.parse({ name: "question" }),
   formSchema: surveyTextNodePropsSchema,
