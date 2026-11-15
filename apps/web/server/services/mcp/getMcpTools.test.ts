@@ -1,6 +1,8 @@
 import type { Meta } from "#server/models/trpc/Meta";
 import type { AnyProcedure, AnyRouter } from "@trpc/server";
+import type { z } from "zod";
 
+import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { publicProcedure, router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
@@ -8,7 +10,6 @@ import { trpcRouter } from "#server/trpc/routers";
 import { McpScope, McpScopes, ResourceType } from "@esposter/db-schema";
 import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
-import { z } from "zod";
 
 // A resource type's own procedures, those its factory did not generate, that declare neither a key description nor a
 // Human-only reason. The factory is called for each type, so the generic set is never listed by hand
@@ -32,7 +33,7 @@ const getUndeclaredTypeProcedurePaths = (anyRouter: AnyRouter) =>
 describe(getMcpTools, () => {
   // A tool's input schema must be one object, and a subscription has no tool call to answer, so a procedure opting in
   // Any other way would list a tool no client can call. A defaulted object converts to the object, its default beside it
-  test("every procedure that opts in is a query or mutation with exactly one object input", () => {
+  test("every procedure that opts in is a query or mutation with exactly one input an agent writes as an object", () => {
     expect.hasAssertions();
 
     // Read as any router, whose record is flat as it is at runtime, where the type nests the sub-routers
@@ -41,9 +42,11 @@ describe(getMcpTools, () => {
       .filter(([, { _def }]) => {
         const { mcp } = (_def.meta ?? {}) as Meta;
         const [input] = _def.inputs;
-        const objectInput = input instanceof z.ZodPrefault ? input.unwrap() : input;
         return (
-          mcp && (_def.type === "subscription" || _def.inputs.length !== 1 || !(objectInput instanceof z.ZodObject))
+          mcp &&
+          (_def.type === "subscription" ||
+            _def.inputs.length !== 1 ||
+            getAgentJsonSchema(input as z.ZodType).type !== "object")
         );
       })
       .map(([path]) => path);

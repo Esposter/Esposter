@@ -14,8 +14,8 @@ export const getMcpTools = (router: AnyRouter): McpTool[] =>
     // A built procedure types its meta as unknown; the root declares it as `Meta`
     const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
     if (!mcp || humanOnly || _def.type === "subscription") return [];
-    // One object input, defaulted or not, which `getMcpTools.test.ts` holds for every procedure that opts in, since a
-    // Tool's input schema must be an object
+    // One input whose written side is an object, defaulted, transformed or not, which `getMcpTools.test.ts` holds for every
+    // Procedure that opts in, since a tool's input schema must be an object
     const [input] = _def.inputs;
     return [
       {

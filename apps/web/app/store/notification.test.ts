@@ -1,12 +1,14 @@
 // @vitest-environment nuxt
 import type { AppNotification } from "@/models/notification/AppNotification";
 
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 describe(useNotificationStore, () => {
+  const { trpcMsw } = setupMswTrpc();
   const title = "title";
   const epoch = new Date(0);
   const nextDay = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
@@ -164,6 +166,20 @@ describe(useNotificationStore, () => {
     await secondStore;
 
     expect(snackbarNotification.value).toBeUndefined();
+  });
+
+  // The total moves for display as the row leaves, and the count the delete answers is the one the bell keeps
+  test("settles the unread total on the count the server answers for a delete", async () => {
+    expect.hasAssertions();
+
+    const notification = createDeliveredNotification(v7(), epoch);
+    trpcMsw.notification.deleteNotification.mutation(() => 5);
+    const { initializeCursorPaginationData, setUnreadDeliveredCount } = notificationStore;
+    initializeCursorPaginationData({ items: [notification], nextCursor: "" });
+    setUnreadDeliveredCount(1);
+    await notificationStore.dismissNotification(notification.id);
+
+    expect(unreadCount.value).toBe(5);
   });
 
   test("marks all notifications as read", async () => {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 interface Props {
   hasMore: boolean;
@@ -14,7 +14,7 @@ const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
 <template>
   <div flex flex-col of-y-auto>
     <div v-if="isPending" aria-busy="true" flex flex-col>
-      <div v-for="i in DEFAULT_READ_LIMIT" :key="i" ui-row>
+      <div v-for="i in DEFAULT_PAGE_LIMIT" :key="i" ui-row>
         <UiSkeleton shrink-0 size-6 />
         <UiSkeleton flex-1 h-4 />
       </div>
@@ -22,7 +22,7 @@ const emit = defineEmits<{ readMore: [onComplete: () => void] }>();
     <template v-else>
       <slot />
       <StyledWaypoint :is-active="hasMore" @change="emit('readMore', $event)">
-        <div v-for="i in DEFAULT_READ_LIMIT" :key="i" ui-row>
+        <div v-for="i in DEFAULT_PAGE_LIMIT" :key="i" ui-row>
           <UiSkeleton shrink-0 size-6 />
           <UiSkeleton flex-1 h-4 />
         </div>

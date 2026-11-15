@@ -2,7 +2,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { VueWrapper } from "@vue/test-utils";
 
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { BooleanFormat } from "#shared/models/resource/sheet/column/BooleanFormat";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
@@ -19,6 +18,7 @@ import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
 import { useRowDialogStore } from "@/store/resource/sheet/rowDialog";
+import { SortOrder } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test } from "vitest";
 

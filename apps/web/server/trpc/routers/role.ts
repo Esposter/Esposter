@@ -10,7 +10,9 @@ import { assertIsMember } from "#server/services/room/assertIsMember";
 import { broadcastRoomEvent } from "#server/services/room/broadcastRoomEvent";
 import { assertCanGrantPermissions } from "#server/services/room/rbac/assertCanGrantPermissions";
 import { assertCanManageMemberRole } from "#server/services/room/rbac/assertCanManageMemberRole";
+import { assertCanManageRole } from "#server/services/room/rbac/assertCanManageRole";
 import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
+import { checkIsRoomOwner } from "#server/services/room/rbac/checkIsRoomOwner";
 import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
 import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { readRoleWithAuthority } from "#server/services/room/rbac/readRoleWithAuthority";
@@ -34,8 +36,7 @@ import { readMyPermissionsInputSchema } from "#shared/models/db/role/ReadMyPermi
 import { readRolesInputSchema } from "#shared/models/db/role/ReadRolesInput";
 import { updateRoleInputSchema } from "#shared/models/db/role/UpdateRoleInput";
 import { upsertMemberPermissionOverrideInputSchema } from "#shared/models/db/role/UpsertMemberPermissionOverrideInput";
-import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
-import { getPermissions } from "@esposter/db";
+import { getPermissions, inJsonArray } from "@esposter/db";
 import {
   DatabaseEntityType,
   getTopic,
@@ -48,7 +49,6 @@ import {
   UserToRoomRoleInMessageRelations,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 
 // Every role read and write is the room's, so each publishes or subscribes to the room's one topic
@@ -91,11 +91,10 @@ export const roleRouter = router({
     getRoomTopics,
   ).mutation<RoomRoleInMessage>(async ({ ctx, input: { color, name, permissions, position, roomId } }) => {
     const actorUserId = ctx.user.id;
-    const { isOwner, topPosition: actorTopPosition } = await getRoomMemberAuthority(ctx.db, actorUserId, roomId);
+    const actorAuthority = await getRoomMemberAuthority(ctx.db, actorUserId, roomId);
 
-    if (!checkIsManageable(actorTopPosition, position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
-
-    await assertCanGrantPermissions(ctx.db, actorUserId, roomId, permissions, isOwner);
+    assertCanManageRole(actorAuthority, position);
+    await assertCanGrantPermissions(ctx.db, actorUserId, roomId, permissions, actorAuthority.isOwner);
 
     const newRole = requireMutation(
       (await ctx.db.insert(roomRolesInMessage).values({ color, name, permissions, position, roomId }).returning())[0],
@@ -134,8 +133,7 @@ export const roleRouter = router({
 
     if (role.isEveryone) throw getInvalidOperationError(Operation.Delete, DatabaseEntityType.RoomRole, id);
 
-    const { isOwner, topPosition: actorTopPosition } = actorAuthority;
-    if (!checkIsManageable(actorTopPosition, role.position, isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+    assertCanManageRole(actorAuthority, role.position);
 
     const deletedRole = requireMutation(
       (
@@ -169,7 +167,7 @@ export const roleRouter = router({
     UserToRoomRoleInMessageWithRelations[]
   >(({ ctx, input: { roomId, userIds } }) =>
     ctx.db.query.usersToRoomRolesInMessage.findMany({
-      where: { roomId: { eq: roomId }, userId: { in: userIds } },
+      where: { RAW: (userToRoomRole) => inJsonArray(userToRoomRole.userId, userIds), roomId: { eq: roomId } },
       with: UserToRoomRoleInMessageRelations,
     }),
   ),
@@ -179,12 +177,18 @@ export const roleRouter = router({
   ).query<MyRoomPermissions[]>(async ({ ctx, input: { roomIds } }) => {
     const userId = ctx.user.id;
     const [rooms, permissionsMap, topRolePositionMap] = await Promise.all([
-      ctx.db.query.roomsInMessage.findMany({ columns: { id: true, userId: true }, where: { id: { in: roomIds } } }),
+      ctx.db.query.roomsInMessage.findMany({
+        columns: { id: true, userId: true },
+        where: { RAW: (room) => inJsonArray(room.id, roomIds) },
+      }),
       getPermissions(ctx.db, userId, roomIds),
       getTopRolePosition(ctx.db, userId, roomIds),
     ]);
     return roomIds.map((roomId) => ({
-      isRoomOwner: rooms.find(({ id }) => id === roomId)?.userId === userId,
+      isRoomOwner: checkIsRoomOwner(
+        rooms.find(({ id }) => id === roomId),
+        userId,
+      ),
       permissions: permissionsMap.get(roomId) ?? 0n,
       roomId,
       topRolePosition: topRolePositionMap.get(roomId) ?? -1,
@@ -196,7 +200,7 @@ export const roleRouter = router({
     await assertIsMember(ctx, roomIds);
     return ctx.db.query.roomRolesInMessage.findMany({
       orderBy: { position: "desc" },
-      where: { roomId: { in: roomIds } },
+      where: { RAW: (role) => inJsonArray(role.roomId, roomIds) },
     });
   }),
   revokeRole: getTopicsProcedure(
@@ -230,14 +234,11 @@ export const roleRouter = router({
     const actorUserId = ctx.user.id;
     const [role, actorAuthority] = await readRoleWithAuthority(ctx.db, actorUserId, id, roomId);
 
-    const { isOwner, topPosition: actorTopPosition } = actorAuthority;
-    if (
-      !checkIsManageable(actorTopPosition, role.position, isOwner) ||
-      (rest.position !== undefined && !checkIsManageable(actorTopPosition, rest.position, isOwner))
-    )
-      throw new TRPCError({ code: "UNAUTHORIZED" });
-    else if (rest.permissions !== undefined)
-      await assertCanGrantPermissions(ctx.db, actorUserId, roomId, rest.permissions, isOwner);
+    // The role as it stands and the position it is moved to must both be below the actor, and the owner clears both
+    assertCanManageRole(actorAuthority, role.position);
+    if (rest.position !== undefined) assertCanManageRole(actorAuthority, rest.position);
+    if (rest.permissions !== undefined)
+      await assertCanGrantPermissions(ctx.db, actorUserId, roomId, rest.permissions, actorAuthority.isOwner);
 
     const updatedRole = requireMutation(
       (

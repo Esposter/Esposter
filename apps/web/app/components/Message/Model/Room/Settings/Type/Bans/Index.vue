@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 interface Props {
   room: RoomInMessage;
@@ -18,7 +18,7 @@ const { hasMore, isPending, items, readMoreBans, searchQuery } = useReadBans(roo
     <UiTextField v-model="searchQuery" label="Search bans" :type="UiTextFieldType.Search" />
     <!-- A ban row's own shape while a search is out: the picture, the name and when it happened -->
     <div v-if="isPending" flex flex-col>
-      <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+      <div v-for="index of DEFAULT_PAGE_LIMIT" :key="index" ui-row>
         <UiSkeleton shrink-0 size-6 />
         <UiSkeleton h-4 w="1/4" />
         <UiSkeleton h-4 w="1/3" />

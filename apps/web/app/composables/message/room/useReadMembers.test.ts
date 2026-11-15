@@ -12,7 +12,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useReadMembers, () => {
   const { trpcMsw } = setupMswTrpc();
-  let memberCount: Ref<number>;
+  let memberCount: Ref<number | undefined>;
   let memberCountsByTopRole: Ref<MemberCountByTopRole[]>;
   let readMembers: ReturnType<typeof useReadMembers>["readMembers"];
   const roomId = v7();
@@ -55,7 +55,7 @@ describe(useReadMembers, () => {
     });
     trpcMsw.room.readMembers.query(async () => {
       await readGate;
-      return { hasMore: false, items: [], nextCursor: "" };
+      return { items: [], nextCursor: "" };
     });
     await mountRead();
     const pendingRead = readMembers();
@@ -66,7 +66,7 @@ describe(useReadMembers, () => {
     releaseReads();
     await pendingRead;
 
-    expect(memberCount.value).toBe(0);
+    expect(memberCount.value).toBeUndefined();
     expect(memberCountsByTopRole.value).toStrictEqual([]);
 
     setCurrentRoomId(roomId);

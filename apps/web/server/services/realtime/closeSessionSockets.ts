@@ -18,13 +18,21 @@ export const closeSessionSockets = async (db: Database, userId: string, sessionI
     .select({ roomId: usersToRoomsInMessage.roomId })
     .from(usersToRoomsInMessage)
     .where(eq(usersToRoomsInMessage.userId, userId));
+  // A failed read of the joined calls costs the calls it names and no other object: the closes below still run, and the
+  // Failure is logged
   const [memberRooms, callSessionRows, joinedCallIds] = await Promise.all([
     memberRoomIds,
     db
       .select({ id: callSessionsInMessage.id })
       .from(callSessionsInMessage)
       .where(or(eq(callSessionsInMessage.userId, userId), inArray(callSessionsInMessage.roomId, memberRoomIds))),
-    useUserObject(userId).readJoinedCallIds(),
+    getResultAsync(() => useUserObject(userId).readJoinedCallIds()).match(
+      (ids) => ids,
+      (error) => {
+        console.error("Joined calls failed to read for a revoked session", { error, sessionId, userId });
+        return [];
+      },
+    ),
   ]);
   const roomIds = memberRooms.map(({ roomId }) => roomId);
   const callSessionIds = [...new Set([...callSessionRows.map(({ id }) => id), ...joinedCallIds])];

@@ -121,6 +121,5 @@ export const usePageBuilderContent = <
     formValue: draftValue,
     pointer: computed(() => target.value?.pointer),
     setFormValue,
-    validationSchema: computed(() => target.value?.propsSchema),
   };
 };

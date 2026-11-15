@@ -15,7 +15,7 @@ describe("resourceLinkSelect", () => {
     expect.hasAssertions();
 
     const wrapper = await mountSuspended(ResourceLinkSelect, {
-      props: { label, modelValue: v7(), resources: { hasMore: false, items } },
+      props: { label, modelValue: v7(), resources: { items, nextCursor: "" } },
     });
 
     expect(wrapper.find("[role='alert']").text()).toBe(getMissingResourceMessage("email"));
@@ -25,7 +25,7 @@ describe("resourceLinkSelect", () => {
   // The read left out
   test.each([
     ["before the resources are read", undefined],
-    ["past the read cap", { hasMore: true, items }],
+    ["past the read cap", { items, nextCursor: v7() }],
   ])("claims nothing %s", async (_title, resources) => {
     expect.hasAssertions();
 

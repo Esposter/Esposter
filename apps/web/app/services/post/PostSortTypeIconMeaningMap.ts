@@ -1,4 +1,4 @@
-import { PostSortType } from "@/models/post/PostSortType";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 export const PostSortTypeIconMeaningMap = {

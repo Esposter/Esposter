@@ -34,7 +34,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
   // Room around one older message and leaves the newer ones unloaded, so the bottom of that window is still the
   // Past. Nothing loaded yet is neither: there is no present to jump to until the first page lands
   const isViewingOlderMessages = computed(
-    () => dataStore.items.length > 0 && (!isNearPresent.value || dataStore.hasMoreNewer),
+    () => dataStore.items.length > 0 && (!isNearPresent.value || dataStore.previousCursor !== ""),
   );
   const activeMessageId = ref(0);
   const roomStore = useRoomStore();
@@ -51,7 +51,7 @@ export const useScrollStore = defineStore("message/ui/scroll", () => {
     // Scrolling cannot reach messages that were never loaded, so a window that is not the tail is re-read rather
     // Than scrolled: the room's own route reads the newest page by definition, and a newer cursor is only ever
     // Left behind by the permalink route it navigates away from
-    else if (dataStore.hasMoreNewer) await navigateTo(RoutePath.Messages(roomId));
+    else if (dataStore.previousCursor !== "") await navigateTo(RoutePath.Messages(roomId));
     // The list is column-reversed, so its scroll origin is the newest message
     else if (messageContainerElement.value) messageContainerElement.value.scrollTop = 0;
   };

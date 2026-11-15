@@ -1,5 +1,5 @@
+import type { NamedAppUserInMessage } from "#shared/models/db/webhook/NamedAppUserInMessage";
 import type {
-  AppUserInMessage,
   IssuedWebhookInMessage,
   PublicWebhookInMessage,
   WebhookInMessageWithRelations,
@@ -60,11 +60,7 @@ export const webhookRouter = router({
     const [, webhookRows] = await ctx.db.batch([
       ctx.db.insert(appUsersInMessage).select(
         ctx.db
-          .select({
-            ...getInsertSelectMetadata(appUsersInMessage),
-            id: sql`${appUserId}`.as("id"),
-            name: sql`${name}`.as("name"),
-          })
+          .select({ ...getInsertSelectMetadata(appUsersInMessage), id: sql`${appUserId}`.as("id") })
           .from(roomsInMessage)
           .where(isUnderWebhookCap),
       ),
@@ -115,9 +111,10 @@ export const webhookRouter = router({
   }),
   readAppUsers: getTopicsProcedure(getMemberProcedure(readAppUsersInputSchema, "roomId"), ({ input }) => [
     getTopic(TopicKind.Webhook, input.roomId),
-  ]).query<AppUserInMessage[]>(({ ctx, input: { ids, roomId } }) =>
+  ]).query<NamedAppUserInMessage[]>(({ ctx, input: { ids, roomId } }) =>
+    // The name is the webhook's, the row that renames the bot, so a rename reaches every message the bot posted
     ctx.db
-      .select(getColumns(appUsersInMessage))
+      .select({ ...getColumns(appUsersInMessage), name: webhooksInMessage.name })
       .from(appUsersInMessage)
       .innerJoin(webhooksInMessage, eq(webhooksInMessage.userId, appUsersInMessage.id))
       .where(and(eq(webhooksInMessage.roomId, roomId), inJsonArray(appUsersInMessage.id, ids))),

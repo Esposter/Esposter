@@ -1,8 +1,9 @@
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { PublicUser } from "@esposter/db-schema";
 
-import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
 import { MemberCounts } from "@/models/message/user/MemberCounts";
+import { compareText } from "@/services/message/member/compareText";
+import { foldAsciiCase } from "@/services/message/member/foldAsciiCase";
 import { memberRoleChangeHooks } from "@/services/message/member/memberRoleChangeHooks";
 import { createBatchedRefresh } from "@/services/shared/createBatchedRefresh";
 import { createOperationData } from "@/services/shared/createOperationData";
@@ -23,13 +24,14 @@ export const useMemberStore = defineStore("message/user/member", () => {
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
   const { getSlice, items, ...restData } = useCursorPaginationDataMap<MemberInRoom>(() => roomStore.scopedRoomId);
-  // Sorted the way the server pages them, on the same display name and id, so a loaded page reads in the order the
-  // Cursor advances through it
+  // Sorted the way the server pages them: a display name compared case-insensitively and then byte by byte, the same
+  // Comparison on the same display name, and then the id. The list is one order whether it was read in pages or joined
+  // Live. A locale collation has no SQLite counterpart, so a list sorted by one would not be the order the cursor advances
   const members = computed(() =>
     items.value.toSorted(
       (firstMember, secondMember) =>
-        EN_US_COMPARATOR.compare(firstMember.displayName, secondMember.displayName) ||
-        EN_US_COMPARATOR.compare(firstMember.id, secondMember.id),
+        compareText(foldAsciiCase(firstMember.displayName), foldAsciiCase(secondMember.displayName)) ||
+        compareText(firstMember.id, secondMember.id),
     ),
   );
   // Server-computed totals for the member list headers — the paginated items only hold loaded pages. Keyed by

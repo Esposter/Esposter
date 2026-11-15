@@ -9,6 +9,7 @@ import { userObjectCalls } from "#server/composables/realtime/useUserObject.test
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { MockJobQueue, MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
+import { MockPublishedTopics } from "#server/services/realtime/publishTopics.test";
 import { getBucket } from "#server/services/storage/getBucket";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
@@ -21,6 +22,7 @@ import {
   getMockRevokeSession,
   getMockSession,
 } from "#server/trpc/context.test";
+import { roomRouter } from "#server/trpc/routers/room";
 import { userRouter } from "#server/trpc/routers/user";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
@@ -31,10 +33,12 @@ import {
   DatabaseEntityType,
   dataExportsInUser,
   DataExportStatus,
+  getTopic,
   McpScope,
   QueueJob,
   sessionsInAuth,
   StorageBucket,
+  TopicKind,
   UserStatus,
   userStatusesInMessage,
   WRITE_PRESIGNED_URL_DURATION_MS,
@@ -282,6 +286,16 @@ describe("userRouter", () => {
     const updatedUser = await authSessionCaller.updateUser({ biography: "" });
 
     expect(updatedUser.biography).toBe("");
+  });
+
+  test("publishes each room the person is in, whose members read the profile through the room's topic", async () => {
+    expect.hasAssertions();
+
+    const room = await createCallerFactory(roomRouter)(mockContext).createRoom({ name });
+    MockPublishedTopics.length = 0;
+    await caller.updateUser({ name });
+
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Room, room.id));
   });
 
   test("reads user", async () => {

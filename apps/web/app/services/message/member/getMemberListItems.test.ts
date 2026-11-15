@@ -23,6 +23,15 @@ describe(getMemberListItems, () => {
     expect(memberItems.map(({ group }) => group)).toStrictEqual(["Mod — 3", "Members — 2"]);
   });
 
+  // Offline the total is unknown, so no group is headed by a count the loaded rows only happen to add up to
+  test("heads a group by its name alone while the total is unknown", () => {
+    expect.hasAssertions();
+
+    const memberItems = getMemberListItems([{ members: [rolelessMember] }], undefined, [], () => "");
+
+    expect(memberItems.map(({ group }) => group)).toStrictEqual(["Members"]);
+  });
+
   test("describes each row with its status message", () => {
     expect.hasAssertions();
 

@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
+import type { Page } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
 import { MemberCounts } from "@/models/message/user/MemberCounts";
@@ -12,17 +12,18 @@ import { writeIndexedDb } from "@/services/cache/indexedDb/writeIndexedDb";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useMemberStore } from "@/store/message/user/member";
+import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useMemberCache, () => {
-  let memberCount: ComputedRef<number>;
+  let memberCount: ComputedRef<number | undefined>;
   let memberCountsByTopRole: ComputedRef<MemberCountByTopRole[]>;
   let members: Ref<MemberInRoom[]>;
   let getMemberCountsRef: ReturnType<typeof useMemberStore>["getMemberCountsRef"];
-  let initializeCursorPaginationData: (data: CursorPaginationData<MemberInRoom>) => void;
+  let initializeCursorPaginationData: (data: Page<MemberInRoom>) => void;
   const partitionKey = v7();
   const secondPartitionKey = v7();
   const user = createUser();
@@ -41,7 +42,7 @@ describe(useMemberCache, () => {
           onUnmounted(() => {
             for (const roomId of [initialRouteId, secondPartitionKey])
               getMemberCountsRef(roomId).value = new MemberCounts();
-            initializeCursorPaginationData(new CursorPaginationData<MemberInRoom>());
+            initializeCursorPaginationData(createEmptyPage<MemberInRoom>());
           });
         },
       }),
@@ -73,7 +74,7 @@ describe(useMemberCache, () => {
     await flushCache();
 
     expect(members.value).toHaveLength(1);
-    expect(memberCount.value).toBe(1);
+    expect(memberCount.value).toBeUndefined();
     expect(memberCountsByTopRole.value).toStrictEqual([]);
     expect(takeOne(members.value).id).toStrictEqual(user.id);
   });

@@ -5,20 +5,31 @@ import type { UpdateMessageInput } from "#shared/models/db/message/UpdateMessage
 import type { MessageEvents } from "#shared/models/message/events/MessageEvents";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
-import type { Typing } from "@esposter/db-schema";
+import type { Page, Typing } from "@esposter/db-schema";
 import type { Editor } from "@tiptap/core";
 
+import { BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS } from "#shared/services/pagination/constants";
 import { MessageHook } from "@/models/message/MessageHook";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { createOperationData } from "@/services/shared/createOperationData";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { DatabaseEntityType } from "@esposter/db-schema";
-import { getResultAsync, getSynchronizedFunction, noop, Operation } from "@esposter/shared";
+import {
+  chunk,
+  createExponentialBackoff,
+  getResultAsync,
+  getSynchronizedFunction,
+  MAX_READ_LIMIT,
+  noop,
+  Operation,
+  withFinalizerAsync,
+} from "@esposter/shared";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -33,21 +44,40 @@ export const useDataStore = defineStore("message/data", () => {
   // Removal all belong to the room the message is in, whichever room the reader has moved to since
   const getRoomOperationData = (roomId: ClientMessage["roomId"]) =>
     createOperationData(getSlice(roomId).items, ["id"], DatabaseEntityType.Message);
-  // Keyed by room like the list they page, never global: a deep link into a room leaves a newer-cursor behind,
-  // And a global one would still be pointing at that room's window after the switch — so the next room renders
-  // A "load newer" waypoint it never earned and pages in a window cut from another room's timestamps
-  // The newer-page cursor belongs to its room exactly as the rows do, and every write of it happens after an
-  // Await — so the ambient pair is a reading view the waypoint renders, and a writer is obtained by naming a room
-  const { data: ambientHasMoreNewer, getDataRef: getHasMoreNewerRef } = useDataMap(
-    () => roomStore.currentRoomId,
-    false,
-  );
-  const { data: ambientNextCursorNewer, getDataRef: getNextCursorNewerRef } = useDataMap(
+  // The newer side of the list is one cursor per room, the one the server answered for it, keyed by room like the rows
+  // It pages: a deep link into a room leaves a cursor behind, and a global one would still point at that room's window
+  // After the switch, so the next room renders a "load newer" waypoint it never earned. Every write of it happens after
+  // An await, so the ambient value is a reading view the waypoint renders, and a writer is obtained by naming a room
+  const { data: ambientPreviousCursor, getDataRef: getPreviousCursorRef } = useDataMap(
     () => roomStore.currentRoomId,
     "",
   );
-  const hasMoreNewer = computed(() => ambientHasMoreNewer.value);
-  const nextCursorNewer = computed(() => ambientNextCursorNewer.value);
+  const previousCursor = computed(() => ambientPreviousCursor.value);
+  const online = useOnline();
+  // The waypoint re-arms on completion even when a newer page fails, so retries are paced the way the older side paces them
+  const executeNewerWithBackoff = createExponentialBackoff(BACKOFF_BASE_DELAY_MS, BACKOFF_MAX_DELAY_MS);
+  // Reads the newer side of a room's list from the cursor the room holds, and places its page ahead of the rows it has. A
+  // Page is held only while the cursor it was read from is still the room's: a newer read or a fresh load that replaced
+  // That chain leaves its page belonging to a window the list no longer holds, so it is dropped
+  const readMoreNewerItems = (
+    roomId: ClientMessage["roomId"],
+    query: (cursor: string) => Promise<Page<ClientMessage>>,
+    onComplete?: () => void,
+  ) => {
+    const boundPreviousCursor = getPreviousCursorRef(roomId);
+    const { items: roomItems } = getSlice(roomId);
+    return withFinalizerAsync(async () => {
+      if (!online.value) return;
+
+      const issuedCursor = boundPreviousCursor.value;
+      const newerPage = await executeNewerWithBackoff(() => query(issuedCursor));
+      if (boundPreviousCursor.value !== issuedCursor) return;
+
+      const newerIds = new Set(newerPage.items.map(({ id }) => id));
+      roomItems.value = [...newerPage.items, ...roomItems.value.filter(({ id }) => !newerIds.has(id))];
+      boundPreviousCursor.value = newerPage.nextCursor;
+    }, onComplete);
+  };
   // The one field here that is not keyed by room, deliberately: a typing indicator expires after three seconds,
   // So a per-room slice would only ever hold entries that have already lapsed. The subscription owns it instead —
   // Its teardown empties this as it unsubscribes, so the list always describes the room currently subscribed
@@ -192,25 +222,38 @@ export const useDataStore = defineStore("message/data", () => {
     await MessageHookMap[Operation.Delete].run(input);
     baseStoreDeleteMessage(input);
   };
-  // A reconnect replays the messages it missed but not the edits or deletes, so the loaded window is read again by id.
-  // A row the room no longer returns was deleted while the socket was closed, and one whose `updatedAt` has moved was
-  // Edited, and each goes through the same funnel its live event would have
+  // A reconnect replays the messages it missed but not the edits or deletes, so every message the client holds is read
+  // Again by id: the loaded window and each row a store keeps beside it. A row the room does not return is a deletion the
+  // Closed socket missed, and one whose `updatedAt` differs from any copy of it is an edit it missed. Each goes through the
+  // Same funnel its live event would have, so every copy is written at once
   const refreshLoadedMessages = getSynchronizedFunction((roomId: ClientMessage["roomId"]) =>
     getResultAsync(async () => {
-      const { items: roomItems } = getSlice(roomId);
-      const loadedMessages = roomItems.value.filter(({ isLoading }) => !isLoading);
-      if (loadedMessages.length === 0) return;
+      const heldMessages = [...getSlice(roomId).items.value];
+      for (const holder of messageHolderRegistry.hooks)
+        holder(roomId, (messages) => {
+          heldMessages.push(...messages);
+        });
+      const copiesById = Map.groupBy(
+        heldMessages.filter(({ isLoading }) => !isLoading),
+        ({ id }) => id,
+      );
+      if (copiesById.size === 0) return;
 
-      const liveMessages = await $trpc.message.readMessagesByIds.query({
-        messageIds: loadedMessages.map(({ id }) => id),
-        roomId,
-      });
+      // The held rows can name more messages than one read takes, so the ids go out in chunks of its cap, all at once,
+      // And the answers are merged once every chunk is in
+      const liveMessages = (
+        await Promise.all(
+          chunk([...copiesById.keys()], MAX_READ_LIMIT).map((messageIds) =>
+            $trpc.message.readMessagesByIds.query({ messageIds, roomId }),
+          ),
+        )
+      ).flat();
       const liveMessageMap = new Map(liveMessages.map((message) => [message.id, message]));
       await Promise.all(
-        loadedMessages.map(async (loadedMessage) => {
-          const liveMessage = liveMessageMap.get(loadedMessage.id);
-          if (!liveMessage) await storeDeleteMessage({ id: loadedMessage.id, roomId });
-          else if (liveMessage.updatedAt.getTime() !== loadedMessage.updatedAt.getTime())
+        Array.from(copiesById, async ([messageId, copies]) => {
+          const liveMessage = liveMessageMap.get(messageId);
+          if (!liveMessage) await storeDeleteMessage({ id: messageId, roomId });
+          else if (copies.some(({ updatedAt }) => updatedAt.getTime() !== liveMessage.updatedAt.getTime()))
             await storeUpdateMessage({ ...liveMessage, roomId });
         }),
       );
@@ -245,12 +288,11 @@ export const useDataStore = defineStore("message/data", () => {
   return {
     createMessage,
     deleteFile,
-    getHasMoreNewerRef,
-    getNextCursorNewerRef,
+    getPreviousCursorRef,
     getSlice,
-    hasMoreNewer,
     items,
-    nextCursorNewer,
+    previousCursor,
+    readMoreNewerItems,
     refreshLoadedMessages,
     sendMessage,
     storeCreateMessage,

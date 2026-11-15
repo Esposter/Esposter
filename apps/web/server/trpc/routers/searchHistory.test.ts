@@ -36,7 +36,7 @@ describe("searchHistoryRouter", () => {
 
     const searchHistories = await searchHistoryCaller.readSearchHistories({ roomId });
 
-    expect(searchHistories).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(searchHistories).toStrictEqual({ items: [], nextCursor: "" });
   });
 
   test("reads search histories", async () => {
@@ -50,6 +50,28 @@ describe("searchHistoryRouter", () => {
     expect(searchHistory.id).toBe(newSearchHistory.id);
     expect(searchHistory.roomId).toBe(roomId);
     expect(searchHistory.query).toBe(query);
+  });
+
+  test("reads the list to its end newest first across a page boundary", async () => {
+    expect.hasAssertions();
+
+    const searchHistories = await Promise.all(
+      ["first", "second", "third"].map((searchQuery) =>
+        searchHistoryCaller.createSearchHistory({ query: searchQuery, roomId }),
+      ),
+    );
+    const firstPage = await searchHistoryCaller.readSearchHistories({ limit: 2, roomId });
+    const secondPage = await searchHistoryCaller.readSearchHistories({
+      cursor: firstPage.nextCursor,
+      limit: 2,
+      roomId,
+    });
+
+    // Newest first is descending on the id, which the UUIDv7s order by creation
+    expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual(
+      searchHistories.map(({ id }) => id).toSorted((firstId, secondId) => secondId.localeCompare(firstId)),
+    );
+    expect(secondPage.nextCursor).toBe("");
   });
 
   test("excludes another member's search histories", async () => {

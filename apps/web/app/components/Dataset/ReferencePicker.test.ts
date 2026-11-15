@@ -27,9 +27,9 @@ describe("datasetReferencePicker", () => {
     const sheet = createResourceListItem();
     trpcMsw.survey.readResources.query(async () => {
       await readGate;
-      return { hasMore: false, items: [{ ...survey, publication: null }] };
+      return { items: [{ ...survey, publication: null }], nextCursor: "" };
     });
-    trpcMsw.sheet.readResources.query(() => ({ hasMore: false, items: [{ ...sheet, publication: null }] }));
+    trpcMsw.sheet.readResources.query(() => ({ items: [{ ...sheet, publication: null }], nextCursor: "" }));
     useSession.mockReturnValue(ref({ data: { user: { id: v7() } } }));
     const wrapper = await mountSuspended(DatasetReferencePicker, { props: { error: "", modelValue: undefined } });
     const [typeSelect, sourceSelect] = wrapper.findAllComponents(UiSelect);

@@ -1,13 +1,11 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { checkIsMessageId } from "@/services/message/checkIsMessageId";
-import { checkIsNewerMessage } from "@/services/message/checkIsNewerMessage";
+import { toRoomMessagePage } from "@/services/message/message/toRoomMessagePage";
 import { requirePartitionKey } from "@/services/message/requirePartitionKey";
-import { toMessagePage } from "@/services/message/toMessagePage";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { takeOne } from "@esposter/shared";
 
 export const useReadMessages = () => {
   const { currentRoute } = useRouter();
@@ -15,82 +13,50 @@ export const useReadMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
-  const { getHasMoreNewerRef, getNextCursorNewerRef, getSlice, readItems, readMoreItems } = dataStore;
+  const { getPreviousCursorRef, readItems, readMoreItems, readMoreNewerItems } = dataStore;
   const readMetadata = useReadMessageMetadata();
+  // A page of a room's messages as the list holds it. A row names only its own id, so the room rides on each message
+  const readRoomMessagePage = async (roomId: ClientMessage["roomId"], cursor: string) => {
+    const page = await $trpc.message.readMessages.query({ cursor, roomId });
+    const roomMessagePage = toRoomMessagePage(page, roomId);
+    await readMetadata(roomId, roomMessagePage.items);
+    return roomMessagePage;
+  };
 
   const readMessages = () => {
     const roomId = requirePartitionKey(currentRoomId.value, readMessages.name);
-    // Both are written after an await, so they name the room this read was issued for rather than the one the
-    // Reader has open by the time it lands
-    const hasMoreNewer = getHasMoreNewerRef(roomId);
-    const nextCursorNewer = getNextCursorNewerRef(roomId);
+    // Written after an await, so the cursor names the room this read was issued for rather than the one the reader has
+    // Open by the time it lands
+    const previousCursor = getPreviousCursorRef(roomId);
     return readItems(async () => {
       // A route param is whatever the address bar holds, so one that is no message id reads as no message to open on
       const messageId = getRouteParam(currentRoute.value.params, "messageId");
       if (checkIsMessageId(messageId)) {
-        const [message] = await $trpc.message.readMessagesByIds.query({ messageIds: [Number(messageId)], roomId });
-        if (message) {
-          // A page older than the message, the message itself first: the newer side is not read, so it stays unloaded
-          const page = toMessagePage(
-            roomId,
-            await $trpc.message.readMessages.query({ before: message.id + 1, roomId }),
-          );
-          hasMoreNewer.value = true;
-          nextCursorNewer.value = String(message.id);
-          await readMetadata(roomId, page.items);
-          return page;
+        // The room opens at the message and reads both ways from it. A message the room does not hold leaves the
+        // Window around its id, so the window only counts when it holds the message itself
+        const anchoredPage = await $trpc.message.readMessagesAround.query({ messageId: Number(messageId), roomId });
+        if (anchoredPage.items.some(({ id }) => id === Number(messageId))) {
+          const roomMessagePage = toRoomMessagePage(anchoredPage, roomId);
+          await readMetadata(roomId, roomMessagePage.items);
+          previousCursor.value = anchoredPage.previousCursor;
+          return roomMessagePage;
         }
       }
 
-      const page = toMessagePage(roomId, await $trpc.message.readMessages.query({ roomId }));
-      hasMoreNewer.value = false;
-      nextCursorNewer.value = "";
-      await readMetadata(roomId, page.items);
+      const page = await readRoomMessagePage(roomId, "");
+      previousCursor.value = "";
       return page;
     });
   };
 
   const readMoreMessages = (onComplete: () => void) => {
     const roomId = requirePartitionKey(currentRoomId.value, readMoreMessages.name);
-    return readMoreItems(async (cursor) => {
-      const page = toMessagePage(roomId, await $trpc.message.readMessages.query({ before: Number(cursor), roomId }));
-      await readMetadata(roomId, page.items);
-      return page;
-    }, onComplete);
+    return readMoreItems((cursor) => readRoomMessagePage(roomId, cursor), onComplete);
   };
 
-  const readMoreNewerMessages = async (onComplete: () => void) => {
-    if (!currentRoomId.value) return;
-    // The room this page was read for, resolved before the request goes out — the reader can open another room
-    // While it is in flight, and the page and its cursor belong to the room that asked for them either way
-    const roomId = currentRoomId.value;
-    const { items: roomItems } = getSlice(roomId);
-    const hasMoreNewer = getHasMoreNewerRef(roomId);
-    const nextCursorNewer = getNextCursorNewerRef(roomId);
-    // The messages after the cursor come oldest first, so the page is turned newest first to sit where the list
-    // Holds it
-    const { hasMore, items: newerPage } = await $trpc.message.readMessages.query({
-      after: Number(nextCursorNewer.value),
-      roomId,
-    });
-    const items = newerPage.map((message) => ({ ...message, roomId })).toReversed();
-    // The newest message of the page is what the next read starts after
-    const newestMessage = newerPage.at(-1);
-    hasMoreNewer.value = hasMore;
-    nextCursorNewer.value = hasMore && newestMessage ? String(newestMessage.id) : "";
-
-    const messageIds = new Set(items.map(({ id }) => id));
-    const newerItems: ClientMessage[] = [];
-    const olderItems: ClientMessage[] = [];
-
-    for (const item of roomItems.value)
-      if (!messageIds.has(item.id))
-        if (items.length > 0 && checkIsNewerMessage(item, takeOne(items))) newerItems.push(item);
-        else olderItems.push(item);
-
-    roomItems.value = [...newerItems, ...items, ...olderItems];
-    await readMetadata(roomId, items);
-    onComplete();
+  const readMoreNewerMessages = (onComplete: () => void) => {
+    const roomId = requirePartitionKey(currentRoomId.value, readMoreNewerMessages.name);
+    return readMoreNewerItems(roomId, (cursor) => readRoomMessagePage(roomId, cursor), onComplete);
   };
 
   return { readMessages, readMoreMessages, readMoreNewerMessages };

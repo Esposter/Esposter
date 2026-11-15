@@ -1,16 +1,7 @@
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
-import { roomIdSchema, roomMessageSchema } from "@esposter/db-schema";
-import { MAX_READ_LIMIT } from "@esposter/shared";
-import { z } from "zod";
+import type { z } from "zod";
 
-// The sent messages of the caller, newest first, from the one after `before`: the last message of the previous page,
-// Named by the triple the sender's index holds it under
-export const readMySentMessagesInputSchema = z
-  .object({
-    before: z
-      .object({ createdAt: z.coerce.date(), messageId: roomMessageSchema.shape.id, roomId: roomIdSchema.shape.roomId })
-      .optional(),
-    limit: z.int().min(1).max(MAX_READ_LIMIT).default(DEFAULT_READ_LIMIT),
-  })
-  .prefault({});
+import { createPageInputSchema, SENT_MESSAGE_PAGE_SORT } from "@esposter/db-schema";
+
+// The caller's sent messages newest first, from the cursor the last page answered
+export const readMySentMessagesInputSchema = createPageInputSchema(SENT_MESSAGE_PAGE_SORT).prefault({});
 export type ReadMySentMessagesInput = z.infer<typeof readMySentMessagesInputSchema>;

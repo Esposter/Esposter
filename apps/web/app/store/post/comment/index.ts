@@ -3,7 +3,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
-import { PostSortType } from "@/models/post/PostSortType";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { applyPostCounts } from "@/services/post/applyPostCounts";
 import { postCountHooks } from "@/services/post/postCountHooks";

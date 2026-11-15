@@ -1,18 +1,17 @@
 import type { ReadNotificationsResult } from "#shared/models/db/notification/ReadNotificationsResult";
-import type { NotificationInNotification, relations, Topic } from "@esposter/db-schema";
+import type { Topic } from "@esposter/db-schema";
 import type { User } from "better-auth";
-import type { RelationsFilter } from "drizzle-orm";
 
 import { ownedBy } from "#server/services/db/ownedBy";
 import { getUnreadNotificationsWhere } from "#server/services/notification/getUnreadNotificationsWhere";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { selectUnreadNotificationCount } from "#server/services/notification/selectUnreadNotificationCount";
 import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readNotificationsInputSchema } from "#shared/models/db/notification/ReadNotificationsInput";
+import { NOTIFICATION_PAGE_SORT } from "#shared/services/notification/constants";
+import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   getTopic,
@@ -21,7 +20,7 @@ import {
   TopicKind,
 } from "@esposter/db-schema";
 import { Operation, takeOne } from "@esposter/shared";
-import { count, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 // The notifications a user holds, and the unread count the bell shows of them, are one topic for the user
 const notificationTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
@@ -29,57 +28,60 @@ const notificationTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
 ];
 
 export const notificationRouter = router({
+  // Each write answers the unread count it leaves, read in the same batch, so the bell takes the settled value
   deleteNotification: getTopicsProcedure(
     standardAuthedProcedure.input(selectNotificationInNotificationSchema.shape.id),
     notificationTopics,
-  ).mutation<NotificationInNotification>(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .delete(notificationsInNotification)
-          .where(ownedBy(notificationsInNotification, input, ctx.user.id))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.Notification,
-      input,
-    ),
-  ),
-  deleteNotifications: getTopicsProcedure(standardAuthedProcedure, notificationTopics).mutation<void>(
+  ).mutation<number>(async ({ ctx, input }) => {
+    const [deletedRows, unreadRows] = await ctx.db.batch([
+      ctx.db
+        .delete(notificationsInNotification)
+        .where(ownedBy(notificationsInNotification, input, ctx.user.id))
+        .returning(),
+      selectUnreadNotificationCount(ctx.db, ctx.user.id),
+    ]);
+    requireMutation(deletedRows[0], Operation.Delete, DatabaseEntityType.Notification, input);
+    return takeOne(unreadRows).count;
+  }),
+  deleteNotifications: getTopicsProcedure(standardAuthedProcedure, notificationTopics).mutation<number>(
     async ({ ctx }) => {
-      await ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id));
+      const [, unreadRows] = await ctx.db.batch([
+        ctx.db.delete(notificationsInNotification).where(eq(notificationsInNotification.userId, ctx.user.id)),
+        selectUnreadNotificationCount(ctx.db, ctx.user.id),
+      ]);
+      return takeOne(unreadRows).count;
     },
   ),
   readNotifications: getTopicsProcedure(
     standardAuthedProcedure.input(readNotificationsInputSchema),
     notificationTopics,
-  ).query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit, sortBy } }) => {
+  ).query<ReadNotificationsResult>(async ({ ctx, input: { cursor, limit } }) => {
     const userId = ctx.user.id;
-    const where: RelationsFilter<(typeof relations)["notificationsInNotification"], typeof relations> = {
-      userId: { eq: userId },
-    };
-    if (cursor) where.RAW = (notification) => getCursorWhere(notification, cursor, sortBy);
-    // The badge counts every unread row, not the ones a page happens to hold: unread notifications sit on pages
-    // The bell has never read, so the total is the server's to state and rides the read the page already costs
-    const [resultNotifications, unreadCounts] = await Promise.all([
-      ctx.db.query.notificationsInNotification.findMany({
-        limit: limit + 1,
-        orderBy: (notification) => parseSortByToSql(notification, sortBy),
-        where,
-      }),
-      ctx.db.select({ count: count() }).from(notificationsInNotification).where(getUnreadNotificationsWhere(userId)),
+    const boundSort = createPageSort({ id: notificationsInNotification.id }, NOTIFICATION_PAGE_SORT);
+    // The badge counts every unread row, not the ones a page happens to hold: unread notifications sit on pages the
+    // Bell has never read, so the total is answered with the first page alone and the later pages leave it as it is
+    const [rows, unreadRows] = await Promise.all([
+      ctx.db
+        .select()
+        .from(notificationsInNotification)
+        .where(and(eq(notificationsInNotification.userId, userId), getPageWhere(boundSort, cursor)))
+        .orderBy(...getPageOrderBy(boundSort, cursor))
+        .limit(limit + 1),
+      cursor.values.length === 0 ? selectUnreadNotificationCount(ctx.db, userId) : undefined,
     ]);
-    return {
-      paginationData: getCursorPaginationData(resultNotifications, limit, sortBy),
-      unreadCount: takeOne(unreadCounts).count,
-    };
+    const page = toPage(rows, NOTIFICATION_PAGE_SORT, cursor, limit);
+    return unreadRows ? { ...page, unreadCount: takeOne(unreadRows).count } : page;
   }),
-  updateNotificationsReadStatus: getTopicsProcedure(standardAuthedProcedure, notificationTopics).mutation<void>(
+  updateNotificationsReadStatus: getTopicsProcedure(standardAuthedProcedure, notificationTopics).mutation<number>(
     async ({ ctx }) => {
-      await ctx.db
-        .update(notificationsInNotification)
-        .set({ isRead: true })
-        .where(getUnreadNotificationsWhere(ctx.user.id));
+      const [, unreadRows] = await ctx.db.batch([
+        ctx.db
+          .update(notificationsInNotification)
+          .set({ isRead: true })
+          .where(getUnreadNotificationsWhere(ctx.user.id)),
+        selectUnreadNotificationCount(ctx.db, ctx.user.id),
+      ]);
+      return takeOne(unreadRows).count;
     },
   ),
 });

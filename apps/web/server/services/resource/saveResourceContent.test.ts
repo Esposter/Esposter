@@ -9,6 +9,7 @@ import { readResourceContent } from "#server/services/resource/readResourceConte
 import { saveResourceContent } from "#server/services/resource/saveResourceContent";
 import { readSnapshotHistory } from "#server/services/resource/snapshot/readSnapshotHistory";
 import { readSnapshotVersionContent } from "#server/services/resource/snapshot/readSnapshotVersionContent";
+import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -607,5 +608,27 @@ describe(saveResourceContent, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash, otherAssetHash].toSorted());
+  });
+
+  // The rollback finds the row by its owner and id rather than as a live row, so a resource binned after the bump
+  // Still has its version put back
+  test("puts the version back when the resource is binned before the save fails", async () => {
+    expect.hasAssertions();
+
+    uploadMock.mockImplementationOnce(async (...parameters: Parameters<typeof uploadMock>) => {
+      await uploadMock.getMockImplementation()?.(...parameters);
+      await softDeleteResources(mockContext.db, eq(resourcesInResource.id, resource.id));
+      throw new Error(" ");
+    });
+
+    await expect(
+      saveResourceContent(ctx, { content, contentVersion: resource.contentVersion, resource }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    const binnedResource = await mockContext.db.query.resourcesInResource.findFirst({
+      columns: { contentVersion: true },
+      where: { id: { eq: resource.id } },
+    });
+    expect(binnedResource).toStrictEqual({ contentVersion: resource.contentVersion });
   });
 });

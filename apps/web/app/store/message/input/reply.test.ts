@@ -36,4 +36,18 @@ describe(useReplyStore, () => {
 
     expect(getReplyMapRef(roomId).value.get(repliedMessage.id)?.id).toBe(repliedMessage.id);
   });
+
+  // A quoted message read from the server is a copy of the room's row, so an edit of the quoted message reaches the
+  // Quote through the hook rather than the quote holding the text from before the edit
+  test("takes an edit to a quoted message", async () => {
+    expect.hasAssertions();
+
+    const replyStore = useReplyStore();
+    const { getReplyMapRef } = replyStore;
+    const quotedMessage = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: 1 };
+    getReplyMapRef(roomId).value.set(quotedMessage.id, { ...quotedMessage });
+    await MessageHookMap[Operation.Update].run({ id: quotedMessage.id, message: "edited", roomId });
+
+    expect(getReplyMapRef(roomId).value.get(quotedMessage.id)?.message).toBe("edited");
+  });
 });

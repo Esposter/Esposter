@@ -1,8 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { RoomMemberAuthority } from "#shared/models/room/RoomMemberAuthority";
 
+import { assertCanManageRole } from "#server/services/room/rbac/assertCanManageRole";
 import { getRoomMemberAuthority } from "#server/services/room/rbac/getRoomMemberAuthority";
-import { checkIsManageable } from "#shared/services/room/rbac/checkIsManageable";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { TRPCError } from "@trpc/server";
 
@@ -15,7 +15,7 @@ export const assertCanManageMemberRole = async (
   roomId: string,
   userId: string,
 ): Promise<void> => {
-  if (!checkIsManageable(actor.topPosition, rolePosition, actor.isOwner)) throw new TRPCError({ code: "UNAUTHORIZED" });
+  assertCanManageRole(actor, rolePosition);
 
   const targetAuthority = await getRoomMemberAuthority(db, userId, roomId);
   if (!checkIsMemberManageable(actor, targetAuthority)) throw new TRPCError({ code: "UNAUTHORIZED" });

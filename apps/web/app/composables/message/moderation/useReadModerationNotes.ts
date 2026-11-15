@@ -22,11 +22,14 @@ export const useReadModerationNotes = (
       setModerationNoteCount(targetUserIdValue, count);
       return moderationNotes;
     });
-  const readMoreModerationNotes = (onComplete: () => void) =>
-    readMoreItems(
+  const readMoreModerationNotes = (onComplete: () => void) => {
+    // Taken as the read is issued, so a retry after the dialog moved to another target still asks for this target's notes
+    const issuedTargetUserId = toValue(targetUserId);
+    return readMoreItems(
       (cursor) =>
-        $trpc.message.moderation.readModerationNotes.query({ cursor, roomId, targetUserId: toValue(targetUserId) }),
+        $trpc.message.moderation.readModerationNotes.query({ cursor, roomId, targetUserId: issuedTargetUserId }),
       onComplete,
     );
+  };
   return { readModerationNotes, readMoreModerationNotes };
 };

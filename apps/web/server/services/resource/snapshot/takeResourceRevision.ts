@@ -1,6 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { readSerializedResourceContent } from "#server/services/resource/readSerializedResourceContent";
 import { chargeSnapshotVersion } from "#server/services/resource/snapshot/chargeSnapshotVersion";
 import { collectSnapshotObjects } from "#server/services/resource/snapshot/collectSnapshotObjects";
@@ -48,13 +49,13 @@ export const takeResourceRevision = async (
     .where(
       reason === SnapshotReason.Automatic
         ? and(
-            eq(resourcesInResource.id, id),
+            getOwnedLiveResourceWhere(resource.userId, id),
             or(
               isNull(resourcesInResource.revisionTakenAt),
               lte(resourcesInResource.revisionTakenAt, new Date(Date.now() - SNAPSHOT_INTERVAL_MS)),
             ),
           )
-        : eq(resourcesInResource.id, id),
+        : getOwnedLiveResourceWhere(resource.userId, id),
     )
     .returning({ revisionVersion: resourcesInResource.revisionVersion });
   if (!updatedResource) return undefined;

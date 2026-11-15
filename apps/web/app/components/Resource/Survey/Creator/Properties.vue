@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { SurveyRootProps } from "vue-survey-engine-headless";
 
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { SurveyImageExtras, SurveyImageExtrasKeyMap } from "@/services/resource/survey/SurveyImageExtras";
 import { SurveyNodeExtrasComponentMap } from "@/services/resource/survey/SurveyNodeExtrasComponentMap";
 import { useSurveyCreatorStore } from "@/store/survey/creator";
@@ -23,7 +22,7 @@ const imageEditorKeys = computed(() => (selectedNode.value && SurveyImageExtrasK
 // The props a node's form holds: a copy, so the form never writes into the document it is drawn from
 const nodeProps = computed<Record<string, unknown>>(() => ({ ...selectedNode.value?.props }));
 // The form draws every prop its schema holds except the lists the extra editors draw and the props the image editors
-// Draw, so each is drawn once
+// Draw, so each is drawn once. The same schema is what an edit is checked against, so the two cannot disagree
 const nodeFormSchema = computed(() => {
   const omitted: Record<string, true> = {};
   for (const { key } of extraEditors.value) omitted[key] = true;
@@ -31,18 +30,18 @@ const nodeFormSchema = computed(() => {
 
   return nodeDefinition.value?.formSchema.omit(omitted);
 });
-const nodeJsonSchema = computed(() => nodeFormSchema.value && zodToJsonSchema(nodeFormSchema.value));
-// The root's form draws the survey's texts: the calculated values are the Logic tab's, and the theme's keys the Theme tab's
-const rootJsonSchema = zodToJsonSchema(
-  surveyRootPropsSchema.omit({
+// The root's form draws the survey's texts: the calculated values are the Logic tab's, and the theme's keys the Theme
+// Tab's. It is loose, as a node's props schema is, so a prop the form does not draw is never refused on this form's behalf
+const rootFormSchema = surveyRootPropsSchema
+  .omit({
     accentColor: true,
     backgroundColor: true,
     calculatedValues: true,
     isQuestionNumbersVisible: true,
     logo: true,
     showProgressBar: true,
-  }),
-);
+  })
+  .loose();
 // The props an edit changed, the only ones written, so the rest of the props are left as they were
 const getChangedProps = <T extends object>(value: T, saved: T): Partial<T> => {
   const changed: Partial<T> = {};
@@ -55,14 +54,14 @@ const getChangedProps = <T extends object>(value: T, saved: T): Partial<T> => {
 const setNodeProps = (props: Record<string, unknown>) => {
   const changed = getChangedProps(props, nodeProps.value);
   if (Object.keys(changed).length === 0) return;
-  if (!nodeDefinition.value?.formSchema.safeParse(props).success) return;
+  if (!nodeFormSchema.value?.safeParse(props).success) return;
 
   updateNodeProps(selectedPointer.value, changed);
 };
 const setRootProps = (props: SurveyRootProps) => {
   const changed = getChangedProps(props, surveyDocument.value.root.props);
   if (Object.keys(changed).length === 0) return;
-  if (!surveyRootPropsSchema.safeParse(props).success) return;
+  if (!rootFormSchema.safeParse(props).success) return;
 
   updateRootProps(changed);
 };
@@ -73,10 +72,9 @@ const setRootProps = (props: SurveyRootProps) => {
     <span text-sm text-muted>{{ selectedNode ? nodeDefinition?.label : "Survey" }}</span>
     <template v-if="selectedNode">
       <UiSchemaForm
-        v-if="nodeJsonSchema && nodeDefinition"
+        v-if="nodeFormSchema && nodeDefinition"
         :model-value="nodeProps"
-        :schema="nodeJsonSchema"
-        :validation-schema="nodeDefinition.formSchema"
+        :schema="nodeFormSchema"
         @update:model-value="(props) => setNodeProps(props)"
       />
       <component
@@ -97,8 +95,7 @@ const setRootProps = (props: SurveyRootProps) => {
     <UiSchemaForm
       v-else
       :model-value="surveyDocument.root.props"
-      :schema="rootJsonSchema"
-      :validation-schema="surveyRootPropsSchema"
+      :schema="rootFormSchema"
       @update:model-value="(props) => setRootProps(props)"
     />
   </div>

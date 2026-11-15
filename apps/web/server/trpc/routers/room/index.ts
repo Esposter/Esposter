@@ -1,23 +1,19 @@
 import type { MemberCountByTopRole } from "#shared/models/db/room/MemberCountByTopRole";
 import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { UserInRoom } from "#shared/models/db/room/UserInRoom";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { RoomInMessage } from "@esposter/db-schema";
+import type { Page, RoomInMessage } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { containsLike } from "#server/services/db/containsLike";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
-import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { deleteRoom } from "#server/services/room/deleteRoom";
 import { getDirectMessageDisplayNames } from "#server/services/room/getDirectMessageDisplayNames";
+import { getLiveInviteWhere } from "#server/services/room/getLiveInviteWhere";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMemberJoinCondition } from "#server/services/room/getRoomMemberJoinCondition";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -28,7 +24,6 @@ import { getBucket } from "#server/services/storage/getBucket";
 import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { router } from "#server/trpc";
-import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -48,14 +43,12 @@ import { createRoomInputSchema } from "#shared/models/db/room/CreateRoomInput";
 import { deleteRoomInputSchema } from "#shared/models/db/room/DeleteRoomInput";
 import { joinRoomInputSchema } from "#shared/models/db/room/JoinRoomInput";
 import { leaveRoomInputSchema } from "#shared/models/db/room/LeaveRoomInput";
-import { readMembersInputSchema } from "#shared/models/db/room/ReadMembersInput";
+import { readMembersInputSchema, readMembersPageSort } from "#shared/models/db/room/ReadMembersInput";
 import { readRoomInputSchema } from "#shared/models/db/room/ReadRoomInput";
 import { readRoomsInputSchema } from "#shared/models/db/room/ReadRoomsInput";
 import { readUsersByIdsInputSchema } from "#shared/models/db/room/ReadUsersByIdsInput";
-import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { createPresignedPutUrl, inJsonArray } from "@esposter/db";
+import { createPageSort, createPresignedPutUrl, getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
-  bansInMessage,
   DatabaseEntityType,
   DEFAULT_EVERYONE_PERMISSIONS,
   getDisplayNameExpression,
@@ -81,7 +74,7 @@ import {
 } from "@esposter/db-schema";
 import { getResultAsync, InvalidOperationError, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
-import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, notExists, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, getColumns, inArray, ne, not, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
 import { z } from "zod";
@@ -136,65 +129,18 @@ export const baseRoomRouter = router({
     return [getTopic(TopicKind.Room, roomId), ...getRoomListTopics(ctx.user.id)];
   }).mutation<RoomInMessage>(async ({ ctx, input }) => {
     const userId = ctx.user.id;
-    const invite = await requireEntity(
-      ctx.db.query.invitesInMessage.findFirst({ where: { id: { eq: input } } }),
-      DatabaseEntityType.Invite,
-      input,
-    );
-    // Expired and exhausted invites get the same error as unknown tokens
-    if (!checkIsInviteUsable(invite)) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-    await assertIsRoom(ctx.db, invite.roomId);
-
-    const { isInvitePaused } = await requireEntity(
-      ctx.db.query.roomsInMessage.findFirst({
-        columns: { isInvitePaused: true },
-        where: { id: { eq: invite.roomId } },
-      }),
-      DatabaseEntityType.Room,
-      invite.roomId,
-    );
-    // A paused room answers a live link exactly as it answers an unknown one
-    if (isInvitePaused) throw getNotFoundError(DatabaseEntityType.Invite, input);
-
-    const ban = await ctx.db.query.bansInMessage.findFirst({
-      columns: { userId: true },
-      where: { deletedAt: { isNull: true }, roomId: { eq: invite.roomId }, userId: { eq: userId } },
+    // The room is read once, to name it in the duplicate-join error. Every refusal of the link itself, an unknown,
+    // Expired or used-up link, a paused room or a banned user, is decided by the batch below, so no read repeats its rules
+    const invite = await ctx.db.query.invitesInMessage.findFirst({
+      columns: { roomId: true },
+      where: { id: { eq: input } },
     });
-    if (ban) throw getForbiddenError("You are banned from this room");
+    if (!invite) throw getNotFoundError(DatabaseEntityType.Invite, input);
 
     const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId });
-    const existingUserToRoom = await ctx.db.query.usersToRoomsInMessage.findFirst({
-      columns: { roomId: true },
-      where: { roomId: { eq: invite.roomId }, userId: { eq: userId } },
-    });
-    if (existingUserToRoom)
-      throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
-
-    // The membership and the use it consumes are one batch, and each is selected only while the link is still usable,
-    // The room still open and the user unbanned, so a change landing after the reads above refuses both. A second
-    // Join of the same user collides on the membership's key and refuses the batch the same way
-    const isStillJoinable = and(
-      eq(invitesInMessage.id, input),
-      or(isNull(invitesInMessage.expiresAt), gt(invitesInMessage.expiresAt, new Date())),
-      or(eq(invitesInMessage.maxUses, 0), lt(invitesInMessage.uses, invitesInMessage.maxUses)),
-      sql`exists ${ctx.db
-        .select({ _: sql`1` })
-        .from(roomsInMessage)
-        .where(and(eq(roomsInMessage.id, invite.roomId), eq(roomsInMessage.isInvitePaused, false)))}`,
-      notExists(
-        ctx.db
-          .select({ _: sql`1` })
-          .from(bansInMessage)
-          .where(
-            and(
-              eq(bansInMessage.roomId, invite.roomId),
-              eq(bansInMessage.userId, userId),
-              isNull(bansInMessage.deletedAt),
-            ),
-          ),
-      ),
-    );
+    // The membership and the use it consumes are one batch, and each is selected only while the link still admits the
+    // Caller. A second join of the same user collides on the membership's key and refuses the batch the same way
+    const liveInviteWhere = getLiveInviteWhere(ctx.db, input, userId);
     const [joinedRows] = await getResultAsync(() =>
       ctx.db.batch([
         ctx.db
@@ -207,13 +153,13 @@ export const baseRoomRouter = router({
                 userId: sql`${userId}`.as("userId"),
               })
               .from(invitesInMessage)
-              .where(isStillJoinable),
+              .where(liveInviteWhere),
           )
           .returning(),
         ctx.db
           .update(invitesInMessage)
           .set({ uses: sql`${invitesInMessage.uses} + 1` })
-          .where(isStillJoinable),
+          .where(liveInviteWhere),
       ]),
     ).match(
       (results) => results,
@@ -304,24 +250,28 @@ export const baseRoomRouter = router({
   }),
   readMembers: getTopicsProcedure(getMemberProcedure(readMembersInputSchema, "roomId"), ({ input: { roomId } }) => [
     getTopic(TopicKind.Room, roomId),
-  ]).query<CursorPaginationData<MemberInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId, sortBy } }) => {
+  ]).query<Page<MemberInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
     // The display name is the sort, cursor and search key, so the order, the page boundary and the match all
     // Agree with the name the row renders
     const displayName = getDisplayNameExpression(usersToRoomsInMessage, usersInAuth);
-    const sortableColumns = { ...getPublicUserColumns(usersInAuth), displayName };
-    const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId)];
-    if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
+    // Compared without regard to ASCII case, so a name sorts beside its lowercase spelling as a reader expects it to,
+    // Which is the comparison the client sorts the loaded list by
+    const boundSort = createPageSort(
+      { displayName: sql<string>`${displayName} collate nocase`, id: usersInAuth.id },
+      readMembersPageSort,
+    );
+    const wheres: (SQL | undefined)[] = [eq(usersToRoomsInMessage.roomId, roomId), getPageWhere(boundSort, cursor)];
     if (filter?.name)
       wheres.push(or(containsLike(displayName, filter.name), containsLike(usersInAuth.name, filter.name)));
 
     const members = await ctx.db
-      .select(sortableColumns)
+      .select({ ...getPublicUserColumns(usersInAuth), displayName })
       .from(usersInAuth)
       .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.userId, usersInAuth.id))
       .where(and(...wheres))
-      .orderBy(...parseSortByToSql(sortableColumns, sortBy))
+      .orderBy(...getPageOrderBy(boundSort, cursor))
       .limit(limit + 1);
-    return getCursorPaginationData(members, limit, sortBy);
+    return toPage(members, readMembersPageSort, cursor, limit);
   }),
   readMembersCount: getTopicsProcedure(getMemberProcedure(roomIdSchema, "roomId"), ({ input: { roomId } }) => [
     getTopic(TopicKind.Room, roomId),
@@ -352,7 +302,7 @@ export const baseRoomRouter = router({
         and(eq(usersToRoomsInMessage2.roomId, roomsInMessage.id), eq(usersToRoomsInMessage2.userId, input.userId)),
       )
       .where(eq(roomsInMessage.type, RoomType.Room))
-      .orderBy(desc(roomsInMessage.updatedAt))
+      .orderBy(desc(roomsInMessage.lastMessageAt))
       .limit(MAX_READ_LIMIT);
   }),
   readRoom: getTopicsProcedure(standardAuthedProcedure.input(readRoomInputSchema), ({ ctx, input }) =>
@@ -389,7 +339,7 @@ export const baseRoomRouter = router({
           .from(roomsInMessage)
           .innerJoin(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, roomsInMessage.id))
           .where(and(eq(usersToRoomsInMessage.userId, ctx.user.id), eq(roomsInMessage.type, RoomType.Room)))
-          .orderBy(desc(roomsInMessage.updatedAt))
+          .orderBy(desc(roomsInMessage.lastMessageAt))
           .limit(1)
       )[0];
   }),
@@ -404,8 +354,8 @@ export const baseRoomRouter = router({
         .parse(output)
         .items.map(({ id }) => getTopic(TopicKind.Room, id)),
     ],
-  ).query<CursorPaginationData<RoomInMessage & { displayName: string }>>(
-    async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
+  ).query<Page<RoomInMessage & { displayName: string }>>(
+    async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sort } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),
         eq(usersToRoomsInMessage.userId, ctx.user.id),
@@ -413,7 +363,14 @@ export const baseRoomRouter = router({
       const directMessageDisplayNames = getDirectMessageDisplayNames(ctx.db, ctx.user.id);
       const displayName = sql<string>`coalesce(nullif(${roomsInMessage.name}, ''), ${directMessageDisplayNames.displayName}, '')`;
       const roomColumns = getColumns(roomsInMessage);
-      const sortableColumns = { ...roomColumns, displayName };
+      const boundSort = createPageSort(
+        {
+          displayName: sql<string>`${displayName} collate nocase`,
+          id: roomsInMessage.id,
+          lastMessageAt: roomsInMessage.lastMessageAt,
+        },
+        sort,
+      );
       let room: (RoomInMessage & { displayName: string }) | undefined;
 
       if (roomId) {
@@ -435,7 +392,7 @@ export const baseRoomRouter = router({
       ];
       if (includeDirectMessages)
         wheres.push(or(ne(roomsInMessage.type, RoomType.DirectMessage), eq(usersToRoomsInMessage.isHidden, false)));
-      if (cursor) wheres.push(getCursorWhere(sortableColumns, cursor, sortBy));
+      wheres.push(getPageWhere(boundSort, cursor));
       if (filter?.name) wheres.push(containsLike(displayName, filter.name));
       if (room) wheres.push(ne(roomsInMessage.id, room.id));
 
@@ -445,11 +402,10 @@ export const baseRoomRouter = router({
         .innerJoin(usersToRoomsInMessage, innerJoinCondition)
         .leftJoin(directMessageDisplayNames, eq(directMessageDisplayNames.roomId, roomsInMessage.id))
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(sortableColumns, sortBy))
+        .orderBy(...getPageOrderBy(boundSort, cursor))
         .limit(limit + 1);
-      const cursorPaginationData = getCursorPaginationData(rooms, limit, sortBy);
-      if (room) cursorPaginationData.items.push(room);
-      return cursorPaginationData;
+      const page = toPage(rooms, sort, cursor, limit);
+      return room ? { ...page, items: [...page.items, room] } : page;
     },
   ),
   // A row comes back for every id that has an account, a user who has left the room included, so a message whose author

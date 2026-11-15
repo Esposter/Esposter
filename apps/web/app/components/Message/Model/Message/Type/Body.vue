@@ -23,7 +23,7 @@ const toggleSpoiler = (event: Event) => {
     <slot name="prepend" />
     <!-- The default slot is the inline editor, which replaces the rendered text while a message is being edited -->
     <slot>
-      <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.isEdited" flex gap-1 items-end>
+      <div v-if="!EMPTY_TEXT_REGEX.test(messageHtml) || message.editedAt !== null" flex gap-1 items-end>
         <div
           v-if="!EMPTY_TEXT_REGEX.test(messageHtml)"
           class="rich-text-content"
@@ -34,7 +34,7 @@ const toggleSpoiler = (event: Event) => {
           @keydown.space.prevent="(event) => toggleSpoiler(event)"
           v-html="messageHtml"
         />
-        <span v-if="message.isEdited" text-sm text-muted>(edited)</span>
+        <span v-if="message.editedAt !== null" text-sm text-muted>(edited)</span>
       </div>
     </slot>
     <MessageModelMessageTypeTrailing :is-preview :message />

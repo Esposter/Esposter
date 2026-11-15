@@ -4,8 +4,10 @@ import type { PublicUser, UserEvent, UserStatusInMessage } from "@esposter/db-sc
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
-import { getDetectedUserStatus } from "@esposter/db-schema";
+import { inJsonArray } from "@esposter/db";
+import { getDetectedUserStatus, userStatusesInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 
 // One joiner's announcement: the room's online members and the joiner's own tabs hear it together, and an online joiner
 // Is attached once they have
@@ -41,11 +43,11 @@ export const announceRoomMembersJoined = async (
 
   const userIds = users.map(({ id }) => id);
   const [memberships, statuses] = await Promise.all([
-    db.query.usersToRoomsInMessage.findMany({
-      columns: { displayName: true, userId: true },
-      where: { roomId: { eq: roomId }, userId: { in: userIds } },
-    }),
-    db.query.userStatusesInMessage.findMany({ where: { userId: { in: userIds } } }),
+    db
+      .select({ displayName: usersToRoomsInMessage.displayName, userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), inJsonArray(usersToRoomsInMessage.userId, userIds))),
+    db.select().from(userStatusesInMessage).where(inJsonArray(userStatusesInMessage.userId, userIds)),
   ]);
   for (const user of users) {
     const displayName = memberships.find(({ userId }) => userId === user.id)?.displayName ?? "";

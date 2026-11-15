@@ -1,8 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 
 import { createResourceRow } from "#server/services/resource/createResourceRow";
-import { ResourceActivityType, resourcesInResource, ResourceType } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { resourceActivitiesInResource, resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -12,18 +11,19 @@ describe(createResourceRow, () => {
   const userId = v7();
   // The resource row resolves at once, and the activity entry settles only when the test releases it, so the one
   // Write the row waits on is the one the test holds
-  const createContext = (activityWrite: Promise<void>, activityValues: Record<string, unknown>[]) =>
+  const createContext = (activityWrite: Promise<void>, activityTables: unknown[]) =>
     ({
       db: {
         insert: (table: unknown) =>
           table === resourcesInResource
             ? { values: () => ({ returning: () => Promise.resolve([{ id: resourceId, name, userId }]) }) }
             : {
-                values: (values: Record<string, unknown>) => {
-                  activityValues.push(values);
+                select: () => {
+                  activityTables.push(table);
                   return activityWrite;
                 },
               },
+        select: () => ({ from: () => ({}) }),
       },
       user: { id: userId },
     }) as unknown as AuthedContext;
@@ -42,11 +42,11 @@ describe(createResourceRow, () => {
   test("does not return the row until its activity entry is durable", async () => {
     expect.hasAssertions();
 
-    const activityValues: Record<string, unknown>[] = [];
+    const activityTables: unknown[] = [];
     const { promise: writePromise, resolve: releaseWrite } = Promise.withResolvers<void>();
     let isReturned = false;
     const promise = (async () => {
-      const resource = await createResourceRow(createContext(writePromise, activityValues), {
+      const resource = await createResourceRow(createContext(writePromise, activityTables), {
         name,
         type: ResourceType.Sheet,
       });
@@ -56,11 +56,7 @@ describe(createResourceRow, () => {
     // A timer boundary drains every pending microtask, so anything still unsettled is waiting on the gated write
     await vi.advanceTimersByTimeAsync(0);
 
-    const activity = takeOne(activityValues);
-
-    expect(activity.activityType).toBe(ResourceActivityType.Created);
-    expect(activity.resourceId).toBe(resourceId);
-    expect(activity.userId).toBe(userId);
+    expect(activityTables).toStrictEqual([resourceActivitiesInResource]);
     expect(isReturned).toBe(false);
 
     releaseWrite();

@@ -2,7 +2,6 @@
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import type { Item } from "@/models/shared/Item";
 
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MEMBER_PROFILE_POSITION_AREA } from "@/services/message/member/constants";
 import { getMemberGroups } from "@/services/message/member/getMemberGroups";
@@ -12,6 +11,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { useStatusStore } from "@/store/message/user/status";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const { readMembers, readMoreMembers } = useReadMembers();
 const { isPending } = await readMembers();
@@ -95,7 +95,7 @@ const getContextMenuItems = (userId: string): Item[] => {
 <template>
   <div p-2 flex flex-col gap-2>
     <ul v-if="isPending" aria-busy="true" aria-label="Members" flex flex-col>
-      <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_READ_LIMIT" :key="index" />
+      <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
     </ul>
     <template v-else-if="currentRoom">
       <UiList
@@ -143,7 +143,7 @@ const getContextMenuItems = (userId: string): Item[] => {
       />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMembers(onComplete)">
         <ul aria-busy="true" aria-label="More members" flex flex-col>
-          <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_READ_LIMIT" :key="index" />
+          <MessageModelMemberListItemSkeleton v-for="index of DEFAULT_PAGE_LIMIT" :key="index" />
         </ul>
       </StyledWaypoint>
     </template>

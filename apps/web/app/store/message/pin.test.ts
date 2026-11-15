@@ -27,12 +27,58 @@ describe(usePinStore, () => {
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const pinStore = usePinStore();
-    const { displayMessages } = storeToRefs(pinStore);
+    const { items } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
     getSlice(pinnedMessage.roomId).items.value = [pinnedMessage];
     await MessageHookMap[Operation.Update].run({ id: pinnedMessage.id, isPinned: true, roomId: pinnedMessage.roomId });
 
-    expect(displayMessages.value.map(({ id }) => id)).toStrictEqual([pinnedMessage.id]);
+    expect(items.value.map(({ id }) => id)).toStrictEqual([pinnedMessage.id]);
+  });
+
+  // The room pages its pins newest message first, so a pin takes the place its message has in that order, ahead of the
+  // Older pins already listed. Added at the end, it would sit under them until the list is read again
+  test("places a pin where the room's page order puts it", async () => {
+    expect.hasAssertions();
+
+    const dataStore = useDataStore();
+    const pinStore = usePinStore();
+    const { items } = storeToRefs(pinStore);
+    const olderPin = { ...createMessage(), id: 3 };
+    const newerMessage = { ...createMessage(), id: 5 };
+    pinStore.getSlice(roomId).items.value = [olderPin];
+    dataStore.getSlice(roomId).items.value = [newerMessage];
+    await MessageHookMap[Operation.Update].run({ id: newerMessage.id, isPinned: true, roomId });
+
+    expect(items.value.map(({ id }) => id)).toStrictEqual([newerMessage.id, olderPin.id]);
+  });
+
+  // The pins are listed in the order the room pages them, which an edit does not change, since the order is the room's
+  // And not the time of the last change to a message. The edit still reaches the pinned copy
+  test("takes an edit to a pinned message without moving it", async () => {
+    expect.hasAssertions();
+
+    const pinStore = usePinStore();
+    const { items } = storeToRefs(pinStore);
+    const newerPin = { ...createMessage(), id: 5 };
+    const editedPin = { ...createMessage(), id: 3 };
+    pinStore.getSlice(roomId).items.value = [newerPin, editedPin];
+    await MessageHookMap[Operation.Update].run({ id: editedPin.id, message: "edited", roomId });
+
+    expect(items.value.map(({ id }) => id)).toStrictEqual([newerPin.id, editedPin.id]);
+    expect(items.value[1]?.message).toBe("edited");
+  });
+
+  // The pinned list holds its own rows, read past what the room has loaded, so a deletion reaches it through the hook
+  test("drops a pinned message the moment it is deleted", async () => {
+    expect.hasAssertions();
+
+    const pinStore = usePinStore();
+    const { items } = storeToRefs(pinStore);
+    const pinnedMessage = { ...createMessage(), id: 3 };
+    pinStore.getSlice(roomId).items.value = [pinnedMessage];
+    await MessageHookMap[Operation.Delete].run({ id: pinnedMessage.id, roomId });
+
+    expect(items.value).toStrictEqual([]);
   });
 
   // A pin toggled from a search result or a thread names a room the reader is not in. Read against the room on
@@ -58,7 +104,7 @@ describe(usePinStore, () => {
     const dataStore = useDataStore();
     const { getSlice } = dataStore;
     const pinStore = usePinStore();
-    const { displayMessages } = storeToRefs(pinStore);
+    const { items } = storeToRefs(pinStore);
     const pinnedMessage = createMessage();
     getSlice(pinnedMessage.roomId).items.value = [pinnedMessage];
     const pinnedInput = { id: pinnedMessage.id, roomId: pinnedMessage.roomId };
@@ -67,6 +113,6 @@ describe(usePinStore, () => {
     // Absent key
     await MessageHookMap[Operation.Update].run({ ...pinnedInput, isPinned: false });
 
-    expect(displayMessages.value).toStrictEqual([]);
+    expect(items.value).toStrictEqual([]);
   });
 });

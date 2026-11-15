@@ -162,12 +162,10 @@ export const useRoleStore = defineStore("message/room/role", () => {
       );
   };
   const { executeMutation: executeCreateRoleMutation, isPending: isCreateRolePending } = useMutation();
-  const { executeMutation: executeUpdateRoleMutation } = useMutation();
-  const { executeMutation: executeDeleteRoleMutation } = useMutation();
-  const { executeMutation: executeAssignRoleMutation } = useMutation();
-  const { executeMutation: executeRevokeRoleMutation } = useMutation();
-  const { executeMutation: executeUpsertMemberPermissionOverrideMutation } = useMutation();
-  const { executeMutation: executeDeleteMemberPermissionOverrideMutation } = useMutation();
+  // The writes that end one row share a queue named for that row, so each unwinds against what the one before it left
+  const { executeMutation: executeRoleMutation } = useMutation();
+  const { executeMutation: executeMemberRoleMutation } = useMutation();
+  const { executeMutation: executeMemberPermissionOverrideMutation } = useMutation();
   const readMemberPermissionOverrides = async (input: ReadMemberPermissionOverridesInput) => {
     const overrides = await $trpc.role.readMemberPermissionOverrides.query(input);
     setMemberPermissionOverrideMap(
@@ -185,7 +183,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   };
   // The write's answer is the state the server left, so the entry is right whatever order the events arrived in
   const upsertMemberPermissionOverride = async (input: UpsertMemberPermissionOverrideInput) => {
-    await executeUpsertMemberPermissionOverrideMutation(() => $trpc.role.upsertMemberPermissionOverride.mutate(input), {
+    await executeMemberPermissionOverrideMutation(() => $trpc.role.upsertMemberPermissionOverride.mutate(input), {
       key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
       onSuccess: (override) => {
         setMemberPermissionOverride(input.roomId, input.userId, override);
@@ -193,7 +191,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const deleteMemberPermissionOverride = async (input: DeleteMemberPermissionOverrideInput) => {
-    await executeDeleteMemberPermissionOverrideMutation(() => $trpc.role.deleteMemberPermissionOverride.mutate(input), {
+    await executeMemberPermissionOverrideMutation(() => $trpc.role.deleteMemberPermissionOverride.mutate(input), {
       key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,
       onSuccess: () => {
         setMemberPermissionOverride(input.roomId, input.userId, { allow: 0n, deny: 0n });
@@ -210,7 +208,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const updateRole = async (input: UpdateRoleInput) => {
-    await executeUpdateRoleMutation(() => $trpc.role.updateRole.mutate(input), {
+    await executeRoleMutation(() => $trpc.role.updateRole.mutate(input), {
       // Read when the write is sent, and unwound one role at a time
       applyOptimistic: () => {
         const previousRole = getRoles(input.roomId).find(({ id }) => id === input.id);
@@ -228,7 +226,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const deleteRole = async (input: DeleteRoleInput) => {
-    await executeDeleteRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
+    await executeRoleMutation(() => $trpc.role.deleteRole.mutate(input), {
       // Put back only this role, at the position it held
       applyOptimistic: () => {
         const previousRoles = getRoles(input.roomId);
@@ -248,7 +246,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
   const assignRole = async (input: AssignRoleInput) => {
     if (getMemberRoles(input.roomId, input.userId).some(({ id }) => id === input.roleId)) return;
     const role = getRoles(input.roomId).find(({ id }) => id === input.roleId);
-    await executeAssignRoleMutation(() => $trpc.role.assignRole.mutate(input), {
+    await executeMemberRoleMutation(() => $trpc.role.assignRole.mutate(input), {
       // The room's roles are only cached once a surface has read them, so an assignment made before that has
       // Nothing to show until the server hands back the role itself
       applyOptimistic: role
@@ -266,7 +264,7 @@ export const useRoleStore = defineStore("message/room/role", () => {
     });
   };
   const revokeRole = async (input: RevokeRoleInput) => {
-    await executeRevokeRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
+    await executeMemberRoleMutation(() => $trpc.role.revokeRole.mutate(input), {
       applyOptimistic: () => {
         const revokedRole = getMemberRoles(input.roomId, input.userId).find(({ id }) => id === input.roleId);
         deleteMemberRole(input.roomId, input.userId, input.roleId);

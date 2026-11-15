@@ -24,13 +24,13 @@ const boundId = computed<string>(() =>
 const { data: listedResources } = useQuery(async () => {
   const linkSource = source.value;
   if (!linkSource) return undefined;
-  const { hasMore, items } = await $trpc[linkSource.router].readResources.query({
+  const { items, nextCursor } = await $trpc[linkSource.router].readResources.query({
     isPublished: linkSource.isPublishedOnly ? true : undefined,
     limit: MAX_READ_LIMIT,
   });
   return {
-    hasMore,
     items: items.map<UiSelectItem<string>>(({ id, name }) => ({ meaning: linkSource.meaning, title: name, value: id })),
+    nextCursor,
   };
 });
 // A bound resource is read only where its type's list leaves published ones out, to tell an unpublished one from one

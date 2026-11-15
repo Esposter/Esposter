@@ -8,7 +8,6 @@ import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
@@ -28,18 +27,15 @@ describe("uiSchemaForm", () => {
     setupUiStyle(uiStyle);
 
     const message = "message";
-    const validationSchema = z.object({ name: z.string().refine((name) => name !== " ", message) });
-    const schema = zodToJsonSchema(validationSchema);
-    const arraySchema = zodToJsonSchema(z.object({ items: z.array(z.object({ name: z.string() })) }));
-    const linkSchema = zodToJsonSchema(
-      z.object({ name: z.string(), surveyId: createResourceLinkSchema(ResourceLinkType.Survey) }),
-    );
+    const schema = z.object({ name: z.string().refine((name) => name !== " ", message) });
+    const arraySchema = z.object({ items: z.array(z.object({ name: z.string() })) });
+    const linkSchema = z.object({ name: z.string(), surveyId: createResourceLinkSchema(ResourceLinkType.Survey) });
 
     test("draws a resource link as the shared select of the owner's resources of its type, beside a plain field as text", async () => {
       expect.hasAssertions();
 
       const survey = createResourceListItem({ type: ResourceType.Survey });
-      trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [{ ...survey, publication: null }] }));
+      trpcMsw.survey.readResources.query(() => ({ items: [{ ...survey, publication: null }], nextCursor: "" }));
       const component = await mountSuspended(UiSchemaForm, {
         props: { modelValue: { name: "", surveyId: survey.id }, schema: linkSchema },
       });
@@ -47,17 +43,15 @@ describe("uiSchemaForm", () => {
 
       expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(1);
       expect(component.findComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
-        hasMore: false,
         items: [{ meaning: UiIconMeaning.Survey, title: survey.name, value: survey.id }],
+        nextCursor: "",
       });
     });
 
     test("draws a string as the library's text field named by its title, and writes what is typed", async () => {
       expect.hasAssertions();
 
-      const component = await mountSuspended(UiSchemaForm, {
-        props: { modelValue: { name: "" }, schema, validationSchema },
-      });
+      const component = await mountSuspended(UiSchemaForm, { props: { modelValue: { name: "" }, schema } });
       await flushPromises();
       const input = component.get("input");
       await input.setValue("a");
@@ -71,7 +65,7 @@ describe("uiSchemaForm", () => {
       expect.hasAssertions();
 
       const warn = vi.spyOn(console, "warn").mockImplementation(noop);
-      await mountSuspended(UiSchemaForm, { props: { modelValue: { name: "" }, schema, validationSchema } });
+      await mountSuspended(UiSchemaForm, { props: { modelValue: { name: "" }, schema } });
       await flushPromises();
 
       // Only the proxy warning: Nuxt's mount always hands Vue Test Utils its mocks, which it applies as a mixin that an
@@ -92,8 +86,7 @@ describe("uiSchemaForm", () => {
         props: {
           modelValue: { id: "id", name: "", step: 1, type: "Count" },
           "onUpdate:modelValue": (modelValue: unknown) => component.setProps({ modelValue }),
-          schema: zodToJsonSchema(unionValidationSchema),
-          validationSchema: unionValidationSchema,
+          schema: unionValidationSchema,
         },
       });
       await flushPromises();
@@ -116,7 +109,7 @@ describe("uiSchemaForm", () => {
       expect.hasAssertions();
 
       const noRendererNotice = "No applicable renderer found.";
-      const nothingSchema = zodToJsonSchema(z.object({ name: z.string(), nothing: z.null() }));
+      const nothingSchema = z.object({ name: z.string(), nothing: z.null() });
       const component = await mountSuspended(UiSchemaForm, {
         props: { modelValue: { name: "", nothing: null }, schema: nothingSchema },
       });
@@ -149,7 +142,6 @@ describe("uiSchemaForm", () => {
           modelValue: { name: "" },
           "onUpdate:modelValue": (modelValue: unknown) => component.setProps({ modelValue }),
           schema,
-          validationSchema,
         },
       });
       await flushPromises();
@@ -168,7 +160,7 @@ describe("uiSchemaForm", () => {
 
       const nestedSchema = z.object({ nested: z.object({ name: z.string() }) });
       const component = await mountSuspended(UiSchemaForm, {
-        props: { modelValue: { nested: { name: "" } }, schema: zodToJsonSchema(nestedSchema) },
+        props: { modelValue: { nested: { name: "" } }, schema: nestedSchema },
       });
       await flushPromises();
       await component.get("input").setValue("a");

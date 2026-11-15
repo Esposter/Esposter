@@ -1,30 +1,14 @@
 import type { Context } from "#server/trpc/context";
 import type { CreateMessageInput } from "#shared/models/db/message/CreateMessageInput";
-import type { MessageCreationRejection } from "@esposter/db";
 import type { RoomActor, RoomMessage } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { getJobQueue } from "#server/services/queue/getJobQueue";
-import { callUserObjects } from "#server/services/realtime/callUserObjects";
-import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
-import {
-  createReplyThreadFollows,
-  getLinkPreviewResponse,
-  getMentionIds,
-  getMessageCreationRejection,
-  incrementMentionCounts,
-} from "@esposter/db";
-import {
-  AppNotificationType,
-  MessageType,
-  publishNotification,
-  QueueJob,
-  usersToRoomsInMessage,
-} from "@esposter/db-schema";
+import { claimMessageSendSlot, createReplyThreadFollows, getLinkPreviewResponse } from "@esposter/db";
+import { AppNotificationType, MessageType, publishNotification, QueueJob } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
-import { and, eq, isNull } from "drizzle-orm";
 
 type RoomObject = ReturnType<typeof useRoomObject>;
 
@@ -37,38 +21,6 @@ const readThreadRootUserId = async (roomObject: RoomObject, replyToId: null | nu
   return threadRoot?.userId ?? undefined;
 };
 
-// A claim lost to a racing send of the same member's decides again on the clock that won, so slowmode refuses it when
-// The room has slowmode and a room without it takes the send. Each loss means another send landed, so it ends
-const claimSendSlot = async (
-  db: Context["db"],
-  userId: string,
-  roomId: string,
-  message: string | undefined,
-  now: Date,
-): Promise<MessageCreationRejection | undefined> => {
-  const member = await db.query.usersToRoomsInMessage.findFirst({
-    columns: { lastMessageAt: true },
-    where: { roomId: { eq: roomId }, userId: { eq: userId } },
-  });
-  const rejection = await getMessageCreationRejection(db, userId, roomId, message);
-  if (rejection) return rejection;
-
-  const claimed = await db
-    .update(usersToRoomsInMessage)
-    .set({ lastMessageAt: now, lastReadAt: now })
-    .where(
-      and(
-        getRoomMembershipWhere(roomId, userId),
-        member?.lastMessageAt
-          ? eq(usersToRoomsInMessage.lastMessageAt, member.lastMessageAt)
-          : isNull(usersToRoomsInMessage.lastMessageAt),
-      ),
-    )
-    .returning({ userId: usersToRoomsInMessage.userId });
-  if (claimed.length > 0) return undefined;
-  return claimSendSlot(db, userId, roomId, message, now);
-};
-
 export const createUserMessage = async (
   db: Context["db"],
   actor: RoomActor,
@@ -76,23 +28,23 @@ export const createUserMessage = async (
 ): Promise<RoomMessage> => {
   const { files, replyToId, roomId, type } = input;
   const message = input.message || "";
-  const now = new Date();
-  // The gate decides and the send claims the slowmode clock, as one guarded write: D1 has no interactive transaction, so
-  // The claim is an UPDATE that lands only if the clock still reads what the decision was made against
-  const rejection = await claimSendSlot(db, actor.userId, roomId, input.message, now);
-  await rejectMessageCreation(db, actor.userId, roomId, rejection);
-  if (!rejection) await updateUserToRoom(db, actor.userId, { lastMessageAt: now, lastReadAt: now, roomId });
+  await rejectMessageCreation(
+    db,
+    actor.userId,
+    roomId,
+    await claimMessageSendSlot(db, actor.userId, roomId, input.message, new Date()),
+  );
 
   // The room's object writes the message, indexes it for the sender and broadcasts it to the room's viewers. The room's
   // `updatedAt` is not written here: the object's own alarm moves the room to the top of its members' lists
   const roomObject = useRoomObject(roomId);
   // Only a text message is unfurled and notified by its mentions: a poll's text is its own JSON, not a message to read
   const isTextMessage = type === MessageType.Message && message !== "";
+  // The room object counts the mentions its text makes, and tells each mentioned member's object of its count
   const newMessage = await roomObject.createMessage(
     {
       files,
       linkPreviewResponse: isTextMessage ? await getLinkPreviewResponse(message) : null,
-      mentions: isTextMessage ? getMentionIds(message) : [],
       message,
       replyToId: replyToId ?? undefined,
       type,
@@ -100,17 +52,14 @@ export const createUserMessage = async (
     actor,
   );
 
-  // Best-effort after the write — a failed increment loses one badge count, never a message
-  const mentionedUsersToRooms = await getResultAsync(() =>
-    incrementMentionCounts(db, { message, roomId, userId: actor.userId }),
-  )
-    .orTee(console.error)
-    .unwrapOr([]);
-  await Promise.all(
-    mentionedUsersToRooms.map((mentionedUserToRoom) =>
-      callUserObjects([mentionedUserToRoom.userId], (userObject) => userObject.updateUserToRoom(mentionedUserToRoom)),
-    ),
+  // The sender has read the room through their own message. The read clock is the message's time as the room's object
+  // Stamped it, since the room's activity reads the same clock, and a web Worker's earlier time would leave the room unread.
+  // Best-effort after the write: the message has landed, so a failed read clock costs an unread badge, never the send
+  await getResultAsync(() => updateUserToRoom(db, actor.userId, { lastReadAt: newMessage.createdAt, roomId })).match(
+    noop,
+    console.error,
   );
+
   // Post-persist and best-effort — a follow failure must never fail the reply that already landed — but strictly
   // Before the publish below, for the reason `createReplyThreadFollows` states
   await getResultAsync(async () => {

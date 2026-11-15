@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { PostFeedSortTypes } from "@/models/post/PostSortType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { POST_FEED_SORT_TYPES } from "@/services/post/constants";
 import { getPostSortTypeItems } from "@/services/post/getPostSortTypeItems";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
-const postSortTypeItems = getPostSortTypeItems(PostFeedSortTypes);
+const postSortTypeItems = getPostSortTypeItems(POST_FEED_SORT_TYPES);
 const postStore = usePostStore();
 const { sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;

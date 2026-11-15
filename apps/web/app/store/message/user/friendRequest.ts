@@ -10,8 +10,10 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
   const { $trpc } = useNuxtApp();
   const { checkIsPending: checkIsSendFriendRequestPending, executeMutation: executeSendFriendRequestMutation } =
     useMutation();
-  const { executeMutation: executeAcceptFriendRequestMutation } = useMutation();
-  const { executeMutation: executeDeclineFriendRequestMutation } = useMutation();
+  // Accepting, declining, blocking and unblocking all write the pending requests between the app user and one other
+  // Party, so they share one executor keyed by that party. A queue lives on the instance and not on the key, so on two
+  // Instances a rejected write's rollback could put back a request another write had already removed on the server
+  const { executeMutation: executeUserPairMutation } = useMutation();
   const friendStore = useFriendStore();
   const { storeCreateFriend, storeDeleteFriend } = friendStore;
   const friendRequests = ref<FriendRequestInSocialWithRelations[]>([]);
@@ -74,7 +76,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     });
   };
   const acceptFriendRequest = async (sender: PublicUser) => {
-    await executeAcceptFriendRequestMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
+    await executeUserPairMutation(() => $trpc.friendRequest.acceptFriendRequest.mutate(sender.id), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(sender.id);
         storeAcceptFriendRequest(sender);
@@ -87,7 +89,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     });
   };
   const declineFriendRequest = async (senderId: PublicUser["id"]) => {
-    await executeDeclineFriendRequestMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
+    await executeUserPairMutation(() => $trpc.friendRequest.declineFriendRequest.mutate(senderId), {
       applyOptimistic: () => {
         const resolvedFriendRequests = getFriendRequestsByUser(senderId);
         storeDeleteFriendRequestsByUser(senderId);
@@ -104,6 +106,7 @@ export const useFriendRequestStore = defineStore("message/user/friendRequest", (
     checkHasSentFriendRequest,
     checkIsSendFriendRequestPending,
     declineFriendRequest,
+    executeUserPairMutation,
     friendRequests,
     getFriendRequestsByUser,
     readFriendRequests,

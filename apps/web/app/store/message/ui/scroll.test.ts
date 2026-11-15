@@ -15,6 +15,7 @@ mockNuxtImport("navigateTo", () => navigateToMock);
 describe(useScrollStore, () => {
   const roomId = v7();
   const messageId = 1;
+  const newerCursor = v7();
   const secondMessageId = 2;
   const highlightMs = Temporal.Duration.from({ seconds: 2 }).total("milliseconds");
   let router: Router;
@@ -75,7 +76,7 @@ describe(useScrollStore, () => {
     expect.hasAssertions();
 
     const dataStore = useDataStore();
-    dataStore.getHasMoreNewerRef(roomId).value = true;
+    dataStore.getPreviousCursorRef(roomId).value = newerCursor;
     Object.assign(router.currentRoute.value.params, { messageId });
     const scrollStore = useScrollStore();
     const { jumpToPresent } = scrollStore;

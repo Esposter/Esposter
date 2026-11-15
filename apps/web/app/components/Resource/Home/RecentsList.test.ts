@@ -20,7 +20,7 @@ describe("resourceHomeRecentsList", () => {
     const recent = createResourceListItem();
     trpcMsw.resource.readResources.query(async () => {
       await readGate;
-      return { hasMore: false, items: [recent] };
+      return { items: [recent], nextCursor: "" };
     });
     const recentStore = useRecentStore();
     const { recents } = storeToRefs(recentStore);

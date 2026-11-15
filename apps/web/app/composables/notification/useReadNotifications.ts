@@ -10,9 +10,9 @@ export const useReadNotifications = () => {
   // Read adopts the payload on the hydrating render and never calls this closure there — store state is what
   // Survives that, so the total goes to the store and nowhere else
   const readNotificationsPage = async (cursor: string) => {
-    const { paginationData, unreadCount } = await $trpc.notification.readNotifications.query({ cursor });
-    setUnreadDeliveredCount(unreadCount);
-    return paginationData;
+    const { items, nextCursor, unreadCount } = await $trpc.notification.readNotifications.query({ cursor });
+    if (unreadCount !== undefined) setUnreadDeliveredCount(unreadCount);
+    return { items, nextCursor };
   };
   // The bell rides the app bar, so it renders on server-rendered routes too and the first page has to come off
   // The payload rather than being read again on hydration

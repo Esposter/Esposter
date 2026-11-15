@@ -7,7 +7,7 @@ export const useMessageCache = () => {
   const { currentRoomId } = storeToRefs(roomStore);
   const dataStore = useDataStore();
   const { getSlice } = dataStore;
-  useCursorPaginationCache({
+  usePaginationCache({
     configuration: MessageIndexedDbStoreConfiguration,
     getSlice,
     getWriteItems: (messages) => messages.filter((message) => !message.isLoading),

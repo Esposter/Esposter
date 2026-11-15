@@ -1,6 +1,5 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
-import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { ScheduledReminder } from "@esposter/db-schema";
+import type { Page, ScheduledReminder } from "@esposter/db-schema";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { useUserObject } from "#server/composables/realtime/useUserObject";
@@ -35,18 +34,11 @@ export const scheduledMessageJobRouter = router({
   readMyScheduledMessageJobs: getTopicsProcedure(
     standardAuthedProcedure.input(readMyScheduledMessagesInputSchema),
     getScheduledMessageTopics,
-  ).query<BasePaginationData<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
+  ).query<Page<ScheduledMessageJobWithRoom>>(({ ctx, input }) =>
     readMyScheduledMessageJobs(ctx.db, ctx.user.id, input),
   ),
   readMyScheduledMessageJobsCount: getTopicsProcedure(standardAuthedProcedure, getScheduledMessageTopics).query<number>(
-    async ({ ctx }) => {
-      const userObject = useUserObject(ctx.user.id);
-      const [scheduledMessages, reminders] = await Promise.all([
-        userObject.readScheduledMessages(),
-        userObject.readReminders(),
-      ]);
-      return scheduledMessages.length + reminders.length;
-    },
+    ({ ctx }) => useUserObject(ctx.user.id).countScheduledMessageJobs(),
   ),
   // A reminder is written to its owner's object, which the alarm sends at `runAt`. Its room is what the notification links
   // To, so only a member of that room can set one

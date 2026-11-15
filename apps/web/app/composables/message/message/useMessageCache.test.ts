@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
 import type { ClientMessage } from "@/models/message/ClientMessage";
+import type { Page } from "@esposter/db-schema";
 
 import { getMockSession } from "#server/trpc/context.test";
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
 import { goOffline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
@@ -65,11 +65,11 @@ describe(useMessageCache, () => {
 
     const userId = getMockSession().user.id;
     await mountCache();
-    const loadedData = new CursorPaginationData<ClientMessage>();
     // The send adds the loading flag to the bubble it renders, which the optimistic factory leaves to it
-    loadedData.items = [
-      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), isLoading: true },
-    ];
+    const loadedData: Page<ClientMessage> = {
+      items: [{ ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), isLoading: true }],
+      nextCursor: "",
+    };
     // Through the store hook a read would use, so the room counts as loaded — an unloaded room persists nothing
     // At all, which would leave the filter untested
     getSlice(roomId).initializeCursorPaginationData(loadedData);

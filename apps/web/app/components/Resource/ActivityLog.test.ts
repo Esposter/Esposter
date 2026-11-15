@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
-import type { ResourceActivityInResource } from "@esposter/db-schema";
+import type { Page, ResourceActivityInResource } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import ResourceActivityLog from "@/components/Resource/ActivityLog.vue";
 import UiSkeleton from "@/components/Ui/Skeleton.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -22,9 +21,10 @@ describe("resourceActivityLog", () => {
     const resourceId = v7();
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     const { promise: isReadReached, resolve: onReadReached } = Promise.withResolvers<void>();
-    const data = Object.assign(new CursorPaginationData<ResourceActivityInResource>(), {
+    const data: Page<ResourceActivityInResource> = {
       items: [{ id: v7() } as ResourceActivityInResource],
-    });
+      nextCursor: "",
+    };
     trpcMsw.resource.readActivities.query(async () => {
       onReadReached();
       await readGate;

@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
 import { useScrollStore } from "@/store/message/ui/scroll";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const { readMessages, readMoreMessages, readMoreNewerMessages: baseReadMoreNewerMessages } = useReadMessages();
 const { isError, isPending, refresh } = await readMessages();
 const dataStore = useDataStore();
-const { hasMore, hasMoreNewer, items } = storeToRefs(dataStore);
+const { hasMore, items, previousCursor } = storeToRefs(dataStore);
 const roomStore = useRoomStore();
 const { currentRoom } = storeToRefs(roomStore);
 const scrollStore = useScrollStore();
@@ -68,18 +68,18 @@ const readMoreNewerMessages = async (onComplete: () => void) => {
   >
     <div :ref="setBottomSentinel" />
     <template v-if="isPending">
-      <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
+      <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_PAGE_LIMIT" :key="index" />
     </template>
     <!-- Only a read that settled with nothing is a new room: a failed one says so, and tries again -->
     <UiErrorState v-else-if="isError" error="The messages could not be loaded." @retry="refresh()" />
     <MessageContentRoomWelcome v-else-if="items.length === 0 && currentRoom" :room="currentRoom" />
     <template v-else>
-      <StyledWaypoint :is-active="hasMoreNewer" @change="(onComplete) => readMoreNewerMessages(onComplete)">
-        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
+      <StyledWaypoint :is-active="Boolean(previousCursor)" @change="(onComplete) => readMoreNewerMessages(onComplete)">
+        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_PAGE_LIMIT" :key="index" />
       </StyledWaypoint>
       <MessageModelMessageListContainer />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMessages(onComplete)">
-        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_READ_LIMIT" :key="index" />
+        <MessageModelMessageListSkeletonItem v-for="index in DEFAULT_PAGE_LIMIT" :key="index" />
       </StyledWaypoint>
     </template>
   </div>

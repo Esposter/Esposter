@@ -1,11 +1,9 @@
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { LinkedResource } from "#shared/models/resource/LinkedResource";
 import type { ReadCritiqueResult } from "#shared/models/resource/ReadCritiqueResult";
 import type { ReadResourceContentResult } from "#shared/models/resource/ReadResourceContentResult";
 import type { ReadResourceContentSchemaResult } from "#shared/models/resource/ReadResourceContentSchemaResult";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
+import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { ResourceTagCount } from "#shared/models/resource/ResourceTagCount";
 import type { ResourceTypeCount } from "#shared/models/resource/ResourceTypeCount";
@@ -13,15 +11,11 @@ import type { ResourceWithPublication } from "#shared/models/resource/ResourceWi
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
-import type { ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
+import type { Page, ResourceActivityInResource, ResourceInResource } from "@esposter/db-schema";
 import type { User } from "better-auth";
-import type { SQL } from "drizzle-orm";
 
 import { getAgentJsonSchema } from "#server/services/mcp/getAgentJsonSchema";
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { applyResourceContentPatches } from "#server/services/resource/applyResourceContentPatches";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
@@ -53,7 +47,7 @@ import { softDeleteResources } from "#server/services/resource/softDeleteResourc
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
 import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
-import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
+import { writeResourceActivities } from "#server/services/resource/writeResourceActivities";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { getBucket } from "#server/services/storage/getBucket";
 import { router } from "#server/trpc";
@@ -64,7 +58,7 @@ import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProce
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/CreateResourceOfTypeInput";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
-import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
+import { readActivitiesInputSchema, RESOURCE_ACTIVITY_SORT } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
 import { readResourceConsumersInputSchema } from "#shared/models/db/resource/ReadResourceConsumersInput";
 import { readResourceContentInputSchema } from "#shared/models/db/resource/ReadResourceContentInput";
@@ -78,9 +72,8 @@ import { updateResourceContentInputSchema } from "#shared/models/db/resource/Upd
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
-import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { inJsonArray, purgeResource } from "@esposter/db";
+import { createPageSort, getPageOrderBy, getPageWhere, inJsonArray, purgeResource, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   getTopic,
@@ -219,17 +212,15 @@ export const resourceRouter = router({
       },
     }),
     getResourceTopics,
-  ).query<CursorPaginationData<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
-    const sortBy: SortItem<keyof ResourceActivityInResource>[] = [ID_DESCENDING_SORT_ITEM];
-    const wheres: (SQL | undefined)[] = [eq(resourceActivitiesInResource.resourceId, id)];
-    if (cursor) wheres.push(getCursorWhere(resourceActivitiesInResource, cursor, sortBy));
+  ).query<Page<ResourceActivityInResource>>(async ({ ctx, input: { cursor, id, limit } }) => {
+    const boundSort = createPageSort({ id: resourceActivitiesInResource.id }, RESOURCE_ACTIVITY_SORT);
     const activities = await ctx.db
       .select()
       .from(resourceActivitiesInResource)
-      .where(and(...wheres))
-      .orderBy(...parseSortByToSql(resourceActivitiesInResource, sortBy))
+      .where(and(eq(resourceActivitiesInResource.resourceId, id), getPageWhere(boundSort, cursor)))
+      .orderBy(...getPageOrderBy(boundSort, cursor))
       .limit(limit + 1);
-    return getCursorPaginationData(activities, limit, sortBy);
+    return toPage(activities, RESOURCE_ACTIVITY_SORT, cursor, limit);
   }),
   // The critique the owner's editor shows as its problems, answered beside the content version it was read at. A type that declares
   // No critique is refused by name, so an empty list is never read as a clean page
@@ -252,23 +243,14 @@ export const resourceRouter = router({
   }),
   readDeletedResources: getTopicsProcedure(standardAuthedProcedure.input(readDeletedResourcesInputSchema), ({ ctx }) =>
     getResourceListTopics(ctx.user.id),
-  ).query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy } }) => {
-    const userId = ctx.user.id;
-    const where = getResourcesWhere(ctx.db, userId, {}, true);
-    const orderBy =
-      sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resourcesInResource.deletedAt)];
-    return readResourceListPage(ctx.db, userId, where, orderBy, limit, offset);
-  }),
-  readDeletedResourcesCount: getTopicsProcedure(standardAuthedProcedure, ({ ctx }) =>
-    getResourceListTopics(ctx.user.id),
-  ).query<number>(
-    async ({ ctx }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.user.id, {}, true)),
-      ).count,
+  ).query<ResourceListPage>(({ ctx, input: { cursor, limit, sort } }) =>
+    readResourceListPage(ctx.db, {
+      cursor,
+      limit,
+      sort,
+      userId: ctx.user.id,
+      where: getResourcesWhere(ctx.db, ctx.user.id, {}, true),
+    }),
   ),
   // Starred-first rather than updated-first, which is the one thing the Favorites list route cannot do: the
   // Star's own timestamp is not a column any list shows
@@ -361,25 +343,13 @@ export const resourceRouter = router({
       .meta({
         mcp: {
           description:
-            "Find the owner's resources a page at a time, most recently updated first, by name, type, tag or when they were last updated. Answers each one's id, name and type, which the content tools take.",
+            "Find the owner's resources a page at a time, most recently updated first unless a sort names another order, or by relevance for a search. Each page answers its cursor for the next and, on the first page, how many resources match. Answers each one's id, name and type, which the content tools take.",
           scope: McpScope.Resources,
         },
       }),
     ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy, ...filter } }) =>
-    readResourceList(ctx.db, ctx.user.id, filter, sortBy, limit, offset),
-  ),
-  readResourcesCount: getTopicsProcedure(
-    standardAuthedProcedure.input(resourceFilterInputSchema.prefault({})),
-    ({ ctx }) => getResourceListTopics(ctx.user.id),
-  ).query<number>(
-    async ({ ctx, input }) =>
-      takeOne(
-        await ctx.db
-          .select({ count: count() })
-          .from(resourcesInResource)
-          .where(getResourcesWhere(ctx.db, ctx.user.id, input)),
-      ).count,
+  ).query<ResourceListPage>(({ ctx, input: { cursor, limit, sort, ...filter } }) =>
+    readResourceList(ctx.db, ctx.user.id, filter, sort, cursor, limit),
   ),
   // The Tags list. Tag names live inside one JSON column rather than their own table, so the breakdown is a
   // Grouped count over the expanded keys — the expansion is a subquery because a table-valued json_each cannot
@@ -473,12 +443,11 @@ export const resourceRouter = router({
         ),
       )
       .returning();
-    // Best-effort: a failed write loses one trail entry, never the restore.
-    for (const { id } of restoredResources)
-      getSynchronizedFunction(writeResourceActivity)(ctx, {
-        activityType: ResourceActivityType.Restored,
-        resourceId: id,
-      });
+    // Best-effort: a failed write loses the trail entries of this restore, never the restore.
+    getSynchronizedFunction(writeResourceActivities)(ctx, {
+      activityType: ResourceActivityType.Restored,
+      resourceIds: restoredResources.map(({ id }) => id),
+    });
     const firstRestoredResource = restoredResources[0];
     if (firstRestoredResource)
       await publishResourceOperation(ctx, {

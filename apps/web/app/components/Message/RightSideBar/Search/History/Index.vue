@@ -10,7 +10,7 @@ const { readMoreSearchHistories, readSearchHistories } = useReadSearchHistories(
 const { isPending } = await readSearchHistories();
 const searchHistoryStore = useSearchHistoryStore();
 const { hasMore, items } = storeToRefs(searchHistoryStore);
-const readSearchedMessages = useReadSearchedMessages();
+const { readSearchedMessages } = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
 const listItems = computed(() =>

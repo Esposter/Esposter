@@ -2,6 +2,7 @@ import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
@@ -35,6 +36,7 @@ describe("inviteRouter", () => {
   const maxUses = takeOne([...INVITE_MAX_USES_OPTIONS]);
   const epoch = new Date(0);
   const oneSecondIn = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
+  const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
   // A link that never lapses, which is what every test not about expiry or exhaustion reads through. It creates as the
   // Default caller unless a test names the one acting
   const createUnlimitedInvite = (inviteRoomId: string, caller = inviteCaller) =>
@@ -98,6 +100,35 @@ describe("inviteRouter", () => {
     expect(invite).toBeUndefined();
   });
 
+  // A paused room answers its live links as it answers unknown codes, so the landing page cannot tell them apart
+  test("reads no invite for a paused room", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    await roomCaller.updateRoom({ id: newRoom.id, isInvitePaused: true });
+    const invite = await inviteCaller.readInvite(newInvite.id);
+
+    expect(invite).toBeUndefined();
+  });
+
+  // The ban is written by the service the moderation procedure calls, which keeps the realtime room out of this suite.
+  // A banned member is refused the link they joined through, though the link is live and its room open
+  test("reads no invite to a member banned from its room", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const memberAuthSession = await createMockAuthSession(mockContext.db);
+    const memberRoomCaller = await createMockCaller(roomRouter, memberAuthSession);
+    await memberRoomCaller.joinRoom(newInvite.id);
+    await banRoomMember(mockContext.db, getMockSession().user.id, newRoom.id, memberAuthSession.user.id);
+    const memberInviteCaller = await createMockCaller(inviteRouter, memberAuthSession);
+    const invite = await memberInviteCaller.readInvite(newInvite.id);
+
+    expect(invite).toBeUndefined();
+  });
+
   test("reads my invite", async () => {
     expect.hasAssertions();
 
@@ -142,7 +173,6 @@ describe("inviteRouter", () => {
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
     const usableInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
-    const twoSecondsIn = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
     // Paging sorts newest first, and these rows are created in the order their codes descend, so the two lapsed links
     // Fill a two-row page and the usable one sits behind them
     await mockContext.db.insert(invitesInMessage).values([
@@ -162,26 +192,44 @@ describe("inviteRouter", () => {
     });
 
     expect(lapsedPage.items).toStrictEqual([]);
-    expect(lapsedPage.hasMore).toBe(true);
     expect(usablePage.items.map(({ id }) => id)).toStrictEqual([usableInviteId]);
   });
 
-  // An invite's code is a random secret, so the list cannot read creation order off it: the older link here carries the
-  // Larger code, and the newer one still lists first
-  test("lists room invites newest first, whatever their codes sort to", async () => {
+  // Newest first, and the rows that tie on creation time fall across both page boundaries, so only the id keeps them
+  // Apart. The newest row carries the smallest code, so it lists first on its time alone, not on the order of codes
+  test("reads every room invite to the end across page boundaries, newest first", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     const { id: userId } = getMockSession().user;
-    const olderInviteId = "b".repeat(SECRET_TOKEN_LENGTH);
-    const newerInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
-    await mockContext.db.insert(invitesInMessage).values([
-      { createdAt: epoch, id: olderInviteId, roomId: newRoom.id, userId },
-      { createdAt: oneSecondIn, id: newerInviteId, roomId: newRoom.id, userId },
-    ]);
-    const page = await inviteCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
+    const newestInviteId = "a".repeat(SECRET_TOKEN_LENGTH);
+    const tiedNewerInviteIds = ["d", "c"].map((character) => character.repeat(SECRET_TOKEN_LENGTH));
+    const tiedOlderInviteIds = ["f", "b"].map((character) => character.repeat(SECRET_TOKEN_LENGTH));
+    await mockContext.db
+      .insert(invitesInMessage)
+      .values([
+        { createdAt: twoSecondsIn, id: newestInviteId, roomId: newRoom.id, userId },
+        ...tiedNewerInviteIds.map((id) => ({ createdAt: oneSecondIn, id, roomId: newRoom.id, userId })),
+        ...tiedOlderInviteIds.map((id) => ({ createdAt: epoch, id, roomId: newRoom.id, userId })),
+      ]);
+    const firstPage = await inviteCaller.readRoomInvites({ limit: 2, roomId: newRoom.id });
+    const secondPage = await inviteCaller.readRoomInvites({
+      cursor: firstPage.nextCursor,
+      limit: 2,
+      roomId: newRoom.id,
+    });
+    const lastPage = await inviteCaller.readRoomInvites({
+      cursor: secondPage.nextCursor,
+      limit: 2,
+      roomId: newRoom.id,
+    });
 
-    expect(page.items.map(({ id }) => id)).toStrictEqual([newerInviteId, olderInviteId]);
+    expect([...firstPage.items, ...secondPage.items, ...lastPage.items].map(({ id }) => id)).toStrictEqual([
+      newestInviteId,
+      ...tiedNewerInviteIds,
+      ...tiedOlderInviteIds,
+    ]);
+    expect(lastPage.nextCursor).toBe("");
   });
 
   test("creating again replaces the previous invite", async () => {

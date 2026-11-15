@@ -13,6 +13,7 @@ interface ForwardedInit {
 describe(forwardSocket, () => {
   const identity: SocketIdentity = {
     deviceId: "33333333-3333-7333-8333-333333333333",
+    sessionExpiresAt: 0,
     sessionId: "session-abcdefghijklmnop",
     userId: "22222222-2222-7222-8222-222222222222",
   };
@@ -37,6 +38,7 @@ describe(forwardSocket, () => {
     expect(headers?.[SOCKET_IDENTITY_HEADER.userId]).toBe(identity.userId);
     expect(headers?.[SOCKET_IDENTITY_HEADER.sessionId]).toBe(identity.sessionId);
     expect(headers?.[SOCKET_IDENTITY_HEADER.deviceId]).toBe(identity.deviceId);
+    expect(headers?.[SOCKET_IDENTITY_HEADER.sessionExpiresAt]).toBe(String(identity.sessionExpiresAt));
   });
 
   test("keeps the upgrade headers the socket needs", async () => {

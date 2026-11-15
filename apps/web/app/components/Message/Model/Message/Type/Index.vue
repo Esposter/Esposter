@@ -24,9 +24,9 @@ const messageHtml = useMessageHtml(
           :reply-to-id="message.replyToId"
           :room-id="message.roomId"
         />
-        <UiAvatar mt-6 :image="creator.image ?? ''" :name="creator.name" />
+        <UiAvatar mt-6 :image="creator.image" :name="creator.name" />
       </div>
-      <UiAvatar v-else-if="!isSameBatch" :image="creator.image ?? ''" :name="creator.name" />
+      <UiAvatar v-else-if="!isSameBatch" :image="creator.image" :name="creator.name" />
       <!-- A message that continues its author's batch shows its time in the author's column, and only while it is the
         Row being acted on -->
       <span v-else :class="{ 'op-0': !active }" text-sm text-muted text-center>

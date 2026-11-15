@@ -1,12 +1,13 @@
-import type { ResourceInResource } from "@esposter/db-schema";
+import type { Page, ResourceInResource } from "@esposter/db-schema";
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { MAX_CSV_EXPORT_ROWS } from "@/services/resource/constants";
 import { getResourcesCsv } from "@/services/resource/list/getResourcesCsv";
+import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { useNotificationStore } from "@/store/notification";
 import { NotificationSeverity } from "@esposter/db-schema";
-import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
@@ -27,31 +28,13 @@ export const useExportResourcesCsv = () => {
     return isExported;
   };
   // Re-queries the current filter in page-sized chunks up to the export cap, so export cost stays bounded
-  const exportAllResourcesCsv = async (
-    readResourcesPage: (input: {
-      limit: number;
-      offset: number;
-    }) => Promise<{ hasMore: boolean; items: ResourceInResource[] }>,
-  ) => {
+  const exportAllResourcesCsv = async (readResourcesPage: (cursor: string) => Promise<Page<ResourceInResource>>) => {
     // Fire-and-forget from the toolbar, so a page query rejection is captured here instead of surfacing unhandled
     await getResultAsync(async () => {
-      const allResources: ResourceInResource[] = [];
-      let offset = 0;
-      let isTruncated = false;
-      while (true) {
-        // oxlint-disable-next-line no-await-in-loop -- Pagination: the next offset is read only once this page says there is more
-        const { hasMore, items } = await readResourcesPage({ limit: MAX_READ_LIMIT, offset });
-        allResources.push(...items);
-        if (!hasMore) break;
-        else if (allResources.length >= MAX_CSV_EXPORT_ROWS) {
-          isTruncated = true;
-          break;
-        }
-
-        offset += MAX_READ_LIMIT;
-      }
+      // One row past the cap tells a full export from a truncated one
+      const allResources = await readAllResourcePages(readResourcesPage, MAX_CSV_EXPORT_ROWS + 1);
       const isExported = await exportResourcesCsv(allResources.slice(0, MAX_CSV_EXPORT_ROWS));
-      if (isExported && isTruncated)
+      if (isExported && allResources.length > MAX_CSV_EXPORT_ROWS)
         createWarningNotification(`Export truncated to the first ${MAX_CSV_EXPORT_ROWS} resources`);
     }).match(noop, createErrorNotification);
   };

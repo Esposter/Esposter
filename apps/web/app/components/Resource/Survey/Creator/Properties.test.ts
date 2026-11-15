@@ -1,4 +1,7 @@
 // @vitest-environment nuxt
+import type { VueWrapper } from "@vue/test-utils";
+import type { z } from "zod";
+
 import ResourceSurveyCreatorChoiceListEditor from "@/components/Resource/Survey/Creator/ChoiceListEditor.vue";
 import ResourceSurveyCreatorImageChoicesEditor from "@/components/Resource/Survey/Creator/ImageChoicesEditor.vue";
 import ResourceSurveyCreatorImageUpload from "@/components/Resource/Survey/Creator/ImageUpload.vue";
@@ -14,6 +17,12 @@ import {
   surveyNodeTypeDefinitionMap,
   surveyRootPropsSchema,
 } from "vue-survey-engine-headless";
+
+// The keys a form draws, which are the keys of the schema it is given
+const getDrawnKeys = (wrapper: VueWrapper) => {
+  const schema: z.ZodObject = Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema");
+  return Object.keys(schema.shape);
+};
 
 // A page holding one question of the given kind, which the panel edits once it is selected
 const createSurveyDocument = (type: SurveyNodeType = SurveyNodeType.RadioGroup) =>
@@ -103,9 +112,7 @@ describe("resourceSurveyCreatorProperties", () => {
     select("/content/0/props/children/0");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
 
-    expect(JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"))).not.toContain(
-      '"choices"',
-    );
+    expect(getDrawnKeys(wrapper)).not.toContain("choices");
     expect(wrapper.findComponent(ResourceSurveyCreatorChoiceListEditor).exists()).toBe(true);
   });
 
@@ -133,9 +140,7 @@ describe("resourceSurveyCreatorProperties", () => {
     select("/content/0/props/children/0");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
 
-    expect(JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"))).not.toContain(
-      '"choices"',
-    );
+    expect(getDrawnKeys(wrapper)).not.toContain("choices");
     expect(wrapper.findComponent(ResourceSurveyCreatorImageChoicesEditor).props("pointer")).toBe(
       "/content/0/props/children/0",
     );
@@ -164,15 +169,15 @@ describe("resourceSurveyCreatorProperties", () => {
     const { select } = useSurveyCreatorCommands();
     select("");
     const wrapper = await mountSuspended(ResourceSurveyCreatorProperties);
-    const rootSchema = JSON.stringify(Reflect.get(wrapper.getComponent(UiSchemaForm).props(), "schema"));
+    const rootKeys = getDrawnKeys(wrapper);
     wrapper
       .getComponent(UiSchemaForm)
       .vm.$emit("update:modelValue", { ...surveyDocument.value.root.props, title: "Renamed survey" });
     await wrapper.vm.$nextTick();
 
-    expect(rootSchema).toContain('"title"');
-    expect(rootSchema).not.toContain('"logo"');
-    expect(rootSchema).not.toContain('"calculatedValues"');
+    expect(rootKeys).toContain("title");
+    expect(rootKeys).not.toContain("logo");
+    expect(rootKeys).not.toContain("calculatedValues");
     expect(surveyDocument.value.root.props).toStrictEqual({
       accentColor: "",
       backgroundColor: "",

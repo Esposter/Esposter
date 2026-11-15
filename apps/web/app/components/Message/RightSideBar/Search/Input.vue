@@ -5,7 +5,7 @@ import { getFilterTypeFromSearchQuery } from "@/services/message/filter/getFilte
 import { SearchFilterComponentMap } from "@/services/message/filter/SearchFilterComponentMap";
 import { useSearchMessageStore } from "@/store/message/search";
 
-const readSearchedMessages = useReadSearchedMessages();
+const { readSearchedMessages } = useReadSearchedMessages();
 const searchMessageStore = useSearchMessageStore();
 const { createFilter } = searchMessageStore;
 const { activeSelectedFilter, isMenuOpen, isSearchQueryEmpty, searchQuery, selectedFilters } =

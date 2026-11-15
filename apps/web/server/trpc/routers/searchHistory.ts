@@ -1,12 +1,7 @@
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { relations, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
+import type { Page, SearchHistoryInMessage, Topic } from "@esposter/db-schema";
 import type { User } from "better-auth";
-import type { RelationsFilter } from "drizzle-orm";
 
 import { ownedBy } from "#server/services/db/ownedBy";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { router } from "#server/trpc";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
@@ -16,8 +11,11 @@ import { createSearchHistoryInputSchema } from "#shared/models/db/searchHistory/
 import { deleteSearchHistoryInputSchema } from "#shared/models/db/searchHistory/DeleteSearchHistoryInput";
 import { readSearchHistoriesInputSchema } from "#shared/models/db/searchHistory/ReadSearchHistoriesInput";
 import { updateSearchHistoryInputSchema } from "#shared/models/db/searchHistory/UpdateSearchHistoryInput";
+import { SEARCH_HISTORY_PAGE_SORT } from "#shared/services/searchHistory/constants";
+import { createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import { DatabaseEntityType, getTopic, searchHistoriesInMessage, TopicKind } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 
 // A user's searches, across every room, are one topic: the history a room shows is read from it
 const getSearchHistoryTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [
@@ -69,23 +67,26 @@ export const searchHistoryRouter = router({
       input,
     ),
   ),
+  // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only says which
+  // Room's searches may be read, never whose
   readSearchHistories: getTopicsProcedure(
     getMemberProcedure(readSearchHistoriesInputSchema, "roomId"),
     getSearchHistoryTopics,
-  ).query<CursorPaginationData<SearchHistoryInMessage>>(async ({ ctx, input: { cursor, limit, roomId, sortBy } }) => {
-    // A search history is the caller's own, exactly as `ownedBy` scopes every write to it — membership only
-    // Says which room's searches may be read, never whose
-    const where: RelationsFilter<(typeof relations)["searchHistoriesInMessage"], typeof relations> = {
-      roomId: { eq: roomId },
-      userId: { eq: ctx.user.id },
-    };
-    if (cursor) where.RAW = (searchHistory) => getCursorWhere(searchHistory, cursor, sortBy);
-    const resultSearchHistories = await ctx.db.query.searchHistoriesInMessage.findMany({
-      limit: limit + 1,
-      orderBy: (searchHistory) => parseSortByToSql(searchHistory, sortBy),
-      where,
-    });
-    return getCursorPaginationData(resultSearchHistories, limit, sortBy);
+  ).query<Page<SearchHistoryInMessage>>(async ({ ctx, input: { cursor, limit, roomId } }) => {
+    const boundSort = createPageSort({ id: searchHistoriesInMessage.id }, SEARCH_HISTORY_PAGE_SORT);
+    const rows = await ctx.db
+      .select()
+      .from(searchHistoriesInMessage)
+      .where(
+        and(
+          eq(searchHistoriesInMessage.roomId, roomId),
+          eq(searchHistoriesInMessage.userId, ctx.user.id),
+          getPageWhere(boundSort, cursor),
+        ),
+      )
+      .orderBy(...getPageOrderBy(boundSort, cursor))
+      .limit(limit + 1);
+    return toPage(rows, SEARCH_HISTORY_PAGE_SORT, cursor, limit);
   }),
   updateSearchHistory: getTopicsProcedure(
     standardAuthedProcedure.input(updateSearchHistoryInputSchema),

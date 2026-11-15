@@ -6,11 +6,7 @@ import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 // Rebalances in `BuildingMap`/`UpgradeMap` always reach existing saves.
 export const toClickerSave = (clicker: Clicker) =>
   new ClickerSave({
+    ...clicker,
     boughtBuildings: clicker.boughtBuildings.map(({ amount, id, producedValue }) => ({ amount, id, producedValue })),
     boughtUpgrades: clicker.boughtUpgrades.map(({ id }) => id),
-    createdAt: clicker.createdAt,
-    id: clicker.id,
-    pointCount: clicker.pointCount,
-    type: clicker.type,
-    updatedAt: clicker.updatedAt,
   });

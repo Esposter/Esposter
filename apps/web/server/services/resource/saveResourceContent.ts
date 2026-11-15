@@ -2,8 +2,10 @@ import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { SaveResourceContentInput } from "#server/models/resource/SaveResourceContentInput";
 import type { ResourceInResource, ResourceLinkInResource } from "@esposter/db-schema";
 
+import { ownedBy } from "#server/services/db/ownedBy";
 import { callUserObjects } from "#server/services/realtime/callUserObjects";
 import { readDeviceId } from "#server/services/realtime/readDeviceId";
+import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
 import { ResourceTypeGetLinkTargetsMap } from "#server/services/resource/link/ResourceTypeGetLinkTargetsMap";
 import { pruneWorkingAssets } from "#server/services/resource/pruneWorkingAssets";
@@ -177,7 +179,10 @@ export const saveResourceContent = async (
   if (contentVersion === undefined) {
     if (hasResourceLinksChanged) await clearResourceLinks();
     await writeContentBlob();
-    await ctx.db.update(resourcesInResource).set({ contentHash, contentSize }).where(eq(resourcesInResource.id, id));
+    await ctx.db
+      .update(resourcesInResource)
+      .set({ contentHash, contentSize })
+      .where(getOwnedLiveResourceWhere(resource.userId, id));
     removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
     savedResource = { ...resource, contentHash, contentSize };
   } else {
@@ -186,7 +191,9 @@ export const saveResourceContent = async (
     const [updatedResource] = await ctx.db
       .update(resourcesInResource)
       .set({ contentHash, contentSize, contentVersion: contentVersion + 1 })
-      .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, contentVersion)))
+      .where(
+        and(getOwnedLiveResourceWhere(resource.userId, id), eq(resourcesInResource.contentVersion, contentVersion)),
+      )
       .returning();
     if (!updatedResource) throw new TRPCError({ code: "BAD_REQUEST", message: STALE_CONTENT_VERSION_ERROR_MESSAGE });
     savedResource = updatedResource;
@@ -195,13 +202,17 @@ export const saveResourceContent = async (
       await writeContentBlob();
       removedAssetHashes = await pruneWorkingAssets(ctx.db, id, assetHashes);
     }).match(noop, async (error) => {
-      // Put back only while it is still this save's bump, and the failure clears links whichever way the upload went
+      // Put back only while it is still this save's bump, matched on the owner and id rather than the live row, so
+      // A resource binned since the bump is put back too. The failure clears links whichever way the upload went
       await getResultAsync(() =>
         ctx.db
           .update(resourcesInResource)
           .set({ contentHash: resource.contentHash, contentSize: resource.contentSize, contentVersion })
           .where(
-            and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, savedResource.contentVersion)),
+            and(
+              ownedBy(resourcesInResource, id, resource.userId),
+              eq(resourcesInResource.contentVersion, savedResource.contentVersion),
+            ),
           ),
       ).match(noop, console.error);
       if (hasResourceLinksChanged && isContentBlobWriteAttempted) await clearResourceLinks();

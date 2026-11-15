@@ -9,7 +9,6 @@ import { checkIsChartVisualType } from "@/services/dashboard/checkIsChartVisualT
 import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
 import { setVisualType } from "@/services/dashboard/setVisualType";
 import { VisualTypeCategoryDefinitions } from "@/services/dashboard/VisualTypeCategoryDefinitions";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
 
@@ -26,7 +25,6 @@ const schema = useZodSchema(
 watchDeep(editedItem, (newEditedItem) => {
   if (schema.value.safeParse(newEditedItem.chart.configuration).success) applyEdit(newEditedItem);
 });
-const jsonSchema = computed(() => zodToJsonSchema(schema.value));
 // A card and a table draw no chart, so the chart type and the chart's settings have nothing to set for them
 const isChartVisual = computed(() => checkIsChartVisualType(editedItem.value.type));
 // A group is made from the palette and keeps its type, so a chart's type picker offers every type but the group's
@@ -67,12 +65,7 @@ const chartTypeItems = computed(() =>
       per category, so this visual shows demo data.
     </p>
     <DashboardVisualPreviewDatasetBindingForm v-else v-model="editedItem.dataset" />
-    <UiSchemaForm
-      v-if="isChartVisual"
-      v-model="editedItem.chart.configuration"
-      :schema="jsonSchema"
-      :validation-schema="schema"
-    />
+    <UiSchemaForm v-if="isChartVisual" v-model="editedItem.chart.configuration" :schema />
     <!-- A card's label is the title its chart configuration holds, so it saves with the rest of the visual and reads back
       as the card's heading. An empty label falls back to the aggregation of the card's column -->
     <UiTextField

@@ -280,7 +280,7 @@ describe("resourceRouter", () => {
     const taggedResource = await dashboardCaller.createResource({ name: "a" });
     await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { a: name } });
     await sheetCaller.createResource({ name: "b" });
-    const count = await caller.readResourcesCount({ searchQuery: name });
+    const { count } = await caller.readResources({ searchQuery: name });
 
     expect(count).toBe(1);
   });
@@ -328,7 +328,7 @@ describe("resourceRouter", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.readResourcesCount();
+    const { count } = await caller.readResources();
 
     expect(count).toBe(2);
   });
@@ -339,7 +339,7 @@ describe("resourceRouter", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name });
 
-    const count = await caller.readResourcesCount({ types: [ResourceType.Dashboard] });
+    const { count } = await caller.readResources({ types: [ResourceType.Dashboard] });
 
     expect(count).toBe(1);
   });
@@ -350,7 +350,7 @@ describe("resourceRouter", () => {
     await dashboardCaller.createResource({ name });
     await sheetCaller.createResource({ name: "a" });
 
-    const count = await caller.readResourcesCount({ searchQuery: name });
+    const { count } = await caller.readResources({ searchQuery: name });
 
     expect(count).toBe(1);
   });
@@ -413,7 +413,7 @@ describe("resourceRouter", () => {
     const draftResource = await dashboardCaller.createResource({ name });
     const { items: publishedItems } = await caller.readResources({ isPublished: true });
     const { items: draftItems } = await caller.readResources({ isPublished: false });
-    const publishedCount = await caller.readResourcesCount({ isPublished: true });
+    const { count: publishedCount } = await caller.readResources({ isPublished: true });
 
     expect(publishedItems.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
     expect(draftItems.map(({ id }) => id)).toStrictEqual([draftResource.id]);
@@ -439,7 +439,7 @@ describe("resourceRouter", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     const sheetResource = await sheetCaller.createResource({ name });
     const deletedResources = await caller.deleteResources({ ids: [dashboardResource.id, sheetResource.id] });
-    const count = await caller.readResourcesCount();
+    const { count } = await caller.readResources();
 
     expect(
       deletedResources
@@ -913,7 +913,7 @@ describe("resourceRouter", () => {
     const otherResource = await sheetCaller.createResource({ name });
     await sheetCaller.updateResource({ id: otherResource.id, name, tags: { a: "a" } });
     const { items } = await caller.readResources({ tags });
-    const tagCount = await caller.readResourcesCount({ tags });
+    const { count: tagCount } = await caller.readResources({ tags });
 
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
     expect(takeOne(items).tags).toStrictEqual({ ...tags, b: "" });
@@ -954,14 +954,46 @@ describe("resourceRouter", () => {
     expect(contentAfter).toStrictEqual(contentBefore);
   });
 
+  // The first page answers the total and the owner's whole list is read a page at a time, from the cursor each answered
+  test("reads the owner's resources to the end a page at a time, the total on the first page", async () => {
+    expect.hasAssertions();
+
+    const firstResource = await dashboardCaller.createResource({ name });
+    const secondResource = await sheetCaller.createResource({ name: updatedName });
+    const firstPage = await caller.readResources({ limit: 1 });
+    const secondPage = await caller.readResources({ cursor: firstPage.nextCursor, limit: 1 });
+
+    expect(firstPage.count).toBe(2);
+    expect([...firstPage.items, ...secondPage.items].map(({ id }) => id).toSorted()).toStrictEqual(
+      [firstResource.id, secondResource.id].toSorted(),
+    );
+    expect(secondPage.count).toBeUndefined();
+    expect(secondPage.nextCursor).toBe("");
+  });
+
+  test("reads the bin to the end a page at a time, newest deletion first", async () => {
+    expect.hasAssertions();
+
+    const firstResource = await dashboardCaller.createResource({ name });
+    const secondResource = await dashboardCaller.createResource({ name: updatedName });
+    await caller.deleteResources({ ids: [firstResource.id] });
+    vi.advanceTimersByTime(1);
+    await caller.deleteResources({ ids: [secondResource.id] });
+    const firstPage = await caller.readDeletedResources({ limit: 1 });
+    const secondPage = await caller.readDeletedResources({ cursor: firstPage.nextCursor, limit: 1 });
+
+    expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondResource.id]);
+    expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstResource.id]);
+    expect(secondPage.nextCursor).toBe("");
+  });
+
   test("moves a deleted resource to the bin instead of destroying it", async () => {
     expect.hasAssertions();
 
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
-    const { items: deletedItems } = await caller.readDeletedResources();
-    const deletedCount = await caller.readDeletedResourcesCount();
-    const liveCount = await caller.readResourcesCount();
+    const { count: deletedCount, items: deletedItems } = await caller.readDeletedResources();
+    const { count: liveCount } = await caller.readResources();
 
     expect(deletedItems.map(({ id }) => id)).toStrictEqual([dashboardResource.id]);
     expect(deletedCount).toBe(1);
@@ -999,8 +1031,8 @@ describe("resourceRouter", () => {
     const dashboardResource = await dashboardCaller.createResource({ name });
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const [restoredResource] = await caller.restoreResources({ ids: [dashboardResource.id] });
-    const liveCount = await caller.readResourcesCount();
-    const deletedCount = await caller.readDeletedResourcesCount();
+    const { count: liveCount } = await caller.readResources();
+    const { count: deletedCount } = await caller.readDeletedResources();
 
     expect(restoredResource?.deletedAt).toBeNull();
     expect(liveCount).toBe(1);
@@ -1288,7 +1320,7 @@ describe("resourceRouter", () => {
     await caller.deleteResources({ ids: [dashboardResource.id] });
     const activityBeforePurge = await readResourceActivities(dashboardResource.id);
     await caller.purgeResource({ id: dashboardResource.id });
-    const deletedCount = await caller.readDeletedResourcesCount();
+    const { count: deletedCount } = await caller.readDeletedResources();
     // The row is gone, so the blade can no longer resolve it — its trail goes with the row's cascade at purge time,
     // Read straight from the table because no procedure can reach a purged resource any more
     const activityAfterPurge = await readResourceActivities(dashboardResource.id);
@@ -1296,6 +1328,27 @@ describe("resourceRouter", () => {
     expect(activityBeforePurge).not.toStrictEqual([]);
     expect(deletedCount).toBe(0);
     expect(activityAfterPurge).toStrictEqual([]);
+  });
+
+  test("reads the activity trail to the end a page at a time", async () => {
+    expect.hasAssertions();
+
+    const dashboardResource = await dashboardCaller.createResource({ name });
+    vi.advanceTimersByTime(1);
+    await dashboardCaller.updateResource({ id: dashboardResource.id, name: updatedName });
+    await waitForSynchronizedFunctions();
+    // Created and renamed, so the trail is read a page short of its full length, and the rest is its last page
+    const { items } = await caller.readActivities({ id: dashboardResource.id });
+    const firstPage = await caller.readActivities({ id: dashboardResource.id, limit: items.length - 1 });
+    const lastPage = await caller.readActivities({
+      cursor: firstPage.nextCursor,
+      id: dashboardResource.id,
+      limit: items.length - 1,
+    });
+
+    expect(firstPage.nextCursor).not.toBe("");
+    expect([...firstPage.items, ...lastPage.items].map(({ id }) => id)).toStrictEqual(items.map(({ id }) => id));
+    expect(lastPage.nextCursor).toBe("");
   });
 
   // The trail's order is pinned by the newest-first test below, so these compare its contents as a set
@@ -1444,7 +1497,50 @@ describe("resourceRouter", () => {
     await expect(caller.readResourceContent({ id, pointer: "/items/0/name" })).resolves.toStrictEqual({
       content: name,
       contentVersion: contentVersion + 1,
+      nextCursor: "",
     });
+  });
+
+  test("reads an array at a pointer to the end a page at a time", async () => {
+    expect.hasAssertions();
+
+    const { contentVersion, id } = await todoListCaller.createResource({ name });
+    await todoListCaller.saveResourceContent({
+      content: { items: [new TodoListItem({ name }), new TodoListItem({ name: updatedName })] },
+      contentVersion,
+      id,
+    });
+    const wholeArray = await caller.readResourceContent({ id, pointer: "/items" });
+    const firstPage = await caller.readResourceContent({ id, limit: 1, pointer: "/items" });
+    const secondPage = await caller.readResourceContent({
+      cursor: firstPage.nextCursor,
+      id,
+      limit: 1,
+      pointer: "/items",
+    });
+
+    expect(firstPage.content).toHaveLength(1);
+    expect([firstPage.length, secondPage.length, secondPage.nextCursor]).toStrictEqual([2, 2, ""]);
+    expect([firstPage.content, secondPage.content].flat()).toStrictEqual(wholeArray.content);
+  });
+
+  test("refuses an array cursor that holds no index of the array", async () => {
+    expect.hasAssertions();
+
+    const { id } = await todoListCaller.createResource({ name });
+
+    await expect(caller.readResourceContent({ cursor: btoa(JSON.stringify([false, [-1]])), id, pointer: "/items" }))
+      .rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "path": [
+            "cursor"
+          ],
+          "message": "A cursor names an index of the array, a non-negative integer"
+        }
+      ]]
+    `);
   });
 
   test("reads content never saved as null, which a patch writes whole", async () => {
@@ -1457,10 +1553,11 @@ describe("resourceRouter", () => {
       operations: [{ op: JsonPatchOperationType.Add, path: "", value: { items: [] } }],
     });
 
-    expect(readContent).toStrictEqual({ content: null, contentVersion });
+    expect(readContent).toStrictEqual({ content: null, contentVersion, nextCursor: "" });
     await expect(caller.readResourceContent({ id })).resolves.toStrictEqual({
       content: { items: [] },
       contentVersion: contentVersion + 1,
+      nextCursor: "",
     });
   });
 
@@ -1547,6 +1644,7 @@ describe("resourceRouter", () => {
     await expect(caller.readResourceContent({ id })).resolves.toStrictEqual({
       content: { items: [] },
       contentVersion: contentVersion + 1,
+      nextCursor: "",
     });
   });
 

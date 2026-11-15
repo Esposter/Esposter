@@ -11,8 +11,9 @@ import { getMemberProcedure } from "#server/trpc/procedure/room/getMemberProcedu
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { readMyUsersToRoomsInputSchema } from "#shared/models/db/userToRoom/ReadMyUsersToRoomsInput";
 import { updateUserToRoomInputSchema } from "#shared/models/db/userToRoom/UpdateUserToRoomInput";
+import { inJsonArray } from "@esposter/db";
 import { getTopic, roomIdSchema, TopicKind, usersToRoomsInMessage } from "@esposter/db-schema";
-import { and, ne } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 
 export const userToRoomRouter = router({
   // The caller's membership rows are the state of their room list, so a change to one is a change to that list
@@ -34,9 +35,12 @@ export const userToRoomRouter = router({
     getRoomListTopics(ctx.user.id),
   ).query<UserToRoomInMessage[]>(async ({ ctx, input }) => {
     await assertIsMember(ctx, input.roomIds);
-    return ctx.db.query.usersToRoomsInMessage.findMany({
-      where: { roomId: { in: input.roomIds }, userId: { eq: ctx.user.id } },
-    });
+    return ctx.db
+      .select()
+      .from(usersToRoomsInMessage)
+      .where(
+        and(eq(usersToRoomsInMessage.userId, ctx.user.id), inJsonArray(usersToRoomsInMessage.roomId, input.roomIds)),
+      );
   }),
   updateUserToRoom: getTopicsProcedure(getMemberProcedure(updateUserToRoomInputSchema, "roomId"), ({ ctx, input }) => {
     // A display name is what the member list shows, so only a rename reaches the room's readers. The row changed

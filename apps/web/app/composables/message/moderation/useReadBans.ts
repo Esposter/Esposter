@@ -13,13 +13,15 @@ export const useReadBans = (roomId: RoomInMessage["id"]) => {
     const name = normalizeString(searchQuery.value);
     return name ? { name } : undefined;
   });
-  const readMoreBans = (onComplete: () => void) =>
-    readMoreItems(
-      // The term rides along with the cursor, so a ban placed mid-scroll cannot appear in a later page of a
-      // Search it does not match
-      (cursor) => $trpc.message.moderation.readBans.query({ cursor, filter: filter.value, roomId }),
+  const readMoreBans = (onComplete: () => void) => {
+    // The term the continuation belongs to is taken as the read is issued, so a retry after the reader typed a new term
+    // Still asks for the rows of the search its cursor came from
+    const issuedFilter = filter.value;
+    return readMoreItems(
+      (cursor) => $trpc.message.moderation.readBans.query({ cursor, filter: issuedFilter, roomId }),
       onComplete,
     );
+  };
   // An empty query is a query rather than a reset, which is what makes an emptied field list the room's bans
   // Again instead of leaving the last term's results on screen — and what makes the first of them the list this
   // Panel opens on

@@ -14,6 +14,7 @@ export const createRoom = (name: string, type = RoomType.Room): RoomInMessage =>
   image: "",
   isInvitePaused: false,
   isReadOnly: false,
+  lastMessageAt: new Date(0),
   maxFileSizeBytes: 0,
   name,
   participantKey: type === RoomType.DirectMessage ? v7() : null,

@@ -1,3 +1,5 @@
+import type { Filter } from "@esposter/db-schema";
+
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
 import { getSearchableFilters } from "#shared/services/message/getSearchableFilters";
 import { RightDrawer } from "@/models/message/RightDrawer";
@@ -16,68 +18,97 @@ export const useReadSearchedMessages = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const searchMessageStore = useSearchMessageStore();
-  const { beginSearch, getBoundCount, getBoundIsSearching, getBoundPage, getReadMoreItems } = searchMessageStore;
+  const {
+    beginSearch,
+    getBoundCount,
+    getBoundIsSearching,
+    getBoundResultSearch,
+    getResultSearchRef,
+    getSlice,
+    getSliceOperationData,
+  } = searchMessageStore;
   const { isMenuOpen, searchQuery, selectedFilters } = storeToRefs(searchMessageStore);
   const searchHistoryStore = useSearchHistoryStore();
   const { createSearchHistory } = searchHistoryStore;
   const readMessageCreators = useReadMessageCreators();
-  return (offset?: number) => {
-    const roomId = requirePartitionKey(currentRoomId.value, useReadSearchedMessages.name);
-    // A newer search for the room cancels this one, and this search's own signal is what its failure is judged by
-    const signal = beginSearch(roomId);
-    const readSearchedPage = getReadMoreItems(() => {
-      // Everything this read writes back is resolved before its first await, exactly as the result slice it is
-      // Issued against is: the room can move while it is in flight, and its totals, its page and its history
-      // Entry all belong to the search that was actually run, not to whatever is on screen when the response lands
-      // A chip the user added but never gave a value to is not a constraint, so it is dropped here rather than
-      // Sent — both to the search and to the history entry the search earns, which stores what it actually ran
-      const filters = getSearchableFilters(selectedFilters.value);
-      const query = searchQuery.value;
-      // The input schema refuses a search with nothing in it, so the read that builds the request is where that
-      // Stops rather than at each of the surfaces that can issue one — an Enter, a history row, a page change.
-      // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
-      if (checkIsSearchQueryEmpty(query, filters)) {
-        // A search this read supersedes was aborted by beginSearch, and an aborted search skips clearing the flag it
-        // Raised, so the read that raised none clears it here rather than leaving the room rendered as searching
-        getBoundIsSearching().value = false;
-        return Promise.resolve({ hasMore: false, items: [] });
-      }
+  // One page of a room's search. A hit is drawn only once its author is known, so the authors the hits name are read
+  // With the results, as a room's messages read theirs
+  const readSearchPage = async (
+    roomId: string,
+    cursor: string,
+    { filters, query }: { filters: Filter[]; query: string },
+    signal?: AbortSignal,
+  ) => {
+    const page = await $trpc.message.searchMessages.query({ cursor, filters, query, roomId }, { signal });
+    await readMessageCreators(roomId, page.items);
+    return page;
+  };
 
-      isMenuOpen.value = false;
-      // The pending flag is raised and cleared inside the read that owns it rather than by the paginator's own
-      // Finalizer, which is shared across every read this composable issues: two searches overlapping across a
-      // Room switch would otherwise have the first to land clear the second's flag and leave its own raised
-      const boundIsSearching = getBoundIsSearching();
-      boundIsSearching.value = true;
-      openRightDrawer(RightDrawer.Search);
-      const boundCount = getBoundCount();
-      const boundPage = getBoundPage();
-      return withFinalizerAsync(
+  const readSearchedMessages = async () => {
+    const roomId = requirePartitionKey(currentRoomId.value, readSearchedMessages.name);
+    // A newer search for the room cancels this one, and this search's own signal is what its answer and its failure are
+    // Judged by
+    const signal = beginSearch(roomId);
+    // A chip the user added but never gave a value to is not a constraint, so it is dropped here rather than sent, both
+    // To the search and to the history entry the search earns, which stores what it actually ran
+    const filters = getSearchableFilters(selectedFilters.value);
+    const query = searchQuery.value;
+    // The input schema refuses a search with nothing in it, so the read that builds the request is where that stops.
+    // The field clearing itself on blur is what put an empty query here, and the answer to that is not a 400
+    if (checkIsSearchQueryEmpty(query, filters)) {
+      // A search this read supersedes was aborted by beginSearch, and an aborted search skips clearing the flag it
+      // Raised, so the read that raised none clears it here rather than leaving the room rendered as searching
+      getBoundIsSearching().value = false;
+      getSlice(roomId).resetCursorPaginationData();
+      getBoundResultSearch().value = undefined;
+      return;
+    }
+
+    isMenuOpen.value = false;
+    // The pending flag is raised and cleared inside the read that owns it, since two searches overlapping across a room
+    // Switch would otherwise have the first to land clear the second's flag and leave its own room rendering as loading
+    const boundIsSearching = getBoundIsSearching();
+    boundIsSearching.value = true;
+    openRightDrawer(RightDrawer.Search);
+    // Everything the search writes back is bound before its first await, to the room it was issued for
+    const boundCount = getBoundCount();
+    const boundResultSearch = getBoundResultSearch();
+    await getResultAsync(() =>
+      withFinalizerAsync(
         async () => {
-          const { count: newCount, data: page } = await $trpc.message.searchMessages.query(
-            { filters, offset, query, roomId },
-            { signal },
-          );
-          // A hit is drawn only once its author is known, so the authors the hits name are read before they land
-          await readMessageCreators(roomId, page.items);
-          // No offset means a fresh search rather than reading the next offset page.
-          if (!offset) await createSearchHistory({ filters: filters.length > 0 ? filters : undefined, query, roomId });
-          // A newer search began while this one was in flight, so its results and totals are dropped whole, and the
-          // Paginator writes nothing for the read the throw ends
+          const page = await readSearchPage(roomId, "", { filters, query }, signal);
+          await createSearchHistory({ filters: filters.length > 0 ? filters : undefined, query, roomId });
+          // A newer search began while this one was in flight, so its results and totals are dropped whole
           signal.throwIfAborted();
-          if (!offset) boundPage.value = 1;
-          if (newCount !== undefined) boundCount.value = newCount;
-          return page;
+          getSlice(roomId).initializeCursorPaginationData(page);
+          if (page.count !== undefined) boundCount.value = page.count;
+          boundResultSearch.value = { filters, query };
         },
         () => {
           // The newer search that cancelled this one raised the flag itself, and clears it when it lands
           if (!signal.aborted) boundIsSearching.value = false;
         },
-      );
-    });
-    return getResultAsync(() => readSearchedPage(offset)).match(noop, (error) => {
+      ),
+    ).match(noop, (error) => {
       // A cancelled search is silent, whatever form its failure took once the client wrapped it
       if (!signal.aborted) createErrorAlert(error);
     });
   };
+
+  // The continuation is read for the search its results were read for, not for whatever the reader has typed since
+  const readMoreSearchedMessages = async (onComplete: () => void) => {
+    const roomId = requirePartitionKey(currentRoomId.value, readMoreSearchedMessages.name);
+    const resultSearch = getResultSearchRef(roomId).value;
+    if (!resultSearch) {
+      onComplete();
+      return;
+    }
+
+    await getSliceOperationData(roomId).readMoreItems(
+      (cursor) => readSearchPage(roomId, cursor, resultSearch),
+      onComplete,
+    );
+  };
+
+  return { readMoreSearchedMessages, readSearchedMessages };
 };

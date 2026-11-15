@@ -12,6 +12,11 @@ import { z } from "zod";
 export class Chart extends AItemEntity implements ItemEntityType<ChartType> {
   configuration = new BasicChartConfiguration();
   type: ChartType = ChartType.Basic;
+
+  constructor(init?: Partial<Chart>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const chartSchema = z.object({

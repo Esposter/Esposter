@@ -11,7 +11,7 @@ import { getRolelessMemberCount } from "@/services/message/member/getRolelessMem
 // Hold it
 export const getMemberListItems = (
   memberGroups: MemberGroup<MemberInRoom>[],
-  memberCount: number,
+  memberCount: number | undefined,
   memberCountsByTopRole: MemberCountByTopRole[],
   getStatusMessage: (userId: string) => string,
 ) => {

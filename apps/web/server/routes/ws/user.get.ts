@@ -10,5 +10,10 @@ export default defineEventHandler(async (event) => {
   const { session, user } = await readSocketSession(event);
 
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));
-  return forwardSocket(event, useUserObject(user.id), { deviceId, sessionId: session.id, userId: user.id });
+  return forwardSocket(event, useUserObject(user.id), {
+    deviceId,
+    sessionExpiresAt: session.expiresAt.getTime(),
+    sessionId: session.id,
+    userId: user.id,
+  });
 });

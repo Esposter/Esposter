@@ -17,10 +17,9 @@ const markRead = <T extends { isRead: boolean }>(notification: T): T =>
 export const useNotificationStore = defineStore("notification", () => {
   const { $trpc } = useNuxtApp();
   const { items: deliveredNotifications, ...restData } = useCursorPaginationData<AppNotification>();
-  const { executeMutation: executeDeleteNotificationMutation } = useMutation();
-  const { executeMutation: executeDeleteNotificationsMutation } = useMutation();
-  const { executeMutation: executeReadStatusMutation } = useMutation();
-  const { executeMutation: executeStoreDeliveredNotificationsMutation } = useMutation();
+  // Every write that answers the unread total queues on this one executor under one key, so an answer read before a
+  // Later write's can never land after it
+  const { executeMutation: executeNotificationMutation } = useMutation();
   const localNotifications = ref<AppNotification[]>([]);
   // Sorted at display time rather than kept in order by every writer: the two halves arrive independently — a
   // Page appends, a local notification prepends — and only the rendered list has an opinion about their order
@@ -55,7 +54,7 @@ export const useNotificationStore = defineStore("notification", () => {
   // Read brought back, re-toasting it after it was dismissed. Queued, the second reads a list that already holds
   // It — and still reads, so a row written while the first was in flight arrives rather than being joined away
   const storeDeliveredNotifications = (readDeliveredNotifications: () => Promise<unknown>) =>
-    executeStoreDeliveredNotificationsMutation(
+    executeNotificationMutation(
       async () => {
         const [previousNewestNotification] = deliveredNotifications.value;
         // The watermark alone cannot separate a row that arrived from the row it ties with: the stored timestamps
@@ -143,23 +142,23 @@ export const useNotificationStore = defineStore("notification", () => {
       return;
     }
 
-    await executeDeleteNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
+    await executeNotificationMutation(() => $trpc.notification.deleteNotification.mutate(id), {
       applyOptimistic: () => {
         const { previousNotifications, previousUnreadDeliveredCount, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.filter((notification) => notification.id !== id);
-        // A deleted row is one fewer unread, and the total is the server's — so it is adjusted here rather than
-        // Re-read, exactly as the list itself is
+        // The total is the server's, so this step moves it for display only: the count the delete answers replaces it
         if (previousNotifications.some((notification) => notification.id === id && !notification.isRead))
           unreadDeliveredCount.value = previousUnreadDeliveredCount - 1;
         return restore;
       },
-      key: id,
+      key: DatabaseEntityType.Notification,
+      onSuccess: setUnreadDeliveredCount,
     });
   };
   const dismissNotifications = async () => {
     localNotifications.value = [];
     snackbarIds.value = [];
-    await executeDeleteNotificationsMutation(() => $trpc.notification.deleteNotifications.mutate(), {
+    await executeNotificationMutation(() => $trpc.notification.deleteNotifications.mutate(), {
       applyOptimistic: () => {
         const { restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = [];
@@ -167,6 +166,7 @@ export const useNotificationStore = defineStore("notification", () => {
         return restore;
       },
       key: DatabaseEntityType.Notification,
+      onSuccess: setUnreadDeliveredCount,
     });
   };
   const markAllAsRead = async () => {
@@ -176,7 +176,7 @@ export const useNotificationStore = defineStore("notification", () => {
     // The server's one — which is also the only thing that says there is anything to clear at all
     if (unreadDeliveredCount.value === 0) return;
 
-    await executeReadStatusMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
+    await executeNotificationMutation(() => $trpc.notification.updateNotificationsReadStatus.mutate(), {
       applyOptimistic: () => {
         const { previousNotifications, restore } = snapshotDeliveredNotifications();
         deliveredNotifications.value = previousNotifications.map((notification) => markRead(notification));
@@ -184,6 +184,7 @@ export const useNotificationStore = defineStore("notification", () => {
         return restore;
       },
       key: DatabaseEntityType.Notification,
+      onSuccess: setUnreadDeliveredCount,
     });
   };
   return {

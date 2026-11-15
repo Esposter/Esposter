@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 interface Props {
   hasMore: boolean;
@@ -20,7 +20,7 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
       <div flex flex-col min-h-0 of-hidden>
         <!-- A room row's own shape while the first page is on its way: a picture's mark and a name -->
         <template v-if="isPending">
-          <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+          <div v-for="index of DEFAULT_PAGE_LIMIT" :key="index" ui-row>
             <UiSkeleton shrink-0 size-6 />
             <UiSkeleton flex-1 h-4 />
           </div>
@@ -28,7 +28,7 @@ const emit = defineEmits<{ loadMore: [onComplete: () => void] }>();
         <template v-else>
           <slot />
           <StyledWaypoint :is-active="hasMore" @change="emit('loadMore', $event)">
-            <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+            <div v-for="index of DEFAULT_PAGE_LIMIT" :key="index" ui-row>
               <UiSkeleton shrink-0 size-6 />
               <UiSkeleton flex-1 h-4 />
             </div>

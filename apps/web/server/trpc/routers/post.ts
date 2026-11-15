@@ -1,15 +1,13 @@
 import type { CreatedComment } from "#shared/models/db/post/CreatedComment";
 import type { DeletedComment } from "#shared/models/db/post/DeletedComment";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { PostInPost, PostInPostWithRelations, relations } from "@esposter/db-schema";
+import type { Page, PostInPost, PostInPostWithRelations, relations } from "@esposter/db-schema";
 import type { RelationsFilter } from "drizzle-orm";
 
 import { ownedBy } from "#server/services/db/ownedBy";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { bindPostSort } from "#server/services/post/bindPostSort";
 import { getNotBlockedWhere } from "#server/services/post/getNotBlockedWhere";
 import { getPostRanking } from "#server/services/post/getPostRanking";
+import { getPostSubtreeWhere } from "#server/services/post/getPostSubtreeWhere";
 import { getPostWithViewerLike } from "#server/services/post/getPostWithViewerLike";
 import { getViewerPostRelations } from "#server/services/post/getViewerPostRelations";
 import { readPostWithRelations } from "#server/services/post/readPostWithRelations";
@@ -30,7 +28,7 @@ import { readPostInputSchema } from "#shared/models/db/post/ReadPostInput";
 import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import { updateCommentInputSchema } from "#shared/models/db/post/UpdateCommentInput";
 import { updatePostInputSchema } from "#shared/models/db/post/UpdatePostInput";
-import { inJsonArray } from "@esposter/db";
+import { getPageOrderBy, getPageWhere, inJsonArray, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   DerivedDatabaseEntityType,
@@ -41,7 +39,7 @@ import {
   TopicKind,
 } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
-import { and, eq, isNotNull, isNull, or, sql } from "drizzle-orm";
+import { and, isNotNull, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 
 // A feed card shows a post's counters and the feed is ranked by them, so every change to a post reaches the feed too
@@ -137,13 +135,14 @@ export const postRouter = router({
       DerivedDatabaseEntityType.Comment,
       input,
     );
+    // A reply has its parent among its ancestors, so the first of them is the thread its subtree lies in
+    const threadRootId = ancestorIds.at(0);
+    if (!threadRootId)
+      throw getInvalidOperationError(Operation.Delete, DerivedDatabaseEntityType.Comment, JSON.stringify(input));
     // The subtree is the comment and every reply beneath it. It is read inside the batch rather than before it: a reply
     // Landing between a read and the delete would otherwise be subtracted from the ancestors without being named. The
     // Read and the counter's own subquery see the same rows, since nothing else writes between them
-    const subtreeWhere = or(
-      eq(postsInPost.id, input),
-      sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
-    );
+    const subtreeWhere = getPostSubtreeWhere(input, threadRootId);
     const [removedRows, , deletedCommentRows] = await ctx.db.batch([
       ctx.db.select({ id: postsInPost.id }).from(postsInPost).where(subtreeWhere),
       // Every ancestor loses the whole subtree; the guard leaves the counters alone when the delete below will not land
@@ -173,15 +172,7 @@ export const postRouter = router({
       ctx.db
         .select({ id: postsInPost.id })
         .from(postsInPost)
-        .where(
-          and(
-            or(
-              eq(postsInPost.id, input),
-              sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
-            ),
-            sql`exists (select 1 from ${postsInPost} where ${ownedPost})`,
-          ),
-        ),
+        .where(and(getPostSubtreeWhere(input, input), sql`exists (select 1 from ${postsInPost} where ${ownedPost})`)),
       ctx.db.delete(postsInPost).where(ownedPost).returning({ id: postsInPost.id }),
     ]);
     requireMutation(deletedPostRows[0], Operation.Delete, DatabaseEntityType.Post, input);
@@ -205,37 +196,29 @@ export const postRouter = router({
       .where(inJsonArray(postsInPost.id, input)),
   ),
   readPosts: getTopicsProcedure(standardRateLimitedProcedure.input(readPostsInputSchema), () => [feedPostsTopic]).query<
-    CursorPaginationData<PostInPostWithRelations>
-  >(async ({ ctx, input: { cursor, limit, parentId, sortBy, userId: authorId } }) => {
+    Page<PostInPostWithRelations>
+  >(async ({ ctx, input: { cursor, limit, parentId, sort, userId: authorId } }) => {
     const userId = ctx.user?.id;
     const where: RelationsFilter<(typeof relations)["postsInPost"], typeof relations> = parentId
       ? { parentId: { eq: parentId } }
       : { parentId: { isNull: true } };
     // Profile feeds scope to a single author — composes with the parentId and cursor clauses
     if (authorId) where.userId = { eq: authorId };
-    if (cursor || userId)
-      where.RAW = (post) => {
-        const rawWhere = and(
-          cursor ? getCursorWhere(post, cursor, sortBy) : undefined,
-          // Only feeds filter blocked users — `readPost` stays readable since navigating
-          // Directly to a blocked user's post is an intentional act
-          userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
-        );
-        if (!rawWhere)
-          throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Post, JSON.stringify({ cursor }));
-        return rawWhere;
-      };
+    where.RAW = (post) =>
+      and(
+        getPageWhere(bindPostSort(post, sort), cursor),
+        // Only feeds filter blocked users — `readPost` stays readable since navigating
+        // Directly to a blocked user's post is an intentional act
+        userId ? getNotBlockedWhere(post, ctx.db, userId) : undefined,
+      ) ?? sql`true`;
     const resultPosts = await ctx.db.query.postsInPost.findMany({
       limit: limit + 1,
-      orderBy: (post) => parseSortByToSql(post, sortBy),
+      orderBy: (post) => getPageOrderBy(bindPostSort(post, sort), cursor),
       where,
       with: userId ? getViewerPostRelations(userId) : PostInPostRelations,
     });
-    return getCursorPaginationData(
-      resultPosts.map((post) => getPostWithViewerLike(post)),
-      limit,
-      sortBy,
-    );
+    const page = toPage(resultPosts, sort, cursor, limit);
+    return { ...page, items: page.items.map((post) => getPostWithViewerLike(post)) };
   }),
   updateComment: getTopicsProcedure(
     getProfanityFilterProcedure(updateCommentInputSchema, ["description"]),

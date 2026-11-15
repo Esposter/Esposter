@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
+import { checkIsRoomOwner } from "#server/services/room/rbac/checkIsRoomOwner";
 import { getTopRolePosition } from "#server/services/room/rbac/getTopRolePosition";
 import { checkIsMemberManageable } from "#shared/services/room/rbac/checkIsMemberManageable";
 import { TRPCError } from "@trpc/server";
@@ -18,8 +19,8 @@ export const assertIsManageable = async (
     getTopRolePosition(db, targetUserId, roomId),
   ]);
   const isManageable = checkIsMemberManageable(
-    { isOwner: room?.userId === actorUserId, topPosition: actorTopPosition },
-    { isOwner: room?.userId === targetUserId, topPosition: targetTopPosition },
+    { isOwner: checkIsRoomOwner(room, actorUserId), topPosition: actorTopPosition },
+    { isOwner: checkIsRoomOwner(room, targetUserId), topPosition: targetTopPosition },
   );
   if (!isManageable) throw new TRPCError({ code: "UNAUTHORIZED" });
 };

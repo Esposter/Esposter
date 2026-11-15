@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { PostSortTypes } from "@/models/post/PostSortType";
+import { POST_SORT_TYPES } from "@/services/post/constants";
 import { getPostSortTypeItems } from "@/services/post/getPostSortTypeItems";
 import { useCommentStore } from "@/store/post/comment";
 
 const commentStore = useCommentStore();
 const { commentSortType } = storeToRefs(commentStore);
 const { setCommentSortType } = commentStore;
-const sortItems = getPostSortTypeItems(PostSortTypes);
+const sortItems = getPostSortTypeItems(POST_SORT_TYPES);
 </script>
 
 <template>

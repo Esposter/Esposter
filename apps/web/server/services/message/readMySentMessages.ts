@@ -5,20 +5,22 @@ import type { RoomMessage } from "@esposter/db-schema";
 
 import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { fanOutRoomReads } from "#server/services/message/fanOutRoomReads";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
-import { inJsonArray } from "@esposter/db";
-import { roomsInMessage } from "@esposter/db-schema";
+import { inJsonArray, toPage } from "@esposter/db";
+import { roomsInMessage, SENT_MESSAGE_PAGE_SORT, usersToRoomsInMessage } from "@esposter/db-schema";
+import { and, eq } from "drizzle-orm";
 
 // The sender's index names each sent message by its room and id, newest first. Each room's object is asked for the
 // Messages the index names there, and the page keeps the index's order: a message its room no longer holds is dropped
-// From the page, and no other message takes its place. The cursor is the index's last entry, whether or not its message
-// Survived, so the next page starts after everything this one read
+// From the page, and no other message takes its place. The cursor continues from the index's last entry, whether or not
+// Its message survived, so the next page starts after everything this one read. A room the caller has left is dropped too,
+// Since its name and the messages they sent there are no longer theirs to see
 export const readMySentMessages = async (
-  { before, limit }: ReadMySentMessagesInput,
+  { cursor, limit }: ReadMySentMessagesInput,
   db: Context["db"],
   userId: string,
 ): Promise<ReadMySentMessagesResult> => {
-  const page = getBasePaginationData(await useUserObject(userId).readSentMessages({ before, limit: limit + 1 }), limit);
+  const rows = await useUserObject(userId).readSentMessages({ cursor, limit: limit + 1 });
+  const page = toPage(rows, SENT_MESSAGE_PAGE_SORT, cursor, limit);
   const roomIdMessageIdsMap = new Map<string, number[]>();
   for (const { messageId, roomId } of page.items)
     roomIdMessageIdsMap.set(roomId, [...(roomIdMessageIdsMap.get(roomId) ?? []), messageId]);
@@ -29,20 +31,24 @@ export const readMySentMessages = async (
       const messages: RoomMessage[] = await roomObject.readMessagesByIds(roomIdMessageIdsMap.get(roomId) ?? []);
       return new Map(messages.map((message) => [message.id, message]));
     }),
-    roomIds.length > 0 ? db.select().from(roomsInMessage).where(inJsonArray(roomsInMessage.id, roomIds)) : [],
+    roomIds.length > 0
+      ? db
+          .select({ room: roomsInMessage })
+          .from(roomsInMessage)
+          .innerJoin(
+            usersToRoomsInMessage,
+            and(eq(usersToRoomsInMessage.roomId, roomsInMessage.id), eq(usersToRoomsInMessage.userId, userId)),
+          )
+          .where(inJsonArray(roomsInMessage.id, roomIds))
+      : [],
   ]);
-  const roomMap = new Map(rooms.map((room) => [room.id, room]));
-  const lastEntry = page.items.at(-1);
+  const roomMap = new Map(rooms.map(({ room }) => [room.id, room]));
   return {
-    hasMore: page.hasMore,
     items: page.items.flatMap(({ messageId, roomId }) => {
       const message = messagesByRoomId.get(roomId)?.get(messageId);
       const room = roomMap.get(roomId);
       return message && room ? [{ message, room }] : [];
     }),
-    nextCursor:
-      page.hasMore && lastEntry
-        ? JSON.stringify({ createdAt: lastEntry.createdAt, messageId: lastEntry.messageId, roomId: lastEntry.roomId })
-        : "",
+    nextCursor: page.nextCursor,
   };
 };

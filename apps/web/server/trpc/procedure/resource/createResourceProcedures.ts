@@ -1,31 +1,31 @@
 /* eslint-disable no-restricted-syntax -- an unresolved generic's conditional tuple, which no single `as` narrows; the union zod infers from a generic map key overlaps no one type's schema */
 import type { PublishableResourceProcedureOptions } from "#server/models/resource/PublishableResourceProcedureOptions";
 import type { Context } from "#server/trpc/context";
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { FileAssetsResourceType } from "#shared/models/resource/FileAssetsResourceType";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
 import type { PublishedResourceContent } from "#shared/models/resource/PublishedResourceContent";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ResourceFilePresignedUrlEntity } from "#shared/models/resource/ResourceFilePresignedUrlEntity";
-import type { ResourceWithPublication } from "#shared/models/resource/ResourceWithPublication";
+import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
 import type { ResourceInResource, ResourcePublicationInResource, ResourceType } from "@esposter/db-schema";
 import type { z } from "zod";
 
 import { publishResourceOperation } from "#server/services/notification/publishResourceOperation";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { RESOURCE_ASSET_PRESIGNED_URL_DURATION_MS } from "#server/services/resource/constants";
 import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
+import { findOwnedResource } from "#server/services/resource/findOwnedResource";
 import { generateReservedResourceAssetPresignedUrlEntities } from "#server/services/resource/generateReservedResourceAssetPresignedUrlEntities";
 import { getChangedResourceTopics } from "#server/services/resource/getChangedResourceTopics";
-import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
+import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { getResourceListTopics } from "#server/services/resource/getResourceListTopics";
+import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getResourceTopics } from "#server/services/resource/getResourceTopics";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
+import { readResourceListPage } from "#server/services/resource/readResourceListPage";
 import { readResourceViewCount } from "#server/services/resource/readResourceViewCount";
 import { readStagedResourceContent } from "#server/services/resource/readStagedResourceContent";
 import { reapplyLiveResourceContent } from "#server/services/resource/reapplyLiveResourceContent";
@@ -63,9 +63,11 @@ import { createSaveResourceContentInputSchema } from "#shared/models/db/resource
 import { saveStagedResourceContentInputSchema } from "#shared/models/db/resource/SaveStagedResourceContentInput";
 import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
+import { ResourceSortName } from "#shared/models/resource/ResourceSortName";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { ResourceSortNamePageSortMap } from "#shared/services/resource/ResourceSortNamePageSortMap";
 import { createPresignedGetUrl, getContentBlobName } from "@esposter/db";
 import {
   DatabaseEntityType,
@@ -80,7 +82,7 @@ import {
   TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
-import { and, EmptyFilter, eq, exists, sql } from "drizzle-orm";
+import { and, eq, exists, sql } from "drizzle-orm";
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
@@ -142,7 +144,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       getChangedResourceTopics,
     ).mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
       const deletedResource = requireMutation(
-        (await softDeleteResources(ctx.db, eq(resourcesInResource.id, id)))[0],
+        (await softDeleteResources(ctx.db, getOwnedLiveResourceWhere(ctx.user.id, id)))[0],
         Operation.Delete,
         DatabaseEntityType.Resource,
         id,
@@ -180,30 +182,17 @@ export const createResourceProcedures = <TType extends ResourceType>(
       getOwnerProcedure(type, resourceIdInputSchema, "id"),
       getResourceTopics,
     ).query<ResourceContent<TType> | undefined>(({ input: { id } }) => readContent(id)),
+    // The type's own listing, which a picker reads a page at a time. Soft-deleted resources belong to the Recycle bin
     readResources: getTopicsProcedure(standardAuthedProcedure.input(readResourcesInputSchema), ({ ctx }) =>
       getResourceListTopics(ctx.user.id),
-    ).query<OffsetPaginationData<ResourceWithPublication>>(
-      async ({ ctx, input: { isPublished, limit, offset, sortBy } }) => {
-        const resultResources = await ctx.db.query.resourcesInResource.findMany({
-          limit: limit + 1,
-          offset,
-          orderBy: (resource, { desc }) =>
-            sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
-          where: {
-            // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
-            deletedAt: { isNull: true },
-            // The filter runs in the query, so the page and its hasMore are over the matching resources alone
-            RAW:
-              isPublished === undefined
-                ? EmptyFilter
-                : (resource) => getPublicationWhere(ctx.db, resource.id, isPublished),
-            type: { eq: type },
-            userId: { eq: ctx.user.id },
-          },
-          with: { publication: true },
-        });
-        return getBasePaginationData(resultResources, limit);
-      },
+    ).query<ResourceListPage>(({ ctx, input: { cursor, isPublished, limit } }) =>
+      readResourceListPage(ctx.db, {
+        cursor,
+        limit,
+        sort: ResourceSortNamePageSortMap[ResourceSortName.UpdatedAtDesc],
+        userId: ctx.user.id,
+        where: getResourcesWhere(ctx.db, ctx.user.id, { isPublished, types: [type] }),
+      }),
     ),
     saveResourceContent: getTopicsProcedure(
       getOwnerProcedure(type, saveResourceContentInputSchema, "id"),
@@ -295,6 +284,8 @@ export const createResourceProcedures = <TType extends ResourceType>(
       // Row left carrying the column's default reports a draft that has moved since it was published,
       // Whatever the owner has or has not edited since
       const { contentVersion: publishedContentVersion } = ctx.resource;
+      // Epoch milliseconds, since the publication is inserted from a select, which takes no JS default for its timestamps
+      const now = Date.now();
       // The object and the claim naming it are written under the lease, so a collection cannot free the object between them
       const published = await withResourceObjectLock(ctx.db, id, async () => {
         // The content is stored before anything is claimed, so a failed store claims nothing and the publication never names
@@ -309,26 +300,49 @@ export const createResourceProcedures = <TType extends ResourceType>(
         // Bumped, so the row and the publication cannot disagree — and a claim that fails takes the version rows with it. A
         // Version's number is claimed fresh here, so no row of the channel holds it yet and no replaced object is released
         const publishVersion = sql<number>`(SELECT ${resourcePublicationsInResource.publishVersion} FROM ${resourcePublicationsInResource} WHERE ${resourcePublicationsInResource.resourceId} = ${id})`;
-        const [publicationRows] = await ctx.db.batch([
-          ctx.db
-            .insert(resourcePublicationsInResource)
-            .values({ publishedContentVersion, resourceId: id })
-            .onConflictDoUpdate({
-              set: {
-                publishedAt: new Date(),
-                publishedContentVersion,
-                publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
-              },
-              target: resourcePublicationsInResource.resourceId,
-            })
-            .returning(),
-          ...getSnapshotVersionWrites(
-            ctx.db,
-            id,
-            { channel: SnapshotChannel.Published, version: publishVersion },
-            prepared,
-          ),
-        ]);
+        const [publicationRows] = await getResultAsync(() =>
+          ctx.db.batch([
+            // Selected from the owner's live row, so a publish that lands after a delete inserts no publication: its version
+            // Names a publication that is not there, so the batch fails whole and nothing is left publicly served
+            ctx.db
+              .insert(resourcePublicationsInResource)
+              .select(
+                ctx.db
+                  .select({
+                    createdAt: sql<Date>`${now}`.as("createdAt"),
+                    publishedAt: sql<Date>`${now}`.as("publishedAt"),
+                    publishedContentVersion: sql<number>`${publishedContentVersion}`.as("publishedContentVersion"),
+                    resourceId: resourcesInResource.id,
+                    updatedAt: sql<Date>`${now}`.as("updatedAt"),
+                  })
+                  .from(resourcesInResource)
+                  .where(getOwnedLiveResourceWhere(ctx.user.id, id)),
+              )
+              .onConflictDoUpdate({
+                set: {
+                  publishedAt: new Date(now),
+                  publishedContentVersion,
+                  publishVersion: sql`${resourcePublicationsInResource.publishVersion} + 1`,
+                },
+                target: resourcePublicationsInResource.resourceId,
+              })
+              .returning(),
+            ...getSnapshotVersionWrites(
+              ctx.db,
+              id,
+              { channel: SnapshotChannel.Published, version: publishVersion },
+              prepared,
+            ),
+          ]),
+        ).match(
+          (batchRows) => batchRows,
+          async (error) => {
+            // The batch commits whole or not at all, so a failure claimed nothing. A resource binned after the owner guard
+            // Fails the version's NOT NULL, so it answers the 404 that a read of a binned resource gives
+            await requireEntity(findOwnedResource(ctx.db, ctx.user.id, id, type), DatabaseEntityType.Resource, id);
+            throw error;
+          },
+        );
         return { prepared, publicationRows };
       });
       const { prepared } = published;
@@ -361,9 +375,10 @@ export const createResourceProcedures = <TType extends ResourceType>(
       standardRateLimitedProcedure.input(selectResourceInResourceSchema.shape.id),
       ({ input }) => [getTopic(TopicKind.Resource, input)],
     ).query<PublishedResourceContent<TType>>(async ({ ctx, input }) => {
+      // A binned resource is no longer served, whatever publication row it still holds
       const resource = await requireEntity(
         ctx.db.query.resourcesInResource.findFirst({
-          where: { id: { eq: input }, type: { eq: type } },
+          where: { deletedAt: { isNull: true }, id: { eq: input }, type: { eq: type } },
           with: { publication: true },
         }),
         DatabaseEntityType.Resource,
@@ -422,7 +437,17 @@ export const createResourceProcedures = <TType extends ResourceType>(
         ),
         ctx.db
           .delete(resourcePublicationsInResource)
-          .where(eq(resourcePublicationsInResource.resourceId, id))
+          .where(
+            and(
+              eq(resourcePublicationsInResource.resourceId, id),
+              exists(
+                ctx.db
+                  .select({ one: sql`1` })
+                  .from(resourcesInResource)
+                  .where(getOwnedLiveResourceWhere(ctx.user.id, id)),
+              ),
+            ),
+          )
           .returning(),
       ]);
       // Only when a row was actually removed: an unpublish that deletes nothing was never publishing anything, so every

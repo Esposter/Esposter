@@ -21,7 +21,7 @@ export const useDirectMessageStore = defineStore("message/room/directMessage", (
   const directMessages = computed(() =>
     items.value.toSorted(
       (firstDirectMessage, secondDirectMessage) =>
-        secondDirectMessage.updatedAt.getTime() - firstDirectMessage.updatedAt.getTime(),
+        secondDirectMessage.lastMessageAt.getTime() - firstDirectMessage.lastMessageAt.getTime(),
     ),
   );
   // Keyed by room and read by every surface that names a conversation after the people in it. Held behind its

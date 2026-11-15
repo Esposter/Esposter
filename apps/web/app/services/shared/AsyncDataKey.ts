@@ -1,4 +1,4 @@
-import type { PostSortType } from "@/models/post/PostSortType";
+import type { PostSortType } from "#shared/models/post/PostSortType";
 import type { PostInPost, PublicUser, ResourceInResource, ResourceType } from "@esposter/db-schema";
 
 import { DatabaseEntityType, DerivedDatabaseEntityType } from "@esposter/db-schema";

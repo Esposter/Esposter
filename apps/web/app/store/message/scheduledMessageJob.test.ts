@@ -17,44 +17,72 @@ describe(useScheduledMessageJobStore, () => {
   const room = createRoom("name");
   const createJob = (jobId: string) => createScheduledMessageJob({ id: jobId, room });
 
-  test("drops a cancelled job from the loaded page", () => {
+  // The badge counts every job the user has, and this page holds only some of them, so a cancel is answered with the
+  // Count the server now holds rather than the page's own count less the row the cancel removed
+  test("takes the badge from the server once a cancel lands, since the page does not hold every job", async () => {
     expect.hasAssertions();
 
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => undefined);
+    trpcMsw.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(() => 5);
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-    const { deleteScheduledMessageJob } = scheduledMessageJobStore;
+    const { cancelScheduledMessageJob } = scheduledMessageJobStore;
     items.value = [createJob(id), createJob(otherId)];
     scheduledMessageJobCount.value = 2;
-    deleteScheduledMessageJob(id);
+    await cancelScheduledMessageJob(createJob(id));
 
     expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([otherId]);
-    expect(scheduledMessageJobCount.value).toBe(1);
+    expect(scheduledMessageJobCount.value).toBe(5);
   });
 
-  // The badge counts every scheduled job the user has, not just the page on screen, so a cancel of a job this
-  // Page never held must leave it alone — decremented anyway, the tab reads one job short of the truth
-  test("leaves the badge count alone for a job the page never held", () => {
+  // A rolled-back job goes back to the place it held, which is when it runs, then its id. Appending it would put a
+  // Job that runs first behind the one that runs after it, on a page the server answers in that order
+  test("puts a rolled-back job back where it runs, not at the end of the page", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const scheduledMessageJobStore = useScheduledMessageJobStore();
+    const { items } = storeToRefs(scheduledMessageJobStore);
+    const { cancelScheduledMessageJob } = scheduledMessageJobStore;
+    const earlierJob = { ...createJob(id), runAt: new Date(1) };
+    const laterJob = { ...createJob(otherId), runAt: new Date(2) };
+    items.value = [earlierJob, laterJob];
+    await cancelScheduledMessageJob(earlierJob);
+
+    expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id, otherId]);
+  });
+
+  // A read can answer while a cancel is in flight and already hold the job the cancel removes, so the rollback restores
+  // Nothing the page holds rather than listing the job twice
+  test("does not list a job twice when a read that landed during a rejected cancel already holds it", async () => {
     expect.hasAssertions();
 
     const scheduledMessageJobStore = useScheduledMessageJobStore();
-    const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-    const { deleteScheduledMessageJob } = scheduledMessageJobStore;
-    items.value = [createJob(id)];
-    scheduledMessageJobCount.value = 2;
-    deleteScheduledMessageJob(otherId);
+    const { items } = storeToRefs(scheduledMessageJobStore);
+    const { cancelScheduledMessageJob, initializeCursorPaginationData } = scheduledMessageJobStore;
+    const job = createJob(id);
+    const laterJob = createJob(otherId);
+    trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(() => {
+      initializeCursorPaginationData({ items: [job, laterJob], nextCursor: "" });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    items.value = [job, laterJob];
+    await cancelScheduledMessageJob(job);
 
-    expect(items.value).toHaveLength(1);
-    expect(scheduledMessageJobCount.value).toBe(2);
+    expect(items.value.map((scheduledMessageJob) => scheduledMessageJob.id)).toStrictEqual([id, otherId]);
   });
 
   // Each job is its own target, so two cancels overlap on one page and the failing one must put back only its
-  // Own row — a job counted back into the badge has nothing to reconcile it until the page is read again
+  // Own row, while the badge is read from the server once the other one lands
   test("puts back only the job whose cancel was rejected", async () => {
     expect.hasAssertions();
 
     trpcMsw.message.scheduledMessageJob.cancelScheduledMessageJob.mutation(({ input }) => {
       if (input.id === id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
+    trpcMsw.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(() => 1);
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob } = scheduledMessageJobStore;
@@ -78,6 +106,7 @@ describe(useScheduledMessageJobStore, () => {
     trpcMsw.message.scheduledMessage.sendScheduledMessageNow.mutation(() =>
       createOptimisticMessage({ roomId: room.id, type: MessageType.Message }, userId),
     );
+    trpcMsw.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(() => 1);
     const scheduledMessageJobStore = useScheduledMessageJobStore();
     const { items, scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
     const { cancelScheduledMessageJob, sendScheduledMessageNow } = scheduledMessageJobStore;

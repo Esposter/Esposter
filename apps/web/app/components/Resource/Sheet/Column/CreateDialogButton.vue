@@ -4,8 +4,6 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
-import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 import { toRawDeep } from "@esposter/shared";
@@ -21,7 +19,6 @@ const { cloned: editedColumn, sync: resetForm } = useCloned<Column>(initialColum
   clone: (source) => structuredClone(toRawDeep(source)),
   deep: true,
 });
-const jsonSchema = zodToJsonSchema(columnFormSchema);
 const value = extractSchemaFields(ColumnTypeFormSchemaMap[initialColumn.type], initialColumn);
 const editedValue = computed(() =>
   extractSchemaFields(ColumnTypeFormSchemaMap[editedColumn.value.type], editedColumn.value),
@@ -42,6 +39,6 @@ const { context, schema } = useColumnForm(
     :submit="() => createColumn(editedColumn)"
     @reset="resetForm()"
   >
-    <UiSchemaForm v-model="editedColumn" :context :schema="jsonSchema" :validation-schema="schema" />
+    <UiSchemaForm v-model="editedColumn" :context :schema />
   </ResourceSheetEditDialogButton>
 </template>

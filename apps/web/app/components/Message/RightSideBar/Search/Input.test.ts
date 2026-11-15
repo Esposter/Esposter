@@ -2,12 +2,11 @@
 import type { searchMessagesInputSchema } from "#shared/models/db/message/SearchMessagesInput";
 import type { z } from "zod";
 
-import { CREATED_AT_DESCENDING_SORT_ITEM, DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import MessageRightSideBarSearchInput from "@/components/Message/RightSideBar/Search/Input.vue";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
-import { FilterType } from "@esposter/db-schema";
+import { DEFAULT_PAGE_LIMIT, FilterType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -42,7 +41,7 @@ describe("messageRightSideBarSearchInput", () => {
     searchMessages = vi.fn<(input: z.input<typeof searchMessagesInputSchema>) => void>();
     trpcMsw.message.searchMessages.query(({ input }) => {
       searchMessages(input);
-      return { count: 0, data: { hasMore: false, items: [] } };
+      return { count: 0, items: [], nextCursor: "" };
     });
     const { promise, resolve: onSearchHistoryCreated } = Promise.withResolvers<void>();
     isSearchHistoryCreated = promise;
@@ -85,12 +84,11 @@ describe("messageRightSideBarSearchInput", () => {
     await flushPromises();
 
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith({
+      cursor: { isBackward: false, values: [] },
       filters: [],
-      limit: DEFAULT_READ_LIMIT,
-      offset: 0,
+      limit: DEFAULT_PAGE_LIMIT,
       query,
       roomId,
-      sortBy: [CREATED_AT_DESCENDING_SORT_ITEM],
     });
   });
 
@@ -116,12 +114,11 @@ describe("messageRightSideBarSearchInput", () => {
 
     expect(selectedFilters.value).toStrictEqual([]);
     expect(searchMessages).toHaveBeenCalledExactlyOnceWith({
+      cursor: { isBackward: false, values: [] },
       filters: [],
-      limit: DEFAULT_READ_LIMIT,
-      offset: 0,
+      limit: DEFAULT_PAGE_LIMIT,
       query: colonQuery,
       roomId,
-      sortBy: [CREATED_AT_DESCENDING_SORT_ITEM],
     });
   });
 });

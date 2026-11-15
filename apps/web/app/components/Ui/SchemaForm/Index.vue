@@ -4,6 +4,7 @@ import type { UiSchemaFormConfiguration } from "@/models/ui/schemaForm/UiSchemaF
 import type { CoreActions, Dispatch, JsonFormsCore, JsonFormsSubStates, JsonSchema } from "@jsonforms/core";
 import type { z } from "zod";
 
+import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { SchemaFormRenderers } from "@/services/ui/schemaForm/SchemaFormRenderers";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jsonforms/core";
@@ -11,21 +12,19 @@ import { Actions, configReducer, coreReducer, Generate, i18nReducer } from "@jso
 interface Props {
   // What only the dialog knows, whose keys a field names for the items it chooses among: a sheet's columns
   context?: object;
-  // The form's JSON Schema, which JSON Forms lays out and dispatches field by field
-  schema: z.core.JSONSchema.JSONSchema;
-  // The form's Zod schema, which validates the whole value on every change; each issue is shown on the field at
-  // Its path
-  validationSchema?: z.ZodType;
+  // The form's Zod schema, which lays the form out through its JSON Schema and validates the whole value on every
+  // Change; each issue is shown on the field at its path
+  schema: z.ZodType;
 }
 // A form generated from a schema: JSON Forms' core lays it out and keeps every nested value in step, every component
 // Drawing it is the library's own, and the Zod schema the form came from is what validates it, so JSON Forms' own
 // Validation is off
 const modelValue = defineModel<T>({ required: true });
-const { context = {}, schema, validationSchema } = defineProps<Props>();
+const { context = {}, schema } = defineProps<Props>();
 const uiSchemaFormConfiguration = computed<UiSchemaFormConfiguration>(() => {
   const issueMap = new Map<string, string>();
-  const result = validationSchema?.safeParse(modelValue.value);
-  if (result && !result.success)
+  const result = schema.safeParse(modelValue.value);
+  if (!result.success)
     for (const { message, path } of result.error.issues) {
       const key = path.join(".");
       if (!issueMap.has(key)) issueMap.set(key, message);
@@ -34,7 +33,7 @@ const uiSchemaFormConfiguration = computed<UiSchemaFormConfiguration>(() => {
 });
 // Zod types what it generates as draft 2020-12 JSON Schema, and JSON Forms types what it reads as draft 7; the keywords
 // A form schema holds — types, properties, required, enum, const, oneOf, items, titles — mean the same in both
-const jsonFormsSchema = computed(() => schema as JsonSchema);
+const jsonFormsSchema = computed(() => zodToJsonSchema(schema) as JsonSchema);
 const uischema = computed(() => Generate.uiSchema(jsonFormsSchema.value, undefined, undefined, jsonFormsSchema.value));
 const options = { validationMode: "NoValidation" } as const;
 // What the renderers read through the form. Shallow, because its reducers return a new core for every change, so the

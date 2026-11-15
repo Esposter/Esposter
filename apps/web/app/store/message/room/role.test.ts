@@ -43,6 +43,25 @@ describe(useRoleStore, () => {
     expect(getRoles(roomId)).toStrictEqual([first]);
   });
 
+  // Writes that end the same role share one queue, so a rejected edit and a rejected deletion of it unwind in order:
+  // The deletion puts back the role the edit left behind, not the one it found before the edit went out
+  test("restores a role that a rejected edit and a rejected deletion both wrote to", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.role.updateRole.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.role.deleteRole.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const roleStore = useRoleStore();
+    const { deleteRole, getRoles, setRoles, updateRole } = roleStore;
+    setRoles(roomId, [first, second]);
+    await Promise.all([updateRole({ id: first.id, name: "renamed", roomId }), deleteRole({ id: first.id, roomId })]);
+
+    expect(getRoles(roomId)).toStrictEqual([first, second]);
+  });
+
   // A member's roles are one list written through per-role targets, so an assignment and a revocation for the
   // Same member run side by side — each has to unwind only the role it added or took away
   test("restores only the role whose revocation was rejected", async () => {
@@ -61,5 +80,28 @@ describe(useRoleStore, () => {
     ]);
 
     expect(getMemberRoles(roomId, userId)).toStrictEqual([first]);
+  });
+
+  // The same pair on one member's role: an assignment that is rejected and a revocation of that role that is rejected
+  // Must leave the member without it, the state the server kept, whichever of the two unwinds first
+  test("restores a member without a role that a rejected assignment and a rejected revocation both wrote to", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    trpcMsw.role.assignRole.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.role.revokeRole.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const roleStore = useRoleStore();
+    const { assignRole, getMemberRoles, revokeRole, setRoles } = roleStore;
+    setRoles(roomId, [first, second]);
+    await Promise.all([
+      assignRole({ roleId: first.id, roomId, userId }),
+      revokeRole({ roleId: first.id, roomId, userId }),
+    ]);
+
+    expect(getMemberRoles(roomId, userId)).toStrictEqual([]);
   });
 });

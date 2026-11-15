@@ -6,7 +6,7 @@ export const useRoomCache = () => {
   const session = authClient.useSession();
   const roomStore = useRoomStore();
   const { getSlice } = roomStore;
-  useCursorPaginationCache({
+  usePaginationCache({
     configuration: RoomIndexedDbStoreConfiguration,
     // One list rather than a map — the user's own rooms — so its slice takes no partition to resolve, and the
     // Cache hands one it ignores

@@ -197,6 +197,17 @@ describe("webhookRouter", () => {
     expect(takeOne(users).id).toBe(newWebhook.userId);
   });
 
+  // The bot's name is its webhook's, so the rename is what every read of the bot names it as
+  test("reads an app user under its webhook's name as it stands after a rename", async () => {
+    expect.hasAssertions();
+
+    const { webhook: newWebhook } = await webhookCaller.createWebhook({ name, roomId });
+    await webhookCaller.updateWebhook({ id: newWebhook.id, name: updatedName, roomId });
+    const users = await webhookCaller.readAppUsers({ ids: [newWebhook.userId], roomId });
+
+    expect(takeOne(users).name).toBe(updatedName);
+  });
+
   test("fails read app users by ids for a non-member", async () => {
     expect.hasAssertions();
 

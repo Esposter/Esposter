@@ -3,6 +3,7 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import { CacheTag } from "@/models/cache/CacheTag";
 import { ResourceListSource } from "@/models/resource/list/ResourceListSource";
 import { RECENT_RESOURCES_LIMIT } from "@/services/resource/constants";
+import { getResourceListSortName } from "@/services/resource/list/getResourceListSortName";
 import { ResourceListSourceDefinitionMap } from "@/services/resource/list/ResourceListSourceDefinitionMap";
 
 // Recent means recently *opened*, and the set is the caller's own server-side access rows, so it follows them
@@ -19,7 +20,11 @@ export const useRecentStore = defineStore("resource/recent", () => {
     () => {
       // Taken from the source registry rather than restated, so what Recent means is one edit everywhere
       const { filter, sortBy } = ResourceListSourceDefinitionMap[ResourceListSource.Recents];
-      return $trpc.resource.readResources.query({ ...filter, limit: RECENT_RESOURCES_LIMIT, sortBy: [...sortBy] });
+      return $trpc.resource.readResources.query({
+        ...filter,
+        limit: RECENT_RESOURCES_LIMIT,
+        sortName: getResourceListSortName(sortBy, filter),
+      });
     },
     {
       // Surfaced in Home's Recent tab as an error state with its own retry rather than a toast: the tab is the only

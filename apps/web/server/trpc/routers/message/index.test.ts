@@ -5,6 +5,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { RoomMessage, RoomObjectRpc, UserObjectRpc } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
@@ -23,8 +24,17 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { DEVICE_ID_HEADER } from "#shared/models/realtime/DeviceId";
 import { getBlobName, getThumbnailBlobName } from "@esposter/db";
 import { createMockBucket } from "@esposter/db-mock";
-import { DatabaseEntityType, MessageType, QueueJob, StorageBucket } from "@esposter/db-schema";
+import {
+  DatabaseEntityType,
+  encodePageCursor,
+  FilterType,
+  MessageType,
+  QueueJob,
+  StorageBucket,
+  usersToRoomsInMessage,
+} from "@esposter/db-schema";
 import { InvalidOperationError, noop, NotFoundError, Operation } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -73,8 +83,10 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
     broadcastEvent: vi.fn<UserObjectRpc["broadcastEvent"]>(),
     closeSession: vi.fn<UserObjectRpc["closeSession"]>(),
+    countScheduledMessageJobs: vi.fn<UserObjectRpc["countScheduledMessageJobs"]>(),
     declineFriendRequest: vi.fn<UserObjectRpc["declineFriendRequest"]>(),
     deleteFriend: vi.fn<UserObjectRpc["deleteFriend"]>(),
+    erase: vi.fn<UserObjectRpc["erase"]>(),
     invalidate: vi.fn<UserObjectRpc["invalidate"]>(),
     readJoinedCallIds: vi.fn<UserObjectRpc["readJoinedCallIds"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
@@ -84,7 +96,8 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     removeJoinedCall: vi.fn<UserObjectRpc["removeJoinedCall"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
     removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
-    removeSentMessage: vi.fn<UserObjectRpc["removeSentMessage"]>(),
+    removeSentMessages: vi.fn<UserObjectRpc["removeSentMessages"]>(),
+    removeSentMessagesInRoom: vi.fn<UserObjectRpc["removeSentMessagesInRoom"]>(),
     replaceSession: vi.fn<UserObjectRpc["replaceSession"]>(),
     roomActivity: vi.fn<UserObjectRpc["roomActivity"]>(),
     saveResourceContent: vi.fn<UserObjectRpc["saveResourceContent"]>(),
@@ -119,7 +132,9 @@ describe("messageRouter", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roomId: string;
   let disposeMessageAssets: () => Promise<void>;
+  const editedAt = new Date(Temporal.Duration.from({ seconds: 2 }).total("milliseconds"));
   const filename = "a";
+  const joinedAt = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
   const messageId = 1;
   const name = "a";
   const text = "a";
@@ -137,9 +152,9 @@ describe("messageRouter", () => {
     appUserImage: "",
     createdAt: new Date(0),
     deletedAt: null,
+    editedAt: null,
     files: [],
     id: messageId,
-    isEdited: false,
     isForward: false,
     isPinned: false,
     linkPreviewResponse: null,
@@ -197,7 +212,6 @@ describe("messageRouter", () => {
         {
           files: undefined,
           linkPreviewResponse: null,
-          mentions: [userId],
           message: createMentionMessage(userId),
           replyToId: undefined,
           type: MessageType.Message,
@@ -205,33 +219,94 @@ describe("messageRouter", () => {
         { userId },
       ],
       [
-        {
-          files: undefined,
-          linkPreviewResponse: null,
-          mentions: [],
-          message: text,
-          replyToId: undefined,
-          type: MessageType.Message,
-        },
+        { files: undefined, linkPreviewResponse: null, message: text, replyToId: undefined, type: MessageType.Message },
         { deviceId, userId },
       ],
     ]);
   });
 
-  test("updates the message with the mentions its new text names", async () => {
+  test("updates the message as its sender, with the text it is given", async () => {
     expect.hasAssertions();
 
-    const mentionedUserId = v7();
-    const mentionedText = createMentionMessage(mentionedUserId);
-    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ mentions: [userId] })]);
-    roomObject.updateMessage.mockReturnValue(createRoomMessage({ isEdited: true, message: mentionedText }));
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage()]);
+    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: updatedText }));
 
-    await messageCaller.updateMessage({ id: messageId, message: mentionedText, roomId });
+    await messageCaller.updateMessage({ id: messageId, message: updatedText, roomId });
 
     expect(roomObject.updateMessage).toHaveBeenCalledExactlyOnceWith(
-      { id: messageId, mentions: [mentionedUserId], message: mentionedText },
+      { id: messageId, message: updatedText },
       { userId },
     );
+  });
+
+  // A count a message made stands only for a member who was in the room when the message was sent. A member joins at the
+  // Epoch the message is dated at unless a test dates the join
+  const getMentionCount = async (memberId: string) =>
+    (
+      await mockContext.db
+        .select({ mentionCount: usersToRoomsInMessage.mentionCount })
+        .from(usersToRoomsInMessage)
+        .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberId)))
+    )[0]?.mentionCount;
+  const setMembership = (memberId: string, mentionCount: number, createdAt = new Date(0)) =>
+    mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ createdAt, mentionCount })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, memberId)));
+
+  test("takes back the mention count a deleted message made for the member it named", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await setMembership(member.id, 1);
+    const message = createRoomMessage({ message: createMentionMessage(member.id) });
+    roomObject.readMessagesByIds.mockReturnValue([message]);
+    roomObject.deleteMessage.mockResolvedValue(message);
+
+    await messageCaller.deleteMessage({ id: messageId, roomId });
+
+    await expect(getMentionCount(member.id)).resolves.toBe(0);
+  });
+
+  test("moves the mention counts with an edit: a member the new text names is counted, and one the old text named is taken back", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await setMembership(member.id, 0);
+    const mentionedText = createMentionMessage(member.id);
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: text })]);
+    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: mentionedText }));
+
+    await messageCaller.updateMessage({ id: messageId, message: mentionedText, roomId });
+    await expect(getMentionCount(member.id)).resolves.toBe(1);
+
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: mentionedText })]);
+    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt: new Date(), message: text }));
+
+    await messageCaller.updateMessage({ id: messageId, message: text, roomId });
+    await expect(getMentionCount(member.id)).resolves.toBe(0);
+  });
+
+  // The edit counts the mention of a member who joined after the message was sent, so a delete takes that count back only
+  // By reading the edit's time, which is the time the count was made, rather than the send's
+  test("takes back the mention count an edit made for a member who joined after the message was sent, when it is deleted", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    await setMembership(member.id, 0, joinedAt);
+    const mentionedText = createMentionMessage(member.id);
+    roomObject.readMessagesByIds.mockReturnValue([createRoomMessage({ message: text })]);
+    roomObject.updateMessage.mockReturnValue(createRoomMessage({ editedAt, message: mentionedText }));
+
+    await messageCaller.updateMessage({ id: messageId, message: mentionedText, roomId });
+    await expect(getMentionCount(member.id)).resolves.toBe(1);
+
+    const editedMessage = createRoomMessage({ editedAt, message: mentionedText });
+    roomObject.readMessagesByIds.mockReturnValue([editedMessage]);
+    roomObject.deleteMessage.mockResolvedValue(editedMessage);
+
+    await messageCaller.deleteMessage({ id: messageId, roomId });
+    await expect(getMentionCount(member.id)).resolves.toBe(0);
   });
 
   test("fails update with NOT_FOUND once the room no longer holds the message", async () => {
@@ -422,26 +497,54 @@ describe("messageRouter", () => {
     expect(threads).toStrictEqual([newerRoot]);
   });
 
-  test("reads one message past the limit, and reports more only when that extra message came back", async () => {
+  test("reads one message past the limit, and continues from the last message kept when that extra one came back", async () => {
     expect.hasAssertions();
 
     const newerMessage = createRoomMessage({ id: messageId + 1 });
     const olderMessage = createRoomMessage({ id: messageId });
     roomObject.readMessages.mockReturnValue([newerMessage, olderMessage]);
 
-    const page = await messageCaller.readMessages({
-      before: messageId + 2,
-      filter: { isPinned: true },
-      limit: 1,
-      roomId,
-    });
+    const page = await messageCaller.readMessages({ cursor: "", filter: { isPinned: true }, limit: 1, roomId });
 
     expect(roomObject.readMessages).toHaveBeenCalledExactlyOnceWith({
-      before: messageId + 2,
+      cursor: { isBackward: false, values: [] },
       isPinned: true,
       limit: 2,
     });
-    expect(page).toStrictEqual({ hasMore: true, items: [newerMessage] });
+    expect(page).toStrictEqual({
+      items: [newerMessage],
+      nextCursor: encodePageCursor({ isBackward: false, values: [messageId + 1] }),
+    });
+  });
+
+  // A room opened at one of its messages reads the messages around it both ways: the anchor starts the older side, and the
+  // Newer side reads from the anchor backward, so each side hands its own cursor on
+  test("opens a room at a message, reading the messages on each side of it with a cursor each way", async () => {
+    expect.hasAssertions();
+
+    const anchorId = 10;
+    const anchor = createRoomMessage({ id: anchorId });
+    const olderMessage = createRoomMessage({ id: anchorId - 1 });
+    const newerMessage = createRoomMessage({ id: anchorId + 1 });
+    roomObject.readMessages
+      .mockReturnValueOnce([anchor, olderMessage])
+      .mockReturnValueOnce([newerMessage, createRoomMessage({ id: anchorId + 2 })]);
+
+    const page = await messageCaller.readMessagesAround({ limit: 1, messageId: anchorId, roomId });
+
+    expect(roomObject.readMessages).toHaveBeenNthCalledWith(1, {
+      cursor: { isBackward: false, values: [anchorId + 1] },
+      limit: 2,
+    });
+    expect(roomObject.readMessages).toHaveBeenNthCalledWith(2, {
+      cursor: { isBackward: true, values: [anchorId] },
+      limit: 2,
+    });
+    expect(page).toStrictEqual({
+      items: [newerMessage, anchor],
+      nextCursor: encodePageCursor({ isBackward: false, values: [anchorId] }),
+      previousCursor: encodePageCursor({ isBackward: true, values: [anchorId + 1] }),
+    });
   });
 
   test("reads the messages the room holds for the ids asked", async () => {
@@ -483,6 +586,29 @@ describe("messageRouter", () => {
       messageCaller.forwardMessage({ id: messageId, message: text, roomId, roomIds: [otherRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
     expect(roomObject.createMessage).not.toHaveBeenCalled();
+  });
+
+  // A forward posts to every room it names at once, so the rooms it can name are bounded before any room is written to
+  test("refuses a forward to more rooms than one forward posts to, writing to none", async () => {
+    expect.hasAssertions();
+
+    const roomIds = Array.from({ length: MAX_FORWARD_ROOMS + 1 }, () => v7());
+
+    await expect(messageCaller.forwardMessage({ id: messageId, message: text, roomId, roomIds })).rejects.toMatchObject(
+      { code: "BAD_REQUEST" },
+    );
+    expect(roomObject.createMessage).not.toHaveBeenCalled();
+  });
+
+  test("refuses a search that names more rooms with in: than one search reads, asking none of them", async () => {
+    expect.hasAssertions();
+
+    const filters = Array.from({ length: MAX_SEARCH_ROOMS + 1 }, () => ({ type: FilterType.In, value: v7() }));
+
+    await expect(
+      messageCaller.searchMessages({ cursor: "", filters, limit: 1, query: "gate", roomId }),
+    ).rejects.toMatchObject({ code: "BAD_REQUEST" });
+    expect(roomObject.searchMessages).not.toHaveBeenCalled();
   });
 
   test("forwards to the room that does not block the word, and fails with the block the other room raised", async () => {

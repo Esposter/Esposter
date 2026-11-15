@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { compareCreatedAt } from "#shared/util/date/compareCreatedAt";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { THREAD_COMPOSER_DROP_ZONE_ATTRIBUTE } from "@/services/message/composer/constants";
 import { useThreadStore } from "@/store/message/thread";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const threadStore = useThreadStore();
 const { closeThread } = threadStore;
@@ -25,7 +25,7 @@ const displayThreadMessages = computed(() =>
         <UiOverflowMenu :items="actionItems" label="Thread actions" />
       </template>
       <template v-if="isReadThreadPending">
-        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" p-4 />
+        <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_PAGE_LIMIT" :key="i" p-4 />
       </template>
       <MessageModelMessageSearchList v-else :messages="displayThreadMessages">
         <template #no-data>

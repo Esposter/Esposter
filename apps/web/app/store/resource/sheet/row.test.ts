@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { createColumn } from "#shared/models/resource/sheet/column/createColumn.test";
 import { createComputedColumn } from "#shared/models/resource/sheet/column/createComputedColumn.test";
@@ -15,6 +14,7 @@ import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useFilterStore } from "@/store/resource/sheet/filter";
 import { useRowStore } from "@/store/resource/sheet/row";
+import { SortOrder } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";

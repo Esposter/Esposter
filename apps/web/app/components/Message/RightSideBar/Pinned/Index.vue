@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { useLayoutStore } from "@/store/layout";
 import { usePinStore } from "@/store/message/pin";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 
 const layoutStore = useLayoutStore();
 const { isRightDrawerOpen } = storeToRefs(layoutStore);
 const { readMorePinnedMessages, readPinnedMessages } = useReadPinnedMessages();
 const { isPending, refresh } = await readPinnedMessages();
 const pinStore = usePinStore();
-const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
+const { hasMore, isLoaded, items } = storeToRefs(pinStore);
 </script>
 
 <!-- A pane of the side panel rather than a popover off the header, as Slack's pins are: the list gets the panel's
@@ -17,10 +17,10 @@ const { displayMessages, hasMore, isLoaded } = storeToRefs(pinStore);
 <template>
   <MessageRightSideBarPane title="Pinned Messages" is-body-bare @close="isRightDrawerOpen = false">
     <template v-if="isPending">
-      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" px-2 />
+      <MessageModelMessageListSkeletonItem v-for="i in DEFAULT_PAGE_LIMIT" :key="i" px-2 />
     </template>
     <UiErrorState v-else-if="!isLoaded" error="The pinned messages could not be loaded." @retry="refresh()" />
-    <MessageModelMessageSearchList v-else :messages="displayMessages">
+    <MessageModelMessageSearchList v-else :messages="items">
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMorePinnedMessages(onComplete)" />
       <template #no-data>
         <UiEmptyState

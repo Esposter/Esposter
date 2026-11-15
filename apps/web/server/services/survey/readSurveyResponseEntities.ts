@@ -1,7 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceInResource, SurveyResponseInResource } from "@esposter/db-schema";
 
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { getSurveyResponsesWhere } from "#server/services/survey/getSurveyResponsesWhere";
 import { surveyResponsesInResource } from "@esposter/db-schema";
 import { MAX_READ_LIMIT } from "@esposter/shared";
@@ -21,6 +20,5 @@ export const readSurveyResponseEntities = async (
     .where(getSurveyResponsesWhere(surveyId))
     .orderBy(asc(surveyResponsesInResource.id))
     .limit(MAX_READ_LIMIT + 1);
-  const { hasMore, items: surveyResponses } = getBasePaginationData(rows, MAX_READ_LIMIT);
-  return { hasMore, surveyResponses };
+  return { hasMore: rows.length > MAX_READ_LIMIT, surveyResponses: rows.slice(0, MAX_READ_LIMIT) };
 };

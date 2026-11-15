@@ -4,7 +4,7 @@ import type { ClientMessage } from "@/models/message/ClientMessage";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 interface Props {
-  messages: ClientMessage[];
+  messages: readonly ClientMessage[];
 }
 
 defineSlots<{ default: () => VNode; "no-data": () => VNode }>();

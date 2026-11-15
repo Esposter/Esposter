@@ -7,6 +7,7 @@ import { authMocks } from "#server/auth.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
+import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext } from "#server/trpc/context.test";
@@ -35,13 +36,14 @@ import {
   DatabaseEntityType,
   getResourceFilesDirectoryName,
   QueueJob,
+  resourcePublicationsInResource,
   resourcesInResource,
   ResourceType,
   resourceViewsInResource,
   StorageBucket,
   storageLedgerInStorage,
 } from "@esposter/db-schema";
-import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
+import { jsonDateParse, noop, NotFoundError, waitForSynchronizedFunctions } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 import { createHash } from "node:crypto";
 import { gzipSync, zstdCompressSync } from "node:zlib";
@@ -80,6 +82,23 @@ describe(createResourceProcedures, () => {
         if (property === "head") return head;
         const value: unknown = Reflect.get(target, property);
         return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+  };
+
+  // Routes the bucket's `put` through `afterPut`, which runs once the object is stored: the one call a race has to land after
+  const interceptPut = (afterPut: () => Promise<void>) => {
+    mockBuckets[StorageBucket.ResourceAssets] = new Proxy(bucket, {
+      get: (target, property: keyof R2Bucket) => {
+        if (property !== "put") {
+          const value: unknown = Reflect.get(target, property);
+          return typeof value === "function" ? value.bind(target) : value;
+        }
+        return async (...args: Parameters<R2Bucket["put"]>) => {
+          const stored = await target.put(...args);
+          await afterPut();
+          return stored;
+        };
       },
     });
   };
@@ -127,26 +146,27 @@ describe(createResourceProcedures, () => {
     expect(newResource.contentVersion).toBe(0);
   });
 
-  test("reads resources with publication state", async () => {
+  test("reads the type's resources a page at a time, the total with the first page", async () => {
     expect.hasAssertions();
 
-    const { items: emptyItems } = await dashboardCaller.readResources();
+    const { count: emptyCount, items: emptyItems } = await dashboardCaller.readResources();
 
     expect(emptyItems).toStrictEqual([]);
+    expect(emptyCount).toBe(0);
 
-    const newResource = await dashboardCaller.createResource({ name });
-    const { items: draftItems } = await dashboardCaller.readResources();
+    const firstResource = await dashboardCaller.createResource({ name });
+    const secondResource = await dashboardCaller.createResource({ name: updatedName });
+    const firstPage = await dashboardCaller.readResources({ limit: 1 });
+    const secondPage = await dashboardCaller.readResources({ cursor: firstPage.nextCursor, limit: 1 });
 
-    expect(draftItems).toStrictEqual([{ ...newResource, publication: null }]);
-
-    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
-    await dashboardCaller.publishResource({ id: newResource.id });
-    const { items: publishedItems } = await dashboardCaller.readResources();
-
-    expect(takeOne(publishedItems).publication?.publishVersion).toBe(1);
+    expect(firstPage.count).toBe(2);
+    expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondResource.id]);
+    expect(secondPage.count).toBeUndefined();
+    expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstResource.id]);
+    expect(secondPage.nextCursor).toBe("");
   });
 
-  test("reads only published resources when filtered to published, with hasMore over them", async () => {
+  test("reads only published resources when filtered to published", async () => {
     expect.hasAssertions();
 
     const publishedResource = await dashboardCaller.createResource({ name });
@@ -157,9 +177,10 @@ describe(createResourceProcedures, () => {
       id: publishedResource.id,
     });
     await dashboardCaller.publishResource({ id: publishedResource.id });
-    const { hasMore, items } = await dashboardCaller.readResources({ isPublished: true, limit: 1 });
+    const { count, items, nextCursor } = await dashboardCaller.readResources({ isPublished: true, limit: 1 });
 
-    expect(hasMore).toBe(false);
+    expect(count).toBe(1);
+    expect(nextCursor).toBe("");
     expect(items.map(({ id }) => id)).toStrictEqual([publishedResource.id]);
   });
 
@@ -634,6 +655,33 @@ describe(createResourceProcedures, () => {
       dashboardCaller.readPublishedResourceContent(newResource.id),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.ResourcePublication, newResource.id).message}]`,
+    );
+  });
+
+  test("a publish that lands after its resource is deleted leaves nothing publicly served", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.saveResourceContent({ content: new Dashboard(), contentVersion: 0, id: newResource.id });
+    // The delete lands once the publish has passed its owner guard and stored its object, and before the batch that writes
+    // The publication: the window a delete from another request can take
+    interceptPut(async () => {
+      await softDeleteResources(mockContext.db, eq(resourcesInResource.id, newResource.id));
+    });
+
+    await expect(dashboardCaller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
+    );
+
+    const publications = await mockContext.db
+      .select()
+      .from(resourcePublicationsInResource)
+      .where(eq(resourcePublicationsInResource.resourceId, newResource.id));
+    expect(publications).toStrictEqual([]);
+    await expect(
+      dashboardCaller.readPublishedResourceContent(newResource.id),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, newResource.id).message}]`,
     );
   });
 

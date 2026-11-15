@@ -1,22 +1,15 @@
 // @vitest-environment nuxt
-import type { ResourceActivityInResource } from "@esposter/db-schema";
+import type { Page, ResourceActivityInResource } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { useActivityStore } from "@/store/resource/activity";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
 const createActivity = (id: string) => ({ id }) as ResourceActivityInResource;
 const createReader =
-  (...activityIds: string[]) =>
+  (...activityIds: string[]): (() => Promise<Page<ResourceActivityInResource>>) =>
   () =>
-    Promise.resolve(
-      Object.assign(new CursorPaginationData<ResourceActivityInResource>(), {
-        hasMore: true,
-        items: activityIds.map((id) => createActivity(id)),
-        nextCursor: "nextCursor",
-      }),
-    );
+    Promise.resolve({ items: activityIds.map((id) => createActivity(id)), nextCursor: "nextCursor" });
 // Set on the route rather than navigated to: the blade's page is auth-guarded, so a real push never resolves.
 // Through triggerRef because currentRoute is a shallowRef
 const openActivityBlade = (id: string) => {

@@ -18,5 +18,10 @@ export default defineEventHandler(async (event) => {
   const isAdmitted = await checkIsCallConnectionAdmitted(db, callSessionId, user.id);
   if (!isAdmitted) throw createError({ statusCode: 403 });
 
-  return forwardSocket(event, useCallObject(callSessionId), { deviceId, sessionId: session.id, userId: user.id });
+  return forwardSocket(event, useCallObject(callSessionId), {
+    deviceId,
+    sessionExpiresAt: session.expiresAt.getTime(),
+    sessionId: session.id,
+    userId: user.id,
+  });
 });

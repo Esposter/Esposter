@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { getMemberDescription } from "@/services/message/member/getMemberDescription";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
+import { DEFAULT_PAGE_LIMIT } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 
 const roleStore = useRoleStore();
@@ -50,7 +50,7 @@ await readMemberCounts();
     <UiTextField v-model="searchQuery" label="Search members" :type="UiTextFieldType.Search" />
     <!-- A member row's own shape while a search is out: the picture and the name -->
     <div v-if="isPending" flex flex-col>
-      <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+      <div v-for="index of DEFAULT_PAGE_LIMIT" :key="index" ui-row>
         <UiSkeleton shrink-0 size-6 />
         <UiSkeleton flex-1 h-4 />
       </div>
@@ -59,7 +59,7 @@ await readMemberCounts();
       <UiList v-if="memberItems.length > 0" v-model="selectedMemberIds" :items="memberItems" label="Members" />
       <UiEmptyState v-else :meaning="UiIconMeaning.Person" title="No member goes by that name." />
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreMembers(onComplete)">
-        <div v-for="index of DEFAULT_READ_LIMIT" :key="index" ui-row>
+        <div v-for="index of DEFAULT_PAGE_LIMIT" :key="index" ui-row>
           <UiSkeleton shrink-0 size-6 />
           <UiSkeleton flex-1 h-4 />
         </div>

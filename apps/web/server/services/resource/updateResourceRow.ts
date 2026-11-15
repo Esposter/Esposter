@@ -3,11 +3,11 @@ import type { UpdateResourceInput } from "#shared/models/db/resource/UpdateResou
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { Except } from "type-fest";
 
+import { getOwnedLiveResourceWhere } from "#server/services/resource/getOwnedLiveResourceWhere";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { DatabaseEntityType, ResourceActivityType, resourcesInResource } from "@esposter/db-schema";
 import { getSynchronizedFunction, Operation } from "@esposter/shared";
-import { eq } from "drizzle-orm";
 
 // The one rename-and-tag write, shared by the typed update and the typeless one, so both leave the same trail. Only
 // The fields the caller sends are written, and the content is never touched
@@ -19,7 +19,11 @@ export const updateResourceRow = async (
   const oldName = resource.name;
   const updatedResource = requireMutation(
     (
-      await ctx.db.update(resourcesInResource).set(values).where(eq(resourcesInResource.id, resource.id)).returning()
+      await ctx.db
+        .update(resourcesInResource)
+        .set(values)
+        .where(getOwnedLiveResourceWhere(resource.userId, resource.id))
+        .returning()
     )[0],
     Operation.Update,
     DatabaseEntityType.Resource,

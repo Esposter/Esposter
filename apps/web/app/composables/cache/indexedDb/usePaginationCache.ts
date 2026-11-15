@@ -43,10 +43,11 @@ export const usePaginationCache = <
       // What is left is the one question hydration turns on — has THIS partition produced rows since the switch
       // Onto it, and would restoring the cache therefore overwrite live data
       onSuccess: async (cachedItems) => {
-        const { initializeItems, isLoaded } = getSlice(newPartitionKey);
+        const { initializeCursorPaginationData, isLoaded } = getSlice(newPartitionKey);
         if (cachedItems.length === 0 || toValue(isLoaded)) return;
 
-        initializeItems(cachedItems);
+        // A cached list is a first page with no cursor: the next read starts over from the newest rows
+        initializeCursorPaginationData({ items: cachedItems, nextCursor: "" });
         await onHydrate?.(cachedItems, newPartitionKey);
       },
     });

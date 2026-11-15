@@ -8,6 +8,11 @@ export class BasicChartConfiguration extends Serializable {
   dataLabels = false;
   subtitle = "";
   title = "";
+
+  constructor(init?: Partial<BasicChartConfiguration>) {
+    super();
+    Object.assign(this, init);
+  }
 }
 
 export const basicChartConfigurationSchema = z.object({

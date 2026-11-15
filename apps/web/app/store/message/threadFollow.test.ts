@@ -2,17 +2,57 @@
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
 
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
+import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
+import { Operation } from "@esposter/shared";
 import { v7 } from "uuid";
-import { describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useThreadFollowStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = v7();
   const threadRootId = 1;
+  const userId = v7();
+  const root = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: threadRootId };
+
+  beforeEach(() => {
+    setCurrentRoomId(roomId);
+  });
+
+  // A followed root is a copy of the room's message, so the followed list takes the room's edits and deletions
+  // The follow itself is kept when its root is deleted, since the unfollow still has to find the thread
+  test("drops a deleted followed root from the list and keeps the follow", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.room.readUsersByIds.query(() => []);
+    const threadFollowStore = useThreadFollowStore();
+    const { checkIsFollowing, readFollowedThreads } = threadFollowStore;
+    const { followedThreads } = storeToRefs(threadFollowStore);
+    await readFollowedThreads(roomId);
+    await MessageHookMap[Operation.Delete].run({ id: threadRootId, roomId });
+
+    expect(followedThreads.value).toStrictEqual([]);
+    expect(checkIsFollowing(roomId, threadRootId)).toBe(true);
+  });
+
+  test("takes an edit to a followed root", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [threadRootId], threads: [root] }));
+    trpcMsw.room.readUsersByIds.query(() => []);
+    const threadFollowStore = useThreadFollowStore();
+    const { readFollowedThreads } = threadFollowStore;
+    const { followedThreads } = storeToRefs(threadFollowStore);
+    await readFollowedThreads(roomId);
+    await MessageHookMap[Operation.Update].run({ id: threadRootId, message: "edited", roomId });
+
+    expect(followedThreads.value[0]?.message).toBe("edited");
+  });
 
   // Every follow button in the room asks on mount, so the read is issued once — and the buttons that joined it
   // Have to see the follow state, or they render an unfollowed star for a thread the user follows

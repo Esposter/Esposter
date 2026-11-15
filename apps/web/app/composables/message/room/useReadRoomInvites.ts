@@ -11,7 +11,7 @@ export const useReadRoomInvites = (roomId: RoomInMessage["id"]) => {
   // Each invite names its creator, and the creator is named as the room knows them, so the creators are read as the
   // Room reads them
   const readUsersByIds = useReadUsersByIds();
-  const readInvitePage = async (cursor?: string) => {
+  const readInvitePage = async (cursor: string) => {
     const invitePage = await $trpc.invite.readRoomInvites.query({ cursor, roomId });
     await readUsersByIds(
       roomId,
@@ -19,7 +19,7 @@ export const useReadRoomInvites = (roomId: RoomInMessage["id"]) => {
     );
     return invitePage;
   };
-  const readRoomInvites = () => readItems(() => readInvitePage());
+  const readRoomInvites = () => readItems(() => readInvitePage(""));
   const readMoreRoomInvites = (onComplete: () => void) => readMoreItems((cursor) => readInvitePage(cursor), onComplete);
   return { hasMore, items, readMoreRoomInvites, readRoomInvites };
 };

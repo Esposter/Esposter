@@ -16,7 +16,7 @@ describe("messageModelMessageTypeIndex", () => {
       { message: "<p>message</p>", roomId, type: MessageType.Message },
       creator.id,
     );
-    message.isEdited = true;
+    message.editedAt = new Date();
     message.isForward = isForward;
     return message;
   };

@@ -3,6 +3,7 @@ import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { createOperationData } from "@/services/shared/createOperationData";
+import { getInsertedItems } from "@/services/shared/getInsertedItems";
 import { useRoomStore } from "@/store/message/room";
 import { DatabaseEntityType } from "@esposter/db-schema";
 import { ID_SEPARATOR } from "@esposter/shared";
@@ -19,14 +20,25 @@ export const useBanStore = defineStore("message/user/ban", () => {
 
   const deleteBan = async (input: DeleteBanInput) => {
     const { items: roomItems } = getSlice(input.roomId);
-    const { createBan: storeCreateBan, deleteBan: storeDeleteBan } = getRoomOperationData(input.roomId);
+    const { deleteBan: storeDeleteBan } = getRoomOperationData(input.roomId);
     await executeMutation(() => $trpc.message.moderation.deleteBan.mutate(input), {
       // The one row this write lifts — unbans are keyed per ban and never queue against each other
       applyOptimistic: () => {
         const deletedBan = roomItems.value.find(({ userId }) => userId === input.userId);
         storeDeleteBan(input);
         return () => {
-          if (deletedBan) storeCreateBan(deletedBan);
+          if (!deletedBan || roomItems.value.some(({ userId }) => userId === deletedBan.userId)) return;
+
+          // The bans are paged newest first, by the time each is made and then by the banned user, so the ban goes back to
+          // The place that order gives it rather than to the end of the list
+          const deletedBanTime = deletedBan.createdAt.getTime();
+          roomItems.value = getInsertedItems(
+            roomItems.value,
+            deletedBan,
+            ({ createdAt, userId }) =>
+              createdAt.getTime() < deletedBanTime ||
+              (createdAt.getTime() === deletedBanTime && userId < deletedBan.userId),
+          );
         };
       },
       key: `${input.roomId}${ID_SEPARATOR}${input.userId}`,

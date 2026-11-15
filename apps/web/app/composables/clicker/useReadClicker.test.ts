@@ -1,11 +1,12 @@
 // @vitest-environment nuxt
+import type { Clicker } from "#shared/models/clicker/data/Clicker";
 import type { VueWrapper } from "@vue/test-utils";
 
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { useReadClicker } from "@/composables/clicker/useReadClicker";
 import { useSession } from "@/services/auth/authClient.test";
+import { createClicker } from "@/services/clicker/createClicker";
 import { toClickerSave } from "@/services/clicker/save/toClickerSave";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -60,7 +61,7 @@ describe(useReadClicker, () => {
   test("hydrates a guest's clicker from the save in this browser", async () => {
     expect.hasAssertions();
 
-    writeGuestSave(new Clicker({ pointCount: 42, updatedAt: new Date() }));
+    writeGuestSave(createClicker({ pointCount: 42, updatedAt: new Date() }));
     await mountReadClicker();
 
     const clickerStore = useClickerStore();
@@ -75,7 +76,7 @@ describe(useReadClicker, () => {
 
     vi.useFakeTimers({ now: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 1 }), toFake: ["Date"] });
     writeGuestSave(
-      new Clicker({
+      createClicker({
         boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
         updatedAt: new Date(0),
       }),

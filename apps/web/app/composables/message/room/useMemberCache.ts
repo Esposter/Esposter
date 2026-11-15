@@ -7,17 +7,17 @@ export const useMemberCache = () => {
   const roomStore = useRoomStore();
   const { currentRoomId } = storeToRefs(roomStore);
   const memberStore = useMemberStore();
-  const { getMemberCountsRef, getSlice } = memberStore;
+  const { getSlice } = memberStore;
   const userStore = useUserStore();
   const { storeRoomMembers, storeUsers } = userStore;
-  useCursorPaginationCache({
+  usePaginationCache({
     configuration: MemberIndexedDbStoreConfiguration,
     getSlice,
-    // Hydration only ever runs offline, where the server-computed total cannot be fetched. The cached page is
-    // The whole of what this room can show, so it is also the only honest total. The per-role breakdown is left
-    // Alone: it is keyed by room in the store, so entering a room offline already finds it empty
+    // Hydration only ever runs offline, where the server-computed totals cannot be fetched, and the cache keeps no record
+    // Of whether its page is the whole list, so the cached rows are not a total. The totals stay what the store already
+    // Holds for this room, which is nothing unless the server answered for it this session. Both are keyed by room, so
+    // Entering a room offline finds no total it did not earn
     onHydrate: (cachedMembers, partitionKey) => {
-      getMemberCountsRef(partitionKey).value.memberCount = cachedMembers.length;
       storeUsers(cachedMembers);
       storeRoomMembers(partitionKey, cachedMembers);
     },

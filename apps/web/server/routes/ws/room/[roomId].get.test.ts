@@ -43,9 +43,10 @@ describe("ws/room/[roomId]", () => {
 });
 
 const createSessionPayload = () =>
-  ({ session: { id: "session-abcdefghijklmnop" }, user: { id: "22222222-2222-7222-8222-222222222222" } }) as Awaited<
-    ReturnType<typeof readSession>
-  >;
+  ({
+    session: { expiresAt: new Date(0), id: "session-abcdefghijklmnop" },
+    user: { id: "22222222-2222-7222-8222-222222222222" },
+  }) as Awaited<ReturnType<typeof readSession>>;
 
 const createEvent = () => {
   const url =

@@ -200,7 +200,7 @@ describe(useMemberStore, () => {
     await otherRoomCountsWritten;
 
     expect(members.value).toStrictEqual([]);
-    expect(memberCount.value).toBe(0);
+    expect(memberCount.value).toBeUndefined();
   });
 
   // The offline cache decides whether to hydrate or persist by asking whether the loaded rows are the current
@@ -220,6 +220,21 @@ describe(useMemberStore, () => {
     setCurrentRoomId(v7());
 
     expect(members.value).toStrictEqual([]);
+  });
+
+  // The server pages members by display name case-insensitively, so an uppercase name sorts beside its lowercase one.
+  // The loaded list is ordered the same way, so the names on screen and the cursor agree on each member's place
+  test("orders the loaded members the way the server pages them", () => {
+    expect.hasAssertions();
+
+    const memberStore = useMemberStore();
+    const { getSlice } = memberStore;
+    const { members } = storeToRefs(memberStore);
+    const lowercaseMember = { ...createUser({ name: "bob" }), displayName: "bob" };
+    const uppercaseMember = { ...createUser({ name: "Carl" }), displayName: "Carl" };
+    getSlice(roomId).items.value = [lowercaseMember, uppercaseMember];
+
+    expect(members.value.map(({ displayName }) => displayName)).toStrictEqual(["bob", "Carl"]);
   });
 
   test("keeps the server-resolved display name on the member row", async () => {

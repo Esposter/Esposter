@@ -1,22 +1,28 @@
 // @vitest-environment nuxt
+import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { ComposerTarget } from "@/models/message/ComposerTarget";
+import type { Page } from "@esposter/db-schema";
 import type { Router } from "vue-router";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { MimeType } from "#shared/models/file/MimeType";
+import { createPendingQuery } from "@/composables/data/pagination/createPendingQuery.test";
+import { goOnline } from "@/composables/shared/network.test";
 import { MessageHook } from "@/models/message/MessageHook";
 import { useSession } from "@/services/auth/authClient.test";
 import { createOptimisticMessage } from "@/services/message/createOptimisticMessage";
 import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
+import { createMessage as createRoomMessage } from "@/services/message/message/createMessage.test";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useDataStore } from "@/store/message/data";
 import { useInputStore } from "@/store/message/input";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
+import { useThreadStore } from "@/store/message/thread";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { MessageType } from "@esposter/db-schema";
-import { Operation, takeOne } from "@esposter/shared";
+import { Operation, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -44,6 +50,7 @@ describe(useDataStore, () => {
   const createFile = (newFilename = filename) => new File([message], newFilename, { type: mimetype });
   // The room numbers the messages it stores from one, and a mutation names one of those ids rather than a bubble's
   const roomMessageId = 1;
+  const newerCursor = v7();
 
   beforeAll(() => {
     router = useRouter();
@@ -353,19 +360,53 @@ describe(useDataStore, () => {
 
     const otherRoomId = v7();
     const dataStore = useDataStore();
-    const { hasMoreNewer, nextCursorNewer } = storeToRefs(dataStore);
-    const { getHasMoreNewerRef, getNextCursorNewerRef } = dataStore;
-    getHasMoreNewerRef(roomId).value = true;
-    getNextCursorNewerRef(roomId).value = message;
+    const { previousCursor } = storeToRefs(dataStore);
+    const { getPreviousCursorRef } = dataStore;
+    getPreviousCursorRef(roomId).value = newerCursor;
     setCurrentRoomId(otherRoomId);
 
-    expect(hasMoreNewer.value).toBe(false);
-    expect(nextCursorNewer.value).toBe("");
+    expect(previousCursor.value).toBe("");
 
     setCurrentRoomId(roomId);
 
-    expect(hasMoreNewer.value).toBe(true);
-    expect(nextCursorNewer.value).toBe(message);
+    expect(previousCursor.value).toBe(newerCursor);
+  });
+
+  // A newer read that fails still completes, since completing is what re-arms the waypoint that asked for it. Left
+  // Un-finalized, one failed read holds the waypoint in its loading state for good
+  test("completes the newer read when the read fails", async () => {
+    expect.hasAssertions();
+
+    goOnline();
+    const dataStore = useDataStore();
+    const onComplete = vi.fn<() => void>();
+    await expect(
+      dataStore.readMoreNewerItems(roomId, () => Promise.reject(new Error(" ")), onComplete),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error:  ]`);
+
+    expect(onComplete).toHaveBeenCalledExactlyOnceWith();
+  });
+
+  // A newer read answers the chain it was issued from. A fresh load of the room replaces that chain with a window of
+  // Its own, so the page the old chain answered belongs to rows the list no longer holds, and is dropped
+  test("drops a newer page whose chain a fresh load replaced while it was in flight", async () => {
+    expect.hasAssertions();
+
+    goOnline();
+    const dataStore = useDataStore();
+    const { getPreviousCursorRef, getSlice } = dataStore;
+    const heldMessage = { ...createRoomMessage(roomId), id: 2 };
+    const newerMessage = { ...createRoomMessage(roomId), id: 3 };
+    const { items: roomItems } = getSlice(roomId);
+    roomItems.value = [heldMessage];
+    getPreviousCursorRef(roomId).value = newerCursor;
+    const { query, resolveQuery } = createPendingQuery<Page<ClientMessage>>({ items: [newerMessage], nextCursor: "" });
+    const pendingRead = dataStore.readMoreNewerItems(roomId, query);
+    getPreviousCursorRef(roomId).value = v7();
+    resolveQuery();
+    await pendingRead;
+
+    expect(roomItems.value.map(({ id }) => id)).toStrictEqual([heldMessage.id]);
   });
 
   // Only the sender's own message renders ahead of its hooks — it has a loading bubble to keep responsive and a
@@ -474,6 +515,34 @@ describe(useDataStore, () => {
     ]);
 
     expect(takeOne(items.value).files.map(({ id }) => id)).toStrictEqual([keptFileId, rejectedFileId]);
+  });
+
+  // The thread pane holds replies the room's window does not, so a reconnect reads them back with the window: a reply
+  // Deleted while the socket is closed leaves the pane, and an edited one takes its change
+  test("refreshes a thread pane's replies with the window after a reconnect", async () => {
+    expect.hasAssertions();
+
+    const threadStore = useThreadStore();
+    const { threadMessages } = storeToRefs(threadStore);
+    const dataStore = useDataStore();
+    const deletedReply = {
+      ...createOptimisticMessage({ replyToId: roomMessageId, roomId, type: MessageType.Message }, userId),
+      id: 2,
+    };
+    const editedReply = {
+      ...createOptimisticMessage({ replyToId: roomMessageId, roomId, type: MessageType.Message }, userId),
+      id: 3,
+    };
+    threadStore.activeRoomId = roomId;
+    threadMessages.value = [deletedReply, editedReply];
+    trpcMsw.message.readMessagesByIds.query(() => [
+      { ...editedReply, message: updatedMessage, updatedAt: new Date(1) },
+    ]);
+    dataStore.refreshLoadedMessages(roomId);
+    await waitForSynchronizedFunctions();
+
+    expect(threadMessages.value.map(({ id }) => id)).toStrictEqual([editedReply.id]);
+    expect(threadMessages.value[0]?.message).toBe(updatedMessage);
   });
 
   test("storeUpdateMessage is idempotent", async () => {

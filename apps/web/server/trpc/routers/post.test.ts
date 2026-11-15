@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { PostInPost } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
@@ -10,7 +9,7 @@ import { createMockAuthSession, createMockCaller, createMockContext } from "#ser
 import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -32,16 +31,6 @@ describe("postRouter", () => {
   const title = "title";
   const updatedTitle = "updatedTitle";
   const description = "description";
-  const HOT_SORT_BY: SortItem<keyof PostInPost>[] = [
-    { key: "ranking", order: SortOrder.Desc },
-    { key: "id", order: SortOrder.Desc },
-  ];
-  const TOP_SORT_BY: SortItem<keyof PostInPost>[] = [
-    { key: "likeCount", order: SortOrder.Desc },
-    { key: "id", order: SortOrder.Desc },
-  ];
-  const NEW_SORT_BY: SortItem<keyof PostInPost>[] = [{ key: "id", order: SortOrder.Desc }];
-  const OLD_SORT_BY: SortItem<keyof PostInPost>[] = [{ key: "id", order: SortOrder.Asc }];
   const updatedDescription = "updatedDescription";
   const value = 1;
 
@@ -82,7 +71,7 @@ describe("postRouter", () => {
 
     const postsPage = await postCaller.readPosts();
 
-    expect(postsPage).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(postsPage).toStrictEqual({ items: [], nextCursor: "" });
   });
 
   test("updates", async () => {
@@ -126,7 +115,9 @@ describe("postRouter", () => {
     MockPublishedTopics.length = 0;
     const removedIds = await postCaller.deletePost(newPost.id);
 
-    expect(removedIds.toSorted()).toStrictEqual([newComment.id, newPost.id].toSorted());
+    expect(removedIds.toSorted((firstId, secondId) => firstId.localeCompare(secondId))).toStrictEqual(
+      [newComment.id, newPost.id].toSorted((firstId, secondId) => firstId.localeCompare(secondId)),
+    );
     // A reply's own page goes with the cascade, so its topic is published with the post's
     expect(MockPublishedTopics).toContain(getTopic(TopicKind.Post, newComment.id));
     await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
@@ -371,8 +362,12 @@ describe("postRouter", () => {
     const firstPost = await postCaller.createPost({ title });
     const secondPost = await postCaller.createPost({ title });
     await likeCaller.createLike({ postId: secondPost.id, value });
-    const firstPage = await postCaller.readPosts({ limit: 1, sortBy: TOP_SORT_BY });
-    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 1, sortBy: TOP_SORT_BY });
+    const firstPage = await postCaller.readPosts({ limit: 1, sortName: PostSortType.Top });
+    const secondPage = await postCaller.readPosts({
+      cursor: firstPage.nextCursor,
+      limit: 1,
+      sortName: PostSortType.Top,
+    });
 
     expect(firstPage.items.map(({ id }) => id)).toStrictEqual([secondPost.id]);
     expect(secondPage.items.map(({ id }) => id)).toStrictEqual([firstPost.id]);
@@ -384,8 +379,12 @@ describe("postRouter", () => {
     const newPostIds = await Promise.all(
       Array.from({ length: 3 }, async () => (await postCaller.createPost({ title })).id),
     );
-    const firstPage = await postCaller.readPosts({ limit: 2, sortBy: TOP_SORT_BY });
-    const secondPage = await postCaller.readPosts({ cursor: firstPage.nextCursor, limit: 2, sortBy: TOP_SORT_BY });
+    const firstPage = await postCaller.readPosts({ limit: 2, sortName: PostSortType.Top });
+    const secondPage = await postCaller.readPosts({
+      cursor: firstPage.nextCursor,
+      limit: 2,
+      sortName: PostSortType.Top,
+    });
 
     expect(
       [...firstPage.items, ...secondPage.items]
@@ -416,7 +415,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { ranking: 0.1 });
     await setReplyColumns(secondId, { ranking: -1 });
     await setReplyColumns(thirdId, { ranking: 0 });
-    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: HOT_SORT_BY });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortName: PostSortType.Hot });
 
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, thirdId, secondId]);
   });
@@ -428,7 +427,7 @@ describe("postRouter", () => {
     const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(secondId, { likeCount: 2 });
     await setReplyColumns(thirdId, { likeCount: 1 });
-    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: TOP_SORT_BY });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortName: PostSortType.Top });
 
     expect(items.map(({ id }) => id)).toStrictEqual([secondId, thirdId, firstId]);
   });
@@ -441,7 +440,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(TWO_SECONDS) });
-    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: NEW_SORT_BY });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortName: PostSortType.New });
 
     expect(items.map(({ id }) => id)).toStrictEqual([thirdId, secondId, firstId]);
   });
@@ -454,7 +453,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(TWO_SECONDS) });
-    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: OLD_SORT_BY });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortName: PostSortType.Old });
 
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
   });
@@ -467,12 +466,12 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(TWO_SECONDS) });
-    const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy: OLD_SORT_BY });
+    const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortName: PostSortType.Old });
     const secondPage = await postCaller.readPosts({
       cursor: firstPage.nextCursor,
       limit: 2,
       parentId: newPost.id,
-      sortBy: OLD_SORT_BY,
+      sortName: PostSortType.Old,
     });
 
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);

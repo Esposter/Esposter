@@ -1,34 +1,31 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { ResourceListSortKey } from "#shared/models/resource/ResourceListSortKey";
+import type { ResourceListColumnKey } from "#shared/models/resource/ResourceListColumnKey";
+import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
+import type { PageCursor, PageSort } from "@esposter/db-schema";
 
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
-import { getResourceNameSearchMatch } from "#server/services/resource/getResourceNameSearchMatch";
 import { getResourceSearchHits } from "#server/services/resource/getResourceSearchHits";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { readResourceListPage } from "#server/services/resource/readResourceListPage";
-import { resourceListSelection } from "#server/services/resource/resourceListSelection";
-import { resourcesInResource } from "@esposter/db-schema";
 import { getSearchExpression } from "@esposter/shared";
-import { asc, desc } from "drizzle-orm";
 
-// One offset page of the owner's resources matching the filter. A search ranks its matches first: a name match ahead
-// Of a row matched only by a tag, then by bm25, and only then the order the caller asked for, which defaults to newest
+// One page of the owner's resources matching the filter, in the order the sort declares. A search is ordered by how
+// Well each row matches: a name match ahead of a row matched only by a tag, then by bm25
 export const readResourceList = (
   db: Context["db"],
   userId: string,
   filter: ResourceFilterInput,
-  sortBy: SortItem<ResourceListSortKey>[],
+  sort: PageSort<ResourceListColumnKey>,
+  cursor: PageCursor,
   limit: number,
-  offset: number,
-) => {
-  const where = getResourcesWhere(db, userId, filter);
+): Promise<ResourceListPage> => {
   const expression = filter.searchQuery ? getSearchExpression(filter.searchQuery) : "";
-  const searchHits = expression ? getResourceSearchHits(db, expression) : undefined;
-  const orderBy = [
-    ...(searchHits ? [desc(getResourceNameSearchMatch(expression)), asc(searchHits.rank)] : []),
-    ...(sortBy.length > 0 ? parseSortByToSql(resourceListSelection, sortBy) : [desc(resourcesInResource.updatedAt)]),
-  ];
-  return readResourceListPage(db, userId, where, orderBy, limit, offset, searchHits);
+  return readResourceListPage(db, {
+    cursor,
+    limit,
+    search: expression ? { expression, hits: getResourceSearchHits(db, expression) } : undefined,
+    sort,
+    userId,
+    where: getResourcesWhere(db, userId, filter),
+  });
 };

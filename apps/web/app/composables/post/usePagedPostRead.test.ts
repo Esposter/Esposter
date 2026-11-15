@@ -2,12 +2,13 @@
 import type { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import type { z } from "zod";
 
+import { PostSortType } from "#shared/models/post/PostSortType";
 import { usePagedPostRead } from "@/composables/post/usePagedPostRead";
-import { PostSortType } from "@/models/post/PostSortType";
 import { createPost } from "@/services/post/createPost.test";
 import { AsyncDataKey } from "@/services/shared/AsyncDataKey";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
+import { encodePageCursor, START_PAGE_CURSOR } from "@esposter/db-schema";
 import { noop } from "@esposter/shared";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
@@ -30,7 +31,7 @@ describe(usePagedPostRead, () => {
     const sentQueries: ReadPostsQuery[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
       if (input) sentQueries.push(input);
-      return { hasMore: false, items: [createPost({ userId })], nextCursor: "" };
+      return { items: [createPost({ userId })], nextCursor: "" };
     });
     const { readFirstPage } = createPagedRead();
     await readFirstPage({ userId }, AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
@@ -42,17 +43,18 @@ describe(usePagedPostRead, () => {
   test("reads each later page on the cursor the page before it left", async () => {
     expect.hasAssertions();
 
-    const sentQueries: ReadPostsQuery[] = [];
+    const pageCursor = { isBackward: false, values: [1, v7()] };
+    const sentCursors: unknown[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
-      if (input) sentQueries.push(input);
-      return input?.cursor
-        ? { hasMore: false, items: [createPost()], nextCursor: "" }
-        : { hasMore: true, items: [createPost()], nextCursor: "cursor" };
+      sentCursors.push(input?.cursor);
+      return sentCursors.length === 1
+        ? { items: [createPost()], nextCursor: encodePageCursor(pageCursor) }
+        : { items: [createPost()], nextCursor: "" };
     });
     const { readFirstPage, readMorePages } = createPagedRead();
     await readFirstPage({ userId }, AsyncDataKey.ReadPosts(PostSortType.Hot, userId));
     await readMorePages({ userId }, noop);
 
-    expect(sentQueries.map((query) => query.cursor)).toStrictEqual(["", "cursor"]);
+    expect(sentCursors).toStrictEqual([START_PAGE_CURSOR, pageCursor]);
   });
 });

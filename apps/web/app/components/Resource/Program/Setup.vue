@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { Page } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 import { useProgramStore } from "@/store/resource/program";
 import { SurveyResponseMode } from "@esposter/db-schema";
-import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 const { $trpc } = useNuxtApp();
 const programStore = useProgramStore();
@@ -43,8 +45,8 @@ const keyColumnItems = computed<UiSelectItem<string>[]>(() =>
   ),
 );
 // Absent until read, so a failed read never claims every binding is missing
-const emailResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
-const surveyResources = ref<OffsetPaginationData<UiSelectItem<string>>>();
+const emailResources = ref<Page<UiSelectItem<string>>>();
+const surveyResources = ref<Page<UiSelectItem<string>>>();
 await loadContent();
 watchImmediate(
   () => programResource.value.surveyId,
@@ -54,21 +56,22 @@ watchImmediate(
     if (surveyId) await refreshSurveyContent();
   },
 );
-// Both binding pickers are independent of each other, so they resolve together
+// Both binding pickers are independent of each other, so they resolve together, each read to the end of its list so a
+// Binding past the first page is still offered. A whole list is one that has no next cursor
 await getResultAsync(async () => {
   const [emails, surveys] = await Promise.all([
-    $trpc.email.readResources.query({ limit: MAX_READ_LIMIT }),
-    $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT }),
+    readAllResourcePages((cursor) => $trpc.email.readResources.query({ cursor })),
+    readAllResourcePages((cursor) => $trpc.survey.readResources.query({ cursor })),
   ]);
   emailResources.value = {
-    hasMore: emails.hasMore,
-    items: emails.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id })),
+    items: emails.map(({ id, name }) => ({ meaning: UiIconMeaning.Email, title: name, value: id })),
+    nextCursor: "",
   };
   surveyResources.value = {
-    hasMore: surveys.hasMore,
-    items: surveys.items.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id })),
+    items: surveys.map(({ id, name }) => ({ meaning: UiIconMeaning.Survey, title: name, value: id })),
+    nextCursor: "",
   };
-}).match(noop, console.error);
+}).match(noop, createErrorAlert);
 // Autosave binding edits — registered after the load, so the hydration itself never reaches the watcher
 watchAutosave(programResource, saveProgram);
 </script>

@@ -30,7 +30,7 @@ import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishe
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { ResourceType } from "@esposter/db-schema";
+import { createEmptyPage, ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
@@ -183,8 +183,8 @@ describe("pageBuilderContentPanel", () => {
     const publishedInList = { ...published, publication: createPublication(published.id) };
     const unpublishedInList = { ...unpublished, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
-      hasMore: false,
       items: input?.isPublished ? [publishedInList] : [publishedInList, unpublishedInList],
+      nextCursor: "",
     }));
     trpcMsw.resource.readResource.query(() => publishedInList);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -205,8 +205,8 @@ describe("pageBuilderContentPanel", () => {
     const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(webpageKind);
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
-      hasMore: false,
       items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+      nextCursor: "",
     });
     component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
 
@@ -223,8 +223,8 @@ describe("pageBuilderContentPanel", () => {
     const { component, published } = await mountInvitePicker(webpageKind);
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
-      hasMore: false,
       items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+      nextCursor: "",
     });
 
     component.unmount();
@@ -236,8 +236,8 @@ describe("pageBuilderContentPanel", () => {
     const { component, pageBuilderDocumentStore, published, resourceId } = await mountInvitePicker(emailKind);
 
     expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
-      hasMore: false,
       items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+      nextCursor: "",
     });
     component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
 
@@ -253,7 +253,7 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = v7();
     const survey = createResourceListItem({ type: ResourceType.Survey });
-    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    trpcMsw.survey.readResources.query(() => createEmptyPage());
     trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const document = createSurveyInviteDocument(survey.id);
@@ -266,7 +266,7 @@ describe("pageBuilderContentPanel", () => {
     expect(component.findAll('[role="alert"]').map((alert) => alert.text())).toStrictEqual([
       getUnpublishedResourceMessage(survey.name),
     ]);
-    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({ hasMore: false, items: [] });
+    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual(createEmptyPage());
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
 
     component.unmount();
@@ -276,7 +276,7 @@ describe("pageBuilderContentPanel", () => {
     expect.hasAssertions();
 
     const resourceId = v7();
-    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    trpcMsw.survey.readResources.query(() => createEmptyPage());
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const document = createSurveyInviteDocument(NO_SURVEY_ID);
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);

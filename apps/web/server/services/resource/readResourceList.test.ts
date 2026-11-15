@@ -1,6 +1,8 @@
+import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
 import type { MockDatabase } from "@esposter/db-mock";
 
 import { readResourceList } from "#server/services/resource/readResourceList";
+import { readResourceListInputSchema } from "#shared/models/db/resource/ReadResourceListInput";
 import { createMockDb } from "@esposter/db-mock";
 import { resourcesInResource, ResourceType, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
@@ -14,6 +16,13 @@ describe(readResourceList, () => {
   const limit = 10;
   let mockDatabase: MockDatabase;
 
+  // Reads a page of the owner's list the way the procedure does: the input parsed for the filter, and its sort and cursor
+  // Taken from it
+  const readPage = (filter: ResourceFilterInput, cursor: string, listLimit: number) => {
+    const input = readResourceListInputSchema.parse({ ...filter, cursor, limit: listLimit });
+    return readResourceList(mockDatabase.db, userId, input, input.sort, input.cursor, listLimit);
+  };
+  const readList = (filter: ResourceFilterInput, listLimit = limit) => readPage(filter, "", listLimit);
   const createResource = async (values: Partial<typeof resourcesInResource.$inferInsert> & { name: string }) => {
     const inserted = await mockDatabase.db
       .insert(resourcesInResource)
@@ -47,7 +56,7 @@ describe(readResourceList, () => {
     const taggedId = await createResource({ name: "Weekly", tags: { budget: "2026" } });
     const namedId = await createResource({ name: "Budget" });
 
-    const { items } = await readResourceList(mockDatabase.db, userId, { searchQuery: "budget" }, [], limit, 0);
+    const { items } = await readList({ searchQuery: "budget" });
 
     expect(items.map(({ id }) => id)).toStrictEqual([namedId, taggedId]);
   });
@@ -57,9 +66,25 @@ describe(readResourceList, () => {
 
     const id = await createResource({ name: "Quarterly budgeting" });
 
-    const { items } = await readResourceList(mockDatabase.db, userId, { searchQuery: "quarterly budg" }, [], limit, 0);
+    const { items } = await readList({ searchQuery: "quarterly budg" });
 
     expect(items.map((item) => item.id)).toStrictEqual([id]);
+  });
+
+  test("reads a search to its end across a page boundary, its ties in id order", async () => {
+    expect.hasAssertions();
+
+    const ids = [
+      await createResource({ name: "Budget" }),
+      await createResource({ name: "Budget" }),
+      await createResource({ name: "Budget" }),
+    ];
+
+    const first = await readPage({ searchQuery: "budget" }, "", 2);
+    const second = await readPage({ searchQuery: "budget" }, first.nextCursor, 2);
+
+    expect([...first.items, ...second.items].map(({ id }) => id)).toStrictEqual(ids.toSorted().toReversed());
+    expect(second.nextCursor).toBe("");
   });
 
   test("leaves out soft-deleted rows and other owners' rows", async () => {
@@ -69,7 +94,7 @@ describe(readResourceList, () => {
     await createResource({ deletedAt: new Date(), name: "Budget" });
     await createResource({ name: "Budget", userId: otherUserId });
 
-    const { items } = await readResourceList(mockDatabase.db, userId, { searchQuery: "budget" }, [], limit, 0);
+    const { items } = await readList({ searchQuery: "budget" });
 
     expect(items.map((item) => item.id)).toStrictEqual([id]);
   });
@@ -80,8 +105,8 @@ describe(readResourceList, () => {
     const id = await createResource({ name: "Budget" });
     await mockDatabase.db.update(resourcesInResource).set({ name: "Roadmap" }).where(eq(resourcesInResource.id, id));
 
-    const renamed = await readResourceList(mockDatabase.db, userId, { searchQuery: "roadmap" }, [], limit, 0);
-    const stale = await readResourceList(mockDatabase.db, userId, { searchQuery: "budget" }, [], limit, 0);
+    const renamed = await readList({ searchQuery: "roadmap" });
+    const stale = await readList({ searchQuery: "budget" });
 
     expect(renamed.items.map((item) => item.id)).toStrictEqual([id]);
     expect(stale.items).toStrictEqual([]);
@@ -92,7 +117,7 @@ describe(readResourceList, () => {
 
     await createResource({ name: "Budget" });
 
-    const { items } = await readResourceList(mockDatabase.db, userId, { searchQuery: "%" }, [], limit, 0);
+    const { items } = await readList({ searchQuery: "%" });
 
     expect(items).toStrictEqual([]);
   });
@@ -103,7 +128,7 @@ describe(readResourceList, () => {
     const id = await createResource({ name: "A", tags: { status: "open" } });
     await createResource({ name: "B", tags: { status: "closed" } });
 
-    const { items } = await readResourceList(mockDatabase.db, userId, { tags: { status: "open" } }, [], limit, 0);
+    const { items } = await readList({ tags: { status: "open" } });
 
     expect(items.map((item) => item.id)).toStrictEqual([id]);
   });

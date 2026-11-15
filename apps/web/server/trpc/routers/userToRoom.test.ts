@@ -5,7 +5,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
-import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
 import { roleRouter } from "#server/trpc/routers/role";
@@ -21,6 +20,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("userToRoomRouter", () => {
@@ -35,10 +35,14 @@ describe("userToRoomRouter", () => {
   const position = 1;
   const timeZone = "UTC";
   // Creates a room as the owner plus a second member whose mention count the tests exercise.
+  // A member holding a mention count, as the room's object leaves one after a message names them
   const setupMentionedMember = async () => {
     const newRoom = await roomCaller.createRoom({ name });
     const member = await createRoomMember(mockContext, newRoom.id);
-    await messageCaller.createMessage({ message: createMentionMessage(member.id), roomId: newRoom.id, timeZone });
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ mentionCount: 1 })
+      .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, member.id)));
     return { member, roomId: newRoom.id };
   };
   // A context acting as the given user on a session of their own, or as a new user when none is given
@@ -93,15 +97,6 @@ describe("userToRoomRouter", () => {
     await expect(
       nonMemberUserToRoomCaller.readMyUsersToRooms({ roomIds: [newRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
-  });
-
-  test("createMessage increments mentionCount for mentioned member", async () => {
-    expect.hasAssertions();
-
-    const { member, roomId } = await setupMentionedMember();
-    const mentionCount = await readMemberMentionCount(member, roomId);
-
-    expect(mentionCount).toBe(1);
   });
 
   test("clearMentionCount is idempotent", async () => {

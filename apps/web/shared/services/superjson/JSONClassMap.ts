@@ -1,7 +1,6 @@
 import type { Serializable } from "#shared/models/shared/Serializable";
 import type { Class } from "type-fest";
 
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { ClickerSave } from "#shared/models/clicker/data/ClickerSave";
 import { BasicChartConfiguration } from "#shared/models/dashboard/data/chart/BasicChartConfiguration";
 import { Chart } from "#shared/models/dashboard/data/chart/Chart";
@@ -23,7 +22,6 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
   BooleanColumn,
   Chart,
-  Clicker,
   ClickerSave,
   ComputedColumn,
   Dashboard,

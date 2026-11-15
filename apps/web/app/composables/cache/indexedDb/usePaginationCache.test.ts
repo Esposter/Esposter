@@ -1,11 +1,10 @@
 // @vitest-environment nuxt
 import type { IndexedDbDatabaseSchema } from "@/models/cache/indexedDb/IndexedDbDatabaseSchema";
 import type { IndexedDbStoreName } from "@/models/cache/indexedDb/IndexedDbStoreName";
+import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
 
 import { getMockSession } from "#server/trpc/context.test";
 import { flushCache } from "@/composables/cache/indexedDb/flushCache.test";
-import { useCursorPaginationCache } from "@/composables/cache/indexedDb/useCursorPaginationCache";
-import { useOffsetPaginationCache } from "@/composables/cache/indexedDb/useOffsetPaginationCache";
 import { goOffline, goOnline } from "@/composables/shared/network.test";
 import { MessageIndexedDbStoreConfiguration } from "@/services/cache/indexedDb/configurations/MessageIndexedDbStoreConfiguration";
 import { resetIndexedDb } from "@/services/cache/indexedDb/openIndexedDb";
@@ -20,61 +19,11 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 type MessageValue = IndexedDbDatabaseSchema[IndexedDbStoreName.Messages]["value"];
 
-interface PaginationCacheVariant {
-  name: string;
-  useCache: (
-    getSlice: (partitionKey: string) => TestSlice,
-    partitionKey: Ref<string>,
-    onHydrate?: () => Promise<void>,
-  ) => void;
-}
-
-interface TestSlice {
-  initializeItems: (data: { items: MessageValue[] }) => void;
-  isLoaded: Ref<boolean>;
-  items: Ref<MessageValue[]>;
-  resetItems: () => void;
-}
-
-describe.each<PaginationCacheVariant>([
-  {
-    name: useCursorPaginationCache.name,
-    useCache: (getSlice, partitionKey, onHydrate) => {
-      useCursorPaginationCache({
-        configuration: MessageIndexedDbStoreConfiguration,
-        getSlice: (key) => {
-          const { initializeItems, isLoaded, items, resetItems } = getSlice(key);
-          return {
-            initializeCursorPaginationData: initializeItems,
-            isLoaded,
-            items,
-            resetCursorPaginationData: resetItems,
-          };
-        },
-        onHydrate,
-        partitionKey,
-      });
-    },
-  },
-  {
-    name: useOffsetPaginationCache.name,
-    useCache: (getSlice, partitionKey, onHydrate) => {
-      useOffsetPaginationCache({
-        configuration: MessageIndexedDbStoreConfiguration,
-        getSlice: (key) => {
-          const { initializeItems, isLoaded, items } = getSlice(key);
-          return { initializeOffsetPaginationData: initializeItems, isLoaded, items };
-        },
-        onHydrate,
-        partitionKey,
-      });
-    },
-  },
-])("$name", ({ useCache }) => {
+describe(usePaginationCache, () => {
   const partitionKeyRef = ref("");
   // Keyed like the store the harness stands in for, so a read for one partition landing after a switch is
   // Visible as rows in the wrong slice rather than hidden behind a single shared list
-  const sliceMap = new Map<string, TestSlice>();
+  const sliceMap = new Map<string, CursorPaginationSlice<MessageValue>>();
   const getTestSlice = (key: string) => {
     const existingSlice = sliceMap.get(key);
     if (existingSlice) return existingSlice;
@@ -83,14 +32,14 @@ describe.each<PaginationCacheVariant>([
     const sliceItems = ref<MessageValue[]>([]);
     // The store that performed the load owns readiness per partition; the harness drives it the way a store
     // Would — true once a read for that partition has landed, false again on a switch onto one that has not
-    const slice: TestSlice = {
-      initializeItems: (data) => {
+    const slice: CursorPaginationSlice<MessageValue> = {
+      initializeCursorPaginationData: (data) => {
         sliceItems.value = data.items;
         sliceIsLoaded.value = true;
       },
       isLoaded: sliceIsLoaded,
       items: sliceItems,
-      resetItems: () => {
+      resetCursorPaginationData: () => {
         sliceItems.value = [];
         sliceIsLoaded.value = false;
       },
@@ -136,7 +85,12 @@ describe.each<PaginationCacheVariant>([
       defineComponent({
         render: () => h("div"),
         setup: () => {
-          useCache(getTestSlice, partitionKeyRef, onHydrate);
+          usePaginationCache({
+            configuration: MessageIndexedDbStoreConfiguration,
+            getSlice: getTestSlice,
+            onHydrate,
+            partitionKey: partitionKeyRef,
+          });
         },
       }),
     );

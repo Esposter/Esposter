@@ -11,4 +11,15 @@ describe("webhookPayloadSchema", () => {
 
     expect(readUnboundedPaths(getRequestJsonSchema(webhookPayloadSchema), "webhookPayload")).toStrictEqual([]);
   });
+
+  test("takes an avatar_url only as https, so a message never draws its picture over plain http", () => {
+    expect.hasAssertions();
+
+    expect(webhookPayloadSchema.safeParse({ avatar_url: "http://example.com/avatar", content: "a" }).success).toBe(
+      false,
+    );
+    expect(webhookPayloadSchema.safeParse({ avatar_url: "https://example.com/avatar", content: "a" }).success).toBe(
+      true,
+    );
+  });
 });

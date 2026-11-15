@@ -1,7 +1,7 @@
 import type { ClickerItemProperties } from "@/models/clicker/ClickerItemProperties";
 
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
+import { createClicker } from "@/services/clicker/createClicker";
 import { ClickerColorMap } from "@/services/clicker/properties/ClickerColorMap";
 import { ClickerIconComponentMap } from "@/services/clicker/properties/ClickerIconComponentMap";
 import { ClickerNameMap } from "@/services/clicker/properties/ClickerNameMap";
@@ -11,7 +11,7 @@ import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 
 export const useClickerStore = defineStore("clicker", () => {
   const { $trpc } = useNuxtApp();
-  const clicker = ref(new Clicker());
+  const clicker = ref(createClicker());
   // Persist ids and counters only (the `ClickerSave` shape) so content rebalances reach existing saves
   const { save: saveClicker, setState: setClicker } = useSave(clicker, {
     auth: { save: (clickerSave, etag) => $trpc.clicker.saveClicker.mutate({ data: clickerSave, etag }) },

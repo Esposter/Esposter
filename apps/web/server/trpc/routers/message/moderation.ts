@@ -1,13 +1,10 @@
 import type { BanInRoom } from "#shared/models/db/room/BanInRoom";
 import type { ModerationLogInRoom } from "#shared/models/db/room/ModerationLogInRoom";
 import type { ModerationNoteInRoom } from "#shared/models/db/room/ModerationNoteInRoom";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { BanInMessage, ModerationLogInMessage, ModerationNoteInMessage } from "@esposter/db-schema";
+import type { ModerationNoteInMessage, Page } from "@esposter/db-schema";
 import type { SQL } from "drizzle-orm";
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
-import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
 import { containsLike } from "#server/services/db/containsLike";
 import { evictRoomCallParticipants } from "#server/services/message/call/evictRoomCallParticipants";
@@ -16,11 +13,10 @@ import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNa
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { broadcastAdminAction } from "#server/services/message/moderation/broadcastAdminAction";
+import { deleteUserMessagesInPages } from "#server/services/message/moderation/deleteUserMessagesInPages";
 import { publishDeletedMessageFiles } from "#server/services/message/moderation/publishDeletedMessageFiles";
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
+import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
 import { announceRoomMemberRemoval } from "#server/services/room/announceRoomMemberRemoval";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
@@ -40,16 +36,17 @@ import { readBansInputSchema } from "#shared/models/db/moderation/ReadBansInput"
 import { readModerationLogInputSchema } from "#shared/models/db/moderation/ReadModerationLogInput";
 import { readModerationNotesCountInputSchema } from "#shared/models/db/moderation/ReadModerationNotesCountInput";
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { checkHasPermission } from "@esposter/db";
+import { checkHasPermission, createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import {
   AdminActionType,
+  BAN_PAGE_SORT,
   bansInMessage,
   DatabaseEntityType,
   getDisplayNameExpression,
   getPublicUserColumns,
   getTopic,
+  MODERATION_LOG_PAGE_SORT,
+  MODERATION_NOTE_PAGE_SORT,
   moderationLogsInMessage,
   moderationNotesInMessage,
   PublishSource,
@@ -134,12 +131,18 @@ export const moderationRouter = router({
           if (deletedMember)
             await announceRoomMemberRemoval(ctx.db, deletedMember, actorUserId, RoomMemberRemovalAction.Banned);
           // A soft ban also purges what the member wrote — best-effort after the ban commits: the ban is the effect that
-          // Must not be lost. The purge is one call to the member's room, which tombstones every message they wrote in one
-          // Turn, and the blobs those messages named are queued for deletion behind it
+          // Must not be lost. The purge is the member's messages in the room, tombstoned a page at a time, and the blobs
+          // Those messages named are queued for deletion behind it, while each one's mention counts are taken back
           if (input.type === AdminActionType.SoftBan)
-            await getResultAsync(async () =>
-              publishDeletedMessageFiles(roomId, await useRoomObject(roomId).deleteUserMessages(targetUserId)),
-            ).match(noop, console.error);
+            await getResultAsync(async () => {
+              const purgedMessages = await deleteUserMessagesInPages(roomId, targetUserId);
+              await Promise.all([
+                publishDeletedMessageFiles(roomId, purgedMessages),
+                ...purgedMessages.map((message) =>
+                  takeBackMentionCounts(ctx.db, roomId, { ...message, userId: targetUserId }),
+                ),
+              ]);
+            }).match(noop, console.error);
           await evictAfterRemoval();
           break;
         }
@@ -198,14 +201,14 @@ export const moderationRouter = router({
   readBans: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.BanMembers, readBansInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<CursorPaginationData<BanInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
+  ).query<Page<BanInRoom>>(async ({ ctx, input: { cursor, filter, limit, roomId } }) => {
     // A ban has no id of its own: it is paged newest-first on creation, tied on the banned user, which with the room is its key
-    const sortBy: SortItem<keyof BanInMessage>[] = [
-      CREATED_AT_DESCENDING_SORT_ITEM,
-      { key: "userId", order: SortOrder.Desc },
+    const sort = createPageSort({ createdAt: bansInMessage.createdAt, userId: bansInMessage.userId }, BAN_PAGE_SORT);
+    const wheres: (SQL | undefined)[] = [
+      eq(bansInMessage.roomId, roomId),
+      isNull(bansInMessage.deletedAt),
+      getPageWhere(sort, cursor),
     ];
-    const wheres: (SQL | undefined)[] = [eq(bansInMessage.roomId, roomId), isNull(bansInMessage.deletedAt)];
-    if (cursor) wheres.push(getCursorWhere(bansInMessage, cursor, sortBy));
     // The join below already brings the banned user's name into scope, so the predicate costs nothing extra
     if (filter?.name) wheres.push(containsLike(usersInAuth.name, filter.name));
 
@@ -234,35 +237,33 @@ export const moderationRouter = router({
         and(eq(bannedByMemberships.userId, bannedByUsers.id), eq(bannedByMemberships.roomId, roomId)),
       )
       .where(and(...wheres))
-      .orderBy(...parseSortByToSql(bansInMessage, sortBy))
+      .orderBy(...getPageOrderBy(sort, cursor))
       .limit(limit + 1);
-    return getCursorPaginationData(bans, limit, sortBy);
+    return toPage(bans, BAN_PAGE_SORT, cursor, limit);
   }),
   readModerationLog: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoom, readModerationLogInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<CursorPaginationData<ModerationLogInRoom>>(
+  ).query<Page<ModerationLogInRoom>>(
     async ({ ctx, input: { actorUserId, cursor, limit, roomId, targetUserId, type } }) => {
-      const sortBy: SortItem<keyof ModerationLogInMessage>[] = [ID_DESCENDING_SORT_ITEM];
-      const wheres: (SQL | undefined)[] = [eq(moderationLogsInMessage.roomId, roomId)];
+      const sort = createPageSort({ id: moderationLogsInMessage.id }, MODERATION_LOG_PAGE_SORT);
+      const wheres: (SQL | undefined)[] = [eq(moderationLogsInMessage.roomId, roomId), getPageWhere(sort, cursor)];
       if (actorUserId) wheres.push(eq(moderationLogsInMessage.actorUserId, actorUserId));
       if (targetUserId) wheres.push(eq(moderationLogsInMessage.targetUserId, targetUserId));
       if (type) wheres.push(eq(moderationLogsInMessage.type, type));
-      if (cursor) wheres.push(getCursorWhere(moderationLogsInMessage, cursor, sortBy));
       const logs = await ctx.db
         .select()
         .from(moderationLogsInMessage)
         .where(and(...wheres))
-        .orderBy(...parseSortByToSql(moderationLogsInMessage, sortBy))
+        .orderBy(...getPageOrderBy(sort, cursor))
         .limit(limit + 1);
-      const page = getCursorPaginationData(logs, limit, sortBy);
+      const page = toPage(logs, MODERATION_LOG_PAGE_SORT, cursor, limit);
       const displayNameMap = await getRoomDisplayNameMap(
         ctx.db,
         roomId,
         page.items.flatMap((item) => (item.actorUserId ? [item.actorUserId, item.targetUserId] : [item.targetUserId])),
       );
       return {
-        hasMore: page.hasMore,
         items: page.items.map((item) => ({
           ...item,
           actorDisplayName: item.actorUserId ? (displayNameMap.get(item.actorUserId) ?? "") : "",
@@ -275,39 +276,37 @@ export const moderationRouter = router({
   readModerationNotes: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.KickMembers, readModerationNotesInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<CursorPaginationData<ModerationNoteInRoom>>(
-    async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
-      await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
+  ).query<Page<ModerationNoteInRoom>>(async ({ ctx, input: { cursor, limit, roomId, targetUserId } }) => {
+    await assertIsManageable(ctx.db, ctx.user.id, targetUserId, roomId);
 
-      const sortBy: SortItem<keyof ModerationNoteInMessage>[] = [ID_DESCENDING_SORT_ITEM];
-      const wheres: (SQL | undefined)[] = [
-        eq(moderationNotesInMessage.roomId, roomId),
-        eq(moderationNotesInMessage.targetUserId, targetUserId),
-      ];
-      if (cursor) wheres.push(getCursorWhere(moderationNotesInMessage, cursor, sortBy));
-      const notes = await ctx.db
-        .select()
-        .from(moderationNotesInMessage)
-        .where(and(...wheres))
-        .orderBy(...parseSortByToSql(moderationNotesInMessage, sortBy))
-        .limit(limit + 1);
-      const page = getCursorPaginationData(notes, limit, sortBy);
-      const displayNameMap = await getRoomDisplayNameMap(
-        ctx.db,
-        roomId,
-        page.items.flatMap(({ actorUserId }) => (actorUserId ? [actorUserId] : [])),
-      );
-      return {
-        hasMore: page.hasMore,
-        items: page.items.map((note) => ({
-          ...note,
-          // A note whose author's account is gone has no name to show
-          actorDisplayName: note.actorUserId ? (displayNameMap.get(note.actorUserId) ?? "") : "",
-        })),
-        nextCursor: page.nextCursor,
-      };
-    },
-  ),
+    const sort = createPageSort({ id: moderationNotesInMessage.id }, MODERATION_NOTE_PAGE_SORT);
+    const notes = await ctx.db
+      .select()
+      .from(moderationNotesInMessage)
+      .where(
+        and(
+          eq(moderationNotesInMessage.roomId, roomId),
+          eq(moderationNotesInMessage.targetUserId, targetUserId),
+          getPageWhere(sort, cursor),
+        ),
+      )
+      .orderBy(...getPageOrderBy(sort, cursor))
+      .limit(limit + 1);
+    const page = toPage(notes, MODERATION_NOTE_PAGE_SORT, cursor, limit);
+    const displayNameMap = await getRoomDisplayNameMap(
+      ctx.db,
+      roomId,
+      page.items.flatMap(({ actorUserId }) => (actorUserId ? [actorUserId] : [])),
+    );
+    return {
+      items: page.items.map((note) => ({
+        ...note,
+        // A note whose author's account is gone has no name to show
+        actorDisplayName: note.actorUserId ? (displayNameMap.get(note.actorUserId) ?? "") : "",
+      })),
+      nextCursor: page.nextCursor,
+    };
+  }),
   readModerationNotesCount: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.KickMembers, readModerationNotesCountInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],

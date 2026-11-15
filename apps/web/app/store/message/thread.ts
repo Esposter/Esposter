@@ -1,6 +1,7 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { RightDrawer } from "@/models/message/RightDrawer";
+import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useLayoutStore } from "@/store/layout";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
@@ -98,6 +99,10 @@ export const useThreadStore = defineStore("message/thread", () => {
     }
 
     threadMessages.value = threadMessages.value.filter((message) => message.id !== messageId);
+  });
+  // The replies are rows the room's window does not hold, so the reconnect refresh reads them back through the funnel
+  messageHolderRegistry.register((roomId, hold) => {
+    if (roomId === activeRoomId.value) hold(threadMessages.value);
   });
   return { activeRoomId, activeThreadRootId, closeThread, isReadThreadPending, openThread, threadMessages };
 });

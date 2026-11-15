@@ -1,12 +1,12 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import type { ReadRoomsInput } from "#shared/models/db/room/ReadRoomsInput";
 import type { R2Bucket } from "@cloudflare/workers-types";
-import type { BlobDeletionQueueMessage } from "@esposter/db-schema";
+import type { BlobDeletionQueueMessage, Page } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
+import { roomObjectCalls, roomObjectFailures } from "#server/composables/realtime/useRoomObject.test";
 import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
+import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
 import { MockJobQueueDatabase } from "#server/services/queue/getJobQueue.test";
 import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { getBucket } from "#server/services/storage/getBucket";
@@ -18,7 +18,6 @@ import { inviteRouter } from "#server/trpc/routers/invite";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
@@ -72,6 +71,16 @@ describe("roomRouter", () => {
   // A link that never lapses, which is what every test not about expiry or exhaustion joins through
   const createUnlimitedInvite = (inviteRoomId: string) =>
     inviteCaller.createInvite({ expireAfterMinutes: 0, maxUses: 0, roomId: inviteRoomId });
+  // Every id a read lists, one page after another from its cursor until the list ends
+  const listEveryId = async (
+    readPage: (cursor: string) => Promise<Page<{ id: string }>>,
+    cursor = "",
+    listedIds: string[] = [],
+  ): Promise<string[]> => {
+    const page = await readPage(cursor);
+    const ids = [...listedIds, ...page.items.map(({ id }) => id)];
+    return page.nextCursor ? listEveryId(readPage, page.nextCursor, ids) : ids;
+  };
 
   beforeAll(async () => {
     ({ bucket: messageAssets, dispose: disposeMessageAssets } = await createMockBucket(StorageBucket.MessageAssets));
@@ -89,11 +98,13 @@ describe("roomRouter", () => {
   beforeEach(() => {
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     roomObjectCalls.length = 0;
+    roomObjectFailures.clear();
     userObjectCalls.length = 0;
   });
 
   afterEach(async () => {
     vi.useRealTimers();
+    roomObjectFailures.clear();
     await deleteDirectory(messageAssets);
     await deleteDirectory(publicUserAssets);
     MockJobQueueDatabase.clear();
@@ -139,7 +150,7 @@ describe("roomRouter", () => {
 
     const rooms = await roomCaller.readRooms();
 
-    expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+    expect(rooms).toStrictEqual({ items: [], nextCursor: "" });
   });
 
   test("watches each listed room's own topic, so a renamed room refreshes the sidebar", async () => {
@@ -189,7 +200,7 @@ describe("roomRouter", () => {
     );
   });
 
-  test("reads latest updated room", async () => {
+  test("reads the room with the latest message", async () => {
     expect.hasAssertions();
 
     await roomCaller.createRoom({ name });
@@ -200,7 +211,7 @@ describe("roomRouter", () => {
     expect(room).toStrictEqual(newRoom);
   });
 
-  test("reads latest updated room with no rooms to be undefined", async () => {
+  test("reads the room with the latest message as undefined when there are no rooms", async () => {
     expect.hasAssertions();
 
     const room = await roomCaller.readRoom();
@@ -208,7 +219,7 @@ describe("roomRouter", () => {
     expect(room).toBeUndefined();
   });
 
-  test("reads latest updated room excluding direct messages", async () => {
+  test("reads the room with the latest message excluding direct messages", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
@@ -520,18 +531,37 @@ describe("roomRouter", () => {
     );
   });
 
-  test("announces a delete to the room's online members and empties its object", async () => {
+  // The object announces the delete to its online members once its teardown is accepted, so the caller sends no second one
+  test("empties its object as the owner deleting it, and does not announce the delete itself", async () => {
     expect.hasAssertions();
 
     const newRoom = await roomCaller.createRoom({ name });
     await roomCaller.deleteRoom(newRoom.id);
 
     expect(roomObjectCalls).toContainEqual({
+      args: [{ userId: getMockSession().user.id }],
+      method: "deleteAll",
+      roomId: newRoom.id,
+    });
+    expect(roomObjectCalls).not.toContainEqual({
       args: [{ data: { roomId: newRoom.id, userId: getMockSession().user.id }, type: "deleteRoom" }],
       method: "notifyOnlineMembers",
       roomId: newRoom.id,
     });
-    expect(roomObjectCalls).toContainEqual({ args: [], method: "deleteAll", roomId: newRoom.id });
+  });
+
+  // The row goes only once the object has emptied, so a refused teardown leaves the room standing for the owner's retry
+  test("keeps the room when its object refuses to empty, and deletes it on the retry", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    roomObjectFailures.set("deleteAll", new Error("The sender index refused"));
+
+    await expect(roomCaller.deleteRoom(newRoom.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: The sender index refused]`,
+    );
+    roomObjectFailures.clear();
+    await expect(roomCaller.deleteRoom(newRoom.id)).resolves.toMatchObject({ id: newRoom.id });
   });
 
   test("joins", async () => {
@@ -636,6 +666,17 @@ describe("roomRouter", () => {
     expect(takeOne(rooms.items).id).toBe(newRoom.id);
   });
 
+  test("reads every room to its end across page boundaries, newest first", async () => {
+    expect.hasAssertions();
+
+    const firstRoom = await roomCaller.createRoom({ name });
+    const secondRoom = await roomCaller.createRoom({ name });
+    const thirdRoom = await roomCaller.createRoom({ name });
+    const listedIds = await listEveryId((cursor) => roomCaller.readRooms({ cursor, limit: 1 }));
+
+    expect(listedIds).toStrictEqual([thirdRoom.id, secondRoom.id, firstRoom.id]);
+  });
+
   test("searches direct messages by their ordered participant display names", async () => {
     expect.hasAssertions();
 
@@ -645,17 +686,14 @@ describe("roomRouter", () => {
       .update(usersToRoomsInMessage)
       .set({ displayName: "Ally" })
       .where(and(eq(usersToRoomsInMessage.roomId, directMessage.id), eq(usersToRoomsInMessage.userId, user.id)));
-    const sortBy: NonNullable<ReadRoomsInput["sortBy"]> = [
-      { key: "displayName", order: SortOrder.Asc },
-      { key: "id", order: SortOrder.Asc },
-    ];
-    const matches = await roomCaller.readRooms({ filter: { name: "Ally" }, includeDirectMessages: true, sortBy });
-    const firstPage = await roomCaller.readRooms({ includeDirectMessages: true, limit: 1, sortBy });
+    const sortName = "displayName";
+    const matches = await roomCaller.readRooms({ filter: { name: "Ally" }, includeDirectMessages: true, sortName });
+    const firstPage = await roomCaller.readRooms({ includeDirectMessages: true, limit: 1, sortName });
     const secondPage = await roomCaller.readRooms({
       cursor: firstPage.nextCursor,
       includeDirectMessages: true,
       limit: 1,
-      sortBy,
+      sortName,
     });
 
     expect(matches.items.map(({ displayName }) => displayName)).toStrictEqual(["Ally", "Ally"]);
@@ -673,6 +711,20 @@ describe("roomRouter", () => {
 
     expect(rooms.items).toHaveLength(1);
     expect(takeOne(rooms.items).id).toBe(newRoom.id);
+  });
+
+  test("answers a banned user's join like an unknown link", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const newInvite = await createUnlimitedInvite(newRoom.id);
+    const bannedAuthSession = await createMockAuthSession(mockContext.db);
+    await banRoomMember(mockContext.db, getMockSession().user.id, newRoom.id, bannedAuthSession.user.id);
+    const bannedRoomCaller = await createMockCaller(roomRouter, bannedAuthSession);
+
+    await expect(bannedRoomCaller.joinRoom(newInvite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, newInvite.id).message}]`,
+    );
   });
 
   test("fails join with joined room", async () => {
@@ -813,6 +865,48 @@ describe("roomRouter", () => {
 
     expect(takeOne(members.items).displayName).toBe(displayName);
     expect(takeOne(globalNameMembers.items).displayName).toBe(displayName);
+  });
+
+  test("reads every member to its end across page boundaries, with equal display names broken by id", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const firstMember = await createRoomMember(mockContext, newRoom.id);
+    const secondMember = await createRoomMember(mockContext, newRoom.id);
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "Tied" })
+      .where(eq(usersToRoomsInMessage.roomId, newRoom.id));
+    const listedIds = await listEveryId((cursor) => roomCaller.readMembers({ cursor, limit: 1, roomId: newRoom.id }));
+
+    expect(listedIds).toStrictEqual(
+      [getMockSession().user.id, firstMember.id, secondMember.id].toSorted((firstId, secondId) =>
+        firstId.localeCompare(secondId),
+      ),
+    );
+  });
+
+  // A name is ordered by its letters, not its bytes, so "bob" sorts before "Carl"; the page boundary falls between them
+  test("reads members in the order names read, with a page boundary between bob and Carl", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "Carl" })
+      .where(
+        and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, getMockSession().user.id)),
+      );
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ displayName: "bob" })
+      .where(and(eq(usersToRoomsInMessage.roomId, newRoom.id), eq(usersToRoomsInMessage.userId, member.id)));
+    const firstPage = await roomCaller.readMembers({ limit: 1, roomId: newRoom.id });
+    const secondPage = await roomCaller.readMembers({ cursor: firstPage.nextCursor, limit: 1, roomId: newRoom.id });
+
+    expect(firstPage.items.map(({ displayName }) => displayName)).toStrictEqual(["bob"]);
+    expect(secondPage.items.map(({ displayName }) => displayName)).toStrictEqual(["Carl"]);
   });
 
   test("reads users by ids with the display name they have in the room", async () => {

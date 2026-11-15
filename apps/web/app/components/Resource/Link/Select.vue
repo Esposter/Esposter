@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { Page } from "@esposter/db-schema";
 
 import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
 import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
@@ -12,7 +12,7 @@ interface Props {
   isUnpublished?: boolean;
   label: string;
   // Absent until the owner's resources of this type are read, since a binding cannot be told missing before then
-  resources?: OffsetPaginationData<UiSelectItem<string>>;
+  resources?: Page<UiSelectItem<string>>;
 }
 
 const modelValue = defineModel<string>({ required: true });
@@ -25,7 +25,7 @@ const items = computed(() => (isRequired ? (resources?.items ?? []) : prependNon
 const isMissing = computed(() =>
   Boolean(
     resources &&
-    !resources.hasMore &&
+    resources.nextCursor === "" &&
     !isUnpublished &&
     modelValue.value &&
     !resources.items.some(({ value }) => value === modelValue.value),

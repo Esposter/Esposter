@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogSize } from "@/models/ui/UiDialogSize";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -7,7 +6,7 @@ import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useDataStore } from "@/store/message/data";
 import { useForwardStore } from "@/store/message/input/forward";
-import { MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
+import { DEFAULT_PAGE_LIMIT, MESSAGE_MAX_LENGTH } from "@esposter/db-schema";
 
 const { $trpc } = useNuxtApp();
 const dataStore = useDataStore();
@@ -30,7 +29,6 @@ const {
   (query, cursor, options) =>
     $trpc.room.readRooms.query({ cursor, filter: query ? { name: query } : undefined }, options),
   true,
-  true,
 );
 </script>
 
@@ -50,7 +48,7 @@ const {
     />
     <div v-else aria-label="Rooms" role="list" flex flex-col>
       <template v-if="isPending && rooms.length === 0">
-        <div v-for="index in DEFAULT_READ_LIMIT" :key="index" aria-hidden="true" ui-row>
+        <div v-for="index in DEFAULT_PAGE_LIMIT" :key="index" aria-hidden="true" ui-row>
           <UiSkeleton size-6 />
           <UiSkeleton flex-1 h-4 />
         </div>
@@ -59,7 +57,7 @@ const {
         <MessageModelMessageForwardRoomListItem :room />
       </div>
       <StyledWaypoint :is-active="hasMore" @change="(onComplete) => readMoreSearchedItems(onComplete)">
-        <div v-for="index in DEFAULT_READ_LIMIT" :key="index" ui-row>
+        <div v-for="index in DEFAULT_PAGE_LIMIT" :key="index" ui-row>
           <UiSkeleton size-6 />
           <UiSkeleton flex-1 h-4 />
         </div>

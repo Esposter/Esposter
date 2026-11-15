@@ -1,6 +1,9 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
+import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
+import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useRoomStore } from "@/store/message/room";
+import { Operation } from "@esposter/shared";
 
 export const useThreadFollowStore = defineStore("message/threadFollow", () => {
   const { $trpc } = useNuxtApp();
@@ -14,6 +17,23 @@ export const useThreadFollowStore = defineStore("message/threadFollow", () => {
     () => roomStore.currentRoomId,
     () => [],
   );
+  // A followed root's row is its own copy, since the room may not hold its message, so it takes the room's changes here
+  messageHolderRegistry.register((roomId, hold) => {
+    hold(getFollowedThreads(roomId) ?? []);
+  });
+  MessageHookMap[Operation.Update].register((input) => {
+    const followedRoot = getFollowedThreads(input.roomId)?.find(({ id }) => id === input.id);
+    if (followedRoot) Object.assign(followedRoot, input);
+  });
+  MessageHookMap[Operation.Delete].register(({ id, roomId }) => {
+    const roots = getFollowedThreads(roomId);
+    // A deleted root leaves the drawer's list. Its follow state stays, so an unfollow can still find the thread
+    if (roots?.some((root) => root.id === id))
+      setFollowedThreads(
+        roomId,
+        roots.filter((root) => root.id !== id),
+      );
+  });
   // Follow-STATE source of truth: every followed root id, including threads whose root message was
   // Deleted. followedThreads above drops deleted roots for the drawer, so checkIsFollowing must read this
   // Instead — otherwise a followed thread with a deleted root looks unfollowed and can never be unfollowed.

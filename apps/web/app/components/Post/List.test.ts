@@ -1,8 +1,8 @@
 // @vitest-environment nuxt
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import PostList from "@/components/Post/List.vue";
-import { PostSortType } from "@/models/post/PostSortType";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { createEmptyPage } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -12,7 +12,7 @@ describe("postList", () => {
   test("feed Sort by omits Old", async () => {
     expect.hasAssertions();
 
-    trpcMsw.post.readPosts.query(() => new CursorPaginationData());
+    trpcMsw.post.readPosts.query(() => createEmptyPage());
     const component = await mountSuspended(PostList);
 
     expect(

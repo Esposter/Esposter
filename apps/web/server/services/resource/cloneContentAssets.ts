@@ -29,7 +29,10 @@ const cloneAsset = async (
   if (await bucket.head(destinationBlobName)) return true;
 
   // One HEAD answers both questions the copy needs: that the source is there, and what the clone costs its new owner
-  const sourceObject = await getResultAsync(() => bucket.head(blobName)).unwrapOr(null);
+  // A failed HEAD is logged as it falls back to a missing source, so a flaky read is visible rather than a missing asset
+  const sourceObject = await getResultAsync(() => bucket.head(blobName))
+    .orTee(console.error)
+    .unwrapOr(null);
   if (!sourceObject) return false;
 
   await chargeAndCopyBlob(

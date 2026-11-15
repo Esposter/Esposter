@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import {
   DataSourceTypeItemCategoryDefinitionMap,
@@ -12,9 +11,8 @@ const sheetStore = useSheetStore();
 const { loadContent, saveSheet } = sheetStore;
 const { settings, sheetResource } = storeToRefs(sheetStore);
 const configuration = useDataSourceConfiguration(settings);
-const schema = computed(() => zodToJsonSchema(configuration.value.schema));
 // A format such as JSON reads every file the same way, so its card says so rather than standing empty
-const hasOptions = computed(() => Object.keys(schema.value.properties ?? {}).length > 0);
+const hasOptions = computed(() => Object.keys(configuration.value.schema.shape).length > 0);
 // Autosave settings edits; the store's dirty check drops the load echo, so no loading guard is needed here
 // (a guard could not work anyway — the debounced callback fires after loading has already finished)
 watchAutosave(settings, saveSheet);
@@ -46,12 +44,7 @@ await loadContent();
       />
     </UiFrame>
     <UiFrame :title="`${DataSourceTypeItemCategoryDefinitionMap[settings.type].title} options`">
-      <UiSchemaForm
-        v-if="hasOptions"
-        v-model="settings.configuration"
-        :schema
-        :validation-schema="configuration.schema"
-      />
+      <UiSchemaForm v-if="hasOptions" v-model="settings.configuration" :schema="configuration.schema" />
       <UiEmptyState
         v-else
         description="Every file of this type is read the same way."

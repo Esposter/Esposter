@@ -1,10 +1,10 @@
 // @vitest-environment nuxt
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { useResourceStore } from "@/store/resource";
 import { useColumnStore } from "@/store/resource/sheet/column";
+import { SortOrder } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(useColumnStore, () => {

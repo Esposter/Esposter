@@ -33,9 +33,9 @@ export const useRoomListEvents = () => {
   );
   // The room's last message moved it to the top of the list, which is what the list sorts by
   onScopeDispose(
-    onUserEvent("roomActivity", ({ id, updatedAt }) => {
-      storeUpdateRoom({ id, updatedAt });
-      storeUpdateDirectMessage({ id, updatedAt });
+    onUserEvent("roomActivity", ({ id, lastMessageAt }) => {
+      storeUpdateRoom({ id, lastMessageAt });
+      storeUpdateDirectMessage({ id, lastMessageAt });
     }),
   );
   onScopeDispose(

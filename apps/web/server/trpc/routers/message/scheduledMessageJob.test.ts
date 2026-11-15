@@ -9,23 +9,29 @@ import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, getMockSession } from "#server/trpc/context.test";
 import { scheduledMessageJobRouter } from "#server/trpc/routers/message/scheduledMessageJob";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
-import { ScheduledMessageJobType } from "@esposter/db-schema";
+import { encodePageCursor, ScheduledMessageJobType, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The person's object and the room's are programmable: each RPC the router reaches is a typed fake a test sets, so the
 // Router's reads and writes are checked through them rather than through a Durable Object that does not run here
 const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hoisted(() => {
-  const roomFake = { deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>() };
+  const roomFake = {
+    deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>(),
+    readScheduledMessages: vi.fn<RoomObjectRpc["readScheduledMessages"]>(),
+  };
   const userFake = {
     addJoinedCall: vi.fn<UserObjectRpc["addJoinedCall"]>(),
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
+    countScheduledMessageJobs: vi.fn<UserObjectRpc["countScheduledMessageJobs"]>(),
     readJoinedCallIds: vi.fn<UserObjectRpc["readJoinedCallIds"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
     removeJoinedCall: vi.fn<UserObjectRpc["removeJoinedCall"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
+    removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
   };
   return {
     roomObject: roomFake,
@@ -96,15 +102,68 @@ describe("scheduledMessageJobRouter", () => {
     });
   });
 
-  test("counts my reminders and scheduled messages together", async () => {
+  test("counts my reminders and scheduled messages together, in the person's object", async () => {
     expect.hasAssertions();
 
-    const reminder = await scheduledMessageJobCaller.scheduleReminder({ roomId, runAt, text });
-    userObject.readReminders.mockResolvedValue([reminder]);
-    userObject.readScheduledMessages.mockResolvedValue([{ roomId, runAt, scheduledId: v7() }]);
+    userObject.countScheduledMessageJobs.mockResolvedValue(2);
     const scheduledMessageJobCount = await scheduledMessageJobCaller.readMyScheduledMessageJobsCount();
 
+    expect(userObject.countScheduledMessageJobs).toHaveBeenCalledExactlyOnceWith();
     expect(scheduledMessageJobCount).toBe(2);
+  });
+
+  // The person's reminders and scheduled messages are one list, soonest first. Each kind is read from its own keyset, and a
+  // Scheduled message's text is read from its room for the page alone
+  test("merges my reminders and scheduled messages soonest first, reading the page's messages from their rooms", async () => {
+    expect.hasAssertions();
+
+    const scheduledMessageId = v7();
+    const soonerRunAt = new Date(0);
+    const laterRunAt = new Date(1);
+    const reminder = { id: v7(), roomId, runAt: laterRunAt, text };
+    userObject.readReminders.mockResolvedValue([reminder]);
+    userObject.readScheduledMessages.mockResolvedValue([{ id: scheduledMessageId, roomId, runAt: soonerRunAt }]);
+    roomObject.readScheduledMessages.mockResolvedValue([
+      { id: scheduledMessageId, message: "later", replyToId: null, runAt: soonerRunAt, userId: v7() },
+    ]);
+    const { items, nextCursor } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 1 });
+
+    expect(roomObject.readScheduledMessages).toHaveBeenCalledExactlyOnceWith({
+      ids: [scheduledMessageId],
+      userId: getMockSession().user.id,
+    });
+    expect(items.map(({ id, payload }) => [id, payload.type])).toStrictEqual([
+      [scheduledMessageId, ScheduledMessageJobType.ScheduledMessage],
+    ]);
+    expect(nextCursor).toBe(encodePageCursor({ isBackward: false, values: [0, scheduledMessageId] }));
+  });
+
+  // A scheduled message stays in its room after the person leaves it, and the room is not asked for it once they have
+  test("leaves out a scheduled message in a room I have left, and asks that room for nothing", async () => {
+    expect.hasAssertions();
+
+    userObject.readScheduledMessages.mockResolvedValue([{ id: v7(), roomId, runAt }]);
+    await mockContext.db
+      .delete(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, getMockSession().user.id)));
+    const { items } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 10 });
+
+    expect(items).toStrictEqual([]);
+    expect(roomObject.readScheduledMessages).not.toHaveBeenCalled();
+  });
+
+  // The index names a scheduled message its room no longer holds only when its send or cancel missed the index, so the
+  // Read removes the stale row and lists none of it
+  test("prunes from my index a scheduled message its room no longer holds, and lists none of it", async () => {
+    expect.hasAssertions();
+
+    const id = v7();
+    userObject.readScheduledMessages.mockResolvedValue([{ id, roomId, runAt }]);
+    roomObject.readScheduledMessages.mockResolvedValue([]);
+    const { items } = await scheduledMessageJobCaller.readMyScheduledMessageJobs({ limit: 10 });
+
+    expect(items).toStrictEqual([]);
+    expect(userObject.removeScheduledMessage).toHaveBeenCalledExactlyOnceWith(id);
   });
 
   test("cancels a reminder in the person's own object without asking its room", async () => {

@@ -1,6 +1,7 @@
 import type { ClientMessage } from "@/models/message/ClientMessage";
 
 import { MessageHook } from "@/models/message/MessageHook";
+import { messageHolderRegistry } from "@/services/message/messageHolderRegistry";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { useDataStore } from "@/store/message/data";
 import { useRoomStore } from "@/store/message/room";
@@ -34,6 +35,14 @@ export const useReplyStore = defineStore("message/input/reply", () => {
   });
   MessageHookMap[Operation.Delete].register(({ id: messageId, roomId }) => {
     getReplyMapRef(roomId).value.delete(messageId);
+  });
+  // A quoted message read from the server is its own copy, so an edit of it reaches the quote through this hook
+  MessageHookMap[Operation.Update].register((input) => {
+    const quotedMessage = getReplyMapRef(input.roomId).value.get(input.id);
+    if (quotedMessage) Object.assign(quotedMessage, input);
+  });
+  messageHolderRegistry.register((roomId, hold) => {
+    hold([...getReplyMapRef(roomId).value.values()]);
   });
 
   const isIndicatorActive = ref(false);

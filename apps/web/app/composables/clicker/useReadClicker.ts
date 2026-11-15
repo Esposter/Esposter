@@ -1,5 +1,5 @@
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { clickerSaveSchema } from "#shared/models/clicker/data/ClickerSave";
+import { createClicker } from "@/services/clicker/createClicker";
 import { toClicker } from "@/services/clicker/save/toClicker";
 import { LocalStorageKey } from "@/services/shared/LocalStorageKey";
 import { parseJsonWithSchema } from "@/services/shared/parseJsonWithSchema";
@@ -37,7 +37,7 @@ export const useReadClicker = async () => {
       const clickerJson = window.localStorage.getItem(LocalStorageKey.ClickerStore);
       // A guest's save lives only in this browser, so one that no longer parses starts a fresh game
       const savedClicker = clickerJson ? parseJsonWithSchema(clickerJson, clickerSaveSchema) : undefined;
-      setClicker(savedClicker ? toClicker(savedClicker) : new Clicker());
+      setClicker(savedClicker ? toClicker(savedClicker) : createClicker());
       isRead = true;
       await applyOfflineProgress();
     },

@@ -1,8 +1,6 @@
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { NotificationInNotification } from "@esposter/db-schema";
+import type { NotificationInNotification, Page } from "@esposter/db-schema";
 
-export interface ReadNotificationsResult {
-  paginationData: CursorPaginationData<NotificationInNotification>;
-  // Every unread row, not the unread rows this page happens to hold — the badge counts across pages
-  unreadCount: number;
+// A page of notifications, with the total of those unread
+export interface ReadNotificationsResult extends Page<NotificationInNotification> {
+  unreadCount?: number;
 }

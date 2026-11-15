@@ -1,6 +1,5 @@
 // @vitest-environment nuxt
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { PostSortType } from "@/models/post/PostSortType";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
@@ -109,7 +108,7 @@ describe(useCommentStore, () => {
     currentPost.value = createPost({ commentCount: 2, id: postId });
     getSlice(postId).items.value = [comment];
     const replyBranch = getSlice(comment.id);
-    replyBranch.initializeCursorPaginationData(new CursorPaginationData({ hasMore: false, items: [reply] }));
+    replyBranch.initializeCursorPaginationData({ items: [reply], nextCursor: "" });
 
     await deleteComment(comment.id, postId);
 
@@ -190,8 +189,8 @@ describe(useCommentStore, () => {
     const reply = createPost({ depth: 2, parentId: comment.id });
     const commentStore = useCommentStore();
     const { getSlice, setCommentSortType } = commentStore;
-    getSlice(postId).initializeCursorPaginationData(new CursorPaginationData({ hasMore: true, items: [comment] }));
-    getSlice(comment.id).initializeCursorPaginationData(new CursorPaginationData({ hasMore: true, items: [reply] }));
+    getSlice(postId).initializeCursorPaginationData({ items: [comment], nextCursor: "cursor" });
+    getSlice(comment.id).initializeCursorPaginationData({ items: [reply], nextCursor: "cursor" });
 
     setCommentSortType(PostSortType.New);
 

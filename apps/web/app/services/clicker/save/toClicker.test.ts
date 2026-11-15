@@ -1,15 +1,15 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { CursorUpgradeId } from "#shared/models/clicker/data/upgrade/CursorUpgradeId";
+import { createClicker } from "@/services/clicker/createClicker";
 import { toClicker } from "@/services/clicker/save/toClicker";
 import { toClickerSave } from "@/services/clicker/save/toClickerSave";
 import { describe, expect, test } from "vitest";
 
 describe(toClicker, () => {
   const upgradeId = CursorUpgradeId["Reinforced Index Finger"];
-  const clicker = new Clicker({
+  const clicker = createClicker({
     boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
     boughtUpgrades: [{ ...UpgradeMap[upgradeId], id: upgradeId }],
     pointCount: 1,

@@ -1,9 +1,8 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { ResourceListItem } from "#shared/models/resource/ResourceListItem";
 
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
-import { UPDATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
+import { SortOrder } from "@esposter/db-schema";
 
 // One shared cadence for every edit-triggered autosave — injected by the autosave wrappers so call sites never restate
 // It
@@ -24,9 +23,9 @@ export const RESOURCE_DATE_TIME_ATTRIBUTES = {
 } as const;
 // Caps the chunked CSV export re-query so export cost stays bounded on huge lists
 export const MAX_CSV_EXPORT_ROWS = 10_000;
-export const DEFAULT_RESOURCE_SORT_BY = [UPDATED_AT_DESCENDING_SORT_ITEM] as const satisfies readonly SortItem<
-  keyof ResourceListItem
->[];
+export const DEFAULT_RESOURCE_SORT_BY = [
+  { key: ResourceListItemPropertyNames.updatedAt, order: SortOrder.Desc },
+] as const satisfies readonly SortItem<keyof ResourceListItem>[];
 // What Recent means: newest open first. Rows this device — any device — has never opened are filtered out
 // Of that view entirely, so the null case never reaches the sort
 export const LAST_ACCESSED_RESOURCE_SORT_BY = [

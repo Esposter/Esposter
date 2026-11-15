@@ -1,8 +1,8 @@
 import { BuildingMap } from "#shared/assets/clicker/data/BuildingMap";
 import { BuildingId } from "#shared/models/clicker/data/building/BuildingId";
-import { Clicker } from "#shared/models/clicker/data/Clicker";
 import { applyGameTick } from "@/services/clicker/applyGameTick";
 import { FPS } from "@/services/clicker/constants";
+import { createClicker } from "@/services/clicker/createClicker";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -15,7 +15,7 @@ describe(applyGameTick, () => {
   test("adds summed building power to points and each share to producedValue", () => {
     expect.hasAssertions();
 
-    const clicker = new Clicker({
+    const clicker = createClicker({
       boughtBuildings: [createBoughtBuilding(BuildingId.Cursor), createBoughtBuilding(BuildingId.Grandma)],
     });
     applyGameTick(clicker);
@@ -28,7 +28,7 @@ describe(applyGameTick, () => {
   test("is a no-op without bought buildings", () => {
     expect.hasAssertions();
 
-    const clicker = new Clicker();
+    const clicker = createClicker();
     applyGameTick(clicker);
 
     expect(clicker.pointCount).toBe(0);

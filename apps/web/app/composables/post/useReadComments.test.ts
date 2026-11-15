@@ -1,10 +1,7 @@
 // @vitest-environment nuxt
-import type { ReadPostsInput } from "#shared/models/db/post/ReadPostsInput";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import { PostSortType } from "@/models/post/PostSortType";
+import { PostSortType } from "#shared/models/post/PostSortType";
 import { createPost } from "@/services/post/createPost.test";
-import { PostSortTypeSortByMap } from "@/services/post/PostSortTypeSortByMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useCommentStore } from "@/store/post/comment";
 import { v7 } from "uuid";
@@ -17,10 +14,10 @@ describe(useReadComments, () => {
   test("reads each branch under the comment sort the reader chose", async () => {
     expect.hasAssertions();
 
-    let receivedInput: Partial<ReadPostsInput> | undefined;
+    let receivedSortName: unknown;
     trpcMsw.post.readPosts.query(({ input }) => {
-      if (input) receivedInput = input;
-      return new CursorPaginationData();
+      receivedSortName = input?.sortName;
+      return { items: [], nextCursor: "" };
     });
     const commentStore = useCommentStore();
     const { commentSortType } = storeToRefs(commentStore);
@@ -28,7 +25,7 @@ describe(useReadComments, () => {
     const { readComments } = useReadComments(parentId);
     await readComments();
 
-    expect(receivedInput?.sortBy).toStrictEqual(PostSortTypeSortByMap[PostSortType.Top]);
+    expect(receivedSortName).toBe(PostSortType.Top);
   });
 
   // A branch read issued before the sort changed belongs to the order the change replaces, so it is dropped when it
@@ -39,7 +36,7 @@ describe(useReadComments, () => {
     const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();
     trpcMsw.post.readPosts.query(async () => {
       await readGate;
-      return new CursorPaginationData({ hasMore: false, items: [createPost({ parentId })] });
+      return { items: [createPost({ parentId })], nextCursor: "" };
     });
     const commentStore = useCommentStore();
     const { getSlice, setCommentSortType } = commentStore;

@@ -7,8 +7,11 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
+import { DELETE_USER_MESSAGES_PAGE_LIMIT } from "#server/services/message/constants";
+import { createRoomMessage } from "#server/services/message/createRoomMessage.test";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockCaller, createMockContext, getMockSession } from "#server/trpc/context.test";
+import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { inviteRouter } from "#server/trpc/routers/invite";
 import { moderationRouter } from "#server/trpc/routers/message/moderation";
 import { readRoomMembershipRows } from "#server/trpc/routers/readRoomMembershipRows.test";
@@ -22,8 +25,9 @@ import {
   MessageType,
   RoomPermission,
   usersInAuth,
+  usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -35,6 +39,8 @@ const { roomObject } = vi.hoisted(() => ({
     broadcastEvent: vi.fn<RoomObjectRpc["broadcastEvent"]>(),
     createMessage: vi.fn<RoomObjectRpc["createMessage"]>(),
     deleteUserMessages: vi.fn<RoomObjectRpc["deleteUserMessages"]>(),
+    notifyOnlineMembers: vi.fn<RoomObjectRpc["notifyOnlineMembers"]>(),
+    removeMember: vi.fn<RoomObjectRpc["removeMember"]>(),
   },
 }));
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
@@ -99,7 +105,7 @@ describe("moderationRouter", () => {
   // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
   // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
   // Retrying the link is the one thing that will never work
-  test(`executeAdminAction ${AdminActionType.CreateBan} stops the member rejoining through an invite`, async () => {
+  test(`executeAdminAction ${AdminActionType.CreateBan} answers the member's join through an invite like an unknown link`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
@@ -109,7 +115,7 @@ describe("moderationRouter", () => {
     const memberRoomCaller = createCallerFactory(roomRouter)(await createMockContext(memberAuthSession));
 
     await expect(memberRoomCaller.joinRoom(invite.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: You are banned from this room]`,
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Invite, invite.id).message}]`,
     );
   });
 
@@ -204,14 +210,53 @@ describe("moderationRouter", () => {
     );
   });
 
-  // The purge is one call to the member's room, which tombstones everything the member wrote in one turn
-  test(`executeAdminAction ${AdminActionType.SoftBan} purges the member's messages in their room`, async () => {
+  // The purge reads the member's messages a page at a time, so a page that comes back full is followed by the next one
+  test(`executeAdminAction ${AdminActionType.SoftBan} purges the member's messages in their room, page by page`, async () => {
     expect.hasAssertions();
 
     const member = await createMember();
+    const lastMessageId = 7;
+    const firstPage = Array.from({ length: DELETE_USER_MESSAGES_PAGE_LIMIT }, (_value, index) =>
+      createRoomMessage({ id: index + 1, userId: member.id }),
+    );
+    roomObject.deleteUserMessages
+      .mockResolvedValueOnce(firstPage)
+      .mockResolvedValueOnce([createRoomMessage({ id: lastMessageId, userId: member.id })]);
     await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
 
-    expect(roomObject.deleteUserMessages).toHaveBeenCalledExactlyOnceWith(member.id);
+    expect(roomObject.deleteUserMessages).toHaveBeenNthCalledWith(1, {
+      limit: DELETE_USER_MESSAGES_PAGE_LIMIT,
+      userId: member.id,
+    });
+    expect(roomObject.deleteUserMessages).toHaveBeenNthCalledWith(2, {
+      after: DELETE_USER_MESSAGES_PAGE_LIMIT,
+      limit: DELETE_USER_MESSAGES_PAGE_LIMIT,
+      userId: member.id,
+    });
+  });
+
+  // A purged message's mention counts are taken back with it, as a delete takes them back, so the member it named is not left
+  // Holding a badge for a message that no longer reads
+  test(`executeAdminAction ${AdminActionType.SoftBan} takes back the mention counts its purged messages made`, async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const mentionedMember = await createMember();
+    await mockContext.db
+      .update(usersToRoomsInMessage)
+      .set({ createdAt: new Date(0), mentionCount: 1 })
+      .where(and(eq(usersToRoomsInMessage.roomId, roomId), eq(usersToRoomsInMessage.userId, mentionedMember.id)));
+    roomObject.deleteUserMessages.mockResolvedValueOnce([
+      createRoomMessage({ message: createMentionMessage(mentionedMember.id), userId: member.id }),
+    ]);
+    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
+
+    const mentionedRoomRow = await mockContext.db.query.usersToRoomsInMessage.findFirst({
+      columns: { mentionCount: true },
+      where: { roomId: { eq: roomId }, userId: { eq: mentionedMember.id } },
+    });
+
+    expect(mentionedRoomRow).toStrictEqual({ mentionCount: 0 });
   });
 
   test("readBans returns the banned user", async () => {

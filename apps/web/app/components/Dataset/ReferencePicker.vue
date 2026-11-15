@@ -7,9 +7,10 @@ import { authClient } from "@/services/auth/authClient";
 import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { DatasetProviderTypeSourceRouterMap } from "@/services/dataset/DatasetProviderTypeSourceRouterMap";
+import { readAllResourcePages } from "@/services/resource/readAllResourcePages";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
-import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
+import { getResultAsync, noop } from "@esposter/shared";
 
 interface Props {
   // Why the picked source could not be read, from the consumer's own read of it
@@ -21,13 +22,12 @@ defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
-// Every provider type lists its sources the one way, a page of its router's resources
-const readSources = async (providerType: DatasetProviderType): Promise<{ id: string; name: string }[]> => {
-  const { items } = await $trpc[DatasetProviderTypeSourceRouterMap[providerType]].readResources.query({
-    limit: MAX_READ_LIMIT,
-  });
-  return items;
-};
+// Every provider type lists its sources the one way: every page of its router's resources, read to the end so none is
+// Left out of the list
+const readSources = (providerType: DatasetProviderType) =>
+  readAllResourcePages((cursor) =>
+    $trpc[DatasetProviderTypeSourceRouterMap[providerType]].readResources.query({ cursor }),
+  );
 // Filed under the provider type they were read for rather than in one list, because a read of the type left behind
 // Can land after the one picked now: listed under it, a survey would be offered as a sheet, and picking it would bind
 // That id under the type on screen

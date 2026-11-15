@@ -1,23 +1,42 @@
-import { createOffsetPaginationParamsSchema } from "#shared/models/pagination/offset/OffsetPaginationParams";
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
-import { CREATED_AT_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { filterSchema, roomIdSchema, roomMessageSchema, selectSearchHistoryInMessageSchema } from "@esposter/db-schema";
+import {
+  decodePageCursor,
+  encodedPageCursorSchema,
+  filterSchema,
+  FilterType,
+  getRoomSearchPageSort,
+  pageLimitSchema,
+  roomIdSchema,
+  selectSearchHistoryInMessageSchema,
+} from "@esposter/db-schema";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 import { z } from "zod";
 
+// The order a search reads in depends on its query, so its cursor is parsed for that order at the boundary: a cursor the
+// Search did not issue for it is a bad request
 export const searchMessagesInputSchema = z
   .object({
-    ...roomIdSchema.shape,
-    // The search orders by its rank and the message's time, so the one sort it accepts is the time the client names
-    ...createOffsetPaginationParamsSchema(roomMessageSchema.pick({ createdAt: true }).keyof(), [
-      CREATED_AT_DESCENDING_SORT_ITEM,
-    ]).shape,
+    cursor: encodedPageCursorSchema,
     // Not unique by type: each filter is one condition, so two `has:` or two `from:` narrow together, and
     // `getSearchableFilters` is what drops an exact repeat on either side of the wire
     filters: filterSchema.array().max(MAX_READ_LIMIT).default([]),
+    limit: pageLimitSchema,
     query: selectSearchHistoryInMessageSchema.shape.query,
+    ...roomIdSchema.shape,
   })
   .refine(({ filters, query }) => !checkIsSearchQueryEmpty(query, filters), {
     error: "A search needs either text or a filter",
+  })
+  // An `in:` filter names a room, so its value is a room id and nothing else, or a search would read rooms it did not name
+  .refine(({ filters }) => filters.every(({ type, value }) => type !== FilterType.In || typeof value === "string"), {
+    error: "An in: filter names a room",
+  })
+  .transform((search, context) => {
+    const cursor = decodePageCursor(search.cursor, getRoomSearchPageSort(search.query));
+    if (!cursor) {
+      context.addIssue({ code: "custom", message: "Invalid cursor", path: ["cursor"] });
+      return z.NEVER;
+    }
+    return { ...search, cursor };
   });
 export type SearchMessagesInput = z.infer<typeof searchMessagesInputSchema>;

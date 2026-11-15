@@ -1,6 +1,7 @@
 import type { ScheduledMessageJobWithRoom } from "#shared/models/db/message/scheduledMessageJob/ScheduledMessageJobWithRoom";
 
 import { MutationStatus } from "@/models/shared/MutationStatus";
+import { getRestoredItems } from "@/services/shared/getRestoredItems";
 
 // A scheduled item is named by its id and its room, which is what both of its writes take
 type ScheduledMessageJobKey = Pick<ScheduledMessageJobWithRoom, "id" | "roomId">;
@@ -11,33 +12,45 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   // Cancelling take the same job off the page, so on two instances the shared `key: id` would read as if they
   // Serialised while they in fact raced, and the rejected one would put the row back over the other's removal
   const { executeMutation: executeScheduledMessageJobMutation } = useMutation();
-  const { items, ...restOffsetPaginationData } = useOffsetPaginationData<ScheduledMessageJobWithRoom>();
+  // The count is one aggregate on its own executor, so its reads share one key and the latest read to start is the
+  // One whose answer lands
+  const { executeQuery: executeScheduledMessageJobCountQuery } = useMutation();
+  const { items, ...restCursorPaginationData } = useCursorPaginationData<ScheduledMessageJobWithRoom>();
   const scheduledMessageJobCount = ref(0);
+  // The badge counts every job the user has, not just the page on screen, and the server holds that count. A write
+  // That settles reads it again rather than adjusting it, since the row it removed is one of many. A failed read keeps
+  // The last count and the tRPC link alerts it, so it never fails the write that settled before it
+  const readScheduledMessageJobCount = async () => {
+    await executeScheduledMessageJobCountQuery(
+      () => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query(),
+      {
+        key: "scheduledMessageJobCount",
+        onError: console.error,
+        onSuccess: (count) => {
+          scheduledMessageJobCount.value = count;
+        },
+      },
+    );
+  };
   const deleteScheduledMessageJob = (id: ScheduledMessageJobWithRoom["id"]) => {
-    const remainingScheduledMessageJobs = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
-    // The badge counts every scheduled job, not just the loaded page, so it only moves when this page really
-    // Lost a row — a cancel of something not on screen would otherwise decrement it for nothing
-    if (remainingScheduledMessageJobs.length === items.value.length) return;
-
-    items.value = remainingScheduledMessageJobs;
-    scheduledMessageJobCount.value = Math.max(0, scheduledMessageJobCount.value - 1);
+    items.value = items.value.filter((scheduledMessageJob) => scheduledMessageJob.id !== id);
   };
   // Cancelling and sending end the job the same way, so they share one optimistic apply. The row is read when
   // The write is sent, so the second of two queued writes on one job finds it already gone and owes nothing back
   const getApplyOptimisticDelete = (id: ScheduledMessageJobWithRoom["id"]) => () => {
-    const deletedScheduledMessageJob = items.value.find((scheduledMessageJob) => scheduledMessageJob.id === id);
+    const deletedIndex = items.value.findIndex((scheduledMessageJob) => scheduledMessageJob.id === id);
+    const deletedScheduledMessageJob = items.value[deletedIndex];
     deleteScheduledMessageJob(id);
     return () => {
       if (!deletedScheduledMessageJob) return;
-      // Back at the end of the page rather than where it stood — a cosmetic loss, taken over dropping a row
-      items.value = [...items.value, deletedScheduledMessageJob];
-      scheduledMessageJobCount.value += 1;
+      // Back at the index it held on the page, which is the order the server answers the tab in
+      items.value = getRestoredItems(items.value, deletedScheduledMessageJob, deletedIndex);
     };
   };
   const cancelScheduledMessageJob = async ({ id, roomId }: ScheduledMessageJobKey) => {
     const outcome = await executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessageJob.cancelScheduledMessageJob.mutate({ id, roomId }),
-      { applyOptimistic: getApplyOptimisticDelete(id), key: id },
+      { applyOptimistic: getApplyOptimisticDelete(id), key: id, onSuccess: readScheduledMessageJobCount },
     );
     // A rejected cancel rolls the row back, so the job is still scheduled and a caller must not treat it as cancelled
     return outcome.status === MutationStatus.Succeeded;
@@ -46,15 +59,15 @@ export const useScheduledMessageJobStore = defineStore("message/scheduledMessage
   const sendScheduledMessageNow = async ({ id, roomId }: ScheduledMessageJobKey) => {
     await executeScheduledMessageJobMutation(
       () => $trpc.message.scheduledMessage.sendScheduledMessageNow.mutate({ id, roomId }),
-      { applyOptimistic: getApplyOptimisticDelete(id), key: id },
+      { applyOptimistic: getApplyOptimisticDelete(id), key: id, onSuccess: readScheduledMessageJobCount },
     );
   };
   return {
     cancelScheduledMessageJob,
-    deleteScheduledMessageJob,
     items,
+    readScheduledMessageJobCount,
     scheduledMessageJobCount,
     sendScheduledMessageNow,
-    ...restOffsetPaginationData,
+    ...restCursorPaginationData,
   };
 });

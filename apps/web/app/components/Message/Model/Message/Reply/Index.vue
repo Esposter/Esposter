@@ -29,7 +29,7 @@ const scrollToMessage = useScrollToMessage();
 <template>
   <div text-sm text-muted flex gap-x-1 min-w-0 items-center>
     <template v-if="reply && creator">
-      <UiAvatar :image="creator.image ?? ''" :name="creator.name" is-small />
+      <UiAvatar :image="creator.image" :name="creator.name" is-small />
       <MessageModelMessageAppUserBadge v-if="reply.type === MessageType.Webhook" />
       <span text-heading-color shrink-0>{{ creator.name }}</span>
       <span v-if="reply.isForward" class="i-mdi:share" aria-label="Forwarded" role="img" shrink-0 size-6 />

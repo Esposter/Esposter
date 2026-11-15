@@ -5,6 +5,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
+import { useBlockStore } from "@/store/message/user/block";
 import { useFriendStore } from "@/store/message/user/friend";
 import { useFriendRequestStore } from "@/store/message/user/friendRequest";
 import { TRPCError } from "@trpc/server";
@@ -142,5 +143,49 @@ describe(useFriendRequestStore, () => {
 
     expect(friendRequests.value).toStrictEqual([firstFriendRequest]);
     expect(friends.value).toStrictEqual([]);
+  });
+
+  // An accept and a decline of one request end the same row, so the decline queues behind the accept. Run beside it,
+  // The decline removed nothing from the list, and the accept's rollback then put the request back although the
+  // Decline had deleted it on the server
+  test("declines a request only once the accept of that request has settled", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.friendRequest.acceptFriendRequest.mutation(() => {
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { acceptFriendRequest, declineFriendRequest } = friendRequestStore;
+    friendRequests.value = [firstFriendRequest, secondFriendRequest];
+    await Promise.all([acceptFriendRequest(first), declineFriendRequest(first.id)]);
+
+    expect(friendRequests.value).toStrictEqual([secondFriendRequest]);
+  });
+
+  // A block removes the pending requests between the two users, as a decline does, so the two queue on the pair: a
+  // Rejected block puts back the request it removed before the decline runs, and the decline then removes it for good
+  test("does not bring back a declined request when an overlapping block is rejected", async () => {
+    expect.hasAssertions();
+
+    const { promise: blockReleased, resolve: releaseBlock } = Promise.withResolvers<void>();
+    trpcMsw.block.createBlock.mutation(async () => {
+      await blockReleased;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    trpcMsw.friendRequest.declineFriendRequest.mutation(() => {});
+    const friendRequestStore = useFriendRequestStore();
+    const { friendRequests } = storeToRefs(friendRequestStore);
+    const { declineFriendRequest } = friendRequestStore;
+    const blockStore = useBlockStore();
+    const { createBlock } = blockStore;
+    friendRequests.value = [firstFriendRequest];
+    const block = createBlock(first.id);
+    const decline = declineFriendRequest(first.id);
+    releaseBlock();
+    await Promise.all([block, decline]);
+
+    expect(friendRequests.value).toStrictEqual([]);
   });
 });

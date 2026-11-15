@@ -16,10 +16,13 @@ export const useReadModerationLog = (
   const { readItems, readMoreItems } = moderationLogStore;
   const readModerationLog = () =>
     readItems(() => $trpc.message.moderation.readModerationLog.query({ roomId, ...toValue(filters) }));
-  const readMoreModerationLog = (onComplete: () => void) =>
-    readMoreItems(
-      (cursor) => $trpc.message.moderation.readModerationLog.query({ cursor, roomId, ...toValue(filters) }),
+  const readMoreModerationLog = (onComplete: () => void) => {
+    // Taken as the read is issued, so a retry after the filters changed still asks for the log their cursor came from
+    const issuedFilters = toValue(filters);
+    return readMoreItems(
+      (cursor) => $trpc.message.moderation.readModerationLog.query({ cursor, roomId, ...issuedFilters }),
       onComplete,
     );
+  };
   return { readModerationLog, readMoreModerationLog };
 };

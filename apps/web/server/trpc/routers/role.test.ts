@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { roomObjectCalls } from "#server/composables/realtime/useRoomObject.test";
+import { D1_MAX_BOUND_PARAMETERS } from "#server/services/db/constants";
 import { createMockAuthSession, createMockCaller, createMockUser } from "#server/trpc/context.test";
 import { roleRouter } from "#server/trpc/routers/role";
 import { setupRoomSuite } from "#server/trpc/routers/setupRoomSuite.test";
@@ -275,6 +276,29 @@ describe("roleRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
   });
 
+  test("fails createRole with a position at or above the actor top", async () => {
+    expect.hasAssertions();
+
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+
+    await expect(actorCaller.createRole({ name, position, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
+  test("fails deleteRole with a role at or above the actor top", async () => {
+    expect.hasAssertions();
+
+    const { member: actor } = await setupMemberWithRole(RoomPermission.ManageRoles, position);
+    const peerRole = await roleCaller.createRole({ name, position, roomId });
+    const actorCaller = await createMockCaller(roleRouter, await createMockAuthSession(mockContext.db, actor));
+
+    await expect(actorCaller.deleteRole({ id: peerRole.id, roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: UNAUTHORIZED]`,
+    );
+  });
+
   test("fails createRole with permissions the actor does not hold", async () => {
     expect.hasAssertions();
 
@@ -342,6 +366,33 @@ describe("roleRouter", () => {
     expect(memberPermissions.isRoomOwner).toBe(false);
     expect(memberPermissions.topRolePosition).toBe(position);
     expect(memberPermissions.permissions & RoomPermission.ManageRoles).toBe(RoomPermission.ManageRoles);
+  });
+
+  test("readMyPermissions answers a list of rooms past D1's parameter cap", async () => {
+    expect.hasAssertions();
+
+    const roomIds = [roomId, ...Array.from({ length: D1_MAX_BOUND_PARAMETERS }, () => v7())];
+    const myPermissions = await roleCaller.readMyPermissions({ roomIds });
+    const ownedRoomIds = myPermissions
+      .filter(({ isRoomOwner }) => isRoomOwner)
+      .map((permissions) => permissions.roomId);
+
+    expect(myPermissions).toHaveLength(roomIds.length);
+    expect(ownedRoomIds).toStrictEqual([roomId]);
+  });
+
+  test("readMemberRoles answers a list of members past D1's parameter cap", async () => {
+    expect.hasAssertions();
+
+    const member = await createMember();
+    const role = await roleCaller.createRole({ name, roomId });
+    await roleCaller.assignRole({ roleId: role.id, roomId, userId: member.id });
+    const userIds = [member.id, ...Array.from({ length: D1_MAX_BOUND_PARAMETERS }, () => v7())];
+    const memberRoles = await roleCaller.readMemberRoles({ roomId, userIds });
+
+    expect(memberRoles.map(({ roleId, userId }) => ({ roleId, userId }))).toStrictEqual([
+      { roleId: role.id, userId: member.id },
+    ]);
   });
 
   test("writes an override's three states, each bit in one of them at a time", async () => {

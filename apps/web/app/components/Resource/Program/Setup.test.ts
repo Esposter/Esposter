@@ -5,7 +5,7 @@ import ResourceProgramSetup from "@/components/Resource/Program/Setup.vue";
 import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
-import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
+import { createEmptyPage, ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -24,8 +24,8 @@ describe("resourceProgramSetup", () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     trpcMsw.resource.readResource.query(() => ({ ...resource, publication: null }));
     trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn: "", surveyId }));
-    trpcMsw.email.readResources.query(() => ({ hasMore: false, items: [] }));
-    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    trpcMsw.email.readResources.query(() => createEmptyPage());
+    trpcMsw.survey.readResources.query(() => createEmptyPage());
     trpcMsw.survey.readResourceContent.query(() => ({
       document: createSurveyDocument(),
       settings: surveySettingsSchema.parse({ responseMode: SurveyResponseMode.Anonymous }),

@@ -27,7 +27,7 @@ describe(useReadMessages, () => {
     const emoji = { emojiTag, messageId: message.id, userIds: [] as string[] };
     trpcMsw.message.readMessages.query(async () => {
       await readGate;
-      return { hasMore: false, items: [message] };
+      return { items: [message], nextCursor: "" };
     });
     trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.emoji.readReactions.query(({ input }) => (input.roomId === roomId ? [emoji] : []));

@@ -1,4 +1,4 @@
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { createEmptyPage } from "@esposter/db-schema";
 import { v7 } from "uuid";
 import { describe, expect, test } from "vitest";
 
@@ -53,8 +53,8 @@ describe(useDataMap, () => {
   test("calls a factory default value so class instances keep their prototype", () => {
     expect.hasAssertions();
 
-    const { data } = useDataMap(ref(id), () => new CursorPaginationData());
+    const { data } = useDataMap(ref(id), () => createEmptyPage());
 
-    expect(data.value).toStrictEqual(new CursorPaginationData());
+    expect(data.value).toStrictEqual(createEmptyPage());
   });
 });

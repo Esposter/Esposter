@@ -26,6 +26,7 @@ import { getPublicAssetUrl } from "#server/services/storage/getPublicAssetUrl";
 import { getStorageCredentials } from "#server/services/storage/getStorageCredentials";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { getDataExportLink } from "#server/services/user/getDataExportLink";
+import { publishUserRoomTopics } from "#server/services/user/publishUserRoomTopics";
 import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -43,7 +44,7 @@ import { userStatusIdsInputSchema } from "#shared/models/db/user/UserStatusIdsIn
 import { updateUserSettingsInputSchema } from "#shared/models/db/userSettings/UpdateUserSettingsInput";
 import { callBackgroundSlotSchema } from "#shared/models/message/call/CallBackgroundSlot";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constants";
-import { createPresignedGetUrl, createPresignedPutUrl } from "@esposter/db";
+import { createPresignedGetUrl, createPresignedPutUrl, inJsonArray } from "@esposter/db";
 import {
   createApiKeyInputSchema,
   DatabaseEntityType,
@@ -215,7 +216,10 @@ export const userRouter = router({
     .meta({ staticReason: "The user object pushes each status change to its sockets as a typed event" })
     .input(userStatusIdsInputSchema)
     .query<SetNonNullable<UserStatusInMessage, "status">[]>(async ({ ctx, input }) => {
-      const foundUserStatuses = await ctx.db.query.userStatusesInMessage.findMany({ where: { userId: { in: input } } });
+      const foundUserStatuses = await ctx.db
+        .select()
+        .from(userStatusesInMessage)
+        .where(inJsonArray(userStatusesInMessage.userId, input));
       const statusMap = new Map(foundUserStatuses.map((userStatus) => [userStatus.userId, userStatus]));
 
       return input.map((userId): SetNonNullable<UserStatusInMessage, "status"> => {
@@ -300,18 +304,24 @@ export const userRouter = router({
       }
     },
   ),
-  // A post card shows its author's name and image, so the feed reads the change as well
+  // A post card shows its author's name and image, so the feed reads the change as well. So does every room the person
+  // Is in, whose members read the name and image through the room's topic, so each membership's room is published too
   updateUser: getTopicsProcedure(standardAuthedProcedure.input(updateUserInputSchema), (options) => [
     ...userTopics(options),
     getTopic(TopicKind.Feed, "posts"),
-  ]).mutation<UserInAuth>(async ({ ctx, input }) =>
-    requireMutation(
+  ]).mutation<UserInAuth>(async ({ ctx, input }) => {
+    const updatedUser = requireMutation(
       (await ctx.db.update(usersInAuth).set(input).where(eq(usersInAuth.id, ctx.user.id)).returning())[0],
       Operation.Update,
       DatabaseEntityType.User,
       ctx.user.id,
-    ),
-  ),
+    );
+    // Best-effort, as the topics the middleware publishes are: the save has committed, so a failed publish costs readers one refresh
+    await getResultAsync(() => publishUserRoomTopics(ctx.db, ctx.user.id)).match(noop, (error) => {
+      console.error("Failed to publish the rooms a profile save reaches:", error);
+    });
+    return updatedUser;
+  }),
   updateUserSettings: getTopicsProcedure(
     standardAuthedProcedure.input(updateUserSettingsInputSchema),
     userTopics,

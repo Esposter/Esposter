@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { ResourceListPage } from "#shared/models/resource/ResourceListPage";
+
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
@@ -40,6 +42,7 @@ import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { createEmptyPage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -76,7 +79,7 @@ describe("pageBuilderEditor", () => {
     display.isCompact = false;
     display.isMobile = false;
     localStorage.clear();
-    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    trpcMsw.survey.readResources.query(() => createEmptyPage());
   });
 
   // Real timers are back before the mock server's own afterEach waits on one, which hooks registered later run ahead of.
@@ -315,7 +318,7 @@ describe("pageBuilderEditor", () => {
     const { promise: surveyListRead, resolve: completeSurveyListRead } = Promise.withResolvers<void>();
     trpcMsw.survey.readResources.query(() => {
       completeSurveyListRead();
-      return { hasMore: false, items: [] };
+      return createEmptyPage();
     });
 
     const resourceId = v7();
@@ -337,7 +340,7 @@ describe("pageBuilderEditor", () => {
 
   test("a document with no survey invite reads no survey list", async () => {
     expect.hasAssertions();
-    const readResources = vi.fn<() => { hasMore: false; items: [] }>(() => ({ hasMore: false, items: [] }));
+    const readResources = vi.fn<() => ResourceListPage>(() => createEmptyPage());
     trpcMsw.survey.readResources.query(readResources);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 

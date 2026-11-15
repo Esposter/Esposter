@@ -16,10 +16,10 @@ describe(useBanStore, () => {
   const otherRoomId = v7();
   const first = { ...createUser({ name: "first" }), displayName: "first" };
   const second = { ...createUser({ name: "second" }), displayName: "second" };
-  const createBan = (user: MemberInRoom): BanInRoom => ({
+  const createBan = (user: MemberInRoom, createdAt = new Date(0)): BanInRoom => ({
     bannedByUser: null,
     bannedByUserId: null,
-    createdAt: new Date(0),
+    createdAt,
     deletedAt: null,
     roomId,
     updatedAt: new Date(0),
@@ -65,5 +65,26 @@ describe(useBanStore, () => {
 
     expect(items.value).toStrictEqual([]);
     expect(getSlice(roomId).items.value).toStrictEqual([createBan(first)]);
+  });
+
+  // The bans are paged newest first, so a rejected unban goes back between the bans it sat between, not to the end
+  test("puts a rejected unban back in the place the page order gives its ban", async () => {
+    expect.hasAssertions();
+
+    const third = { ...createUser({ name: "third" }), displayName: "third" };
+    trpcMsw.message.moderation.deleteBan.mutation(({ input }) => {
+      if (input.userId === second.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    const banStore = useBanStore();
+    const { items } = storeToRefs(banStore);
+    const { deleteBan, getSlice } = banStore;
+    getSlice(roomId).items.value = [
+      createBan(first, new Date(3)),
+      createBan(second, new Date(2)),
+      createBan(third, new Date(1)),
+    ];
+    await deleteBan({ roomId, userId: second.id });
+
+    expect(items.value.map(({ userId }) => userId)).toStrictEqual([first.id, second.id, third.id]);
   });
 });

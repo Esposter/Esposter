@@ -16,6 +16,7 @@ export const forwardSocket = (event: RequestEvent, stub: DurableObjectStub, iden
     headers: {
       ...Object.fromEntries([...event.req.headers].filter(([name]) => !name.startsWith(SOCKET_IDENTITY_HEADER_PREFIX))),
       [SOCKET_IDENTITY_HEADER.deviceId]: identity.deviceId,
+      [SOCKET_IDENTITY_HEADER.sessionExpiresAt]: String(identity.sessionExpiresAt),
       [SOCKET_IDENTITY_HEADER.sessionId]: identity.sessionId,
       [SOCKET_IDENTITY_HEADER.userId]: identity.userId,
     },

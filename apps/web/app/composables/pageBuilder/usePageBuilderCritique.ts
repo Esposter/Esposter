@@ -32,7 +32,7 @@ export const usePageBuilderCritique = (resourceId: MaybeRefOrGetter<string>) => 
     const surveys = publishedSurveys.value;
     if (!surveys) return SurveyPublishState.Unreadable;
     if (surveys.items.some(({ id }) => id === surveyId)) return SurveyPublishState.Published;
-    return surveys.hasMore ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
+    return surveys.nextCursor ? SurveyPublishState.Unreadable : SurveyPublishState.Unpublished;
   };
   const critiqueSources = { lookupSurveyPublishState, readColor: readBrowserColor };
   // The critique as the problems surface's findings, computed once the document settles as every editor's check is. Each

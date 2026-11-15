@@ -19,7 +19,7 @@ export const getDirectMessageDisplayNames = (db: Context["db"], userId: string) 
   return db
     .select({
       displayName:
-        sql<string>`group_concat(${participantDisplayName}, ', ' ORDER BY ${participantDisplayName}, ${participantUser.id})`.as(
+        sql<string>`group_concat(${participantDisplayName}, ', ' ORDER BY ${participantDisplayName} collate nocase, ${participantUser.id})`.as(
           "displayName",
         ),
       roomId: participantMembership.roomId,

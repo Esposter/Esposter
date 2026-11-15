@@ -3,7 +3,6 @@ import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { UiDataTableCell } from "@/models/ui/UiDataTableCell";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
-import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDataTableDensity } from "@/models/ui/UiDataTableDensity";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -14,6 +13,7 @@ import {
   REORDER_HANDLE_CLASS,
 } from "@/services/ui/constants";
 import { getNextGridCellPosition } from "@/services/ui/getNextGridCellPosition";
+import { SortOrder } from "@esposter/db-schema";
 import { checkIsNestedInteraction } from "@esposter/shared";
 
 interface Props {

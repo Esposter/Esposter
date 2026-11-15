@@ -1,13 +1,9 @@
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { selectResourceActivityInResourceSchema } from "@esposter/db-schema";
-import { z } from "zod";
+import { createPageInputSchema, SortOrder } from "@esposter/db-schema";
 
-export const readActivitiesInputSchema = z.object({
-  ...resourceIdInputSchema.shape,
-  ...createCursorPaginationParamsSchema(selectResourceActivityInResourceSchema.keyof(), [ID_DESCENDING_SORT_ITEM]).omit(
-    { sortBy: true },
-  ).shape,
-});
-export type ReadActivitiesInput = z.infer<typeof readActivitiesInputSchema>;
+// A resource's trail newest first. An id is a UUIDv7, so the id orders the trail by creation on its own
+export const RESOURCE_ACTIVITY_SORT = { keys: ["id"], order: SortOrder.Desc } as const;
+
+export const readActivitiesInputSchema = createPageInputSchema(RESOURCE_ACTIVITY_SORT).extend(
+  resourceIdInputSchema.shape,
+);

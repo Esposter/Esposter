@@ -2,24 +2,25 @@ import type { ReadMySentMessagesResult } from "#shared/models/db/message/ReadMyS
 import type { SearchMessagesResult } from "#shared/models/db/message/SearchMessagesResult";
 import type { MessageFilePresignedUrlEntity } from "#shared/models/message/file/MessageFilePresignedUrlEntity";
 import type { ReadFollowedThreadsResult } from "#shared/models/message/thread/ReadFollowedThreadsResult";
-import type { BasePaginationData } from "#shared/models/pagination/BasePaginationData";
-import type { RoomMessage, Topic } from "@esposter/db-schema";
+import type { AnchoredPage, Page, PageCursor, RoomMessage, Topic } from "@esposter/db-schema";
 import type { User } from "better-auth";
 
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
+import { addMentionCounts } from "#server/services/message/addMentionCounts";
+import { MAX_FORWARD_ROOMS, MAX_SEARCH_ROOMS } from "#server/services/message/constants";
 import { createSystemRoomMessage } from "#server/services/message/createSystemRoomMessage";
 import { createUserMessage } from "#server/services/message/createUserMessage";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
 import { generateReservedMessageFilePresignedUrlEntities } from "#server/services/message/file/generateReservedMessageFilePresignedUrlEntities";
-import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { publishDeletedMessageFiles } from "#server/services/message/moderation/publishDeletedMessageFiles";
+import { rejectMessageCreation } from "#server/services/message/moderation/rejectMessageCreation";
 import { readMySentMessages } from "#server/services/message/readMySentMessages";
 import { searchMessages } from "#server/services/message/searchMessages";
+import { takeBackMentionCounts } from "#server/services/message/takeBackMentionCounts";
 import { readFollowedThreadRootIds } from "#server/services/message/thread/readFollowedThreadRootIds";
 import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThreadUnfollow";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
-import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
 import { publishBlobDeletion } from "#server/services/queue/publishBlobDeletion";
 import { getRoomActor } from "#server/services/realtime/getRoomActor";
 import { getRoomEventOptions } from "#server/services/realtime/getRoomEventOptions";
@@ -49,6 +50,7 @@ import { generateDownloadFilePresignedUrlsInputSchema } from "#shared/models/db/
 import { generateDownloadThumbnailPresignedUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadThumbnailPresignedUrlsInput";
 import { generateUploadFilePresignedUrlEntitiesInputSchema } from "#shared/models/db/message/GenerateUploadFilePresignedUrlEntitiesInput";
 import { pinMessageInputSchema } from "#shared/models/db/message/PinMessageInput";
+import { readMessagesAroundInputSchema } from "#shared/models/db/message/ReadMessagesAroundInput";
 import { readMessagesByIdsInputSchema } from "#shared/models/db/message/ReadMessagesByIdsInput";
 import { readMessagesInputSchema } from "#shared/models/db/message/ReadMessagesInput";
 import { readMySentMessagesInputSchema } from "#shared/models/db/message/ReadMySentMessagesInput";
@@ -62,13 +64,14 @@ import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCr
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import {
+  claimMessageSendSlot,
   cloneFiles,
   createThreadFollow,
   generateDownloadFilePresignedUrls,
   generateDownloadThumbnailPresignedUrls,
   getFileBlobNames,
   getFilesBlobNames,
-  getMentionIds,
+  toPage,
 } from "@esposter/db";
 import {
   DatabaseEntityType,
@@ -77,6 +80,7 @@ import {
   getTopic,
   MAX_FOLLOWED_THREADS,
   MessageType,
+  ROOM_MESSAGE_PAGE_SORT,
   roomIdSchema,
   StorageBucket,
   TopicKind,
@@ -152,6 +156,9 @@ export const baseMessageRouter = router({
         JSON.stringify(input),
       );
       await publishDeletedMessageFiles(input.roomId, [deletedMessage]);
+      // A webhook's message is never counted, so only a member's deleted message takes its mention counts back
+      if (deletedMessage.userId)
+        await takeBackMentionCounts(ctx.db, input.roomId, { ...deletedMessage, userId: deletedMessage.userId });
     }),
   // Reclaims blobs that were uploaded against a presigned write url but never reached a message — the composer's revert
   // Path. Nothing else can: every other deletion walks a persisted message's `files`, and an upload the composer threw
@@ -180,6 +187,8 @@ export const baseMessageRouter = router({
   forwardMessage: getMemberProcedure(forwardMessageInputSchema, "roomId")
     .meta({ staticReason: "The room objects push the forwarded messages to their sockets as typed events" })
     .mutation<void>(async ({ ctx, input: { id, message, roomId, roomIds } }) => {
+      if (roomIds.length > MAX_FORWARD_ROOMS)
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Message, JSON.stringify(roomIds.length));
       await assertIsMember(ctx, roomIds);
       const userId = ctx.user.id;
       const [source] = await useRoomObject(roomId).readMessagesByIds([id]);
@@ -197,11 +206,14 @@ export const baseMessageRouter = router({
       // First per-room block is surfaced — never an all-rooms pre-flight that times out and then posts nothing.
       const results = await Promise.allSettled(
         roomIds.map(async (targetRoomId) => {
-          await assertCanCreateMessage(ctx.db, userId, targetRoomId, forwardedMessage);
-          // A forward is a send like any other, so it advances the slowmode clock it was just checked against —
-          // With the guards, before the write, so it can never fail open behind an already-persisted forward
-          const now = new Date();
-          await updateUserToRoom(ctx.db, userId, { lastMessageAt: now, lastReadAt: now, roomId: targetRoomId });
+          // A forward is a send like any other: it takes the slowmode claim a live send takes, with the guards, before the
+          // Write, so it can never fail open behind an already-persisted forward
+          await rejectMessageCreation(
+            ctx.db,
+            userId,
+            targetRoomId,
+            await claimMessageSendSlot(ctx.db, userId, targetRoomId, forwardedMessage, new Date()),
+          );
           const clonedFiles = await cloneFiles(
             ctx.db,
             userId,
@@ -215,7 +227,7 @@ export const baseMessageRouter = router({
           // Actor names no device
           const actor = { userId };
           const roomObject = useRoomObject(targetRoomId);
-          await roomObject.createMessage(
+          const forwardedRoomMessage = await roomObject.createMessage(
             {
               files: source.files.map((file, index) => ({ ...file, ...takeOne(clonedFiles, index) })),
               isForward: true,
@@ -225,7 +237,11 @@ export const baseMessageRouter = router({
             },
             actor,
           );
-          if (message) await roomObject.createMessage({ message, type: MessageType.Message }, actor);
+          const lastStoredMessage = message
+            ? await roomObject.createMessage({ message, type: MessageType.Message }, actor)
+            : forwardedRoomMessage;
+          // The read clock is the time the room stored the last message, as a send stamps it
+          await updateUserToRoom(ctx.db, userId, { lastReadAt: lastStoredMessage.createdAt, roomId: targetRoomId });
         }),
       );
       // Every copy that landed was charged to the forwarder, so the meter is read once the rooms have settled
@@ -329,12 +345,34 @@ export const baseMessageRouter = router({
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
-    .query<BasePaginationData<RoomMessage>>(async ({ input: { after, before, filter, limit, roomId } }) =>
-      getBasePaginationData(
-        await useRoomObject(roomId).readMessages({ after, before, isPinned: filter?.isPinned, limit: limit + 1 }),
+    .query<Page<RoomMessage>>(async ({ input: { cursor, filter, limit, roomId } }) =>
+      toPage(
+        await useRoomObject(roomId).readMessages({ cursor, isPinned: filter?.isPinned, limit: limit + 1 }),
+        ROOM_MESSAGE_PAGE_SORT,
+        cursor,
         limit,
       ),
     ),
+  // A room opened at one of its messages: the message and the messages around it, read both ways from it. The older side
+  // Starts at the anchor itself, so the anchor is the first of it, and the newer side starts just past it
+  readMessagesAround: getMemberProcedure(readMessagesAroundInputSchema, "roomId")
+    .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
+    .query<AnchoredPage<RoomMessage>>(async ({ input: { limit, messageId, roomId } }) => {
+      const roomObject = useRoomObject(roomId);
+      const olderCursor: PageCursor = { isBackward: false, values: [messageId + 1] };
+      const newerCursor: PageCursor = { isBackward: true, values: [messageId] };
+      const [older, newer] = await Promise.all([
+        roomObject.readMessages({ cursor: olderCursor, limit: limit + 1 }),
+        roomObject.readMessages({ cursor: newerCursor, limit: limit + 1 }),
+      ]);
+      const olderPage = toPage(older, ROOM_MESSAGE_PAGE_SORT, olderCursor, limit);
+      const newerPage = toPage(newer, ROOM_MESSAGE_PAGE_SORT, newerCursor, limit);
+      return {
+        items: [...newerPage.items, ...olderPage.items],
+        nextCursor: olderPage.nextCursor,
+        previousCursor: newerPage.nextCursor,
+      };
+    }),
   readMessagesByIds: getMemberProcedure(readMessagesByIdsInputSchema, "roomId")
     .meta({ staticReason: "The room object pushes its messages to its sockets as typed events" })
     .query<RoomMessage[]>(({ input: { messageIds, roomId } }) => useRoomObject(roomId).readMessagesByIds(messageIds)),
@@ -351,10 +389,17 @@ export const baseMessageRouter = router({
   searchMessages: getMemberProcedure(searchMessagesInputSchema, "roomId")
     .meta({ staticReason: "A search answered once for its input, and never kept live" })
     .query<SearchMessagesResult>(async ({ ctx, input }) => {
-      const inFilterRoomIds = input.filters.filter(({ type }) => type === FilterType.In).map(({ value }) => value);
-      if (!inFilterRoomIds.every((value) => typeof value === "string"))
-        throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Message, JSON.stringify(inFilterRoomIds));
-      else if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
+      // The schema names every `in:` value a room id, so the rooms a search reads are bounded here and checked for membership
+      const inFilterRoomIds = input.filters.flatMap(({ type, value }) =>
+        type === FilterType.In && typeof value === "string" ? [value] : [],
+      );
+      if (inFilterRoomIds.length > MAX_SEARCH_ROOMS)
+        throw getInvalidOperationError(
+          Operation.Read,
+          DatabaseEntityType.Message,
+          JSON.stringify(inFilterRoomIds.length),
+        );
+      if (inFilterRoomIds.length > 0) await assertIsMember(ctx, inFilterRoomIds);
       return searchMessages(input);
     }),
   unfollowThread: getTopicsProcedure(
@@ -375,16 +420,20 @@ export const baseMessageRouter = router({
   updateMessage: getMessageProcedure(updateMessageInputSchema, MessageOperation.Update)
     .meta({ staticReason: "The room object pushes the edited message to its sockets as a typed event" })
     .mutation<void>(async ({ ctx, input }) => {
-      // The object stamps the message as edited and takes its mentions as the new text names them, which the procedure
-      // Reads off the text it was sent
+      // The message as it was is read first, so the mention counts its old text made can be taken back and the new text's added
+      const roomObject = useRoomObject(input.roomId);
+      const [previousMessage] = await roomObject.readMessagesByIds([input.id]);
+      // The object stamps the message as edited and names the members its new text names
       await requireEntity(
-        useRoomObject(input.roomId).updateMessage(
-          { id: input.id, mentions: getMentionIds(input.message), message: input.message },
-          getRoomActor(ctx),
-        ),
+        roomObject.updateMessage({ id: input.id, message: input.message }, getRoomActor(ctx)),
         DatabaseEntityType.Message,
         JSON.stringify(input),
       );
+      // A webhook's message is never counted, so an edit of one moves no count
+      if (previousMessage?.userId) {
+        await takeBackMentionCounts(ctx.db, input.roomId, { ...previousMessage, userId: previousMessage.userId });
+        await addMentionCounts(ctx.db, input.roomId, { message: input.message, userId: previousMessage.userId });
+      }
     }),
   // Casting a vote is not editing the poll: any member may vote, while editing or deleting the poll stays with its
   // Author. The client names the option it picked and the object applies it to the stored poll, so a member can never

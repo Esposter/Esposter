@@ -3,24 +3,18 @@ import { useScheduledMessageJobStore } from "@/store/message/scheduledMessageJob
 export const useReadScheduledMessageJobs = () => {
   const { $trpc } = useNuxtApp();
   const scheduledMessageJobStore = useScheduledMessageJobStore();
-  const { readItems, readMoreItems } = scheduledMessageJobStore;
-  const { scheduledMessageJobCount } = storeToRefs(scheduledMessageJobStore);
-  const queryScheduledMessageJobCount = () => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobsCount.query();
-  const readScheduledMessageJobCount = async () => {
-    scheduledMessageJobCount.value = await queryScheduledMessageJobCount();
-  };
+  const { readItems, readMoreItems, readScheduledMessageJobCount } = scheduledMessageJobStore;
   const readScheduledMessageJobs = () =>
     readItems(async () => {
-      const [scheduledMessageJobs, count] = await Promise.all([
+      const [page] = await Promise.all([
         $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query(),
-        queryScheduledMessageJobCount(),
+        readScheduledMessageJobCount(),
       ]);
-      scheduledMessageJobCount.value = count;
-      return scheduledMessageJobs;
+      return page;
     });
   const readMoreScheduledMessageJobs = (onComplete: () => void) =>
     readMoreItems(
-      (offset) => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query({ offset }),
+      (cursor) => $trpc.message.scheduledMessageJob.readMyScheduledMessageJobs.query({ cursor }),
       onComplete,
     );
   return { readMoreScheduledMessageJobs, readScheduledMessageJobCount, readScheduledMessageJobs };

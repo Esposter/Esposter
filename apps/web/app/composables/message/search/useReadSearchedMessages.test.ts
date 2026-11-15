@@ -10,7 +10,8 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useSearchMessageStore } from "@/store/message/search";
 import { useSearchHistoryStore } from "@/store/message/search/history";
-import { FilterType, MessageType } from "@esposter/db-schema";
+import { DEFAULT_PAGE_LIMIT, encodePageCursor, FilterType, MessageType } from "@esposter/db-schema";
+import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { v7 } from "uuid";
@@ -20,17 +21,15 @@ describe(useReadSearchedMessages, () => {
   const { trpcMsw } = setupMswTrpc();
   let count: Ref<number>;
   let isSearching: Ref<boolean>;
-  let items: Ref<ClientMessage[]>;
-  let page: Ref<number>;
+  let items: ComputedRef<readonly ClientMessage[]>;
   let searchQuery: Ref<string>;
   let selectedFilters: Ref<Filter[]>;
   let createSearchHistory: MockInstance<ReturnType<typeof useSearchHistoryStore>["createSearchHistory"]>;
-  let readSearchedMessages: ReturnType<typeof useReadSearchedMessages>;
+  let readSearchedMessages: ReturnType<typeof useReadSearchedMessages>["readSearchedMessages"];
+  let readMoreSearchedMessages: ReturnType<typeof useReadSearchedMessages>["readMoreSearchedMessages"];
   const roomId = v7();
   const newCount = 1;
   const otherRoomId = v7();
-  const otherRoomPage = 3;
-  const roomPage = 2;
   const query = "a";
   const pendingFilter = { type: FilterType.Has, value: "" };
   const filter = { type: FilterType.Pinned, value: false };
@@ -43,15 +42,10 @@ describe(useReadSearchedMessages, () => {
         setup: () => {
           setCurrentRoomId(roomId);
           const searchMessageStore = useSearchMessageStore();
-          ({ count, isSearching, items, page, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
-          // Each room's page starts at its own value, so a page written into the wrong slice is visible
-          setCurrentRoomId(otherRoomId);
-          page.value = otherRoomPage;
-          setCurrentRoomId(roomId);
-          page.value = roomPage;
+          ({ count, isSearching, items, searchQuery, selectedFilters } = storeToRefs(searchMessageStore));
           const searchHistoryStore = useSearchHistoryStore();
           createSearchHistory = vi.spyOn(searchHistoryStore, "createSearchHistory").mockResolvedValue();
-          readSearchedMessages = useReadSearchedMessages();
+          ({ readMoreSearchedMessages, readSearchedMessages } = useReadSearchedMessages());
         },
       }),
     );
@@ -61,16 +55,16 @@ describe(useReadSearchedMessages, () => {
     vi.restoreAllMocks();
   });
 
-  // Each room owns its own result slice, and the totals, the page and the history entry a search writes back are
-  // As much a part of that slice as the rows — switching rooms mid-flight must not hand the new room the previous
-  // Room's total, nor drop the history entry that search earned
-  test("files a search's totals, page and history under the room it was issued for", async () => {
+  // Each room owns its own result slice, and the total and the history entry a search writes back are as much a part
+  // Of that slice as the rows — switching rooms mid-flight must not hand the new room the previous room's total, nor
+  // Drop the history entry that search earned
+  test("files a search's total and history under the room it was issued for", async () => {
     expect.hasAssertions();
 
     const { promise: searchGate, resolve: releaseSearch } = Promise.withResolvers<void>();
     trpcMsw.message.searchMessages.query(async () => {
       await searchGate;
-      return { count: newCount, data: { hasMore: false, items: [] } };
+      return { count: newCount, items: [], nextCursor: "" };
     });
     await mountRead();
     searchQuery.value = query;
@@ -83,12 +77,10 @@ describe(useReadSearchedMessages, () => {
     await pendingSearch;
 
     expect(count.value).toBe(0);
-    expect(page.value).toBe(otherRoomPage);
 
     setCurrentRoomId(roomId);
 
     expect(count.value).toBe(newCount);
-    expect(page.value).toBe(1);
     expect(createSearchHistory).toHaveBeenCalledTimes(1);
   });
 
@@ -110,7 +102,7 @@ describe(useReadSearchedMessages, () => {
         onOtherRoomSearchReached();
         await otherRoomSearch;
       }
-      return { count: newCount, data: { hasMore: false, items: [] } };
+      return { count: newCount, items: [], nextCursor: "" };
     });
     await mountRead();
     searchQuery.value = query;
@@ -145,7 +137,7 @@ describe(useReadSearchedMessages, () => {
     const { promise: searchGate, resolve: releaseSearch } = Promise.withResolvers<void>();
     trpcMsw.message.searchMessages.query(async () => {
       await searchGate;
-      return { count: newCount, data: { hasMore: false, items: [] } };
+      return { count: newCount, items: [], nextCursor: "" };
     });
     await mountRead();
     searchQuery.value = query;
@@ -171,7 +163,7 @@ describe(useReadSearchedMessages, () => {
     const searchMessages = vi.fn<() => void>();
     trpcMsw.message.searchMessages.query(() => {
       searchMessages();
-      return { count: newCount, data: { hasMore: false, items: [] } };
+      return { count: newCount, items: [], nextCursor: "" };
     });
     await mountRead();
     selectedFilters.value = [pendingFilter];
@@ -193,7 +185,7 @@ describe(useReadSearchedMessages, () => {
       // The wire input types filters as optional because the schema defaults it, but this read always sends it
       assert.exists(input.filters);
       searchMessages(input.filters);
-      return { count: newCount, data: { hasMore: false, items: [] } };
+      return { count: newCount, items: [], nextCursor: "" };
     });
     await mountRead();
     selectedFilters.value = [pendingFilter, filter];
@@ -214,10 +206,10 @@ describe(useReadSearchedMessages, () => {
     const staleMessage = createOptimisticMessage({ message: query, roomId, type: MessageType.Message }, userId);
     const latestMessage = createOptimisticMessage({ message: latestQuery, roomId, type: MessageType.Message }, userId);
     trpcMsw.message.searchMessages.query(async ({ input }) => {
-      if (input.query !== query) return { count: newCount, data: { hasMore: false, items: [latestMessage] } };
+      if (input.query !== query) return { count: newCount, items: [latestMessage], nextCursor: "" };
 
       await isStaleResponseReleased;
-      return { count: newCount, data: { hasMore: false, items: [staleMessage] } };
+      return { count: newCount, items: [staleMessage], nextCursor: "" };
     });
     trpcMsw.room.readUsersByIds.query(() => []);
     await mountRead();
@@ -238,12 +230,45 @@ describe(useReadSearchedMessages, () => {
 
     const author = createUser();
     const hit = createOptimisticMessage({ roomId, type: MessageType.Message }, author.id);
-    trpcMsw.message.searchMessages.query(() => ({ count: newCount, data: { hasMore: false, items: [hit] } }));
+    trpcMsw.message.searchMessages.query(() => ({ count: newCount, items: [hit], nextCursor: "" }));
     trpcMsw.room.readUsersByIds.query(() => [{ ...author, displayName: "displayName", isMember: true }]);
     await mountRead();
     searchQuery.value = query;
     await readSearchedMessages();
 
     expect(useCreator(() => hit).value?.id).toBe(author.id);
+  });
+
+  // The waypoint reads the next page of the results on screen after the reader has typed a new search, so that page
+  // Continues the search those results were read for, with the cursor the page answered
+  test("reads the next page for the search its results were read for, not the text typed since", async () => {
+    expect.hasAssertions();
+
+    // The first search answers a cursor a continuation can carry, of the three keys the text search is ordered by
+    const continuationCursor = encodePageCursor({ isBackward: false, values: [1, roomId, 1] });
+    const searchPage = vi.fn<(input: unknown) => void>();
+    let isSearchIssued = false;
+    trpcMsw.message.searchMessages.query(({ input }) => {
+      if (!isSearchIssued) {
+        isSearchIssued = true;
+        return { count: newCount, items: [], nextCursor: continuationCursor };
+      }
+
+      searchPage(input);
+      return { items: [], nextCursor: "" };
+    });
+    await mountRead();
+    searchQuery.value = query;
+    await readSearchedMessages();
+    searchQuery.value = latestQuery;
+    await readMoreSearchedMessages(noop);
+
+    expect(searchPage).toHaveBeenCalledExactlyOnceWith({
+      cursor: { isBackward: false, values: [1, roomId, 1] },
+      filters: [],
+      limit: DEFAULT_PAGE_LIMIT,
+      query,
+      roomId,
+    });
   });
 });

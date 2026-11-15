@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import type { InviteInMessageWithCreator } from "@esposter/db-schema";
 
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { inviteCreateHooks } from "@/services/message/room/invite/inviteCreateHooks";
 import { createUser } from "@/services/message/user/createUser.test";
 import { useRoomInviteStore } from "@/store/message/room/roomInvite";
@@ -37,9 +36,7 @@ describe(useRoomInviteStore, () => {
     const roomInviteStore = useRoomInviteStore();
     const { getSlice } = roomInviteStore;
     const slice = getSlice(roomId);
-    slice.initializeCursorPaginationData(
-      new CursorPaginationData({ hasMore: false, items: [ownInvite, otherMembersInvite] }),
-    );
+    slice.initializeCursorPaginationData({ items: [ownInvite, otherMembersInvite], nextCursor: "" });
 
     await inviteCreateHooks.run(roomId, replacementInvite);
     await inviteCreateHooks.run(unreadRoomId, replacementInvite);

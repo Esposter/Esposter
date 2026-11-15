@@ -1,11 +1,7 @@
 import type { z } from "zod";
 
-import { createCursorPaginationParamsSchema } from "#shared/models/pagination/cursor/CursorPaginationParams";
-import { ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
-import { selectNotificationInNotificationSchema } from "@esposter/db-schema";
+import { NOTIFICATION_PAGE_SORT } from "#shared/services/notification/constants";
+import { createPageInputSchema } from "@esposter/db-schema";
 
-export const readNotificationsInputSchema = createCursorPaginationParamsSchema(
-  selectNotificationInNotificationSchema.keyof(),
-  [ID_DESCENDING_SORT_ITEM],
-).prefault({});
+export const readNotificationsInputSchema = createPageInputSchema(NOTIFICATION_PAGE_SORT).prefault({});
 export type ReadNotificationsInput = z.infer<typeof readNotificationsInputSchema>;

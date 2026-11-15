@@ -19,7 +19,7 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { v7 } from "uuid";
 import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -34,25 +34,6 @@ const { roomObject } = vi.hoisted(() => ({
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
 }));
-// A racing send of the same member's lands between the gate's decision and the claim, as a real write to the member's
-// Clock, so the claim this send makes against the clock it read loses
-const { racingSend } = vi.hoisted(() => ({
-  racingSend: { remaining: 0, write: (): Promise<unknown> => Promise.resolve() },
-}));
-vi.mock(import("@esposter/db"), async (importOriginal) => {
-  const original = await importOriginal();
-  return {
-    ...original,
-    getMessageCreationRejection: async (...args: Parameters<typeof original.getMessageCreationRejection>) => {
-      if (racingSend.remaining > 0) {
-        racingSend.remaining -= 1;
-        await racingSend.write();
-      }
-      return original.getMessageCreationRejection(...args);
-    },
-  };
-});
-
 describe(createUserMessage, () => {
   let mockContext: Context;
   let rootAuthor: AuthSession;
@@ -72,7 +53,6 @@ describe(createUserMessage, () => {
     vi.restoreAllMocks();
     roomObject.createMessage.mockReset();
     roomObject.readMessagesByIds.mockReset();
-    racingSend.remaining = 0;
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
@@ -115,24 +95,25 @@ describe(createUserMessage, () => {
     );
   };
 
-  // A claim lost to the member's own racing send decides again, and a room without slowmode refuses none of them
-  test("takes a send whose claim lost twice to the member's racing sends in a room with no slowmode", async () => {
+  test("stamps the sender's read clock with the time the room stored their message, not the web Worker's", async () => {
     expect.hasAssertions();
 
     const room = await createRoom();
-    let racedAt = Date.now();
-    racingSend.remaining = 2;
-    racingSend.write = () => {
-      racedAt += 1;
-      return mockContext.db
-        .update(usersToRoomsInMessage)
-        .set({ lastMessageAt: new Date(racedAt) })
-        .where(eq(usersToRoomsInMessage.userId, rootAuthor.user.id));
-    };
-    const newMessage = await postRoot(room.id);
+    const storedAt = new Date(1000);
+    roomObject.createMessage.mockResolvedValueOnce(
+      createRoomMessage({ createdAt: storedAt, id: rootId, userId: rootAuthor.user.id }),
+    );
+    await createUserMessage(
+      mockContext.db,
+      { userId: rootAuthor.user.id },
+      { files: [], message, roomId: room.id, type: MessageType.Message },
+    );
 
-    expect(newMessage.id).toBe(rootId);
-    expect(racingSend.remaining).toBe(0);
+    const [rootAuthorToRoom] = await mockContext.db
+      .select({ lastReadAt: usersToRoomsInMessage.lastReadAt })
+      .from(usersToRoomsInMessage)
+      .where(and(eq(usersToRoomsInMessage.roomId, room.id), eq(usersToRoomsInMessage.userId, rootAuthor.user.id)));
+    expect(rootAuthorToRoom?.lastReadAt).toStrictEqual(storedAt);
   });
 
   // Discord notifies you when someone replies to your message, so the root's author follows their own thread

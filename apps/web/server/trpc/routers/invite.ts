@@ -1,17 +1,12 @@
 import type { ReadInviteResult } from "#shared/models/db/room/ReadInviteResult";
-import type { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
-import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
-import type { InviteInMessage, InviteInMessageWithCreator } from "@esposter/db-schema";
-import type { SQL } from "drizzle-orm";
+import type { InviteInMessage, InviteInMessageWithCreator, Page } from "@esposter/db-schema";
 
 import { checkIsUniqueViolation } from "#server/services/db/checkIsUniqueViolation";
 import { getInsertSelectMetadata } from "#server/services/db/getInsertSelectMetadata";
 import { readMyInvite } from "#server/services/message/readMyInvite";
-import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
-import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
-import { parseSortByToSql } from "#server/services/pagination/sorting/parseSortByToSql";
 import { MAX_INVITE_ID_RETRIES } from "#server/services/room/constants";
 import { getRoomListTopics } from "#server/services/room/getRoomListTopics";
+import { resolveLiveInvite } from "#server/services/room/resolveLiveInvite";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
@@ -23,16 +18,14 @@ import { getPermissionsProcedure } from "#server/trpc/procedure/room/getPermissi
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { createInviteInputSchema } from "#shared/models/db/room/CreateInviteInput";
 import { readInviteInputSchema } from "#shared/models/db/room/ReadInviteInput";
-import { readRoomInvitesInputSchema } from "#shared/models/db/room/ReadRoomInvitesInput";
+import { readRoomInvitesInputSchema, ROOM_INVITE_PAGE_SORT } from "#shared/models/db/room/ReadRoomInvitesInput";
 import { revokeInviteInputSchema } from "#shared/models/db/room/RevokeInviteInput";
-import { CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM } from "#shared/services/pagination/constants";
 import { checkIsInviteUsable } from "#shared/services/room/invite/checkIsInviteUsable";
-import { checkHasPermission } from "@esposter/db";
+import { checkHasPermission, createPageSort, getPageOrderBy, getPageWhere, toPage } from "@esposter/db";
 import {
   DatabaseEntityType,
   getPublicUserColumns,
   getTopic,
-  InviteInMessageRelations,
   invitesInMessage,
   PublicUserColumns,
   roomIdSchema,
@@ -53,14 +46,6 @@ export const inviteRouter = router({
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
   ).mutation<InviteInMessageWithCreator>(async ({ ctx, input: { expireAfterMinutes, maxUses, roomId } }) => {
     const userId = ctx.user.id;
-    // A paused room keeps its links and stops minting them too, otherwise it goes on handing out credentials
-    // Nobody can use
-    const { isInvitePaused } = await requireEntity(
-      ctx.db.query.roomsInMessage.findFirst({ columns: { isInvitePaused: true }, where: { id: { eq: roomId } } }),
-      DatabaseEntityType.Room,
-      roomId,
-    );
-    if (isInvitePaused) throw getInvalidOperationError(Operation.Create, DatabaseEntityType.Invite, roomId);
     // Timestamps have no empty value, so the 0 sentinel (never expires) maps to null here
     const expiresAt = expireAfterMinutes
       ? new Date(Date.now() + Temporal.Duration.from({ minutes: expireAfterMinutes }).total("milliseconds"))
@@ -72,8 +57,8 @@ export const inviteRouter = router({
       DatabaseEntityType.User,
       userId,
     );
-    // The pause is checked by the statements themselves, so one committed after the check above refuses them too:
-    // The old link stays and no new one is minted
+    // A paused room keeps its links and mints none, and the statements check the pause themselves, so a pause
+    // Committed after the request began refuses them the same way: the old link stays and no new one is minted
     const roomIsOpenWhere = and(eq(roomsInMessage.id, roomId), eq(roomsInMessage.isInvitePaused, false));
     const roomIsOpen = exists(
       ctx.db
@@ -126,22 +111,29 @@ export const inviteRouter = router({
   readInvite: getTopicsProcedure(standardAuthedProcedure.input(readInviteInputSchema), ({ ctx }) =>
     getRoomListTopics(ctx.user.id),
   ).query<ReadInviteResult | undefined>(async ({ ctx, input }) => {
-    const invite = await ctx.db.query.invitesInMessage.findFirst({
-      where: { id: { eq: input } },
-      with: InviteInMessageRelations,
-    });
-    // Expired/exhausted invites behave exactly like unknown tokens — don't leak which
-    if (!invite || !checkIsInviteUsable(invite)) return undefined;
+    // An expired, exhausted, paused or banned link reads as an unknown token, so the landing page cannot tell them apart
+    const invite = await resolveLiveInvite(ctx.db, input, ctx.user.id);
+    if (!invite) return undefined;
 
-    // The landing page shows how many are in the room, never who: the count is taken here, since the relation
-    // Reads the room without its memberships
-    const [membership, memberCount] = await Promise.all([
+    // The landing page shows the room's name and how many are in it, never who: the room is read by its name alone, and
+    // The count is taken here, since the memberships are never read
+    const [room, user, membership, memberCount] = await Promise.all([
+      requireEntity(
+        ctx.db.query.roomsInMessage.findFirst({ columns: { name: true }, where: { id: { eq: invite.roomId } } }),
+        DatabaseEntityType.Room,
+        invite.roomId,
+      ),
+      requireEntity(
+        ctx.db.query.usersInAuth.findFirst({ columns: PublicUserColumns, where: { id: { eq: invite.userId } } }),
+        DatabaseEntityType.User,
+        invite.userId,
+      ),
       ctx.db.query.usersToRoomsInMessage.findFirst({
         where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.user.id } },
       }),
       ctx.db.$count(usersToRoomsInMessage, eq(usersToRoomsInMessage.roomId, invite.roomId)),
     ]);
-    return { ...invite, isMember: Boolean(membership), room: { ...invite.room, memberCount } };
+    return { ...invite, isMember: Boolean(membership), room: { memberCount, name: room.name }, user };
   }),
   readMyInvite: getTopicsProcedure(
     getMemberProcedure(roomIdSchema, "roomId").use(assertIsRoomMiddleware),
@@ -150,24 +142,23 @@ export const inviteRouter = router({
   readRoomInvites: getTopicsProcedure(
     getPermissionsProcedure(RoomPermission.ManageRoom, readRoomInvitesInputSchema, "roomId"),
     ({ input }) => [getTopic(TopicKind.Room, input.roomId)],
-  ).query<CursorPaginationData<InviteInMessageWithCreator>>(async ({ ctx, input: { cursor, limit, roomId } }) => {
-    // An invite's id is a random secret, not a time-ordered one, so creation time leads and the id only breaks its ties
-    const sortBy: SortItem<keyof InviteInMessage>[] = [CREATED_AT_DESCENDING_SORT_ITEM, ID_DESCENDING_SORT_ITEM];
-    const wheres: (SQL | undefined)[] = [eq(invitesInMessage.roomId, roomId)];
-    if (cursor) wheres.push(getCursorWhere(invitesInMessage, cursor, sortBy));
-
+  ).query<Page<InviteInMessageWithCreator>>(async ({ ctx, input: { cursor, limit, roomId } }) => {
+    const sort = createPageSort(
+      { createdAt: invitesInMessage.createdAt, id: invitesInMessage.id },
+      ROOM_INVITE_PAGE_SORT,
+    );
     const invites = await ctx.db
       .select({ ...getColumns(invitesInMessage), user: getPublicUserColumns(usersInAuth) })
       .from(invitesInMessage)
       .innerJoin(usersInAuth, eq(invitesInMessage.userId, usersInAuth.id))
-      .where(and(...wheres))
-      .orderBy(...parseSortByToSql(invitesInMessage, sortBy))
+      .where(and(eq(invitesInMessage.roomId, roomId), getPageWhere(sort, cursor)))
+      .orderBy(...getPageOrderBy(sort, cursor))
       .limit(limit + 1);
     // Expiry and exhaustion are decided by `checkIsInviteUsable` rather than by a second copy of it in SQL, so
     // The page is cut over every row and only then filtered: a batch of lapsed links narrows what this page shows
     // Without ending the walk, and the cursor still names the oldest row read rather than the oldest usable one
-    const { hasMore, items, nextCursor } = getCursorPaginationData(invites, limit, sortBy);
-    return { hasMore, items: items.filter((invite) => checkIsInviteUsable(invite)), nextCursor };
+    const page = toPage(invites, ROOM_INVITE_PAGE_SORT, cursor, limit);
+    return { items: page.items.filter((invite) => checkIsInviteUsable(invite)), nextCursor: page.nextCursor };
   }),
   revokeInvite: getTopicsProcedure(getMemberProcedure(revokeInviteInputSchema, "roomId"), ({ input }) => [
     getTopic(TopicKind.Room, input.roomId),

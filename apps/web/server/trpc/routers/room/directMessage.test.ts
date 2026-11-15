@@ -8,6 +8,7 @@ import { userObjectCalls } from "#server/composables/realtime/useUserObject.test
 import { getDirectMessageParticipantKey } from "#server/services/room/directMessage/getDirectMessageParticipantKey";
 import { createCallerFactory } from "#server/trpc";
 import { createMockAuthSession, createMockContext, createMockUser, getMockSession } from "#server/trpc/context.test";
+import { blockRouter } from "#server/trpc/routers/block";
 import { createFriends } from "#server/trpc/routers/createFriends.test";
 import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
@@ -22,14 +23,34 @@ import {
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { and, eq } from "drizzle-orm";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { and, eq, inArray } from "drizzle-orm";
+import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+
+// The participants an add reads before it writes. A test lands a concurrent change in that gap through this hook, taken
+// Once, so a concurrent add it makes reads the participants unhooked
+const { onParticipantIdsRead } = vi.hoisted(() => ({
+  onParticipantIdsRead: { current: undefined as (() => Promise<void>) | undefined },
+}));
+vi.mock(import("#server/services/room/directMessage/readDirectMessageParticipantIds"), async (importOriginal) => {
+  const { readDirectMessageParticipantIds } = await importOriginal();
+  return {
+    readDirectMessageParticipantIds: async (db: Context["db"], roomId: string) => {
+      const participantIds = await readDirectMessageParticipantIds(db, roomId);
+      const onRead = onParticipantIdsRead.current;
+      onParticipantIdsRead.current = undefined;
+      await onRead?.();
+      return participantIds;
+    },
+  };
+});
 
 describe("directMessageRouter", () => {
   let mockContext: Context;
   let directMessageCaller: DecorateRouterRecord<TRPCRouter["room"]["directMessage"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
+  const epoch = new Date(0);
+  const later = new Date(Temporal.Duration.from({ seconds: 1 }).total("milliseconds"));
   // A context acting as the given user on a session of their own, or as a new user when none is given
   const createUserContext = async (user?: AuthSession["user"]) =>
     createMockContext(await createMockAuthSession(mockContext.db, user));
@@ -43,6 +64,7 @@ describe("directMessageRouter", () => {
   beforeEach(() => {
     roomObjectCalls.length = 0;
     userObjectCalls.length = 0;
+    onParticipantIdsRead.current = undefined;
   });
 
   afterEach(async () => {
@@ -129,6 +151,41 @@ describe("directMessageRouter", () => {
     const directMessages = await directMessageCaller.readDirectMessages();
 
     expect(directMessages.items).toHaveLength(0);
+  });
+
+  test("reads direct messages to the end across a page boundary between rooms tied on their last message time", async () => {
+    expect.hasAssertions();
+
+    const { directMessage: firstDirectMessage, mainUser } = await createDirectMessageWithFriend(mockContext);
+    const secondFriend = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, secondFriend);
+    const secondDirectMessage = await directMessageCaller.createDirectMessage([secondFriend.id]);
+    const thirdFriend = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, thirdFriend);
+    const thirdDirectMessage = await directMessageCaller.createDirectMessage([thirdFriend.id]);
+    // The two older rooms share a last message time, so the page boundary falls inside that tie
+    await mockContext.db
+      .update(roomsInMessage)
+      .set({ lastMessageAt: epoch })
+      .where(inArray(roomsInMessage.id, [firstDirectMessage.id, secondDirectMessage.id]));
+    await mockContext.db
+      .update(roomsInMessage)
+      .set({ lastMessageAt: later })
+      .where(eq(roomsInMessage.id, thirdDirectMessage.id));
+    const listedIds: string[] = [];
+    let cursor = "";
+    do {
+      // oxlint-disable-next-line no-await-in-loop -- Pagination: the next page's cursor is the last page's answer
+      const page = await directMessageCaller.readDirectMessages({ cursor, limit: 1 });
+      listedIds.push(...page.items.map(({ id }) => id));
+      cursor = page.nextCursor;
+    } while (cursor);
+
+    // The newer room first, then the tied rooms with the larger id first
+    expect(listedIds).toStrictEqual([
+      thirdDirectMessage.id,
+      ...[firstDirectMessage.id, secondDirectMessage.id].toSorted().toReversed(),
+    ]);
   });
 
   test("fails hide with non-member", async () => {
@@ -294,6 +351,139 @@ describe("directMessageRouter", () => {
       directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Create, DerivedDatabaseEntityType.DirectMessage, addedUser.id).message}]`,
+    );
+  });
+
+  test("refuses an add whose participants a concurrent add changed before it wrote, and adds no member", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    const concurrentlyAddedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, user, concurrentlyAddedUser);
+    const userDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext(user));
+    onParticipantIdsRead.current = async () => {
+      await userDirectMessageCaller.createDirectMessageParticipants({
+        roomId: directMessage.id,
+        userIds: [concurrentlyAddedUser.id],
+      });
+    };
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.DirectMessage, directMessage.id).message}]`,
+    );
+    const participantIds = await mockContext.db
+      .select({ userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.roomId, directMessage.id));
+    const room = await mockContext.db.query.roomsInMessage.findFirst({
+      columns: { participantKey: true },
+      where: { id: { eq: directMessage.id } },
+    });
+
+    expect(participantIds.map(({ userId }) => userId).toSorted()).toStrictEqual(
+      [mainUser.id, user.id, concurrentlyAddedUser.id].toSorted(),
+    );
+    expect(room).toStrictEqual({
+      participantKey: getDirectMessageParticipantKey([mainUser.id, user.id, concurrentlyAddedUser.id]),
+    });
+  });
+
+  test("refuses a removal whose participants a concurrent add changed before it wrote, and keeps the member", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    await directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] });
+    const concurrentlyAddedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, concurrentlyAddedUser);
+    const userDirectMessageCaller = createCallerFactory(directMessageRouter)(await createUserContext(user));
+    onParticipantIdsRead.current = async () => {
+      await directMessageCaller.createDirectMessageParticipants({
+        roomId: directMessage.id,
+        userIds: [concurrentlyAddedUser.id],
+      });
+    };
+
+    await expect(
+      userDirectMessageCaller.deleteDirectMessageParticipant({ roomId: directMessage.id, userId: user.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, DerivedDatabaseEntityType.DirectMessage, directMessage.id).message}]`,
+    );
+    const participantIds = await mockContext.db
+      .select({ userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.roomId, directMessage.id));
+    const room = await mockContext.db.query.roomsInMessage.findFirst({
+      columns: { participantKey: true },
+      where: { id: { eq: directMessage.id } },
+    });
+
+    expect(participantIds.map(({ userId }) => userId).toSorted()).toStrictEqual(
+      [mainUser.id, user.id, addedUser.id, concurrentlyAddedUser.id].toSorted(),
+    );
+    expect(room).toStrictEqual({
+      participantKey: getDirectMessageParticipantKey([mainUser.id, user.id, addedUser.id, concurrentlyAddedUser.id]),
+    });
+  });
+
+  // Another direct message already holds the set of all three, so the add would give this one a key that room holds
+  test("refuses adding a participant whose set another direct message already holds, and adds no member", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    await directMessageCaller.createDirectMessage([user.id, addedUser.id]);
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: Another direct message already has these participants]`);
+    const participantIds = await mockContext.db
+      .select({ userId: usersToRoomsInMessage.userId })
+      .from(usersToRoomsInMessage)
+      .where(eq(usersToRoomsInMessage.roomId, directMessage.id));
+
+    expect(participantIds.map(({ userId }) => userId).toSorted()).toStrictEqual([mainUser.id, user.id].toSorted());
+  });
+
+  test("fails create direct message participant blocked by a participant of the direct message", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser, user } = await createDirectMessageWithFriend(mockContext);
+    const addedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, addedUser);
+    await createCallerFactory(blockRouter)(await createUserContext(user)).createBlock(addedUser.id);
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({ roomId: directMessage.id, userIds: [addedUser.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, addedUser.id).message}]`,
+    );
+  });
+
+  test("fails create direct message participant blocked by a user added before them in the same request", async () => {
+    expect.hasAssertions();
+
+    const { directMessage, mainUser } = await createDirectMessageWithFriend(mockContext);
+    const firstAddedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, firstAddedUser);
+    const secondAddedUser = await createMockUser(mockContext.db);
+    await createFriends(mockContext, mainUser, secondAddedUser);
+    // The second user blocks the first: the first is admitted, and the block then refuses the second
+    await createCallerFactory(blockRouter)(await createUserContext(secondAddedUser)).createBlock(firstAddedUser.id);
+
+    await expect(
+      directMessageCaller.createDirectMessageParticipants({
+        roomId: directMessage.id,
+        userIds: [firstAddedUser.id, secondAddedUser.id],
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, secondAddedUser.id).message}]`,
     );
   });
 

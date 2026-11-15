@@ -1,9 +1,12 @@
+import type { SearchMessagesInput } from "#shared/models/db/message/SearchMessagesInput";
 import type { ClientMessage } from "@/models/message/ClientMessage";
 import type { Filter, FilterType } from "@esposter/db-schema";
 
 import { checkIsSearchQueryEmpty } from "#shared/services/message/checkIsSearchQueryEmpty";
-import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { useRoomStore } from "@/store/message/room";
+
+// The search a room's results were read for, held beside them so a continuation is read for that search
+type ResultSearch = Pick<SearchMessagesInput, "filters" | "query">;
 
 export const useSearchMessageStore = defineStore("message/search", () => {
   const roomStore = useRoomStore();
@@ -17,13 +20,16 @@ export const useSearchMessageStore = defineStore("message/search", () => {
   const createFilter = (type: FilterType) => {
     selectedFilters.value.push({ type, value: "" });
   };
-  const { items, ...restData } = useOffsetPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
+  // Keyed by room like the rows it pages, so a search's results are filed under the room it was issued for
+  const { getSlice, items, ...restData } = useCursorPaginationDataMap<ClientMessage>(() => roomStore.currentRoomId);
   // The totals a search writes back belong to the room it was issued for, so a read binds them alongside the
-  // Result slice it is already binding — `count`/`page` themselves track whichever room is current, which is
-  // What the rendered header and paginator want and exactly what an in-flight response must not use
+  // Result slice it is already binding — `count` itself tracks whichever room is current, which is what the rendered
+  // Header wants and exactly what an in-flight response must not use
   const { data: count, getBoundData: getBoundCount } = useDataMap(() => roomStore.currentRoomId, 0);
-  const pageCount = computed(() => Math.ceil(count.value / DEFAULT_READ_LIMIT));
-  const { data: page, getBoundData: getBoundPage } = useDataMap(() => roomStore.currentRoomId, 1);
+  const { getBoundData: getBoundResultSearch, getDataRef: getResultSearchRef } = useDataMap<ResultSearch | undefined>(
+    () => roomStore.currentRoomId,
+    undefined,
+  );
   // Pending belongs to the room the search was issued for, like the totals above it: held globally, a search
   // Still running in the room the reader just left renders the room they arrived in as loading, and the first
   // Of two overlapping searches to finish clears the flag for both
@@ -44,13 +50,13 @@ export const useSearchMessageStore = defineStore("message/search", () => {
     createFilter,
     getBoundCount,
     getBoundIsSearching,
-    getBoundPage,
+    getBoundResultSearch,
+    getResultSearchRef,
+    getSlice,
     isMenuOpen,
     isSearching,
     isSearchQueryEmpty,
     items,
-    page,
-    pageCount,
     searchQuery,
     selectedFilters,
     ...restData,

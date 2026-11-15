@@ -1,4 +1,4 @@
-import type { PostSortType } from "@/models/post/PostSortType";
+import type { PostSortType } from "#shared/models/post/PostSortType";
 
 import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
 

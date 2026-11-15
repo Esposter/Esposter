@@ -1,13 +1,7 @@
-import type { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import type { SortOrder } from "@esposter/db-schema";
 
-import { sortOrderSchema } from "#shared/models/pagination/sorting/SortOrder";
-import { z } from "zod";
-
+// A table's sort, as the data table reads and writes it; the server is sent the sort's name, never this
 export interface SortItem<T extends string> {
-  isIncludeValue?: true;
   key: T;
   order: SortOrder;
 }
-
-export const createSortItemSchema = <T extends z.ZodType<string>>(sortKeySchema: T) =>
-  z.object({ isIncludeValue: z.literal(true).optional(), key: sortKeySchema, order: sortOrderSchema });

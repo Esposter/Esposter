@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
   });
   return forwardSocket(event, useRoomObject(roomId), {
     deviceId,
+    sessionExpiresAt: authSession.session.expiresAt.getTime(),
     sessionId: authSession.session.id,
     userId: authSession.user.id,
   });
