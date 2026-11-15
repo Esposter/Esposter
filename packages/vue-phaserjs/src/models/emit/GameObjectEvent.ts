@@ -1,16 +1,17 @@
-export enum GameObjectEvent {
-  Clickoutside = "clickoutside",
-  Drag = "drag",
-  Dragend = "dragend",
-  Dragenter = "dragenter",
-  Dragleave = "dragleave",
-  Dragover = "dragover",
-  Dragstart = "dragstart",
-  Drop = "drop",
-  Pointerdown = "pointerdown",
-  Pointermove = "pointermove",
-  Pointerout = "pointerout",
-  Pointerover = "pointerover",
-  Pointerup = "pointerup",
-  Wheel = "wheel",
-}
+export const GameObjectEvent = {
+  Clickoutside: "clickoutside",
+  Drag: "drag",
+  Dragend: "dragend",
+  Dragenter: "dragenter",
+  Dragleave: "dragleave",
+  Dragover: "dragover",
+  Dragstart: "dragstart",
+  Drop: "drop",
+  Pointerdown: "pointerdown",
+  Pointermove: "pointermove",
+  Pointerout: "pointerout",
+  Pointerover: "pointerover",
+  Pointerup: "pointerup",
+  Wheel: "wheel",
+} as const;
+export type GameObjectEvent = (typeof GameObjectEvent)[keyof typeof GameObjectEvent];

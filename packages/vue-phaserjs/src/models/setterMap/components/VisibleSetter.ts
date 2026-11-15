@@ -1,3 +1,2 @@
-export enum VisibleSetter {
-  Visible = "visible",
-}
+export const VisibleSetter = { Visible: "visible" } as const;
+export type VisibleSetter = (typeof VisibleSetter)[keyof typeof VisibleSetter];
