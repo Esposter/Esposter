@@ -3,4 +3,4 @@ import type { MjmlTextProps } from "#src/models/MjmlTextProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML text type, holding the props its model declares
-export type MjmlTextNode = BlockNode<MjmlNodeType.Text, MjmlTextProps>;
+export type MjmlTextNode = BlockNode<typeof MjmlNodeType.Text, MjmlTextProps>;

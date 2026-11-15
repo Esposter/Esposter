@@ -3,4 +3,4 @@ import type { MjmlRawProps } from "#src/models/MjmlRawProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML raw type, holding the props its model declares
-export type MjmlRawNode = BlockNode<MjmlNodeType.Raw, MjmlRawProps>;
+export type MjmlRawNode = BlockNode<typeof MjmlNodeType.Raw, MjmlRawProps>;

@@ -3,4 +3,4 @@ import type { MjmlSocialProps } from "#src/models/MjmlSocialProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML social type, holding the props its model declares
-export type MjmlSocialNode = BlockNode<MjmlNodeType.Social, MjmlSocialProps>;
+export type MjmlSocialNode = BlockNode<typeof MjmlNodeType.Social, MjmlSocialProps>;

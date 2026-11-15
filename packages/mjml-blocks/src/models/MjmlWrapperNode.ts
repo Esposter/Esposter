@@ -3,4 +3,4 @@ import type { MjmlWrapperProps } from "#src/models/MjmlWrapperProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML wrapper type, holding the props its model declares
-export type MjmlWrapperNode = BlockNode<MjmlNodeType.Wrapper, MjmlWrapperProps>;
+export type MjmlWrapperNode = BlockNode<typeof MjmlNodeType.Wrapper, MjmlWrapperProps>;

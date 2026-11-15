@@ -3,4 +3,4 @@ import type { MjmlNodeType } from "#src/models/MjmlNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML carousel image type, holding the props its model declares
-export type MjmlCarouselImageNode = BlockNode<MjmlNodeType.CarouselImage, MjmlCarouselImageProps>;
+export type MjmlCarouselImageNode = BlockNode<typeof MjmlNodeType.CarouselImage, MjmlCarouselImageProps>;

@@ -3,4 +3,4 @@ import type { MjmlSectionProps } from "#src/models/MjmlSectionProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML section type, holding the props its model declares
-export type MjmlSectionNode = BlockNode<MjmlNodeType.Section, MjmlSectionProps>;
+export type MjmlSectionNode = BlockNode<typeof MjmlNodeType.Section, MjmlSectionProps>;

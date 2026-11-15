@@ -23,8 +23,11 @@ type MjmlBlockTypeFields<TNode extends BlockNode, TContext> = Pick<BlockTypeDefi
 
 // The content kind a definition declares, keyed to the props schema that holds its content: a label or raw kind holds a string, rich text holds its consumer's content, and a definition without a kind holds no content of its own
 type MjmlContentDefinition<TNode extends BlockNode> =
-  | { contentKind: MjmlContentKind.Label | MjmlContentKind.Raw; propsSchema: z.ZodType<MjmlStringContentProps<TNode>> }
-  | { contentKind: MjmlContentKind.RichText; propsSchema: z.ZodType<OwnProps<TNode["props"]>> }
+  | {
+      contentKind: typeof MjmlContentKind.Label | typeof MjmlContentKind.Raw;
+      propsSchema: z.ZodType<MjmlStringContentProps<TNode>>;
+    }
+  | { contentKind: typeof MjmlContentKind.RichText; propsSchema: z.ZodType<OwnProps<TNode["props"]>> }
   | { contentKind?: undefined; propsSchema: z.ZodType<OwnProps<TNode["props"]>> };
 
 // The props of a node whose content is a string: a label or raw kind's content schema parses one

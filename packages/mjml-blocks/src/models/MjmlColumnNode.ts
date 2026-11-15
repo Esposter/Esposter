@@ -3,4 +3,4 @@ import type { MjmlNodeType } from "#src/models/MjmlNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML column type, holding the props its model declares
-export type MjmlColumnNode = BlockNode<MjmlNodeType.Column, MjmlColumnProps>;
+export type MjmlColumnNode = BlockNode<typeof MjmlNodeType.Column, MjmlColumnProps>;

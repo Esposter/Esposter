@@ -3,4 +3,4 @@ import type { MjmlNodeType } from "#src/models/MjmlNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML accordion element type, holding the props its model declares
-export type MjmlAccordionElementNode = BlockNode<MjmlNodeType.AccordionElement, MjmlAccordionElementProps>;
+export type MjmlAccordionElementNode = BlockNode<typeof MjmlNodeType.AccordionElement, MjmlAccordionElementProps>;

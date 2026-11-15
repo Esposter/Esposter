@@ -7,7 +7,7 @@ import { takeOne } from "@esposter/shared";
 import { getBlockSlots } from "vue-block-editor-headless";
 
 // A section lays its columns side by side, and stacks them at the canvas width the mobile breakpoint covers
-export const drawSection: EmailCanvasDrawing<MjmlNodeType.Section> = (
+export const drawSection: EmailCanvasDrawing<typeof MjmlNodeType.Section> = (
   node,
   { attribute, childNodes, isStacked, kind },
 ) => {

@@ -1,9 +1,15 @@
 import type { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 
 export type MjmlAttributeType =
-  | { isNegativeAllowed: boolean; kind: MjmlAttributeKind.Unit; maxCount: number; minCount: number; units: string[] }
-  | { kind: MjmlAttributeKind.Boolean }
-  | { kind: MjmlAttributeKind.Color }
-  | { kind: MjmlAttributeKind.Enum; options: string[] }
-  | { kind: MjmlAttributeKind.Integer }
-  | { kind: MjmlAttributeKind.String };
+  | {
+      isNegativeAllowed: boolean;
+      kind: typeof MjmlAttributeKind.Unit;
+      maxCount: number;
+      minCount: number;
+      units: string[];
+    }
+  | { kind: typeof MjmlAttributeKind.Boolean }
+  | { kind: typeof MjmlAttributeKind.Color }
+  | { kind: typeof MjmlAttributeKind.Enum; options: string[] }
+  | { kind: typeof MjmlAttributeKind.Integer }
+  | { kind: typeof MjmlAttributeKind.String };

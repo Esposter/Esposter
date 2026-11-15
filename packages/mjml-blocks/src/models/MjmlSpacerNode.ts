@@ -3,4 +3,4 @@ import type { MjmlSpacerProps } from "#src/models/MjmlSpacerProps";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML spacer type, holding the props its model declares
-export type MjmlSpacerNode = BlockNode<MjmlNodeType.Spacer, MjmlSpacerProps>;
+export type MjmlSpacerNode = BlockNode<typeof MjmlNodeType.Spacer, MjmlSpacerProps>;

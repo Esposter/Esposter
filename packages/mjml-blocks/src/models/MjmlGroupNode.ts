@@ -3,4 +3,4 @@ import type { MjmlNodeType } from "#src/models/MjmlNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML group type, holding the props its model declares
-export type MjmlGroupNode = BlockNode<MjmlNodeType.Group, MjmlGroupProps>;
+export type MjmlGroupNode = BlockNode<typeof MjmlNodeType.Group, MjmlGroupProps>;

@@ -3,4 +3,4 @@ import type { MjmlNodeType } from "#src/models/MjmlNodeType";
 import type { BlockNode } from "vue-block-editor-headless";
 
 // A node of the MJML navbar link type, holding the props its model declares
-export type MjmlNavbarLinkNode = BlockNode<MjmlNodeType.NavbarLink, MjmlNavbarLinkProps>;
+export type MjmlNavbarLinkNode = BlockNode<typeof MjmlNodeType.NavbarLink, MjmlNavbarLinkProps>;

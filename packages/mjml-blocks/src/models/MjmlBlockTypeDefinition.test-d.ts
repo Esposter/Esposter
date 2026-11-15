@@ -50,6 +50,6 @@ describe("mjmlBlockTypeDefinition content kind", () => {
       contentKind: MjmlContentKind.Label,
       propsSchema: stringContentSchema,
     } satisfies MjmlBlockTypeDefinition;
-    expectTypeOf(definition.contentKind).toEqualTypeOf<MjmlContentKind.Label>();
+    expectTypeOf(definition.contentKind).toEqualTypeOf<typeof MjmlContentKind.Label>();
   });
 });
