@@ -9,6 +9,7 @@ import { createSystemRoomMessage } from "#server/services/message/createSystemRo
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { announceRoomMemberDeparture } from "#server/services/room/announceRoomMemberDeparture";
 import { announceRoomMembersJoined } from "#server/services/room/announceRoomMembersJoined";
+import { notifyOnlineRoomMembers } from "#server/services/room/notifyOnlineRoomMembers";
 import { assertIsMember } from "#server/services/room/assertIsMember";
 import { assertIsRoom } from "#server/services/room/assertIsRoom";
 import { assertCanCreateDirectMessageParticipant } from "#server/services/room/directMessage/assertCanCreateDirectMessageParticipant";
@@ -216,9 +217,17 @@ export const directMessageRouter = router({
       DatabaseEntityType.UserToRoom,
       JSON.stringify({ roomId, userId }),
     );
-    requireMutation(updatedRoomRows[0], Operation.Update, DerivedDatabaseEntityType.DirectMessage, roomId);
+    const updatedRoom = requireMutation(
+      updatedRoomRows[0],
+      Operation.Update,
+      DerivedDatabaseEntityType.DirectMessage,
+      roomId,
+    );
 
     await announceRoomMemberDeparture({ roomId, userId });
+    // A departed owner hands the group on, and the members still in it learn the new owner the way a room update tells them
+    if (updatedRoom.userId !== room?.userId)
+      await notifyOnlineRoomMembers(roomId, { data: { id: roomId, userId: updatedRoom.userId }, type: "updateRoom" });
     await createSystemRoomMessage(
       roomId,
       actorUser.id,

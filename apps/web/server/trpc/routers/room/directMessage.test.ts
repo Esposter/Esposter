@@ -272,6 +272,13 @@ describe("directMessageRouter", () => {
     });
 
     expect([user.id, addedUser.id]).toContain(room?.userId);
+    // The members still in the group are told the new owner, or their list keeps the departed one and hides the owner's
+    // Controls until a reload
+    expect(roomObjectCalls).toContainEqual({
+      args: [{ data: { id: directMessage.id, userId: room?.userId }, type: "updateRoom" }],
+      method: "notifyOnlineMembers",
+      roomId: directMessage.id,
+    });
     await expect(
       roomCaller.updateRoom({ id: directMessage.id, isReadOnly: true }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);

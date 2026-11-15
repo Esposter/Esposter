@@ -55,7 +55,11 @@ const saveResourceContentEventSchema = z.object({
   }),
   type: z.literal("saveResourceContent"),
 });
-const updateRoomEventSchema = z.object({ data: updateRoomInputSchema, type: z.literal("updateRoom") });
+// The fields a room edit changes, and the owner a group's departing owner hands it to
+const updateRoomEventSchema = z.object({
+  data: updateRoomInputSchema.extend({ userId: selectRoomInMessageSchema.shape.userId.optional() }),
+  type: z.literal("updateRoom"),
+});
 // A room's last message moved it to the top of the list, which is what the room list sorts by. Its own event, since a
 // Room update names only the fields a room edit changes
 const roomActivityEventSchema = z.object({
