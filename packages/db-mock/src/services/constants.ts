@@ -1,18 +1,10 @@
-import {
-  CloudflareAssetType,
-  CloudflareDatabaseRole,
-  CloudflareEnvironment,
-  getCloudflareResourceName,
-} from "@esposter/db-schema";
+import { CloudflareCoreDatabaseIdMap, CloudflareEnvironment } from "@esposter/db-schema";
 
 // The binding name the Worker gives its database, the name its generated `wrangler.json` gives it in production
 export const CORE_BINDING = "CORE";
-// The database the development environment names it by, which a dev server's local D1 file is keyed on
-export const CORE_DATABASE_NAME: string = getCloudflareResourceName(
-  CloudflareEnvironment.Development,
-  CloudflareAssetType.D1Database,
-  CloudflareDatabaseRole.Core,
-);
+// The development database's id, which a dev server's local D1 file is keyed on: wrangler names the local file by the
+// Binding's database_id, so the dev seed reopens the same file
+export const CORE_DATABASE_ID: string = CloudflareCoreDatabaseIdMap[CloudflareEnvironment.Development];
 // The compatibility date Miniflare runs the mock Worker under. It is a stand-in with no code of its own, so it only has
 // To be a date the installed workerd accepts. Miniflare refuses a date later than the machine's clock, so a date long past,
 // The one its own fallback uses, is the one every clock accepts
