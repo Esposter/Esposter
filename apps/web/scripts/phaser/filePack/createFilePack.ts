@@ -23,7 +23,10 @@ const listObjectNames = async (client: AwsClient, bucketUrl: string, continuatio
   const url = new URL(bucketUrl);
   url.searchParams.set("list-type", "2");
   if (continuationToken !== undefined) url.searchParams.set("continuation-token", continuationToken);
-  const { nextContinuationToken, objects } = parseListBucketResult(await (await client.fetch(url)).text());
+  const response = await client.fetch(url);
+  // A refused listing answers an error document with no entries, which would otherwise read as an empty bucket
+  if (!response.ok) throw new InvalidOperationError(Operation.Read, bucketUrl, `responds ${response.status}`);
+  const { nextContinuationToken, objects } = parseListBucketResult(await response.text());
   const names = objects.map(({ key }) => key);
   return nextContinuationToken === undefined
     ? names
