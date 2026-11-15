@@ -4,7 +4,6 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 import { getBucket } from "#src/services/storage/getBucket";
-import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
 import { FILES_DIRECTORY_SEGMENT, getResourceFileBlobName, StorageBucket } from "@esposter/db-schema";
 
@@ -40,12 +39,11 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     if (publication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, publication);
     if (links.length > 0) await archive.addJsonEntry(`${entryDirectory}/links.json`, links);
     if (content) await archive.addEntry(`${entryDirectory}/content.json`, content);
-    for (const { assetHash } of workingAssets)
-      await writeBlobEntry(
-        archive,
-        `${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`,
-        bucket,
-        getResourceFileBlobName(resource.id, assetHash),
-      );
+    for (const { assetHash } of workingAssets) {
+      // A save keeps a reference to an asset that was never uploaded as the owner's data, so such a reference has no
+      // Bytes to archive and no entry, where every other missing blob fails the export
+      const object = await bucket.get(getResourceFileBlobName(resource.id, assetHash));
+      if (object) await archive.addEntry(`${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`, object.body);
+    }
   }
 };

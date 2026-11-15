@@ -1,5 +1,6 @@
 import { publishTopics } from "#src/services/realtime/publishTopics";
 import { db } from "#src/services/shared/db";
+import { getBucket } from "#src/services/storage/getBucket";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import {
@@ -9,6 +10,7 @@ import {
   exportUserDataQueueMessageSchema,
   getTopic,
   QueueJob,
+  StorageBucket,
   TopicKind,
 } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -33,14 +35,18 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
   await getResultAsync(() => buildUserDataArchive(buildingRow.userId, blobName)).match(
     async () => {
       const readyAt = Temporal.Now.instant();
-      await db
+      const readyRows = await db
         .update(dataExportsInUser)
         .set({
           expiresAt: new Date(readyAt.epochMilliseconds + DATA_EXPORT_RETENTION_MS),
           readyAt: new Date(readyAt.epochMilliseconds),
           status: DataExportStatus.Ready,
         })
-        .where(eq(dataExportsInUser.id, dataExportId));
+        .where(eq(dataExportsInUser.id, dataExportId))
+        .returning({ id: dataExportsInUser.id });
+      // The account was deleted while the archive was written, and its sweep found no object yet to remove, so the
+      // Archive that just committed is removed here rather than outliving the person it holds
+      if (readyRows.length === 0) await getBucket(StorageBucket.UserAssets).delete(blobName);
     },
     async (error) => {
       console.error(`${QueueJob.ExportUserData} failed for ${dataExportId}`, error);

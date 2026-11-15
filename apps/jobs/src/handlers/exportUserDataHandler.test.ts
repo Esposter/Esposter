@@ -13,6 +13,9 @@ import {
   DataExportStatus,
   getTopic,
   MessageType,
+  resourcesInResource,
+  ResourceType,
+  resourceWorkingAssetsInResource,
   roomsInMessage,
   StorageBucket,
   TopicKind,
@@ -156,5 +159,42 @@ describe(exportUserDataHandler, () => {
 
     await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([getDataExportBlobName(dataExportId)]);
     expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);
+  });
+
+  // A save keeps a reference to an asset that was never uploaded as the owner's data, so the export carries on past it
+  test("marks an export ready when a resource references an asset that was never uploaded", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const resource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
+    );
+    await mockDb.insert(resourceWorkingAssetsInResource).values({ assetHash: "0".repeat(64), resourceId: resource.id });
+    const dataExportId = await seedQueuedExport(userId);
+
+    await exportUserDataHandler({ dataExportId });
+
+    expect((await readExportRow(dataExportId)).status).toBe(DataExportStatus.Ready);
+  });
+
+  // The account's deletion swept while the archive was still being written, before there was an object to remove
+  test("removes an archive that commits after its export row was deleted", async () => {
+    expect.hasAssertions();
+
+    const userId = v7();
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
+    const dataExportId = await seedQueuedExport(userId);
+    roomObjectReplies.set("exportUserMessages", () => []);
+    roomObjectReplies.set("exportUserReactions", async () => {
+      await mockDb.delete(dataExportsInUser).where(eq(dataExportsInUser.id, dataExportId));
+      return [];
+    });
+
+    await exportUserDataHandler({ dataExportId });
+
+    await expect(readBlobNames(StorageBucket.UserAssets)).resolves.toStrictEqual([]);
   });
 });
