@@ -30,7 +30,7 @@ const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
-const CONSTELLATION_2_ELEMENTS: ReadonlySet<Element> = new Set<Element>([
+const CONSTELLATION_2_ELEMENTS: ReadonlySet<Element> = new Set([
   Element.Cryo,
   Element.Electro,
   Element.Hydro,

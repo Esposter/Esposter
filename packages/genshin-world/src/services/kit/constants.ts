@@ -62,7 +62,7 @@ export const ELECTRO_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
 ]);
 // The weapons a melee infusion converts the attacks of, a sword's, a claymore's or a polearm's, while a bow or a catalyst
 // Wielder keeps its own, as gcsim v2.47.2 (MIT) gives Fantastic Voyage's and Layered Frost's infusions
-export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set<WeaponType>([
+export const MELEE_WEAPON_TYPES: ReadonlySet<WeaponType> = new Set([
   WeaponType.Claymore,
   WeaponType.Polearm,
   WeaponType.Sword,

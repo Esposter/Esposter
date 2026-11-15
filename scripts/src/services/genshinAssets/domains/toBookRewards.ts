@@ -9,7 +9,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // The Adventure Rank's row and to that row's average. A rarity the row has no count for is not paid, and a book whose rarity
 // The materials do not name is refused rather than paid at no rarity
 export const toBookRewards = (
-  kind: DomainKind.Forgery | DomainKind.Mastery,
+  kind: typeof DomainKind.Forgery | typeof DomainKind.Mastery,
   books: number[],
   rarities: ReadonlyMap<number, number>,
   rank: number,

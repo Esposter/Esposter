@@ -20,7 +20,7 @@ const readPage = (title: string, combatTalent: CombatTalent, revisionId: number)
 const createStrikeEntries = (
   path: string,
   poise: number,
-  internalCooldownTag = InternalCooldownTag.NormalAttack,
+  internalCooldownTag: InternalCooldownTag = InternalCooldownTag.NormalAttack,
 ): [string, unknown][] => [
   [`${path}.poiseDamage`, poise],
   [`${path}.internalCooldownTag`, internalCooldownTag],

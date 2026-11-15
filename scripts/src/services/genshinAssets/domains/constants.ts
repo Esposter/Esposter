@@ -58,7 +58,7 @@ export const SUNDAY_DAYS_OF_WEEK: number[] = [SUNDAY_DAY_OF_WEEK];
 // Ranks 16, 21, 30 and 40, weapon ascension materials of two to five stars) and Template:Domain_Levels/Mastery (Adventure
 // Ranks 27, 28, 36 and 45, talent books of two to four stars). The dump's levels stand at 15, 21, 30 and 40, and 25, 28, 36
 // And 45, so a level reads the row of the greatest Adventure Rank not above its own (see `findTreeRow`)
-export const DOMAIN_TREE_COUNT_ROWS: Record<DomainKind.Forgery | DomainKind.Mastery, TreeCountRow[]> = {
+export const DOMAIN_TREE_COUNT_ROWS: Record<typeof DomainKind.Forgery | typeof DomainKind.Mastery, TreeCountRow[]> = {
   [DomainKind.Forgery]: [
     { counts: { 2: { avg: 4.7, maxCount: 6, minCount: 4 } }, rank: 16 },
     { counts: { 2: { avg: 2.7, maxCount: 3, minCount: 2 }, 3: { avg: 2, maxCount: 2, minCount: 2 } }, rank: 21 },
