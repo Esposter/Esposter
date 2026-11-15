@@ -3,7 +3,7 @@ import type { Topic } from "@esposter/db-schema";
 import { collectTopics } from "@/services/realtime/collectTopics";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useConnectionStore } from "@/store/realtime/connection";
-import { getSynchronizedFunction, noop } from "@esposter/shared";
+import { getSynchronizedFunction, ID_SEPARATOR, noop } from "@esposter/shared";
 
 interface QueryOptions<TResult> {
   // The surface renders the failure itself, as UiErrorState with its retry, so the toast is dropped
@@ -35,6 +35,8 @@ export const useQuery = <TResult>(
   const connectionStore = import.meta.client ? useConnectionStore() : undefined;
   let watchedTopicsKey = "";
   let unwatchTopics = noop;
+  // A read can answer after its surface has gone, and a watch taken then would outlive it with nothing left to let go
+  let isDisposed = false;
   const refresh = async () => {
     error.value = "";
     await executeQuery(() => collectTopics(query), {
@@ -51,14 +53,15 @@ export const useQuery = <TResult>(
     });
   };
   const watchTopics = (topics: Topic[]) => {
-    const topicsKey = [...new Set(topics)].toSorted().join(",");
-    if (!connectionStore || topicsKey === watchedTopicsKey) return;
+    const topicsKey = [...new Set(topics)].toSorted().join(ID_SEPARATOR);
+    if (!connectionStore || isDisposed || topicsKey === watchedTopicsKey) return;
     unwatchTopics();
     watchedTopicsKey = topicsKey;
     unwatchTopics = topics.length > 0 ? connectionStore.watchTopics(topics, getSynchronizedFunction(refresh)) : noop;
   };
   if (connectionStore)
     onScopeDispose(() => {
+      isDisposed = true;
       unwatchTopics();
     });
   // Fetch on setup without blocking it — no Suspense boundary, unlike a top-level awaited query

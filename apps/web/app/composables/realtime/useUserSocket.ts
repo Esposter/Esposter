@@ -5,8 +5,9 @@ import { useConnectionStore } from "@/store/realtime/connection";
 export const useUserSocket = async () => {
   const connectionStore = useConnectionStore();
   const { closeUser, openUser } = connectionStore;
-  const { data: session } = await useAuthSession();
+  // Captured before the await, which leaves no current instance or scope behind it
   const onlineSubscribableContext = getOnlineSubscribableContext();
+  const { data: session } = await useAuthSession();
 
   useOnlineSubscribable(
     () => session.value?.user.id,
