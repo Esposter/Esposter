@@ -1,4 +1,4 @@
-// The asset-type token of a Cloudflare resource name, second after the environment, as Azure's names carry `st`, `func`
+// The asset-type token of a Cloudflare resource name, second after the environment
 export const CloudflareAssetType = {
   D1Database: "d1",
   DeadLetterQueue: "dlq",
