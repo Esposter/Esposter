@@ -4,7 +4,7 @@ The Delete account card in user settings removes one account and the content it 
 
 ## The request
 
-`user.deleteAccount` in `apps/web/server/trpc/routers/user.ts` writes `deletionRequestedAt` on the user row in D1, sends one `DeleteAccount` job carrying the user id to its queue, and then ends every session the account holds. A failed send fails the request, and the sessions stay open. `deleteAccountSessions` ends the sessions: it revokes each one by the token it was read with and closes that session's sockets on the person's user object and on each room and call object the person is connected to, so the caller is signed out everywhere.
+`user.deleteAccount` in `apps/web/server/trpc/routers/user.ts` writes `deletionRequestedAt` on the user row in D1, sends one `DeleteAccount` job carrying the user id to its queue, and then ends every session the account holds. A failed send fails the request, and the sessions stay open. `deleteAccountSessions` ends the sessions: it revokes each one by the token it was read with, and each row's removal closes that session's sockets through the session delete hook ([session and device management](../session-device-management/design.md)), so the caller is signed out everywhere.
 
 The mutation does not sweep. A sweep walks every room the account is in and every object it holds, so it outlasts a request; the caller is answered once the job is accepted.
 
@@ -96,7 +96,7 @@ Every step treats an already-gone target as done. A missing object's delete coun
 | Path                                                               | Role                                                                                                                           |
 | :----------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------- |
 | `apps/web/server/trpc/routers/user.ts`                             | The `deleteAccount` mutation                                                                                                   |
-| `apps/web/server/services/user/deleteAccountSessions.ts`           | Ends the account's sessions and closes their sockets                                                                           |
+| `apps/web/server/services/user/deleteAccountSessions.ts`           | Ends the account's sessions; their sockets close with their rows                                                               |
 | `apps/web/app/components/User/DeleteAccountCard/Index.vue`         | The Delete account card and its typed confirmation                                                                             |
 | `apps/web/app/components/Ui/ConfirmDialog.vue`                     | The confirmation dialog that gates on the typed name                                                                           |
 | `apps/web/app/services/user/settings/AccountDeletionKeptItems.ts`  | The kept list the confirmation names                                                                                           |

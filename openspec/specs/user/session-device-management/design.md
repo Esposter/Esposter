@@ -30,7 +30,7 @@ sequenceDiagram
   R->>BA: revokeSession({ token })
   BA->>DB: row deleted
   DB->>PS: sessionId cascades
-  R->>UO: closeSession(sessionId) — best-effort
+  BA->>UO: delete hook: closeSession(sessionId) — best-effort
   Note over Card: current row instead lands on the login route
 ```
 
@@ -50,7 +50,7 @@ Writing a subscription requires its session to exist as a row. The test mock for
 
 `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
 
-**Live connections are closed explicitly**, because a socket outlives the session that opened it. A socket is accepted with its session's tag, and the person's user object closes the sockets carrying that tag with code 1008, the policy close a server gives a credential it no longer accepts, so `closeSession` addresses exactly one session's sockets. It is best-effort: the revoke has already landed by then, so an object that cannot be reached costs a socket living until it drops on its own, rather than a revoke reported as failed.
+**Live connections close with their session's row**, because a socket outlives the session that opened it. better-auth's `session.delete.after` hook in `server/auth.ts` runs for every removed row — a sign-out, a revoke, a bulk revoke, an account deletion, and an expired row better-auth deletes when a read presents it — and calls `closeSessionSockets`, so no path that removes a session can forget its sockets. A socket is accepted with its session's tag, and each object the person reaches (their user object, every room they are a member of, every call they are in) closes the sockets carrying that tag with code 1008, the policy close a server gives a credential it no longer accepts. It is best-effort: the removal has already landed, so an object that cannot be reached costs a socket living until it drops on its own, rather than a revoke reported as failed. An object also records the revoke for an hour and refuses an upgrade for that session, since an upgrade that read the session just before the revoke can reach the object just after its close ran. A socket left idle past its session's expiry, with no read to delete the row, stays open until it drops or the session is removed.
 
 Revoking your **own** row is sign-out: the wording says so before the click, and the card lands on the login route rather than refreshing a listing the page can no longer read. The auth cookie is left in place and inert — it names a session row that no longer exists, so the next request resolves no session.
 
@@ -64,24 +64,26 @@ No admin-facing counterpart. An operator terminating another user's sessions is 
 
 ## Procedures
 
-| Procedure                     | Auth   | Purpose                                                     |
-| ----------------------------- | ------ | ----------------------------------------------------------- |
-| `session.readSessions`        | authed | own sessions as `SessionSummary[]`, the current one marked  |
-| `session.deleteSession`       | authed | revoke one session by id, then close its connections        |
-| `session.deleteOtherSessions` | authed | revoke every session but the current one, then close theirs |
+| Procedure                     | Auth   | Purpose                                                        |
+| ----------------------------- | ------ | -------------------------------------------------------------- |
+| `session.readSessions`        | authed | own sessions as `SessionSummary[]`, the current one marked     |
+| `session.deleteSession`       | authed | revoke one session by id; its row's removal closes its sockets |
+| `session.deleteOtherSessions` | authed | revoke every session but the current one                       |
 
 ## Key files
 
-| File                                                                            | Role                                                         |
-| ------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `apps/web/server/trpc/routers/session.ts`                                       | the three procedures                                         |
-| `apps/web/server/services/auth/readSession.ts`                                  | the server's session read, forwarding its cookie             |
-| `apps/web/server/middleware/session.ts`                                         | a page's session read ahead of its render                    |
-| `apps/web/server/models/session/SessionSummary.ts`                              | what a row is allowed to say — no address                    |
-| `apps/realtime/src/durableObjects/UserObject.ts`                                | `closeSession`, the best-effort close of a session's sockets |
-| `apps/web/server/services/realtime/forwardSocket.ts`                            | the socket upgrade the Worker forwards to the user object    |
-| `apps/web/app/components/User/SessionsCard/`                                    | the card, its row, and the two confirm dialogs               |
-| `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label              |
-| `apps/web/app/store/user/sessionDialog.ts`                                      | the singleton revoke target                                  |
-| `packages/db-schema/src/schema/notification/pushSubscriptionsInNotification.ts` | `sessionId`, cascading on the session row                    |
-| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, cascading on the user                      |
+| File                                                                            | Role                                                            |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/session.ts`                                       | the three procedures                                            |
+| `apps/web/server/auth.ts`                                                       | the session delete hook that closes a removed session's sockets |
+| `apps/web/server/services/realtime/closeSessionSockets.ts`                      | the close on every object the person reaches                    |
+| `apps/web/server/services/auth/readSession.ts`                                  | the server's session read, forwarding its cookie                |
+| `apps/web/server/middleware/session.ts`                                         | a page's session read ahead of its render                       |
+| `apps/web/server/models/session/SessionSummary.ts`                              | what a row is allowed to say — no address                       |
+| `apps/realtime/src/durableObjects/UserObject.ts`                                | `closeSession`, the best-effort close of a session's sockets    |
+| `apps/web/server/services/realtime/forwardSocket.ts`                            | the socket upgrade the Worker forwards to the user object       |
+| `apps/web/app/components/User/SessionsCard/`                                    | the card, its row, and the two confirm dialogs                  |
+| `apps/web/server/services/auth/getDeviceLabel.ts`                               | the stored user agent → a readable device label                 |
+| `apps/web/app/store/user/sessionDialog.ts`                                      | the singleton revoke target                                     |
+| `packages/db-schema/src/schema/notification/pushSubscriptionsInNotification.ts` | `sessionId`, cascading on the session row                       |
+| `packages/db-schema/src/schema/auth/sessionsInAuth.ts`                          | the session rows, cascading on the user                         |
