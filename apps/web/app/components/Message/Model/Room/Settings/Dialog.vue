@@ -28,12 +28,7 @@ const isSettingsDrawerOpen = ref(false);
       :room
       @open:delete="isDeleteOpen = true"
     />
-    <MessageModelRoomSettingsContent
-      :room
-      :settings-type
-      @close="isOpen = false"
-      @open:drawer="isSettingsDrawerOpen = true"
-    />
+    <MessageModelRoomSettingsContent :room :settings-type @open:drawer="isSettingsDrawerOpen = true" />
   </MessageModelSettingsDialog>
   <MessageModelRoomConfirmDeleteDialog v-if="room" v-model="isDeleteOpen" :room />
 </template>

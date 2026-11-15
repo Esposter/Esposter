@@ -19,7 +19,7 @@ const { answer, isPending } = useDialogAnswer(isOpen);
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title :size="UiDialogSize.Medium">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :title is-size-fixed :size="UiDialogSize.Medium">
     <template #default="{ formId }">
       <UiForm :id="formId" flex flex-col gap-3 @submit="answer(() => executeAdminAction(getInput))">
         <slot />

@@ -42,12 +42,12 @@ describe("uiDialog", () => {
       expect(document.activeElement).not.toBe(component.get("dialog").element);
     });
 
-    test("stands over the whole page while an expandable dialog is expanded", async () => {
+    test("stands over the whole page while expanded", async () => {
       expect.hasAssertions();
 
       const component = mount(UiDialog, {
         attachTo: document.body,
-        props: { isExpandable: true, modelValue: true, placement: UiDialogPlacement.Middle, title },
+        props: { modelValue: true, placement: UiDialogPlacement.Middle, title },
       });
       await flushPromises();
       await component.get('[aria-label="Full screen"]').trigger("click");
@@ -58,6 +58,30 @@ describe("uiDialog", () => {
 
       expect(component.get("dialog").attributes("data-placement")).toBe(UiDialogPlacement.FullScreen);
       expect(component.get('[aria-label="Full screen"]').attributes("aria-pressed")).toBe("true");
+    });
+
+    test("a decision keeps its size, with no full screen to take", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { isSizeFixed: true, modelValue: true, placement: UiDialogPlacement.Middle, title },
+      });
+      await flushPromises();
+
+      expect(component.find('[aria-label="Full screen"]').exists()).toBe(false);
+    });
+
+    test("a drawer stands at its edge, with no full screen to take", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiDialog, {
+        attachTo: document.body,
+        props: { modelValue: true, placement: UiDialogPlacement.DrawerEnd, title },
+      });
+      await flushPromises();
+
+      expect(component.find('[aria-label="Full screen"]').exists()).toBe(false);
     });
 
     // A size is the dialog element's width class, which the browser holds to the viewport. jsdom lays nothing out, so the

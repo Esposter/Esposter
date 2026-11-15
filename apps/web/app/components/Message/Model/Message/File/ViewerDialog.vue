@@ -90,7 +90,6 @@ useCommands(() =>
     max-w="[90vw]"
     :placement="UiDialogPlacement.Middle"
     :title="file.filename"
-    is-expandable
   >
     <div
       :class="isZoomed ? 'cursor-grab' : 'cursor-zoom-in'"

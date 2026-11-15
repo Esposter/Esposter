@@ -41,7 +41,7 @@ const hasActions = computed(() => Boolean(confirmLabel || slots["prepend-actions
 <template>
   <!-- One decision about one thing, so it stands in the middle. The body mounts with each open, so a dialog closed
     Holds nothing and every open starts from what its model says -->
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title :="$attrs">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title is-size-fixed :="$attrs">
     <template v-if="$slots.default" #default>
       <!-- Held through the dialog's leave, so it rises out with what it showed rather than as an empty frame -->
       <Transition :duration="DIALOG_BODY_TRANSITION_DURATION">

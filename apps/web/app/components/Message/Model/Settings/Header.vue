@@ -6,10 +6,10 @@ interface Props {
   title: string;
 }
 // Belongs in the shell's `#header` slot, which renders outside the scroll container — so it stays put without
-// `sticky`, and a panel scrolled past it is genuinely out of view rather than hidden underneath it. The Room
-// And User dialogs render the same three controls; only what they do on close differs
+// `sticky`, and a panel scrolled past it is genuinely out of view rather than hidden underneath it. The settings dialog
+// Hides its own title bar, so this header draws the dialog's commands in its place
 defineProps<Props>();
-const emit = defineEmits<{ close: []; "open:drawer": [] }>();
+const emit = defineEmits<{ "open:drawer": [] }>();
 </script>
 
 <template>
@@ -23,11 +23,6 @@ const emit = defineEmits<{ close: []; "open:drawer": [] }>();
       @click="emit('open:drawer')"
     />
     <h2 flex-1 truncate ui-title>{{ title }}</h2>
-    <UiIconButton
-      label="Close"
-      :meaning="UiIconMeaning.Close"
-      :variant="UiButtonVariant.Quiet"
-      @click="emit('close')"
-    />
+    <UiDialogCommands />
   </header>
 </template>

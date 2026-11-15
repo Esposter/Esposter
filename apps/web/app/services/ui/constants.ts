@@ -1,3 +1,4 @@
+import type { UiDialogContext } from "@/models/ui/UiDialogContext";
 import type { UiStyle } from "@/models/ui/UiStyle";
 
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
@@ -90,6 +91,8 @@ export const READABLE_TEXT_COOKIE_NAME = "readable-text";
 export const UI_STYLE_COOKIE_NAME = "ui-style";
 // The style the nearest theme scope draws in, or the reader's around the whole app, which the icon and any scope read
 export const UI_STYLE_INJECTION_KEY: InjectionKey<Readonly<Ref<UiStyle>>> = Symbol("uiStyle");
+// The dialog the nearest commands stand in, which UiDialog provides to its title bar and to a body that draws its own
+export const UI_DIALOG_INJECTION_KEY: InjectionKey<UiDialogContext> = Symbol("uiDialog");
 // The library's own reading of the screen's width, apart from any a primitive makes under its default namespace
 export const BREAKPOINTS_NAMESPACE = "ui:breakpoints";
 // The library's own tooltips, apart from any a primitive opens under its default namespace

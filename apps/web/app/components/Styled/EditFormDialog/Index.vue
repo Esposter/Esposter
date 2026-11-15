@@ -60,7 +60,6 @@ watch(isOpen, (newIsOpen) => {
     The dialog's full screen and close. A close asked for while there are unsaved changes asks first -->
   <UiDialog
     :model-value="isOpen"
-    is-expandable
     :overline="prettify(itemType)"
     :title
     :size="UiDialogSize.Large"

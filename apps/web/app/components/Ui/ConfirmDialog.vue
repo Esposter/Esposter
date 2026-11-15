@@ -34,7 +34,7 @@ watch(isOpen, (newIsOpen) => {
 </script>
 
 <template>
-  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title role="alertdialog">
+  <UiDialog v-model="isOpen" :placement="UiDialogPlacement.Middle" :size :title is-size-fixed role="alertdialog">
     <slot />
     <template v-if="confirmName">
       <div px-2 py-1 flex gap-2 items-center ui-field>

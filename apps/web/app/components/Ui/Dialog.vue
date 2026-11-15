@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import type { UiDialogSize } from "@/models/ui/UiDialogSize";
 
-import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { UI_DIALOG_INJECTION_KEY } from "@/services/ui/constants";
 import { UiDialogFrameClassMap } from "@/services/ui/UiDialogFrameClassMap";
 import { UiDialogPlacementClassMap } from "@/services/ui/UiDialogPlacementClassMap";
 import { UiDialogSizeClassMap } from "@/services/ui/UiDialogSizeClassMap";
@@ -12,9 +11,9 @@ import { Dialog } from "@vuetify/v0";
 interface Props {
   // A body that is one full-bleed child, such as a listbox, drops the body's padding and keeps its scroll
   isBodyBare?: true;
-  // A button beside the close one takes it over the whole page and back, for content that wants all the room the
-  // Reader can give it
-  isExpandable?: true;
+  // A decision about one thing, a confirmation, keeps its size: every other dialog standing in the page can be taken over
+  // The whole page and back by a button beside its close, so whatever it holds can have all the room the reader gives it
+  isSizeFixed?: true;
   // Stands at a fixed height in the page rather than only being capped by it, so a two-pane body divides a height and
   // Each pane scrolls on its own. A drawer and the full screen already stand at their edge's height, so they ignore it
   isTall?: true;
@@ -41,10 +40,18 @@ defineSlots<{
 }>();
 const isOpen = defineModel<boolean>({ default: false });
 const isExpanded = defineModel<boolean>("isExpanded", { default: false });
-const { isExpandable, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
+const { isSizeFixed, isTall, placement = UiDialogPlacement.High, size } = defineProps<Props>();
 // The body and the footer both take this id, so a footer's submit names the form the body holds
 const formId = useId();
-const displayPlacement = computed(() => (isExpandable && isExpanded.value ? UiDialogPlacement.FullScreen : placement));
+// A drawer and the full screen already stand at their edges, so only a dialog standing in the page has a page to take
+const isExpandable = computed(
+  () => !isSizeFixed && (placement === UiDialogPlacement.High || placement === UiDialogPlacement.Middle),
+);
+const displayPlacement = computed(() =>
+  isExpandable.value && isExpanded.value ? UiDialogPlacement.FullScreen : placement,
+);
+// oxlint-disable-next-line no-restricted-globals -- the dialog is its subtree's context, which its commands read wherever a body draws them
+provide(UI_DIALOG_INJECTION_KEY, { isExpandable, isExpanded, isOpen });
 // A tall frame takes its placement's fixed height, and otherwise keeps the height its placement gives it
 const frameClass = computed(() => {
   const { height, tallHeight } = UiDialogFrameClassMap[displayPlacement.value];
@@ -97,20 +104,7 @@ watchImmediate(isOpen, async (newIsOpen) => {
               <!-- The content's own commands, then the dialog's -->
               <div aria-hidden="true" mx-1 bg-border h-6 w="[var(--ui-border-width)]" />
             </template>
-            <UiIconButton
-              v-if="isExpandable"
-              :aria-pressed="isExpanded"
-              label="Full screen"
-              :meaning="isExpanded ? UiIconMeaning.Collapse : UiIconMeaning.Expand"
-              :variant="UiButtonVariant.Quiet"
-              @click="isExpanded = !isExpanded"
-            />
-            <UiIconButton
-              label="Close"
-              :meaning="UiIconMeaning.Remove"
-              :variant="UiButtonVariant.Quiet"
-              @click="isOpen = false"
-            />
+            <UiDialogCommands />
           </div>
         </header>
         <div v-if="$slots.default" ui-region-body :class="isBodyBare ? undefined : 'p-3'">

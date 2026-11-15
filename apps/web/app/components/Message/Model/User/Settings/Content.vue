@@ -8,14 +8,14 @@ interface Props {
 
 const { settingsType } = defineProps<Props>();
 const userSettingsDialogStore = useUserSettingsDialogStore();
-const { isDrawerOpen, isVisible } = storeToRefs(userSettingsDialogStore);
+const { isDrawerOpen } = storeToRefs(userSettingsDialogStore);
 const component = computed(() => UserSettingsContentMap[settingsType]);
 </script>
 
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <MessageModelSettingsHeader :title="settingsType" @close="isVisible = false" @open:drawer="isDrawerOpen = true" />
+      <MessageModelSettingsHeader :title="settingsType" @open:drawer="isDrawerOpen = true" />
     </template>
     <!-- The scroll area owns its bottom breathing room, so no panel carries a trailing margin of its own -->
     <div pb-8 flex flex-col gap-8>

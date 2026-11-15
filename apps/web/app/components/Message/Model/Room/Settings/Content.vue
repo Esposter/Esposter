@@ -9,14 +9,14 @@ interface Props {
 }
 
 const { settingsType } = defineProps<Props>();
-const emit = defineEmits<{ close: []; "open:drawer": [] }>();
+const emit = defineEmits<{ "open:drawer": [] }>();
 const component = computed(() => SettingsContentMap[settingsType]);
 </script>
 
 <template>
   <MessageModelSettingsContent>
     <template #header>
-      <MessageModelSettingsHeader :title="settingsType" @close="emit('close')" @open:drawer="emit('open:drawer')" />
+      <MessageModelSettingsHeader :title="settingsType" @open:drawer="emit('open:drawer')" />
     </template>
     <Suspense v-if="component" :timeout="0">
       <component :is="component" :room />
