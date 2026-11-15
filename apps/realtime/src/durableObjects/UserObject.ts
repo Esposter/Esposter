@@ -25,6 +25,7 @@ import { setUserConnectedInRooms } from "#src/services/user/setUserConnectedInRo
 import { setUserStatusInRooms } from "#src/services/user/setUserStatusInRooms";
 import {
   AppNotificationType,
+  joinedCallsInUser,
   publishNotification,
   remindersInUser,
   scheduledMessagesInUser,
@@ -50,6 +51,10 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
   }
 
   // A reminder armed again under its id replaces the one it names, so a re-run of the step that armed it converges
+  async addJoinedCall(callSessionId: string): Promise<void> {
+    await this.db.insert(joinedCallsInUser).values({ callSessionId }).onConflictDoNothing();
+  }
+
   async addReminder(reminder: ScheduledReminder): Promise<void> {
     await this.db
       .insert(remindersInUser)
@@ -119,6 +124,10 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
     return Promise.resolve();
   }
 
+  async readJoinedCallIds(): Promise<string[]> {
+    return (await this.db.select().from(joinedCallsInUser)).map(({ callSessionId }) => callSessionId);
+  }
+
   async readReminders(): Promise<ScheduledReminder[]> {
     return this.db.select().from(remindersInUser).orderBy(asc(remindersInUser.runAt));
   }
@@ -173,6 +182,10 @@ export class UserObject extends RealtimeObject<UserEvent> implements UserObjectR
           and(eq(todoRemindersInUser.resourceId, resourceId), inArray(todoRemindersInUser.itemId, cancelledItemIds)),
         );
     await this.#armAlarm();
+  }
+
+  async removeJoinedCall(callSessionId: string): Promise<void> {
+    await this.db.delete(joinedCallsInUser).where(eq(joinedCallsInUser.callSessionId, callSessionId));
   }
 
   // A cancel removes the row and re-arms the alarm for what is left, so a reminder that was next due no longer wakes it

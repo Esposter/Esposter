@@ -119,7 +119,10 @@ describe("sessionRouter", () => {
 
     await caller.deleteSession(otherSession.id);
 
-    expect(userObjectCalls).toStrictEqual([{ args: [otherSession.id], method: "closeSession", userId }]);
+    expect(userObjectCalls).toStrictEqual([
+      { args: [], method: "readJoinedCallIds", userId },
+      { args: [otherSession.id], method: "closeSession", userId },
+    ]);
   });
 
   test("closes the sockets of every other session it revokes, and not the current one's", async () => {
@@ -127,6 +130,9 @@ describe("sessionRouter", () => {
 
     await caller.deleteOtherSessions();
 
-    expect(userObjectCalls).toStrictEqual([{ args: [otherSession.id], method: "closeSession", userId }]);
+    expect(userObjectCalls).toStrictEqual([
+      { args: [], method: "readJoinedCallIds", userId },
+      { args: [otherSession.id], method: "closeSession", userId },
+    ]);
   });
 });

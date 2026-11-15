@@ -428,6 +428,13 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
       { excludeTag: `session:${sessionId}` },
     );
     this.#closeSessionSockets(sessionId);
+    // A person's last session out of the call takes it off the calls their object closes a revoked session on
+    if (this.#readSessionIdsOf(participant.userId).length === 0)
+      this.ctx.waitUntil(
+        getResultAsync(() =>
+          this.env.USER.get(this.env.USER.idFromName(participant.userId)).removeJoinedCall(callSessionId),
+        ).match(noop, console.error),
+      );
     return {
       callDurationSeconds: this.#checkHasParticipants() ? null : this.#endCall(callSessionId),
       sessionId,

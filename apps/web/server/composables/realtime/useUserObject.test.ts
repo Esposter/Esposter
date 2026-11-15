@@ -18,7 +18,8 @@ export const useUserObject = (userId: string): ReturnType<typeof useRealUserObje
       (_target, method: string) =>
       (...args: unknown[]) => {
         userObjectCalls.push({ args, method, userId });
-        return Promise.resolve();
+        // A read answers with nothing held, since the double keeps no state of its own
+        return Promise.resolve(method.startsWith("read") ? [] : undefined);
       },
   });
 

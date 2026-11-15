@@ -69,6 +69,7 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
   } satisfies RoomObjectRpc;
   const userObjectFake = {
     acceptFriendRequest: vi.fn<UserObjectRpc["acceptFriendRequest"]>(),
+    addJoinedCall: vi.fn<UserObjectRpc["addJoinedCall"]>(),
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
     addScheduledMessage: vi.fn<UserObjectRpc["addScheduledMessage"]>(),
     addSentMessage: vi.fn<UserObjectRpc["addSentMessage"]>(),
@@ -77,10 +78,12 @@ const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hois
     declineFriendRequest: vi.fn<UserObjectRpc["declineFriendRequest"]>(),
     deleteFriend: vi.fn<UserObjectRpc["deleteFriend"]>(),
     invalidate: vi.fn<UserObjectRpc["invalidate"]>(),
+    readJoinedCallIds: vi.fn<UserObjectRpc["readJoinedCallIds"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
     readSentMessages: vi.fn<UserObjectRpc["readSentMessages"]>(),
     reconcileTodoReminders: vi.fn<UserObjectRpc["reconcileTodoReminders"]>(),
+    removeJoinedCall: vi.fn<UserObjectRpc["removeJoinedCall"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
     removeScheduledMessage: vi.fn<UserObjectRpc["removeScheduledMessage"]>(),
     removeSentMessage: vi.fn<UserObjectRpc["removeSentMessage"]>(),

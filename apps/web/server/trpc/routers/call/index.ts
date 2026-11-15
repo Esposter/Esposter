@@ -1,6 +1,7 @@
 import type { JoinCallResult } from "#shared/models/room/call/JoinCallResult";
 import type { CallParticipant, CallSessionInMessage } from "@esposter/db-schema";
 
+import { useUserObject } from "#server/composables/realtime/useUserObject";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { createCallSessionId } from "#server/services/message/call/createCallSessionId";
 import { createParticipant } from "#server/services/message/call/createParticipant";
@@ -54,6 +55,8 @@ export const baseCallRouter = router({
         participant: createParticipant(session, user),
       });
       if (!join) throw getForbiddenError("Must be admitted to join this call");
+      // No D1 row names who was admitted to a call without a room, so the person's object keeps it for a revoked session
+      if (!isCreator) await useUserObject(user.id).addJoinedCall(id);
 
       return {
         authToken: join.authToken,

@@ -10,6 +10,7 @@ A call is anchored to a `callSessionsInMessage` row, not a route:
 
 - `id: text` PK — a **shareable alphanumeric token** (`createId(CALL_ID_LENGTH)`, crypto-secure); the id _is_ the shareable link token.
 - `roomId` — set for room calls (unique FK → rooms, cascade); null-scoped standalone calls persist ownership on `userId` (creator).
+- A standalone call has no D1 row naming who was admitted to it, so each admitted joiner's `UserObject` keeps the call in `joinedCallsInUser` until their last session leaves it (the `CallObject` removes the row), and a revoked session is closed on each call listed there as well as on the calls D1 names (`closeSessionSockets`).
 - The session row is the persistent 1:1 anchor per room and survives restarts, and so do the participants: the call's own `CallObject` keeps them in its storage, so an eviction of the object loses nothing.
 
 `CallParticipant.id` is the **auth `session.id`, not `user.id`** — the custom participant id RealtimeKit is given is `session.id`, so each device is its own participant (separate tracks, separate mute state). Using `user.id` would make multi-device join last-write-wins and let device A's leave evict device B.

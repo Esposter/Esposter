@@ -19,9 +19,12 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vi
 const { roomObject, userObject, useRoomObjectMock, useUserObjectMock } = vi.hoisted(() => {
   const roomFake = { deleteScheduledMessage: vi.fn<RoomObjectRpc["deleteScheduledMessage"]>() };
   const userFake = {
+    addJoinedCall: vi.fn<UserObjectRpc["addJoinedCall"]>(),
     addReminder: vi.fn<UserObjectRpc["addReminder"]>(),
+    readJoinedCallIds: vi.fn<UserObjectRpc["readJoinedCallIds"]>(),
     readReminders: vi.fn<UserObjectRpc["readReminders"]>(),
     readScheduledMessages: vi.fn<UserObjectRpc["readScheduledMessages"]>(),
+    removeJoinedCall: vi.fn<UserObjectRpc["removeJoinedCall"]>(),
     removeReminder: vi.fn<UserObjectRpc["removeReminder"]>(),
   };
   return {

@@ -11,6 +11,10 @@ export const sentMessagesInUser = sqliteTable(
   ],
 );
 
+// The calls without a room a person was admitted to, one row each until their last session leaves.
+// No D1 row names who sits in such a call, so a revoked session is closed on each of these
+export const joinedCallsInUser = sqliteTable("joinedCallsInUser", { callSessionId: text().primaryKey() });
+
 // The scheduled messages a person has pending, one row each until the room delivers or cancels them.
 // Ordered by when they run, which is what their list shows
 export const scheduledMessagesInUser = sqliteTable(

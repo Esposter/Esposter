@@ -24,6 +24,7 @@ export interface ScheduledReminder {
 // A personal event is sent by the write that raised it, and reaches every tab the person has open
 export interface UserObjectRpc {
   acceptFriendRequest: (input: { receiverUser: PublicUser; senderUser: PublicUser }) => Promise<void>;
+  addJoinedCall: (callSessionId: string) => Promise<void>;
   addReminder: (reminder: ScheduledReminder) => Promise<void>;
   addScheduledMessage: (scheduledMessage: { roomId: string; runAt: Date; scheduledId: string }) => Promise<void>;
   addSentMessage: (sentMessage: { createdAt: Date; messageId: number; roomId: string }) => Promise<void>;
@@ -34,6 +35,7 @@ export interface UserObjectRpc {
   deleteFriend: (input: Pick<FriendInSocial, "receiverId" | "senderId">) => Promise<void>;
   // A topic one of the person's tabs watches changed: every tab watching it hears so, and no other tab does
   invalidate: (topic: Topic) => Promise<void>;
+  readJoinedCallIds: () => Promise<string[]>;
   readReminders: () => Promise<ScheduledReminder[]>;
   readScheduledMessages: () => Promise<{ roomId: string; runAt: Date; scheduledId: string }[]>;
   readSentMessages: (input: {
@@ -41,6 +43,7 @@ export interface UserObjectRpc {
     limit: number;
   }) => Promise<{ createdAt: Date; messageId: number; roomId: string }[]>;
   reconcileTodoReminders: (input: ReconcileTodoRemindersInput) => Promise<void>;
+  removeJoinedCall: (callSessionId: string) => Promise<void>;
   // Whether a reminder was there to remove, so a cancel of one that already fired or never existed is told so
   removeReminder: (id: string) => Promise<boolean>;
   removeScheduledMessage: (scheduledId: string) => Promise<void>;

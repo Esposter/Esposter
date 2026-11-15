@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 
+import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createParticipant } from "#server/services/message/call/createParticipant";
 import { getCallObject } from "#server/services/message/call/getCallObject";
 import { createMockAuthSession, createMockCaller, createMockContext } from "#server/trpc/context.test";
@@ -37,6 +38,26 @@ describe("callRouter", () => {
     await expect(joinerCaller.joinCall({ id: callSessionId })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: Must be admitted to join this call]`,
     );
+  });
+
+  // No D1 row names who was admitted to a call without a room, so revoking the joiner's session finds the call here
+  test("joinCall records an admitted joiner's call on the joiner's object", async () => {
+    expect.hasAssertions();
+
+    const creatorCaller = await createMockCaller(callRouter, await createMockAuthSession(mockContext.db));
+    const { callSessionId } = await creatorCaller.createCall();
+    const joinerAuthSession = await createMockAuthSession(mockContext.db);
+    const joinerCaller = await createMockCaller(callRouter, joinerAuthSession);
+    const joinCall = vi.fn<(input: unknown) => Promise<unknown>>(() =>
+      Promise.resolve({ authToken: "auth-token", meetingId: "meeting-id", participantMap: new Map() }),
+    );
+    vi.mocked(getCallObject).mockReturnValueOnce({ joinCall } as unknown as ReturnType<typeof getCallObject>);
+    userObjectCalls.length = 0;
+    await joinerCaller.joinCall({ id: callSessionId });
+
+    expect(userObjectCalls).toStrictEqual([
+      { args: [callSessionId], method: "addJoinedCall", userId: joinerAuthSession.user.id },
+    ]);
   });
 
   test("joinCall returns the join of the call object, and the creator is the doorkeeper", async () => {
