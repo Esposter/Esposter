@@ -1,5 +1,5 @@
-// Every key of each object in a union, rather than the keys the union's members share
-type KeysOf<T> = T extends object ? keyof T : never;
+export type MergeObjectsStrict<T extends object[]> = HasSharedKey<T> extends true ? never : Intersect<T>;
+
 // Whether any two of the objects share a key: each is compared with every object after it, not only its neighbour
 type HasSharedKey<T extends object[]> = T extends [infer TFirst, ...infer TRemaining extends object[]]
   ? [keyof TFirst & KeysOf<TRemaining[number]>] extends [never]
@@ -7,7 +7,7 @@ type HasSharedKey<T extends object[]> = T extends [infer TFirst, ...infer TRemai
     : true
   : false;
 type Intersect<T extends object[]> = T extends [infer TFirst, ...infer TRemaining extends object[]]
-  ? TFirst & Intersect<TRemaining>
+  ? Intersect<TRemaining> & TFirst
   : unknown;
-
-export type MergeObjectsStrict<T extends object[]> = HasSharedKey<T> extends true ? never : Intersect<T>;
+// Every key of each object in a union, rather than the keys the union's members share
+type KeysOf<T> = T extends object ? keyof T : never;
