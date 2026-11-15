@@ -10,7 +10,8 @@ import { SOCKET_IDENTITY_HEADER, SOCKET_IDENTITY_HEADER_PREFIX } from "@esposter
 // The headers the route rules prepared are cleared: h3 rebuilds a returned response that has prepared headers to merge,
 // And the rebuilt response drops the object's socket, so the browser's upgrade fails
 export const forwardSocket = (event: RequestEvent, stub: DurableObjectStub, identity: SocketIdentity) => {
-  for (const name of [...event.res.headers.keys()]) event.res.headers.delete(name);
+  // The names are copied first, since deleting from the headers while iterating them skips the name after each one deleted
+  for (const name of new Set(event.res.headers.keys())) event.res.headers.delete(name);
   return stub.fetch(event.req.url, {
     headers: {
       ...Object.fromEntries([...event.req.headers].filter(([name]) => !name.startsWith(SOCKET_IDENTITY_HEADER_PREFIX))),

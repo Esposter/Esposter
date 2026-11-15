@@ -20,14 +20,8 @@ describe(forwardSocket, () => {
   const createEvent = (headers: Record<string, string>) =>
     ({
       req: new Request(url, { headers: { ...headers, Upgrade: "websocket" } }),
-      res: { headers: new Headers({ "X-Frame-Options": "DENY" }) },
+      res: { headers: new Headers({ "Referrer-Policy": "no-referrer", "X-Frame-Options": "DENY" }) },
     }) as unknown as RequestEvent;
-  const createStub = () => {
-    const fetch = vi.fn<(url: string, init: ForwardedInit) => Promise<Response>>(() =>
-      Promise.resolve(new Response(null)),
-    );
-    return { fetch, stub: { fetch } as unknown as DurableObjectStub };
-  };
 
   test("replaces an identity header the client sent with the identity the Worker verified", async () => {
     expect.hasAssertions();
@@ -63,3 +57,10 @@ describe(forwardSocket, () => {
     expect([...event.res.headers]).toStrictEqual([]);
   });
 });
+
+const createStub = () => {
+  const fetch = vi.fn<(url: string, init: ForwardedInit) => Promise<Response>>(() =>
+    Promise.resolve(new Response(null)),
+  );
+  return { fetch, stub: { fetch } as unknown as DurableObjectStub };
+};
