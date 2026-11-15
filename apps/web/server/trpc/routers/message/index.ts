@@ -75,6 +75,7 @@ import {
   FilterType,
   getMimeCategory,
   getTopic,
+  MAX_FOLLOWED_THREADS,
   MessageType,
   roomIdSchema,
   StorageBucket,
@@ -321,8 +322,9 @@ export const baseMessageRouter = router({
   ).query<ReadFollowedThreadsResult>(async ({ ctx, input: { roomId } }) => {
     const threadRootIds = await readFollowedThreadRootIds(ctx.db, roomId, ctx.user.id);
     if (threadRootIds.length === 0) return { threadRootIds, threads: [] };
-    // The follows come back newest root first, so the object's roots do too. The read drops the deleted ones
-    const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds);
+    // The follows come back newest root first, so the object's roots do too. The drawer lists the newest of them, and the
+    // Follow state keeps every one. The read drops the deleted ones
+    const threads = await useRoomObject(roomId).readMessagesByIds(threadRootIds.slice(0, MAX_FOLLOWED_THREADS));
     return { threadRootIds, threads };
   }),
   readMessages: getMemberProcedure(readMessagesInputSchema, "roomId")
