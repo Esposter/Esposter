@@ -3,8 +3,8 @@ import type { z } from "zod";
 
 import { getDeviceId } from "@/services/realtime/getDeviceId";
 import { openRealtimeSocket } from "@/services/realtime/openRealtimeSocket";
-import { callEventSchema, roomEventSchema, userEventSchema } from "@esposter/db-schema";
-import { getOrCreate, jsonDateParse } from "@esposter/shared";
+import { callEventSchema, MAX_FRAME_TOPICS, roomEventSchema, userEventSchema } from "@esposter/db-schema";
+import { chunk, getOrCreate, jsonDateParse } from "@esposter/shared";
 
 type EventData<TEvent extends { data: unknown; type: string }, TType extends TEvent["type"]> = Extract<
   TEvent,
@@ -129,10 +129,14 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
   const sendUserFrame = (frame: UserClientFrame) => {
     sendUserSocketFrame?.(JSON.stringify(frame));
   };
+  // A frame names at most so many topics, so a tab watching more sends them over several
+  const sendTopicsFrames = (topics: Topic[], type: UserClientFrame["type"]) => {
+    for (const frameTopics of chunk(topics, MAX_FRAME_TOPICS)) sendUserFrame({ data: { topics: frameTopics }, type });
+  };
   const watchTopics = (topics: Topic[], refetch: () => void) => {
     const newTopics = topics.filter((topic) => !topicRefetchesMap.has(topic));
     for (const topic of topics) getOrCreate(topicRefetchesMap, topic, () => new Set()).add(refetch);
-    if (newTopics.length > 0) sendUserFrame({ data: { topics: newTopics }, type: "watch" });
+    sendTopicsFrames(newTopics, "watch");
     return () => {
       const releasedTopics = topics.filter((topic) => {
         const refetches = topicRefetchesMap.get(topic);
@@ -141,7 +145,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
         topicRefetchesMap.delete(topic);
         return true;
       });
-      if (releasedTopics.length > 0) sendUserFrame({ data: { topics: releasedTopics }, type: "unwatch" });
+      sendTopicsFrames(releasedTopics, "unwatch");
     };
   };
   const refetchTopics = (topics: Iterable<Topic>) => {
@@ -161,8 +165,7 @@ export const useConnectionStore = defineStore("realtime/connection", () => {
       },
       {
         onOpen: () => {
-          if (topicRefetchesMap.size > 0)
-            sendUserFrame({ data: { topics: [...topicRefetchesMap.keys()] }, type: "watch" });
+          sendTopicsFrames([...topicRefetchesMap.keys()], "watch");
         },
         onReopen: () => {
           refetchTopics(topicRefetchesMap.keys());
