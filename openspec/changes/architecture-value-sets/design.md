@@ -2,9 +2,7 @@
 
 ## Context
 
-The repository declares several hundred closed sets of named values: element kinds, permission bits, message types, achievement names, scene and texture keys. Nearly all are TypeScript `enum`s. An `enum` is not erasable syntax: it compiles to a runtime object, so Node's type stripping, which only removes types, refuses it, and Node has dropped the transform flag that once ran it. The graphs Node loads with no transform — the Nuxt configuration's, a Nuxt module's, a Claude Code plugin's hooks and commands — therefore declare their sets as `as const` objects, and the typescript skill keeps a list of which graphs those are. Two forms of one idea, and a list deciding between them, is the cost.
-
-Sets sharing one namespace — the achievement name column, Phaser's texture cache, a chart's type — are combined from per-feature sets by `mergeObjectsStrict`. Its runtime is `Object.assign`, which lets a repeated key overwrite the earlier one, and its type recurses pairwise over neighbours only, so a key shared by the first and third set passes. Nothing has collided yet; nothing would say so if it did.
+The repository declares several hundred closed sets of named values: element kinds, permission bits, message types, achievement names, scene and texture keys. The proposal's Why gives the two forms and the merge's defect. The decisions below settle the one form, how a member is typed, and the merge's check. Nothing has collided yet, and nothing would say so if it did.
 
 ## Goals
 
