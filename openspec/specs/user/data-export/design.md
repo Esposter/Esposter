@@ -12,7 +12,7 @@ The stores this reads are the ones in the [user data inventory](../../architectu
 
 **Links are short-lived and owner-only.** The download is a presigned read URL valid for fifteen minutes (`DATA_EXPORT_LINK_DURATION_MS`), minted on request for the owner of a ready, unexpired export. The archive itself is private, so a link is the only way in.
 
-**Expiry is enforced twice.** The row carries an expiry seven days after it is ready (`DATA_EXPORT_RETENTION`), and the bucket's lifecycle rule deletes the object after the same period. A link is refused once the row has expired, even if the object still exists.
+**Expiry is enforced twice.** The row carries an expiry seven days after it is ready (`DATA_EXPORT_RETENTION_MS`), and the user assets bucket's lifecycle rule (`apps/infra/src/cloudflare/resources/r2BucketLifecycles/`) deletes everything under `DATA_EXPORT_BLOB_PREFIX` after the same period. A link is refused once the row has expired, even if the object still exists.
 
 **One export is active per person.** A second request while one is queued or building returns the first one's status. This bounds the work an account can start.
 

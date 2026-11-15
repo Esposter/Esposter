@@ -1,9 +1,9 @@
 import { publishTopics } from "#src/services/realtime/publishTopics";
 import { db } from "#src/services/shared/db";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
-import { DATA_EXPORT_RETENTION } from "#src/services/user/constants";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import {
+  DATA_EXPORT_RETENTION_MS,
   dataExportsInUser,
   DataExportStatus,
   exportUserDataQueueMessageSchema,
@@ -36,7 +36,7 @@ export const exportUserDataHandler = async (body: unknown): Promise<void> => {
       await db
         .update(dataExportsInUser)
         .set({
-          expiresAt: new Date(readyAt.add(DATA_EXPORT_RETENTION).epochMilliseconds),
+          expiresAt: new Date(readyAt.epochMilliseconds + DATA_EXPORT_RETENTION_MS),
           readyAt: new Date(readyAt.epochMilliseconds),
           status: DataExportStatus.Ready,
         })
