@@ -7,11 +7,11 @@ describe("aItemEntitySchema", () => {
   test("an id of another version is refused", () => {
     expect.hasAssertions();
 
-    // The real id with only its version digit moved to 7
+    // The real id with only its version digit moved to 4
     const realId = v7();
-    const versionSevenId = `${realId.slice(0, 14)}7${realId.slice(15)}`;
+    const versionFourId = `${realId.slice(0, 14)}4${realId.slice(15)}`;
 
-    expect(aItemEntitySchema.shape.id.safeParse(versionSevenId).success).toBe(false);
+    expect(aItemEntitySchema.shape.id.safeParse(versionFourId).success).toBe(false);
   });
 
   test("a fixed id passes", () => {
