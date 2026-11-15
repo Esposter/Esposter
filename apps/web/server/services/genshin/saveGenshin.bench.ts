@@ -3,20 +3,22 @@ import type { GenshinSave } from "genshin-world/save";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
 import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { transformer } from "#shared/services/trpc/transformer";
+import { createMockBucket } from "@esposter/db-mock";
 import { getSaveBlobName, StorageBucket } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";
 import { v7 } from "uuid";
-import { describe, test } from "vitest";
+import { afterAll, beforeAll, describe, test } from "vitest";
 
 // The bag is the one collection that reaches its ceiling, so its entry count is the scale: a typical bag,
 // Then the most the schema admits
 const BENCH_BAG_ENTRY_COUNTS = [1000, MAX_INVENTORY_ITEM_COUNT];
 // The ETag a save is sent under, and one the blob never carries, which a write under it is refused for
-const SAVE_ETAG = '"save"';
-const STALE_ETAG = '"stale"';
+const SAVE_ETAG = "save";
+const STALE_ETAG = "stale";
 // A save whose bag holds the given number of stacks, with the rest of it a new player's
 const createSave = (bagEntryCount: number): GenshinSave => ({
   ...EMPTY_GENSHIN_SAVE,
@@ -66,6 +68,19 @@ describe("client stringify and send", () => {
 // Of its own, and the PUT threads the ETag each write returns into the next one, as a session's saves do. The save
 // Is read-only, so it is built once per scale
 describe(saveGenshin, () => {
+  let dispose: () => Promise<void>;
+
+  beforeAll(async () => {
+    let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.GenshinAssets));
+    mockBuckets[StorageBucket.GenshinAssets] = bucket;
+  });
+
+  afterAll(async () => {
+    delete mockBuckets[StorageBucket.GenshinAssets];
+    await dispose();
+  });
+
   test.for(BENCH_BAG_ENTRY_COUNTS)("%i bag entries", async (bagEntryCount, { bench }) => {
     const save = createSave(bagEntryCount);
     const sessionId = v7();

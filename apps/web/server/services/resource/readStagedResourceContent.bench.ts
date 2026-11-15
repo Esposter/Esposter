@@ -2,16 +2,18 @@ import { getStagingContentBlobName } from "#server/services/resource/getStagingC
 import { readResourceContentDelta } from "#server/services/resource/readResourceContentDelta";
 import { readStagedResourceContent } from "#server/services/resource/readStagedResourceContent";
 import { getBucket } from "#server/services/storage/getBucket";
+import { mockBuckets } from "#server/services/storage/getBucket.test";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { getContentBlobName, writeJsonBlob } from "@esposter/db";
+import { createMockBucket } from "@esposter/db-mock";
 import { StorageBucket } from "@esposter/db-schema";
 import { DEFAULT_COMPRESSION_LEVEL, getWindowLog } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { createHash } from "node:crypto";
 import { constants, gzipSync, zstdCompressSync } from "node:zlib";
 import { v7 } from "uuid";
-import { describe, test } from "vitest";
+import { afterAll, beforeAll, describe, test } from "vitest";
 
 const BENCH_DOCUMENT_BYTE_COUNTS = [1_000_000, 10_000_000];
 // Rows of a Sheet-like document, the one resource type that reaches these sizes
@@ -26,6 +28,19 @@ const createDocument = (byteCount: number, editedIndex = -1) =>
 // The delta one a download of the stored document — so the parse every save pays anyway is the floor each is read
 // Against, and the gap between them is what the transport itself costs the server
 describe(readStagedResourceContent, () => {
+  let dispose: () => Promise<void>;
+
+  beforeAll(async () => {
+    let bucket: Awaited<ReturnType<typeof createMockBucket>>["bucket"];
+    ({ bucket, dispose } = await createMockBucket(StorageBucket.ResourceAssets));
+    mockBuckets[StorageBucket.ResourceAssets] = bucket;
+  });
+
+  afterAll(async () => {
+    delete mockBuckets[StorageBucket.ResourceAssets];
+    await dispose();
+  });
+
   test.for(BENCH_DOCUMENT_BYTE_COUNTS)("%i bytes", async (byteCount, { bench }) => {
     const id = v7();
     const baseline = Buffer.from(createDocument(byteCount));
