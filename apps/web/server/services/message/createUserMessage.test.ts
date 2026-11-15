@@ -34,6 +34,24 @@ const { roomObject } = vi.hoisted(() => ({
 vi.mock(import("#server/composables/realtime/useRoomObject"), () => ({
   useRoomObject: () => roomObject as unknown as ReturnType<typeof useRoomObject>,
 }));
+// A racing send of the same member's lands between the gate's decision and the claim, as a real write to the member's
+// Clock, so the claim this send makes against the clock it read loses
+const { racingSend } = vi.hoisted(() => ({
+  racingSend: { remaining: 0, write: (): Promise<unknown> => Promise.resolve() },
+}));
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    getMessageCreationRejection: async (...args: Parameters<typeof original.getMessageCreationRejection>) => {
+      if (racingSend.remaining > 0) {
+        racingSend.remaining -= 1;
+        await racingSend.write();
+      }
+      return original.getMessageCreationRejection(...args);
+    },
+  };
+});
 
 describe(createUserMessage, () => {
   let mockContext: Context;
@@ -52,6 +70,9 @@ describe(createUserMessage, () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
+    roomObject.createMessage.mockReset();
+    roomObject.readMessagesByIds.mockReset();
+    racingSend.remaining = 0;
     MockJobQueueDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
   });
@@ -93,6 +114,26 @@ describe(createUserMessage, () => {
       { files: [], message, replyToId, roomId, type: MessageType.Message },
     );
   };
+
+  // A claim lost to the member's own racing send decides again, and a room without slowmode refuses none of them
+  test("takes a send whose claim lost twice to the member's racing sends in a room with no slowmode", async () => {
+    expect.hasAssertions();
+
+    const room = await createRoom();
+    let racedAt = Date.now();
+    racingSend.remaining = 2;
+    racingSend.write = () => {
+      racedAt += 1;
+      return mockContext.db
+        .update(usersToRoomsInMessage)
+        .set({ lastMessageAt: new Date(racedAt) })
+        .where(eq(usersToRoomsInMessage.userId, rootAuthor.user.id));
+    };
+    const newMessage = await postRoot(room.id);
+
+    expect(newMessage.id).toBe(rootId);
+    expect(racingSend.remaining).toBe(0);
+  });
 
   // Discord notifies you when someone replies to your message, so the root's author follows their own thread
   // The moment it becomes one — otherwise the thread pipeline reaches everyone who replied and never the one
