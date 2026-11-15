@@ -7,7 +7,7 @@
 
 ## 2. The cutover command
 
-- [ ] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-tables`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
+- [x] 2.1 Build `inventory`, `snapshot`, `copy-objects`, `copy-tables`, `copy-core`, `rewrite-urls`, `reschedule` and `verify`, each idempotent and resumable. Verified by their tests over Miniflare and a Postgres test database.
 - [x] 2.2 Freeze by disconnecting Railway's source and removing its running deployment, with no maintenance mode in the old app (design, "The freeze"). Verified on develop: 404 while frozen, 200 after the abort's pinned redeploy, 404 again once refrozen.
 
 ## 3. Rehearsal

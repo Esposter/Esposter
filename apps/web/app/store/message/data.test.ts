@@ -42,6 +42,8 @@ describe(useDataStore, () => {
   const size = 1;
   const baseFile = { filename, hasThumbnail: false, isSpoiler: false, mimetype, size };
   const createFile = (newFilename = filename) => new File([message], newFilename, { type: mimetype });
+  // The room numbers the messages it stores from one, and a mutation names one of those ids rather than a bubble's
+  const roomMessageId = 1;
 
   beforeAll(() => {
     router = useRouter();
@@ -399,7 +401,10 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId);
+    const newMessage = {
+      ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId),
+      id: roomMessageId,
+    };
     getSlice(newMessage.roomId).items.value = [newMessage];
     const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
     await Promise.all([
@@ -421,7 +426,10 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { getSlice, updateMessage } = dataStore;
-    const newMessage = createOptimisticMessage({ message: "", roomId, type: MessageType.Message }, userId);
+    const newMessage = {
+      ...createOptimisticMessage({ message: "", roomId, type: MessageType.Message }, userId),
+      id: roomMessageId,
+    };
     getSlice(newMessage.roomId).items.value = [newMessage];
     await updateMessage({ id: newMessage.id, message: rejectedMessage, roomId: newMessage.roomId });
 
@@ -442,19 +450,22 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { items } = storeToRefs(dataStore);
     const { deleteFile, getSlice } = dataStore;
-    const newMessage = createOptimisticMessage(
-      {
-        files: [
-          { ...baseFile, id: acceptedFileId },
-          { ...baseFile, id: rejectedFileId },
-          { ...baseFile, id: keptFileId },
-        ],
-        message,
-        roomId,
-        type: MessageType.Message,
-      },
-      userId,
-    );
+    const newMessage = {
+      ...createOptimisticMessage(
+        {
+          files: [
+            { ...baseFile, id: acceptedFileId },
+            { ...baseFile, id: rejectedFileId },
+            { ...baseFile, id: keptFileId },
+          ],
+          message,
+          roomId,
+          type: MessageType.Message,
+        },
+        userId,
+      ),
+      id: roomMessageId,
+    };
     getSlice(newMessage.roomId).items.value = [newMessage];
     const messageKey = { id: newMessage.id, roomId: newMessage.roomId };
     await Promise.all([

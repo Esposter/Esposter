@@ -18,9 +18,13 @@ describe(useReadMessageMetadata, () => {
   test("reads only the replies a message names", async () => {
     expect.hasAssertions();
 
-    const reply = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
-    const replyingMessage = createOptimisticMessage({ replyToId: reply.id, roomId, type: MessageType.Message }, userId);
-    const message = createOptimisticMessage({ roomId, type: MessageType.Message }, userId);
+    // The room numbers each message, so a read asks after positive ids rather than a bubble's negative one
+    const reply = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: 2 };
+    const replyingMessage = {
+      ...createOptimisticMessage({ replyToId: reply.id, roomId, type: MessageType.Message }, userId),
+      id: 1,
+    };
+    const message = { ...createOptimisticMessage({ roomId, type: MessageType.Message }, userId), id: 3 };
     const readMessagesByIdsInputs: ReadMessagesByIdsInput[] = [];
     trpcMsw.message.readMessagesByIds.query(({ input }) => {
       readMessagesByIdsInputs.push(input);

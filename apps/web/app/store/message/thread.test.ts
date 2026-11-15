@@ -27,6 +27,12 @@ describe(useThreadStore, () => {
   const threadRootId = 1;
   const createReply = (replyToId: ClientMessage["id"] | null = null) =>
     createOptimisticMessage({ message, replyToId, roomId, type: MessageType.Message }, userId);
+  // A reply the thread read returns is a row the room numbered, where a bubble the sender holds has a negative id
+  const roomReplyId = 2;
+  const createRoomReply = (replyToId: ClientMessage["id"] | null = null) => ({
+    ...createReply(replyToId),
+    id: roomReplyId,
+  });
 
   beforeEach(() => {
     // Every read that returns replies reads their authors, the root they quote and their reactions too, which no
@@ -34,12 +40,14 @@ describe(useThreadStore, () => {
     trpcMsw.room.readUsersByIds.query(() => []);
     trpcMsw.message.readMessagesByIds.query(() => []);
     trpcMsw.message.emoji.readReactions.query(() => []);
+    // Opening a thread loads the follow state of its room, which no test here is about
+    trpcMsw.message.readFollowedThreads.query(() => ({ threadRootIds: [], threads: [] }));
   });
 
   test("opens the drawer on the thread it read", async () => {
     expect.hasAssertions();
 
-    const reply = createReply();
+    const reply = createRoomReply();
     trpcMsw.message.readThread.query(() => [reply]);
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
@@ -84,13 +92,13 @@ describe(useThreadStore, () => {
     expect(isRightDrawerOpen.value).toBe(true);
 
     closeThread();
-    resolveRead([createReply()]);
+    resolveRead([createRoomReply()]);
     await openPromise;
 
     expect(threadMessages.value).toStrictEqual([]);
     expect(isRightDrawerOpen.value).toBe(false);
     expect(activeRoomId.value).toBe("");
-    expect(activeThreadRootId.value).toBe("");
+    expect(activeThreadRootId.value).toBe(0);
   });
 
   // A reply renders its attachments, the message it quotes and its reactions from the room's metadata, and a thread
@@ -107,10 +115,13 @@ describe(useThreadStore, () => {
       mimetype: MimeType.Png,
       size: 1,
     };
-    const reply = createOptimisticMessage(
-      { files: [file], message, replyToId: threadRootId, roomId, type: MessageType.Message },
-      userId,
-    );
+    const reply = {
+      ...createOptimisticMessage(
+        { files: [file], message, replyToId: threadRootId, roomId, type: MessageType.Message },
+        userId,
+      ),
+      id: roomReplyId,
+    };
     trpcMsw.message.readThread.query(() => [reply]);
     trpcMsw.message.generateDownloadFilePresignedUrls.query(() => [url]);
     await mountThreadDrawer();
@@ -163,7 +174,7 @@ describe(useThreadStore, () => {
     await readStarted;
     const liveReply = createReply(threadRootId);
     await MessageHookMap[Operation.Create].run(liveReply);
-    const readReply = createReply(threadRootId);
+    const readReply = createRoomReply(threadRootId);
     resolveRead([readReply]);
     await openPromise;
 
@@ -189,7 +200,7 @@ describe(useThreadStore, () => {
   test("closes the pane when the root is deleted", async () => {
     expect.hasAssertions();
 
-    trpcMsw.message.readThread.query(() => [createReply(threadRootId)]);
+    trpcMsw.message.readThread.query(() => [createRoomReply(threadRootId)]);
     await mountThreadDrawer();
     const layoutStore = useLayoutStore();
     const { isRightDrawerOpen } = storeToRefs(layoutStore);
@@ -199,7 +210,7 @@ describe(useThreadStore, () => {
     await openThread(roomId, threadRootId);
     await MessageHookMap[Operation.Delete].run({ id: threadRootId, roomId });
 
-    expect(activeThreadRootId.value).toBe("");
+    expect(activeThreadRootId.value).toBe(0);
     expect(threadMessages.value).toStrictEqual([]);
     expect(isRightDrawerOpen.value).toBe(false);
   });

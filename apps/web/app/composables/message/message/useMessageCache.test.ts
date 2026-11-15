@@ -66,7 +66,10 @@ describe(useMessageCache, () => {
     const userId = getMockSession().user.id;
     await mountCache();
     const loadedData = new CursorPaginationData<ClientMessage>();
-    loadedData.items = [createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId)];
+    // The send adds the loading flag to the bubble it renders, which the optimistic factory leaves to it
+    loadedData.items = [
+      { ...createOptimisticMessage({ message, roomId, type: MessageType.Message }, userId), isLoading: true },
+    ];
     // Through the store hook a read would use, so the room counts as loaded — an unloaded room persists nothing
     // At all, which would leave the filter untested
     getSlice(roomId).initializeCursorPaginationData(loadedData);

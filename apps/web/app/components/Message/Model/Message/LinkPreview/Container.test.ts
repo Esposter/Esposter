@@ -27,8 +27,12 @@ describe("messageModelMessageLinkPreviewContainer", () => {
     trpcMsw.message.deleteLinkPreviewResponse.mutation(async () => {
       await deleteGate;
     });
-    const message = createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, v7());
-    message.linkPreviewResponse = linkPreviewResponse;
+    // The room numbers the message it holds, so the removal names a positive id rather than a bubble's negative one
+    const message = {
+      ...createOptimisticMessage({ roomId: otherRoomId, type: MessageType.Message }, v7()),
+      id: 1,
+      linkPreviewResponse,
+    };
     const component = await mountSuspended(MessageModelMessageLinkPreviewContainer, {
       props: { linkPreviewResponse, messageId: message.id, roomId: message.roomId },
     });
