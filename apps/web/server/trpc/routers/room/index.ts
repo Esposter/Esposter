@@ -84,6 +84,7 @@ import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 import { and, count, desc, eq, getColumns, gt, inArray, isNull, lt, ne, not, notExists, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/sqlite-core";
 import { v7 } from "uuid";
+import { z } from "zod";
 
 export const baseRoomRouter = router({
   createRoom: getTopicsProcedure(getProfanityFilterProcedure(createRoomInputSchema, ["name"]), ({ ctx }) =>
@@ -392,10 +393,18 @@ export const baseRoomRouter = router({
           .limit(1)
       )[0];
   }),
-  readRooms: getTopicsProcedure(getMemberProcedure(readRoomsInputSchema, "roomId"), ({ ctx, input: { roomId } }) => [
-    ...(roomId === undefined ? [] : [getTopic(TopicKind.Room, roomId)]),
-    ...getRoomListTopics(ctx.user.id),
-  ]).query<CursorPaginationData<RoomInMessage & { displayName: string }>>(
+  // Each listed room's own topic too, since the sidebar shows its name and image, which change without the list doing so
+  readRooms: getTopicsProcedure(
+    getMemberProcedure(readRoomsInputSchema, "roomId"),
+    ({ ctx, input: { roomId }, output }) => [
+      ...(roomId === undefined ? [] : [getTopic(TopicKind.Room, roomId)]),
+      ...getRoomListTopics(ctx.user.id),
+      ...z
+        .object({ items: z.array(selectRoomInMessageSchema.pick({ id: true })) })
+        .parse(output)
+        .items.map(({ id }) => getTopic(TopicKind.Room, id)),
+    ],
+  ).query<CursorPaginationData<RoomInMessage & { displayName: string }>>(
     async ({ ctx, input: { cursor, filter, includeDirectMessages, limit, roomId, sortBy } }) => {
       const innerJoinCondition = and(
         eq(usersToRoomsInMessage.roomId, roomsInMessage.id),

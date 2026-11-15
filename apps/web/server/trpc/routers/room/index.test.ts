@@ -20,6 +20,7 @@ import { roomRouter } from "#server/trpc/routers/room";
 import { createDirectMessageWithFriend } from "#server/trpc/routers/room/createDirectMessageWithFriend.test";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
+import { readTopicsHeader } from "#shared/services/realtime/readTopicsHeader";
 import { INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
 import { InviteExpireAfterMinutesMap } from "#shared/services/room/invite/InviteExpireAfterMinutesMap";
 import { deleteDirectory } from "@esposter/db";
@@ -27,6 +28,7 @@ import { createMockBucket } from "@esposter/db-mock";
 import {
   DatabaseEntityType,
   friendsInSocial,
+  getTopic,
   MAX_BLOB_DELETION_MESSAGE_BLOB_NAMES,
   MessageType,
   PublicUserColumns,
@@ -34,6 +36,7 @@ import {
   RoomPermission,
   roomsInMessage,
   StorageBucket,
+  TopicKind,
   userStatusesInMessage,
   usersToRoomsInMessage,
   WRITE_PRESIGNED_URL_DURATION_MS,
@@ -137,6 +140,19 @@ describe("roomRouter", () => {
     const rooms = await roomCaller.readRooms();
 
     expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
+  });
+
+  test("watches each listed room's own topic, so a renamed room refreshes the sidebar", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const readContext = await createMockContext();
+    await createCallerFactory(roomRouter)(readContext).readRooms();
+
+    expect(readTopicsHeader(readContext.responseHeaders, "readRooms")).toStrictEqual([
+      getTopic(TopicKind.RoomList, getMockSession().user.id),
+      getTopic(TopicKind.Room, newRoom.id),
+    ]);
   });
 
   test("reads multiple with roomId with inclusive filter", async () => {
