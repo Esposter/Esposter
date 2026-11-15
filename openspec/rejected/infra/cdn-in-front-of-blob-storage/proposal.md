@@ -1,4 +1,4 @@
-# CDN in front of Blob storage
+# CDN in front of the asset buckets
 
 ## Why
 

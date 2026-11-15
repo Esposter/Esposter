@@ -88,7 +88,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Load-echoed autosave or an unedited explicit save never bumps contentVersion over the wire.
   // Content stores seed it after hydrating so the first debounced watch tick has something to compare against
   let persistedContentJson = "";
-  // The stored bytes this client holds — read straight from Blob Storage, or sent by a save whose hash the server
+  // The stored bytes this client holds — read straight from R2, or sent by a save whose hash the server
   // Confirmed — which is what a large document's next save is compressed against. Not reactive and not persisted:
   // Nothing renders it, and a reload reads the bytes afresh
   let contentBaseline: ContentBaseline | undefined;
@@ -219,7 +219,7 @@ export const useResourceStore = defineStore("resource", () => {
     latestContentRead = contentRead;
     const resourceRouter = getResourceRouter(type);
     // A read crosses the way a save of the same document would: through the server while one body carries it,
-    // Straight from Blob Storage above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the
+    // Straight from R2 above that (openspec/specs/architecture/large-documents/design.md). The stored bytes are then the
     // Delta baseline as well, so a session's first large save can already be a delta
     let storedContent: ContentBaseline | undefined;
     let content: unknown;
@@ -339,7 +339,7 @@ export const useResourceStore = defineStore("resource", () => {
         const input = { content: issuedContent, contentVersion: target.contentVersion, id: target.id };
         const baseline = contentBaseline?.id === target.id ? contentBaseline : undefined;
         // A body the server's request size limiter would refuse goes as a delta against the stored bytes when this
-        // Client holds them, and staged through Blob Storage otherwise. The body is measured as the transformer
+        // Client holds them, and staged through R2 otherwise. The body is measured as the transformer
         // Writes it, never as the content's own JSON, which is smaller — but only once the JSON alone is under the
         // Limit, since the body is never smaller than it
         const savedResource =

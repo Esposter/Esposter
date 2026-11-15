@@ -1,6 +1,6 @@
 ## Purpose
 
-A document crosses the server only while one request body carries it and only where the server has to interpret it — anything larger moves between the browser and Blob Storage through a signed url, an edit to it crosses as a delta, and a write that changes nothing stores no new bytes.
+A document crosses the server only while one request body carries it and only where the server has to interpret it — anything larger moves between the browser and R2 through a signed url, an edit to it crosses as a delta, and a write that changes nothing stores no new bytes.
 
 ## Requirements
 

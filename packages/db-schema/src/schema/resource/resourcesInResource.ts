@@ -26,7 +26,7 @@ export const resourcesInResource = sqliteTable(
     contentHash: text().notNull().default(""),
     // The byte length of the content's JSON, written with its hash — not the compressed length the blob is stored
     // And charged at. A client picks how a read crosses by it the way a save picks by the body it would send: a
-    // Document one request body carries comes through the server, a larger one straight from Blob Storage.
+    // Document one request body carries comes through the server, a larger one straight from R2.
     // Design: openspec/specs/architecture/large-documents/design.md
     contentSize: integer().notNull().default(0),
     contentVersion: integer().notNull().default(0),

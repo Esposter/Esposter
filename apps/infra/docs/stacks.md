@@ -1,10 +1,10 @@
 # Pulumi Stacks
 
-Pulumi stacks are isolated state and configuration records for the same Pulumi program. A stack name does not automatically filter which Azure resources are managed.
+Pulumi stacks are isolated state and configuration records for the same Pulumi program. A stack name does not automatically filter which Cloudflare resources are managed.
 
 ## Current State
 
-One unified stack owns all Azure resources in the subscription. Both development (`dev-*`) and production (`prod-*`) resources are declared together in the Pulumi program.
+One unified stack owns all Cloudflare resources in the account. Both development (`dev-*`) and production (`prod-*`) resources are declared together in the Pulumi program.
 
 The stack is named `prod`.
 

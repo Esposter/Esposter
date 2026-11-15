@@ -34,7 +34,7 @@ Guard clauses over nested conditionals. `InvalidOperationError` for impossible s
 
 ## Testing — 10 / 10
 
-Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. PGlite provides in-memory PostgreSQL for server tests — no real DB required. Queue job logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `queue` entry in `apps/jobs/src/worker.ts`, has no test of its own, since a test of that wiring fails only on a deliberate edit.
+Several hundred test files, concentrated in `app` but present in every package that holds logic. Benchmarks cover the sheet editor hot paths. Miniflare provides an in-memory D1 for server tests — no real DB required. Queue job logic lives in extracted `handlers/` and is directly tested wherever a handler holds any; a handler that only configures a tested primitive, like the thin `queue` entry in `apps/jobs/src/worker.ts`, has no test of its own, since a test of that wiring fails only on a deliberate edit.
 
 **Accepted trade-off:** untested Pinia stores are Phaser game-engine state (dungeons, clicker) that cannot be meaningfully exercised outside the canvas runtime, or thin CRUD holders with no logic to assert.
 
@@ -66,11 +66,11 @@ These **pre-release packages sit in production paths**:
 
 UnoCSS `presetAttributify` + `presetWind4` project-wide: static styles as element attributes, `class` reserved for dynamic bindings. The app's own UI library draws every interface on Vuetify 0's headless primitives, with no second component library or theme system beside it, and its design tokens — CSS custom properties per design style and mode — are the UnoCSS theme colours, a single source of truth for colour. Cascade managed via `outputToCssLayers`, over wind4's own reset. Dark mode wired through the `data-theme` attribute a theme scope carries, so a region in another mode needs no media query. Images are `<NuxtImg>` sized in CSS — a raw `<img>` is a lint error.
 
-**Accepted trade-off:** no automated visual regression testing of the app's own interface — the seeding layer (real-time messages, Azure Table, WebPubSub, env-gated features) makes generic snapshot coverage impractical until the UI stabilises. Visual drift is caught by manual review. The Genshin packages hold their own screenshot suites.
+**Accepted trade-off:** no automated visual regression testing of the app's own interface — the seeding layer (real-time messages over the Durable Objects' sockets, D1 rows, env-gated features) makes generic snapshot coverage impractical until the UI stabilises. Visual drift is caught by manual review. The Genshin packages hold their own screenshot suites.
 
 ## CI / CD — 10 / 10
 
-The workflows are CI, Bench, CodeQL (on `ai/queue`, `main` and weekly), Scorecard, Release (nightly, of `main`) with FinishRelease behind it, MergeMain, Pulumi (infra preview on a push to `ai/queue`), Delete Merged Branch, Claude warmup, the Review running its own script, a reusable build, and one Azure Functions deployment whose branch picks the stack (ai/queue → dev, main → prod).
+The workflows are CI, Bench, CodeQL (on `ai/queue`, `main` and weekly), Scorecard, Release (nightly, of `main`) with FinishRelease behind it, MergeMain, Pulumi (infra preview on a push to `ai/queue`), Delete Merged Branch, Claude warmup, the Review running its own script, a reusable build, and one Deploy workflow that ships the three Workers, whose branch picks the environment (ai/queue → dev, main → prod).
 
 CI builds every non-app package once via the reusable `build-packages` workflow, which every package-consuming job (`build`, `coverage`, and the `check` matrix that fans out `lint` and `typecheck`) gates on. Its `actions/cache` entry is keyed by content hash and shared repo-wide, so a CI build gives Bench a cache hit for free, and vice versa — the common app-only commit skips the build entirely. Tests run through one root `vitest.config.ts` `projects` config, so coverage runs as a `--shard` matrix with `--reporter=blob`, feeding a dependent `coverage-merge` job that recombines the blobs into one artifact.
 

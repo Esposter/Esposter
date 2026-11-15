@@ -41,14 +41,11 @@ Install the Pulumi CLI before you run a stack command. The `@pulumi/pulumi` depe
 
 Secrets come only from the `esposter-infra/prod` Pulumi ESC environment, which `Pulumi.prod.yaml` imports. Do not run `pulumi config set --secret`: it writes the ciphertext into that tracked file.
 
-1. Authenticate to Azure on the local machine:
+1. Sign in to Pulumi Cloud on the local machine, which serves the stack and its ESC environment:
 
    ```bash
-   az login
-   az account set --subscription "<subscription-id>"
+   pulumi login
    ```
-
-   Replace `<subscription-id>` with your subscription ID.
 
 2. Select the stack:
 
@@ -59,7 +56,7 @@ Secrets come only from the `esposter-infra/prod` Pulumi ESC environment, which `
 
 ## <a name="commands">⌨️ Commands</a>
 
-Run these commands from `apps/infra/`. The program still declares the Azure resources, so an untargeted `pulumi up` changes them too: pass `--target` for the Cloudflare or GitHub resources.
+Run these commands from `apps/infra/`.
 
 ```bash
 pnpm build             # regenerate the barrel and compile the Pulumi program to dist/

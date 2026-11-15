@@ -153,7 +153,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       });
       return deletedResource;
     }),
-    // A document larger than one request body is read straight from Blob Storage, so the server signs the read
+    // A document larger than one request body is read straight from R2, so the server signs the read
     // And never holds the bytes. Used the moment it is issued, so it lives minutes rather than the attachment default
     generateReadContentPresignedUrl: getOwnerProcedure(type, resourceIdInputSchema, "id")
       .meta({ staticReason: "The presigned address the content is read through, which names no state a reader shows" })
@@ -230,7 +230,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
         resource: ctx.resource,
       });
     }),
-    // A document too large for one request body is uploaded straight to Blob Storage first and committed here by
+    // A document too large for one request body is uploaded straight to R2 first and committed here by
     // Reference, reaching the same door with the same version check (openspec/specs/architecture/file-uploads/design.md)
     saveStagedResourceContent: getTopicsProcedure(
       getOwnerProcedure(type, saveStagedResourceContentInputSchema, "id"),

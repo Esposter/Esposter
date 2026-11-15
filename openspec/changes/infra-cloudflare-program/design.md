@@ -71,7 +71,7 @@ The order that matters is the live path. The web Worker authorises against D1 an
 
 **The size ceiling is measured, not assumed.** A Worker's code is capped at 64 MiB uncompressed with no compressed limit. The last `node-server` build was about 50 MB of JavaScript without source maps, much of it client-only libraries the server never runs. The [runtime part](../infra-cloudflare-runtime/design.md) keeps those out of the server bundle and records the build's size in CI against the cap.
 
-**These decisions overturn three settled ones.** [CDN in front of Railway](../../rejected/infra/cdn-in-front-of-railway/design.md) and [LiveKit stack trim](../../rejected/infra/livekit-stack-trim/design.md) were argued from staying on Railway and waiting for it to route UDP; the program leaves Railway instead. The [cross-process event bridge](../../deferred/esbabbler/cross-process-event-bridge/design.md) stays deferred, for the reason above. Each page is rewritten when the cutover ships.
+**These decisions supersede three settled ones.** The rejected CDN in front of Railway and LiveKit stack trim were argued from staying on Railway and waiting for it to route UDP, and the rejected search index capacity priced an Azure AI Search tier; the program leaves Railway and Azure, so the three pages are deleted with the estate they reasoned about. The [cross-process event bridge](../../deferred/esbabbler/cross-process-event-bridge/design.md) stays deferred, for the reason above.
 
 ## Conventions every part follows
 

@@ -273,9 +273,9 @@ describe(useResourceStore, () => {
     });
   });
 
-  // A document one body cannot carry is read from Blob Storage rather than through the server, and the bytes read
+  // A document one body cannot carry is read from R2 rather than through the server, and the bytes read
   // Are the stored ones, so a session's first large save needs no full save to earn a baseline
-  test("reads a large document from Blob Storage and saves its first edit as a delta against those bytes", async () => {
+  test("reads a large document from R2 and saves its first edit as a delta against those bytes", async () => {
     expect.hasAssertions();
 
     const loadedContent = createLargeSheetResource(" ");

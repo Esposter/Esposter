@@ -1,6 +1,6 @@
 ## Purpose
 
-Every JSON document the app stores in Blob Storage is a zstd frame served with Content-Encoding zstd, written by one writer and read by one reader, so the blob, its quota charge and every read shrink several times over and any change to the path reaches every document at once.
+Every JSON document the app stores in R2 is a zstd frame served with Content-Encoding zstd, written by one writer and read by one reader, so the blob, its quota charge and every read shrink several times over and any change to the path reaches every document at once.
 
 ## Requirements
 
