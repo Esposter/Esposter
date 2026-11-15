@@ -163,21 +163,30 @@ export const postRouter = router({
     requireMutation(deletedCommentRows[0], Operation.Delete, DerivedDatabaseEntityType.Comment, input);
     return { ancestorIds, removedIds: removedRows.map(({ id }: Pick<PostInPost, "id">) => id) };
   }),
-  deletePost: getTopicsProcedure(standardAuthedProcedure.input(deletePostInputSchema), ({ input }) =>
-    getPostTopics(input),
-  ).mutation<PostInPost>(async ({ ctx, input }) =>
-    requireMutation(
-      (
-        await ctx.db
-          .delete(postsInPost)
-          .where(and(ownedBy(postsInPost, input, ctx.user.id), isNull(postsInPost.parentId)))
-          .returning()
-      )[0],
-      Operation.Delete,
-      DatabaseEntityType.Post,
-      input,
-    ),
-  ),
+  // The post and every reply the cascade removes beneath it, each of whose pages goes with the delete
+  deletePost: getTopicsProcedure(standardAuthedProcedure.input(deletePostInputSchema), ({ output }) =>
+    getPostTopics(...z.array(z.string()).parse(output)),
+  ).mutation<PostInPost["id"][]>(async ({ ctx, input }) => {
+    const ownedPost = and(ownedBy(postsInPost, input, ctx.user.id), isNull(postsInPost.parentId));
+    // Read in the batch with the delete, so a reply landing in between is either named or never written
+    const [removedRows, deletedPostRows] = await ctx.db.batch([
+      ctx.db
+        .select({ id: postsInPost.id })
+        .from(postsInPost)
+        .where(
+          and(
+            or(
+              eq(postsInPost.id, input),
+              sql`exists (select 1 from json_each(${postsInPost.ancestorIds}) where json_each.value = ${input})`,
+            ),
+            sql`exists (select 1 from ${postsInPost} where ${ownedPost})`,
+          ),
+        ),
+      ctx.db.delete(postsInPost).where(ownedPost).returning({ id: postsInPost.id }),
+    ]);
+    requireMutation(deletedPostRows[0], Operation.Delete, DatabaseEntityType.Post, input);
+    return removedRows.map(({ id }: Pick<PostInPost, "id">) => id);
+  }),
   readPost: getTopicsProcedure(standardRateLimitedProcedure.input(readPostInputSchema), ({ input }) => [
     getTopic(TopicKind.Post, input),
   ])

@@ -73,7 +73,7 @@ describe(usePostStore, () => {
     trpcMsw.post.deletePost.mutation(({ input }) => {
       if (input === post.id) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
 
-      return otherPost;
+      return [otherPost.id];
     });
     const postStore = usePostStore();
     const { items } = storeToRefs(postStore);

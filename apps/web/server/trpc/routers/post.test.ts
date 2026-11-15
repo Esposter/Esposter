@@ -122,9 +122,13 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const deletedPost = await postCaller.deletePost(newPost.id);
+    const { comment: newComment } = await postCaller.createComment({ description, parentId: newPost.id });
+    MockPublishedTopics.length = 0;
+    const removedIds = await postCaller.deletePost(newPost.id);
 
-    expect(deletedPost.id).toBe(newPost.id);
+    expect(removedIds.toSorted()).toStrictEqual([newComment.id, newPost.id].toSorted());
+    // A reply's own page goes with the cascade, so its topic is published with the post's
+    expect(MockPublishedTopics).toContain(getTopic(TopicKind.Post, newComment.id));
     await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
     );
