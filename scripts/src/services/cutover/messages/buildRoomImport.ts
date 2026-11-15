@@ -4,6 +4,7 @@ import type { LegacyMessageEmoji } from "#src/models/cutover/LegacyMessageEmoji"
 import type { TableParents } from "#src/models/cutover/TableParents";
 import type { RoomImport } from "@esposter/db-schema";
 
+import { toEmojiTag } from "#src/services/cutover/messages/toEmojiTag";
 import { getReverseTickedMilliseconds } from "#src/services/cutover/tables/getReverseTickedMilliseconds";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { fileEntitySchema } from "@esposter/db-schema";
@@ -67,7 +68,13 @@ export const buildRoomImport = ({
     const messageId = getNumber(messageRowKey);
     return messageId === undefined
       ? []
-      : [{ emojiTag, messageId, userIds: (userIds ?? []).map((userId) => idMap.rewrite(userId)) }];
+      : [
+          {
+            emojiTag: toEmojiTag(emojiTag),
+            messageId,
+            userIds: (userIds ?? []).map((userId) => idMap.rewrite(userId)),
+          },
+        ];
   }),
   scheduledMessages,
 });

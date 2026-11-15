@@ -17,7 +17,8 @@ export const legacyMessageSchema = z.object({
   partitionKey: z.string(),
   replyRowKey: z.string().optional(),
   rowKey: z.string(),
-  type: z.enum(MessageType),
+  // A call message written before the type was renamed is stored as `VoiceCall`, with the fields a `Call` has
+  type: z.union([z.enum(MessageType), z.literal("VoiceCall").transform(() => MessageType.Call)]),
   userId: z.string().optional(),
 });
 export type LegacyMessage = z.infer<typeof legacyMessageSchema>;

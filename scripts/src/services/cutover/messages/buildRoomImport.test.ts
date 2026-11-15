@@ -45,7 +45,7 @@ describe(buildRoomImport, () => {
     const roomImport = buildRoomImport({
       emojis: [
         {
-          emojiTag: "thumbs",
+          emojiTag: ":+1:",
           messageRowKey: ROOT_ROW_KEY,
           partitionKey: ROOM_OLD_ID,
           rowKey: ROOT_ROW_KEY,
@@ -69,7 +69,7 @@ describe(buildRoomImport, () => {
       { id: 1, replyToId: null },
       { id: 2, replyToId: 1 },
     ]);
-    expect(roomImport.reactions).toStrictEqual([{ emojiTag: "thumbs", messageId: 1, userIds: [USER_NEW_ID] }]);
+    expect(roomImport.reactions).toStrictEqual([{ emojiTag: "👍", messageId: 1, userIds: [USER_NEW_ID] }]);
   });
 
   test("keeps a message whose sender is gone with no author, so its reply keeps the root", () => {
