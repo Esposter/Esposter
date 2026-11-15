@@ -22,9 +22,12 @@ export const verifyTypedTables = async (options: VerifyTypedTablesOptions): Prom
   await forEachConcurrently(tableMappers, COPY_CONCURRENCY, async (mapper) => {
     const expected = new Map<string, number>();
     const tableClient = TableClient.fromConnectionString(connectionString, mapper.azureTable);
+    // Every mapper's partition column holds the partition key rewritten to its new id, so the expected count is keyed the same way
     for await (const { entity, timestamp } of listMapperEntities(tableClient, mapper.azureTable))
-      if (mapper.toRow(entity, { idMap, parents, timestamp }))
-        expected.set(entity.partitionKey, (expected.get(entity.partitionKey) ?? 0) + 1);
+      if (mapper.toRow(entity, { idMap, parents, timestamp })) {
+        const partition = idMap.rewrite(entity.partitionKey);
+        expected.set(partition, (expected.get(partition) ?? 0) + 1);
+      }
     const actual = await readCountByPartition(executor, mapper.countByPartitionSql);
     const partitions = new Set([...expected.keys(), ...actual.keys()]);
     for (const partition of partitions) {

@@ -6,7 +6,9 @@ import type { SourceClient } from "#src/models/cutover/SourceClient";
 import { readSourceCoreRows } from "#src/services/cutover/core/readSourceCoreRows";
 import { readTargetCoreRows } from "#src/services/cutover/core/readTargetCoreRows";
 import { toCoreRecord } from "#src/services/cutover/core/toCoreRecord";
+import { storageLedgerInStorage } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { getTableConfig } from "drizzle-orm/sqlite-core";
 
 // Compares one table row by row, each row by its new key: the source's values through the copy's transform, the target's as stored.
 // So a row that copied wrong names its key.
@@ -18,11 +20,17 @@ export const verifyCoreTable = async (
   table: CoreTable,
   idMap: IdMap,
 ): Promise<number> => {
+  // The ledger's counted bytes are charged each object's stored size after the copy, so verifyStorageLedger checks them
+  // Against the objects rather than against the source
+  const columns =
+    table.name === getTableConfig(storageLedgerInStorage).name
+      ? table.columns.filter(({ name }) => name !== "countedBytes")
+      : table.columns;
   const keyTargetCanonicalMap = new Map<string, string>();
   for await (const row of readTargetCoreRows(executor, table))
     keyTargetCanonicalMap.set(
       JSON.stringify(table.primaryKeyColumns.map((column) => row[column.name] ?? null)),
-      JSON.stringify(table.columns.map((column) => row[column.name] ?? null)),
+      JSON.stringify(columns.map((column) => row[column.name] ?? null)),
     );
 
   let sourceCount = 0;
@@ -30,7 +38,7 @@ export const verifyCoreTable = async (
     sourceCount += 1;
     const record = toCoreRecord(table, row, idMap);
     const key = JSON.stringify(table.primaryKeyColumns.map(({ name }) => record[name]));
-    const canonical = JSON.stringify(table.columns.map(({ name }) => record[name]));
+    const canonical = JSON.stringify(columns.map(({ name }) => record[name]));
     const targetCanonical = keyTargetCanonicalMap.get(key);
     if (targetCanonical === undefined)
       throw new InvalidOperationError(Operation.Read, table.name, `row ${key} is missing from D1`);
