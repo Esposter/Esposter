@@ -56,7 +56,6 @@
     "type-fest": "catalog:"
   },
   "peerDependencies": {
-    "@pulumi/azure-native": "catalog:",
     "@pulumi/github": "catalog:",
     "@pulumi/pulumi": "catalog:"
   }

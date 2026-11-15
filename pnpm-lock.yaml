@@ -291,9 +291,6 @@ catalogs:
     '@pinia/nuxt':
       specifier: ^1.0.3
       version: 1.0.3
-    '@pulumi/azure-native':
-      specifier: ^3.30.0
-      version: 3.30.0
     '@pulumi/cloudflare':
       specifier: ^6.24.0
       version: 6.24.0
@@ -807,9 +804,6 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../../packages/shared
-      '@pulumi/azure-native':
-        specifier: 'catalog:'
-        version: 3.30.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
       '@pulumi/cloudflare':
         specifier: 'catalog:'
         version: 6.24.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
@@ -5220,9 +5214,6 @@ packages:
   '@publint/pack@0.1.7':
     resolution: {integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==}
     engines: {node: '>=18'}
-
-  '@pulumi/azure-native@3.30.0':
-    resolution: {integrity: sha512-W4l1B4sku6DHFo7B4fJsez8FJzO8N7jQy3sJTPdI13H2igull2cNbeQSjk9pG7TkM0NArvAzp234YesVPFOjlA==}
 
   '@pulumi/cloudflare@6.24.0':
     resolution: {integrity: sha512-UsgQbHLExQgIFLoGjACgpTeRp359khU6wCNyQ7CNqK6hzgRgyOWKRXg1GqZYOKLEXmA/nKv32p+2S3gM0Va1Vg==}
@@ -15449,14 +15440,6 @@ snapshots:
   '@publint/pack@0.1.7':
     dependencies:
       tinyexec: 1.3.1
-
-  '@pulumi/azure-native@3.30.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)':
-    dependencies:
-      '@pulumi/pulumi': 3.276.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)
-    transitivePeerDependencies:
-      - supports-color
-      - ts-node
-      - typescript
 
   '@pulumi/cloudflare@6.24.0(supports-color@8.1.1)(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2)':
     dependencies:

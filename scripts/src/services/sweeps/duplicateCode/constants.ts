@@ -36,7 +36,6 @@ export const DUPLICATE_CODE_IGNORED_GLOBS: string[] = [
   "**/*.d.ts",
   "**/migrations/**",
   "**/apps/web/app/assets/**",
-  "**/apps/infra/src/azure/resources/**",
   "**/apps/infra/src/cloudflare/resources/**",
 ];
 // The manifest a Claude plugin's directory holds, the one a plugin's root is read by

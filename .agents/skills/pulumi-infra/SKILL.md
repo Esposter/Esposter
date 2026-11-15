@@ -13,7 +13,7 @@ description: Apply when modifying apps/infra. Esposter's Pulumi infrastructure f
 
 ## Package Shape
 
-One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). **Teardown pending:** the Azure resources are still declared, so an untargeted `pulumi up` applies them too, and every apply names its resources with `--target`. Two applies run untargeted: the first apply after a provider bump (`references/operations.md`), and the first deploy, which holds back the queue consumers and Workers custom domains with `--exclude` (`apps/infra/docs/stacks.md`, "First deploy").
+One private package, one `prod` stack, `src/` split by provider (`src/cloudflare/`, `src/github/`) with a generated barrel, `dist/index.js` as the entrypoint, and a clean preview before every `infra:up` (`references/package-shape.md`; the preview is `references/operations.md`). The stack holds only what the program declares, so an apply is untargeted once its preview reads clean; `--target` narrows one only when a preview shows a change the apply must not make yet (`references/operations.md`), and the first deploy holds back the queue consumers and Workers custom domains with `--exclude` (`apps/infra/docs/stacks.md`, "First deploy").
 
 ## Cloudflare Rules
 

@@ -107,13 +107,12 @@ Incoming webhooks also change host, from an Azure Function URL to `esposter.com/
 
 ## Teardown
 
-Once the window closes: the Railway services are deleted, the one step done in a dashboard; the Azure resource files are deleted from `apps/infra/src/azure` with `protect` removed in the same change, and `pulumi up` deletes them; the `cutover-archive` bucket, which holds the old tokens and the id map, and the cutover command are deleted; the temporary routes are deleted from the jobs Worker; `openspec/specs/architecture/cloudflare-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
+Once the data is verified: the Railway project is deleted through its CLI; the Azure resource files are deleted from the infra package with `protect` removed from their state, and `pulumi up` deletes them, except the owner's own subscription Owner assignment, which leaves the state only so the owner keeps the subscription; the `cutover-archive` bucket, which holds the old tokens and the id map, and the cutover command are deleted; the temporary routes are deleted from the jobs Worker; `openspec/specs/architecture/cloudflare-services/design.md` becomes the Cloudflare services page, and the rejected and deferred pages the program overturned are rewritten.
 
 ## Key files
 
 | File                                                        | Role after the change                     |
 | :---------------------------------------------------------- | :---------------------------------------- |
-| `apps/infra/src/azure/resources`                            | deleted at teardown                       |
 | `apps/infra/src/index.ts`                                   | exports the zone and its records          |
 | `apps/jobs/src/services/cutover`                            | the temporary routes, deleted at teardown |
 | `scripts/src/services/cutover`                              | the copy's services, deleted at teardown  |
