@@ -15,6 +15,7 @@ describe(getGameDataKeysSource, () => {
     expect(source).toContain(`domains: {\n    self: "domains",\n    weeklyBosses: "domains/weeklyBosses",\n  },`);
     expect(source).toContain(`quests: {\n    "11018": "quests/11018",\n  },`);
     expect(source).toContain(`export type GameDataKeyOf<D extends keyof typeof GameDataKeys>`);
+    expect(source.startsWith("/* eslint-disable no-restricted-syntax -- ")).toBe(true);
   });
 
   test("keeps a segment named after an Object.prototype member as a key of its own, computing __proto__ so it is an own property", () => {

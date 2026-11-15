@@ -14,4 +14,5 @@ export const usersToRoomRolesInMessageRelation = defineRelationsPart(schema, (r)
 }));
 
 // @TODO: https://github.com/drizzle-team/drizzle-orm/issues/695
+// eslint-disable-next-line no-restricted-syntax -- the relation names a query's `with` takes, keyed as drizzle keys them
 export const UserToRoomRoleInMessageRelations = { role: true } as const;
