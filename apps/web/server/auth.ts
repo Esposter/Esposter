@@ -3,7 +3,9 @@ import { apiKeyPlugin } from "#server/services/auth/apiKeyPlugin";
 import { authModelOptions } from "#server/services/auth/authModelOptions";
 import { PRODUCTION_BASE_URL } from "#server/services/auth/constants";
 import { drizzleAdapterConfiguration } from "#server/services/auth/drizzleAdapterConfiguration";
+import { closeSessionSockets } from "#server/services/realtime/closeSessionSockets";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter/relations-v2";
+import { getResultAsync, noop } from "@esposter/shared";
 import { betterAuth } from "better-auth";
 import { oAuthProxy } from "better-auth/plugins/oauth-proxy";
 import { v7 } from "uuid";
@@ -44,8 +46,25 @@ export const auth = betterAuth({
       // Through `db.query`, which our v2 relations define
       joins: true,
     },
+    // Lax is also better-auth's default, written out because the socket routes count on it: it keeps the session cookie
+    // Off a cross-site WebSocket handshake, alongside the Origin check those routes make (`readSocketSession.ts`)
+    defaultCookieAttributes: { sameSite: "lax" },
   },
   database: drizzleAdapter(db, drizzleAdapterConfiguration),
+  // Every removal of a session row ends its sockets here, whichever path removed it: a sign-out, a revoke, a bulk revoke,
+  // And an expired row better-auth deletes when it next reads that row. The row is already gone when this runs, and a
+  // Failed close is logged rather than thrown, since the removal it follows has already landed
+  databaseHooks: {
+    session: {
+      delete: {
+        after: async (session) => {
+          await getResultAsync(() => closeSessionSockets(db, session.userId, session.id)).match(noop, (error) => {
+            console.error("Session sockets failed to close", { error, sessionId: session.id, userId: session.userId });
+          });
+        },
+      },
+    },
+  },
   // The proxy sends a sign-in outside production through production's callback, which the shared secret lets it hand
   // Back encrypted; production itself skips it
   plugins: [apiKeyPlugin, oAuthProxy({ productionURL: PRODUCTION_BASE_URL })],

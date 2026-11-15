@@ -1,5 +1,7 @@
 import type { RealtimeSocketOptions } from "@/models/realtime/RealtimeSocketOptions";
 
+import { getExponentialBackoffDelayMs } from "@esposter/shared";
+
 const INITIAL_RETRY_MS = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
 const MAX_RETRY_MS = Temporal.Duration.from({ seconds: 30 }).total("milliseconds");
 
@@ -14,7 +16,7 @@ export const openRealtimeSocket = (
   { onOpen, onReopen, onSettled }: RealtimeSocketOptions = {},
 ) => {
   let socket: undefined | WebSocket;
-  let retryMs = INITIAL_RETRY_MS;
+  let failureCount = 0;
   let retryTimer: ReturnType<typeof setTimeout> | undefined;
   let isClosed = false;
   let isOpened = false;
@@ -25,7 +27,7 @@ export const openRealtimeSocket = (
   const connect = () => {
     socket = new WebSocket(getUrl());
     socket.addEventListener("open", () => {
-      retryMs = INITIAL_RETRY_MS;
+      failureCount = 0;
       onSettled?.();
       onOpen?.();
       if (isOpened) onReopen?.();
@@ -38,8 +40,8 @@ export const openRealtimeSocket = (
       socket = undefined;
       onSettled?.();
       if (isClosed) return;
-      retryTimer = setTimeout(connect, retryMs);
-      retryMs = Math.min(retryMs * 2, MAX_RETRY_MS);
+      retryTimer = setTimeout(connect, getExponentialBackoffDelayMs(failureCount, INITIAL_RETRY_MS, MAX_RETRY_MS));
+      failureCount += 1;
     });
   };
   connect();

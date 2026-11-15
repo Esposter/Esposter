@@ -4,7 +4,6 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import type { Session } from "better-auth";
 
 import { createMockSession } from "#server/auth.test";
-import { userObjectCalls } from "#server/composables/realtime/useUserObject.test";
 import { createCallerFactory } from "#server/trpc";
 import {
   createMockContext,
@@ -67,7 +66,6 @@ describe("sessionRouter", () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    userObjectCalls.length = 0;
   });
 
   test("reads the caller's unexpired sessions, without the stored address", async () => {
@@ -112,27 +110,5 @@ describe("sessionRouter", () => {
     await caller.deleteOtherSessions();
 
     expect(getMockRevokeOtherSessions()).toHaveBeenCalledExactlyOnceWith({ headers: requestContext.headers });
-  });
-
-  test("closes the sockets of the session it revokes on the person's object", async () => {
-    expect.hasAssertions();
-
-    await caller.deleteSession(otherSession.id);
-
-    expect(userObjectCalls).toStrictEqual([
-      { args: [], method: "readJoinedCallIds", userId },
-      { args: [otherSession.id], method: "closeSession", userId },
-    ]);
-  });
-
-  test("closes the sockets of every other session it revokes, and not the current one's", async () => {
-    expect.hasAssertions();
-
-    await caller.deleteOtherSessions();
-
-    expect(userObjectCalls).toStrictEqual([
-      { args: [], method: "readJoinedCallIds", userId },
-      { args: [otherSession.id], method: "closeSession", userId },
-    ]);
   });
 });

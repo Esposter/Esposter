@@ -1,6 +1,6 @@
 import { useRoomObject } from "#server/composables/realtime/useRoomObject";
 import { db } from "#server/db";
-import { readSession } from "#server/services/auth/readSession";
+import { readSocketSession } from "#server/services/auth/readSocketSession";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { readSocketValue } from "#server/services/realtime/readSocketValue";
 import { assertIsMember } from "#server/services/room/assertIsMember";
@@ -12,8 +12,7 @@ import { createError, defineEventHandler, getQuery } from "nuxt/server";
 // A room's socket, for a member of the room. The check that fails is refused rather than served, and carries its cause:
 // A database fault closes the socket the same way a non-member's attempt does
 export default defineEventHandler(async (event) => {
-  const authSession = await readSession(event.req.headers);
-  if (!authSession) throw createError({ statusCode: 401 });
+  const authSession = await readSocketSession(event);
 
   const roomId = readSocketValue(selectRoomInMessageSchema.shape.id, event.context.params?.roomId);
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));

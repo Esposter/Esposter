@@ -1,33 +1,41 @@
 import { RESERVED_CLOSE_CODES } from "#src/services/durableObject/constants";
 import { readSocketIdentity } from "#src/services/realtime/readSocketIdentity";
+import { getResultAsync, noop } from "@esposter/shared";
 import { DurableObject } from "cloudflare:workers";
 
-// A revoked session's sockets close with code 1008, the policy close for a credential the server no longer accepts
+// A revoked session's sockets close with code 1008, the policy close for a credential the server does not accept
 const SESSION_REVOKED_CLOSE_CODE = 1008;
+// A revoke is kept this long. An upgrade reaches the object within seconds of reading its session, so an hour outlasts
+// Every upgrade a revoke can overtake. A record older than that is pruned when the next revoke is recorded
+const REVOKED_SESSION_TTL_MS = Temporal.Duration.from({ hours: 1 }).total("milliseconds");
+const REVOKED_SESSION_PREFIX = "revokedSession:";
+const getRevokedSessionKey = (sessionId: string) => `${REVOKED_SESSION_PREFIX}${sessionId}`;
 
 // The three objects share one socket shape.
 // A socket is accepted under tags for its user, session and device, and hibernates while no message is in flight.
 // Each event is written to every socket a tag names, one JSON frame each.
 // A socket is never listened to with addEventListener, which would hold the object awake for as long as it stayed open
 export abstract class RealtimeObject<TEvent extends { type: string } = { type: string }> extends DurableObject {
-  // Promise.try turns a synchronous throw into a rejection, as an async body did, so callers see the same outcome
-  override fetch(request: Request): Promise<Response> {
-    return Promise.try(() => {
-      if (request.headers.get("Upgrade") !== "websocket")
-        return new Response("Expected a WebSocket upgrade", { status: 426 });
+  // An upgrade whose session was revoked on this object is refused. The revoke's close ran before the upgrade reached the
+  // Object, so the close could not see the socket the upgrade was about to open
+  override async fetch(request: Request): Promise<Response> {
+    if (request.headers.get("Upgrade") !== "websocket")
+      return new Response("Expected a WebSocket upgrade", { status: 426 });
 
-      const identity = readSocketIdentity(request.headers);
-      if (!identity) return new Response("Missing socket identity", { status: 400 });
+    const identity = readSocketIdentity(request.headers);
+    if (!identity) return new Response("Missing socket identity", { status: 400 });
 
-      const { 0: client, 1: server } = new WebSocketPair();
-      this.ctx.acceptWebSocket(server, [
-        `user:${identity.userId}`,
-        `session:${identity.sessionId}`,
-        `device:${identity.deviceId}`,
-      ]);
-      this.onSocketAccepted(server, request);
-      return new Response(null, { status: 101, webSocket: client });
-    });
+    if ((await this.ctx.storage.get<number>(getRevokedSessionKey(identity.sessionId))) !== undefined)
+      return new Response("Session revoked", { status: 401 });
+
+    const { 0: client, 1: server } = new WebSocketPair();
+    this.ctx.acceptWebSocket(server, [
+      `user:${identity.userId}`,
+      `session:${identity.sessionId}`,
+      `device:${identity.deviceId}`,
+    ]);
+    this.onSocketAccepted(server, request);
+    return new Response(null, { status: 101, webSocket: client });
   }
 
   // A close the peer began is answered in kind, so the socket is released rather than left half open. A reserved code
@@ -52,10 +60,20 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
     }
   }
 
-  // A revoked session's sockets on this object close, and no other session's do
+  // A revoked session's sockets on this object close, and no other session's do. The revoke is also recorded, so an
+  // Upgrade that read the session before the revoke is refused when it arrives
   protected closeRevokedSession(sessionId: string): void {
-    for (const ws of this.ctx.getWebSockets(`session:${sessionId}`))
-      ws.close(SESSION_REVOKED_CLOSE_CODE, "Session revoked");
+    this.closeSockets(`session:${sessionId}`, SESSION_REVOKED_CLOSE_CODE, "Session revoked");
+    this.ctx.waitUntil(
+      getResultAsync(() => this.#recordRevokedSession(sessionId)).match(noop, (error) => {
+        console.error("Revoked session failed to record", { error, sessionId });
+      }),
+    );
+  }
+
+  // Closes every socket a tag names with the code and reason the caller gives, so each object states its own close
+  protected closeSockets(tag: string, code: number, reason: string): void {
+    for (const ws of this.ctx.getWebSockets(tag)) ws.close(code, reason);
   }
 
   // Runs once a socket is accepted and before its upgrade is answered.
@@ -66,5 +84,17 @@ export abstract class RealtimeObject<TEvent extends { type: string } = { type: s
   // One event to one socket, as the frame every socket hears
   protected sendEvent(socket: WebSocket, event: TEvent): void {
     socket.send(JSON.stringify(event));
+  }
+
+  // Records the revoke, then drops records past the TTL, so an object that outlives many revokes keeps only recent ones
+  async #recordRevokedSession(sessionId: string): Promise<void> {
+    const revokedAt = Date.now();
+    await this.ctx.storage.put(getRevokedSessionKey(sessionId), revokedAt);
+    const records = await this.ctx.storage.list<number>({ prefix: REVOKED_SESSION_PREFIX });
+    await Promise.all(
+      [...records]
+        .filter(([, recordedAt]) => revokedAt - recordedAt > REVOKED_SESSION_TTL_MS)
+        .map(([key]) => this.ctx.storage.delete(key)),
+    );
   }
 }

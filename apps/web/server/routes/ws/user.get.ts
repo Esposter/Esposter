@@ -1,16 +1,14 @@
 import { useUserObject } from "#server/composables/realtime/useUserObject";
-import { readSession } from "#server/services/auth/readSession";
+import { readSocketSession } from "#server/services/auth/readSocketSession";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { readSocketValue } from "#server/services/realtime/readSocketValue";
 import { deviceIdSchema } from "#shared/models/realtime/DeviceId";
-import { createError, defineEventHandler, getQuery } from "nuxt/server";
+import { defineEventHandler, getQuery } from "nuxt/server";
 
 // The person's own socket, which every signed-in page opens: the user object holds it for every tab the person has open
 export default defineEventHandler(async (event) => {
-  const authSession = await readSession(event.req.headers);
-  if (!authSession) throw createError({ statusCode: 401 });
+  const { session, user } = await readSocketSession(event);
 
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));
-  const { session, user } = authSession;
   return forwardSocket(event, useUserObject(user.id), { deviceId, sessionId: session.id, userId: user.id });
 });

@@ -1,6 +1,6 @@
 import { useCallObject } from "#server/composables/realtime/useCallObject";
 import { db } from "#server/db";
-import { readSession } from "#server/services/auth/readSession";
+import { readSocketSession } from "#server/services/auth/readSocketSession";
 import { checkIsCallConnectionAdmitted } from "#server/services/message/call/checkIsCallConnectionAdmitted";
 import { forwardSocket } from "#server/services/realtime/forwardSocket";
 import { readSocketValue } from "#server/services/realtime/readSocketValue";
@@ -10,8 +10,7 @@ import { createError, defineEventHandler, getQuery } from "nuxt/server";
 
 // A call's socket, for a connection the call admits: the call object holds it with everyone joined to or knocking on the call
 export default defineEventHandler(async (event) => {
-  const authSession = await readSession(event.req.headers);
-  if (!authSession) throw createError({ statusCode: 401 });
+  const authSession = await readSocketSession(event);
 
   const callSessionId = readSocketValue(callSessionIdSchema.shape.callSessionId, event.context.params?.callSessionId);
   const { deviceId } = readSocketValue(deviceIdSchema, getQuery(event));

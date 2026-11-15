@@ -5,7 +5,6 @@ import type { User } from "better-auth";
 import { auth } from "#server/auth";
 import { getDeviceLabel } from "#server/services/auth/getDeviceLabel";
 import { readActiveSessions } from "#server/services/auth/readActiveSessions";
-import { closeSessionSockets } from "#server/services/realtime/closeSessionSockets";
 import { router } from "#server/trpc";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { getTopicsProcedure } from "#server/trpc/procedure/getTopicsProcedure";
@@ -17,16 +16,9 @@ import { DatabaseEntityType, getTopic, TopicKind } from "@esposter/db-schema";
 const sessionTopics = ({ ctx }: { ctx: { user: User } }): Topic[] => [getTopic(TopicKind.Session, ctx.user.id)];
 
 export const sessionRouter = router({
+  // Each session the revoke removes closes its own sockets as its row goes (`server/auth.ts`)
   deleteOtherSessions: getTopicsProcedure(standardAuthedProcedure, sessionTopics).mutation<void>(async ({ ctx }) => {
-    const { session, user } = ctx;
-    // Read before the revoke, which leaves nothing to name the sessions it ended by
-    const otherSessions = (await readActiveSessions(ctx.db, user.id)).filter(({ id }) => id !== session.id);
     await auth.api.revokeOtherSessions({ headers: ctx.headers });
-    await closeSessionSockets(
-      ctx.db,
-      user.id,
-      otherSessions.map(({ id }) => id),
-    );
   }),
   deleteSession: getTopicsProcedure(
     standardAuthedProcedure.input(deleteSessionInputSchema),
@@ -40,8 +32,7 @@ export const sessionRouter = router({
     const session = sessions.find(({ id }) => id === input);
     if (!session) throw getNotFoundError(DatabaseEntityType.Session, input);
     await auth.api.revokeSession({ body: { token: session.token }, headers: ctx.headers });
-    await closeSessionSockets(ctx.db, user.id, [session.id]);
-    // The session's push subscriptions went with the row better-auth just deleted — `pushSubscriptions.sessionId` cascades
+    // Its sockets close with its row (`server/auth.ts`), and its push subscriptions cascade from the same row
   }),
   readSessions: getTopicsProcedure(standardAuthedProcedure, sessionTopics).query<SessionSummary[]>(async ({ ctx }) => {
     const { session: currentSession, user } = ctx;

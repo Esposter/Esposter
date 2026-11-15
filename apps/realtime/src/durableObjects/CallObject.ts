@@ -318,10 +318,6 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
     return this.#readParticipant(sessionId) !== undefined || this.#readKnocker(sessionId) !== undefined;
   }
 
-  #closeSessionSockets(sessionId: string): void {
-    for (const socket of this.ctx.getWebSockets(`session:${sessionId}`)) socket.close(1000, "Left the call");
-  }
-
   #consumeAdmission(sessionId: string): boolean {
     return (
       this.db.delete(admittedSessions).where(eq(admittedSessions.sessionId, sessionId)).returning().all().length > 0
@@ -440,7 +436,7 @@ export class CallObject extends RealtimeObject<CallEvent> implements CallObjectR
       { data: { callSessionId, id: sessionId }, type: "leaveCall" },
       { excludeTag: `session:${sessionId}` },
     );
-    this.#closeSessionSockets(sessionId);
+    this.closeSockets(`session:${sessionId}`, 1000, "Left the call");
     // A person's last session out of the call takes it off the calls their object closes a revoked session on
     if (this.#readSessionIdsOf(participant.userId).length === 0)
       this.ctx.waitUntil(
