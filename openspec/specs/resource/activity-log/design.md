@@ -49,9 +49,9 @@ Soft delete leaves the rows intact: history survives the [recycle bin](../recycl
 
 ## Procedures
 
-| Procedure                 | Auth                | Input             | Purpose                             |
-| ------------------------- | ------------------- | ----------------- | ----------------------------------- |
-| `resource.readActivities` | `getOwnerProcedure` | `{ id, cursor? }` | Cursor-paginated read, newest first |
+| Procedure                 | Auth                | Input                   | Purpose                             |
+| ------------------------- | ------------------- | ----------------------- | ----------------------------------- |
+| `resource.readActivities` | `getOwnerProcedure` | `{ id, cursor, limit }` | Cursor-paginated read, newest first |
 
 ## Key files
 

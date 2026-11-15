@@ -21,7 +21,7 @@ Renaming any of these changes no data, so consistency here never costs rows. Exp
 
 ## CHECK constraints with `sql` template literals
 
-- **A length, a minimum, a range or a name bound is a `create*CheckSql` helper** from `packages/db-schema/src/services/shared/`, the folder being the list of bounds one exists for — never the predicate spelled inline. Each renders exactly the string an inline check would, so moving one in costs no migration: `check("appUsers_name_length_check", createNameCheckSql(name, APP_USER_NAME_MAX_LENGTH))` (`packages/db-schema/src/schema/message/appUsersInMessage.ts`).
+- **A length, a minimum, a range or a name bound is a `create*CheckSql` helper** from `packages/db-schema/src/services/shared/`, the folder being the list of bounds one exists for — never the predicate spelled inline. Each renders exactly the string an inline check would, so moving one in costs no migration: `check("webhooks_name_length_check", createNameCheckSql(name, WEBHOOK_NAME_MAX_LENGTH))` (`packages/db-schema/src/schema/message/webhooksInMessage.ts`).
 - A predicate no helper covers is an `sql` template literal — never a raw string.
 - **A numeric literal inside one is `sql.raw()`** — bare interpolation makes Drizzle emit a placeholder (`?`), invalid in DDL:
 

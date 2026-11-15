@@ -8,7 +8,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 
 - **Filter-pill row** (`ResourceListFilterBar`): each active filter is a pill reading what it holds, "Status: all", that opens a panel to change it and is taken off by its own ✕; `+ Add filter` is a menu of the remaining filters. A pill stays visible while empty ("all") until its ✕ removes it; a deep-linked value surfaces its pill automatically. A pill of one choice closes on the pick; the Type pill takes several and stays open.
   - **Type** — multi-select over `ResourceDefinitionMap` (icon + title), bound to the `types` ref `useReadResources` accepts.
-  - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `getResourcesWhere` (the one filter source for both `readResourcesCount` and `readResources`).
+  - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `getResourcesWhere` (the one filter source every list read shares, `readResources`'s first-page total included).
   - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now". Custom's bounds are one [range field](../../architecture/calendar/design.md).
   - **Tag** — name + optional value, filtered as [tags](../tags/design.md) describes.
 - **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. The widths the reader drags the columns to are a `columnWidths` param beside them, serialized to `key:width,…` and read back dropping any entry that names no column or a width no handle reaches. Named saved views are [rejected](../../../rejected/resource/saved-views/design.md).
@@ -43,17 +43,17 @@ flowchart LR
   PILLS["FilterBar pills"] --> STATE
   STATE --> WHERE["getResourcesWhere<br/>(single filter source)"]
   WHERE --> RR["resource.readResources"] --> TABLE["UiDataTable"]
-  WHERE --> CNT["resource.readResourcesCount"] --> FOOTER["footer x–y of N"]
+  RR -->|"first page answers N"| FOOTER["footer x–y of N"]
   TABLE -->|"select n → Delete (n)"| BULK["resource.deleteResources"] -->|"deletedAt + publications dropped"| GONE[("recycle bin")]
   TABLE -->|"Export CSV (chunked)"| CSV["getResourcesCsv"]
 ```
 
 ## Procedures
 
-| Procedure                                                | Auth                          | Input                                                                                       | Purpose                                              |
-| -------------------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `resource.readResources` / `resource.readResourcesCount` | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `getResourcesWhere` |
-| `resource.deleteResources`                               | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete                                     |
+| Procedure                  | Auth                          | Input                                                                                       | Purpose                                                                                |
+| -------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `resource.readResources`   | authed                        | `isPublished?`, `isFavorite?`, `isAccessed?: boolean`, `updatedAfter?/updatedBefore?: Date` | status, set and date filters via `getResourcesWhere`; the first page answers the total |
+| `resource.deleteResources` | authed (owner-scoped `where`) | `ids: string[]` (unique, bounded)                                                           | bulk soft delete                                                                       |
 
 ## Key files
 
@@ -75,7 +75,7 @@ flowchart LR
 
 - Publish **status stays off the default columns** — it appears only as an opt-in filter pill.
 - A source's own preset also lands in `getResourcesWhere`, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
-- The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResources` selects the resource columns alongside `resourceAccesses.accessedAt` once and hands that same selection to `parseSortByToSql`, so a column the list can show is a column it can sort by.
+- The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResourceListPage` selects the resource columns alongside `resourceAccesses.accessedAt` once and binds the sort to that same selection with `createPageSort`, so a column the list can show is a column it can sort by.
 - All filters funnel through one key (a JSON of the filter state): a change to it sends the list back to page 1, and the list reads whenever that key, the page, its size or the order changes. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
 - **The total is only ever written by a read.** A bulk delete drops its rows from the page optimistically, because those rows are what the user is looking at, but the count is the server's number over the whole filter — so the delete re-reads instead of nudging it. Nudging is wrong in both directions: a refresh landing mid-flight has already re-counted, so the adjustment is applied on top of a number that no longer needs it, and the rollback of a rejected delete then adds back rows the fresh count never included.
 - The list also reads on a page turn, a page-size change and a sort change, none of which move the total, so the count is keyed to the filter the user picked (`getResourceFilterKey`) and reused until that changes (or a mutation refreshes). The key is deliberately built from the **selection**, not from the input the queries send: a relative Updated preset anchors its boundary to the current time, so a key holding that resolved date would never repeat and every page turn would re-run the count. For the same reason `useReadResourcesPage` resolves the filter input once per read and hands the same one to both queries, so the total and the rows always describe the same window. The list and the [recycle bin](../recycle-bin/design.md) share that composable, which owns the keying and the latest-wins stale guard that keeps a slower earlier read from overwriting a fresher one.

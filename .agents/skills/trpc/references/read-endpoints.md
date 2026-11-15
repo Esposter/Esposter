@@ -2,32 +2,28 @@
 
 Read when writing a `read*` procedure, building its pagination input schema, or writing the `useRead*` composable that calls it. The client-side list/infinite-scroll layering belongs to `.agents/skills/pagination/references/cursor-pagination.md`.
 
-## Pagination Params Schemas
+## Pagination inputs
 
-Two factory functions in `shared/models/pagination/`:
+Two factories in `packages/db-schema/src/models/pagination/PageInput.ts` take a `PageSort`, `{ keys, order }`, whose last key is unique so the order is total:
 
-- **`createCursorPaginationParamsSchema(sortKeySchema, defaultSortBy)`** — cursor-based; `minimumSortBy` hard-coded to `1` (needs a primary cursor key). `defaultSortBy` is typed `[SortItem<T>, ...SortItem<T>[]]` (non-empty tuple) — TS enforces ≥1 item matching the `min(1)` runtime constraint. Spread `.shape` into a `z.object({...})` and chain `.prefault({})` on the outer object for optional-input procedures.
-- **`createOffsetPaginationParamsSchema(sortKeySchema, defaultSortBy?)`** — offset-based; `minimumSortBy` hard-coded to `0` (offset skips N rows without a stable sort key); `defaultSortBy` defaults to `[]`.
+- **`createPageInputSchema(sort)`** — a read whose order is fixed. Its input is `{ cursor, limit }`: the cursor is decoded for that sort at the boundary, and `limit` defaults to `DEFAULT_PAGE_LIMIT` and is capped at `MAX_READ_LIMIT`. Add filters with `.extend({...})`, and chain `.prefault({})` on the outer object for an optional input.
+- **`createSortedPageInputSchema(sortNameSchema, sorts, defaultSortName)`** — a read where the caller names one of its own sorts. The input carries `sortName`, and the cursor is decoded for the sort it names. The client never sends an order, only the name of one.
 
-Both use `.prefault(defaultSortBy)` (not `.default()`) on `sortBy` — `prefault` applies the default _before_ inner validation, so the default array is itself validated against `.min(minimumSortBy)`. The `defaultSortBy` must satisfy the minimum.
-
-**Never define `limit`/`cursor` manually.** The factories bake in `DEFAULT_READ_LIMIT`, `MAX_READ_LIMIT` and `cursor: z.string().default("")` — never override them. A parsed input therefore always carries a string, so the first page is `!cursor`, never `cursor === undefined`; `.optional()` here would also break the `""` sentinel rule (`.agents/skills/absent-values/references/string-sentinel.md`). Non-cursor endpoints use `createBasePaginationParamsSchema`. When sort order is fixed, still pass a non-empty `defaultSortBy` (the factory's `min(1)` rejects `[]`), then omit `sortBy`: `createCursorPaginationParamsSchema(z.string(), [{ key: "rowKey", order: SortOrder.Desc }]).omit({ sortBy: true })`.
+**Never define `limit` or `cursor` by hand.** The factory owns both. On the wire the cursor is a string, and `""` is the first page; inside the procedure it is the decoded `PageCursor`, so the first page is `cursor.values.length === 0`. A read that is not paged takes no page input.
 
 ```ts
-// CORRECT — cursor: non-empty defaultSortBy, .prefault({}) on outer object
-const readFoosInputSchema = z
-  .object({
-    ...createCursorPaginationParamsSchema(selectFooSchema.keyof(), [
-      { key: ItemMetadataPropertyNames.updatedAt, order: SortOrder.Desc },
-    ]).shape,
-  })
-  .prefault({});
+// The sort is a constant beside its input, with the unique id as its last key
+export const NOTIFICATION_PAGE_SORT = { keys: ["id"], order: SortOrder.Desc } as const satisfies PageSort<"id">;
+export const readNotificationsInputSchema = createPageInputSchema(NOTIFICATION_PAGE_SORT).prefault({});
 
-// CORRECT — offset: minimumSortBy=0, empty default is fine
-const readBarsInputSchema = createOffsetPaginationParamsSchema(selectBarSchema.keyof()).prefault({});
+// CORRECT — a fixed order, with filters added by extend beside the page
+export const readBansInputSchema = createPageInputSchema(BAN_PAGE_SORT).extend({
+  ...roomIdSchema.shape,
+  filter: selectUserInAuthSchema.pick({ name: true }).optional(),
+});
 ```
 
-Server-side on **D1**, a paginated read is three helpers around the procedure's own query. `getCursorWhere` turns the cursor into a clause, which the query carries in `where.RAW`; the query orders by `parseSortByToSql` and reads `limit + 1` rows; and `getCursorPaginationData(rows, limit, sortBy)` splits off the extra row as the `hasMore` answer and names the cursor of the last row the page keeps. Never re-write the cursor clause or the page split inline. The live example is `apps/web/server/trpc/routers/notification.ts`.
+Server-side on **D1**, a paginated read is the `packages/db` helpers around the procedure's own query. `createPageSort(columns, sort)` binds each key to the column it compares, `getPageWhere` is the clause past the cursor and `getPageOrderBy` the order it reads in, the query reads `limit + 1` rows, and `toPage(rows, sort, cursor, limit)` answers `{ items, nextCursor }`, where the extra row is the whole answer to whether the list goes on. Never re-write the cursor clause or the page split inline. A first page also answers the list's total beside its rows, and a later page does not count again. The live example is `apps/web/server/trpc/routers/notification.ts`.
 
 ## Read endpoints must accept arrays (no N+1)
 

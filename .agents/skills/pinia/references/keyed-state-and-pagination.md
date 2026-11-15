@@ -4,7 +4,7 @@ Read when a store keys state by an id, holds a list of entities, or paginates on
 
 ## `useDataMap`
 
-`useDataMap<T>(currentId, defaultValue)` (`apps/web/app/composables/data/useDataMap.ts`) — its return is the inventory. `useCursorPaginationDataMap`/`useOffsetPaginationDataMap` are thin wrappers that pass a factory default for their class instance.
+`useDataMap<T>(currentId, defaultValue)` (`apps/web/app/composables/data/useDataMap.ts`) — its return is the inventory. `useCursorPaginationDataMap` is a thin wrapper that passes a factory default for its `Page`.
 
 Which of the three views you take is the whole of the keying rule ("Every field is keyed, and a write names its key", on this page):
 
@@ -40,7 +40,7 @@ const { data: trailingText } = useDataMap(() => fooStore.currentFooId, "");
 
 Selection state uses the same primitive — the selected id is `useDataMap(() => parentStore.currentId, "")` and the selected entity a `computed` that `find`s it, so mutations set the id directly (`setSelectedFooId(input.parentId, newFoo.id)` from a create's `onSuccess`) rather than emitting.
 
-- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
+- **Pass a factory** (`() => createEmptyPage<TItem>()`) for a default built per key: `useDataMap` calls a factory once for each key and `structuredClone`s a plain default, which strips the prototype of a class instance. `useCursorPaginationDataMap` passes its `Page` that way.
 
 ## Every field is keyed, and a write names its key
 
@@ -50,13 +50,13 @@ Selection state uses the same primitive — the selected id is `useDataMap(() =>
 
 ## Cursor pagination helpers
 
-| Helper                                       | When to use                                                                           |
-| -------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `useCursorPaginationData<T>()`               | single list per store; any `T` (unconstrained)                                        |
-| `useCursorPaginationOperationData(ref(...))` | you already own the ref (e.g. from a keyed map); layer `createOperationData` for CRUD |
-| `useCursorPaginationDataMap<T>(currentId)`   | same store holds per-key lists (e.g. pinned messages per room); built on `useDataMap` |
+| Helper                                                     | When to use                                                                                              |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `useCursorPaginationData<T>()`                             | single list per store; any `T` (unconstrained)                                                           |
+| `useCursorPaginationOperationData(bindPage, bindIsLoaded)` | you already own the `Page` and loaded refs (e.g. from a keyed map); layer `createOperationData` for CRUD |
+| `useCursorPaginationDataMap<T>(currentId)`                 | same store holds per-key lists (e.g. pinned messages per room); built on `useDataMap`                    |
 
-Both hand out a `CursorPaginationSlice<TItem>` — `{ initializeCursorPaginationData, isLoaded, items }` — through
+Both hand out a `CursorPaginationSlice<TItem>` — `{ initializeCursorPaginationData, isLoaded, items, resetCursorPaginationData }` — through
 `getSlice`: `getSlice(key)` on the map, `getSlice()` on the single-list one, so a consumer that only needs one
 partition's rows (the IndexedDB pagination caches, above all) takes the same shape from either. That slice is the
 **only** writable `items` a keyed store has; the store's ambient `items` is `readonly` and rendering-only.

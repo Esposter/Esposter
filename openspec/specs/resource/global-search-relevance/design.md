@@ -18,7 +18,7 @@ flowchart LR
   H --> P
   N --> O["order: name match desc, rank asc, then the sort asked for"]
   O --> P
-  W --> CNT["readResourcesCount<br/>same filter, never drifts"]
+  W --> CNT["readResources first page: total<br/>same filter, never drifts"]
 ```
 
 The filter is the owner's: `getResourcesWhere` narrows the index hits to the caller's rows that are not soft-deleted, so the index itself never decides visibility. `readResourceList` orders by the name arm first, because a `bm25` rank alone cannot keep a tag-only row below a name row. The weights are name 10 and tags 1, so among the rows that match, a name that holds the word ranks above one whose tag does.

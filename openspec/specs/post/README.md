@@ -8,7 +8,7 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 - **Denormalized counters** — `likeCount` and `commentCount` live on the post row and are updated transactionally with every like/comment mutation, so feed cards never aggregate. How a comment write reaches the posts above it is in [posts and comments](posts-and-comments/design.md).
 - **Stored ranking** — a Reddit-style hot score computed at write time and stored on the row, so the feed is a simple indexed sort. See [feed and ranking](feed-and-ranking/design.md).
 - **Profanity filtering** — every create/update of user text goes through `getProfanityFilterProcedure`, which censors configured input fields in middleware before the mutation runs.
-- **Achievements** — post, comment, and like actions feed a rich set of achievement definitions (including condition-based ones like "50 comments under 50 characters") through the tRPC-path plugin.
+- **Achievements** — post, comment and like actions feed the achievement definitions the [achievements](../achievement/README.md) area owns.
 
 ## Pages
 

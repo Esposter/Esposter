@@ -38,13 +38,12 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Procedures
 
-| Procedure                                            | Auth                    | Input      | Purpose                                                                      |
-| ---------------------------------------------------- | ----------------------- | ---------- | ---------------------------------------------------------------------------- |
-| `<type>.deleteResource` / `resource.deleteResources` | owner                   | unchanged  | Set `deletedAt`, delete the publication row                                  |
-| `resource.readDeletedResources`                      | authed                  | pagination | The caller's own bin list                                                    |
-| `resource.readDeletedResourcesCount`                 | authed                  | none       | The caller's own bin total                                                   |
-| `resource.restoreResources`                          | owner-scoped where      | `{ ids }`  | Clear `deletedAt` on the owner's binned rows, append a `Restored` entry each |
-| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`   | Hard delete the object prefix, then the row                                  |
+| Procedure                                            | Auth                    | Input       | Purpose                                                                      |
+| ---------------------------------------------------- | ----------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `<type>.deleteResource` / `resource.deleteResources` | owner                   | unchanged   | Set `deletedAt`, delete the publication row                                  |
+| `resource.readDeletedResources`                      | authed                  | cursor page | The caller's own bin list, its first page answering the bin total            |
+| `resource.restoreResources`                          | owner-scoped where      | `{ ids }`   | Clear `deletedAt` on the owner's binned rows, append a `Restored` entry each |
+| `resource.purgeResource`                             | owner (`isDeletedOnly`) | `{ id }`    | Hard delete the object prefix, then the row                                  |
 
 ## Key files
 

@@ -8,7 +8,7 @@ The offline cache is a local IndexedDB mirror of Pinia state. **The stores remai
 flowchart LR
   subgraph online [Online]
     Q["tRPC query (readItems)"] --> STORE["Pinia store items"]
-    STORE -->|"watched by useCursorPaginationCache"| IDB[("IndexedDB store<br/>partitioned by key")]
+    STORE -->|"watched by usePaginationCache"| IDB[("IndexedDB store<br/>partitioned by key")]
   end
 
   subgraph offline [Offline]
@@ -16,15 +16,9 @@ flowchart LR
   end
 ```
 
-One generic composable owns the whole lifecycle, behind a thin shape adapter per pagination variant:
+One generic composable, `usePaginationCache`, owns the whole lifecycle: it persists on change, clears on empty, hydrates on mount, on a partition switch and on going offline. It reads and writes the store through the `CursorPaginationSlice` that the store's `getSlice` returns.
 
-| Composable                 | Purpose                                                                                |
-| -------------------------- | -------------------------------------------------------------------------------------- |
-| `usePaginationCache`       | Persists on change, clears on empty, hydrates on mount, on switch and on going offline |
-| `useCursorPaginationCache` | Adapts the hydrated rows into a `CursorPaginationData` for the store's hook            |
-| `useOffsetPaginationCache` | Offset-paginated equivalent                                                            |
-
-Feature wiring is a thin wrapper supplying partition key, store refs, and hooks: `useMessageCache` (room partition, filters loading messages), `useMemberCache` (room partition, hydrates counts/user store), `useRoomCache` (user partition).
+Feature wiring is a thin wrapper supplying partition key, store refs, and hooks: `useMessageCache` (room partition, filters loading messages), `useMemberCache` (room partition, hydrates the user store and the room's member map, never the totals), `useRoomCache` (user partition).
 
 ### partitionKey is always required
 
@@ -72,13 +66,13 @@ That flag only means anything while **the store's list cannot outlive its partit
 
 ### The store list must be partition-scoped too
 
-A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` / `useOffsetPaginationDataMap` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
+A store whose partition key can change while it is alive therefore uses `useCursorPaginationDataMap(() => currentKey)` — messages and members both key on `currentRoomId`. The unkeyed `useCursorPaginationData` is correct only where the key cannot change under the store: the room list partitions on the signed-in user, and signing out reloads the page, so that list is recreated with its partition rather than outliving it.
 
-**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link opens the room around an older message and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor and its `hasMoreNewer` flag survive the room switch the rows do not — the next room renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
+**Every field describing that partition is keyed, not only the rows.** A cursor is the clearest case: the message list pages in both directions, and a deep link opens the room around an older message and leaves a _newer_ cursor to page forward from. Held in a plain `ref` beside a room-keyed list, that cursor survives the room switch the rows do not — the next room's `previousCursor` is not empty, so it renders a "load newer" waypoint it never earned, then pages in a window cut from the previous room's timestamps. Anything that answers for one room goes through `useDataMap(() => currentRoomId, …)` like the rows do.
 
 ## Patterns
 
-Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (member counts, companion user maps):
+Feature cache composables wrap the generic one — `getWriteItems` only for feature-specific filtering, `onHydrate` only for side effects not represented by the paginated store itself (companion user maps and the room's member map):
 
 ```ts
 export const useFooCache = () => {
@@ -87,7 +81,7 @@ export const useFooCache = () => {
   const fooStore = useFooStore();
   const { getSlice } = fooStore;
 
-  useCursorPaginationCache({
+  usePaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     getSlice,
     getWriteItems: (items) => items.filter((item) => !item.isLoading),
@@ -110,7 +104,7 @@ Nothing in a fetch composable touches the cache: hydration is a watcher's job, f
 | `apps/web/app/services/auth/signOutOfBrowser.ts`              | deletes the whole database just before the load                                            |
 | `apps/web/app/services/cache/indexedDb/readIndexedDb.ts`      | read all items by `partitionKey`                                                           |
 | `apps/web/app/services/cache/indexedDb/writeIndexedDb.ts`     | replace all items for a `partitionKey` (respects `limit`)                                  |
-| `apps/web/app/composables/cache/indexedDb/`                   | the generic pagination cache composables                                                   |
+| `apps/web/app/composables/cache/indexedDb/`                   | `usePaginationCache`, the one generic pagination cache composable                          |
 | `apps/web/app/composables/message/message/useMessageCache.ts` | message wiring                                                                             |
 | `apps/web/app/composables/message/room/useMemberCache.ts`     | member wiring                                                                              |
 | `apps/web/app/composables/message/room/useRoomCache.ts`       | room wiring                                                                                |

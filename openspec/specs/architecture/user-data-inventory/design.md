@@ -32,7 +32,20 @@ Each room's messages, reactions and search live in that room's object, and the s
 | `messages` table in each room's object         | room id; `userId`, `mentions`, `files`    | Soft delete. The sweep calls `deleteUserMessages` on each room the person is a member of, which empties each of their messages' text, files and link preview and sets `deletedAt`. An owned room's object is deleted with `deleteAll`, which closes its sockets. The moderation ban sweep soft-deletes one user's messages in one room. Each deletion is broadcast to the room's viewers as it lands. | `rooms/{roomId}/messages.json`, the person's messages (by `userId`) in rooms they are a member of |
 | `messages_search` (FTS5) in each room's object | the message's row                         | Written by triggers on the messages table, so a deletion that empties the text drops the message from search in the same statement. Nothing is left to an indexer's next pass.                                                                                                                                                                                                                        | None. Derived from `messages`.                                                                    |
 | Reactions in each room's object                | room id; `userIds`                        | Removed when the reactor is the sole reactor. `deleteUserReactions` takes the person's id out of the reactions they share in each member room; an owned room's object is deleted with `deleteAll`.                                                                                                                                                                                                    | `likes.json`, the reactions the person made                                                       |
-| Sent-message index in the person's user object | the person's user id; room id, message id | Each deletion of a message the person sent removes its entry through the user object's `removeSentMessage`.                                                                                                                                                                                                                                                                                           | None. Derived from the rooms' messages.                                                           |
+| Sent-message index in the person's user object | the person's user id; room id, message id | Each deletion of a message the person sent removes its entry through the user object's `removeSentMessages`.                                                                                                                                                                                                                                                                                          | None. Derived from the rooms' messages.                                                           |
+
+## User object
+
+The person's own object holds what is theirs outside every room. The sweep reaches it through its own id, in one step (`eraseAccountUserObject`), which empties each store below and clears the object's alarm. The room-keyed rows in it are erased first, by the room steps, so a replay that finds the indexes empty has nothing left to name.
+
+| Store                                                                | Keyed by                                    | Removed today                                                                                                                             | Export entry                                     |
+| :------------------------------------------------------------------- | :------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------- |
+| `remindersInUser` (reminders, with their text and room)              | the person's user id; reminder id, room id  | The sweep's user-object step. A reminder whose room was deleted is dropped at send, so no notification links to it                        | None                                             |
+| `todoRemindersInUser` (TodoList due reminders)                       | the person's user id; resource id, item id  | The sweep's user-object step. A reminder of a resource purged by the sweep is dropped at send, since the send re-reads the resource       | None. Derived from the resource's own record     |
+| `joinedCallsInUser` (standalone calls the person was admitted to)    | the person's user id; call session id       | The sweep's user-object step. A call's row is removed when its last participant leaves                                                    | None                                             |
+| `scheduledMessagesInUser` (index of the person's scheduled messages) | the person's user id; scheduled id, room id | Each row's room deletes its scheduled message in the room sweep, which removes the index entry. The user-object step empties what is left | None. Derived from the rooms' scheduled messages |
+| `sentMessagesInUser` (index of the person's sent messages)           | the person's user id; room id, message id   | The user-object step, after the room sweep has erased the messages the index names                                                        | None. Derived from the rooms' messages           |
+| Topic watch rows (storage keys under the watch prefix)               | the person's user id; watch id, topic       | The user-object step, which also lets go of the topics their tabs watched                                                                 | None. Connection state                           |
 
 ## Typed tables in core
 
@@ -86,13 +99,14 @@ Each one is named where it is decided and says which operation it affects. Items
 
 ## Key files
 
-| Path                                                     | Role                                                                               |
-| :------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/db-schema/src/schema/`                         | The D1 tables and their foreign keys                                               |
-| `packages/db-schema/src/models/storage/StorageBucket.ts` | The buckets, each named for its R2 bucket                                          |
-| `packages/db/src/services/storage/`                      | The object helpers, including the prefix delete                                    |
-| `packages/db/src/services/resource/purgeResource.ts`     | The one existing whole-owner sweep, for resources                                  |
-| `apps/web/server/services/room/deleteRoom.ts`            | The room deletion an owner's departure runs                                        |
-| `apps/realtime/src/durableObjects/RoomObject.ts`         | The per-user delete, erase and export inside one room, and the room's own deletion |
-| `apps/realtime/src/durableObjects/UserObject.ts`         | The sent-message index a deletion removes its entries from                         |
-| `apps/jobs/src/handlers/deleteAccountHandler.ts`         | The sweep that removes these stores, in order                                      |
+| Path                                                       | Role                                                                               |
+| :--------------------------------------------------------- | :--------------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/`                           | The D1 tables and their foreign keys                                               |
+| `packages/db-schema/src/models/storage/StorageBucket.ts`   | The buckets, each named for its R2 bucket                                          |
+| `packages/db/src/services/storage/`                        | The object helpers, including the prefix delete                                    |
+| `packages/db/src/services/resource/purgeResource.ts`       | The one existing whole-owner sweep, for resources                                  |
+| `apps/web/server/services/room/deleteRoom.ts`              | The room deletion an owner's departure runs                                        |
+| `apps/realtime/src/durableObjects/RoomObject.ts`           | The per-user delete, erase and export inside one room, and the room's own deletion |
+| `apps/realtime/src/durableObjects/UserObject.ts`           | The sent-message index a deletion removes its entries from                         |
+| `apps/jobs/src/services/account/eraseAccountUserObject.ts` | The sweep step that empties the person's own object                                |
+| `apps/jobs/src/handlers/deleteAccountHandler.ts`           | The sweep that removes these stores, in order                                      |

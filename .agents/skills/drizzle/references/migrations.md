@@ -48,6 +48,11 @@ grep -cE "DROP TABLE|DELETE FROM" <migration>.sql   # expect 0
 
 SQLite cannot alter most of a column, so drizzle-kit rebuilds the table for a change to a column or a constraint: `PRAGMA foreign_keys=OFF`, a `__new_` table, an `INSERT … SELECT` copy, `DROP TABLE`, `ALTER TABLE … RENAME TO`, `PRAGMA foreign_keys=ON`.
 
+**On D1 a rebuild of a referenced table deletes its children.** D1 ignores `PRAGMA foreign_keys=OFF`, and `PRAGMA defer_foreign_keys` defers only the checks, not the actions, so the rebuild's `DROP TABLE` runs every `ON DELETE CASCADE` that points at the table and empties each child (proven on local D1, which runs D1's SQLite). Before applying a generated rebuild, list the tables whose foreign keys reference it:
+
+- **A new `NOT NULL` column is added in place, not rebuilt:** `ALTER TABLE … ADD … NOT NULL DEFAULT <placeholder>`, then an `UPDATE` that backfills it from the column it derives from. The placeholder default lives in the database alone; the schema and the snapshot stay without one, and every insert writes the column.
+- **A rebuild that cannot be avoided keeps its children aside:** `CREATE TABLE __keep_<child> AS SELECT * FROM <child>` before the rebuild, then `INSERT INTO <child> SELECT * FROM __keep_<child>` and `DROP TABLE __keep_<child>` after it, for every child that cascades — and for the children of those children, since the cascade follows them too. `pnpm --filter @esposter/scripts test src/workspace/d1RebuildCascades.test.ts` refuses a migration that rebuilds a referenced table without keeping each cascading child.
+
 The bundles the size tests read grow with a schema change wherever `@esposter/db-schema` is inlined. The bundle-size record that growth moves is regenerated with `pnpm bundle-sizes:gen` only after the rebuild, as `build`'s `references/dist-size.md` sets out. `@esposter/db-mock` applies the migration folders on every `createMockDb`, so no snapshot goes stale.
 
 ## Fixing up the generated SQL

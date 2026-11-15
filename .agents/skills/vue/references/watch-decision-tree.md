@@ -109,7 +109,7 @@ Auto-save, API calls on throttled search, typing indicators — the source genui
 ```ts
 watch(throttledSearchQuery, async (newQuery) => {
   const results = await search(newQuery);
-  initializePaginationData(results);
+  initializeCursorPaginationData(results);
 });
 ```
 

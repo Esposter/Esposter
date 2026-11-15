@@ -8,7 +8,7 @@ Tags live on the resource row itself as a JSON column defaulting to `{}`, not in
 
 Editing replaces the whole record rather than merging. The dialog always sends every tag it knows about, and whatever it omits is gone. That makes a save one atomic write with no partial-merge ambiguity: a merge would have to tell an omitted key that was removed from one that was never touched, and the whole-record replace has no such case, which is also how the editor can express "remove this tag" at all. It edits an ordered list of name/value rows rather than the record directly — a record cannot hold a half-typed duplicate or a blank name mid-edit, and rows keep their position while the user types. Rows with a blank name are dropped at save, which is what lets an empty row sit on screen as somewhere to type without ever being written.
 
-Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is an exact match: `getResourcesWhere` tests for a row of `json_each(tags)` whose `key` and `value` both match; a name alone is key presence, a row whose `key` matches — "tagged with this at all", which is the common case. Both go through `getResourcesWhere`, so `readResourcesCount` and `readResources` can never disagree about what matches.
+Filtering splits in two, because the pill's value is optional and one operator cannot cover both cases. A name _and_ value is an exact match: `getResourcesWhere` tests for a row of `json_each(tags)` whose `key` and `value` both match; a name alone is key presence, a row whose `key` matches — "tagged with this at all", which is the common case. Both go through `getResourcesWhere`, so the rows of `readResources` and its total can never disagree about what matches.
 
 ```mermaid
 flowchart LR
@@ -28,11 +28,11 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 ## Procedures
 
-| Procedure                                                | Auth   | Input                  | Purpose                                   |
-| -------------------------------------------------------- | ------ | ---------------------- | ----------------------------------------- |
-| `<type>.updateResource` (factory)                        | owner  | + `tags?`              | Whole-record replace                      |
-| `resource.readResources` / `resource.readResourcesCount` | authed | + `tags?` / `tagName?` | Exact-value or key-presence filter        |
-| `resource.readResourceTagCounts`                         | authed | —                      | Tag names + how many resources carry each |
+| Procedure                         | Auth   | Input                  | Purpose                                   |
+| --------------------------------- | ------ | ---------------------- | ----------------------------------------- |
+| `<type>.updateResource` (factory) | owner  | + `tags?`              | Whole-record replace                      |
+| `resource.readResources`          | authed | + `tags?` / `tagName?` | Exact-value or key-presence filter        |
+| `resource.readResourceTagCounts`  | authed | —                      | Tag names + how many resources carry each |
 
 ## Key files
 

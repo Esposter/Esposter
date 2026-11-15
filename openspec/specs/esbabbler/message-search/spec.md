@@ -187,7 +187,7 @@ A search SHALL cancel the search still in flight in the same room, whichever sur
 #### Scenario: A search is run while the one before it is still in flight
 
 - **GIVEN** a search in a room is still waiting for its results
-- **WHEN** the reader runs another search in that room, by Enter, from the history or by changing the page
+- **WHEN** the reader runs another search in that room, by Enter or from the history
 - **THEN** the earlier search's request is cancelled
 - **AND** its results never replace the results of the later search
 - **AND** no error is shown for the cancelled search

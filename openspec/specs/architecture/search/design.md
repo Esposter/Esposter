@@ -41,7 +41,7 @@ const { isPending } = useAutoSearch(searchQuery, {
 
 ### `useCursorSearcher` — cursor-paginated results
 
-`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationData` for searches whose results paginate (room pickers, forward-to dialogs); its callback contract is `.agents/skills/pagination/references/search-as-you-type.md`. It returns `{ hasMore, items, readSearchedItems, readMoreSearchedItems, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
+`app/composables/useCursorSearcher.ts` composes `useAutoSearch` with `useCursorPaginationDataMap`, keyed by the query on screen, for searches whose results paginate (room pickers, forward-to dialogs): each continuation is read for the query its page came from, and a search the reader has moved past lands nowhere. Its callback contract is `.agents/skills/pagination/references/search-as-you-type.md`. It returns `{ hasMore, isError, isPending, items, readMoreSearchedItems, retry, searchQuery }`, so the list renders with the standard `StyledWaypoint` infinite-scroll pattern.
 
 ```ts
 export const useRoomSearchStore = defineStore("message/room/search", () => {

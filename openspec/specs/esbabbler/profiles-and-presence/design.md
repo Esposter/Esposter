@@ -30,7 +30,7 @@ flowchart TD
 - **Profile card** — avatar, display name, status message, roles and mutual rooms; shown from the member list and message avatars.
 - **Editing** — the bottom-left user panel opens the edit dialog: `name`, biography, avatar upload.
 - `users.biography` — text, capped at the length `USER_BIOGRAPHY_MAX_LENGTH` declares in `packages/db-schema/src/services/user/constants.ts`, shown beneath the display name.
-- `user.updateUser` — restricted to the caller's own row; validates `name` (`USER_NAME_MAX_LENGTH`), `biography`, `image`.
+- `user.updateUser` — restricted to the caller's own row; validates `name` (`USER_NAME_MAX_LENGTH`), `biography`, `image`. A save publishes the person's own `User` topic and the `Room` topic of each room they are a member of, in waves of `MAX_CONCURRENT_ROOM_TOPIC_PUBLISHES` (`publishUserRoomTopics`), so the readers of every room they are in are told of the change. The room's client re-reads the users it shows on that topic, replacing the copies it holds, so a renamed member's name and image update on screen without a reload.
 - Avatar upload is one presigned PUT ([file uploads](../../architecture/file-uploads/design.md)) into the `public-user-assets` bucket, served on the public asset domain, at `{userId}/ProfileImage`; rooms have the equivalent room profile image at `rooms/{roomId}/ProfileImage`.
 
 In room contexts, a `displayName` wins over the account name ([display names](../display-names/design.md)).
@@ -42,5 +42,6 @@ In room contexts, a `displayName` wins over the account name ([display names](..
 | `packages/db-schema/src/schema/message/userStatusesInMessage.ts` | presence table + `UserStatus` enum                                                      |
 | `apps/realtime/src/services/user/setUserConnectedInRooms.ts`     | the connected flag, written on the first socket and the last close, then each room told |
 | `apps/web/server/trpc/routers/user.ts`                           | `upsertStatus`, `readStatuses`, `updateUser`                                            |
+| `apps/web/server/services/user/publishUserRoomTopics.ts`         | the room topics a profile save publishes, one per membership                            |
 | `apps/web/app/components/User/ProfileCard/`                      | editable profile card (global surface)                                                  |
 | `apps/web/app/components/Message/Model/User/ProfileCard/`        | in-room profile card (mutual rooms, member actions)                                     |

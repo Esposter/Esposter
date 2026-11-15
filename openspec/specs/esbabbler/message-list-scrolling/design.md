@@ -7,7 +7,7 @@ The message list is a `column-reverse` scroll container, so its scroll origin is
 A reader is in the present when **the newest loaded message is on screen** _and_ **the loaded window is the live tail**. Either half can fail on its own:
 
 - **The reader scrolled back by a screenful** — observed with an `IntersectionObserver` over a zero-height sentinel rendered at the list's newest end, whose `rootMargin` is the container's own height. A screen is the threshold every chat client the reader already knows uses: a wheel notch off the newest message is still reading the present, a screen back is browsing history. Expressing it as the reader's viewport rather than a tuned pixel count is what makes it hold on a phone and on a tall monitor alike.
-- **The window is not the live tail** — `hasMoreNewer` is set. A deep link into an older message opens the room _around_ that message and leaves the newer ones unloaded ([offline cache](../offline-cache/design.md) covers why that cursor is keyed per room), so the bottom of that window is still the past no matter how far down the reader scrolls.
+- **The window is not the live tail** — `previousCursor` is not empty. A deep link into an older message opens the room _around_ that message and leaves the newer ones unloaded ([offline cache](../offline-cache/design.md) covers why that cursor is keyed per room), so the bottom of that window is still the past no matter how far down the reader scrolls.
 
 The same sentinel is observed twice, because the two consumers want different edges: the affordance wants the screenful above, while the list's `overflow-anchor` class wants the strict bottom — it may only be disabled where the reader is genuinely pinned, and half a screen up it is the browser's own anchoring that holds their place as a message arrives. Both observers start pinned (`initialValue: true`), the answer that costs nothing when wrong for the first frame an observer has not yet reported — otherwise the affordance flashes over every room the reader opens.
 
@@ -17,11 +17,11 @@ The same sentinel is observed twice, because the two consumers want different ed
 flowchart TD
   SENTINEL["bottom sentinel<br/>observed at the list's newest end"] --> PINNED{"newest message within one screen?"}
   PINNED -->|"no — a screenful back"| SHOW["snackbar<br/>You're Viewing Older Messages"]
-  PINNED -->|"yes"| TAIL{"hasMoreNewer — newer messages unloaded?"}
+  PINNED -->|"yes"| TAIL{"previousCursor set — newer messages unloaded?"}
   TAIL -->|"yes — a deep link opened an older window"| SHOW
   TAIL -->|"no"| HIDE["no affordance — the reader is in the present"]
   SHOW --> CLICK["Jump to Present"]
-  CLICK --> BRANCH{"hasMoreNewer?"}
+  CLICK --> BRANCH{"previousCursor set?"}
   BRANCH -->|"yes"| REREAD["navigate to the room route — re-reads the newest page"]
   BRANCH -->|"no"| ORIGIN["scrollTop = 0 — the column-reverse origin"]
   REREAD --> SENTINEL
@@ -30,7 +30,7 @@ flowchart TD
 
 ## What a jump does
 
-`jumpToPresent` branches on the same `hasMoreNewer` the affordance reads, never on the route: **scrolling cannot reach messages that were never loaded.** A window that is not the tail is re-read by navigating to the room's own route, which remounts the list on the newest page; a window that already holds the newest message is scrolled to its origin, keeping every page the reader scrolled through. Keying that branch on the route parameter instead spends a full re-read on a reader who had already paged forward to the present, and would silently scroll-and-do-nothing for any future window whose newer cursor did not come from a permalink.
+`jumpToPresent` branches on the same `previousCursor` the affordance reads, never on the route: **scrolling cannot reach messages that were never loaded.** A window that is not the tail is re-read by navigating to the room's own route, which remounts the list on the newest page; a window that already holds the newest message is scrolled to its origin, keeping every page the reader scrolled through. Keying that branch on the route parameter instead spends a full re-read on a reader who had already paged forward to the present, and would silently scroll-and-do-nothing for any future window whose newer cursor did not come from a permalink.
 
 The affordance is a **persistent** status bar at the list's foot, rising from the end the list is scrolled away from. It reports where the reader is rather than something that happened, so it stays for as long as the list is in the past and has no timeout; a timed toast would retract it while what it reports is still true.
 
@@ -46,6 +46,7 @@ A permalink lands through `useScrollToMessage`: if the room and the message are 
 
 | File                                                                      | Role                                                                |
 | ------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `apps/web/app/store/message/data.ts`                                      | The newer cursor, `previousCursor`, kept per room                   |
 | `apps/web/app/store/message/ui/scroll.ts`                                 | The present predicate, the sentinel, `jumpToPresent`, row highlight |
 | `apps/web/app/components/Message/Model/Message/List/Index.vue`            | Scroll container, sentinel, both waypoints, anchor compensation     |
 | `apps/web/app/components/Message/Model/Message/JumpToPresentSnackbar.vue` | The affordance itself                                               |

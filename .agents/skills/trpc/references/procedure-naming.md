@@ -3,8 +3,8 @@
 Read when naming a procedure, a result type, a socket event or a DB result variable.
 
 - **Every query names its verb** (`trpc-procedure/require-query-verb`): `read*` for a fetch, `search*` for a ranked query, `generate*` for a minted credential (an upload's presigned url). A bare noun (`buildVersion`) and a `get*` procedure are both wrong — `get*` is for derivation, which is not what a network round trip is.
-- **A query answering with a count is a `read*Count`** — `readResourcesCount`, `readMembersCount`,
-  `readResourceViewCount`, `readSurveyResponsesCount`. There is no second spelling: whether the caller drove the
+- **A query answering with a count is a `read*Count`** — `readMembersCount`,
+  `readResourceViewCount`, `readSurveyResponsesCount`. A list's total is not one of these: the first page of the list answers it. There is no second spelling: whether the caller drove the
   tally with filters or asked for a number belonging to one subject makes no difference to the name, because a
   reader cannot tell those apart and neither can the next author.
 - **A grouping answers with rows rather than a number**, so it is plural and named for what it returns —

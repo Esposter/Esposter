@@ -11,10 +11,9 @@ Consequences that keep this boundary intact:
 - `readIndexedDb` / `writeIndexedDb` (`apps/web/app/services/cache/indexedDb/`) are called **only** from `usePaginationCache`.
 - **Sign-out deletes the whole database** (`apps/web/app/services/auth/signOutOfBrowser.ts`), which is what stops room-keyed messages and members reaching the next reader of the browser. A store keyed by anything other than the reader relies on that delete.
 
-**Generic cache composables** (`apps/web/app/composables/cache/indexedDb/`) — each takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
+**The generic cache composable** (`apps/web/app/composables/cache/indexedDb/usePaginationCache.ts`) takes one options object and returns nothing. Both of its operations are fired from watchers through `getSynchronizedFunction`, so the completion signal is the repo-wide drain, `waitForSynchronizedFunctions()`; never give the cache (or the `useMutation` instance under it) a `flush` of its own for a test to await.
 
-- `usePaginationCache` — the base; takes `getSlice(partitionKey)` → `{ initializeItems, isLoaded, items }`
-- `useCursorPaginationCache` / `useOffsetPaginationCache` — wrap it, taking a slice whose initializer is named `initializeCursorPaginationData` / the offset equivalent
+`usePaginationCache` takes `getSlice(partitionKey)`, which returns a `CursorPaginationSlice` (`{ initializeCursorPaginationData, isLoaded, items, resetCursorPaginationData }`); the cache reads and writes the rows of the partition it names through that slice.
 
 **The cache names its partition, it does not read the ambient one.** Both watchers act on a partition key the cache already has in hand, so the store hands over `getSlice` rather than `items`/`isLoaded`: a hydrate that finishes after the reader moved on lands in the partition it was read for instead of being dropped. That is why there is no "is this still the current partition" check anywhere in here.
 
@@ -24,7 +23,7 @@ Consequences that keep this boundary intact:
 export const useFooCache = () => {
   const fooStore = useFooStore();
   const { getSlice } = fooStore;
-  useCursorPaginationCache({
+  usePaginationCache({
     configuration: FooIndexedDbStoreConfiguration,
     getSlice,
     partitionKey: () => session.value.data?.user.id ?? "",

@@ -73,13 +73,13 @@ sequenceDiagram
   participant History as searchHistory.createSearchHistory
 
   Input->>Read: Enter with something to search on
-  Read->>Store: bind the tab's result slice, totals and page
+  Read->>Store: bind the room's result slice and totals
   Note over Read: filters and query are read before the first await,<br/>so the response is filed under the search that ran
   Read->>Trpc: getSearchableFilters(filters) plus the query
   Trpc->>Search: each named room's object applies the filter conditions, the room and not-deleted conditions, and MATCH over getSearchExpression
   Search-->>Trpc: page of documents and a total
   Trpc-->>Read: results and count
-  Read->>Store: write results, count and page 1
+  Read->>Store: write the first page and its count
   Read->>History: the filters and query that actually ran
 ```
 
@@ -91,9 +91,11 @@ The history lists each combination once: `createSearchHistory` returns the row a
 
 Browsing a room's attachments is `has: file` and nothing more — a filter like every other narrowing, rather than a second surface asking the same question with its own result slice to keep apart. What those attachments are is [file and media](../file-media/design.md)'s subject.
 
-Results, totals and the current page are all keyed by room, so a response that lands after the user has moved on is filed under the room it was issued for rather than shown under the new one.
+Results, totals and the continuation cursor are all keyed by room, so a response that lands after the user has moved on is filed under the room it was issued for rather than shown under the new one.
 
-Within a room, a newer search cancels the one still in flight, whichever surface issued it: the Enter key, a history entry or a page change. The store holds one `AbortController` per room and hands out its signal, so the cancelled request is actually stopped, and a response that arrives after the cancel writes nothing, as the [search design](../../architecture/search/design.md) requires of every search. An empty read cancels the search the same way, and it clears the pending flag that search leaves behind, since the cancelled search skips clearing its own flag and nothing else would.
+Within a room, a newer search cancels the one still in flight, whichever surface issued it: the Enter key or a history entry. The store holds one `AbortController` per room and hands out its signal, so the cancelled request is actually stopped, and a response that arrives after the cancel writes nothing, as the [search design](../../architecture/search/design.md) requires of every search. An empty read cancels the search the same way, and it clears the pending flag that search leaves behind, since the cancelled search skips clearing its own flag and nothing else would.
+
+Loading more results from the waypoint at the list's end is a continuation of the search its results were read for. It is read with the slice's `nextCursor` and takes no signal of its own, so it neither cancels the search in flight nor is cancelled by a newer one.
 
 ## Erased accounts
 
@@ -116,7 +118,7 @@ A deleted account's messages keep their place in their rooms, but not their text
 | `shared/services/message/checkIsSearchQueryEmpty.ts`                     | Whether there is anything to search on at all                                                                   |
 | `app/composables/message/search/useReadSearchedMessages.ts`              | The explicit-submit read, and the history row it earns                                                          |
 | `app/composables/message/message/useReadMessageCreators.ts`              | The authors a page of messages names, read before the page lands                                                |
-| `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and page                                                                 |
+| `app/store/message/search/index.ts`                                      | Per-room query, chips, results, totals and the search those results were read for                               |
 | `server/services/message/searchMessages.ts`                              | Condition assembly and the paged FTS5 read                                                                      |
 | `packages/shared/src/services/search/getSearchExpression.ts`             | The user text as literal FTS5 words                                                                             |
 

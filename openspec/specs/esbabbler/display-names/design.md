@@ -55,7 +55,7 @@ Member display names are returned by `readMembers` on each row as `displayName`.
 
 `readMyUsersToRooms` is called from `useReadRooms` to pre-load the current user's private settings (unread state, notification type) for all rooms at startup.
 
-The quick switcher needs to search and page direct messages by the same name it renders. `readRooms` can include DMs for that surface and returns the resolved value as `displayName`: participant display names (falling back to each account's `name`) are sorted by display name and user id, then joined in that order. `readDirectMessageParticipants` returns those participants with the same `displayName` values and order, so the client joins the server-resolved values instead of resolving them again. The UI still labels the per-room setting **Display name**; persisted fields and code use `displayName` consistently.
+The quick switcher needs to search and page direct messages by the same name it renders. `readRooms` can include DMs for that surface and returns the resolved value as `displayName`: participant display names (falling back to each account's `name`) are sorted by display name, compared without regard to ASCII case, and then by user id, then joined in that order. `readDirectMessageParticipants` returns those participants with the same `displayName` values and order, so the client joins the server-resolved values instead of resolving them again. The UI still labels the per-room setting **Display name**; persisted fields and code use `displayName` consistently.
 
 ## Setting your display name
 
@@ -117,6 +117,6 @@ sequenceDiagram
 
 ## Notes
 
-- **Other members see a moderator's rename when they next read the room's members, not at once.** The caller's list and the renamed member's list are current when the write lands, but no socket event carries the change to the rest of the room: the `updateUserToRoom` event reaches only the row's own member's sockets, and a row already held is not read again. A self-service rename reaches the room the same way.
+- **A rename reaches the room on screen at once.** Every display-name write publishes the room's topic, and the room on screen re-reads the members and message authors it holds (`useRefreshRoomUsers`), so every member viewing the room sees the new name without a reload. The `updateUserToRoom` event carries the row to the renamed member's own sockets only.
 - **A rename is in neither the moderation log nor the audit log.** A display name is not a sanction, and a moderation action type would be enumerated across the [moderation design](../moderation/design.md). An audit entry is a follow-up for the moderation owner if the room asks for one.
 - **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one the room sees.

@@ -3,13 +3,13 @@
 SuperJSON annotates nested values by walking the payload, and it only walks **plain** objects and arrays. A class instance it does not recognise is neither registered (so no `registerCustom` hook fires) nor plain (so it is not walked), and it crosses the wire with no annotations for anything inside it — every nested `Date` arrives as a string:
 
 ```ts
-// hasMore/items survive; items[0].createdAt arrives as a string, not a Date
-return new OffsetPaginationData({ hasMore, items });
+// items survive; items[0].createdAt arrives as a string, not a Date
+return new SomeUnregisteredClass({ items, nextCursor });
 // annotated as `items.0.createdAt: ["Date"]`, revived as a Date
-return { hasMore, items };
+return { items, nextCursor };
 ```
 
-This is why `getBasePaginationData` and `getCursorPaginationData` return **object literals** typed as their class rather than constructing one. Both classes are pure data holders with no methods, so the literal satisfies the type and the annotations survive. The transport is [tRPC transport](../trpc-transport/design.md).
+This is why a paginated read answers an **object literal** typed as `Page` (`toPage` and `createEmptyPage` build one) rather than constructing a class. `Page` is an interface with no methods, so the literal satisfies the type and the annotations survive. The transport is [tRPC transport](../trpc-transport/design.md).
 
 The failure is silent and only visible at the leaves, which makes it easy to misread as "the transformer isn't wired up". Two rules follow:
 

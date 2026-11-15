@@ -5,26 +5,27 @@ Read when a surface shows a number about the whole list — an unread badge, an 
 ## A total over a paginated list is the server's, never the loaded rows
 
 Any number a surface shows _about the whole list_ — an unread badge, a "N items" summary, a filtered tally — is
-computed by the endpoint and returned with the page, because the client holds one page and the answer is about
+computed by the endpoint, because the client holds one page and the answer is about
 all of them. A `computed` counting `items` is right only for a list that is never paginated (a client-owned half
 that exists solely in the tab), and it fails in the direction nobody notices: it reads low, and it reads correct
 the whole time the list is short enough to fit one page. So it survives every manual check and breaks for the
 users with the most rows.
 
-Return it from the same endpoint as the page rather than adding a second one — one round trip, and a total the
+Answer it from the same read as the page, on the first page only, so a later page does not count again. That is one round trip, and a total the
 client cannot forget to ask for. The two statements still run against separate snapshots, so a write landing
 between them can move the total by a row; put both in one statement or one transaction where that matters:
 
 ```ts
-// endpoint: the page and the total it belongs to, resolved together
-const [items, [total]] = await Promise.all([findManyPage(), countMatchingRows()]);
-return { paginationData: getCursorPaginationData(items, limit, sortBy), total: total?.count ?? 0 };
+// endpoint: the first page answers the total beside its rows, and a later page leaves the count out
+const [rows, totals] = await Promise.all([
+  findPageRows(cursor),
+  cursor.values.length === 0 ? countMatchingRows() : undefined,
+]);
+const page = toPage(rows, sort, cursor, limit);
+return totals ? { ...page, count: takeOne(totals).count } : page;
 ```
 
-The store then holds the server's number and **every optimistic write that changes it moves it under the same
-rollback as the list** — a delete decrements it, a clear-all zeroes it, and each rollback restores the previous
-value alongside the previous rows. A write that gates on the loaded rows (`items.every(...)`) is the same bug one
-layer down: gate on the total, which is the only value that speaks for the pages nobody has read.
+The store then holds the total the first page answered, and **a write never moves it by a delta**: a delete re-reads the list and its total together, and a failed delete puts back the rows it removed, never a number. A nudge is wrong in both directions — a refresh landing mid-flight has already re-counted, and the rollback of a rejected write adds back rows the fresh count never held. A write that gates on the loaded rows (`items.every(...)`) is the same bug one layer down: gate on the total, which is the only value that speaks for the pages nobody has read.
 
 ## A keyed read's query closure does not run on the hydrating client
 

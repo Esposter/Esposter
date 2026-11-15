@@ -62,7 +62,7 @@ A column builder is called bare, never with a name string (`no-restricted-syntax
 
 ## Query API: Relational vs SQL-style
 
-The relational API for every read; SQL-style for writes, multi-column `OR` joins, aggregates and upserts; a read's `limit` is `MAX_READ_LIMIT` or `DEFAULT_READ_LIMIT` (`references/queries.md`).
+The relational API for every read; SQL-style for writes, multi-column `OR` joins, aggregates and upserts; a read's `limit` is `MAX_READ_LIMIT` or `DEFAULT_PAGE_LIMIT` (`references/queries.md`).
 
 ## Relations (v2 API) — at a glance
 

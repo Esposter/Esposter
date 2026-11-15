@@ -5,7 +5,7 @@ The three-layer cursor pattern, infinite scroll, the one search-as-you-type stac
 | Unit                                                                                        | Swept                 | Notes |
 | ------------------------------------------------------------------------------------------- | --------------------- | ----- |
 | `app/composables/data/pagination`, `app/composables/cache/indexedDb`                        | 2026-10-05 · Opus 5.5 |       |
-| `server/services/pagination` and the list reads it serves                                   | 2026-10-05 · Opus 5.5 |       |
+| `packages/db/src/services/pagination` and the list reads it serves                          | 2026-10-05 · Opus 5.5 |       |
 | `app/store/message`, `app/composables/message` — messages, pins, search, drafts, moderation | 2026-10-05 · Opus 5.5 |       |
 | `app/store/message/room`, `app/composables/message/room`, `Message/Model/Room`              | 2026-10-05 · Opus 5.5 |       |
 | `app/store/message/user`, `Message/RightSideBar/Search`                                     | 2026-10-05 · Opus 5.5 |       |

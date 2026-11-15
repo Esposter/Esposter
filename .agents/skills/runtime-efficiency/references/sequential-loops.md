@@ -32,7 +32,7 @@ one wrote and nothing depends on the order they land in:
 | Shape                    | Why it stays sequential                                                                                     | Example                                                        |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
 | Retry                    | The next attempt exists only because the last one failed                                                    | `withResourceObjectLock`, `createCallSessionId`, the invite id |
-| Pagination               | The next page's cursor or offset is the last page's answer                                                  | the user data export (`writeRoomEntries`), the CSV export      |
+| Pagination               | The next page's cursor is the last page's `nextCursor`                                                      | the user data export (`writeRoomEntries`), the CSV export      |
 | Committed prefix         | A failure must stop the chunks behind it, and everything before it stays durable for a redelivery to resume | `publishBlobDeletion`, the dead-letter replay                  |
 | Order is the contract    | The iterations land in an order something else reads                                                        | new messages entering the list, SQL statements of a migration  |
 | Lock order               | Rows are locked in a sorted order so two transactions cannot deadlock                                       | `releaseStorageLedgerEntriesByWhere`                           |

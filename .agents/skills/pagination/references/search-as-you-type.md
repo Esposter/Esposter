@@ -6,7 +6,7 @@ Hand-rolling search-as-you-type around a `$trpc` search query is **banned** — 
 
 Pick the layer by result shape:
 
-- **Cursor-paginated results** → `useCursorSearcher(query, isAutoSearch?, isIncludeEmptySearchQuery?)` — wraps `useAutoSearch` + `useCursorPaginationData`; the query callback receives `(searchQuery, cursor, opts)`, the query already normalized, and must forward `opts` (carries the abort signal) to the tRPC call. Both flags are literal `true`-only (never `false`): the 2nd opts into auto-search, and the 3rd makes an empty query list everything (e.g. room pickers) — it only has an effect alongside the 2nd. Its return is defined in `apps/web/app/composables/useCursorSearcher.ts`.
+- **Cursor-paginated results** → `useCursorSearcher(query, isAutoSearch?, isIncludeEmptySearchQuery?)` — wraps `useAutoSearch` + `useCursorPaginationDataMap`, keyed by the query on screen so each continuation is read for the query its page came from; the query callback receives `(searchQuery, cursor, opts)`, the query already normalized, and must forward `opts` (carries the abort signal) to the tRPC call. Both flags are literal `true`-only (never `false`): the 2nd opts into auto-search, and the 3rd makes an empty query list everything (e.g. room pickers) — it only has an effect alongside the 2nd. Its return is defined in `apps/web/app/composables/useCursorSearcher.ts`.
 - **Plain array results** → `useAutoSearch(searchQuery, { reset, search })` directly; `search` receives the sanitized query and the `AbortSignal` to forward as `{ signal }`.
 - **Ctrl+K palette UI** → register the search as the command palette's scope with `useCommandScope` (the `ui-library` skill, `references/keys-and-commands.md`).
 

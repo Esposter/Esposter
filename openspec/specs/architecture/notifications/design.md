@@ -32,7 +32,7 @@ Two properties fall out of the shape rather than out of discipline:
 
 `NotificationQueueMessage` is a discriminated union on `AppNotificationType`. Each member carries exactly what its own recipient resolution needs and nothing more — a message carries the message and, when it is a reply, its thread root; a friend request carries the two user ids. Nothing carries a rendered name or avatar: those are resolved at delivery from the ids, so the same room display-name rule applies to every notification and no publisher restates it.
 
-`ResourceOperation` is the one member that carries its own copy, and deliberately: the wording depends on what the caller did — one resource or fifty, a version number, the name a row had before it was deleted — and none of that survives to delivery time. Its wording is shared with the tab that also shows it immediately, through `ResourceOperationTitleMap`, so the two can never drift.
+`ResourceOperation` carries its own copy, and deliberately: the wording depends on what the caller did — one resource or fifty, a version number, the name a row had before it was deleted — and none of that survives to delivery time. Its wording is shared with the tab that also shows it immediately, through `ResourceOperationTitleMap`, so the two can never drift. A `Message` and a `Reminder` carry the text their publisher wrote, and that text is a snapshot by nature: a push is one delivery, so an edit or a delete after publish does not reach a push already sent, and is not meant to. A message writes no bell row at all (its channel is push only), so no bell read holds a message's text to go stale.
 
 ## Channels
 

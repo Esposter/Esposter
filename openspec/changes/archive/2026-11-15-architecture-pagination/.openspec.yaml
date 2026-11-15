@@ -1,0 +1,11 @@
+schema: spec-driven
+affected_areas: [architecture]
+x-model: claude-haiku-5-5
+x-touches:
+  [
+    "apps/web/shared/models/pagination/**",
+    "apps/web/server/services/pagination/**",
+    "apps/web/app/composables/data/pagination/**",
+    "packages/db/src/services/pagination/**",
+    "packages/db-schema/src/models/pagination/**",
+  ]

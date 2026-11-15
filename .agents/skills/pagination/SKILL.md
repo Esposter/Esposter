@@ -5,6 +5,10 @@ description: Apply when building or reviewing a paginated list, an infinite-scro
 
 # Pagination, Search & Offline List Cache
 
+## The Server and the Wire — one keyset primitive
+
+Every read takes `createPageInputSchema(sort)`, or `createSortedPageInputSchema` where it offers named orders, over a `PageSort` it declares beside its input, and answers `Page` (`{ items, nextCursor }`, plus `count` on a first page whose surface shows a total); the server pages with `createPageSort`, `getPageWhere`, `getPageOrderBy` and `toPage`, and a read merging several sources with `toMergedPage`. The wire, the cursor and why no client chooses an order are `openspec/specs/architecture/pagination/design.md`.
+
 ## Cursor Pagination — Store + Composable + Waypoint
 
 Every paginated list is three layers — a store on `useCursorPaginationData` (per-key lists on `useCursorPaginationDataMap`), a `useRead*` composable wrapping `readItems`/`readMoreItems`, and a component with `<StyledWaypoint>` — never a raw array or a component calling the read; an SSR'd list passes an `AsyncDataKey`, and a keyed write names its key where it is issued (`references/cursor-pagination.md`).
@@ -23,7 +27,7 @@ A server search goes through `useAutoSearch`, or `useCursorSearcher` for paginat
 
 ## Totals Over the List
 
-**A total over the list is the server's, returned with the page, never a `computed` over the loaded rows** — and every optimistic write that changes it moves it under the same rollback as the list. A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
+**A total over the list is the server's, answered on the list's first page, never a `computed` over the loaded rows — and a write that changes it re-reads it rather than moving it.** A keyed read's query closure never runs on the hydrating client, so it writes store state and nothing else. Both: `references/list-totals.md`.
 
 ## Re-reads After a Push
 

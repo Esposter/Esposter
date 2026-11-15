@@ -7,7 +7,7 @@ The home page renders top-level posts across the page's width, with infinite scr
 ```mermaid
 flowchart LR
   sortSelect[Hot / New / Top sort select] -->|sortType| store[post store<br/>items + hasMore + sortType]
-  page[pages/index.vue] -->|readPosts + sortBy| store
+  page[pages/index.vue] -->|readPosts + sortName| store
   waypoint[StyledWaypoint at list end] -->|readMorePosts + cursor| store
   store --> proc[post.readPosts<br/>cursor pagination + viewer block filter]
   proc --> pg[(posts, parentId IS NULL)]
@@ -15,9 +15,9 @@ flowchart LR
   counters --> pg
 ```
 
-**Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc with the unique `id` as tiebreaker), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). Compound sort keys compare lexicographically — `(k1 < v1) OR (k1 = v1 AND k2 < v2)` — so pages of tied values (every new post has `likeCount = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
+**Pagination** — `readPosts` pages by the app's one keyset pagination ([pagination](../../architecture/pagination/design.md)): the reader names a sort, its keys end in the unique `id`, and they compare as one row value, so pages of tied values (every new post has `likeCount = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
 
-**Sort options** — a "Sort by" select on the feed's toolbar, beside Create post, switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`likeCount` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The map also holds Old, which only the comments offer. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments take their own Sort by, which adds Old and is owned by [comment sort](../comment-sort/design.md).
+**Sort options** — a "Sort by" select on the feed's toolbar, beside Create post, switches between Hot (`ranking` desc), New (`id` desc, which is creation order for a UUIDv7) and Top (`likeCount` desc, all-time), each a declared sort in `PostSortTypePageSortMap` ending in `id` and served by an index that leads with the parent or author. The map also holds Old, which only the comments offer. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments take their own Sort by, which adds Old and is owned by [comment sort](../comment-sort/design.md).
 
 **Block filtering** — authenticated feed reads exclude posts and comments authored by users the viewer has blocked — see [feed block filtering](../feed-block-filtering/design.md).
 
@@ -35,26 +35,26 @@ The log term means early likes matter most; the time term gives newer posts a co
 
 ## Procedures
 
-| Procedure        | Auth         | Input                               | Purpose                      |
-| ---------------- | ------------ | ----------------------------------- | ---------------------------- |
-| `post.readPosts` | rate-limited | cursor params + optional `parentId` | one feed/comment page        |
-| `post.readPost`  | rate-limited | post id                             | single post for `/post/[id]` |
+| Procedure        | Auth         | Input                                                  | Purpose                      |
+| ---------------- | ------------ | ------------------------------------------------------ | ---------------------------- |
+| `post.readPosts` | rate-limited | `sortName` and cursor params, plus optional `parentId` | one feed/comment page        |
+| `post.readPost`  | rate-limited | post id                                                | single post for `/post/[id]` |
 
 ## Key files
 
-Paths relative to `apps/web`.
+Paths relative to `apps/web`, except `packages/`, which is relative to the repository root.
 
-| File                                         | Role                                                              |
-| -------------------------------------------- | ----------------------------------------------------------------- |
-| `app/pages/index.vue`                        | the feed page                                                     |
-| `app/components/Post/List.vue`               | the toolbar, the cards, the waypoint                              |
-| `app/composables/post/useReadPosts.ts`       | initial read + read-more, `sortBy`                                |
-| `app/composables/post/usePagedPostRead.ts`   | the first page and cursor pages, shared with the comment branches |
-| `app/store/post/index.ts`                    | feed items store + `sortType`                                     |
-| `app/services/post/PostSortTypeSortByMap.ts` | sort → `sortBy` mapping, Old included                             |
-| `server/trpc/routers/post.ts`                | `readPosts` / `readPost`                                          |
-| `server/services/post/getPostRanking.ts`     | the hot score                                                     |
-| `server/services/pagination/cursor/`         | shared cursor pagination helpers                                  |
+| File                                              | Role                                                              |
+| ------------------------------------------------- | ----------------------------------------------------------------- |
+| `app/pages/index.vue`                             | the feed page                                                     |
+| `app/components/Post/List.vue`                    | the toolbar, the cards, the waypoint                              |
+| `app/composables/post/useReadPosts.ts`            | initial read + read-more, `sortName`                              |
+| `app/composables/post/usePagedPostRead.ts`        | the first page and cursor pages, shared with the comment branches |
+| `app/store/post/index.ts`                         | feed items store + `sortType`                                     |
+| `shared/services/post/PostSortTypePageSortMap.ts` | sort → declared page sort, Old included                           |
+| `server/trpc/routers/post.ts`                     | `readPosts` / `readPost`                                          |
+| `server/services/post/getPostRanking.ts`          | the hot score                                                     |
+| `packages/db/src/services/pagination/`            | createPageSort, getPageWhere, getPageOrderBy, toPage              |
 
 ## Notes
 

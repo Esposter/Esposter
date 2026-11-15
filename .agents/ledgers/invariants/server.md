@@ -17,7 +17,7 @@
 | `server/services/resource` — the roots                                                                                                                | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/resource` — `snapshot`, `todoList`                                                                                                   | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/room`, `blueprint`                                                                                                                   | 2026-10-14 · Haiku 5.5 |       |
-| `server/services/pagination`, `survey`                                                                                                                | 2026-10-14 · Haiku 5.5 |       |
+| `survey`                                                                                                                                              | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/auth`, `rateLimiter`                                                                                                                 | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/dataset`, `storage`                                                                                                                  | 2026-10-14 · Haiku 5.5 |       |
 | `server/services/program`, `post`, `achievement`                                                                                                      | 2026-10-14 · Haiku 5.5 |       |

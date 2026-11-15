@@ -16,6 +16,8 @@ export const useFooStore = defineStore("feature/foo", () => {
 });
 ```
 
+`hasMore` is computed from the page's `nextCursor`; the server answers no `hasMore` of its own.
+
 ## Layer 2 — `useRead*` Composable
 
 Wrap `readItems` (first page) and `readMoreItems` (subsequent pages) with tRPC calls. The `readMoreItems` callback receives the current `cursor` automatically. Omit `roomId` for global (non-room-scoped) lists.
@@ -54,10 +56,10 @@ await readFoos();
 
 ## Rules
 
-- **Never** store a paginated list as a plain `ref<TItem[]>` — always `CursorPaginationData<TItem>`.
+- **Never** store a paginated list as a plain `ref<TItem[]>` — always the `Page<TItem>` (`{ items, nextCursor }`) that `useCursorPaginationData` holds.
 - **Never** call `readItems`/`readMoreItems` from a component directly — always via a `useRead*` composable.
 - Optimistic mutations update the list directly (spread for create, filter for delete) — no re-fetch: `items.value` on a single-list store, and on a keyed one the `items` of `getSlice(key)`, since its ambient `items` is `readonly`.
-- `readMoreItems` appends; `readItems` resets the full `CursorPaginationData` ref (handles navigating back to first page).
+- `readMoreItems` appends; `readItems` resets the full `Page` ref (handles navigating back to first page).
 - A reset replaces the partition's data and retires the old one: a read issued against the retired data is dropped when it lands, so a page of the order a reset left behind never fills the list the new order reads into. A cache hydration replaces data without retiring it, so a read in flight still lands on the rows it restores (`emptyCursorPaginationData` in `useCursorPaginationOperationData.ts`).
 - A list on an **SSR'd route** passes `readItems` a `key` from `AsyncDataKey`; one behind `ssr: false` (the routes `apps/web/configuration/routeRules.ts` marks) passes none. Without a key the read runs twice per page load — the server issues it for the html, and hydration replays the same setup client-side — and the second answer can disagree with the rows already rendered. The key covers every input that changes which page the server rendered (the sort, the profile, the parent post), and only the hydrating render adopts the payload: a sort change, a pull to refresh and a client-side navigation all read live.
 - Which pagination helper a store uses (single list vs per-key lists) is the `pinia` skill's (`references/keyed-state-and-pagination.md`).
@@ -81,6 +83,6 @@ Use `<StyledWaypoint>` for cursor-paginated lists instead of a "Load more" butto
 
 ```vue
 <StyledWaypoint :is-active="hasMore" @change="readMoreFoos">
-  <FooSkeletonItem v-for="i in DEFAULT_READ_LIMIT" :key="i" />
+  <FooSkeletonItem v-for="i in DEFAULT_PAGE_LIMIT" :key="i" />
 </StyledWaypoint>
 ```
