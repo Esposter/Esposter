@@ -43,12 +43,7 @@ export const handleCutoverRequest = async (
         await Promise.all(
           reminders.map(({ userId, ...reminder }) => env.USER.get(env.USER.idFromName(userId)).addReminder(reminder)),
         );
-        const scheduledTodoReminders = await rescheduleTodoReminders(
-          drizzle(env.CORE),
-          env.RESOURCE_ASSETS,
-          env.USER,
-          Date.now(),
-        );
+        const scheduledTodoReminders = await rescheduleTodoReminders(drizzle(env.CORE), env.USER, Date.now());
         return Response.json({ scheduledReminders: reminders.length, scheduledTodoReminders });
       },
       () => new Response("Bad request", { status: 400 }),

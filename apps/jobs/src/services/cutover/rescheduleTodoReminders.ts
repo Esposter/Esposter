@@ -1,16 +1,16 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
-import { getContentBlobName } from "@esposter/db";
-import { resourcesInResource, ResourceType, todoReminderContentSchema } from "@esposter/db-schema";
+import { getBucket } from "#src/services/storage/getBucket";
+import { getContentBlobName, readJsonBlob } from "@esposter/db";
+import { resourcesInResource, ResourceType, StorageBucket, todoReminderContentSchema } from "@esposter/db-schema";
 import { and, eq, isNull } from "drizzle-orm";
 
 // Gives every incomplete TodoList item with a due date a reminder on its owner's User object.
 // The app does the same when the item is saved. A due date that passed while the estate was frozen is due now.
-// The content is read from the bucket the copy wrote, under the blob name the app reads it by.
+// The content is read from the bucket the copy wrote, under the blob name and in the compressed frame the app reads it by.
 // A resource never saved has no content and no reminder
 export const rescheduleTodoReminders = async (
   database: DrizzleD1Database,
-  bucket: R2Bucket,
   userNamespace: Cloudflare.Env["USER"],
   now: number,
 ): Promise<number> => {
@@ -20,10 +20,10 @@ export const rescheduleTodoReminders = async (
     .where(and(eq(resourcesInResource.type, ResourceType.TodoList), isNull(resourcesInResource.deletedAt)));
   const scheduledCounts = await Promise.all(
     resources.map(async ({ id: resourceId, userId }) => {
-      const object = await bucket.get(getContentBlobName(resourceId));
-      if (!object) return 0;
+      const content = await readJsonBlob(getBucket(StorageBucket.ResourceAssets), getContentBlobName(resourceId));
+      if (!content) return 0;
       // oxlint-disable-next-line no-restricted-properties -- todoReminderContentSchema coerces dueAt itself
-      const { items } = todoReminderContentSchema.parse(JSON.parse(await object.text()));
+      const { items } = todoReminderContentSchema.parse(JSON.parse(content.toString()));
       const reminders = items.flatMap(({ completedAt, dueAt, id: itemId }) =>
         completedAt || !dueAt ? [] : [{ dueAt: new Date(Math.max(dueAt.getTime(), now)), itemId, resourceId }],
       );
