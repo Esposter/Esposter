@@ -11,5 +11,5 @@
 
 ## 3. One runner
 
-- [ ] 3.1 Every web app script entry runs under `node`, for 'A web app script run by bare Node', held by `scripts/src/workspace/packageScripts.test.ts` stripping each entry's modules.
+- [ ] 3.1 Every web app script entry runs under `node`, for 'A web app script run by bare Node', held by `scripts/src/workspace/packageScripts.test.ts` stripping each entry's modules. That test's import walk follows only `#src/` today and skips any specifier whose file it cannot find: this task extends it to follow every `imports` entry the entry's own package declares, and fails an unresolved one, before the first web app entry moves.
 - [ ] 3.2 `scripts/src/workspace/packageScripts.test.ts` fails a `.ts` script entry run by `vpx`. Verified for the scenario 'A script entry running TypeScript through another loader', seen failing on a `vpx` entry left in place; the file-organization skill's alias map and the package-scripts skill's runner rule are rewritten for the one way.
