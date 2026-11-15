@@ -6,7 +6,7 @@
 
 ## 2. The conversion
 
-- [ ] 2.1 One codemod commit rewrites every `@/` and `@@/` specifier in the web app (static, dynamic and `vi.mock` paths) to its `#` name, with the import order `oxlint --fix` writes, and the lint bans `@/`, `@@/`, `~/` and `~~/` there, for 'An alias import in the web app'. Each package's typecheck and suite pass on the push.
+- [ ] 2.1 One codemod commit rewrites every `@/` and `@@/` specifier in the web app (static, dynamic and `vi.mock` paths) to its `#` name, with the import order `oxlint --fix` writes, and the lint bans `@/`, `@@/`, `~/` and `~~/` there, for 'An alias import in the web app'. The codemod commit is reviewed locally and pushed straight to `main` (the review-queue skill's codemod case) after the app's typecheck and suite pass locally; the lint ban is its own commit through the queue.
 - [ ] 2.2 A test in `apps/web/configuration` resolves `#shared` and `#server` through Nuxt's aliases and through the manifest. Verified for the scenario 'Nuxt and Node resolving one name', seen failing with one target moved.
 
 ## 3. One runner

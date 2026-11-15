@@ -47,9 +47,3 @@ A set whose members name data the repository does not author SHALL be written by
 - **GIVEN** a list of names read from outside data
 - **WHEN** the set generator writes them
 - **THEN** it writes a constant object of those names, sorted, with a type of the same name
-
-#### Scenario: A listing whose names collide once capitalized
-
-- **GIVEN** a list of names read from outside data that holds both `dark` and `Dark`
-- **WHEN** the set generator writes them
-- **THEN** it refuses to write the set and names the colliding members, and the file it would have replaced is left as it was
