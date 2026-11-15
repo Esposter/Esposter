@@ -44,11 +44,12 @@ No cloud client is mocked. A service takes the binding it uses as a parameter, s
 
 **Identity helpers:**
 
-| Helper                             | What it does                                                                                                                  |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `getMockSession()`                 | The default identity the test acts as: one user and one session for the whole run.                                            |
-| `createMockAuthSession(db, user?)` | A fresh user with a session row, or, given a user, a second session (device) of theirs. A context built over it acts as them. |
-| `createMockUser(db)`               | A second user for the test to act on rather than act as.                                                                      |
+| Helper                                   | What it does                                                                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `getMockSession()`                       | The default identity the test acts as: one user and one session for the whole run.                                            |
+| `createMockAuthSession(db, user?)`       | A fresh user with a session row, or, given a user, a second session (device) of theirs. A context built over it acts as them. |
+| `createMockUser(db)`                     | A second user for the test to act on rather than act as.                                                                      |
+| `createMockCaller(router, authSession?)` | A router's caller over a fresh context acting as that caller: the default identity when none is named, signed out for `null`. |
 
 Better-auth's own session read is still mocked in `shared/test/setup.ts` for the routes that read the cookie themselves (the socket routes and the asset route); the tRPC suites never reach it.
 
@@ -74,7 +75,7 @@ beforeEach
   └─ per-test setup only     ← vi.useFakeTimers(), fixture rows (e.g. a fresh room)
 
 [ test body ]
-  └─ a context over createMockAuthSession(db)   ← when a non-owner caller is needed
+  └─ createMockCaller(router, await createMockAuthSession(db))   ← when a non-owner caller is needed
   └─ caller.someProc(input)
 
 afterEach
@@ -97,5 +98,5 @@ All cleanup — the database and its buckets — lives in `afterEach`, never `be
 2. Import `createMockContext`, session helpers, and your router from their canonical locations.
 3. Follow the `beforeAll → createMockContext → createCallerFactory` pattern.
 4. Use the base user (from `getMockSession()`) as the room/resource owner.
-5. Build a second context over `createMockAuthSession(db)` only when a non-owner caller is needed.
+5. Build a second caller with `createMockCaller(router, await createMockAuthSession(db))` only when a non-owner caller is needed.
 6. Reset the database in `afterEach` (not `beforeEach`).
