@@ -1,0 +1,4 @@
+schema: spec-driven
+affected_areas: [ed6-formats]
+x-model: claude-opus-5-5
+x-waiting: "every task (1.1 to 4.2): parked by the owner, who will ask for it when the work starts"
