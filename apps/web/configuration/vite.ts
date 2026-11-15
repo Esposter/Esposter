@@ -17,3 +17,21 @@ export const vite: NuxtConfig["vite"] = {
     include: ["@jsonforms/core > ajv", "@jsonforms/core > ajv-formats"],
   },
 };
+
+// Nuxt resolves a client chunk's imported asset against the chunk (`new URL(file, import.meta.url)`, an absolute URL
+// Once read) where the server render writes it through `__buildAssetsURL`, root-relative: every server-rendered
+// `<img>` of an imported asset then hydrated as a mismatch. The client resolves its assets through the same helper
+export const viteHooks: NuxtConfig["hooks"] = {
+  "vite:extend": ({ config, nuxt }) => {
+    const renderBuiltUrl = config.experimental?.renderBuiltUrl;
+    if (!renderBuiltUrl) return;
+    const buildAssetsDirectory = `${nuxt.options.app.buildAssetsDir.replaceAll(/^\/|\/$/gu, "")}/`;
+    config.experimental = {
+      ...config.experimental,
+      renderBuiltUrl: (filename, context) =>
+        !context.ssr && context.hostType === "js" && context.type === "asset"
+          ? { runtime: `globalThis.__buildAssetsURL(${JSON.stringify(filename.replace(buildAssetsDirectory, ""))})` }
+          : renderBuiltUrl(filename, context),
+    };
+  },
+};

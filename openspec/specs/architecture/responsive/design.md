@@ -17,7 +17,7 @@ flowchart TD
 
 `app/plugins/ui.ts` installs Vuetify 0's breakpoints plugin with `BREAKPOINTS` and `mobileBreakpoint: "lg"`, which makes `isMobile` true below the `lg` threshold: the width under which a page's drawers become sheets. `uno.config.ts` passes `UNOCSS_BREAKPOINTS` as `theme.breakpoint`, which is what makes `sm:`/`md:`/`lg:`/`xl:` prefixes resolve to those same widths.
 
-The server has no screen, so the plugin starts both renders at no width, where every page is narrow, and the client measures once the app is mounted. A branch on width therefore hydrates as the narrow layout and switches after mount, never mismatching.
+The server has no screen, so the plugin starts both renders at no width, where every page is narrow, and the client measures once hydration has finished, when Nuxt's root suspense resolves. Mounting is too early: a layout or page Nuxt loads lazily hydrates after the app has mounted, so the plugin's own measure at mount is set aside, and a wide screen hydrated its drawers as docked columns over the server's sheets. A branch on width therefore hydrates as the narrow layout and switches once hydration is done, never mismatching.
 
 ## Choosing where to branch
 

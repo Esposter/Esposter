@@ -19,7 +19,7 @@ import { security } from "./configuration/security.ts";
 import { site } from "./configuration/site.ts";
 import { skewProtection } from "./configuration/skewProtection.ts";
 import { typescript, typescriptHooks } from "./configuration/typescript.ts";
-import { vite } from "./configuration/vite.ts";
+import { vite, viteHooks } from "./configuration/vite.ts";
 
 export default defineNuxtConfig({
   app,
@@ -29,7 +29,7 @@ export default defineNuxtConfig({
   devtools,
   experimental,
   fonts,
-  hooks: typescriptHooks,
+  hooks: { ...typescriptHooks, ...viteHooks },
   ignore,
   image,
   imports,
